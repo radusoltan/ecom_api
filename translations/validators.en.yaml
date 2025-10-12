@@ -1,0 +1,47 @@
+# Validation error messages (English)
+# Domain: validators
+
+required: "This field is required"
+invalid: "This value is not valid"
+too_short: "This value is too short. It should have {{ limit }} characters or more"
+too_long: "This value is too long. It should have {{ limit }} characters or less"
+min_value: "This value should be {{ limit }} or more"
+max_value: "This value should be {{ limit }} or less"
+
+email:
+  invalid: "This email address is not valid"
+  already_exists: "This email address is already registered"
+
+password:
+  too_short: "Password must be at least {{ limit }} characters long"
+  too_weak: "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+  mismatch: "Passwords do not match"
+
+phone:
+  invalid: "This phone number is not valid"
+
+postal_code:
+  invalid: "This postal code is not valid"
+
+cart:
+  empty: "Your cart is empty"
+  item_not_found: "Item not found in cart"
+  invalid_quantity: "Quantity must be at least 1"
+  out_of_stock: "This product is out of stock"
+  insufficient_stock: "Only {{ available }} items available in stock"
+
+product:
+  not_found: "Product not found"
+  inactive: "This product is no longer available"
+  invalid_sku: "Invalid SKU format"
+
+order:
+  invalid_status: "Invalid order status"
+  cannot_cancel: "This order cannot be cancelled"
+  payment_failed: "Payment processing failed"
+
+coupon:
+  invalid: "This coupon code is not valid"
+  expired: "This coupon has expired"
+  already_used: "You have already used this coupon"
+  minimum_not_met: "Minimum order amount of {{ amount }} required"

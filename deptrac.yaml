@@ -1,0 +1,75 @@
+deptrac:
+  paths:
+    - ./src
+
+  exclude_files:
+    - '#.*test.*#'
+
+  layers:
+    # Tenant Context Layers
+    - name: Tenant_Domain
+      collectors:
+        - type: directory
+          value: src/Tenant/Domain/.*
+
+    - name: Tenant_Application
+      collectors:
+        - type: directory
+          value: src/Tenant/Application/.*
+
+    - name: Tenant_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Tenant/Infrastructure/.*
+
+    - name: Tenant_Presentation
+      collectors:
+        - type: directory
+          value: src/Tenant/Presentation/.*
+
+    # Shared Layers
+    - name: Shared_Domain
+      collectors:
+        - type: directory
+          value: src/Shared/Domain/.*
+
+    - name: Shared_Application
+      collectors:
+        - type: directory
+          value: src/Shared/Application/.*
+
+    - name: Shared_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Shared/Infrastructure/.*
+
+  ruleset:
+    # Tenant Context Rules
+    Tenant_Domain:
+      - Shared_Domain
+
+    Tenant_Application:
+      - Tenant_Domain
+      - Shared_Domain
+      - Shared_Application
+
+    Tenant_Infrastructure:
+      - Tenant_Domain
+      - Tenant_Application
+      - Shared_Domain
+      - Shared_Infrastructure
+
+    Tenant_Presentation:
+      - Tenant_Application
+      - Tenant_Domain
+      - Shared_Domain
+
+    # Shared Rules
+    Shared_Domain: []
+
+    Shared_Application:
+      - Shared_Domain
+
+    Shared_Infrastructure:
+      - Shared_Domain
+      - Shared_Application

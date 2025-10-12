@@ -1,0 +1,41 @@
+# Elasticsearch configuration
+parameters:
+    elasticsearch.host: '%env(ELASTICSEARCH_HOST)%'
+    elasticsearch.user: '%env(ELASTICSEARCH_USER)%'
+    elasticsearch.password: '%env(ELASTICSEARCH_PASSWORD)%'
+
+services:
+    # Elasticsearch Client
+    Elastic\Elasticsearch\Client:
+        factory: ['App\Shared\Infrastructure\Elasticsearch\ElasticsearchClientFactory', 'create']
+        arguments:
+            $host: '%elasticsearch.host%'
+            $user: '%elasticsearch.user%'
+            $password: '%elasticsearch.password%'
+
+    # Alias for easier injection
+    elasticsearch.client:
+        alias: Elastic\Elasticsearch\Client
+
+when@test:
+    services:
+        Elastic\Elasticsearch\Client:
+            factory: ['App\Shared\Infrastructure\Elasticsearch\ElasticsearchClientFactory', 'create']
+            arguments:
+                $host: '%elasticsearch.host%'
+                $user: '%elasticsearch.user%'
+                $password: '%elasticsearch.password%'
+            public: true
+
+        # Make Elasticsearch services public in test environment for functional tests
+        App\Shared\Infrastructure\Elasticsearch\IndexManager:
+            autowire: true
+            public: true
+
+        App\Catalog\Infrastructure\Elasticsearch\ProductIndexer:
+            autowire: true
+            public: true
+
+        App\Catalog\Infrastructure\Elasticsearch\CategoryIndexer:
+            autowire: true
+            public: true

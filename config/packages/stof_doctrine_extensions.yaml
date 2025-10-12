@@ -1,0 +1,30 @@
+# Doctrine Extensions Configuration
+# https://github.com/doctrine-extensions/DoctrineExtensions
+# https://symfony.com/bundles/StofDoctrineExtensionsBundle/current/index.html
+
+stof_doctrine_extensions:
+    default_locale: en
+    translation_fallback: true
+    persist_default_translation: true
+    orm:
+        default:
+            # Translatable: pentru traduceri conținut dinamic (products, categories, tenant)
+            translatable: true
+
+            # Sluggable: pentru URL-friendly slugs (SEO)
+            sluggable: true
+
+            # Timestampable: pentru createdAt/updatedAt automată (disabled - managed manually in domain)
+            timestampable: false
+
+            # Blameable: pentru createdBy/updatedBy (disabled - not needed yet)
+            blameable: false
+
+            # SoftDeleteable: pentru soft delete (disabled - not needed yet)
+            softdeleteable: false
+
+            # Tree: pentru category hierarchy (disabled - not needed yet)
+            tree: false
+
+            # Loggable: pentru audit trail (disabled - not needed yet)
+            loggable: false

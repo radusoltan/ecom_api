@@ -1,0 +1,55 @@
+security:
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        app_user_provider:
+            entity:
+                class: App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity
+                property: email
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        login:
+            pattern: ^/api/login
+            stateless: true
+            provider: app_user_provider
+            json_login:
+                check_path: /api/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        # Commenting out for now - these firewalls bypass authentication
+        # Uncomment in production if you need public API endpoints
+        # search:
+        #     pattern: ^/api/search
+        #     security: false
+        # public_api:
+        #     pattern: ^/api/(product_entities|category_entities|warehouses|price_lists|tenants)
+        #     security: false
+        api:
+            pattern: ^/api
+            stateless: true
+            provider: app_user_provider
+            jwt: ~
+        main:
+            lazy: true
+            provider: app_user_provider
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#the-firewall
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS }  # Allow access to API documentation
+        - { path: ^/api/translations, roles: PUBLIC_ACCESS }  # Allow access to translations
+        - { path: ^/api/categories, roles: PUBLIC_ACCESS }  # Allow public access to categories for storefront
+        - { path: ^/api/product_entities, roles: PUBLIC_ACCESS }  # Allow public access to products for storefront
+        - { path: ^/api/customers, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public customer registration
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

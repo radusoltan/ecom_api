@@ -1,0 +1,32 @@
+framework:
+    cache:
+        pools:
+            cache.rate_limiter:
+                adapter: cache.adapter.filesystem
+
+    rate_limiter:
+        # Stock operations rate limiter - per user/IP
+        stock_operations:
+            policy: 'sliding_window'
+            limit: 100
+            interval: '1 minute'
+
+        # Stock operations per tenant - prevent single tenant abuse
+        stock_operations_per_tenant:
+            policy: 'sliding_window'
+            limit: 1000
+            interval: '1 minute'
+
+        # Stock reservation rate limiter - more restrictive
+        stock_reservations:
+            policy: 'token_bucket'
+            limit: 50
+            rate:
+                interval: '1 minute'
+                amount: 50
+
+        # Bulk operations - very restrictive
+        bulk_operations:
+            policy: 'fixed_window'
+            limit: 10
+            interval: '1 minute'

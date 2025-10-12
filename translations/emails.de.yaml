@@ -1,0 +1,69 @@
+# Email templates and notifications (German)
+# Domain: emails
+
+common:
+  greeting: "Hallo {{ name }},"
+  closing: "Mit freundlichen Grüßen,"
+  signature: "Das {{ tenant_name }} Team"
+  footer: "Bei Fragen kontaktieren Sie uns bitte unter {{ support_email }}"
+  unsubscribe: "Möchten Sie diese E-Mails nicht mehr erhalten? Hier abmelden"
+
+order:
+  confirmation:
+    subject: "Bestellbestätigung #{{ order_number }}"
+    title: "Vielen Dank für Ihre Bestellung!"
+    body: "Wir haben Ihre Bestellung #{{ order_number }} erhalten und sie wird nun bearbeitet."
+    view_order: "Ihre Bestellung ansehen"
+
+  shipped:
+    subject: "Ihre Bestellung #{{ order_number }} wurde versandt"
+    title: "Ihre Bestellung ist unterwegs!"
+    body: "Ihre Bestellung #{{ order_number }} wurde versandt und sollte bis zum {{ delivery_date }} ankommen."
+    tracking: "Verfolgen Sie Ihre Sendung: {{ tracking_url }}"
+
+  delivered:
+    subject: "Ihre Bestellung #{{ order_number }} wurde zugestellt"
+    title: "Ihre Bestellung wurde zugestellt!"
+    body: "Ihre Bestellung #{{ order_number }} wurde erfolgreich zugestellt."
+    feedback: "Wie war Ihre Erfahrung? Hinterlassen Sie eine Bewertung"
+
+  cancelled:
+    subject: "Bestellung #{{ order_number }} wurde storniert"
+    title: "Bestellung Storniert"
+    body: "Ihre Bestellung #{{ order_number }} wurde wie gewünscht storniert."
+    refund: "Sie erhalten eine Rückerstattung innerhalb von {{ refund_days }} Werktagen."
+
+customer:
+  welcome:
+    subject: "Willkommen bei {{ tenant_name }}!"
+    title: "Willkommen an Bord!"
+    body: "Vielen Dank, dass Sie ein Konto bei uns erstellt haben. Wir freuen uns, Sie als Kunden zu haben."
+    explore: "Jetzt einkaufen"
+
+  password_reset:
+    subject: "Anfrage zum Zurücksetzen des Passworts"
+    title: "Setzen Sie Ihr Passwort zurück"
+    body: "Wir haben eine Anfrage zum Zurücksetzen Ihres Passworts erhalten. Klicken Sie auf die Schaltfläche unten, um ein neues Passwort zu erstellen."
+    reset_button: "Passwort Zurücksetzen"
+    expire: "Dieser Link läuft in {{ expire_hours }} Stunden ab."
+    ignore: "Wenn Sie dies nicht angefordert haben, ignorieren Sie bitte diese E-Mail."
+
+  account_verified:
+    subject: "E-Mail-Adresse Verifiziert"
+    title: "Konto Verifiziert!"
+    body: "Ihre E-Mail-Adresse wurde erfolgreich verifiziert. Sie können jetzt alle Funktionen Ihres Kontos nutzen."
+
+cart:
+  abandoned:
+    subject: "Sie haben Artikel in Ihrem Warenkorb gelassen"
+    title: "Vergessen Sie Ihren Warenkorb nicht!"
+    body: "Sie haben {{ count }} Artikel in Ihrem Warenkorb."
+    complete: "Kauf abschließen"
+    expires: "Die Artikel in Ihrem Warenkorb sind für {{ hours }} Stunden reserviert."
+
+notification:
+  low_stock:
+    subject: "Produkt wieder auf Lager: {{ product_name }}"
+    title: "Gute Nachrichten!"
+    body: "{{ product_name }} ist wieder auf Lager. Holen Sie es sich, bevor es wieder ausverkauft ist!"
+    shop_now: "Jetzt Einkaufen"

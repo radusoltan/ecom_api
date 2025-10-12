@@ -3,3 +3,13 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+# Payment webhook controllers
+payment_webhooks:
+    resource:
+        path: ../src/Payment/Presentation/Api/Controller/
+        namespace: App\Payment\Presentation\Api\Controller
+    type: attribute
+
+api_login_check:
+    path: /api/login_check

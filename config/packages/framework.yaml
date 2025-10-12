@@ -5,6 +5,16 @@ framework:
     # Note that the session will be started ONLY if you read or write from it.
     session: true
 
+    # Enable HTTP Client component
+    http_client:
+        default_options:
+            timeout: 30
+
+    # Redis Cache Configuration
+    cache:
+        app: cache.adapter.redis
+        default_redis_provider: '%env(REDIS_URL)%'
+
     #esi: true
     #fragments: true
 

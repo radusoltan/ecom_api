@@ -1,0 +1,157 @@
+doctrine:
+    dbal:
+        url: '%env(resolve:DATABASE_URL)%'
+
+        # IMPORTANT: You MUST configure your server version,
+        # either here or in the DATABASE_URL env var (see .env file)
+        #server_version: '16'
+
+        profiling_collect_backtrace: '%kernel.debug%'
+        use_savepoints: true
+        logging: true  # Enable query logging
+        profiling: true  # Enable profiling
+
+        # Connection pool optimization
+        options:
+            # Keep connections alive to avoid reconnection overhead
+            1002: true  # PDO::ATTR_PERSISTENT = true
+        types:
+            tenant_id: App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType
+            tenant_name: App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantNameType
+            tenant_status: App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantStatusType
+            email: App\Shared\Infrastructure\Persistence\Doctrine\Type\EmailType
+            language_code: App\Shared\Infrastructure\Doctrine\Type\LanguageCodeType
+            tax_rule_id: App\Tax\Infrastructure\Persistence\Doctrine\Type\TaxRuleIdType
+            translated_string: App\Shared\Infrastructure\Persistence\Doctrine\Type\TranslatedStringType
+            order_id: App\Order\Infrastructure\Persistence\Doctrine\Type\OrderIdType
+            order_status: App\Order\Infrastructure\Persistence\Doctrine\Type\OrderStatusType
+            product_id: App\Catalog\Infrastructure\Persistence\Doctrine\Type\ProductIdType
+            stock_item_id: App\Inventory\Infrastructure\Persistence\Doctrine\Type\StockItemIdType
+            warehouse_id: App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseIdType
+            quantity: App\Inventory\Infrastructure\Persistence\Doctrine\Type\QuantityType
+            price_list_id: App\Pricing\Infrastructure\Persistence\Doctrine\Type\PriceListIdType
+            promotion_id: App\Pricing\Infrastructure\Persistence\Doctrine\Type\PromotionIdType
+            promotion_type: App\Pricing\Infrastructure\Persistence\Doctrine\Type\PromotionTypeType
+            discount_type: App\Pricing\Infrastructure\Persistence\Doctrine\Type\DiscountTypeType
+            coupon_code: App\Pricing\Infrastructure\Persistence\Doctrine\Type\CouponCodeType
+            customer_id: App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerIdType
+            customer_segment: App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerSegmentType
+            payment_id: App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentIdType
+            payment_method: App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentMethodType
+            payment_status: App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentStatusType
+            payment_gateway: App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentGatewayType
+            return_request_id: App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnRequestIdType
+            return_status: App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType
+    orm:
+        auto_generate_proxy_classes: true
+        enable_lazy_ghost_objects: true
+        report_fields_where_declared: true
+        validate_xml_mapping: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        identity_generation_preferences:
+            Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
+        auto_mapping: true
+        mappings:
+            Tenant:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Tenant/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Tenant\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Tenant
+            User:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/User/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\User\Infrastructure\Persistence\Doctrine\Entity'
+                alias: User
+            Internationalization:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Internationalization/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Internationalization\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Internationalization
+            Catalog:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Catalog/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Catalog\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Catalog
+            Order:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Order/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Order\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Order
+            Inventory:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Inventory/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Inventory\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Inventory
+            Pricing:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Pricing/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Pricing\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Pricing
+            Customer:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Customer/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Customer\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Customer
+            Payment:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Payment/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Payment\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Payment
+            Tax:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Tax/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Tax\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Tax
+            Returns:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Returns/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Returns\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Returns
+        controller_resolver:
+            auto_mapping: false
+
+when@dev:
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system
+
+when@test:
+    doctrine:
+        dbal:
+            # Database name is already ecom_test in DATABASE_URL, no suffix needed
+            # dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+
+when@prod:
+    doctrine:
+        orm:
+            auto_generate_proxy_classes: false
+            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+            query_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system

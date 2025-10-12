@@ -7,14 +7,56 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "doctrine/annotations": "^2.0",
+        "elasticsearch/elasticsearch": "^9.1",
+        "gedmo/doctrine-extensions": "^3.21",
+        "gesdinet/jwt-refresh-token-bundle": "^1.5",
+        "nelmio/cors-bundle": "^2.5",
+        "stof/doctrine-extensions-bundle": "^1.14",
+        "stripe/stripe-php": "^18.0",
+        "symfony/asset": "7.3.*",
         "symfony/console": "7.3.*",
         "symfony/dotenv": "7.3.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.3.*",
+        "symfony/mailer": "7.3.*",
+        "symfony/notifier": "7.3.*",
+        "symfony/property-access": "7.3.*",
         "symfony/runtime": "7.3.*",
+        "symfony/scheduler": "7.3.*",
+        "symfony/translation": "7.3.*",
+        "symfony/twig-bundle": "7.3.*",
         "symfony/yaml": "7.3.*"
     },
     "require-dev": {
+        "api-platform/core": "*",
+        "brick/money": "*",
+        "dama/doctrine-test-bundle": "^8.3",
+        "deptrac/deptrac": "^4.2",
+        "doctrine/dbal": "^3",
+        "doctrine/doctrine-bundle": "^2.17",
+        "doctrine/doctrine-fixtures-bundle": "^4.1",
+        "doctrine/doctrine-migrations-bundle": "^3.4",
+        "doctrine/orm": "^3.5",
+        "friendsofphp/php-cs-fixer": "^3.88",
+        "justinrainbow/json-schema": "^6.5",
+        "lexik/jwt-authentication-bundle": "*",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-doctrine": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
+        "phpunit/phpunit": "^12.4",
+        "rector/rector": "^2.2",
+        "symfony/browser-kit": "7.3.*",
+        "symfony/cache": "7.3.*",
+        "symfony/http-client": "7.3.*",
+        "symfony/maker-bundle": "*",
+        "symfony/mercure-bundle": "^0.3.9",
+        "symfony/messenger": "7.3.*",
+        "symfony/rate-limiter": "7.3.*",
+        "symfony/serializer": "7.3.*",
+        "symfony/uid": "7.3.*",
+        "symfony/validator": "7.3.*",
+        "webonyx/graphql-php": "^15.25"
     },
     "config": {
         "allow-plugins": {
@@ -55,6 +97,53 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "test": [
+            "vendor/bin/phpunit"
+        ],
+        "test:unit": [
+            "vendor/bin/phpunit tests/Unit"
+        ],
+        "test:integration": [
+            "vendor/bin/phpunit tests/Integration"
+        ],
+        "test:functional": [
+            "vendor/bin/phpunit tests/Functional"
+        ],
+        "test:coverage": [
+            "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text --colors=never"
+        ],
+        "phpstan": [
+            "vendor/bin/phpstan analyse"
+        ],
+        "cs:check": [
+            "vendor/bin/php-cs-fixer fix --dry-run --diff"
+        ],
+        "cs:fix": [
+            "vendor/bin/php-cs-fixer fix"
+        ],
+        "rector:check": [
+            "vendor/bin/rector process --dry-run"
+        ],
+        "rector:fix": [
+            "vendor/bin/rector process"
+        ],
+        "deptrac": [
+            "vendor/bin/deptrac analyse"
+        ],
+        "quality:check": [
+            "@phpstan",
+            "@cs:check",
+            "@rector:check",
+            "@deptrac"
+        ],
+        "quality:fix": [
+            "@cs:fix",
+            "@rector:fix"
+        ],
+        "ci": [
+            "@quality:check",
+            "@test"
         ]
     },
     "conflict": {

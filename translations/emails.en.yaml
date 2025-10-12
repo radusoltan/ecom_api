@@ -1,0 +1,69 @@
+# Email templates and notifications (English)
+# Domain: emails
+
+common:
+  greeting: "Hello {{ name }},"
+  closing: "Best regards,"
+  signature: "The {{ tenant_name }} Team"
+  footer: "If you have any questions, please contact us at {{ support_email }}"
+  unsubscribe: "Don't want to receive these emails? Unsubscribe here"
+
+order:
+  confirmation:
+    subject: "Order Confirmation #{{ order_number }}"
+    title: "Thank you for your order!"
+    body: "We have received your order #{{ order_number }} and it is now being processed."
+    view_order: "View your order"
+
+  shipped:
+    subject: "Your order #{{ order_number }} has been shipped"
+    title: "Your order is on its way!"
+    body: "Your order #{{ order_number }} has been shipped and should arrive by {{ delivery_date }}."
+    tracking: "Track your shipment: {{ tracking_url }}"
+
+  delivered:
+    subject: "Your order #{{ order_number }} has been delivered"
+    title: "Your order has been delivered!"
+    body: "Your order #{{ order_number }} was successfully delivered."
+    feedback: "How was your experience? Leave a review"
+
+  cancelled:
+    subject: "Order #{{ order_number }} has been cancelled"
+    title: "Order Cancelled"
+    body: "Your order #{{ order_number }} has been cancelled as requested."
+    refund: "You will receive a refund within {{ refund_days }} business days."
+
+customer:
+  welcome:
+    subject: "Welcome to {{ tenant_name }}!"
+    title: "Welcome aboard!"
+    body: "Thank you for creating an account with us. We're excited to have you as a customer."
+    explore: "Start shopping now"
+
+  password_reset:
+    subject: "Password Reset Request"
+    title: "Reset Your Password"
+    body: "We received a request to reset your password. Click the button below to create a new password."
+    reset_button: "Reset Password"
+    expire: "This link will expire in {{ expire_hours }} hours."
+    ignore: "If you didn't request this, please ignore this email."
+
+  account_verified:
+    subject: "Email Address Verified"
+    title: "Account Verified!"
+    body: "Your email address has been successfully verified. You can now enjoy all features of your account."
+
+cart:
+  abandoned:
+    subject: "You left items in your cart"
+    title: "Don't forget about your cart!"
+    body: "You have {{ count }} item(s) waiting for you in your cart."
+    complete: "Complete your purchase"
+    expires: "Items in your cart are reserved for {{ hours }} hours."
+
+notification:
+  low_stock:
+    subject: "Product back in stock: {{ product_name }}"
+    title: "Good news!"
+    body: "{{ product_name }} is back in stock. Get it before it's gone again!"
+    shop_now: "Shop Now"

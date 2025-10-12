@@ -15,6 +15,885 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
+        exclude:
+            - '../src/Shared/Infrastructure/ApiPlatform/State/TenantContextProcessor.php'
+            - '../src/Shared/Infrastructure/ApiPlatform/State/TenantContextProvider.php'
+            - '../src/Shared/Infrastructure/ApiPlatform/State/CachedCollectionProvider.php'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # Tenant Context Service - for RLS support
+    App\Shared\Infrastructure\Tenant\TenantContext:
+        shared: true
+
+    # Translation Service - for multilanguage support
+    App\Shared\Application\Service\TranslationService:
+        shared: true
+
+    # Gedmo Doctrine Extensions Listeners
+    # These listeners enable Translatable and Sluggable behaviors
+
+    gedmo.listener.translatable:
+        class: Gedmo\Translatable\TranslatableListener
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ setAnnotationReader, [ '@annotation_reader' ] ]
+            - [ setDefaultLocale, [ 'en' ] ]
+            - [ setTranslationFallback, [ true ] ]
+
+    gedmo.listener.sluggable:
+        class: Gedmo\Sluggable\SluggableListener
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ setAnnotationReader, [ '@annotation_reader' ] ]
+
+    # Annotation Reader (required by Gedmo listeners)
+    # Symfony 7 uses attributes by default, but Gedmo still needs the annotation reader
+    annotation_reader:
+        class: Doctrine\Common\Annotations\AnnotationReader
+        public: false
+
+    # Alias for autowiring TranslatableListener
+    Gedmo\Translatable\TranslatableListener:
+        alias: gedmo.listener.translatable
+
+    # Performance Query Logger - Doctrine DBAL query profiling
+    App\Shared\Infrastructure\Doctrine\PerformanceQueryLogger:
+        arguments:
+            $profiler: '@App\Shared\Infrastructure\Performance\PerformanceProfiler'
+        tags:
+            - { name: doctrine.dbal.logger, connection: default }
+
+    # API Caching - Cached Collection Provider
+    # Note: Decorates the default Doctrine ORM collection provider
+    # App\Shared\Infrastructure\ApiPlatform\State\CachedCollectionProvider:
+    #     decorates: 'api_platform.doctrine.orm.state.collection_provider'
+    #     arguments:
+    #         $decorated: '@.inner'
+    #         $cacheService: '@App\Shared\Infrastructure\Cache\CacheService'
+    #         $requestStack: '@request_stack'
+    #         $logger: '@logger'
+    # NOTE: Commented out by default. Enable when Redis is configured and ready for production.
+
+    # API Cache Headers Subscriber
+    App\Shared\Infrastructure\EventSubscriber\ApiCacheSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    # Tenant Repository - inject event.bus for domain events
+    App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository:
+        arguments:
+            $eventBus: '@event.bus'
+
+    # Repository interface binding
+    App\Tenant\Domain\Repository\TenantRepositoryInterface:
+        alias: App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository
+
+    # Order Repository - inject event dispatcher for domain events
+    App\Order\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMOrderRepository:
+        arguments:
+            $eventDispatcher: '@event_dispatcher'
+
+    # Order Repository interface binding
+    App\Order\Domain\Repository\OrderRepositoryInterface:
+        alias: App\Order\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMOrderRepository
+
+    # Command Handlers
+    App\Tenant\Application\Command\CreateTenantCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Tenant\Application\Command\ActivateTenantCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Tenant\Application\Command\DeactivateTenantCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    # Query Handlers
+    App\Tenant\Application\Query\GetTenantByIdQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Tenant\Application\Query\GetTenantByOwnerEmailQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Tenant\Application\Query\GetAllTenantsQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    # API Platform State Processors
+    App\Tenant\Presentation\Api\Processor\CreateTenantProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    App\Tenant\Presentation\Api\Processor\ActivateTenantProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    App\Tenant\Presentation\Api\Processor\DeactivateTenantProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    # API Platform State Providers
+    App\Tenant\Presentation\Api\Provider\TenantItemProvider:
+        arguments:
+            $queryBus: '@query.bus'
+
+    App\Tenant\Presentation\Api\Provider\TenantCollectionProvider:
+        arguments:
+            $queryBus: '@query.bus'
+
+    # Order Command Handlers
+    App\Order\Application\Command\PlaceOrderCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Order\Application\Command\CancelOrderCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Order\Application\Command\UpdateOrderStatusCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    # Order Query Handlers
+    App\Order\Application\Query\GetOrderByIdQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Order\Application\Query\GetOrdersByCustomerQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Order\Application\Query\GetAllOrdersQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    # Order API Platform State Processors
+    App\Order\Presentation\Api\Processor\PlaceOrderProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    App\Order\Presentation\Api\Processor\UpdateOrderStatusProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    App\Order\Presentation\Api\Processor\CancelOrderProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    # Order API Platform State Providers
+    # The actual providers (inner services)
+    App\Order\Presentation\Api\Provider\OrderItemProvider:
+        arguments:
+            $queryBus: '@query.bus'
+
+    App\Order\Presentation\Api\Provider\OrderCollectionProvider:
+        arguments:
+            $queryBus: '@query.bus'
+
+    # Decorate providers with TenantContext to inject X-Tenant-ID header into context
+    App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider:
+        decorates: App\Order\Presentation\Api\Provider\OrderItemProvider
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_collection_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Order\Presentation\Api\Provider\OrderCollectionProvider
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Order Event Subscribers
+    # These subscribers listen to domain events and perform side effects
+    # (emails, notifications, integrations)
+
+    App\Order\Application\EventSubscriber\OrderPlacedSubscriber:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $logger: '@logger'
+            $senderEmail: 'orders@ecommerce.local'
+            $senderName: 'E-Commerce Platform'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Order\Application\EventSubscriber\OrderStatusChangedSubscriber:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $logger: '@logger'
+            $senderEmail: 'orders@ecommerce.local'
+            $senderName: 'E-Commerce Platform'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Order\Application\EventSubscriber\OrderCancelledSubscriber:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $logger: '@logger'
+            $senderEmail: 'orders@ecommerce.local'
+            $senderName: 'E-Commerce Platform'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    # Catalog Context - State Providers
+    # The actual providers (inner services)
+    App\Catalog\Infrastructure\ApiPlatform\State\ProductCollectionProvider: ~
+    App\Catalog\Infrastructure\ApiPlatform\State\ProductItemProvider: ~
+
+    # Decorate Product providers with TenantContext to inject X-Tenant-ID header into context
+    tenant_context_product_collection_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Catalog\Infrastructure\ApiPlatform\State\ProductCollectionProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_product_item_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Catalog\Infrastructure\ApiPlatform\State\ProductItemProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Inventory Context - State Providers and Processors
+    App\Inventory\Infrastructure\ApiPlatform\State\StockItemProvider: ~
+    App\Inventory\Infrastructure\ApiPlatform\State\CreateStockItemProcessor: ~
+    App\Inventory\Infrastructure\ApiPlatform\State\ReserveStockProcessor: ~
+    App\Inventory\Infrastructure\ApiPlatform\State\AllocateStockProcessor: ~
+    App\Inventory\Infrastructure\ApiPlatform\State\ReleaseStockProcessor: ~
+    App\Inventory\Infrastructure\ApiPlatform\State\BulkReserveStockProcessor: ~
+
+    # Warehouse State Providers (define inner services)
+    App\Inventory\Presentation\Api\Provider\WarehouseCollectionProvider: ~
+    App\Inventory\Presentation\Api\Provider\WarehouseItemProvider: ~
+
+    # Decorate Warehouse providers with TenantContext
+    tenant_context_warehouse_collection_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Inventory\Presentation\Api\Provider\WarehouseCollectionProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_warehouse_item_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Inventory\Presentation\Api\Provider\WarehouseItemProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Inventory Context - Decorate providers with TenantContext
+    tenant_context_stock_item_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Inventory\Infrastructure\ApiPlatform\State\StockItemProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Inventory Context - Decorate processors with TenantContext
+    tenant_context_create_stock_item_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Inventory\Infrastructure\ApiPlatform\State\CreateStockItemProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_reserve_stock_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Inventory\Infrastructure\ApiPlatform\State\ReserveStockProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_allocate_stock_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Inventory\Infrastructure\ApiPlatform\State\AllocateStockProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_release_stock_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Inventory\Infrastructure\ApiPlatform\State\ReleaseStockProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_bulk_reserve_stock_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Inventory\Infrastructure\ApiPlatform\State\BulkReserveStockProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Inventory Context - Command Handlers
+    App\Inventory\Application\Command\CreateStockItem\CreateStockItemHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Inventory\Application\Command\ReserveStock\ReserveStockHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Inventory\Application\Command\AllocateStock\AllocateStockHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Inventory\Application\Command\ReleaseStock\ReleaseStockHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Inventory\Application\Command\AdjustStock\AdjustStockHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Inventory\Application\Command\ReleaseExpiredReservations\ReleaseExpiredReservationsHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Inventory\Application\Command\BulkReserveStock\BulkReserveStockHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    # Inventory Context - Query Handlers
+    App\Inventory\Application\Query\GetStockByProduct\GetStockByProductHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    # Inventory Context - Rate Limiting
+    App\Inventory\Infrastructure\EventSubscriber\StockOperationRateLimitSubscriber:
+        arguments:
+            $stockOperationsLimiter: '@limiter.stock_operations'
+            $stockOperationsPerTenantLimiter: '@limiter.stock_operations_per_tenant'
+            $stockReservationsLimiter: '@limiter.stock_reservations'
+            $bulkOperationsLimiter: '@limiter.bulk_operations'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    # Inventory Context - Real-time Notifications
+    App\Inventory\Infrastructure\EventSubscriber\StockLevelChangeNotificationSubscriber:
+        arguments:
+            $hub: '@mercure.hub.default'
+            $logger: '@logger'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    # Pricing Context - Repository
+    App\Pricing\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPriceListRepository:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $eventDispatcher: '@event_dispatcher'
+
+    App\Pricing\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPromotionRepository:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $eventDispatcher: '@event_dispatcher'
+
+    # Pricing Repository interface binding
+    App\Pricing\Domain\Repository\PriceListRepositoryInterface:
+        alias: App\Pricing\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPriceListRepository
+
+    App\Pricing\Domain\Repository\PromotionRepositoryInterface:
+        alias: App\Pricing\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPromotionRepository
+
+    # Pricing Context - Command Handlers
+    App\Pricing\Application\Command\CreatePriceList\CreatePriceListCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Pricing\Application\Command\ActivatePriceList\ActivatePriceListCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Pricing\Application\Command\DeactivatePriceList\DeactivatePriceListCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    # Pricing Context - Query Handlers
+    App\Pricing\Application\Query\GetPriceListById\GetPriceListByIdQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Pricing\Application\Query\GetActivePriceLists\GetActivePriceListsQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    # Promotion Command Handlers
+    App\Pricing\Application\Command\CreatePromotion\CreatePromotionCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Pricing\Application\Command\UpdatePromotion\UpdatePromotionCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Pricing\Application\Command\ActivatePromotion\ActivatePromotionCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Pricing\Application\Command\DeactivatePromotion\DeactivatePromotionCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    # Promotion Query Handlers
+    App\Pricing\Application\Query\GetPromotionById\GetPromotionByIdQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Pricing\Application\Query\GetActivePromotions\GetActivePromotionsQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Pricing\Application\Query\GetAllPromotions\GetAllPromotionsQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    # Pricing Context - State Processors
+    App\Pricing\Presentation\Api\Processor\CreatePriceListProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    App\Pricing\Presentation\Api\Processor\ActivatePriceListProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    App\Pricing\Presentation\Api\Processor\DeactivatePriceListProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    # Promotion Processors (inner services)
+    App\Pricing\Presentation\Api\Processor\CreatePromotionProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    App\Pricing\Presentation\Api\Processor\UpdatePromotionProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    App\Pricing\Presentation\Api\Processor\ActivatePromotionProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    App\Pricing\Presentation\Api\Processor\DeactivatePromotionProcessor:
+        arguments:
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+
+    # Pricing Context - State Providers (inner services)
+    App\Pricing\Presentation\Api\Provider\PriceListItemProvider: ~
+    App\Pricing\Presentation\Api\Provider\PriceListCollectionProvider: ~
+
+    # Promotion Providers (inner services)
+    App\Pricing\Presentation\Api\Provider\PromotionItemProvider: ~
+    App\Pricing\Presentation\Api\Provider\PromotionCollectionProvider: ~
+
+    # Decorate Pricing providers with TenantContext
+    tenant_context_price_list_item_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Pricing\Presentation\Api\Provider\PriceListItemProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_price_list_collection_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Pricing\Presentation\Api\Provider\PriceListCollectionProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Decorate Promotion providers with TenantContext
+    tenant_context_promotion_item_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Pricing\Presentation\Api\Provider\PromotionItemProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_promotion_collection_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Pricing\Presentation\Api\Provider\PromotionCollectionProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Decorate Promotion processors with TenantContext
+    tenant_context_create_promotion_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Pricing\Presentation\Api\Processor\CreatePromotionProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_update_promotion_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Pricing\Presentation\Api\Processor\UpdatePromotionProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_activate_promotion_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Pricing\Presentation\Api\Processor\ActivatePromotionProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_deactivate_promotion_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Pricing\Presentation\Api\Processor\DeactivatePromotionProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Customer Context - Tenant decorators
+    tenant_context_register_customer_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Customer\Presentation\Api\Processor\RegisterCustomerProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_update_customer_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Customer\Presentation\Api\Processor\UpdateCustomerProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_change_segment_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Customer\Presentation\Api\Processor\ChangeSegmentProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_activate_customer_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Customer\Presentation\Api\Processor\ActivateCustomerProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_deactivate_customer_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Customer\Presentation\Api\Processor\DeactivateCustomerProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_customer_item_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Customer\Presentation\Api\Provider\CustomerItemProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_customer_collection_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Customer\Presentation\Api\Provider\CustomerCollectionProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Payment Context - Gateway Adapters
+    App\Payment\Infrastructure\Gateway\StripePaymentGateway:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+            $logger: '@logger'
+
+    App\Payment\Infrastructure\Gateway\PayPalPaymentGateway:
+        arguments:
+            $clientId: '%env(PAYPAL_CLIENT_ID)%'
+            $clientSecret: '%env(PAYPAL_SECRET_KEY)%'
+            $httpClient: '@Symfony\Contracts\HttpClient\HttpClientInterface'
+            $logger: '@logger'
+            $sandbox: true
+
+    # Payment Gateway Factory
+    App\Payment\Infrastructure\Gateway\PaymentGatewayFactory:
+        arguments:
+            $gateways:
+                stripe: '@App\Payment\Infrastructure\Gateway\StripePaymentGateway'
+                paypal: '@App\Payment\Infrastructure\Gateway\PayPalPaymentGateway'
+
+    # Payment Repository
+    App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $eventDispatcher: '@event_dispatcher'
+
+    # Payment Repository interface binding
+    App\Payment\Domain\Repository\PaymentRepositoryInterface:
+        alias: App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository
+
+    # Payment Context - Command Handlers
+    App\Payment\Application\Command\CreatePaymentHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Payment\Application\Command\AuthorizePaymentHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Payment\Application\Command\CapturePaymentHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Payment\Application\Command\RefundPaymentHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Payment\Application\Command\CancelPaymentHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    # Payment Context - Query Handlers
+    App\Payment\Application\Query\GetPaymentByIdHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Payment\Application\Query\GetPaymentsByOrderHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Payment\Application\Query\GetAllPaymentsHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    # Payment Context - State Processors (inner services)
+    App\Payment\Presentation\Api\Processor\CreatePaymentProcessor: ~
+    App\Payment\Presentation\Api\Processor\AuthorizePaymentProcessor: ~
+    App\Payment\Presentation\Api\Processor\CapturePaymentProcessor: ~
+    App\Payment\Presentation\Api\Processor\RefundPaymentProcessor: ~
+    App\Payment\Presentation\Api\Processor\CancelPaymentProcessor: ~
+
+    # Payment Context - State Providers (inner services)
+    App\Payment\Presentation\Api\Provider\PaymentItemProvider: ~
+    App\Payment\Presentation\Api\Provider\PaymentCollectionProvider: ~
+
+    # Decorate Payment providers with TenantContext
+    tenant_context_payment_item_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Payment\Presentation\Api\Provider\PaymentItemProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_payment_collection_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Payment\Presentation\Api\Provider\PaymentCollectionProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Decorate Payment processors with TenantContext
+    tenant_context_create_payment_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Payment\Presentation\Api\Processor\CreatePaymentProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_authorize_payment_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Payment\Presentation\Api\Processor\AuthorizePaymentProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_capture_payment_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Payment\Presentation\Api\Processor\CapturePaymentProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_refund_payment_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Payment\Presentation\Api\Processor\RefundPaymentProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_cancel_payment_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Payment\Presentation\Api\Processor\CancelPaymentProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Payment Context - Event Subscribers
+    App\Payment\Application\EventSubscriber\PaymentAuthorizedSubscriber:
+        arguments:
+            $logger: '@logger'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Payment\Application\EventSubscriber\PaymentCapturedSubscriber:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $logger: '@logger'
+            $senderEmail: 'payments@ecommerce.local'
+            $senderName: 'E-Commerce Platform'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Payment\Application\EventSubscriber\PaymentRefundedSubscriber:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $logger: '@logger'
+            $senderEmail: 'payments@ecommerce.local'
+            $senderName: 'E-Commerce Platform'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Payment\Application\EventSubscriber\PaymentFailedSubscriber:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $logger: '@logger'
+            $senderEmail: 'payments@ecommerce.local'
+            $senderName: 'E-Commerce Platform'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Payment\Application\EventSubscriber\PaymentCancelledSubscriber:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $logger: '@logger'
+            $senderEmail: 'payments@ecommerce.local'
+            $senderName: 'E-Commerce Platform'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    # Stripe Webhook Handler
+    App\Payment\Infrastructure\Webhook\StripeWebhookHandler:
+        arguments:
+            $webhookSecret: '%env(STRIPE_WEBHOOK_SECRET)%'
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+            $logger: '@logger'
+
+    # Tax Context - Repository
+    App\Tax\Domain\Repository\TaxRuleRepositoryInterface:
+        alias: App\Tax\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMTaxRuleRepository
+
+    App\Tax\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMTaxRuleRepository:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $eventDispatcher: '@event_dispatcher'
+
+    # Tax Context - Domain Services
+    App\Tax\Domain\Service\TaxCalculationService:
+        arguments:
+            $taxRuleRepository: '@App\Tax\Domain\Repository\TaxRuleRepositoryInterface'
+
+    # Returns Context - Repository
+    App\Returns\Domain\Repository\ReturnRequestRepositoryInterface:
+        alias: App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository
+
+    App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $eventBus: '@messenger.default_bus'
+
+    # Returns Context - Event Subscribers
+    App\Returns\Application\EventSubscriber\ReturnRequestCreatedSubscriber:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $logger: '@logger'
+            $senderEmail: 'returns@ecommerce.local'
+            $senderName: 'E-Commerce Platform - Returns'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Returns\Application\EventSubscriber\ReturnRequestApprovedSubscriber:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $logger: '@logger'
+            $senderEmail: 'returns@ecommerce.local'
+            $senderName: 'E-Commerce Platform - Returns'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $logger: '@logger'
+            $senderEmail: 'returns@ecommerce.local'
+            $senderName: 'E-Commerce Platform - Returns'
+            $commandBus: '@command.bus'
+            $returnRequestRepository: '@App\Returns\Domain\Repository\ReturnRequestRepositoryInterface'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Returns\Application\EventSubscriber\ReturnRequestCompletedSubscriber:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $logger: '@logger'
+            $senderEmail: 'returns@ecommerce.local'
+            $senderName: 'E-Commerce Platform - Returns'
+            $commandBus: '@command.bus'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Returns\Application\EventSubscriber\ReturnRequestRejectedSubscriber:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $logger: '@logger'
+            $senderEmail: 'returns@ecommerce.local'
+            $senderName: 'E-Commerce Platform - Returns'
+        tags:
+            - { name: kernel.event_subscriber }

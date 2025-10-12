@@ -1,0 +1,47 @@
+# Validation error messages (French)
+# Domain: validators
+
+required: "Ce champ est obligatoire"
+invalid: "Cette valeur n'est pas valide"
+too_short: "Cette valeur est trop courte. Elle doit contenir {{ limit }} caractères ou plus"
+too_long: "Cette valeur est trop longue. Elle doit contenir {{ limit }} caractères ou moins"
+min_value: "Cette valeur doit être {{ limit }} ou plus"
+max_value: "Cette valeur doit être {{ limit }} ou moins"
+
+email:
+  invalid: "Cette adresse email n'est pas valide"
+  already_exists: "Cette adresse email est déjà enregistrée"
+
+password:
+  too_short: "Le mot de passe doit contenir au moins {{ limit }} caractères"
+  too_weak: "Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre"
+  mismatch: "Les mots de passe ne correspondent pas"
+
+phone:
+  invalid: "Ce numéro de téléphone n'est pas valide"
+
+postal_code:
+  invalid: "Ce code postal n'est pas valide"
+
+cart:
+  empty: "Votre panier est vide"
+  item_not_found: "Article non trouvé dans le panier"
+  invalid_quantity: "La quantité doit être au moins 1"
+  out_of_stock: "Ce produit est en rupture de stock"
+  insufficient_stock: "Seulement {{ available }} articles disponibles en stock"
+
+product:
+  not_found: "Produit non trouvé"
+  inactive: "Ce produit n'est plus disponible"
+  invalid_sku: "Format SKU invalide"
+
+order:
+  invalid_status: "Statut de commande invalide"
+  cannot_cancel: "Cette commande ne peut pas être annulée"
+  payment_failed: "Le traitement du paiement a échoué"
+
+coupon:
+  invalid: "Ce code de coupon n'est pas valide"
+  expired: "Ce coupon a expiré"
+  already_used: "Vous avez déjà utilisé ce coupon"
+  minimum_not_met: "Montant minimum de commande de {{ amount }} requis"

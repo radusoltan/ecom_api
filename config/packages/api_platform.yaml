@@ -1,0 +1,29 @@
+api_platform:
+    title: 'E-Commerce Multi-Tenant API'
+    version: '1.0.0'
+    description: 'DDD/CQRS E-Commerce Platform API'
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+    patch_formats:
+        json: ['application/merge-patch+json']
+    docs_formats:
+        jsonld: ['application/ld+json']
+        jsonopenapi: ['application/vnd.openapi+json']
+        html: ['text/html']
+    defaults:
+        stateless: true
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Accept', 'X-Tenant-ID']
+            max_age: 60  # Cache for 60 seconds
+            shared_max_age: 300  # Shared cache (CDN) for 5 minutes
+            public: true  # Allow caching by CDN/proxies for public endpoints
+        extra_properties:
+            standard_put: false
+    # GraphQL Support
+    graphql:
+        enabled: true
+        graphiql:
+            enabled: true
+        default_ide: graphiql
+        nesting_separator: _

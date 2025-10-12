@@ -1,0 +1,54 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Pricing\Presentation\Api\Resource;
+
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use App\Pricing\Presentation\Api\Processor\CreatePriceListProcessor;
+use App\Pricing\Presentation\Api\Processor\ActivatePriceListProcessor;
+use App\Pricing\Presentation\Api\Processor\DeactivatePriceListProcessor;
+use App\Pricing\Presentation\Api\Provider\PriceListItemProvider;
+use App\Pricing\Presentation\Api\Provider\PriceListCollectionProvider;
+
+#[ApiResource(
+    shortName: 'PriceList',
+    operations: [
+        new GetCollection(
+            provider: PriceListCollectionProvider::class
+        ),
+        new Get(
+            provider: PriceListItemProvider::class
+        ),
+        new Post(
+            processor: CreatePriceListProcessor::class
+        ),
+        new Patch(
+            uriTemplate: '/price_lists/{id}/activate',
+            provider: PriceListItemProvider::class,
+            processor: ActivatePriceListProcessor::class
+        ),
+        new Patch(
+            uriTemplate: '/price_lists/{id}/deactivate',
+            provider: PriceListItemProvider::class,
+            processor: DeactivatePriceListProcessor::class
+        ),
+    ]
+)]
+class PriceListResource
+{
+    public ?string $id = null;
+    public ?string $tenantId = null;
+    public ?string $name = null;
+    public ?int $priority = null;
+    public array $rules = [];
+    public ?string $validFrom = null;
+    public ?string $validTo = null;
+    public ?bool $isActive = null;
+    public ?string $createdAt = null;
+    public ?string $updatedAt = null;
+}

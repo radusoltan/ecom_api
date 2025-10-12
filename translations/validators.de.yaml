@@ -1,0 +1,47 @@
+# Validation error messages (German)
+# Domain: validators
+
+required: "Dieses Feld ist erforderlich"
+invalid: "Dieser Wert ist ungültig"
+too_short: "Dieser Wert ist zu kurz. Er sollte {{ limit }} Zeichen oder mehr haben"
+too_long: "Dieser Wert ist zu lang. Er sollte {{ limit }} Zeichen oder weniger haben"
+min_value: "Dieser Wert sollte {{ limit }} oder mehr sein"
+max_value: "Dieser Wert sollte {{ limit }} oder weniger sein"
+
+email:
+  invalid: "Diese E-Mail-Adresse ist ungültig"
+  already_exists: "Diese E-Mail-Adresse ist bereits registriert"
+
+password:
+  too_short: "Das Passwort muss mindestens {{ limit }} Zeichen lang sein"
+  too_weak: "Das Passwort muss mindestens einen Großbuchstaben, einen Kleinbuchstaben und eine Zahl enthalten"
+  mismatch: "Die Passwörter stimmen nicht überein"
+
+phone:
+  invalid: "Diese Telefonnummer ist ungültig"
+
+postal_code:
+  invalid: "Diese Postleitzahl ist ungültig"
+
+cart:
+  empty: "Ihr Warenkorb ist leer"
+  item_not_found: "Artikel im Warenkorb nicht gefunden"
+  invalid_quantity: "Die Menge muss mindestens 1 sein"
+  out_of_stock: "Dieses Produkt ist nicht vorrätig"
+  insufficient_stock: "Nur {{ available }} Artikel auf Lager verfügbar"
+
+product:
+  not_found: "Produkt nicht gefunden"
+  inactive: "Dieses Produkt ist nicht mehr verfügbar"
+  invalid_sku: "Ungültiges SKU-Format"
+
+order:
+  invalid_status: "Ungültiger Bestellstatus"
+  cannot_cancel: "Diese Bestellung kann nicht storniert werden"
+  payment_failed: "Zahlungsabwicklung fehlgeschlagen"
+
+coupon:
+  invalid: "Dieser Gutscheincode ist ungültig"
+  expired: "Dieser Gutschein ist abgelaufen"
+  already_used: "Sie haben diesen Gutschein bereits verwendet"
+  minimum_not_met: "Mindestbestellwert von {{ amount }} erforderlich"
