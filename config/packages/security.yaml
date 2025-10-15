@@ -52,4 +52,6 @@ security:
         - { path: ^/api/categories, roles: PUBLIC_ACCESS }  # Allow public access to categories for storefront
         - { path: ^/api/product_entities, roles: PUBLIC_ACCESS }  # Allow public access to products for storefront
         - { path: ^/api/customers, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public customer registration
+        - { path: ^/api/orders, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public place orders
+        - { path: ^/api/orders, roles: PUBLIC_ACCESS, methods: [GET] }  # Allow public place orders
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

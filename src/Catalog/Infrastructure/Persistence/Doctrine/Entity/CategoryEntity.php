@@ -14,6 +14,8 @@ use App\Catalog\Domain\Model\Category;
 use App\Catalog\Domain\Model\CategoryId;
 use App\Catalog\Domain\Model\CategoryName;
 use App\Catalog\Domain\Model\Slug;
+use App\Catalog\Infrastructure\ApiPlatform\State\CreateCategoryProcessor;
+use App\Catalog\Presentation\Api\Provider\CategoryCollectionProvider;
 use App\Internationalization\Infrastructure\Persistence\Doctrine\Entity\Translation;
 use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\ORM\Mapping as ORM;
@@ -32,10 +34,11 @@ use Gedmo\Translatable\Translatable;
     shortName: 'Category',
     operations: [
         new GetCollection(
-            provider: \App\Catalog\Presentation\Api\Provider\CategoryCollectionProvider::class
+            provider: CategoryCollectionProvider::class,
+
         ),
         new Post(
-            processor: \App\Catalog\Infrastructure\ApiPlatform\State\CreateCategoryProcessor::class
+            processor: CreateCategoryProcessor::class
         ),
         new Get(),
         new Patch(),

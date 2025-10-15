@@ -7,9 +7,17 @@ namespace App\DataFixtures;
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\CategoryEntity;
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity;
 use App\Order\Infrastructure\Persistence\Doctrine\Entity\OrderEntity;
+use App\Shared\Domain\ValueObject\Email;
+use App\User\Domain\Model\User;
+use App\User\Domain\Repository\UserRepositoryInterface;
+use App\User\Domain\ValueObject\HashedPassword;
+use App\User\Domain\ValueObject\Username;
+use App\User\Domain\ValueObject\UserRole;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Uid\Uuid;
 
 class C_AppFixtures extends Fixture
@@ -17,6 +25,12 @@ class C_AppFixtures extends Fixture
     private string $tenantId;
     private array $categoryIds = [];
     private array $productIds = [];
+
+    public function __construct(
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly UserPasswordHasherInterface $passwordHasher
+    ) {
+    }
 
     public function load(ObjectManager $manager): void
     {
@@ -29,6 +43,8 @@ class C_AppFixtures extends Fixture
         }
 
         echo "📦 Loading fixtures for tenant: {$this->tenantId}\n";
+
+        $this->loadAdminUser($manager);
 
         // Load categories with translations
         $this->loadCategories($manager);
@@ -59,6 +75,36 @@ class C_AppFixtures extends Fixture
         $result = $connection->executeQuery('SELECT id FROM tenants LIMIT 1')->fetchOne();
 
         return $result ?: null;
+    }
+
+    public function loadAdminUser(ObjectManager $manager): void
+    {
+        $tempUser = new class implements PasswordAuthenticatedUserInterface {
+            private string $password = '';
+
+            public function getPassword(): ?string
+            {
+                return $this->password;
+            }
+
+            public function setPassword(string $password): void
+            {
+                $this->password = $password;
+            }
+        };
+
+        // Hash the password
+        $hashedPassword = $this->passwordHasher->hashPassword($tempUser, 'password');
+
+        // Create super admin using domain model
+        $superAdmin = User::create(
+            Email::fromString('admin@admin.com'),
+            Username::fromString('admin'),
+            HashedPassword::fromHash($hashedPassword),
+            [UserRole::superAdmin()]
+        );
+
+        $this->userRepository->save($superAdmin);
     }
 
     private function loadCategories(ObjectManager $manager): void
