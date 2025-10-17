@@ -8,7 +8,6 @@
 
 ## Quick Links
 
-- 📚 **Main Documentation**: See [`CLAUDE.md`](../CLAUDE.md) in project root for architecture patterns and development guidelines
 - 🔌 **API Documentation**: http://localhost:8001/api/docs (OpenAPI/Swagger)
 - 🎮 **GraphQL Playground**: http://localhost:8001/api/graphql
 - 📊 **Monitoring**: http://localhost:3002 (Grafana), http://localhost:9090 (Prometheus)
