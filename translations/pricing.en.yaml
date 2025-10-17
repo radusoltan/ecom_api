@@ -1,0 +1,291 @@
+# Pricing Translation Domain (English)
+# Domain: pricing
+# Usage: Price lists, promotions, discounts, segments
+
+# Price List Management
+priceList:
+  title: "Price Lists"
+  addNew: "Add New Price List"
+  editPriceList: "Edit Price List"
+  viewPriceList: "View Price List"
+  deletePriceList: "Delete Price List"
+  duplicatePriceList: "Duplicate Price List"
+
+  # Form Fields
+  name: "Price List Name"
+  namePlaceholder: "Enter price list name"
+  nameHelp: "Unique name for this price list"
+
+  code: "Price List Code"
+  codePlaceholder: "e.g., VIP-2024"
+  codeHelp: "Unique identifier for API/integration usage"
+
+  description: "Description"
+  descriptionPlaceholder: "Enter description"
+
+  currency: "Currency"
+  currencyHelp: "All prices in this list will use this currency"
+
+  isActive: "Active"
+  isDefault: "Default Price List"
+
+  priority: "Priority"
+  priorityHelp: "Higher priority lists are checked first (1 = highest)"
+
+  # Date Range
+  validFrom: "Valid From"
+  validTo: "Valid To"
+  validFromHelp: "Leave empty for no start date"
+  validToHelp: "Leave empty for no expiry"
+
+  # Customer Segments
+  segments: "Customer Segments"
+  segmentsHelp: "Apply this price list to specific customer segments"
+  allCustomers: "All Customers"
+  selectSegments: "Select Segments"
+
+  # Prices
+  prices: "Product Prices"
+  addPrice: "Add Price"
+  editPrice: "Edit Price"
+  removePrice: "Remove Price"
+
+  product: "Product"
+  variant: "Variant"
+  basePrice: "Base Price"
+  listPrice: "List Price"
+  salePrice: "Sale Price"
+  costPrice: "Cost Price"
+  marginPercent: "Margin %"
+
+  bulkUpdate: "Bulk Update Prices"
+  importPrices: "Import Prices"
+  exportPrices: "Export Prices"
+
+  # Price Rules
+  rules:
+    title: "Pricing Rules"
+    addRule: "Add Rule"
+    type: "Rule Type"
+    typePercentage: "Percentage Discount"
+    typeFixedAmount: "Fixed Amount Discount"
+    typeFixedPrice: "Fixed Price"
+    value: "Value"
+    minQuantity: "Minimum Quantity"
+    maxQuantity: "Maximum Quantity"
+
+  # Validation
+  validation:
+    nameRequired: "Price list name is required"
+    codeRequired: "Price list code is required"
+    codeInvalid: "Invalid code format"
+    codeExists: "This code already exists"
+    currencyRequired: "Currency is required"
+    priceInvalid: "Invalid price value"
+    dateRangeInvalid: "Valid From date must be before Valid To date"
+
+# Promotions
+promotion:
+  title: "Promotions"
+  addNew: "Add New Promotion"
+  editPromotion: "Edit Promotion"
+  viewPromotion: "View Promotion"
+  deletePromotion: "Delete Promotion"
+
+  name: "Promotion Name"
+  namePlaceholder: "Enter promotion name"
+
+  description: "Description"
+  descriptionPublic: "Public Description"
+  descriptionInternal: "Internal Description"
+
+  code: "Promotion Code"
+  codePlaceholder: "e.g., SUMMER20"
+  codeHelp: "Coupon code customers will enter"
+  autoGenerateCode: "Auto-generate Code"
+
+  type: "Promotion Type"
+  typePercentage: "Percentage Off"
+  typeFixedAmount: "Fixed Amount Off"
+  typeBuyXGetY: "Buy X Get Y"
+  typeFreeShipping: "Free Shipping"
+
+  value: "Discount Value"
+  valuePlaceholder: "e.g., 20"
+  percentageOff: "% Off"
+  amountOff: "Amount Off"
+
+  # Conditions
+  conditions:
+    title: "Promotion Conditions"
+    minimumPurchase: "Minimum Purchase"
+    minimumQuantity: "Minimum Quantity"
+    applyTo: "Apply To"
+    applyToOrder: "Entire Order"
+    applyToCategory: "Specific Categories"
+    applyToProduct: "Specific Products"
+
+    selectCategories: "Select Categories"
+    selectProducts: "Select Products"
+
+    customerEligibility: "Customer Eligibility"
+    allCustomers: "All Customers"
+    specificSegments: "Specific Segments"
+    firstTimeCustomers: "First-Time Customers"
+    returningCustomers: "Returning Customers"
+
+    usageLimit: "Usage Limit"
+    usageLimitPerCustomer: "Per Customer"
+    usageLimitTotal: "Total Uses"
+    unlimited: "Unlimited"
+
+  # Schedule
+  schedule:
+    title: "Schedule"
+    startDate: "Start Date"
+    endDate: "End Date"
+    startTime: "Start Time"
+    endTime: "End Time"
+    timezone: "Timezone"
+    alwaysActive: "Always Active"
+
+  # Status
+  status: "Promotion Status"
+  statusActive: "Active"
+  statusScheduled: "Scheduled"
+  statusExpired: "Expired"
+  statusDisabled: "Disabled"
+
+  # Statistics
+  stats:
+    totalUses: "Total Uses"
+    uniqueCustomers: "Unique Customers"
+    revenueGenerated: "Revenue Generated"
+    discountGiven: "Total Discount Given"
+    conversionRate: "Conversion Rate"
+
+  # Validation
+  validation:
+    nameRequired: "Promotion name is required"
+    codeRequired: "Promotion code is required"
+    codeExists: "This promotion code already exists"
+    typeRequired: "Promotion type is required"
+    valueRequired: "Discount value is required"
+    valueInvalid: "Invalid discount value"
+    dateRangeInvalid: "Start date must be before end date"
+
+# Discounts
+discount:
+  title: "Discounts"
+  automatic: "Automatic Discounts"
+  coupon: "Coupon Codes"
+
+  apply: "Apply Discount"
+  remove: "Remove Discount"
+  code: "Discount Code"
+  enterCode: "Enter discount code"
+  codeApplied: "Discount code applied"
+  codeInvalid: "Invalid discount code"
+  codeExpired: "This discount code has expired"
+  codeNotEligible: "You are not eligible for this discount"
+  codeUsageLimitReached: "This discount code has reached its usage limit"
+
+  amount: "Discount Amount"
+  percentage: "Discount Percentage"
+  total: "Total Discount"
+
+# Customer Segments
+segment:
+  title: "Customer Segments"
+  addNew: "Add New Segment"
+  editSegment: "Edit Segment"
+  viewSegment: "View Segment"
+  deleteSegment: "Delete Segment"
+
+  name: "Segment Name"
+  namePlaceholder: "Enter segment name"
+
+  description: "Description"
+  descriptionPlaceholder: "Describe this customer segment"
+
+  type: "Segment Type"
+  typeStatic: "Static Segment"
+  typeDynamic: "Dynamic Segment"
+  typeHelp: "Static segments are manually managed, dynamic segments update automatically"
+
+  # Criteria
+  criteria:
+    title: "Segment Criteria"
+    addCriteria: "Add Criteria"
+    field: "Field"
+    operator: "Operator"
+    value: "Value"
+
+    totalSpent: "Total Spent"
+    orderCount: "Order Count"
+    lastOrderDate: "Last Order Date"
+    averageOrderValue: "Average Order Value"
+    customerSince: "Customer Since"
+    location: "Location"
+    tags: "Tags"
+
+    operatorEquals: "Equals"
+    operatorNotEquals: "Not Equals"
+    operatorGreaterThan: "Greater Than"
+    operatorLessThan: "Less Than"
+    operatorBetween: "Between"
+    operatorContains: "Contains"
+
+  # Statistics
+  stats:
+    customerCount: "Customers in Segment"
+    totalRevenue: "Total Revenue"
+    averageOrderValue: "Average Order Value"
+    activeCustomers: "Active Customers"
+
+  # Actions
+  assignPriceList: "Assign Price List"
+  assignPromotion: "Assign Promotion"
+  exportCustomers: "Export Customers"
+  sendCampaign: "Send Campaign"
+
+# Tax Configuration
+tax:
+  title: "Tax Configuration"
+  taxRates: "Tax Rates"
+  taxClasses: "Tax Classes"
+
+  rate:
+    name: "Tax Rate Name"
+    code: "Tax Code"
+    percentage: "Tax Percentage"
+    country: "Country"
+    state: "State/Province"
+    zipCode: "ZIP/Postal Code"
+    priority: "Priority"
+    compound: "Compound Tax"
+
+  class:
+    name: "Tax Class Name"
+    description: "Description"
+    defaultRate: "Default Tax Rate"
+
+# Validation Messages
+validation:
+  priceInvalid: "Price must be a valid number"
+  priceNegative: "Price cannot be negative"
+  percentageInvalid: "Percentage must be between 0 and 100"
+  dateInvalid: "Invalid date format"
+  codeInvalid: "Code can only contain letters, numbers, and hyphens"
+
+# Messages
+messages:
+  priceListCreated: "Price list created successfully"
+  priceListUpdated: "Price list updated successfully"
+  priceListDeleted: "Price list deleted successfully"
+  promotionCreated: "Promotion created successfully"
+  promotionUpdated: "Promotion updated successfully"
+  promotionActivated: "Promotion activated"
+  promotionDeactivated: "Promotion deactivated"
+  segmentCreated: "Customer segment created successfully"
+  segmentUpdated: "Customer segment updated successfully"

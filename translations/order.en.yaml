@@ -1,0 +1,276 @@
+# Order Translation Domain (English)
+# Domain: order
+# Usage: Orders, checkout, fulfillment, shipping
+
+# Order Management
+order:
+  title: "Orders"
+  viewOrder: "View Order"
+  editOrder: "Edit Order"
+  cancelOrder: "Cancel Order"
+  printOrder: "Print Order"
+  invoiceOrder: "Create Invoice"
+
+  # Order Details
+  orderNumber: "Order Number"
+  orderDate: "Order Date"
+  orderStatus: "Order Status"
+  paymentStatus: "Payment Status"
+  fulfillmentStatus: "Fulfillment Status"
+
+  customer: "Customer"
+  customerEmail: "Customer Email"
+  customerPhone: "Customer Phone"
+
+  total: "Order Total"
+  subtotal: "Subtotal"
+  tax: "Tax"
+  taxAmount: "Tax Amount"
+  shipping: "Shipping"
+  shippingCost: "Shipping Cost"
+  discount: "Discount"
+  discountAmount: "Discount Amount"
+  grandTotal: "Grand Total"
+
+  itemCount: "Items"
+  itemsCount: "{count} items"
+
+  notes: "Order Notes"
+  internalNotes: "Internal Notes"
+  customerNotes: "Customer Notes"
+
+  # Order Status
+  status:
+    pending: "Pending"
+    processing: "Processing"
+    onHold: "On Hold"
+    completed: "Completed"
+    cancelled: "Cancelled"
+    refunded: "Refunded"
+    failed: "Failed"
+
+  # Payment Status
+  payment:
+    pending: "Payment Pending"
+    authorized: "Authorized"
+    paid: "Paid"
+    partiallyPaid: "Partially Paid"
+    refunded: "Refunded"
+    partiallyRefunded: "Partially Refunded"
+    failed: "Payment Failed"
+    cancelled: "Payment Cancelled"
+
+  # Fulfillment Status
+  fulfillment:
+    unfulfilled: "Unfulfilled"
+    partiallyFulfilled: "Partially Fulfilled"
+    fulfilled: "Fulfilled"
+    shipped: "Shipped"
+    delivered: "Delivered"
+    returned: "Returned"
+
+# Order Items
+item:
+  product: "Product"
+  sku: "SKU"
+  variant: "Variant"
+  quantity: "Quantity"
+  price: "Price"
+  unitPrice: "Unit Price"
+  subtotal: "Subtotal"
+  tax: "Tax"
+  discount: "Discount"
+  total: "Total"
+
+  addItem: "Add Item"
+  editItem: "Edit Item"
+  removeItem: "Remove Item"
+
+  notes: "Item Notes"
+  customization: "Customization"
+
+# Customer Information
+customer:
+  title: "Customer Information"
+  name: "Customer Name"
+  email: "Email"
+  phone: "Phone"
+  company: "Company"
+
+  billingAddress: "Billing Address"
+  shippingAddress: "Shipping Address"
+  sameAsBilling: "Same as billing address"
+
+  street: "Street Address"
+  streetLine2: "Address Line 2"
+  city: "City"
+  state: "State/Province"
+  postalCode: "Postal Code"
+  country: "Country"
+
+# Shipping
+shipping:
+  title: "Shipping Information"
+  method: "Shipping Method"
+  carrier: "Carrier"
+  service: "Service Level"
+
+  trackingNumber: "Tracking Number"
+  trackingUrl: "Tracking URL"
+
+  estimatedDelivery: "Estimated Delivery"
+  shippedDate: "Shipped Date"
+  deliveredDate: "Delivered Date"
+
+  weight: "Package Weight"
+  dimensions: "Package Dimensions"
+
+  shippingLabel: "Shipping Label"
+  printLabel: "Print Label"
+  downloadLabel: "Download Label"
+
+  signature: "Signature Required"
+  insurance: "Shipping Insurance"
+  insuranceValue: "Insured Value"
+
+# Payment
+payment:
+  title: "Payment Information"
+  method: "Payment Method"
+  gateway: "Payment Gateway"
+
+  transactionId: "Transaction ID"
+  authorizationCode: "Authorization Code"
+
+  cardType: "Card Type"
+  cardLast4: "Card Last 4 Digits"
+  cardExpiry: "Card Expiry"
+
+  bankTransfer: "Bank Transfer"
+  bankAccount: "Bank Account"
+  paymentReference: "Payment Reference"
+
+  paymentDate: "Payment Date"
+  amountPaid: "Amount Paid"
+  amountRefunded: "Amount Refunded"
+  amountDue: "Amount Due"
+
+  capture: "Capture Payment"
+  refund: "Refund Payment"
+  void: "Void Transaction"
+
+  refundAmount: "Refund Amount"
+  refundReason: "Refund Reason"
+  partialRefund: "Partial Refund"
+  fullRefund: "Full Refund"
+
+# Fulfillment
+fulfillment:
+  title: "Fulfillment"
+  newFulfillment: "Create Fulfillment"
+  viewFulfillment: "View Fulfillment"
+
+  warehouse: "Warehouse"
+  items: "Items to Fulfill"
+  quantityToFulfill: "Quantity to Fulfill"
+  quantityFulfilled: "Quantity Fulfilled"
+  quantityRemaining: "Quantity Remaining"
+
+  pickList: "Pick List"
+  packingSlip: "Packing Slip"
+  printPickList: "Print Pick List"
+  printPackingSlip: "Print Packing Slip"
+
+  status: "Fulfillment Status"
+  statusPending: "Pending"
+  statusPicking: "Picking"
+  statusPacked: "Packed"
+  statusShipped: "Shipped"
+  statusDelivered: "Delivered"
+
+  pickedBy: "Picked By"
+  packedBy: "Packed By"
+  pickedAt: "Picked At"
+  packedAt: "Packed At"
+
+  completeFulfillment: "Complete Fulfillment"
+  shipFulfillment: "Mark as Shipped"
+
+# Timeline & History
+timeline:
+  title: "Order Timeline"
+  event: "Event"
+  date: "Date"
+  user: "User"
+  details: "Details"
+
+  orderCreated: "Order Created"
+  orderUpdated: "Order Updated"
+  paymentReceived: "Payment Received"
+  paymentRefunded: "Payment Refunded"
+  itemsShipped: "Items Shipped"
+  orderDelivered: "Order Delivered"
+  orderCancelled: "Order Cancelled"
+  emailSent: "Email Sent"
+  noteAdded: "Note Added"
+  statusChanged: "Status Changed"
+
+# Actions
+actions:
+  updateStatus: "Update Status"
+  sendInvoice: "Send Invoice"
+  sendShippingNotification: "Send Shipping Notification"
+  resendConfirmation: "Resend Confirmation Email"
+
+  markAsPaid: "Mark as Paid"
+  markAsShipped: "Mark as Shipped"
+  markAsDelivered: "Mark as Delivered"
+
+  duplicate: "Duplicate Order"
+  archive: "Archive Order"
+
+# Filters
+filters:
+  allOrders: "All Orders"
+  todayOrders: "Today's Orders"
+  pendingOrders: "Pending"
+  processingOrders: "Processing"
+  completedOrders: "Completed"
+  cancelledOrders: "Cancelled"
+
+  unpaid: "Unpaid"
+  partiallyPaid: "Partially Paid"
+  paid: "Paid"
+
+  unfulfilled: "Unfulfilled"
+  partiallyFulfilled: "Partially Fulfilled"
+  fulfilled: "Fulfilled"
+
+  dateRange: "Date Range"
+  customerName: "Customer Name"
+  orderNumber: "Order Number"
+  total: "Order Total"
+
+# Validation
+validation:
+  invalidQuantity: "Invalid quantity"
+  insufficientStock: "Insufficient stock available"
+  invalidAddress: "Invalid shipping address"
+  paymentRequired: "Payment method required"
+  shippingMethodRequired: "Shipping method required"
+
+# Messages
+messages:
+  orderPlaced: "Order placed successfully"
+  orderUpdated: "Order updated successfully"
+  orderCancelled: "Order cancelled successfully"
+  invoiceSent: "Invoice sent to customer"
+  shippingNotificationSent: "Shipping notification sent"
+  paymentCaptured: "Payment captured successfully"
+  refundProcessed: "Refund processed successfully"
+  fulfillmentCreated: "Fulfillment created successfully"
+  statusUpdated: "Order status updated"
+
+  confirmCancel: "Are you sure you want to cancel this order?"
+  confirmRefund: "Are you sure you want to refund {amount}?"
+  confirmCapture: "Are you sure you want to capture payment?"

@@ -1,0 +1,87 @@
+# Authentication & User Account translations (FR)
+# Covers login, registration, profile management, and account-related UI
+
+# Login
+signIn: "Se connecter"
+signInTitle: "Connectez-vous à votre compte"
+signInSuccess: "Connexion réussie"
+signInFailed: "Échec de la connexion"
+
+# Registration
+createAccount: "Créer un compte"
+createAccountTitle: "Créez votre compte"
+accountCreatedSuccess: "Compte créé avec succès ! Redirection vers la connexion..."
+registerFailed: "Échec de l'inscription"
+signInToExisting: "connectez-vous à votre compte existant"
+
+# Common
+or: "ou"
+email: "Adresse e-mail"
+emailPlaceholder: "Entrez votre e-mail"
+password: "Mot de passe"
+passwordPlaceholder: "Entrez votre mot de passe"
+confirmPassword: "Confirmer le mot de passe"
+confirmPasswordPlaceholder: "Ressaisissez votre mot de passe"
+firstName: "Prénom"
+firstNamePlaceholder: "Entrez votre prénom"
+lastName: "Nom"
+lastNamePlaceholder: "Entrez votre nom"
+phoneNumber: "Numéro de téléphone"
+phoneNumberPlaceholder: "+33612345678"
+
+# Profile
+profile: "Profil"
+myAccount: "Mon compte"
+accountSettings: "Paramètres du compte"
+personalInfo: "Informations personnelles"
+updateProfile: "Mettre à jour le profil"
+profileUpdated: "Profil mis à jour avec succès"
+changePassword: "Changer le mot de passe"
+currentPassword: "Mot de passe actuel"
+newPassword: "Nouveau mot de passe"
+passwordChanged: "Mot de passe modifié avec succès"
+
+# Account Actions
+logout: "Se déconnecter"
+deleteAccount: "Supprimer le compte"
+deactivateAccount: "Désactiver le compte"
+confirmDelete: "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible."
+accountDeleted: "Compte supprimé avec succès"
+
+# Verification
+verifyEmail: "Vérifier l'e-mail"
+emailVerified: "E-mail vérifié avec succès"
+emailNotVerified: "E-mail non vérifié"
+resendVerification: "Renvoyer l'e-mail de vérification"
+verificationSent: "E-mail de vérification envoyé"
+
+# Password Reset
+forgotPassword: "Mot de passe oublié ?"
+resetPassword: "Réinitialiser le mot de passe"
+resetPasswordTitle: "Réinitialisez votre mot de passe"
+resetPasswordSent: "E-mail de réinitialisation envoyé"
+resetPasswordSuccess: "Mot de passe réinitialisé avec succès"
+resetPasswordFailed: "Échec de la réinitialisation du mot de passe"
+resetPasswordExpired: "Lien de réinitialisation expiré"
+
+# Two-Factor Authentication
+twoFactorAuth: "Authentification à deux facteurs"
+enable2FA: "Activer 2FA"
+disable2FA: "Désactiver 2FA"
+twoFactorCode: "Code 2FA"
+twoFactorCodePlaceholder: "Entrez le code à 6 chiffres"
+twoFactorEnabled: "Authentification à deux facteurs activée"
+twoFactorDisabled: "Authentification à deux facteurs désactivée"
+
+# Session
+sessionExpired: "Votre session a expiré. Veuillez vous reconnecter."
+loggedOut: "Vous avez été déconnecté"
+
+# Errors
+invalidCredentials: "E-mail ou mot de passe invalide"
+accountNotFound: "Compte introuvable"
+accountDisabled: "Ce compte a été désactivé"
+accountLocked: "Compte verrouillé en raison de trop nombreuses tentatives échouées"
+emailAlreadyExists: "Un compte avec cet e-mail existe déjà"
+weakPassword: "Le mot de passe est trop faible"
+passwordMismatch: "Les mots de passe ne correspondent pas"

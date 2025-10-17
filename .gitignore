@@ -24,4 +24,27 @@
 ###> phpunit/phpunit ###
 /phpunit.xml
 /.phpunit.cache/
+.phpunit.result.cache
 ###< phpunit/phpunit ###
+
+###> temporary files ###
+*.log
+*.bak
+*.zip
+*.tmp
+server.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temporary PHP scripts
+create_*.php
+test_*.php
+
+# Media uploads (use external storage in production)
+/public/media/*
+!/public/media/.gitkeep
+###< temporary files ###

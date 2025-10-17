@@ -1,0 +1,266 @@
+# Catalog Translation Domain (English)
+# Domain: catalog
+# Usage: Products, categories, variants, SKUs, attributes
+
+# Product Management
+product:
+  title: "Products"
+  addNew: "Add New Product"
+  editProduct: "Edit Product"
+  viewProduct: "View Product"
+  deleteProduct: "Delete Product"
+  duplicateProduct: "Duplicate Product"
+
+  # Form Fields
+  name: "Product Name"
+  namePlaceholder: "Enter product name"
+  nameHelp: "Unique, descriptive product name (max 255 characters)"
+
+  description: "Description"
+  descriptionPlaceholder: "Enter product description"
+  descriptionHelp: "Detailed product information for customers"
+
+  shortDescription: "Short Description"
+  shortDescriptionPlaceholder: "Enter a brief summary"
+  shortDescriptionHelp: "Brief summary displayed in product lists"
+
+  sku: "SKU"
+  skuPlaceholder: "e.g., PROD-123456"
+  skuHelp: "Stock Keeping Unit - unique product identifier (format: XXX-######)"
+  skuFormat: "SKU format: 3 uppercase letters + dash + 6 digits (e.g., ELC-123456)"
+
+  slug: "URL Slug"
+  slugPlaceholder: "auto-generated-from-name"
+  slugHelp: "SEO-friendly URL (auto-generated from name)"
+
+  price: "Price"
+  pricePlaceholder: "0.00"
+  priceHelp: "Base price in {currency}"
+
+  costPrice: "Cost Price"
+  retailPrice: "Retail Price"
+  salePrice: "Sale Price"
+
+  status: "Status"
+  statusActive: "Active"
+  statusInactive: "Inactive"
+  statusDraft: "Draft"
+  statusArchived: "Archived"
+
+  visibility: "Visibility"
+  visibilityPublic: "Public"
+  visibilityHidden: "Hidden"
+  visibilityCatalogOnly: "Catalog Only"
+
+  type: "Product Type"
+  typeSimple: "Simple Product"
+  typeConfigurable: "Configurable Product"
+  typeBundle: "Product Bundle"
+  typeVirtual: "Virtual Product"
+
+  brand: "Brand"
+  manufacturer: "Manufacturer"
+  vendor: "Vendor"
+
+  weight: "Weight"
+  weightUnit: "kg"
+  dimensions: "Dimensions"
+  length: "Length"
+  width: "Width"
+  height: "Height"
+  dimensionUnit: "cm"
+
+  taxClass: "Tax Class"
+  taxable: "Taxable"
+
+  featured: "Featured Product"
+  newArrival: "New Arrival"
+  bestSeller: "Best Seller"
+  onSale: "On Sale"
+
+  publishedAt: "Publish Date"
+  expiresAt: "Expiry Date"
+
+  # Validation Messages
+  validation:
+    nameRequired: "Product name is required"
+    nameTooLong: "Product name must be less than 255 characters"
+    skuRequired: "SKU is required"
+    skuInvalid: "Invalid SKU format (expected: XXX-######)"
+    skuExists: "This SKU already exists"
+    priceRequired: "Price is required"
+    priceInvalid: "Price must be a positive number"
+    priceMin: "Price must be at least {min}"
+    descriptionRequired: "Description is required"
+
+# Category Management
+category:
+  title: "Categories"
+  addNew: "Add New Category"
+  editCategory: "Edit Category"
+  viewCategory: "View Category"
+  deleteCategory: "Delete Category"
+  rootCategory: "Root Category"
+  parentCategory: "Parent Category"
+  subCategory: "Sub Category"
+
+  # Form Fields
+  name: "Category Name"
+  namePlaceholder: "Enter category name"
+  nameHelp: "Display name for this category"
+
+  description: "Description"
+  descriptionPlaceholder: "Enter category description"
+  descriptionHelp: "Optional description for SEO and navigation"
+
+  slug: "URL Slug"
+  slugHelp: "SEO-friendly URL (auto-generated from name)"
+
+  parent: "Parent Category"
+  parentHelp: "Select parent category or leave empty for root"
+
+  sortOrder: "Sort Order"
+  sortOrderHelp: "Display order (lower numbers appear first)"
+
+  image: "Category Image"
+  icon: "Category Icon"
+
+  isActive: "Active"
+  isVisible: "Visible in Menu"
+
+  metaTitle: "Meta Title"
+  metaDescription: "Meta Description"
+  metaKeywords: "Meta Keywords"
+
+  # Tree View
+  tree:
+    expand: "Expand"
+    collapse: "Collapse"
+    moveUp: "Move Up"
+    moveDown: "Move Down"
+    level: "Level {level}"
+    children: "{count} subcategories"
+
+# Variant Management
+variant:
+  title: "Product Variants"
+  addNew: "Add Variant"
+  editVariant: "Edit Variant"
+  deleteVariant: "Delete Variant"
+  generateVariants: "Generate All Variants"
+
+  sku: "Variant SKU"
+  price: "Variant Price"
+  stock: "Variant Stock"
+
+  option: "Option"
+  optionValue: "Value"
+
+  # Variant Generation
+  generate:
+    title: "Generate Variants"
+    selectOptions: "Select options to generate variants"
+    preview: "Preview Variants"
+    generating: "Generating {count} variants..."
+    success: "{count} variants created successfully"
+
+# Options & Attributes
+option:
+  title: "Product Options"
+  addNew: "Add Option"
+  editOption: "Edit Option"
+
+  name: "Option Name"
+  namePlaceholder: "e.g., Color, Size, Material"
+  nameHelp: "Display name for this option (e.g., Color)"
+
+  type: "Option Type"
+  typeSelect: "Dropdown"
+  typeRadio: "Radio Buttons"
+  typeCheckbox: "Checkboxes"
+  typeSwatch: "Color/Image Swatches"
+
+  values: "Option Values"
+  addValue: "Add Value"
+  valueName: "Value Name"
+  valueCode: "Value Code"
+  valueSwatchColor: "Swatch Color"
+  valueSwatchImage: "Swatch Image"
+
+  isRequired: "Required"
+  isFilterable: "Use in Filters"
+  sortOrder: "Sort Order"
+
+# Stock & Inventory (in Catalog context)
+stock:
+  inStock: "In Stock"
+  outOfStock: "Out of Stock"
+  lowStock: "Low Stock"
+  stockQuantity: "Stock Quantity"
+  stockStatus: "Stock Status"
+  backordersAllowed: "Allow Backorders"
+  trackInventory: "Track Inventory"
+  stockThreshold: "Low Stock Threshold"
+
+# Media & Images
+media:
+  title: "Product Images"
+  addImage: "Add Image"
+  uploadImage: "Upload Image"
+  setAsFeatured: "Set as Featured"
+  removeImage: "Remove Image"
+  reorderImages: "Reorder Images"
+  featuredImage: "Featured Image"
+  galleryImages: "Gallery Images"
+  altText: "Alt Text"
+  altTextHelp: "Image description for SEO and accessibility"
+  maxImages: "Maximum {count} images allowed"
+  dragToReorder: "Drag to reorder images"
+
+# SEO
+seo:
+  title: "SEO Settings"
+  metaTitle: "Meta Title"
+  metaTitleHelp: "Page title for search engines (50-60 characters)"
+  metaDescription: "Meta Description"
+  metaDescriptionHelp: "Description for search results (150-160 characters)"
+  metaKeywords: "Meta Keywords"
+  metaKeywordsHelp: "Comma-separated keywords"
+  canonicalUrl: "Canonical URL"
+  ogTitle: "Open Graph Title"
+  ogDescription: "Open Graph Description"
+  ogImage: "Open Graph Image"
+
+# Bulk Actions
+bulk:
+  selected: "{count} selected"
+  selectAll: "Select all {total}"
+  deselectAll: "Deselect all"
+  updatePrice: "Update Price"
+  updateStock: "Update Stock"
+  updateStatus: "Update Status"
+  updateCategory: "Update Category"
+  exportSelected: "Export Selected"
+  deleteSelected: "Delete Selected"
+
+# Import/Export
+import:
+  title: "Import Products"
+  selectFile: "Select CSV file"
+  mapping: "Map CSV Columns"
+  preview: "Preview Import"
+  validate: "Validate Data"
+  import: "Import Products"
+  skipErrors: "Skip rows with errors"
+  updateExisting: "Update existing products"
+  createNew: "Create new products only"
+
+export:
+  title: "Export Products"
+  selectFields: "Select fields to export"
+  includeVariants: "Include variants"
+  includeImages: "Include image URLs"
+  format: "Export Format"
+  formatCsv: "CSV"
+  formatExcel: "Excel"
+  formatXml: "XML"

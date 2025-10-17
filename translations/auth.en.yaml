@@ -1,0 +1,87 @@
+# Authentication & User Account translations (EN)
+# Covers login, registration, profile management, and account-related UI
+
+# Login
+signIn: "Sign In"
+signInTitle: "Sign in to your account"
+signInSuccess: "Successfully signed in"
+signInFailed: "Sign in failed"
+
+# Registration
+createAccount: "Create Account"
+createAccountTitle: "Create your account"
+accountCreatedSuccess: "Account created successfully! Redirecting to login..."
+registerFailed: "Registration failed"
+signInToExisting: "sign in to your existing account"
+
+# Common
+or: "or"
+email: "Email Address"
+emailPlaceholder: "Enter your email"
+password: "Password"
+passwordPlaceholder: "Enter your password"
+confirmPassword: "Confirm Password"
+confirmPasswordPlaceholder: "Re-enter your password"
+firstName: "First Name"
+firstNamePlaceholder: "Enter your first name"
+lastName: "Last Name"
+lastNamePlaceholder: "Enter your last name"
+phoneNumber: "Phone Number"
+phoneNumberPlaceholder: "+40712345678"
+
+# Profile
+profile: "Profile"
+myAccount: "My Account"
+accountSettings: "Account Settings"
+personalInfo: "Personal Information"
+updateProfile: "Update Profile"
+profileUpdated: "Profile updated successfully"
+changePassword: "Change Password"
+currentPassword: "Current Password"
+newPassword: "New Password"
+passwordChanged: "Password changed successfully"
+
+# Account Actions
+logout: "Logout"
+deleteAccount: "Delete Account"
+deactivateAccount: "Deactivate Account"
+confirmDelete: "Are you sure you want to delete your account? This action cannot be undone."
+accountDeleted: "Account deleted successfully"
+
+# Verification
+verifyEmail: "Verify Email"
+emailVerified: "Email verified successfully"
+emailNotVerified: "Email not verified"
+resendVerification: "Resend Verification Email"
+verificationSent: "Verification email sent"
+
+# Password Reset
+forgotPassword: "Forgot your password?"
+resetPassword: "Reset Password"
+resetPasswordTitle: "Reset your password"
+resetPasswordSent: "Password reset email sent"
+resetPasswordSuccess: "Password reset successfully"
+resetPasswordFailed: "Password reset failed"
+resetPasswordExpired: "Password reset link expired"
+
+# Two-Factor Authentication
+twoFactorAuth: "Two-Factor Authentication"
+enable2FA: "Enable 2FA"
+disable2FA: "Disable 2FA"
+twoFactorCode: "2FA Code"
+twoFactorCodePlaceholder: "Enter 6-digit code"
+twoFactorEnabled: "Two-factor authentication enabled"
+twoFactorDisabled: "Two-factor authentication disabled"
+
+# Session
+sessionExpired: "Your session has expired. Please sign in again."
+loggedOut: "You have been logged out"
+
+# Errors
+invalidCredentials: "Invalid email or password"
+accountNotFound: "Account not found"
+accountDisabled: "This account has been disabled"
+accountLocked: "Account locked due to too many failed attempts"
+emailAlreadyExists: "An account with this email already exists"
+weakPassword: "Password is too weak"
+passwordMismatch: "Passwords do not match"

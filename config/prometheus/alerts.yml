@@ -1,0 +1,168 @@
+groups:
+  - name: catalog_alerts
+    interval: 30s
+    rules:
+      # High error rate alert
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum by(tenant, route) (
+              rate(ecom_catalog_api_latency_seconds_count{status_code=~"5.."}[5m])
+            )
+            /
+            sum by(tenant, route) (
+              rate(ecom_catalog_api_latency_seconds_count[5m])
+            )
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          component: catalog
+          alert_type: error_rate
+        annotations:
+          summary: "High error rate detected for tenant {{ $labels.tenant }}"
+          description: "Error rate is {{ $value | humanizePercentage }} for route {{ $labels.route }} (threshold: 5%)"
+          runbook_url: "https://docs.ecommerce.local/runbooks/high-error-rate"
+
+      # Low cache hit ratio alert
+      - alert: LowCacheHit
+        expr: |
+          ecom_catalog_cache_hit_ratio < 0.7
+        for: 10m
+        labels:
+          severity: warning
+          component: catalog
+          alert_type: cache_performance
+        annotations:
+          summary: "Low cache hit ratio for tenant {{ $labels.tenant }}"
+          description: "Cache hit ratio is {{ $value | humanizePercentage }} (threshold: 70%)"
+          runbook_url: "https://docs.ecommerce.local/runbooks/low-cache-hit"
+
+      # Slow thumbnail generation alert
+      - alert: SlowThumbnails
+        expr: |
+          histogram_quantile(0.95,
+            rate(ecom_thumbnail_generation_seconds_bucket[5m])
+          ) > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: media
+          alert_type: performance
+        annotations:
+          summary: "Slow thumbnail generation for tenant {{ $labels.tenant }}"
+          description: "Thumbnail generation p95 latency is {{ $value }}s (threshold: 5s)"
+          runbook_url: "https://docs.ecommerce.local/runbooks/slow-thumbnails"
+
+      # High API latency alert
+      - alert: HighApiLatency
+        expr: |
+          histogram_quantile(0.95,
+            rate(ecom_catalog_api_latency_seconds_bucket[5m])
+          ) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          component: catalog
+          alert_type: performance
+        annotations:
+          summary: "High API latency for tenant {{ $labels.tenant }}"
+          description: "API p95 latency is {{ $value }}s for route {{ $labels.route }} (threshold: 500ms)"
+          runbook_url: "https://docs.ecommerce.local/runbooks/high-api-latency"
+
+      # RLS policy mismatch alert (potential security issue)
+      - alert: RLSMismatch
+        expr: |
+          rate(ecom_catalog_product_created_total[5m]) > 0
+          and
+          absent(ecom_catalog_api_latency_seconds_count{tenant!=""})
+        for: 1m
+        labels:
+          severity: critical
+          component: security
+          alert_type: rls_mismatch
+        annotations:
+          summary: "Potential RLS policy mismatch detected"
+          description: "Products are being created but tenant context is missing from API metrics"
+          runbook_url: "https://docs.ecommerce.local/runbooks/rls-mismatch"
+
+      # No data received (service down)
+      - alert: CatalogServiceDown
+        expr: |
+          absent(up{job="ecommerce-backend"} == 1)
+        for: 2m
+        labels:
+          severity: critical
+          component: catalog
+          alert_type: availability
+        annotations:
+          summary: "Catalog service is down"
+          description: "No metrics received from ecommerce-backend for 2 minutes"
+          runbook_url: "https://docs.ecommerce.local/runbooks/service-down"
+
+      # Excessive product creation rate (potential abuse)
+      - alert: ExcessiveProductCreation
+        expr: |
+          rate(ecom_catalog_product_created_total[5m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: catalog
+          alert_type: rate_limit
+        annotations:
+          summary: "Excessive product creation rate for tenant {{ $labels.tenant }}"
+          description: "Product creation rate is {{ $value }} per second (threshold: 100/5m)"
+          runbook_url: "https://docs.ecommerce.local/runbooks/excessive-product-creation"
+
+      # Image upload spike (potential attack or misconfiguration)
+      - alert: ImageUploadSpike
+        expr: |
+          rate(ecom_catalog_image_upload_total[5m]) >
+          (
+            rate(ecom_catalog_image_upload_total[1h] offset 1h) * 5
+          )
+        for: 5m
+        labels:
+          severity: warning
+          component: media
+          alert_type: anomaly
+        annotations:
+          summary: "Image upload spike detected for tenant {{ $labels.tenant }}"
+          description: "Image upload rate is 5x higher than normal baseline"
+          runbook_url: "https://docs.ecommerce.local/runbooks/image-upload-spike"
+
+      # Disk space warning (for image storage)
+      - alert: LowDiskSpace
+        expr: |
+          (
+            node_filesystem_avail_bytes{mountpoint="/var/www/storage"}
+            /
+            node_filesystem_size_bytes{mountpoint="/var/www/storage"}
+          ) < 0.15
+        for: 5m
+        labels:
+          severity: warning
+          component: storage
+          alert_type: capacity
+        annotations:
+          summary: "Low disk space on image storage volume"
+          description: "Only {{ $value | humanizePercentage }} disk space remaining"
+          runbook_url: "https://docs.ecommerce.local/runbooks/low-disk-space"
+
+      # Database connection pool exhaustion
+      - alert: DatabasePoolExhaustion
+        expr: |
+          (
+            sum(doctrine_dbal_connections_active)
+            /
+            sum(doctrine_dbal_connections_max)
+          ) > 0.8
+        for: 2m
+        labels:
+          severity: critical
+          component: database
+          alert_type: resource
+        annotations:
+          summary: "Database connection pool near exhaustion"
+          description: "Connection pool usage is {{ $value | humanizePercentage }}"
+          runbook_url: "https://docs.ecommerce.local/runbooks/db-pool-exhaustion"

@@ -1,0 +1,336 @@
+# Inventory Translation Domain (English)
+# Domain: inventory
+# Usage: Stock management, warehouses, stock movements, reservations
+
+# Warehouse Management
+warehouse:
+  title: "Warehouses"
+  addNew: "Add New Warehouse"
+  editWarehouse: "Edit Warehouse"
+  viewWarehouse: "View Warehouse"
+  deleteWarehouse: "Delete Warehouse"
+
+  # Form Fields
+  name: "Warehouse Name"
+  namePlaceholder: "Enter warehouse name"
+  nameHelp: "Unique identifier for this warehouse location"
+
+  code: "Warehouse Code"
+  codePlaceholder: "e.g., WH001"
+  codeHelp: "Unique alphanumeric code (uppercase letters and numbers only)"
+  codeFormat: "Format: Uppercase alphanumeric (e.g., WH001, MAIN, NYC01)"
+
+  description: "Description"
+  descriptionPlaceholder: "Enter warehouse description"
+
+  type: "Warehouse Type"
+  typeMain: "Main Warehouse"
+  typeRegional: "Regional Distribution Center"
+  typeFulfillment: "Fulfillment Center"
+  typeRetail: "Retail Store"
+  typeVirtual: "Virtual Warehouse"
+
+  priority: "Priority"
+  priorityHelp: "Routing priority (1 = highest, 100 = lowest)"
+
+  isActive: "Active"
+  isDefault: "Default Warehouse"
+
+  # Address
+  address:
+    title: "Warehouse Address"
+    street: "Street Address"
+    streetLine2: "Address Line 2"
+    city: "City"
+    state: "State/Province"
+    postalCode: "Postal Code"
+    country: "Country"
+    countryCode: "Country Code"
+
+  # Contact
+  contact:
+    title: "Contact Information"
+    name: "Contact Name"
+    email: "Email"
+    phone: "Phone"
+    mobile: "Mobile"
+
+  # Operating Hours
+  hours:
+    title: "Operating Hours"
+    timezone: "Timezone"
+    monday: "Monday"
+    tuesday: "Tuesday"
+    wednesday: "Wednesday"
+    thursday: "Thursday"
+    friday: "Friday"
+    saturday: "Saturday"
+    sunday: "Sunday"
+    from: "From"
+    to: "To"
+    closed: "Closed"
+
+  # Capacity
+  capacity:
+    title: "Capacity & Limits"
+    totalCapacity: "Total Capacity (units)"
+    usedCapacity: "Used Capacity"
+    availableCapacity: "Available Capacity"
+    maxItems: "Max Items"
+    maxWeight: "Max Weight"
+
+  # Statistics
+  stats:
+    totalItems: "Total Items"
+    totalValue: "Total Inventory Value"
+    lowStockItems: "Low Stock Items"
+    outOfStockItems: "Out of Stock Items"
+    lastStockCount: "Last Stock Count"
+
+  # Validation
+  validation:
+    nameRequired: "Warehouse name is required"
+    codeRequired: "Warehouse code is required"
+    codeInvalid: "Code must contain only uppercase letters and numbers"
+    codeExists: "This warehouse code already exists"
+    priorityInvalid: "Priority must be between 1 and 100"
+
+# Stock Item Management
+stock:
+  title: "Stock Management"
+  addStock: "Add Stock"
+  editStock: "Edit Stock"
+  viewStock: "View Stock Details"
+  adjustStock: "Adjust Stock"
+  transferStock: "Transfer Stock"
+
+  # Form Fields
+  product: "Product"
+  productSku: "Product SKU"
+  warehouse: "Warehouse"
+  quantity: "Quantity"
+  quantityPlaceholder: "0"
+  quantityHelp: "Current stock level"
+
+  availableQuantity: "Available"
+  reservedQuantity: "Reserved"
+  committedQuantity: "Committed"
+  onHand: "On Hand"
+
+  reorderLevel: "Reorder Level"
+  reorderLevelHelp: "Minimum quantity before reordering"
+
+  reorderQuantity: "Reorder Quantity"
+  reorderQuantityHelp: "Quantity to reorder when stock is low"
+
+  location: "Storage Location"
+  locationPlaceholder: "e.g., Aisle 5, Shelf B"
+  locationHelp: "Physical location within warehouse"
+
+  binCode: "Bin Code"
+  binCodePlaceholder: "e.g., A5-B3-02"
+
+  lotNumber: "Lot/Batch Number"
+  serialNumber: "Serial Number"
+
+  expiryDate: "Expiry Date"
+  receivedDate: "Received Date"
+
+  condition: "Stock Condition"
+  conditionNew: "New"
+  conditionUsed: "Used"
+  conditionRefurbished: "Refurbished"
+  conditionDamaged: "Damaged"
+
+  status: "Stock Status"
+  statusAvailable: "Available"
+  statusReserved: "Reserved"
+  statusQuarantined: "Quarantined"
+  statusDefective: "Defective"
+
+  notes: "Notes"
+  notesPlaceholder: "Internal notes about this stock item"
+
+# Stock Adjustment
+adjustment:
+  title: "Stock Adjustment"
+  type: "Adjustment Type"
+  typeIncrease: "Increase"
+  typeDecrease: "Decrease"
+  typeSet: "Set to Value"
+
+  reason: "Reason"
+  reasonReceived: "Goods Received"
+  reasonReturned: "Customer Return"
+  reasonDamaged: "Damaged"
+  reasonLost: "Lost/Stolen"
+  reasonCorrection: "Inventory Correction"
+  reasonSale: "Sale"
+  reasonTransfer: "Transfer"
+  reasonOther: "Other"
+
+  adjustmentQuantity: "Adjustment Quantity"
+  newQuantity: "New Quantity"
+  previousQuantity: "Previous Quantity"
+
+  reference: "Reference Number"
+  referencePlaceholder: "e.g., PO-12345"
+
+  performedBy: "Performed By"
+  performedAt: "Adjustment Date"
+
+  notes: "Adjustment Notes"
+  notesRequired: "Please explain the reason for this adjustment"
+
+# Stock Transfer
+transfer:
+  title: "Stock Transfer"
+  newTransfer: "New Transfer"
+  viewTransfer: "View Transfer"
+
+  fromWarehouse: "From Warehouse"
+  toWarehouse: "To Warehouse"
+
+  transferDate: "Transfer Date"
+  estimatedArrival: "Estimated Arrival"
+  actualArrival: "Actual Arrival"
+
+  status: "Transfer Status"
+  statusPending: "Pending"
+  statusInTransit: "In Transit"
+  statusReceived: "Received"
+  statusCancelled: "Cancelled"
+
+  items: "Transfer Items"
+  addItem: "Add Item"
+  quantityToTransfer: "Quantity to Transfer"
+
+  trackingNumber: "Tracking Number"
+  carrier: "Carrier"
+
+  notes: "Transfer Notes"
+
+  confirm: "Confirm Transfer"
+  receive: "Mark as Received"
+  cancel: "Cancel Transfer"
+
+# Stock Reservation
+reservation:
+  title: "Stock Reservations"
+  newReservation: "New Reservation"
+  viewReservation: "View Reservation"
+  releaseReservation: "Release Reservation"
+
+  order: "Order Number"
+  customer: "Customer"
+
+  reservedQuantity: "Reserved Quantity"
+  reservedAt: "Reserved At"
+  expiresAt: "Expires At"
+
+  status: "Reservation Status"
+  statusActive: "Active"
+  statusExpired: "Expired"
+  statusReleased: "Released"
+  statusFulfilled: "Fulfilled"
+
+  autoRelease: "Auto-release after"
+  autoReleaseMinutes: "{minutes} minutes"
+
+# Stock Movement
+movement:
+  title: "Stock Movements"
+  viewMovement: "View Movement"
+  history: "Movement History"
+
+  type: "Movement Type"
+  typeIn: "Incoming"
+  typeOut: "Outgoing"
+  typeAdjustment: "Adjustment"
+  typeTransfer: "Transfer"
+
+  date: "Movement Date"
+  reference: "Reference"
+  reason: "Reason"
+  quantity: "Quantity"
+  before: "Before"
+  after: "After"
+
+  performedBy: "Performed By"
+
+  exportHistory: "Export History"
+  filterByDate: "Filter by Date"
+  filterByType: "Filter by Type"
+
+# Alerts & Notifications
+alerts:
+  lowStock: "Low Stock Alert"
+  outOfStock: "Out of Stock"
+  overstock: "Overstock Alert"
+  expiringStock: "Stock Expiring Soon"
+
+  lowStockMessage: "{product} is below reorder level in {warehouse}"
+  outOfStockMessage: "{product} is out of stock in {warehouse}"
+  expiringStockMessage: "{count} items expiring in next {days} days"
+
+  notification:
+    title: "Stock Alert"
+    subscribe: "Subscribe to Alerts"
+    unsubscribe: "Unsubscribe"
+    emailNotifications: "Email Notifications"
+    smsNotifications: "SMS Notifications"
+
+# Reports
+reports:
+  title: "Inventory Reports"
+  stockLevel: "Stock Level Report"
+  stockValue: "Stock Valuation Report"
+  movements: "Stock Movement Report"
+  aging: "Stock Aging Report"
+  turnover: "Inventory Turnover"
+  forecast: "Demand Forecast"
+
+  lowStockReport: "Low Stock Report"
+  expiryReport: "Expiry Report"
+  deadStock: "Dead Stock Report"
+
+  exportReport: "Export Report"
+  scheduleReport: "Schedule Report"
+
+  dateRange: "Date Range"
+  warehouse: "Warehouse"
+  category: "Category"
+  groupBy: "Group By"
+
+# Inventory Count
+count:
+  title: "Stock Count"
+  newCount: "New Stock Count"
+  viewCount: "View Stock Count"
+
+  type: "Count Type"
+  typeFull: "Full Inventory Count"
+  typeCycle: "Cycle Count"
+  typeSpot: "Spot Check"
+
+  status: "Count Status"
+  statusPlanned: "Planned"
+  statusInProgress: "In Progress"
+  statusCompleted: "Completed"
+  statusCancelled: "Cancelled"
+
+  scheduledDate: "Scheduled Date"
+  completedDate: "Completed Date"
+
+  items: "Items to Count"
+  countedBy: "Counted By"
+
+  expected: "Expected Quantity"
+  counted: "Counted Quantity"
+  variance: "Variance"
+
+  startCount: "Start Count"
+  completeCount: "Complete Count"
+
+  adjustments: "Apply Adjustments"
+  discrepancies: "Discrepancies Found"

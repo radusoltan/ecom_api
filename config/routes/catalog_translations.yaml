@@ -1,0 +1,38 @@
+# Translation endpoints for products and categories
+# These routes handle JSONB translations for Sprint 2
+
+# Product translations
+product_translations_get:
+    path: /api/products/{id}/translations
+    controller: App\Catalog\Infrastructure\Controller\ProductTranslationController::getTranslations
+    methods: GET
+    requirements:
+        id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+
+product_translations_update:
+    path: /api/products/{id}/translations
+    controller: App\Catalog\Infrastructure\Controller\ProductTranslationController::updateTranslations
+    methods: PATCH
+    requirements:
+        id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+
+# Category translations
+category_translations_get:
+    path: /api/categories/{id}/translations
+    controller: App\Catalog\Infrastructure\Controller\CategoryTranslationController::getTranslations
+    methods: GET
+    requirements:
+        id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+
+category_translations_update:
+    path: /api/categories/{id}/translations
+    controller: App\Catalog\Infrastructure\Controller\CategoryTranslationController::updateTranslations
+    methods: PATCH
+    requirements:
+        id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+
+# Locales endpoint
+available_locales:
+    path: /api/locales
+    controller: App\Catalog\Infrastructure\Controller\LocaleController::getAvailableLocales
+    methods: GET

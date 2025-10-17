@@ -1,0 +1,87 @@
+# Authentication & User Account translations (DE)
+# Covers login, registration, profile management, and account-related UI
+
+# Login
+signIn: "Anmelden"
+signInTitle: "Melden Sie sich bei Ihrem Konto an"
+signInSuccess: "Erfolgreich angemeldet"
+signInFailed: "Anmeldung fehlgeschlagen"
+
+# Registration
+createAccount: "Konto erstellen"
+createAccountTitle: "Erstellen Sie Ihr Konto"
+accountCreatedSuccess: "Konto erfolgreich erstellt! Weiterleitung zur Anmeldung..."
+registerFailed: "Registrierung fehlgeschlagen"
+signInToExisting: "melden Sie sich bei Ihrem bestehenden Konto an"
+
+# Common
+or: "oder"
+email: "E-Mail-Adresse"
+emailPlaceholder: "Geben Sie Ihre E-Mail ein"
+password: "Passwort"
+passwordPlaceholder: "Geben Sie Ihr Passwort ein"
+confirmPassword: "Passwort bestätigen"
+confirmPasswordPlaceholder: "Geben Sie Ihr Passwort erneut ein"
+firstName: "Vorname"
+firstNamePlaceholder: "Geben Sie Ihren Vornamen ein"
+lastName: "Nachname"
+lastNamePlaceholder: "Geben Sie Ihren Nachnamen ein"
+phoneNumber: "Telefonnummer"
+phoneNumberPlaceholder: "+49151234567"
+
+# Profile
+profile: "Profil"
+myAccount: "Mein Konto"
+accountSettings: "Kontoeinstellungen"
+personalInfo: "Persönliche Informationen"
+updateProfile: "Profil aktualisieren"
+profileUpdated: "Profil erfolgreich aktualisiert"
+changePassword: "Passwort ändern"
+currentPassword: "Aktuelles Passwort"
+newPassword: "Neues Passwort"
+passwordChanged: "Passwort erfolgreich geändert"
+
+# Account Actions
+logout: "Abmelden"
+deleteAccount: "Konto löschen"
+deactivateAccount: "Konto deaktivieren"
+confirmDelete: "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+accountDeleted: "Konto erfolgreich gelöscht"
+
+# Verification
+verifyEmail: "E-Mail verifizieren"
+emailVerified: "E-Mail erfolgreich verifiziert"
+emailNotVerified: "E-Mail nicht verifiziert"
+resendVerification: "Verifizierungs-E-Mail erneut senden"
+verificationSent: "Verifizierungs-E-Mail gesendet"
+
+# Password Reset
+forgotPassword: "Passwort vergessen?"
+resetPassword: "Passwort zurücksetzen"
+resetPasswordTitle: "Setzen Sie Ihr Passwort zurück"
+resetPasswordSent: "Passwort-Zurücksetzungs-E-Mail gesendet"
+resetPasswordSuccess: "Passwort erfolgreich zurückgesetzt"
+resetPasswordFailed: "Passwort-Zurücksetzung fehlgeschlagen"
+resetPasswordExpired: "Passwort-Zurücksetzungs-Link abgelaufen"
+
+# Two-Factor Authentication
+twoFactorAuth: "Zwei-Faktor-Authentifizierung"
+enable2FA: "2FA aktivieren"
+disable2FA: "2FA deaktivieren"
+twoFactorCode: "2FA-Code"
+twoFactorCodePlaceholder: "Geben Sie den 6-stelligen Code ein"
+twoFactorEnabled: "Zwei-Faktor-Authentifizierung aktiviert"
+twoFactorDisabled: "Zwei-Faktor-Authentifizierung deaktiviert"
+
+# Session
+sessionExpired: "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an."
+loggedOut: "Sie wurden abgemeldet"
+
+# Errors
+invalidCredentials: "Ungültige E-Mail oder Passwort"
+accountNotFound: "Konto nicht gefunden"
+accountDisabled: "Dieses Konto wurde deaktiviert"
+accountLocked: "Konto gesperrt aufgrund zu vieler fehlgeschlagener Versuche"
+emailAlreadyExists: "Ein Konto mit dieser E-Mail existiert bereits"
+weakPassword: "Passwort ist zu schwach"
+passwordMismatch: "Passwörter stimmen nicht überein"

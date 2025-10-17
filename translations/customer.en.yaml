@@ -1,0 +1,171 @@
+# Customer Translation Domain (English)
+# Domain: customer
+# Usage: Customer management, profiles, groups, loyalty
+
+# Customer Management
+customer:
+  title: "Customers"
+  addNew: "Add New Customer"
+  editCustomer: "Edit Customer"
+  viewCustomer: "View Customer"
+  deleteCustomer: "Delete Customer"
+
+  # Personal Information
+  firstName: "First Name"
+  lastName: "Last Name"
+  fullName: "Full Name"
+  email: "Email Address"
+  phone: "Phone Number"
+  mobile: "Mobile Number"
+  dateOfBirth: "Date of Birth"
+  gender: "Gender"
+  genderMale: "Male"
+  genderFemale: "Female"
+  genderOther: "Other"
+  company: "Company"
+  taxNumber: "Tax Number / VAT ID"
+
+  # Account
+  accountStatus: "Account Status"
+  statusActive: "Active"
+  statusInactive: "Inactive"
+  statusBlocked: "Blocked"
+  statusPending: "Pending Verification"
+
+  emailVerified: "Email Verified"
+  phoneVerified: "Phone Verified"
+
+  createdAt: "Customer Since"
+  lastLogin: "Last Login"
+  lastOrderDate: "Last Order Date"
+
+  # Address Book
+  addresses: "Addresses"
+  addAddress: "Add Address"
+  editAddress: "Edit Address"
+  deleteAddress: "Delete Address"
+  defaultBillingAddress: "Default Billing Address"
+  defaultShippingAddress: "Default Shipping Address"
+  setAsDefault: "Set as Default"
+
+  addressType: "Address Type"
+  addressBilling: "Billing"
+  addressShipping: "Shipping"
+  addressBoth: "Billing & Shipping"
+
+  street: "Street Address"
+  streetLine2: "Address Line 2"
+  city: "City"
+  state: "State/Province"
+  postalCode: "Postal Code"
+  country: "Country"
+
+  # Customer Groups
+  group: "Customer Group"
+  groups: "Customer Groups"
+  assignToGroup: "Assign to Group"
+  removeFromGroup: "Remove from Group"
+
+  groupName: "Group Name"
+  groupDescription: "Group Description"
+  groupDiscount: "Group Discount"
+  groupPricing: "Special Pricing"
+
+  # Tags & Segments
+  tags: "Tags"
+  addTag: "Add Tag"
+  segments: "Segments"
+  segment: "Segment"
+
+  # Statistics
+  stats:
+    totalOrders: "Total Orders"
+    totalSpent: "Total Spent"
+    averageOrderValue: "Average Order Value"
+    lifetimeValue: "Lifetime Value"
+    firstOrderDate: "First Order"
+    lastOrderDate: "Last Order"
+    orderCount: "Number of Orders"
+    returnsCount: "Returns"
+    refundsCount: "Refunds"
+
+  # Orders & History
+  orders: "Orders"
+  viewOrders: "View Orders"
+  orderHistory: "Order History"
+  recentOrders: "Recent Orders"
+  noOrders: "No orders yet"
+
+  # Payment & Billing
+  paymentMethods: "Payment Methods"
+  addPaymentMethod: "Add Payment Method"
+  savedCards: "Saved Cards"
+  creditBalance: "Account Credit"
+  storeCredit: "Store Credit"
+  addCredit: "Add Credit"
+  deductCredit: "Deduct Credit"
+
+  # Loyalty & Rewards
+  loyalty:
+    title: "Loyalty Program"
+    points: "Loyalty Points"
+    pointsBalance: "Points Balance"
+    pointsEarned: "Points Earned"
+    pointsRedeemed: "Points Redeemed"
+    tier: "Loyalty Tier"
+    tierBronze: "Bronze"
+    tierSilver: "Silver"
+    tierGold: "Gold"
+    tierPlatinum: "Platinum"
+    rewards: "Available Rewards"
+    redeemPoints: "Redeem Points"
+
+  # Communication
+  communication:
+    title: "Communication Preferences"
+    emailMarketing: "Marketing Emails"
+    emailTransactional: "Order Notifications"
+    emailNewsletter: "Newsletter"
+    smsMarketing: "SMS Marketing"
+    smsNotifications: "SMS Notifications"
+    preferredLanguage: "Preferred Language"
+    preferredCurrency: "Preferred Currency"
+
+  # Notes & Activity
+  notes: "Customer Notes"
+  addNote: "Add Note"
+  internalNotes: "Internal Notes"
+  noteText: "Note"
+  noteCreatedBy: "Created by {user} on {date}"
+
+  activity:
+    title: "Activity Log"
+    type: "Activity Type"
+    date: "Date"
+    details: "Details"
+    createdAccount: "Created Account"
+    placedOrder: "Placed Order"
+    updatedProfile: "Updated Profile"
+    addedAddress: "Added Address"
+    subscribedNewsletter: "Subscribed to Newsletter"
+
+  # Validation
+  validation:
+    firstNameRequired: "First name is required"
+    lastNameRequired: "Last name is required"
+    emailRequired: "Email address is required"
+    emailInvalid: "Invalid email address"
+    emailExists: "This email is already registered"
+    phoneInvalid: "Invalid phone number"
+    passwordTooShort: "Password must be at least {min} characters"
+    addressRequired: "Address is required"
+
+  # Messages
+  messages:
+    created: "Customer created successfully"
+    updated: "Customer updated successfully"
+    deleted: "Customer deleted successfully"
+    blocked: "Customer account blocked"
+    activated: "Customer account activated"
+    emailSent: "Email sent to customer"
+    creditAdded: "Credit added to customer account"
