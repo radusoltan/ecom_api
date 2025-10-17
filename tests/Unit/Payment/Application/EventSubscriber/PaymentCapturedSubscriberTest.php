@@ -7,22 +7,31 @@ namespace App\Tests\Unit\Payment\Application\EventSubscriber;
 use App\Payment\Application\EventSubscriber\PaymentCapturedSubscriber;
 use App\Payment\Domain\Event\PaymentCaptured;
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\Email;
 
 final class PaymentCapturedSubscriberTest extends TestCase
 {
+    private MessageBusInterface $commandBus;
+    private EventDispatcherInterface $eventDispatcher;
     private MailerInterface $mailer;
     private LoggerInterface $logger;
     private PaymentCapturedSubscriber $subscriber;
 
     protected function setUp(): void
     {
+        $this->commandBus = $this->createMock(MessageBusInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->mailer = $this->createMock(MailerInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->subscriber = new PaymentCapturedSubscriber(
+            commandBus: $this->commandBus,
+            eventDispatcher: $this->eventDispatcher,
             mailer: $this->mailer,
             logger: $this->logger,
             senderEmail: 'payments@test.com',
@@ -44,10 +53,15 @@ final class PaymentCapturedSubscriberTest extends TestCase
     {
         // Arrange
         $paymentId = PaymentId::generate();
+        $tenantId = TenantId::generate();
         $event = new PaymentCaptured(
             paymentId: $paymentId,
+            tenantId: $tenantId,
             capturedAmountInCents: 9999
         );
+
+        $this->commandBus->method('dispatch');
+        $this->eventDispatcher->method('dispatch');
 
         $this->mailer->expects($this->once())
             ->method('send')
@@ -70,11 +84,15 @@ final class PaymentCapturedSubscriberTest extends TestCase
     {
         // Arrange
         $paymentId = PaymentId::generate();
+        $tenantId = TenantId::generate();
         $event = new PaymentCaptured(
             paymentId: $paymentId,
+            tenantId: $tenantId,
             capturedAmountInCents: 5000
         );
 
+        $this->commandBus->method('dispatch');
+        $this->eventDispatcher->method('dispatch');
         $this->mailer->method('send');
 
         $this->logger->expects($this->atLeastOnce())
@@ -119,8 +137,12 @@ final class PaymentCapturedSubscriberTest extends TestCase
         foreach ($testCases as $testCase) {
             $event = new PaymentCaptured(
                 paymentId: PaymentId::generate(),
+                tenantId: TenantId::generate(),
                 capturedAmountInCents: $testCase['amountInCents']
             );
+
+            $this->commandBus->method('dispatch');
+            $this->eventDispatcher->method('dispatch');
 
             $this->mailer->expects($this->once())
                 ->method('send')
@@ -142,15 +164,21 @@ final class PaymentCapturedSubscriberTest extends TestCase
     {
         // Arrange
         $paymentId = PaymentId::generate();
+        $tenantId = TenantId::generate();
         $event = new PaymentCaptured(
             paymentId: $paymentId,
+            tenantId: $tenantId,
             capturedAmountInCents: 9999
         );
+
+        $this->commandBus->method('dispatch');
+        $this->eventDispatcher->method('dispatch');
 
         $this->mailer->expects($this->once())
             ->method('send')
             ->willThrowException(new \RuntimeException('SMTP server unavailable'));
 
+        $this->logger->method('info');
         $this->logger->expects($this->once())
             ->method('error')
             ->with(
@@ -174,8 +202,12 @@ final class PaymentCapturedSubscriberTest extends TestCase
         // Arrange
         $event = new PaymentCaptured(
             paymentId: PaymentId::generate(),
+            tenantId: TenantId::generate(),
             capturedAmountInCents: 9999
         );
+
+        $this->commandBus->method('dispatch');
+        $this->eventDispatcher->method('dispatch');
 
         $this->mailer->expects($this->once())
             ->method('send')

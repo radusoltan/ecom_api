@@ -15,7 +15,9 @@ final readonly class ProductIndexer
 {
     public function __construct(
         private Client $client,
-        private IndexManager $indexManager
+        private IndexManager $indexManager,
+        private \Doctrine\ORM\EntityManagerInterface $entityManager,
+        private \Doctrine\DBAL\Connection $connection
     ) {}
 
     public function indexProduct(Product $product, Locale $locale): void
@@ -117,22 +119,137 @@ final readonly class ProductIndexer
         $name = $product->name()->value();
         $description = $product->description() ?? '';
 
+        // Get all category IDs including parent hierarchy
+        $categoryIds = $this->getCategoryHierarchy($product);
+
+        // Get product options if this is a configurable product
+        $options = $this->getProductOptions($product);
+
+        // Get rating statistics
+        $ratingStats = $this->getRatingStats($product->id()->toString(), $product->tenantId()->toString());
+
         return [
             'id' => $product->id()->toString(),
             'tenant_id' => $product->tenantId()->toString(),
             'sku' => $product->sku()->value(),
+            'is_featured' => $product->isFeatured(),
             'name' => $name,
             'description' => $description,
             'slug' => $product->slug()->value(),
             'price' => $product->price()->getAmount() / 100, // Convert minor units to major units
             'currency' => $product->price()->getCurrency()->getCurrencyCode(),
             'status' => $product->isActive() ? 'active' : 'inactive',
-            'category_ids' => $product->categoryId() !== null ? [$product->categoryId()->toString()] : [],
+            'category_ids' => $categoryIds,
             'category_names' => [], // TODO: Load category names when needed
             'image_url' => $primaryImage?->url() ?? null,
             'locale' => $locale->toString(),
             'created_at' => $product->createdAt()->format('c'),
             'updated_at' => $product->updatedAt()->format('c'),
+            'options' => $options, // Available option values for this product
+            'average_rating' => $ratingStats['average_rating'],
+            'review_count' => $ratingStats['review_count'],
+        ];
+    }
+
+    /**
+     * Get all category IDs including parent hierarchy
+     * @return array<string>
+     */
+    private function getCategoryHierarchy(Product $product): array
+    {
+        if ($product->categoryId() === null) {
+            return [];
+        }
+
+        $categoryIds = [$product->categoryId()->toString()];
+
+        // Load category entity to get parent
+        $categoryEntity = $this->entityManager->find(
+            \App\Catalog\Infrastructure\Persistence\Doctrine\Entity\CategoryEntity::class,
+            $product->categoryId()->toString()
+        );
+
+        if ($categoryEntity === null) {
+            return $categoryIds;
+        }
+
+        // Walk up the hierarchy to get all parent IDs
+        $parentId = $categoryEntity->getParentId();
+        while ($parentId !== null) {
+            $categoryIds[] = $parentId;
+
+            $parentEntity = $this->entityManager->find(
+                \App\Catalog\Infrastructure\Persistence\Doctrine\Entity\CategoryEntity::class,
+                $parentId
+            );
+
+            if ($parentEntity === null) {
+                break;
+            }
+
+            $parentId = $parentEntity->getParentId();
+        }
+
+        return $categoryIds;
+    }
+
+    /**
+     * Get product options if this is a configurable product
+     * Returns format: ['color' => ['red', 'blue'], 'size' => ['s', 'm', 'l']]
+     * @return array<string, array<string>>
+     */
+    private function getProductOptions(Product $product): array
+    {
+        // Load ConfigurableProduct entity
+        $configurableProductEntity = $this->entityManager->getRepository(
+            \App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ConfigurableProductEntity::class
+        )->findOneBy(['productId' => $product->id()->toString()]);
+
+        if ($configurableProductEntity === null) {
+            return [];
+        }
+
+        // Convert to domain model
+        $configurableProduct = $configurableProductEntity->toDomainModel();
+
+        // Extract all unique option values
+        $optionsMap = [];
+        foreach ($configurableProduct->getOptions() as $option) {
+            $optionCode = $option->getCode()->value();
+            $optionsMap[$optionCode] = [];
+
+            foreach ($option->getValues() as $optionValue) {
+                $optionsMap[$optionCode][] = $optionValue->getCode()->value();
+            }
+        }
+
+        return $optionsMap;
+    }
+
+    /**
+     * Get rating statistics for a product
+     * @return array{average_rating: float, review_count: int}
+     */
+    private function getRatingStats(string $productId, string $tenantId): array
+    {
+        $sql = "
+            SELECT
+                AVG(rating)::float as average_rating,
+                COUNT(*)::int as review_count
+            FROM product_reviews
+            WHERE product_id = :product_id
+            AND tenant_id = :tenant_id
+            AND status = 'approved'
+        ";
+
+        $result = $this->connection->executeQuery($sql, [
+            'product_id' => $productId,
+            'tenant_id' => $tenantId,
+        ])->fetchAssociative();
+
+        return [
+            'average_rating' => $result['average_rating'] ?? 0.0,
+            'review_count' => $result['review_count'] ?? 0,
         ];
     }
 }

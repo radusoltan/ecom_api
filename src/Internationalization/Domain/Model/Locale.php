@@ -26,15 +26,39 @@ final readonly class Locale implements \Stringable
 
     public static function fromString(string $locale): self
     {
+        // Support both "en" and "en_US" formats
         $parts = explode('_', $locale);
+
+        if (count($parts) === 1) {
+            // Short format (e.g., "en") - add default country
+            $language = strtolower($parts[0]);
+            $country = self::getDefaultCountryForLanguage($language);
+            return new self($language, $country);
+        }
 
         if (count($parts) !== 2) {
             throw new InvalidArgumentException(
-                sprintf('Invalid locale format "%s". Expected format: language_COUNTRY (e.g., en_US)', $locale)
+                sprintf('Invalid locale format "%s". Expected format: language or language_COUNTRY (e.g., "en" or "en_US")', $locale)
             );
         }
 
         return new self(strtolower($parts[0]), strtoupper($parts[1]));
+    }
+
+    /**
+     * Get default country for a given language code
+     */
+    private static function getDefaultCountryForLanguage(string $language): string
+    {
+        return match ($language) {
+            'en' => 'US',
+            'ro' => 'RO',
+            'de' => 'DE',
+            'fr' => 'FR',
+            'es' => 'ES',
+            'it' => 'IT',
+            default => 'US', // Fallback to US
+        };
     }
 
     public function getLanguage(): string

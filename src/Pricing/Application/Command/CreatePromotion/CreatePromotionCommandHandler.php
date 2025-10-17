@@ -21,18 +21,22 @@ final readonly class CreatePromotionCommandHandler
 
     public function __invoke(CreatePromotionCommand $command): void
     {
-        $promotion = Promotion::create(
-            id: $command->promotionId,
-            tenantId: $command->tenantId,
-            name: $command->name,
-            type: PromotionType::fromString($command->type),
-            discount: Discount::fromTypeAndValue($command->discountType, $command->discountValue),
-            priority: $command->priority,
-            couponCode: $command->couponCode !== null ? CouponCode::fromString($command->couponCode) : null,
-            conditions: $command->conditions,
-            validFrom: $command->validFrom !== null ? new \DateTimeImmutable($command->validFrom) : null,
-            validTo: $command->validTo !== null ? new \DateTimeImmutable($command->validTo) : null
-        );
+        try {
+            $promotion = Promotion::create(
+                id: $command->promotionId,
+                tenantId: $command->tenantId,
+                name: $command->name,
+                type: PromotionType::fromString($command->type),
+                discount: Discount::fromTypeAndValue($command->discountType, $command->discountValue),
+                priority: $command->priority,
+                couponCode: $command->couponCode !== null ? CouponCode::fromString($command->couponCode) : null,
+                conditions: $command->conditions,
+                validFrom: $command->validFrom !== null ? new \DateTimeImmutable($command->validFrom) : null,
+                validTo: $command->validTo !== null ? new \DateTimeImmutable($command->validTo) : null
+            );
+        } catch (\InvalidArgumentException|\DomainException $exception) {
+            throw new \Symfony\Component\HttpKernel\Exception\BadRequestHttpException($exception->getMessage(), $exception);
+        }
 
         $this->promotionRepository->save($promotion);
     }

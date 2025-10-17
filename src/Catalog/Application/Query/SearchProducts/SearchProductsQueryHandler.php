@@ -104,6 +104,34 @@ final readonly class SearchProductsQueryHandler
             $filterClauses[] = $rangeQuery;
         }
 
+        // Product options filter (color, size, etc.)
+        if ($query->options !== null && count($query->options) > 0) {
+            foreach ($query->options as $optionCode => $optionValues) {
+                if (!empty($optionValues)) {
+                    // Use "terms" query to match any of the selected values for this option
+                    $filterClauses[] = [
+                        'terms' => [
+                            'options.' . $optionCode => $optionValues,
+                        ],
+                    ];
+                }
+            }
+        }
+
+        // Rating filter
+        if ($query->minRating !== null && $query->minRating > 0) {
+            $filterClauses[] = [
+                'range' => [
+                    'average_rating' => ['gte' => $query->minRating],
+                ],
+            ];
+        }
+
+        // Featured filter
+        if ($query->featured === true) {
+            $filterClauses[] = ['term' => ['is_featured' => true]];
+        }
+
         $boolQuery = [
             'bool' => [
                 'must' => $mustClauses,

@@ -36,6 +36,8 @@ final class CategoryTest extends TestCase
         $this->assertNull($category->parentId());
         $this->assertSame(0, $category->position());
         $this->assertTrue($category->isActive());
+        $this->assertFalse($category->showOnFront());
+        $this->assertNull($category->coverImage());
     }
 
     public function testCategorySlugGeneratedFromName(): void
@@ -62,12 +64,16 @@ final class CategoryTest extends TestCase
             name: CategoryName::fromString('Laptops'),
             description: 'Laptop computers',
             parentId: $parentId,
-            position: 1
+            position: 1,
+            showOnFront: true,
+            coverImage: '/media/originals/laptops.jpg'
         );
 
         $this->assertNotNull($category->parentId());
         $this->assertTrue($category->parentId()->equals($parentId));
         $this->assertSame(1, $category->position());
+        $this->assertTrue($category->showOnFront());
+        $this->assertSame('/media/originals/laptops.jpg', $category->coverImage());
     }
 
     public function testUpdateCategory(): void
@@ -78,7 +84,8 @@ final class CategoryTest extends TestCase
             name: CategoryName::fromString('Original Name'),
             description: 'Original description',
             parentId: null,
-            position: 0
+            position: 0,
+            showOnFront: false
         );
 
         $originalUpdatedAt = $category->updatedAt();
@@ -91,7 +98,8 @@ final class CategoryTest extends TestCase
             name: CategoryName::fromString('Updated Name'),
             description: 'Updated description',
             parentId: $newParentId,
-            position: 5
+            position: 5,
+            showOnFront: true
         );
 
         $this->assertSame('Updated Name', $category->name()->value());
@@ -99,6 +107,7 @@ final class CategoryTest extends TestCase
         $this->assertNotNull($category->parentId());
         $this->assertTrue($category->parentId()->equals($newParentId));
         $this->assertSame(5, $category->position());
+        $this->assertTrue($category->showOnFront());
         $this->assertGreaterThan($originalUpdatedAt, $category->updatedAt());
     }
 
@@ -189,10 +198,31 @@ final class CategoryTest extends TestCase
             name: CategoryName::fromString('Now Root Category'),
             description: null,
             parentId: null,
-            position: 0
+            position: 0,
+            showOnFront: false
         );
 
         $this->assertNull($category->parentId());
+    }
+
+    public function testAssignAndRemoveCoverImage(): void
+    {
+        $category = Category::create(
+            id: CategoryId::generate(),
+            tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
+            name: CategoryName::fromString('Media Category'),
+            description: null,
+            parentId: null,
+            position: 0
+        );
+
+        $category->assignCoverImage('/media/originals/media.jpg');
+
+        $this->assertSame('/media/originals/media.jpg', $category->coverImage());
+
+        $category->removeCoverImage();
+
+        $this->assertNull($category->coverImage());
     }
 
     public function testCategoryPositionOrdering(): void
@@ -248,7 +278,8 @@ final class CategoryTest extends TestCase
             name: CategoryName::fromString('Category'),
             description: 'New description',
             parentId: null,
-            position: 0
+            position: 0,
+            showOnFront: false
         );
 
         $this->assertSame('New description', $category->description());

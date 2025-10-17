@@ -194,7 +194,8 @@ final class CategoryRepositoryTest extends KernelTestCase
             name: CategoryName::fromString('Updated Name'),
             description: 'Updated description',
             parentId: null,
-            position: 5
+            position: 5,
+            showOnFront: true
         );
 
         $this->repository->save($category);
@@ -205,6 +206,7 @@ final class CategoryRepositoryTest extends KernelTestCase
         $this->assertSame('Updated Name', $found->name()->value());
         $this->assertSame('Updated description', $found->description());
         $this->assertSame(5, $found->position());
+        $this->assertTrue($found->showOnFront());
     }
 
     public function testDeleteCategory(): void

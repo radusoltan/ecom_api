@@ -4,24 +4,34 @@ declare(strict_types=1);
 
 namespace App\Payment\Application\EventSubscriber;
 
+use App\Order\Application\Command\UpdateOrderStatusCommand;
 use App\Payment\Domain\Event\PaymentCaptured;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\Email;
 
 /**
  * Payment Captured Subscriber
  *
  * Handles actions when a payment is successfully captured (funds transferred).
+ * - Updates order status to "processing" (ready for fulfillment)
  * - Sends payment confirmation email to customer
- * - Updates order status to "paid" (order integration)
  * - Logs capture for audit trail
- * - Triggers fulfillment workflow
+ * - Emits OrderPaid event for saga orchestration
+ *
+ * Business Rules:
+ * - Order status: pending → processing (after payment captured)
+ * - Triggers fulfillment workflow via OrderPaid event
+ * - Failures in email don't block order processing
  */
 final readonly class PaymentCapturedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
+        private MessageBusInterface $commandBus,
+        private EventDispatcherInterface $eventDispatcher,
         private MailerInterface $mailer,
         private LoggerInterface $logger,
         private string $senderEmail = 'payments@ecommerce.local',
@@ -46,14 +56,45 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
                 'occurred_on' => date('Y-m-d H:i:s'),
             ]);
 
+            // Update order status to "processing" (ready for fulfillment)
+            if ($event->orderId) {
+                try {
+                    $updateStatusCommand = new UpdateOrderStatusCommand(
+                        orderId: $event->orderId,
+                        tenantId: $event->tenantId->toString(),
+                        newStatus: 'processing'
+                    );
+
+                    $this->commandBus->dispatch($updateStatusCommand);
+
+                    $this->logger->info('Order status updated to processing after payment capture', [
+                        'payment_id' => $event->paymentId->toString(),
+                        'order_id' => $event->orderId,
+                    ]);
+
+                    // Emit OrderPaid event for Order Saga
+                    $orderPaidEvent = new \App\Order\Domain\Event\OrderPaid(
+                        orderId: $event->orderId,
+                        tenantId: $event->tenantId,
+                        paymentId: $event->paymentId->toString(),
+                        paidAmountInCents: $event->capturedAmountInCents,
+                        occurredOn: new \DateTimeImmutable()
+                    );
+
+                    $this->eventDispatcher->dispatch($orderPaidEvent);
+
+                } catch (\Throwable $e) {
+                    $this->logger->error('Failed to update order status after payment capture', [
+                        'payment_id' => $event->paymentId->toString(),
+                        'order_id' => $event->orderId,
+                        'error' => $e->getMessage(),
+                    ]);
+                    // Don't throw - allow email to still be sent
+                }
+            }
+
             // Send payment confirmation email
             $this->sendConfirmationEmail($event);
-
-            // TODO: Update order status to "paid"
-            // Example: $this->orderService->markAsPaid($event->orderId);
-
-            // TODO: Trigger fulfillment workflow
-            // Example: $this->fulfillmentService->startFulfillment($event->orderId);
 
             $this->logger->info('Payment captured subscriber completed successfully', [
                 'payment_id' => $event->paymentId->toString(),

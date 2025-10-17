@@ -1,0 +1,107 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Catalog\Application\Service;
+
+use App\Catalog\Domain\Model\CategoryId;
+use App\Catalog\Domain\Model\SKU;
+use App\Catalog\Domain\Repository\CategoryRepositoryInterface;
+use App\Shared\Domain\ValueObject\TenantId;
+use App\Tenant\Domain\Repository\TenantRepositoryInterface;
+use App\Tenant\Domain\ValueObject\TenantId as TenantDomainId;
+use Doctrine\DBAL\Connection;
+
+final class SkuGeneratorService
+{
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly CategoryRepositoryInterface $categoryRepository,
+        private readonly TenantRepositoryInterface $tenantRepository
+    ) {}
+
+    public function generate(TenantId $tenantId, ?CategoryId $categoryId = null): SKU
+    {
+        $categoryCode = $this->resolveCategoryCode($tenantId, $categoryId);
+        $vendorCode = $this->resolveVendorCode($tenantId);
+        $sequence = $this->getNextSequence($tenantId);
+
+        $sku = sprintf('%s-%s-%06d', $categoryCode, $vendorCode, $sequence);
+
+        return SKU::fromString($sku);
+    }
+
+    private function resolveCategoryCode(TenantId $tenantId, ?CategoryId $categoryId): string
+    {
+        if ($categoryId === null) {
+            return 'GEN';
+        }
+
+        $category = $this->categoryRepository->findById($categoryId);
+
+        if ($category === null || !$category->tenantId()->equals($tenantId)) {
+            return 'GEN';
+        }
+
+        return $this->buildCode($category->name()->value(), 'GEN');
+    }
+
+    private function resolveVendorCode(TenantId $tenantId): string
+    {
+        $tenant = $this->tenantRepository->findById(
+            TenantDomainId::fromString($tenantId->toString())
+        );
+
+        if ($tenant === null) {
+            return 'TEN';
+        }
+
+        return $this->buildCode($tenant->name()->value(), 'TEN');
+    }
+
+    private function buildCode(string $value, string $default): string
+    {
+        $transliterated = iconv('UTF-8', 'ASCII//TRANSLIT', $value);
+        if ($transliterated === false) {
+            $transliterated = $value;
+        }
+
+        $upper = strtoupper($transliterated);
+        $filtered = preg_replace('/[^A-Z0-9]/', '', $upper);
+
+        if ($filtered === null || $filtered === '') {
+            return $default;
+        }
+
+        $code = substr($filtered, 0, 3);
+
+        return str_pad($code, 3, 'X');
+    }
+
+    private function getNextSequence(TenantId $tenantId): int
+    {
+        $now = (new \DateTimeImmutable())->format('Y-m-d H:i:s');
+
+        $result = $this->connection->fetchOne(
+            <<<'SQL'
+INSERT INTO catalog_sku_sequences (tenant_id, last_value, created_at, updated_at)
+VALUES (:tenantId, 1, :now, :now)
+ON CONFLICT (tenant_id)
+DO UPDATE SET
+    last_value = catalog_sku_sequences.last_value + 1,
+    updated_at = EXCLUDED.updated_at
+RETURNING last_value
+SQL,
+            [
+                'tenantId' => $tenantId->toString(),
+                'now' => $now,
+            ]
+        );
+
+        if ($result === false) {
+            throw new \RuntimeException('Failed to generate SKU sequence.');
+        }
+
+        return (int) $result;
+    }
+}

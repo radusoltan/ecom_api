@@ -31,7 +31,8 @@ final class CategoryEntityTest extends TestCase
             name: CategoryName::fromString('Electronics'),
             description: 'Electronic products',
             parentId: null,
-            position: 1
+            position: 1,
+            showOnFront: true
         );
 
         $entity = CategoryEntity::fromDomainModel($category);
@@ -44,6 +45,8 @@ final class CategoryEntityTest extends TestCase
         $this->assertNull($entity->getParentId());
         $this->assertSame(1, $entity->getPosition());
         $this->assertTrue($entity->isActive());
+        $this->assertTrue($entity->isShowOnFront());
+        $this->assertNull($entity->getCoverImage());
     }
 
     public function testFromDomainModelWithParentCategory(): void
@@ -55,7 +58,8 @@ final class CategoryEntityTest extends TestCase
             name: CategoryName::fromString('Laptops'),
             description: 'Laptop computers',
             parentId: $parentId,
-            position: 2
+            position: 2,
+            showOnFront: false
         );
 
         $entity = CategoryEntity::fromDomainModel($category);
@@ -75,6 +79,8 @@ final class CategoryEntityTest extends TestCase
             position: 0
         );
 
+        $category->assignCoverImage('/media/originals/books.jpg');
+
         $entity = CategoryEntity::fromDomainModel($category);
         $reconstituted = $entity->toDomainModel();
 
@@ -86,6 +92,8 @@ final class CategoryEntityTest extends TestCase
         $this->assertNull($reconstituted->parentId());
         $this->assertSame(0, $reconstituted->position());
         $this->assertTrue($reconstituted->isActive());
+        $this->assertFalse($reconstituted->showOnFront());
+        $this->assertSame('/media/originals/books.jpg', $reconstituted->coverImage());
     }
 
     public function testToDomainModelWithParentId(): void
@@ -98,7 +106,8 @@ final class CategoryEntityTest extends TestCase
             name: CategoryName::fromString('Subcategory'),
             description: 'Child category',
             parentId: $parentId,
-            position: 5
+            position: 5,
+            showOnFront: true
         );
 
         $category->deactivate();
@@ -110,6 +119,7 @@ final class CategoryEntityTest extends TestCase
         $this->assertTrue($reconstituted->parentId()->equals($parentId));
         $this->assertFalse($reconstituted->isActive());
         $this->assertSame(5, $reconstituted->position());
+        $this->assertTrue($reconstituted->showOnFront());
     }
 
     public function testSettersWorkCorrectly(): void
@@ -147,6 +157,15 @@ final class CategoryEntityTest extends TestCase
 
         $entity->setActive(true);
         $this->assertTrue($entity->isActive());
+
+        $entity->setShowOnFront(true);
+        $this->assertTrue($entity->isShowOnFront());
+
+        $entity->setShowOnFront(false);
+        $this->assertFalse($entity->isShowOnFront());
+
+        $entity->setCoverImage('/media/originals/cover.jpg');
+        $this->assertSame('/media/originals/cover.jpg', $entity->getCoverImage());
     }
 
     public function testParentIdCanBeNullAndSet(): void

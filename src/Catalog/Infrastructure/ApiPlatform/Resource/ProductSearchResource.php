@@ -32,12 +32,32 @@ final class ProductSearchResource
     public ?string $description = null;
     public ?string $slug = null;
     public ?float $price = null;
+    public ?int $priceMinor = null;
+    public ?float $finalPrice = null;
+    public ?int $finalPriceMinor = null;
+    public ?int $totalDiscountMinor = null;
+    public ?float $discountPercent = null;
     public ?string $currency = null;
     public ?string $status = null;
+    public ?bool $inStock = null;
+    public ?bool $trackInventory = null;
+    public ?bool $allowBackorder = null;
     public ?array $categoryIds = null;
     public ?string $imageUrl = null;
     public ?string $locale = null;
     public ?float $score = null;
+
+    // Inventory information
+    public ?int $inventoryTotalAvailable = null;
+    public ?bool $inventoryIsLow = null;
+    public ?array $inventoryWarehouses = null;
+
+    // Rating and review information
+    public ?float $averageRating = null;
+    public ?int $reviewCount = null;
+
+    // Featured flag
+    public ?bool $isFeatured = null;
 
     // Metadata properties (only in collection response)
     public ?int $total = null;

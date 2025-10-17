@@ -9,18 +9,24 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Order\Application\Command\PlaceOrderCommand;
 use App\Order\Application\Query\GetOrderByIdQuery;
 use App\Order\Domain\Model\OrderId;
+use App\Order\Domain\Service\FraudCheckService;
 use App\Order\Presentation\Api\Resource\OrderResource;
 use InvalidArgumentException;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Psr\Log\LoggerInterface;
 
 final readonly class PlaceOrderProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private MessageBusInterface $queryBus
+        private MessageBusInterface $queryBus,
+        private FraudCheckService $fraudCheckService,
+        private RequestStack $requestStack,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -37,6 +43,38 @@ final readonly class PlaceOrderProcessor implements ProcessorInterface
         $orderId = OrderId::generate()->toString();
         $tenantId = $data->tenantId ?? throw new InvalidArgumentException('Tenant ID is required');
 
+        // Perform fraud check
+        $request = $this->requestStack->getCurrentRequest();
+        $clientIp = $request?->getClientIp() ?? 'unknown';
+
+        $fraudCheck = $this->fraudCheckService->calculateFraudScore(
+            $clientIp,
+            $data->customerEmail,
+            $tenantId
+        );
+
+        // Log fraud score for monitoring
+        $this->logger->info('Order fraud check performed', [
+            'order_id' => $orderId,
+            'customer_email' => $data->customerEmail,
+            'fraud_score' => $fraudCheck['score'],
+            'risk_level' => $fraudCheck['risk_level'],
+            'ip' => $clientIp,
+        ]);
+
+        // For high-risk orders, we log but still allow (can be changed to block)
+        if ($fraudCheck['risk_level'] === 'high') {
+            $this->logger->warning('High-risk order detected', [
+                'order_id' => $orderId,
+                'fraud_score' => $fraudCheck['score'],
+                'reasons' => $fraudCheck['reasons'],
+                'customer_email' => $data->customerEmail,
+                'ip' => $clientIp,
+            ]);
+            // In production, you might want to:
+            // throw new InvalidArgumentException('Order flagged for manual review');
+        }
+
         $command = new PlaceOrderCommand(
             orderId: $orderId,
             tenantId: $tenantId,
@@ -49,6 +87,9 @@ final readonly class PlaceOrderProcessor implements ProcessorInterface
         );
 
         $this->commandBus->dispatch($command);
+
+        // Record successful order placement for fraud tracking
+        $this->fraudCheckService->recordOrderPlaced($clientIp, $data->customerEmail, $tenantId);
 
         // Retrieve the created order
         $envelope = $this->queryBus->dispatch(new GetOrderByIdQuery($orderId, $tenantId));

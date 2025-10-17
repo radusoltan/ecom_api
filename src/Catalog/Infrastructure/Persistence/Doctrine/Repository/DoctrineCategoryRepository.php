@@ -33,6 +33,8 @@ final class DoctrineCategoryRepository implements CategoryRepositoryInterface
             $existingEntity->setParentId($category->parentId()?->toString());
             $existingEntity->setPosition($category->position());
             $existingEntity->setActive($category->isActive());
+            $existingEntity->setShowOnFront($category->showOnFront());
+            $existingEntity->setCoverImage($category->coverImage());
             // Doctrine will auto-detect changes and update on flush
         } else {
             // Create new entity

@@ -27,7 +27,12 @@ use Gedmo\Translatable\Translatable;
 
 #[Gedmo\TranslationEntity(class: Translation::class)]
 #[ORM\Entity]
-#[ORM\Table(name: 'catalog_products')]
+#[ORM\Table(
+    name: 'catalog_products',
+    uniqueConstraints: [
+        new ORM\UniqueConstraint(name: 'uniq_catalog_products_tenant_sku', columns: ['tenant_id', 'sku'])
+    ]
+)]
 // Performance indexes for queries
 #[ORM\Index(name: 'idx_products_tenant_id', columns: ['tenant_id'])]
 #[ORM\Index(name: 'idx_products_tenant_sku', columns: ['tenant_id', 'sku'])]
@@ -61,7 +66,7 @@ class ProductEntity
     #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
     private string $tenantId;
 
-    #[ORM\Column(type: 'string', length: 50, unique: true)]
+    #[ORM\Column(type: 'string', length: 50)]
     private string $sku;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -108,6 +113,9 @@ class ProductEntity
     #[ORM\Column(type: 'boolean')]
     private bool $active = true;
 
+    #[ORM\Column(type: 'boolean', name: 'is_featured')]
+    private bool $isFeatured = false;
+
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
@@ -135,6 +143,7 @@ class ProductEntity
         $entity->allowBackorder = $product->stock()->allowBackorder();
         $entity->images = array_map(fn($img) => $img->toArray(), $product->images());
         $entity->active = $product->isActive();
+        $entity->isFeatured = $product->isFeatured();
         $entity->createdAt = $product->createdAt();
         $entity->updatedAt = $product->updatedAt();
 
@@ -168,6 +177,7 @@ class ProductEntity
                 $this->images
             ),
             active: $this->active,
+            isFeatured: $this->isFeatured,
             createdAt: $this->createdAt,
             updatedAt: $this->updatedAt
         );
@@ -318,6 +328,16 @@ class ProductEntity
     public function setActive(bool $active): void
     {
         $this->active = $active;
+    }
+
+    public function isFeatured(): bool
+    {
+        return $this->isFeatured;
+    }
+
+    public function setIsFeatured(bool $isFeatured): void
+    {
+        $this->isFeatured = $isFeatured;
     }
 
     public function getCreatedAt(): \DateTimeImmutable

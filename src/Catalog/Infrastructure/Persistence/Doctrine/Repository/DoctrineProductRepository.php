@@ -41,6 +41,7 @@ final class DoctrineProductRepository implements ProductRepositoryInterface
             $existingEntity->setAllowBackorder($product->stock()->allowBackorder());
             $existingEntity->setImages(array_map(fn($img) => $img->toArray(), $product->images()));
             $existingEntity->setActive($product->isActive());
+            $existingEntity->setIsFeatured($product->isFeatured());
             // Doctrine will auto-detect changes and update on flush
         } else {
             // Create new entity

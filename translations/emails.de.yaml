@@ -8,30 +8,7 @@ common:
   footer: "Bei Fragen kontaktieren Sie uns bitte unter {{ support_email }}"
   unsubscribe: "Möchten Sie diese E-Mails nicht mehr erhalten? Hier abmelden"
 
-order:
-  confirmation:
-    subject: "Bestellbestätigung #{{ order_number }}"
-    title: "Vielen Dank für Ihre Bestellung!"
-    body: "Wir haben Ihre Bestellung #{{ order_number }} erhalten und sie wird nun bearbeitet."
-    view_order: "Ihre Bestellung ansehen"
-
-  shipped:
-    subject: "Ihre Bestellung #{{ order_number }} wurde versandt"
-    title: "Ihre Bestellung ist unterwegs!"
-    body: "Ihre Bestellung #{{ order_number }} wurde versandt und sollte bis zum {{ delivery_date }} ankommen."
-    tracking: "Verfolgen Sie Ihre Sendung: {{ tracking_url }}"
-
-  delivered:
-    subject: "Ihre Bestellung #{{ order_number }} wurde zugestellt"
-    title: "Ihre Bestellung wurde zugestellt!"
-    body: "Ihre Bestellung #{{ order_number }} wurde erfolgreich zugestellt."
-    feedback: "Wie war Ihre Erfahrung? Hinterlassen Sie eine Bewertung"
-
-  cancelled:
-    subject: "Bestellung #{{ order_number }} wurde storniert"
-    title: "Bestellung Storniert"
-    body: "Ihre Bestellung #{{ order_number }} wurde wie gewünscht storniert."
-    refund: "Sie erhalten eine Rückerstattung innerhalb von {{ refund_days }} Werktagen."
+# Order section kept for backwards compatibility with existing code
 
 customer:
   welcome:
@@ -67,3 +44,84 @@ notification:
     title: "Gute Nachrichten!"
     body: "{{ product_name }} ist wieder auf Lager. Holen Sie es sich, bevor es wieder ausverkauft ist!"
     shop_now: "Jetzt Einkaufen"
+
+emails:
+  default_title: 'Benachrichtigung'
+
+  footer:
+    thanks: 'Vielen Dank, dass Sie bei uns einkaufen!'
+    company: 'Ihre E-Commerce-Plattform'
+    visit_site: 'Website Besuchen'
+    contact: 'Support Kontaktieren'
+    copyright: '© %year% Alle Rechte vorbehalten.'
+
+  order:
+    order_details: 'Bestelldetails'
+    order_id: 'Bestellnummer'
+    order_date: 'Bestelldatum'
+    total: 'Gesamt'
+    status_label: 'Status'
+    items: 'Bestellte Artikel'
+    shipping_address: 'Lieferadresse'
+    shipping_to: 'Lieferung an'
+    view_order: 'Bestelldetails Ansehen'
+    payment_details: 'Zahlungsdetails'
+    payment_date: 'Zahlungsdatum'
+    amount_paid: 'Bezahlter Betrag'
+    payment_method: 'Zahlungsmethode'
+    transaction_id: 'Transaktions-ID'
+    shipping_details: 'Versanddetails'
+    shipped_date: 'Versanddatum'
+    carrier: 'Versandunternehmen'
+    tracking_number: 'Sendungsnummer'
+    estimated_delivery: 'Voraussichtliche Lieferung'
+    track_shipment: 'Sendung Verfolgen'
+    cancellation_details: 'Stornierungsdetails'
+    cancelled_date: 'Stornierungsdatum'
+    original_total: 'Original Gesamt'
+    reason: 'Grund'
+    refund_details: 'Rückerstattungsinformationen'
+    refund_amount: 'Rückerstattungsbetrag'
+    refund_method: 'Rückerstattungsmethode'
+
+    status:
+      pending: 'Ausstehend'
+      confirmed: 'Bestätigt'
+      processing: 'In Bearbeitung'
+      paid: 'Bezahlt'
+      shipped: 'Versandt'
+      delivered: 'Zugestellt'
+      cancelled: 'Storniert'
+
+    placed:
+      title: 'Bestellbestätigung'
+      header: 'Bestellung Bestätigt'
+      greeting: 'Liebe(r) %customer_name%,'
+      confirmation: 'Vielen Dank für Ihre Bestellung! Wir haben Ihre Bestellung erhalten und werden sie in Kürze bearbeiten.'
+      next_steps: 'Wir senden Ihnen eine weitere E-Mail, sobald Ihre Zahlung bestätigt wurde und Ihre Bestellung für den Versand vorbereitet wird.'
+      questions: 'Wenn Sie Fragen zu Ihrer Bestellung haben, zögern Sie bitte nicht, unser Support-Team zu kontaktieren.'
+
+    paid:
+      title: 'Zahlung Bestätigt'
+      header: 'Zahlung Erhalten'
+      greeting: 'Liebe(r) %customer_name%,'
+      confirmation: 'Wir haben Ihre Zahlung erfolgreich erhalten. Vielen Dank!'
+      next_steps: 'Ihre Bestellung wird nun bearbeitet und in Kürze versandt.'
+      processing: 'Wir informieren Sie, sobald Ihre Bestellung mit Tracking-Informationen versandt wurde.'
+
+    shipped:
+      title: 'Bestellung Versandt'
+      header: 'Ihre Bestellung Wurde Versandt'
+      greeting: 'Liebe(r) %customer_name%,'
+      confirmation: 'Tolle Neuigkeiten! Ihre Bestellung wurde versandt und ist auf dem Weg zu Ihnen.'
+      delivery_info: 'Sie können Ihre Sendung mit der oben angegebenen Sendungsnummer verfolgen.'
+      questions: 'Wenn Sie Fragen oder Bedenken bezüglich Ihrer Lieferung haben, kontaktieren Sie uns bitte.'
+
+    cancelled:
+      title: 'Bestellung Storniert'
+      header: 'Bestellstornierung'
+      greeting: 'Liebe(r) %customer_name%,'
+      confirmation: 'Ihre Bestellung wurde wie gewünscht storniert.'
+      refund_time: 'Bitte erlauben Sie 5-10 Werktage, bis die Rückerstattung bearbeitet wurde und auf Ihrem Konto erscheint.'
+      apology: 'Wir entschuldigen uns für etwaige Unannehmlichkeiten. Wir hoffen, Sie in Zukunft wieder bedienen zu dürfen.'
+      questions: 'Wenn Sie Fragen zu dieser Stornierung oder Ihrer Rückerstattung haben, kontaktieren Sie bitte unser Support-Team.'

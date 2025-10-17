@@ -7,110 +7,66 @@ namespace App\DataFixtures;
 use App\Order\Infrastructure\Persistence\Doctrine\Entity\OrderEntity;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Uid\Uuid;
 
-class OrderFixtures extends Fixture
+/**
+ * Order fixtures - creates sample orders for testing
+ */
+class OrderFixtures extends Fixture implements DependentFixtureInterface
 {
-    private string $tenantId;
-    private array $productIds = [];
-
     public function load(ObjectManager $manager): void
-    {
-        // Get first tenant ID from database
-        $this->tenantId = $this->getFirstTenantId($manager);
-
-        if (!$this->tenantId) {
-            echo "⚠️  No tenants found in database. Please create a tenant first.\n";
-            return;
-        }
-
-        // Get product IDs
-        $this->productIds = $this->getProductIds($manager);
-
-        if (empty($this->productIds)) {
-            echo "⚠️  No products found in database. Please create products first.\n";
-            return;
-        }
-
-        echo "📦 Loading order fixtures for tenant: {$this->tenantId}\n";
-
-        $this->loadOrders($manager);
-
-        $manager->flush();
-
-        echo "✅ Order fixtures loaded successfully!\n";
-        echo "   - Orders: 10\n";
-    }
-
-    private function getFirstTenantId(ObjectManager $manager): ?string
-    {
-        $connection = $manager->getConnection();
-        $result = $connection->executeQuery('SELECT id FROM tenants LIMIT 1')->fetchOne();
-
-        return $result ?: null;
-    }
-
-    private function getProductIds(ObjectManager $manager): array
-    {
-        $connection = $manager->getConnection();
-        $result = $connection->executeQuery('SELECT id FROM catalog_products LIMIT 10')->fetchAllAssociative();
-
-        return array_column($result, 'id');
-    }
-
-    private function loadOrders(ObjectManager $manager): void
     {
         echo "📦 Creating orders...\n";
 
-        $statuses = ['pending', 'processing', 'shipped', 'delivered'];
+        // Get first tenant ID from database
+        $connection = $manager->getConnection();
+        $tenantId = $connection->executeQuery('SELECT id FROM tenants ORDER BY created_at ASC LIMIT 1')->fetchOne();
+
+        // Set tenant context for RLS
+        $connection->executeStatement("SET app.tenant_id = '{$tenantId}'");
+
+        $statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
         $customerEmails = [
             'john.doe@example.com',
             'jane.smith@example.com',
-            'bob.wilson@example.com',
-            'alice.johnson@example.com',
+            'william.garcia@example.com',
+            'maria.rodriguez@example.com',
+            'christopher.thomas@example.com',
         ];
 
-        $shippingAddress = [
-            'street' => '123 Main Street',
-            'city' => 'New York',
-            'state' => 'NY',
-            'postalCode' => '10001',
-            'country' => 'US',
-        ];
-
-        $billingAddress = [
-            'street' => '123 Main Street',
-            'city' => 'New York',
-            'state' => 'NY',
-            'postalCode' => '10001',
-            'country' => 'US',
-        ];
-
-        for ($i = 0; $i < 10; $i++) {
+        // Create 20 orders with varying statuses and dates
+        for ($i = 0; $i < 20; $i++) {
             $orderId = Uuid::v4()->toString();
             $customerEmail = $customerEmails[$i % count($customerEmails)];
             $status = $statuses[$i % count($statuses)];
 
-            // Create 1-3 random order lines
-            $numLines = rand(1, 3);
+            // Get random products from database
+            $productIds = $connection->executeQuery('SELECT id FROM catalog_products ORDER BY RANDOM() LIMIT ' . rand(1, 3))->fetchFirstColumn();
             $lines = [];
 
-            for ($j = 0; $j < $numLines; $j++) {
-                $productIndex = rand(0, count($this->productIds) - 1);
+            foreach ($productIds as $productId) {
                 $quantity = rand(1, 3);
-                $unitPrice = rand(1000, 50000);
+                $unitPrice = rand(2000, 150000);
 
                 $lines[] = [
-                    'productId' => $this->productIds[$productIndex],
-                    'productName' => 'Product ' . ($productIndex + 1),
+                    'productId' => $productId,
+                    'productName' => 'Product',
                     'quantity' => $quantity,
                     'unitPriceAmount' => $unitPrice,
                     'unitPriceCurrency' => 'USD',
                 ];
             }
 
-            // Use reflection to create order with private properties
+            if (empty($lines)) {
+                continue; // Skip if no valid products
+            }
+
+            $shippingAddress = $this->getRandomAddress();
+            $billingAddress = $shippingAddress; // Same as shipping for simplicity
+
+            // Use reflection to create order
             $order = new OrderEntity();
             $reflection = new \ReflectionClass($order);
 
@@ -118,7 +74,7 @@ class OrderFixtures extends Fixture
             $idProperty->setValue($order, $orderId);
 
             $tenantIdProperty = $reflection->getProperty('tenantId');
-            $tenantIdProperty->setValue($order, $this->tenantId);
+            $tenantIdProperty->setValue($order, $tenantId);
 
             $customerEmailProperty = $reflection->getProperty('customerEmail');
             $customerEmailProperty->setValue($order, $customerEmail);
@@ -135,16 +91,88 @@ class OrderFixtures extends Fixture
             $billingAddressProperty = $reflection->getProperty('billingAddress');
             $billingAddressProperty->setValue($order, $billingAddress);
 
+            // Orders from the past 30 days
+            $daysAgo = rand(0, 30);
             $createdAtProperty = $reflection->getProperty('createdAt');
-            $createdAtProperty->setValue($order, new DateTimeImmutable("-{$i} days"));
+            $createdAtProperty->setValue($order, new DateTimeImmutable("-{$daysAgo} days"));
 
             $updatedAtProperty = $reflection->getProperty('updatedAt');
-            $updatedAtProperty->setValue($order, new DateTimeImmutable("-{$i} days"));
+            $updatedAtProperty->setValue($order, new DateTimeImmutable("-{$daysAgo} days"));
 
             $manager->persist($order);
         }
 
         $manager->flush();
-        echo "   ✓ Created 10 orders with various statuses\n";
+        echo "✅ Created 20 orders with various statuses\n";
+    }
+
+    private function getRandomProductReferences(int $count): array
+    {
+        $prefixes = ['lap', 'pho', 'acc', 'men', 'wom', 'kid', 'fur', 'dec', 'kit'];
+        $refs = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $prefix = $prefixes[array_rand($prefixes)];
+            $number = rand(1, 10);
+            $refs[] = sprintf('product_%s_%d', $prefix, $number);
+        }
+
+        return $refs;
+    }
+
+    private function getRandomAddress(): array
+    {
+        $addresses = [
+            [
+                'street' => '123 Main Street',
+                'city' => 'New York',
+                'state' => 'NY',
+                'postalCode' => '10001',
+                'country' => 'US',
+            ],
+            [
+                'street' => '456 Oak Avenue',
+                'city' => 'Los Angeles',
+                'state' => 'CA',
+                'postalCode' => '90001',
+                'country' => 'US',
+            ],
+            [
+                'street' => '789 Pine Road',
+                'city' => 'Chicago',
+                'state' => 'IL',
+                'postalCode' => '60601',
+                'country' => 'US',
+            ],
+            [
+                'street' => '321 Elm Street',
+                'city' => 'Houston',
+                'state' => 'TX',
+                'postalCode' => '77001',
+                'country' => 'US',
+            ],
+            [
+                'street' => '654 Maple Drive',
+                'city' => 'Seattle',
+                'state' => 'WA',
+                'postalCode' => '98101',
+                'country' => 'US',
+            ],
+        ];
+
+        return $addresses[array_rand($addresses)];
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            TenantFixtures::class,
+            ProductFixtures::class,
+        ];
+    }
+
+    public function getOrder(): int
+    {
+        return 9;
     }
 }

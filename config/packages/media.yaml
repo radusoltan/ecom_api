@@ -1,0 +1,5 @@
+parameters:
+    media.storage.local.base_path: '%kernel.project_dir%/public/media/originals'
+    media.storage.local.public_prefix: '/media/originals'
+    media.thumbnail.local.base_path: '%kernel.project_dir%/public/media/thumbnails'
+    media.thumbnail.local.public_prefix: '/media/thumbnails'

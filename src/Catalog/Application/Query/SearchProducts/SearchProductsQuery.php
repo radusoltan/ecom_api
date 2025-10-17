@@ -11,6 +11,7 @@ final readonly class SearchProductsQuery
 {
     /**
      * @param array<string>|null $categoryIds
+     * @param array<string, array<string>>|null $options Product variant options (e.g., ['color' => ['red', 'blue'], 'size' => ['m', 'l']])
      */
     public function __construct(
         public TenantId $tenantId,
@@ -23,5 +24,8 @@ final readonly class SearchProductsQuery
         public string $sortBy = 'relevance',
         public int $page = 1,
         public int $limit = 20,
+        public ?array $options = null,
+        public ?int $minRating = null,
+        public ?bool $featured = null,
     ) {}
 }

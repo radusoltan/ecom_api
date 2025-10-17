@@ -46,18 +46,8 @@ final class ProductRepositoryTest extends KernelTestCase
 
         $qb = $em->createQueryBuilder();
         $qb->delete(\App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity::class, 'p')
-            ->where('p.sku LIKE :prefix1 OR p.sku LIKE :prefix2 OR p.sku LIKE :prefix3 OR p.sku LIKE :prefix4 OR p.sku LIKE :prefix5 OR p.sku LIKE :prefix6 OR p.sku LIKE :prefix7 OR p.sku LIKE :prefix8 OR p.sku LIKE :prefix9 OR p.sku LIKE :prefix10 OR p.sku LIKE :prefix11')
-            ->setParameter('prefix1', 'TEST-%')
-            ->setParameter('prefix2', 'FIND-SKU-%')
-            ->setParameter('prefix3', 'SLUG-TEST-%')
-            ->setParameter('prefix4', 'TENANT-%')
-            ->setParameter('prefix5', 'PAGE-%')
-            ->setParameter('prefix6', 'UPDATE-%')
-            ->setParameter('prefix7', 'DELETE-%')
-            ->setParameter('prefix8', 'IMAGE-%')
-            ->setParameter('prefix9', 'CAT-%')
-            ->setParameter('prefix10', 'TENANT1-%')
-            ->setParameter('prefix11', 'TENANT2-%')
+            ->where('p.sku LIKE :testSkuPrefix')
+            ->setParameter('testSkuPrefix', '%-TST-%')
             ->getQuery()
             ->execute();
     }
@@ -67,7 +57,7 @@ final class ProductRepositoryTest extends KernelTestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('TEST-001'),
+            sku: SKU::fromString('ELC-TST-000001'),
             name: ProductName::fromString('Test Product'),
             description: 'Test description',
             shortDescription: 'Short desc',
@@ -84,7 +74,7 @@ final class ProductRepositoryTest extends KernelTestCase
         $this->assertTrue($found->id()->equals($product->id()));
         $this->assertSame('Test Product', $found->name()->value());
         $this->assertSame('test-product', $found->slug()->value());
-        $this->assertSame('TEST-001', $found->sku()->value());
+        $this->assertSame('ELC-TST-000001', $found->sku()->value());
         $this->assertSame(5000, $found->price()->getAmount());
         $this->assertSame('USD', $found->price()->getCurrency()->getCurrencyCode());
         $this->assertSame(100, $found->stock()->quantity());
@@ -93,7 +83,7 @@ final class ProductRepositoryTest extends KernelTestCase
     public function testFindProductBySKU(): void
     {
         $tenantId = TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab');
-        $sku = SKU::fromString('FIND-SKU-001');
+        $sku = SKU::fromString('FND-TST-000002');
 
         $product = Product::create(
             id: ProductId::generate(),
@@ -113,7 +103,7 @@ final class ProductRepositoryTest extends KernelTestCase
 
         $this->assertNotNull($found);
         $this->assertTrue($found->id()->equals($product->id()));
-        $this->assertSame('FIND-SKU-001', $found->sku()->value());
+        $this->assertSame('FND-TST-000002', $found->sku()->value());
     }
 
     public function testFindProductBySlug(): void
@@ -123,7 +113,7 @@ final class ProductRepositoryTest extends KernelTestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: $tenantId,
-            sku: SKU::fromString('SLUG-TEST-001'),
+            sku: SKU::fromString('SLG-TST-000003'),
             name: ProductName::fromString('Slug Test Product'),
             description: null,
             shortDescription: null,
@@ -148,7 +138,7 @@ final class ProductRepositoryTest extends KernelTestCase
         $product1 = Product::create(
             id: ProductId::generate(),
             tenantId: $tenantId,
-            sku: SKU::fromString('TENANT-001'),
+            sku: SKU::fromString('TEN-TST-000004'),
             name: ProductName::fromString('Tenant Product 1'),
             description: null,
             shortDescription: null,
@@ -160,7 +150,7 @@ final class ProductRepositoryTest extends KernelTestCase
         $product2 = Product::create(
             id: ProductId::generate(),
             tenantId: $tenantId,
-            sku: SKU::fromString('TENANT-002'),
+            sku: SKU::fromString('TEN-TST-000005'),
             name: ProductName::fromString('Tenant Product 2'),
             description: null,
             shortDescription: null,
@@ -185,7 +175,7 @@ final class ProductRepositoryTest extends KernelTestCase
             $product = Product::create(
                 id: ProductId::generate(),
                 tenantId: $tenantId,
-                sku: SKU::fromString("PAGE-{$i}"),
+                sku: SKU::fromString(sprintf('PGT-TST-%06d', $i)),
                 name: ProductName::fromString("Pagination Product {$i}"),
                 description: null,
                 shortDescription: null,
@@ -209,13 +199,14 @@ final class ProductRepositoryTest extends KernelTestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('UPDATE-001'),
+            sku: SKU::fromString('UPD-TST-000006'),
             name: ProductName::fromString('Original Product'),
             description: 'Original description',
             shortDescription: 'Original short',
             price: Money::fromScalars(5000, 'USD'),
             categoryId: null,
-            stock: Stock::create(100)
+            stock: Stock::create(100),
+            isFeatured: false
         );
 
         $this->repository->save($product);
@@ -225,7 +216,8 @@ final class ProductRepositoryTest extends KernelTestCase
             description: 'Updated description',
             shortDescription: 'Updated short',
             price: Money::fromScalars(6000, 'USD'),
-            categoryId: null
+            categoryId: null,
+            isFeatured: true
         );
 
         $this->repository->save($product);
@@ -244,7 +236,7 @@ final class ProductRepositoryTest extends KernelTestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('DELETE-001'),
+            sku: SKU::fromString('DEL-TST-000007'),
             name: ProductName::fromString('Product to Delete'),
             description: null,
             shortDescription: null,
@@ -269,7 +261,7 @@ final class ProductRepositoryTest extends KernelTestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('IMAGE-001'),
+            sku: SKU::fromString('IMG-TST-000008'),
             name: ProductName::fromString('Product With Images'),
             description: null,
             shortDescription: null,
@@ -301,7 +293,7 @@ final class ProductRepositoryTest extends KernelTestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('CAT-001'),
+            sku: SKU::fromString('CAT-TST-000009'),
             name: ProductName::fromString('Product With Category'),
             description: null,
             shortDescription: null,
@@ -336,7 +328,7 @@ final class ProductRepositoryTest extends KernelTestCase
         $product1 = Product::create(
             id: ProductId::generate(),
             tenantId: $tenant1Id,
-            sku: SKU::fromString('TENANT1-001'),
+            sku: SKU::fromString('TNA-TST-100001'),
             name: ProductName::fromString('Tenant 1 Product'),
             description: null,
             shortDescription: null,
@@ -348,7 +340,7 @@ final class ProductRepositoryTest extends KernelTestCase
         $product2 = Product::create(
             id: ProductId::generate(),
             tenantId: $tenant2Id,
-            sku: SKU::fromString('TENANT2-001'),
+            sku: SKU::fromString('TNB-TST-100001'),
             name: ProductName::fromString('Tenant 2 Product'),
             description: null,
             shortDescription: null,
@@ -366,9 +358,9 @@ final class ProductRepositoryTest extends KernelTestCase
         $tenant1SKUs = array_map(fn($p) => $p->sku()->value(), $tenant1Products);
         $tenant2SKUs = array_map(fn($p) => $p->sku()->value(), $tenant2Products);
 
-        $this->assertContains('TENANT1-001', $tenant1SKUs);
-        $this->assertNotContains('TENANT2-001', $tenant1SKUs);
-        $this->assertContains('TENANT2-001', $tenant2SKUs);
-        $this->assertNotContains('TENANT1-001', $tenant2SKUs);
+        $this->assertContains('TNA-TST-100001', $tenant1SKUs);
+        $this->assertNotContains('TNB-TST-100001', $tenant1SKUs);
+        $this->assertContains('TNB-TST-100001', $tenant2SKUs);
+        $this->assertNotContains('TNA-TST-100001', $tenant2SKUs);
     }
 }

@@ -39,7 +39,8 @@ final readonly class CreateProductHandler
             shortDescription: $command->shortDescription,
             price: $command->price,
             categoryId: $command->categoryId,
-            stock: $stock
+            stock: $stock,
+            isFeatured: $command->isFeatured
         );
 
         $this->productRepository->save($product);

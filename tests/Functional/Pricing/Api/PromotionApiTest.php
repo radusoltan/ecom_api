@@ -123,7 +123,8 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertSame('percentage', $data['discountType']);
         $this->assertEquals(20.0, $data['discountValue']); // Changed to assertEquals to allow int/float
         $this->assertSame(100, $data['priority']);
-        $this->assertFalse($data['isActive']);
+        $this->assertArrayHasKey('active', $data);
+        $this->assertFalse($data['active']);
         $this->assertNull($data['couponCode']);
         $this->assertSame(['min_cart_value' => 50], $data['conditions']);
     }
@@ -319,7 +320,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertSame($promotion->id()->toString(), $data['id']);
         $this->assertSame('Test Promotion', $data['name']);
         $this->assertSame('cart_rule', $data['type']);
-        $this->assertSame(15.0, $data['discountValue']);
+        $this->assertEquals(15.0, $data['discountValue']);
         $this->assertSame(120, $data['priority']);
     }
 
@@ -528,7 +529,8 @@ final class PromotionApiTest extends ApiTestCase
 
         $data = $response->toArray();
 
-        $this->assertTrue($data['isActive']);
+        $this->assertArrayHasKey('active', $data);
+        $this->assertTrue($data['active']);
     }
 
     public function testActivateAlreadyActivePromotionFails(): void
@@ -594,7 +596,8 @@ final class PromotionApiTest extends ApiTestCase
 
         $data = $response->toArray();
 
-        $this->assertFalse($data['isActive']);
+        $this->assertArrayHasKey('active', $data);
+        $this->assertFalse($data['active']);
     }
 
     public function testDeactivateAlreadyInactivePromotionFails(): void
@@ -649,7 +652,8 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(201);
         $createData = $createResponse->toArray();
         $promotionId = $createData['id'];
-        $this->assertFalse($createData['isActive']);
+        $this->assertArrayHasKey('active', $createData);
+        $this->assertFalse($createData['active']);
 
         // 2. Get promotion (verify creation)
         $getResponse = $client->request('GET', '/api/promotions/' . $promotionId, [
@@ -673,7 +677,8 @@ final class PromotionApiTest extends ApiTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $activateData = $activateResponse->toArray();
-        $this->assertTrue($activateData['isActive']);
+        $this->assertArrayHasKey('active', $activateData);
+        $this->assertTrue($activateData['active']);
 
         // 4. Update promotion
         $updateResponse = $client->request('PUT', '/api/promotions/' . $promotionId, [
@@ -695,7 +700,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(200);
         $updateData = $updateResponse->toArray();
         $this->assertSame('Updated Lifecycle Promotion', $updateData['name']);
-        $this->assertSame(30.0, $updateData['discountValue']);
+        $this->assertEquals(30.0, $updateData['discountValue']);
 
         // 5. Deactivate promotion
         $deactivateResponse = $client->request('PATCH', '/api/promotions/' . $promotionId . '/deactivate', [
@@ -708,7 +713,8 @@ final class PromotionApiTest extends ApiTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $deactivateData = $deactivateResponse->toArray();
-        $this->assertFalse($deactivateData['isActive']);
+        $this->assertArrayHasKey('active', $deactivateData);
+        $this->assertFalse($deactivateData['active']);
 
         // 6. Final verification
         $finalResponse = $client->request('GET', '/api/promotions/' . $promotionId, [
@@ -720,8 +726,9 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(200);
         $finalData = $finalResponse->toArray();
         $this->assertSame('Updated Lifecycle Promotion', $finalData['name']);
-        $this->assertSame(30.0, $finalData['discountValue']);
-        $this->assertFalse($finalData['isActive']);
+        $this->assertEquals(30.0, $finalData['discountValue']);
+        $this->assertArrayHasKey('active', $finalData);
+        $this->assertFalse($finalData['active']);
     }
 
     public function testPromotionStackingScenario(): void

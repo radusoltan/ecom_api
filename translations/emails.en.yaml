@@ -8,30 +8,7 @@ common:
   footer: "If you have any questions, please contact us at {{ support_email }}"
   unsubscribe: "Don't want to receive these emails? Unsubscribe here"
 
-order:
-  confirmation:
-    subject: "Order Confirmation #{{ order_number }}"
-    title: "Thank you for your order!"
-    body: "We have received your order #{{ order_number }} and it is now being processed."
-    view_order: "View your order"
-
-  shipped:
-    subject: "Your order #{{ order_number }} has been shipped"
-    title: "Your order is on its way!"
-    body: "Your order #{{ order_number }} has been shipped and should arrive by {{ delivery_date }}."
-    tracking: "Track your shipment: {{ tracking_url }}"
-
-  delivered:
-    subject: "Your order #{{ order_number }} has been delivered"
-    title: "Your order has been delivered!"
-    body: "Your order #{{ order_number }} was successfully delivered."
-    feedback: "How was your experience? Leave a review"
-
-  cancelled:
-    subject: "Order #{{ order_number }} has been cancelled"
-    title: "Order Cancelled"
-    body: "Your order #{{ order_number }} has been cancelled as requested."
-    refund: "You will receive a refund within {{ refund_days }} business days."
+# Order section kept for backwards compatibility with existing code
 
 customer:
   welcome:
@@ -67,3 +44,84 @@ notification:
     title: "Good news!"
     body: "{{ product_name }} is back in stock. Get it before it's gone again!"
     shop_now: "Shop Now"
+
+emails:
+  default_title: 'Notification'
+
+  footer:
+    thanks: 'Thank you for shopping with us!'
+    company: 'Your E-Commerce Platform'
+    visit_site: 'Visit Website'
+    contact: 'Contact Support'
+    copyright: '© %year% All rights reserved.'
+
+  order:
+    order_details: 'Order Details'
+    order_id: 'Order ID'
+    order_date: 'Order Date'
+    total: 'Total'
+    status_label: 'Status'
+    items: 'Order Items'
+    shipping_address: 'Shipping Address'
+    shipping_to: 'Shipping To'
+    view_order: 'View Order Details'
+    payment_details: 'Payment Details'
+    payment_date: 'Payment Date'
+    amount_paid: 'Amount Paid'
+    payment_method: 'Payment Method'
+    transaction_id: 'Transaction ID'
+    shipping_details: 'Shipping Details'
+    shipped_date: 'Shipped Date'
+    carrier: 'Carrier'
+    tracking_number: 'Tracking Number'
+    estimated_delivery: 'Estimated Delivery'
+    track_shipment: 'Track Your Shipment'
+    cancellation_details: 'Cancellation Details'
+    cancelled_date: 'Cancelled Date'
+    original_total: 'Original Total'
+    reason: 'Reason'
+    refund_details: 'Refund Information'
+    refund_amount: 'Refund Amount'
+    refund_method: 'Refund Method'
+
+    status:
+      pending: 'Pending'
+      confirmed: 'Confirmed'
+      processing: 'Processing'
+      paid: 'Paid'
+      shipped: 'Shipped'
+      delivered: 'Delivered'
+      cancelled: 'Cancelled'
+
+    placed:
+      title: 'Order Confirmation'
+      header: 'Order Confirmed'
+      greeting: 'Dear %customer_name%,'
+      confirmation: 'Thank you for your order! We have received your order and will process it shortly.'
+      next_steps: 'We will send you another email once your payment is confirmed and your order is being prepared for shipment.'
+      questions: 'If you have any questions about your order, please don''t hesitate to contact our support team.'
+
+    paid:
+      title: 'Payment Confirmed'
+      header: 'Payment Received'
+      greeting: 'Dear %customer_name%,'
+      confirmation: 'We have successfully received your payment. Thank you!'
+      next_steps: 'Your order is now being processed and will be shipped soon.'
+      processing: 'We will notify you once your order has been shipped with tracking information.'
+
+    shipped:
+      title: 'Order Shipped'
+      header: 'Your Order Has Shipped'
+      greeting: 'Dear %customer_name%,'
+      confirmation: 'Great news! Your order has been shipped and is on its way to you.'
+      delivery_info: 'You can track your shipment using the tracking number provided above.'
+      questions: 'If you have any questions or concerns about your delivery, please contact us.'
+
+    cancelled:
+      title: 'Order Cancelled'
+      header: 'Order Cancellation'
+      greeting: 'Dear %customer_name%,'
+      confirmation: 'Your order has been cancelled as requested.'
+      refund_time: 'Please allow 5-10 business days for the refund to be processed and appear in your account.'
+      apology: 'We apologize for any inconvenience. We hope to serve you again in the future.'
+      questions: 'If you have any questions about this cancellation or your refund, please contact our support team.'

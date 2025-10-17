@@ -51,11 +51,6 @@ final readonly class RegisterCustomerProcessor implements ProcessorInterface
             throw new InvalidArgumentException('Email, first name, and last name are required');
         }
 
-        // Validate password is provided
-        if (!$data->getPlainPassword()) {
-            throw new InvalidArgumentException('Password is required for registration');
-        }
-
         $customerId = CustomerId::generate()->toString();
 
         // Create User for authentication
@@ -118,7 +113,7 @@ final readonly class RegisterCustomerProcessor implements ProcessorInterface
     /**
      * Create a User entity for authentication when a customer registers
      */
-    private function createUserForCustomer(string $email, string $plainPassword, string $username): void
+    private function createUserForCustomer(string $email, ?string $plainPassword, string $username): void
     {
         // Check if user already exists
         $existingUser = $this->entityManager->getRepository(UserEntity::class)->findOneBy(['email' => $email]);
@@ -127,15 +122,21 @@ final readonly class RegisterCustomerProcessor implements ProcessorInterface
             return;
         }
 
+        $passwordToHash = $plainPassword ?? bin2hex(random_bytes(16));
+
         $user = new UserEntity();
         $user->setId((string) new Ulid());
         $user->setEmail($email);
-        $user->setUsername($username);
+
+        $sanitized = strtolower(trim($username));
+        $sanitized = preg_replace('/[^a-z0-9]+/', '-', $sanitized);
+        $generatedUsername = sprintf('%s-%s', $sanitized !== '' ? trim($sanitized, '-') : 'customer', bin2hex(random_bytes(4)));
+        $user->setUsername($generatedUsername);
         $user->setRoles(['ROLE_CUSTOMER']); // Assign customer role
         $user->setCreatedAt(new \DateTimeImmutable());
 
         // Hash the password
-        $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
+        $hashedPassword = $this->passwordHasher->hashPassword($user, $passwordToHash);
         $user->setPassword($hashedPassword);
 
         $this->entityManager->persist($user);

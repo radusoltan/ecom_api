@@ -8,30 +8,7 @@ common:
   footer: "Si vous avez des questions, contactez-nous à {{ support_email }}"
   unsubscribe: "Vous ne souhaitez plus recevoir ces emails ? Désabonnez-vous ici"
 
-order:
-  confirmation:
-    subject: "Confirmation de commande #{{ order_number }}"
-    title: "Merci pour votre commande !"
-    body: "Nous avons reçu votre commande #{{ order_number }} et elle est maintenant en cours de traitement."
-    view_order: "Voir votre commande"
-
-  shipped:
-    subject: "Votre commande #{{ order_number }} a été expédiée"
-    title: "Votre commande est en route !"
-    body: "Votre commande #{{ order_number }} a été expédiée et devrait arriver le {{ delivery_date }}."
-    tracking: "Suivez votre envoi : {{ tracking_url }}"
-
-  delivered:
-    subject: "Votre commande #{{ order_number }} a été livrée"
-    title: "Votre commande a été livrée !"
-    body: "Votre commande #{{ order_number }} a été livrée avec succès."
-    feedback: "Comment s'est passée votre expérience ? Laissez un avis"
-
-  cancelled:
-    subject: "La commande #{{ order_number }} a été annulée"
-    title: "Commande Annulée"
-    body: "Votre commande #{{ order_number }} a été annulée comme demandé."
-    refund: "Vous recevrez un remboursement dans {{ refund_days }} jours ouvrables."
+# Order section kept for backwards compatibility with existing code
 
 customer:
   welcome:
@@ -67,3 +44,84 @@ notification:
     title: "Bonne nouvelle !"
     body: "{{ product_name }} est de nouveau en stock. Obtenez-le avant qu'il ne soit à nouveau en rupture !"
     shop_now: "Acheter Maintenant"
+
+emails:
+  default_title: 'Notification'
+
+  footer:
+    thanks: 'Merci de faire vos achats chez nous !'
+    company: 'Votre Plateforme E-Commerce'
+    visit_site: 'Visiter le Site'
+    contact: 'Contacter le Support'
+    copyright: '© %year% Tous droits réservés.'
+
+  order:
+    order_details: 'Détails de la Commande'
+    order_id: 'Numéro de Commande'
+    order_date: 'Date de Commande'
+    total: 'Total'
+    status_label: 'Statut'
+    items: 'Articles Commandés'
+    shipping_address: 'Adresse de Livraison'
+    shipping_to: 'Livraison à'
+    view_order: 'Voir les Détails de la Commande'
+    payment_details: 'Détails du Paiement'
+    payment_date: 'Date du Paiement'
+    amount_paid: 'Montant Payé'
+    payment_method: 'Méthode de Paiement'
+    transaction_id: 'ID de Transaction'
+    shipping_details: 'Détails de Livraison'
+    shipped_date: 'Date d''Expédition'
+    carrier: 'Transporteur'
+    tracking_number: 'Numéro de Suivi'
+    estimated_delivery: 'Livraison Estimée'
+    track_shipment: 'Suivre Votre Colis'
+    cancellation_details: 'Détails de l''Annulation'
+    cancelled_date: 'Date d''Annulation'
+    original_total: 'Total Original'
+    reason: 'Raison'
+    refund_details: 'Informations de Remboursement'
+    refund_amount: 'Montant du Remboursement'
+    refund_method: 'Méthode de Remboursement'
+
+    status:
+      pending: 'En Attente'
+      confirmed: 'Confirmée'
+      processing: 'En Cours de Traitement'
+      paid: 'Payée'
+      shipped: 'Expédiée'
+      delivered: 'Livrée'
+      cancelled: 'Annulée'
+
+    placed:
+      title: 'Confirmation de Commande'
+      header: 'Commande Confirmée'
+      greeting: 'Cher(e) %customer_name%,'
+      confirmation: 'Merci pour votre commande ! Nous avons reçu votre commande et nous la traiterons sous peu.'
+      next_steps: 'Nous vous enverrons un autre email une fois votre paiement confirmé et votre commande préparée pour l''expédition.'
+      questions: 'Si vous avez des questions concernant votre commande, n''hésitez pas à contacter notre équipe de support.'
+
+    paid:
+      title: 'Paiement Confirmé'
+      header: 'Paiement Reçu'
+      greeting: 'Cher(e) %customer_name%,'
+      confirmation: 'Nous avons bien reçu votre paiement. Merci !'
+      next_steps: 'Votre commande est maintenant en cours de traitement et sera expédiée bientôt.'
+      processing: 'Nous vous informerons dès que votre commande aura été expédiée avec les informations de suivi.'
+
+    shipped:
+      title: 'Commande Expédiée'
+      header: 'Votre Commande a été Expédiée'
+      greeting: 'Cher(e) %customer_name%,'
+      confirmation: 'Excellente nouvelle ! Votre commande a été expédiée et est en route vers vous.'
+      delivery_info: 'Vous pouvez suivre votre colis en utilisant le numéro de suivi fourni ci-dessus.'
+      questions: 'Si vous avez des questions ou des préoccupations concernant votre livraison, veuillez nous contacter.'
+
+    cancelled:
+      title: 'Commande Annulée'
+      header: 'Annulation de Commande'
+      greeting: 'Cher(e) %customer_name%,'
+      confirmation: 'Votre commande a été annulée comme demandé.'
+      refund_time: 'Veuillez prévoir 5 à 10 jours ouvrables pour que le remboursement soit traité et apparaisse sur votre compte.'
+      apology: 'Nous nous excusons pour tout désagrément. Nous espérons vous servir à nouveau à l''avenir.'
+      questions: 'Si vous avez des questions concernant cette annulation ou votre remboursement, veuillez contacter notre équipe de support.'

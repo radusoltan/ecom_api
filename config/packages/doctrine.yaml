@@ -42,6 +42,8 @@ doctrine:
             payment_gateway: App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentGatewayType
             return_request_id: App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnRequestIdType
             return_status: App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType
+            fulfillment_id: App\Order\Infrastructure\Persistence\Doctrine\Type\FulfillmentIdType
+            fulfillment_status: App\Order\Infrastructure\Persistence\Doctrine\Type\FulfillmentStatusType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
@@ -106,6 +108,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Payment/Infrastructure/Persistence/Doctrine/Entity'
                 prefix: 'App\Payment\Infrastructure\Persistence\Doctrine\Entity'
                 alias: Payment
+            Media:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Media/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Media\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Media
             Tax:
                 type: attribute
                 is_bundle: false

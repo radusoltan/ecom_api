@@ -10,7 +10,8 @@ use App\Pricing\Application\Query\GetPriceListById\GetPriceListByIdQuery;
 use App\Pricing\Domain\Model\PriceListId;
 use App\Pricing\Presentation\Api\Resource\PriceListResource;
 use App\Shared\Domain\ValueObject\TenantId;
-use InvalidArgumentException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -23,14 +24,28 @@ final readonly class PriceListItemProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?PriceListResource
     {
-        $priceListId = PriceListId::fromString(
-            $uriVariables['id'] ?? throw new InvalidArgumentException('Price list ID is required')
-        );
+        $priceListIdValue = $uriVariables['id'] ?? null;
+        if ($priceListIdValue === null) {
+            throw new BadRequestHttpException('Price list ID is required');
+        }
+
+        try {
+            $priceListId = PriceListId::fromString($priceListIdValue);
+        } catch (\InvalidArgumentException $exception) {
+            throw new NotFoundHttpException($exception->getMessage(), $exception);
+        }
 
         // Extract tenant ID from context (injected by TenantContextProvider)
-        $tenantId = TenantId::fromString(
-            $context['tenant_id'] ?? throw new InvalidArgumentException('Tenant ID is required')
-        );
+        $tenantIdValue = $context['tenant_id'] ?? null;
+        if ($tenantIdValue === null) {
+            throw new BadRequestHttpException('Tenant ID is required');
+        }
+
+        try {
+            $tenantId = TenantId::fromString($tenantIdValue);
+        } catch (\InvalidArgumentException $exception) {
+            throw new BadRequestHttpException($exception->getMessage(), $exception);
+        }
 
         $envelope = $this->queryBus->dispatch(
             new GetPriceListByIdQuery($priceListId, $tenantId)

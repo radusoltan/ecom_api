@@ -16,6 +16,10 @@ use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Inventory\Domain\Repository\StockReservationRepositoryInterface;
 use App\Inventory\Infrastructure\ApiPlatform\Resource\StockOperationResource;
 use App\Shared\Domain\ValueObject\TenantId;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -45,7 +49,7 @@ final readonly class ReserveStockProcessor implements ProcessorInterface
         );
 
         if ($stockItem === null) {
-            throw new \RuntimeException(sprintf(
+            throw new NotFoundHttpException(sprintf(
                 'Stock item not found for product %s in warehouse %s',
                 $data->productId,
                 $data->warehouseId
@@ -61,7 +65,16 @@ final readonly class ReserveStockProcessor implements ProcessorInterface
             $tenantId
         );
 
-        $this->messageBus->dispatch($command);
+        try {
+            $this->messageBus->dispatch($command);
+        } catch (HandlerFailedException $exception) {
+            $previous = $exception->getPrevious();
+            if ($previous instanceof HttpExceptionInterface) {
+                throw $previous;
+            }
+
+            throw new BadRequestHttpException($previous?->getMessage() ?? $exception->getMessage(), $exception);
+        }
 
         // Create reservation tracking
         $reservation = StockReservation::create(
@@ -93,6 +106,6 @@ final readonly class ReserveStockProcessor implements ProcessorInterface
             return TenantId::fromString($context['tenant_id']);
         }
 
-        throw new \RuntimeException('Tenant ID not found in context. Ensure X-Tenant-ID header is provided.');
+        throw new BadRequestHttpException('Tenant ID not found in context. Ensure X-Tenant-ID header is provided.');
     }
 }

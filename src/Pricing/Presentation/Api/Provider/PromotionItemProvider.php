@@ -10,6 +10,8 @@ use App\Pricing\Application\Query\GetPromotionById\GetPromotionByIdQuery;
 use App\Pricing\Domain\ValueObject\PromotionId;
 use App\Pricing\Infrastructure\Persistence\Doctrine\Entity\PromotionEntity;
 use App\Shared\Domain\ValueObject\TenantId;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -24,9 +26,26 @@ final class PromotionItemProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?PromotionEntity
     {
+        $tenantIdValue = $context['tenant_id'] ?? null;
+        if ($tenantIdValue === null) {
+            throw new BadRequestHttpException('Tenant ID not found in context');
+        }
+
+        try {
+            $tenantId = TenantId::fromString($tenantIdValue);
+        } catch (\InvalidArgumentException $exception) {
+            throw new BadRequestHttpException($exception->getMessage(), $exception);
+        }
+
+        try {
+            $promotionId = PromotionId::fromString($uriVariables['id']);
+        } catch (\InvalidArgumentException $exception) {
+            throw new NotFoundHttpException($exception->getMessage(), $exception);
+        }
+
         $dto = $this->handle(new GetPromotionByIdQuery(
-            promotionId: PromotionId::fromString($uriVariables['id']),
-            tenantId: TenantId::fromString($context['tenant_id'] ?? '')
+            promotionId: $promotionId,
+            tenantId: $tenantId
         ));
 
         if ($dto === null) {

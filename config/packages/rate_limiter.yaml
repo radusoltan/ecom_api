@@ -30,3 +30,16 @@ framework:
             policy: 'fixed_window'
             limit: 10
             interval: '1 minute'
+
+        # Order placement rate limiter - prevent checkout abuse
+        # Per IP + per tenant to prevent spam/brute force
+        orders_place:
+            policy: 'sliding_window'
+            limit: 10
+            interval: '1 minute'
+
+        # Order operations per tenant - global tenant throttling
+        orders_per_tenant:
+            policy: 'sliding_window'
+            limit: 100
+            interval: '1 minute'

@@ -6,13 +6,16 @@ framework:
         buses:
             command.bus:
                 middleware:
+                    - App\Shared\Infrastructure\Messenger\TenantContextMiddleware
                     - doctrine_transaction
             query.bus:
                 middleware:
+                    - App\Shared\Infrastructure\Messenger\TenantContextMiddleware
                     - doctrine_transaction
             event.bus:
                 default_middleware: allow_no_handlers
                 middleware:
+                    - App\Shared\Infrastructure\Messenger\TenantContextMiddleware
                     - doctrine_transaction
 
         # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
@@ -20,13 +23,91 @@ framework:
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
-            # async: '%env(MESSENGER_TRANSPORT_DSN)%'
-            # failed: 'doctrine://default?queue_name=failed'
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    auto_setup: true
+                    queues:
+                        async: ~
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+
+            media_async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    auto_setup: true
+                    queues:
+                        media: ~
+                retry_strategy:
+                    max_retries: 3
+                    delay: 2000
+
+            # Payment events queue - async processing
+            payment_events:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    auto_setup: true
+                    queues:
+                        payment_events: ~
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+
+            # Order events queue - async processing
+            order_events:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    auto_setup: true
+                    queues:
+                        order_events: ~
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+
+            # Inventory events queue - for stock allocation
+            inventory_events:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    auto_setup: true
+                    queues:
+                        inventory_events: ~
+                retry_strategy:
+                    max_retries: 5
+                    delay: 2000
+                    multiplier: 2
+
+            failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
+
+        failure_transport: failed
 
         routing:
             # Route your messages to the transports (if needed)
             # All handlers are synchronous by default via services.yaml tags
+
+            # Media Messages
+            'App\Media\Application\Message\GenerateThumbnailsMessage': media_async
+            'App\Media\Application\Message\DeleteImageAssetsMessage': media_async
+
+            # Payment Domain Events - async via RabbitMQ
+            'App\Payment\Domain\Event\PaymentCaptured': payment_events
+            'App\Payment\Domain\Event\PaymentAuthorized': payment_events
+            'App\Payment\Domain\Event\PaymentRefunded': payment_events
+            'App\Payment\Domain\Event\PaymentFailed': payment_events
+            'App\Payment\Domain\Event\PaymentCancelled': payment_events
+
+            # Order Domain Events - async via RabbitMQ
+            'App\Order\Domain\Event\OrderPlaced': order_events
+            'App\Order\Domain\Event\OrderPaid': order_events
+            'App\Order\Domain\Event\OrderStatusChanged': order_events
+            'App\Order\Domain\Event\OrderCancelled': order_events
+            'App\Order\Domain\Event\FulfillmentStatusChanged': order_events
+
+            # Async email sending (Symfony Mailer)
+            'Symfony\Component\Mailer\Messenger\SendEmailMessage': async
 
 # when@test:
 #    framework:

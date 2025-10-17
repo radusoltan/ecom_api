@@ -36,20 +36,21 @@ final class ProductEntityTest extends TestCase
         $product = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('PRD-123456'),
+            sku: SKU::fromString('ELC-TEN-000001'),
             name: ProductName::fromString('Test Product'),
             description: 'Product description',
             shortDescription: 'Short desc',
             price: Money::of('99.99', 'USD'),
             categoryId: $this->categoryId,
-            stock: Stock::create(100, true, false)
+            stock: Stock::create(100, true, false),
+            isFeatured: true
         );
 
         $entity = ProductEntity::fromDomainModel($product);
 
         $this->assertSame($this->productId->toString(), $entity->getId());
         $this->assertSame($this->tenantId->toString(), $entity->getTenantId());
-        $this->assertSame('PRD-123456', $entity->getSku());
+        $this->assertSame('ELC-TEN-000001', $entity->getSku());
         $this->assertSame('Test Product', $entity->getName());
         $this->assertSame('Product description', $entity->getDescription());
         $this->assertSame('Short desc', $entity->getShortDescription());
@@ -60,6 +61,7 @@ final class ProductEntityTest extends TestCase
         $this->assertTrue($entity->isTrackInventory());
         $this->assertFalse($entity->isAllowBackorder());
         $this->assertTrue($entity->isActive());
+        $this->assertTrue($entity->isFeatured());
     }
 
     public function testToDomainModelReconstitutesProductCorrectly(): void
@@ -67,13 +69,14 @@ final class ProductEntityTest extends TestCase
         $product = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('PRD-789012'),
+            sku: SKU::fromString('ELC-TEN-000002'),
             name: ProductName::fromString('Entity Product'),
             description: 'Entity description',
             shortDescription: 'Entity short',
             price: Money::of('49.99', 'EUR'),
             categoryId: $this->categoryId,
-            stock: Stock::create(50, false, true)
+            stock: Stock::create(50, false, true),
+            isFeatured: false
         );
 
         $product->deactivate();
@@ -83,7 +86,7 @@ final class ProductEntityTest extends TestCase
 
         $this->assertTrue($reconstituted->id()->equals($this->productId));
         $this->assertTrue($reconstituted->tenantId()->equals($this->tenantId));
-        $this->assertSame('PRD-789012', $reconstituted->sku()->value());
+        $this->assertSame('ELC-TEN-000002', $reconstituted->sku()->value());
         $this->assertSame('Entity Product', $reconstituted->name()->value());
         $this->assertSame('Entity description', $reconstituted->description());
         $this->assertSame('Entity short', $reconstituted->shortDescription());
@@ -94,6 +97,7 @@ final class ProductEntityTest extends TestCase
         $this->assertFalse($reconstituted->stock()->trackInventory());
         $this->assertTrue($reconstituted->stock()->allowBackorder());
         $this->assertFalse($reconstituted->isActive());
+        $this->assertFalse($reconstituted->isFeatured());
     }
 
     public function testSettersWorkCorrectly(): void
@@ -101,7 +105,7 @@ final class ProductEntityTest extends TestCase
         $product = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('TEST-001'),
+            sku: SKU::fromString('ELC-TEN-000003'),
             name: ProductName::fromString('Original Name'),
             description: 'Original desc',
             shortDescription: 'Short',
@@ -116,8 +120,8 @@ final class ProductEntityTest extends TestCase
         $entity->setTenantId('new-tenant-id');
         $this->assertSame('new-tenant-id', $entity->getTenantId());
 
-        $entity->setSku('NEW-SKU');
-        $this->assertSame('NEW-SKU', $entity->getSku());
+        $entity->setSku('ELC-TEN-999999');
+        $this->assertSame('ELC-TEN-999999', $entity->getSku());
 
         $entity->setName('New Name');
         $this->assertSame('New Name', $entity->getName());
@@ -156,7 +160,7 @@ final class ProductEntityTest extends TestCase
         $product = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('IMG-123456'),
+            sku: SKU::fromString('ELC-TEN-000010'),
             name: ProductName::fromString('Product with Images'),
             description: 'Description',
             shortDescription: 'Short',
@@ -196,7 +200,7 @@ final class ProductEntityTest extends TestCase
         $product = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('PRD-NOCAT'),
+            sku: SKU::fromString('GEN-TEN-000011'),
             name: ProductName::fromString('Uncategorized Product'),
             description: 'No category',
             shortDescription: 'Short',
@@ -219,7 +223,7 @@ final class ProductEntityTest extends TestCase
         $product = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('SLG-001'),
+            sku: SKU::fromString('SLG-TEN-000012'),
             name: ProductName::fromString('Test Product Slug'),
             description: 'Slug test',
             shortDescription: 'Short',
@@ -238,7 +242,7 @@ final class ProductEntityTest extends TestCase
         $product = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('BCK-123456'),
+            sku: SKU::fromString('BCK-TEN-123456'),
             name: ProductName::fromString('Backorder Product'),
             description: 'Allows backorder',
             shortDescription: 'Backorder',
@@ -259,7 +263,7 @@ final class ProductEntityTest extends TestCase
         $product = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('UNL-123456'),
+            sku: SKU::fromString('UNL-TEN-123456'),
             name: ProductName::fromString('Unlimited Product'),
             description: 'No inventory tracking',
             shortDescription: 'Unlimited',
@@ -280,7 +284,7 @@ final class ProductEntityTest extends TestCase
         $product = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('DTE-001'),
+            sku: SKU::fromString('DTE-TEN-000013'),
             name: ProductName::fromString('Date Test'),
             description: 'Testing dates',
             shortDescription: 'Dates',
@@ -305,7 +309,7 @@ final class ProductEntityTest extends TestCase
         $product = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('EMP-001'),
+            sku: SKU::fromString('EMP-TEN-000014'),
             name: ProductName::fromString('No Images'),
             description: 'No images',
             shortDescription: 'Empty',
@@ -324,7 +328,7 @@ final class ProductEntityTest extends TestCase
         $product = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('NULL-001'),
+            sku: SKU::fromString('NUL-TEN-000015'),
             name: ProductName::fromString('Null Descriptions'),
             description: null,
             shortDescription: null,
@@ -344,13 +348,14 @@ final class ProductEntityTest extends TestCase
         $originalProduct = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('RTR-001'),
+            sku: SKU::fromString('RTR-TEN-000016'),
             name: ProductName::fromString('Round Trip Test'),
             description: 'Testing round trip',
             shortDescription: 'Round trip',
             price: Money::of('123.45', 'EUR'),
             categoryId: $this->categoryId,
-            stock: Stock::create(99, true, false)
+            stock: Stock::create(99, true, false),
+            isFeatured: true
         );
 
         $originalProduct->addImage(ProductImage::create(
@@ -381,6 +386,7 @@ final class ProductEntityTest extends TestCase
         $this->assertSame($originalProduct->stock()->allowBackorder(), $reconstituted->stock()->allowBackorder());
         $this->assertCount(count($originalProduct->images()), $reconstituted->images());
         $this->assertSame($originalProduct->isActive(), $reconstituted->isActive());
+        $this->assertSame($originalProduct->isFeatured(), $reconstituted->isFeatured());
     }
 
     public function testSetTranslatableLocale(): void
@@ -388,7 +394,7 @@ final class ProductEntityTest extends TestCase
         $product = Product::create(
             id: $this->productId,
             tenantId: $this->tenantId,
-            sku: SKU::fromString('LOC-001'),
+            sku: SKU::fromString('LOC-TEN-000017'),
             name: ProductName::fromString('Locale Test'),
             description: 'Testing locale',
             shortDescription: 'Locale',

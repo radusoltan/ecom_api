@@ -76,6 +76,12 @@ class CategoryEntity
     #[ORM\Column(type: 'boolean')]
     private bool $active;
 
+    #[ORM\Column(type: 'boolean', name: 'show_on_front')]
+    private bool $showOnFront = false;
+
+    #[ORM\Column(type: 'string', length: 512, name: 'cover_image', nullable: true)]
+    private ?string $coverImage = null;
+
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
@@ -96,6 +102,8 @@ class CategoryEntity
         $entity->parentId = $category->parentId()?->toString();
         $entity->position = $category->position();
         $entity->active = $category->isActive();
+        $entity->showOnFront = $category->showOnFront();
+        $entity->coverImage = $category->coverImage();
         $entity->createdAt = $category->createdAt();
         $entity->updatedAt = $category->updatedAt();
 
@@ -113,6 +121,8 @@ class CategoryEntity
             parentId: $this->parentId !== null ? CategoryId::fromString($this->parentId) : null,
             position: $this->position,
             active: $this->active,
+            showOnFront: $this->showOnFront,
+            coverImage: $this->coverImage,
             createdAt: $this->createdAt,
             updatedAt: $this->updatedAt
         );
@@ -187,6 +197,26 @@ class CategoryEntity
     public function setActive(bool $active): void
     {
         $this->active = $active;
+    }
+
+    public function getCoverImage(): ?string
+    {
+        return $this->coverImage;
+    }
+
+    public function setCoverImage(?string $coverImage): void
+    {
+        $this->coverImage = $coverImage;
+    }
+
+    public function isShowOnFront(): bool
+    {
+        return $this->showOnFront;
+    }
+
+    public function setShowOnFront(bool $showOnFront): void
+    {
+        $this->showOnFront = $showOnFront;
     }
 
     public function getCreatedAt(): \DateTimeImmutable

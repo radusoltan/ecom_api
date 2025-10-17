@@ -37,7 +37,7 @@ final class ReindexElasticsearchCommand extends Command
     {
         $this
             ->addArgument('tenant-id', InputArgument::REQUIRED, 'Tenant ID to reindex')
-            ->addOption('entity', 'e', InputOption::VALUE_OPTIONAL, 'Entity type: products|categories|all', 'all')
+            ->addOption('entity', 't', InputOption::VALUE_OPTIONAL, 'Entity type: products|categories|all', 'all')
             ->addOption('locale', 'l', InputOption::VALUE_OPTIONAL, 'Locale (default: all enabled locales)')
             ->setHelp(<<<'HELP'
 The <info>%command.name%</info> command reindexes products and categories in Elasticsearch.

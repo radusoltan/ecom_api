@@ -14,6 +14,8 @@ use App\Order\Presentation\Api\Processor\PlaceOrderProcessor;
 use App\Order\Presentation\Api\Processor\UpdateOrderStatusProcessor;
 use App\Order\Presentation\Api\Provider\OrderCollectionProvider;
 use App\Order\Presentation\Api\Provider\OrderItemProvider;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 #[ApiResource(
     shortName: 'Order',

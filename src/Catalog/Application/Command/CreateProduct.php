@@ -24,6 +24,7 @@ final readonly class CreateProduct
         public ?CategoryId $categoryId,
         public int $stockQuantity,
         public bool $trackInventory = true,
-        public bool $allowBackorder = false
+        public bool $allowBackorder = false,
+        public bool $isFeatured = false
     ) {}
 }

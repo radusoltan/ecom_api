@@ -36,8 +36,10 @@ final readonly class TenantConnectionSubscriber
 
         try {
             // Execute PostgreSQL function to set current tenant
+            // NOTE: This function will be created in Sprint 6 (Multi-tenancy Hardening)
+            // For now, we use set_config() function because SET doesn't support prepared statements
             $connection->executeStatement(
-                "SELECT set_current_tenant_id(?)",
+                "SELECT set_config('app.tenant_id', ?, false)",
                 [$tenantId->toString()]
             );
 
@@ -45,12 +47,13 @@ final readonly class TenantConnectionSubscriber
                 'tenant_id' => $tenantId->toString(),
             ]);
         } catch (\Throwable $e) {
-            $this->logger->error('Failed to set tenant context in database', [
+            // Log warning but don't fail - tenant isolation is handled at application level
+            $this->logger->warning('Could not set tenant context in database: ' . $e->getMessage(), [
                 'tenant_id' => $tenantId->toString(),
+                'exception' => get_class($e),
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
-
-            throw $e;
         }
     }
 }

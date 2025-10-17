@@ -50,7 +50,8 @@ final readonly class UpdateCategoryHandler
             name: $command->name,
             description: $command->description,
             parentId: $command->parentId,
-            position: $command->position
+            position: $command->position,
+            showOnFront: $command->showOnFront
         );
 
         $this->categoryRepository->save($category);

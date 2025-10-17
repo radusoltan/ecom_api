@@ -55,9 +55,11 @@ final readonly class LocaleResponseListener implements EventSubscriberInterface
         // Get current locale
         $currentLocale = $this->localeNegotiator->getCurrentLocale();
         $supportedLocales = $this->localeNegotiator->getSupportedLocales();
+        $fallbackLocale = $this->localeNegotiator->getFallbackLocale();
 
         // Add locale headers
         $response->headers->set('X-Content-Language', $currentLocale);
+        $response->headers->set('X-Fallback-Language', $fallbackLocale);
         $response->headers->set('X-Supported-Languages', implode(', ', $supportedLocales));
 
         // Standard HTTP Content-Language header

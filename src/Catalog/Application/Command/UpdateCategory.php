@@ -16,6 +16,7 @@ final readonly class UpdateCategory
         public CategoryName $name,
         public ?string $description,
         public ?CategoryId $parentId,
-        public int $position
+        public int $position,
+        public bool $showOnFront
     ) {}
 }

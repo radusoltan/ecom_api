@@ -13,8 +13,10 @@ use App\Pricing\Domain\Model\PriceListName;
 use App\Pricing\Presentation\Api\Resource\PriceListResource;
 use App\Shared\Domain\ValueObject\TenantId;
 use DateTimeImmutable;
-use InvalidArgumentException;
 use RuntimeException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -29,11 +31,11 @@ final readonly class CreatePriceListProcessor implements ProcessorInterface
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): PriceListResource
     {
         if (!$data instanceof PriceListResource) {
-            throw new InvalidArgumentException('Expected PriceListResource');
+            throw new BadRequestHttpException('Expected PriceListResource');
         }
 
         if (!$data->name || !$data->tenantId) {
-            throw new InvalidArgumentException('Name and tenant ID are required');
+            throw new BadRequestHttpException('Name and tenant ID are required');
         }
 
         $priceListId = PriceListId::generate();
@@ -53,7 +55,16 @@ final readonly class CreatePriceListProcessor implements ProcessorInterface
             validTo: $validTo
         );
 
-        $this->commandBus->dispatch($command);
+        try {
+            $this->commandBus->dispatch($command);
+        } catch (HandlerFailedException $exception) {
+            $previous = $exception->getPrevious();
+            if ($previous instanceof HttpExceptionInterface) {
+                throw $previous;
+            }
+
+            throw $exception;
+        }
 
         // Retrieve the created price list
         $envelope = $this->queryBus->dispatch(

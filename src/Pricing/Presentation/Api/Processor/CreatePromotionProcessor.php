@@ -11,8 +11,10 @@ use App\Pricing\Application\Query\GetPromotionById\GetPromotionByIdQuery;
 use App\Pricing\Domain\ValueObject\PromotionId;
 use App\Pricing\Infrastructure\Persistence\Doctrine\Entity\PromotionEntity;
 use App\Shared\Domain\ValueObject\TenantId;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 final readonly class CreatePromotionProcessor implements ProcessorInterface
 {
@@ -49,7 +51,16 @@ final readonly class CreatePromotionProcessor implements ProcessorInterface
             validTo: $data->getValidTo()?->format(\DateTimeInterface::ATOM)
         );
 
-        $this->commandBus->dispatch($command);
+        try {
+            $this->commandBus->dispatch($command);
+        } catch (HandlerFailedException $exception) {
+            $previous = $exception->getPrevious();
+            if ($previous instanceof HttpExceptionInterface) {
+                throw $previous;
+            }
+
+            throw $exception;
+        }
 
         // Retrieve the created promotion
         $envelope = $this->queryBus->dispatch(

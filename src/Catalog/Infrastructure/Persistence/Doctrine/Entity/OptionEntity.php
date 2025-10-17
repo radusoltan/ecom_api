@@ -1,0 +1,134 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Catalog\Infrastructure\Persistence\Doctrine\Entity;
+
+use App\Catalog\Domain\Model\Option;
+use App\Catalog\Domain\Model\OptionId;
+use App\Catalog\Domain\ValueObject\LocalizedString;
+use App\Catalog\Domain\ValueObject\OptionCode;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Doctrine entity for Option
+ */
+#[ORM\Entity]
+#[ORM\Table(name: 'catalog_product_options')]
+#[ORM\UniqueConstraint(name: 'uniq_product_options_product_code', columns: ['configurable_product_id', 'code'])]
+#[ORM\Index(name: 'idx_product_options_position', columns: ['configurable_product_id', 'position'])]
+class OptionEntity
+{
+    #[ORM\Id]
+    #[ORM\Column(type: 'string', length: 36)]
+    private string $id;
+
+    #[ORM\ManyToOne(targetEntity: ConfigurableProductEntity::class, inversedBy: 'options')]
+    #[ORM\JoinColumn(name: 'configurable_product_id', nullable: false, onDelete: 'CASCADE')]
+    private ?ConfigurableProductEntity $configurableProduct = null;
+
+    #[ORM\Column(type: 'string', length: 32)]
+    private string $code;
+
+    #[ORM\Column(type: 'json', name: 'name_translations')]
+    private array $nameTranslations = [];
+
+    #[ORM\Column(type: 'integer')]
+    private int $position = 0;
+
+    /**
+     * @var Collection<int, OptionValueEntity>
+     */
+    #[ORM\OneToMany(mappedBy: 'option', targetEntity: OptionValueEntity::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $values;
+
+    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    private \DateTimeImmutable $createdAt;
+
+    public function __construct()
+    {
+        $this->values = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+    }
+
+    /**
+     * Create entity from domain model
+     */
+    public static function fromDomainModel(Option $option): self
+    {
+        $entity = new self();
+        $entity->id = $option->getId()->toString();
+        $entity->code = $option->getCode()->toString();
+        $entity->nameTranslations = $option->getNameTranslations()->toArray();
+        $entity->position = $option->getPosition();
+
+        // Map values
+        foreach ($option->getValues() as $value) {
+            $valueEntity = OptionValueEntity::fromDomainModel($value);
+            $valueEntity->setOption($entity);
+            $entity->values->add($valueEntity);
+        }
+
+        return $entity;
+    }
+
+    /**
+     * Convert to domain model
+     */
+    public function toDomainModel(): Option
+    {
+        // Reconstitute values first
+        $values = [];
+        foreach ($this->values as $valueEntity) {
+            $values[] = $valueEntity->toDomainModel();
+        }
+
+        return Option::create(
+            OptionId::fromString($this->id),
+            OptionCode::fromString($this->code),
+            LocalizedString::fromArray($this->nameTranslations),
+            $this->position,
+            $values
+        );
+    }
+
+    // Setters for associations
+    public function setConfigurableProduct(?ConfigurableProductEntity $configurableProduct): void
+    {
+        $this->configurableProduct = $configurableProduct;
+    }
+
+    // Getters
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getCode(): string
+    {
+        return $this->code;
+    }
+
+    public function getNameTranslations(): array
+    {
+        return $this->nameTranslations;
+    }
+
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    public function getValues(): Collection
+    {
+        return $this->values;
+    }
+
+    public function getConfigurableProduct(): ?ConfigurableProductEntity
+    {
+        return $this->configurableProduct;
+    }
+}

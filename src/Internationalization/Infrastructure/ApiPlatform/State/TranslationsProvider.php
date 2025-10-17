@@ -35,7 +35,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final readonly class TranslationsProvider implements ProviderInterface
 {
-    private const SUPPORTED_DOMAINS = ['messages', 'validators', 'emails'];
+    private const SUPPORTED_DOMAINS = [
+        'messages',      // General UI strings (buttons, labels, status)
+        'validators',    // Validation error messages
+        'emails',        // Email templates
+        'auth',          // Authentication, login, registration, profile
+        'admin',         // Admin panel specific (dashboard, navigation, tables)
+        'catalog',       // Products, categories, variants, SKUs
+        'inventory',     // Warehouses, stock, transfers, reservations
+        'order',         // Orders, checkout, fulfillment, shipping
+        'customer',      // Customers, addresses, groups, loyalty
+        'pricing',       // Price lists, promotions, discounts, segments
+    ];
     private const DEFAULT_DOMAIN = 'messages';
     private const DEFAULT_LOCALE = 'en';
 

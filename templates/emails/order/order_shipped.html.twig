@@ -1,0 +1,69 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block email_title %}{{ 'emails.order.shipped.title'|trans }}{% endblock %}
+
+{% block header_icon %}📦{% endblock %}
+
+{% block header_title %}{{ 'emails.order.shipped.header'|trans }}{% endblock %}
+
+{% block content %}
+    <p>{{ 'emails.order.shipped.greeting'|trans({'%customer_name%': customerName}) }}</p>
+
+    <p>{{ 'emails.order.shipped.confirmation'|trans }}</p>
+
+    <div class="info-box">
+        <h3>{{ 'emails.order.shipping_details'|trans }}</h3>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.order_id'|trans }}:</span>
+            <span class="info-value"><strong>{{ orderId }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.shipped_date'|trans }}:</span>
+            <span class="info-value">{{ shippedDate|date('d/m/Y H:i') }}</span>
+        </div>
+        {% if carrier is defined %}
+            <div class="info-row">
+                <span class="info-label">{{ 'emails.order.carrier'|trans }}:</span>
+                <span class="info-value">{{ carrier }}</span>
+            </div>
+        {% endif %}
+        {% if trackingNumber is defined %}
+            <div class="info-row">
+                <span class="info-label">{{ 'emails.order.tracking_number'|trans }}:</span>
+                <span class="info-value"><strong>{{ trackingNumber }}</strong></span>
+            </div>
+        {% endif %}
+        {% if estimatedDelivery is defined %}
+            <div class="info-row">
+                <span class="info-label">{{ 'emails.order.estimated_delivery'|trans }}:</span>
+                <span class="info-value">{{ estimatedDelivery|date('d/m/Y') }}</span>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if trackingUrl is defined %}
+        <p style="text-align: center;">
+            <a href="{{ trackingUrl }}" class="button">{{ 'emails.order.track_shipment'|trans }}</a>
+        </p>
+    {% endif %}
+
+    {% if shippingAddress is defined %}
+        <div class="info-box">
+            <h3>{{ 'emails.order.shipping_to'|trans }}</h3>
+            <p>
+                {{ shippingAddress.street }}<br>
+                {{ shippingAddress.city }}, {{ shippingAddress.postalCode }}<br>
+                {{ shippingAddress.country }}
+            </p>
+        </div>
+    {% endif %}
+
+    <p style="text-align: center;">
+        <a href="{{ orderViewUrl }}" class="button">{{ 'emails.order.view_order'|trans }}</a>
+    </p>
+
+    <div class="divider"></div>
+
+    <p>{{ 'emails.order.shipped.delivery_info'|trans }}</p>
+    <p>{{ 'emails.order.shipped.questions'|trans }}</p>
+{% endblock %}

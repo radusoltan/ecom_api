@@ -124,6 +124,7 @@ final readonly class CategoryIndexer
             'parent_id' => $category->parentId()?->toString(),
             'position' => $category->position(),
             'is_active' => $category->isActive(),
+            'show_on_front' => $category->showOnFront(),
             'locale' => $locale->toString(),
             'created_at' => $category->createdAt()->format('c'),
             'updated_at' => $category->updatedAt()->format('c'),

@@ -10,15 +10,18 @@ namespace App\Payment\Domain\ValueObject;
  * Supported payment gateways:
  * - stripe: Stripe payment processing
  * - paypal: PayPal payment processing
+ * - twocheckout: 2Checkout payment processing
  */
 final readonly class PaymentGateway
 {
     private const STRIPE = 'stripe';
     private const PAYPAL = 'paypal';
+    private const TWOCHECKOUT = 'twocheckout';
 
     private const VALID_GATEWAYS = [
         self::STRIPE,
         self::PAYPAL,
+        self::TWOCHECKOUT,
     ];
 
     private function __construct(
@@ -45,6 +48,11 @@ final readonly class PaymentGateway
         return new self(self::PAYPAL);
     }
 
+    public static function twoCheckout(): self
+    {
+        return new self(self::TWOCHECKOUT);
+    }
+
     public static function fromString(string $value): self
     {
         return new self(strtolower($value));
@@ -63,6 +71,11 @@ final readonly class PaymentGateway
     public function isPaypal(): bool
     {
         return $this->value === self::PAYPAL;
+    }
+
+    public function isTwoCheckout(): bool
+    {
+        return $this->value === self::TWOCHECKOUT;
     }
 
     public function equals(self $other): bool

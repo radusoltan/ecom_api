@@ -6,7 +6,10 @@ namespace App\Catalog\Infrastructure\ApiPlatform\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use App\Catalog\Application\Service\SkuGeneratorService;
+use App\Catalog\Domain\Model\CategoryId;
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity;
+use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Uid\Uuid;
@@ -20,6 +23,7 @@ final readonly class CreateProductProcessor implements ProcessorInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private RequestStack $requestStack,
+        private SkuGeneratorService $skuGenerator
     ) {
     }
 
@@ -50,6 +54,21 @@ final readonly class CreateProductProcessor implements ProcessorInterface
 
         // Set tenant ID
         $data->setTenantId($tenantId);
+
+        $tenantIdVo = TenantId::fromString($tenantId);
+        $categoryIdValue = $data->getCategoryId();
+        $categoryIdVo = null;
+
+        if ($categoryIdValue !== null) {
+            try {
+                $categoryIdVo = CategoryId::fromString($categoryIdValue);
+            } catch (\InvalidArgumentException) {
+                $categoryIdVo = null;
+            }
+        }
+
+        $generatedSku = $this->skuGenerator->generate($tenantIdVo, $categoryIdVo);
+        $data->setSku($generatedSku->value());
 
         // Set timestamps
         $now = new \DateTimeImmutable();

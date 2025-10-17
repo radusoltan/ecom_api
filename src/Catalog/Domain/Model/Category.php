@@ -20,6 +20,8 @@ final class Category extends AggregateRoot
         private ?CategoryId $parentId,
         private int $position,
         private bool $active,
+        private bool $showOnFront,
+        private ?string $coverImage,
         private \DateTimeImmutable $createdAt,
         private \DateTimeImmutable $updatedAt
     ) {}
@@ -33,7 +35,9 @@ final class Category extends AggregateRoot
         CategoryName $name,
         ?string $description,
         ?CategoryId $parentId,
-        int $position = 0
+        int $position = 0,
+        bool $showOnFront = false,
+        ?string $coverImage = null
     ): self {
         $category = new self(
             id: $id,
@@ -44,6 +48,8 @@ final class Category extends AggregateRoot
             parentId: $parentId,
             position: $position,
             active: true,
+            showOnFront: $showOnFront,
+            coverImage: $coverImage,
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable()
         );
@@ -65,6 +71,8 @@ final class Category extends AggregateRoot
         ?CategoryId $parentId,
         int $position,
         bool $active,
+        bool $showOnFront,
+        ?string $coverImage,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt
     ): self {
@@ -77,6 +85,8 @@ final class Category extends AggregateRoot
             $parentId,
             $position,
             $active,
+            $showOnFront,
+            $coverImage,
             $createdAt,
             $updatedAt
         );
@@ -86,12 +96,14 @@ final class Category extends AggregateRoot
         CategoryName $name,
         ?string $description,
         ?CategoryId $parentId,
-        int $position
+        int $position,
+        bool $showOnFront
     ): void {
         $this->name = $name;
         $this->description = $description;
         $this->parentId = $parentId;
         $this->position = $position;
+        $this->showOnFront = $showOnFront;
         $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new CategoryUpdated($this->id, $this->tenantId));
@@ -148,6 +160,28 @@ final class Category extends AggregateRoot
     public function isActive(): bool
     {
         return $this->active;
+    }
+
+    public function showOnFront(): bool
+    {
+        return $this->showOnFront;
+    }
+
+    public function coverImage(): ?string
+    {
+        return $this->coverImage;
+    }
+
+    public function assignCoverImage(string $path): void
+    {
+        $this->coverImage = $path;
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function removeCoverImage(): void
+    {
+        $this->coverImage = null;
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function createdAt(): \DateTimeImmutable

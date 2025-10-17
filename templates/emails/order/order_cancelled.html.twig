@@ -1,0 +1,63 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block email_title %}{{ 'emails.order.cancelled.title'|trans }}{% endblock %}
+
+{% block header_icon %}❌{% endblock %}
+
+{% block header_title %}{{ 'emails.order.cancelled.header'|trans }}{% endblock %}
+
+{% block content %}
+    <p>{{ 'emails.order.cancelled.greeting'|trans({'%customer_name%': customerName}) }}</p>
+
+    <p>{{ 'emails.order.cancelled.confirmation'|trans }}</p>
+
+    <div class="info-box">
+        <h3>{{ 'emails.order.cancellation_details'|trans }}</h3>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.order_id'|trans }}:</span>
+            <span class="info-value"><strong>{{ orderId }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.cancelled_date'|trans }}:</span>
+            <span class="info-value">{{ cancelledDate|date('d/m/Y H:i') }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.original_total'|trans }}:</span>
+            <span class="info-value">{{ total }} {{ currency }}</span>
+        </div>
+        {% if cancellationReason is defined and cancellationReason is not empty %}
+            <div class="info-row">
+                <span class="info-label">{{ 'emails.order.reason'|trans }}:</span>
+                <span class="info-value">{{ cancellationReason }}</span>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if refundAmount is defined and refundAmount > 0 %}
+        <div class="info-box" style="border-left-color: #4CAF50;">
+            <h3 style="color: #4CAF50;">{{ 'emails.order.refund_details'|trans }}</h3>
+            <div class="info-row">
+                <span class="info-label">{{ 'emails.order.refund_amount'|trans }}:</span>
+                <span class="info-value"><strong>{{ refundAmount }} {{ currency }}</strong></span>
+            </div>
+            {% if refundMethod is defined %}
+                <div class="info-row">
+                    <span class="info-label">{{ 'emails.order.refund_method'|trans }}:</span>
+                    <span class="info-value">{{ refundMethod }}</span>
+                </div>
+            {% endif %}
+            <p style="margin-top: 10px; font-size: 14px;">
+                {{ 'emails.order.cancelled.refund_time'|trans }}
+            </p>
+        </div>
+    {% endif %}
+
+    <p style="text-align: center;">
+        <a href="{{ orderViewUrl }}" class="button">{{ 'emails.order.view_order'|trans }}</a>
+    </p>
+
+    <div class="divider"></div>
+
+    <p>{{ 'emails.order.cancelled.apology'|trans }}</p>
+    <p>{{ 'emails.order.cancelled.questions'|trans }}</p>
+{% endblock %}

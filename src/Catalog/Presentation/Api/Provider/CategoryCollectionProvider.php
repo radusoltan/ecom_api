@@ -34,17 +34,33 @@ final class CategoryCollectionProvider implements ProviderInterface
             ?? $request?->getPreferredLanguage(['en', 'fr', 'de'])
             ?? 'en';
 
-        // Set the translatable locale
-        $query = $this->entityManager->createQueryBuilder()
+        // Check if we should filter by parent (root/subcategories)
+        $parentFilter = $request?->query->get('parent');
+        $parentId = $request?->query->get('parentId');
+
+        // Build query
+        $queryBuilder = $this->entityManager->createQueryBuilder()
             ->select('c')
             ->from(CategoryEntity::class, 'c')
             ->where('c.tenantId = :tenantId')
             ->andWhere('c.active = :active')
-            ->andWhere('c.parentId IS NULL') // Root categories only
             ->setParameter('tenantId', $tenantId)
             ->setParameter('active', true)
-            ->orderBy('c.position', 'ASC')
-            ->getQuery();
+            ->orderBy('c.position', 'ASC');
+
+        // Filter by parent if specified
+        if ($parentFilter === 'root') {
+            $queryBuilder->andWhere('c.parentId IS NULL');
+        } elseif ($parentFilter === 'sub') {
+            $queryBuilder->andWhere('c.parentId IS NOT NULL');
+        } elseif ($parentId !== null) {
+            // Filter by specific parent ID
+            $queryBuilder->andWhere('c.parentId = :parentId')
+                ->setParameter('parentId', $parentId);
+        }
+        // If no filter, return all categories
+
+        $query = $queryBuilder->getQuery();
 
         // Set translation hint for Gedmo Translatable
         $query->setHint(

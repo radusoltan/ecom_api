@@ -17,6 +17,7 @@ use InvalidArgumentException;
 final readonly class OrderStatus
 {
     public const PENDING = 'pending';
+    public const PAID = 'paid';
     public const PROCESSING = 'processing';
     public const SHIPPED = 'shipped';
     public const DELIVERED = 'delivered';
@@ -24,6 +25,7 @@ final readonly class OrderStatus
 
     private const VALID_STATUSES = [
         self::PENDING,
+        self::PAID,
         self::PROCESSING,
         self::SHIPPED,
         self::DELIVERED,
@@ -31,7 +33,8 @@ final readonly class OrderStatus
     ];
 
     private const VALID_TRANSITIONS = [
-        self::PENDING => [self::PROCESSING, self::CANCELLED],
+        self::PENDING => [self::PAID, self::PROCESSING, self::CANCELLED],
+        self::PAID => [self::PROCESSING, self::CANCELLED],
         self::PROCESSING => [self::SHIPPED, self::CANCELLED],
         self::SHIPPED => [self::DELIVERED],
         self::DELIVERED => [],
@@ -55,6 +58,11 @@ final readonly class OrderStatus
     public static function pending(): self
     {
         return new self(self::PENDING);
+    }
+
+    public static function paid(): self
+    {
+        return new self(self::PAID);
     }
 
     public static function processing(): self
@@ -90,6 +98,11 @@ final readonly class OrderStatus
     public function isPending(): bool
     {
         return $this->value === self::PENDING;
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->value === self::PAID;
     }
 
     public function isProcessing(): bool

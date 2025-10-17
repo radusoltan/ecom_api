@@ -1,10 +1,11 @@
 api_platform:
     title: 'E-Commerce Multi-Tenant API'
     version: '1.0.0'
-    description: 'DDD/CQRS E-Commerce Platform API'
+    description: 'DDD/CQRS E-Commerce Platform API - v1'
     formats:
         jsonld: ['application/ld+json']
         json: ['application/json']
+        multipart: ['multipart/form-data']
     patch_formats:
         json: ['application/merge-patch+json']
     docs_formats:
@@ -14,7 +15,7 @@ api_platform:
     defaults:
         stateless: true
         cache_headers:
-            vary: ['Content-Type', 'Authorization', 'Accept', 'X-Tenant-ID']
+            vary: ['Content-Type', 'Authorization', 'Accept', 'Accept-Language', 'X-Tenant-ID']
             max_age: 60  # Cache for 60 seconds
             shared_max_age: 300  # Shared cache (CDN) for 5 minutes
             public: true  # Allow caching by CDN/proxies for public endpoints

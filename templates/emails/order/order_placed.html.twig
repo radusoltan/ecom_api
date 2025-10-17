@@ -1,0 +1,65 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block email_title %}{{ 'emails.order.placed.title'|trans }}{% endblock %}
+
+{% block header_icon %}✓{% endblock %}
+
+{% block header_title %}{{ 'emails.order.placed.header'|trans }}{% endblock %}
+
+{% block content %}
+    <p>{{ 'emails.order.placed.greeting'|trans({'%customer_name%': customerName}) }}</p>
+
+    <p>{{ 'emails.order.placed.confirmation'|trans }}</p>
+
+    <div class="info-box">
+        <h3>{{ 'emails.order.order_details'|trans }}</h3>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.order_id'|trans }}:</span>
+            <span class="info-value"><strong>{{ orderId }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.order_date'|trans }}:</span>
+            <span class="info-value">{{ orderDate|date('d/m/Y H:i') }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.total'|trans }}:</span>
+            <span class="info-value"><strong>{{ total }} {{ currency }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.status'|trans }}:</span>
+            <span class="info-value">{{ ('emails.order.status.' ~ status)|trans }}</span>
+        </div>
+    </div>
+
+    {% if items is defined and items|length > 0 %}
+        <div class="info-box">
+            <h3>{{ 'emails.order.items'|trans }}</h3>
+            {% for item in items %}
+                <div class="info-row">
+                    <span class="info-label">{{ item.name }}</span>
+                    <span class="info-value">{{ item.quantity }} × {{ item.price }} {{ currency }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if shippingAddress is defined %}
+        <div class="info-box">
+            <h3>{{ 'emails.order.shipping_address'|trans }}</h3>
+            <p>
+                {{ shippingAddress.street }}<br>
+                {{ shippingAddress.city }}, {{ shippingAddress.postalCode }}<br>
+                {{ shippingAddress.country }}
+            </p>
+        </div>
+    {% endif %}
+
+    <p style="text-align: center;">
+        <a href="{{ orderViewUrl }}" class="button">{{ 'emails.order.view_order'|trans }}</a>
+    </p>
+
+    <div class="divider"></div>
+
+    <p>{{ 'emails.order.placed.next_steps'|trans }}</p>
+    <p>{{ 'emails.order.placed.questions'|trans }}</p>
+{% endblock %}

@@ -16,6 +16,7 @@ final readonly class CreateCategory
         public CategoryName $name,
         public ?string $description,
         public ?CategoryId $parentId,
-        public int $position = 0
+        public int $position = 0,
+        public bool $showOnFront = false
     ) {}
 }

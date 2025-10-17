@@ -273,7 +273,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: $this->tenantId,
-            sku: SKU::fromString(sprintf('PRD-%06d', rand(1, 999999))),
+            sku: SKU::fromString(sprintf('GEN-TEN-%06d', rand(1, 999999))),
             name: ProductName::fromString($name),
             description: 'Test product description',
             shortDescription: 'Short desc',

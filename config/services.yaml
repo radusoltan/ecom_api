@@ -27,6 +27,10 @@ services:
     App\Shared\Infrastructure\Tenant\TenantContext:
         shared: true
 
+    # Prometheus CollectorRegistry alias for autowiring
+    Prometheus\CollectorRegistry:
+        alias: prometheus_metrics_bundle.collector_registry
+
     # Translation Service - for multilanguage support
     App\Shared\Application\Service\TranslationService:
         shared: true
@@ -91,6 +95,94 @@ services:
     # Repository interface binding
     App\Tenant\Domain\Repository\TenantRepositoryInterface:
         alias: App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository
+
+    App\Catalog\Domain\Repository\ProductRepositoryInterface:
+        alias: App\Catalog\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductRepository
+
+    App\Catalog\Domain\Repository\CategoryRepositoryInterface:
+        alias: App\Catalog\Infrastructure\Persistence\Doctrine\Repository\DoctrineCategoryRepository
+
+    App\Media\Domain\Repository\ImageRepositoryInterface:
+        alias: App\Media\Infrastructure\Persistence\Doctrine\Repository\DoctrineImageRepository
+
+    App\Media\Domain\Service\ThumbnailPolicy:
+        alias: App\Media\Domain\Service\DefaultThumbnailPolicy
+
+    App\Media\Domain\Service\DefaultThumbnailPolicy: ~
+
+    App\Media\Domain\Service\ImageStorage:
+        alias: App\Media\Infrastructure\Storage\LocalImageStorage
+
+    App\Media\Infrastructure\Storage\LocalImageStorage:
+        arguments:
+            $basePath: '%media.storage.local.base_path%'
+            $publicPrefix: '%media.storage.local.public_prefix%'
+
+    App\Media\Domain\Service\ThumbnailGenerator:
+        alias: App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator
+
+    App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator:
+        arguments:
+            $basePath: '%media.thumbnail.local.base_path%'
+            $publicPrefix: '%media.thumbnail.local.public_prefix%'
+            $originalBasePath: '%media.storage.local.base_path%'
+            $originalPublicPrefix: '%media.storage.local.public_prefix%'
+
+    App\Media\Domain\Service\ImageSecurityPolicy:
+        alias: App\Media\Infrastructure\Security\TenantAwareImageSecurityPolicy
+
+    App\Media\Infrastructure\Security\TenantAwareImageSecurityPolicy:
+        arguments:
+            $tenantContext: '@App\Media\Infrastructure\Security\TenantContextInterface'
+
+    App\Media\Infrastructure\Security\TenantContextInterface:
+        alias: App\Media\Application\Security\HeaderTenantContext
+
+    App\Media\Application\Security\HeaderTenantContext: ~
+
+    App\Media\Infrastructure\MessageHandler\DeleteImageAssetsHandler:
+        arguments:
+            $originalBasePath: '%media.storage.local.base_path%'
+            $originalPublicPrefix: '%media.storage.local.public_prefix%'
+            $thumbnailBasePath: '%media.thumbnail.local.base_path%'
+            $thumbnailPublicPrefix: '%media.thumbnail.local.public_prefix%'
+        tags:
+            - { name: messenger.message_handler }
+
+    App\Media\Infrastructure\MessageHandler\GenerateThumbnailsHandler:
+        tags:
+            - { name: messenger.message_handler }
+
+    App\Media\Presentation\Api\State\ImageUploadProcessor:
+        arguments:
+            $messageBus: '@messenger.default_bus'
+            $asyncThumbnails: '%env(bool:ASYNC_THUMBNAILS)%'
+
+    App\Media\Presentation\Api\State\RegenerateThumbnailsProcessor:
+        arguments:
+            $messageBus: '@messenger.default_bus'
+            $validator: '@validator'
+            $asyncThumbnails: '%env(bool:ASYNC_THUMBNAILS)%'
+
+    App\Shared\Infrastructure\Tenant\TenantRequestSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Catalog\Infrastructure\EventSubscriber\StorefrontCacheSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\Media\Infrastructure\Serializer\MultipartDecoder:
+        tags:
+            - { name: serializer.encoder, format: multipart }
+
+    App\Media\Infrastructure\Serializer\UploadedFileDenormalizer:
+        tags:
+            - { name: serializer.normalizer }
+
+    App\Media\Infrastructure\Serializer\MediaObjectNormalizer:
+        tags:
+            - { name: serializer.normalizer, priority: 64 }
 
     # Order Repository - inject event dispatcher for domain events
     App\Order\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMOrderRepository:
@@ -655,12 +747,22 @@ services:
             $logger: '@logger'
             $sandbox: true
 
+    App\Payment\Infrastructure\Gateway\TwoCheckoutPaymentGateway:
+        arguments:
+            $merchantCode: '%env(TWO_CHECKOUT_MERCHANT_CODE)%'
+            $privateKey: '%env(TWO_CHECKOUT_PRIVATE_KEY)%'
+            $secretKey: '%env(TWO_CHECKOUT_SECRET_KEY)%'
+            $httpClient: '@Symfony\Contracts\HttpClient\HttpClientInterface'
+            $logger: '@logger'
+            $sandbox: true
+
     # Payment Gateway Factory
     App\Payment\Infrastructure\Gateway\PaymentGatewayFactory:
         arguments:
             $gateways:
                 stripe: '@App\Payment\Infrastructure\Gateway\StripePaymentGateway'
                 paypal: '@App\Payment\Infrastructure\Gateway\PayPalPaymentGateway'
+                twocheckout: '@App\Payment\Infrastructure\Gateway\TwoCheckoutPaymentGateway'
 
     # Payment Repository
     App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository:
@@ -784,6 +886,8 @@ services:
 
     App\Payment\Application\EventSubscriber\PaymentCapturedSubscriber:
         arguments:
+            $commandBus: '@command.bus'
+            $eventDispatcher: '@event_dispatcher'
             $mailer: '@mailer.mailer'
             $logger: '@logger'
             $senderEmail: 'payments@ecommerce.local'
@@ -897,3 +1001,19 @@ services:
             $senderName: 'E-Commerce Platform - Returns'
         tags:
             - { name: kernel.event_subscriber }
+
+    # Stripe Payment Controller
+    App\Payment\Presentation\Api\Controller\StripePaymentController:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+        tags:
+            - { name: controller.service_arguments }
+
+    # Review Context - Repository
+    App\Review\Domain\Repository\ProductReviewRepositoryInterface:
+        alias: App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository
+
+    App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $eventBus: '@messenger.default_bus'

@@ -1,3 +1,9 @@
+parameters:
+    media.storage.local.base_path: '%kernel.cache_dir%/media/originals'
+    media.storage.local.public_prefix: '/media/originals'
+    media.thumbnail.local.base_path: '%kernel.cache_dir%/media/thumbnails'
+    media.thumbnail.local.public_prefix: '/media/thumbnails'
+
 services:
     # Override Payment Gateways with Fake implementations for testing
     # This prevents actual API calls to Stripe/PayPal during tests
@@ -19,3 +25,20 @@ services:
         autoconfigure: false
         arguments:
             $logger: '@logger'
+
+    App\Tests\Stub\NullMercureHub:
+        public: false
+        autowire: true
+        autoconfigure: false
+        arguments:
+            $url: '%env(MERCURE_URL)%'
+
+    Symfony\Component\Mercure\HubInterface:
+        alias: App\Tests\Stub\NullMercureHub
+    'Symfony\Component\Mercure\HubInterface $defaultHub':
+        alias: App\Tests\Stub\NullMercureHub
+    'Symfony\Component\Mercure\HubInterface $default':
+        alias: App\Tests\Stub\NullMercureHub
+
+
+    App\Inventory\Infrastructure\EventSubscriber\StockLevelChangeNotificationSubscriber: null

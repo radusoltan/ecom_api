@@ -23,6 +23,9 @@ final readonly class ProductSearchDTO
         public ?string $imageUrl,
         public string $locale,
         public float $score,
+        public float $averageRating = 0.0,
+        public int $reviewCount = 0,
+        public bool $isFeatured = false,
     ) {}
 
     /**
@@ -46,6 +49,9 @@ final readonly class ProductSearchDTO
             imageUrl: $source['image_url'] ?? null,
             locale: $source['locale'],
             score: $hit['_score'] ?? 0.0,
+            averageRating: (float) ($source['average_rating'] ?? 0.0),
+            reviewCount: (int) ($source['review_count'] ?? 0),
+            isFeatured: (bool) ($source['is_featured'] ?? false),
         );
     }
 }

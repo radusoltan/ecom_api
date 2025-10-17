@@ -6,6 +6,9 @@ namespace App\Tests\Unit\Shared\Infrastructure\Elasticsearch;
 
 use App\Shared\Infrastructure\Elasticsearch\ElasticsearchClientFactory;
 use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
+use Elastic\Transport\Exception\NoNodeAvailableException;
 use PHPUnit\Framework\TestCase;
 
 final class ElasticsearchClientFactoryTest extends TestCase
@@ -13,9 +16,10 @@ final class ElasticsearchClientFactoryTest extends TestCase
     public function testCreateReturnsClient(): void
     {
         $client = ElasticsearchClientFactory::create(
-            'localhost:9200',
-            'elastic',
-            'WsAEcDWAbQjb5XGUnpvk'
+            $this->getElasticsearchHost(),
+            $this->getElasticsearchUser(),
+            $this->getElasticsearchPassword(),
+            $this->shouldVerifySsl()
         );
 
         $this->assertInstanceOf(Client::class, $client);
@@ -24,15 +28,59 @@ final class ElasticsearchClientFactoryTest extends TestCase
     public function testClientCanConnectToElasticsearch(): void
     {
         $client = ElasticsearchClientFactory::create(
-            'localhost:9200',
-            'elastic',
-            'WsAEcDWAbQjb5XGUnpvk'
+            $this->getElasticsearchHost(),
+            $this->getElasticsearchUser(),
+            $this->getElasticsearchPassword(),
+            $this->shouldVerifySsl()
         );
 
-        $response = $client->info();
+        try {
+            $response = $client->info();
+        } catch (NoNodeAvailableException | ClientResponseException | ServerResponseException $exception) {
+            self::markTestSkipped(sprintf(
+                'Elasticsearch not reachable at %s: %s',
+                $this->getElasticsearchHost(),
+                $exception->getMessage()
+            ));
+
+            return;
+        }
 
         $this->assertIsArray($response->asArray());
         $this->assertArrayHasKey('version', $response->asArray());
         $this->assertArrayHasKey('cluster_name', $response->asArray());
+    }
+
+    private function getElasticsearchHost(): string
+    {
+        $host = getenv('ELASTICSEARCH_HOST');
+
+        return $host !== false ? $host : 'https://localhost:9200';
+    }
+
+    private function getElasticsearchUser(): string
+    {
+        $user = getenv('ELASTICSEARCH_USER');
+
+        return $user !== false ? $user : 'elastic';
+    }
+
+    private function getElasticsearchPassword(): string
+    {
+        $password = getenv('ELASTICSEARCH_PASSWORD');
+
+        return $password !== false ? $password : 'WsAEcDWAbQjb5XGUnpvk';
+    }
+
+    private function shouldVerifySsl(): bool
+    {
+        $value = getenv('ELASTICSEARCH_VERIFY_SSL');
+        if ($value === false) {
+            return true;
+        }
+
+        $parsed = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+        return $parsed ?? true;
     }
 }

@@ -19,6 +19,7 @@ final readonly class UpdateProduct
         public ?string $description,
         public ?string $shortDescription,
         public Money $price,
-        public ?CategoryId $categoryId
+        public ?CategoryId $categoryId,
+        public bool $isFeatured
     ) {}
 }

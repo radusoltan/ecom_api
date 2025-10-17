@@ -1,0 +1,50 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block email_title %}{{ 'emails.order.paid.title'|trans }}{% endblock %}
+
+{% block header_icon %}💳{% endblock %}
+
+{% block header_title %}{{ 'emails.order.paid.header'|trans }}{% endblock %}
+
+{% block content %}
+    <p>{{ 'emails.order.paid.greeting'|trans({'%customer_name%': customerName}) }}</p>
+
+    <p>{{ 'emails.order.paid.confirmation'|trans }}</p>
+
+    <div class="info-box">
+        <h3>{{ 'emails.order.payment_details'|trans }}</h3>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.order_id'|trans }}:</span>
+            <span class="info-value"><strong>{{ orderId }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.payment_date'|trans }}:</span>
+            <span class="info-value">{{ paymentDate|date('d/m/Y H:i') }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.amount_paid'|trans }}:</span>
+            <span class="info-value"><strong>{{ total }} {{ currency }}</strong></span>
+        </div>
+        {% if paymentMethod is defined %}
+            <div class="info-row">
+                <span class="info-label">{{ 'emails.order.payment_method'|trans }}:</span>
+                <span class="info-value">{{ paymentMethod }}</span>
+            </div>
+        {% endif %}
+        {% if transactionId is defined %}
+            <div class="info-row">
+                <span class="info-label">{{ 'emails.order.transaction_id'|trans }}:</span>
+                <span class="info-value">{{ transactionId }}</span>
+            </div>
+        {% endif %}
+    </div>
+
+    <p style="text-align: center;">
+        <a href="{{ orderViewUrl }}" class="button">{{ 'emails.order.view_order'|trans }}</a>
+    </p>
+
+    <div class="divider"></div>
+
+    <p>{{ 'emails.order.paid.next_steps'|trans }}</p>
+    <p>{{ 'emails.order.paid.processing'|trans }}</p>
+{% endblock %}

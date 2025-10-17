@@ -21,7 +21,7 @@ final class ProductTest extends TestCase
     {
         $productId = ProductId::generate();
         $tenantId = TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab');
-        $sku = SKU::fromString('LAPTOP-001');
+        $sku = SKU::fromString('ELC-TEN-010001');
         $name = ProductName::fromString('Dell XPS 15');
         $description = 'High-performance laptop';
         $shortDescription = 'Premium laptop';
@@ -45,13 +45,14 @@ final class ProductTest extends TestCase
         $this->assertTrue($product->isAvailable());
         $this->assertTrue($product->id()->equals($productId));
         $this->assertTrue($product->tenantId()->equals($tenantId));
-        $this->assertSame('LAPTOP-001', $product->sku()->value());
+        $this->assertSame('ELC-TEN-010001', $product->sku()->value());
         $this->assertSame($description, $product->description());
         $this->assertSame($shortDescription, $product->shortDescription());
         $this->assertSame(199999, $product->price()->getAmount());
         $this->assertSame('USD', $product->price()->getCurrency()->getCurrencyCode());
         $this->assertNull($product->categoryId());
         $this->assertTrue($product->isActive());
+        $this->assertFalse($product->isFeatured());
     }
 
     public function testProductSlugGeneratedFromName(): void
@@ -59,7 +60,7 @@ final class ProductTest extends TestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('TEST-001'),
+            sku: SKU::fromString('ELC-TEN-010002'),
             name: ProductName::fromString('Test Product Name With Spaces'),
             description: null,
             shortDescription: null,
@@ -76,7 +77,7 @@ final class ProductTest extends TestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('OUT-STOCK-001'),
+            sku: SKU::fromString('ELC-TEN-010003'),
             name: ProductName::fromString('Out of Stock Product'),
             description: null,
             shortDescription: null,
@@ -93,7 +94,7 @@ final class ProductTest extends TestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('BACKORDER-001'),
+            sku: SKU::fromString('ELC-TEN-010004'),
             name: ProductName::fromString('Backorder Product'),
             description: null,
             shortDescription: null,
@@ -110,7 +111,7 @@ final class ProductTest extends TestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('NO-TRACK-001'),
+            sku: SKU::fromString('ELC-TEN-010005'),
             name: ProductName::fromString('No Tracking Product'),
             description: null,
             shortDescription: null,
@@ -127,13 +128,14 @@ final class ProductTest extends TestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('UPDATE-001'),
+            sku: SKU::fromString('ELC-TEN-010006'),
             name: ProductName::fromString('Original Name'),
             description: 'Original description',
             shortDescription: 'Original short',
             price: Money::fromScalars(5000, 'USD'),
             categoryId: null,
-            stock: Stock::create(10)
+            stock: Stock::create(10),
+            isFeatured: false
         );
 
         $originalUpdatedAt = $product->updatedAt();
@@ -146,13 +148,15 @@ final class ProductTest extends TestCase
             description: 'Updated description',
             shortDescription: 'Updated short',
             price: Money::fromScalars(6000, 'USD'),
-            categoryId: null
+            categoryId: null,
+            isFeatured: true
         );
 
         $this->assertEquals('Updated Name', $product->name()->value());
         $this->assertSame('Updated description', $product->description());
         $this->assertSame('Updated short', $product->shortDescription());
         $this->assertSame(6000, $product->price()->getAmount());
+        $this->assertTrue($product->isFeatured());
         $this->assertGreaterThan($originalUpdatedAt, $product->updatedAt());
     }
 
@@ -161,7 +165,7 @@ final class ProductTest extends TestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('IMAGE-001'),
+            sku: SKU::fromString('ELC-TEN-010007'),
             name: ProductName::fromString('Product With Images'),
             description: null,
             shortDescription: null,
@@ -185,7 +189,7 @@ final class ProductTest extends TestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('IMAGE-002'),
+            sku: SKU::fromString('ELC-TEN-010008'),
             name: ProductName::fromString('Product With Images'),
             description: null,
             shortDescription: null,
@@ -214,7 +218,7 @@ final class ProductTest extends TestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('DEACTIVATE-001'),
+            sku: SKU::fromString('ELC-TEN-010009'),
             name: ProductName::fromString('Product to Deactivate'),
             description: null,
             shortDescription: null,
@@ -235,7 +239,7 @@ final class ProductTest extends TestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('ACTIVATE-001'),
+            sku: SKU::fromString('ELC-TEN-010010'),
             name: ProductName::fromString('Product to Activate'),
             description: null,
             shortDescription: null,
@@ -256,7 +260,7 @@ final class ProductTest extends TestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('STOCK-001'),
+            sku: SKU::fromString('ELC-TEN-010011'),
             name: ProductName::fromString('Product With Stock'),
             description: null,
             shortDescription: null,
@@ -274,6 +278,24 @@ final class ProductTest extends TestCase
         $this->assertSame(5, $product->stock()->quantity());
     }
 
+    public function testCreateFeaturedProduct(): void
+    {
+        $product = Product::create(
+            id: ProductId::generate(),
+            tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
+            sku: SKU::fromString('ELC-TEN-010013'),
+            name: ProductName::fromString('Featured Product'),
+            description: null,
+            shortDescription: null,
+            price: Money::fromScalars(10000, 'USD'),
+            categoryId: null,
+            stock: Stock::create(5),
+            isFeatured: true
+        );
+
+        $this->assertTrue($product->isFeatured());
+    }
+
     public function testProductWithCategory(): void
     {
         $categoryId = CategoryId::generate();
@@ -281,7 +303,7 @@ final class ProductTest extends TestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab'),
-            sku: SKU::fromString('CATEGORY-001'),
+            sku: SKU::fromString('ELC-TEN-010012'),
             name: ProductName::fromString('Product With Category'),
             description: null,
             shortDescription: null,

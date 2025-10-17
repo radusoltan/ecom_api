@@ -12,12 +12,19 @@ final class ElasticsearchClientFactory
     public static function create(
         string $host,
         string $user,
-        string $password
+        string $password,
+        bool $verifySsl = true
     ): Client {
-        return ClientBuilder::create()
-            ->setHosts([$host])
-            ->setBasicAuthentication($user, $password)
-            ->setRetries(2)
-            ->build();
+        $builder = ClientBuilder::create()
+            ->setHosts([rtrim($host, '/')])
+            ->setRetries(2);
+
+        if ('' !== $user || '' !== $password) {
+            $builder->setBasicAuthentication($user, $password);
+        }
+
+        $builder->setSSLVerification($verifySsl);
+
+        return $builder->build();
     }
 }

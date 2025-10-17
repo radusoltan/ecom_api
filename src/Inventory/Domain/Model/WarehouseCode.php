@@ -64,6 +64,11 @@ final readonly class WarehouseCode implements \Stringable
         return $this->value;
     }
 
+    public function toString(): string
+    {
+        return $this->value;
+    }
+
     public function equals(self $other): bool
     {
         return $this->value === $other->value;

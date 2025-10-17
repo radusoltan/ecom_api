@@ -28,6 +28,7 @@ final class Product extends AggregateRoot
         private Stock $stock,
         private array $images,
         private bool $active,
+        private bool $isFeatured,
         private \DateTimeImmutable $createdAt,
         private \DateTimeImmutable $updatedAt
     ) {}
@@ -41,7 +42,8 @@ final class Product extends AggregateRoot
         ?string $shortDescription,
         Money $price,
         ?CategoryId $categoryId,
-        Stock $stock
+        Stock $stock,
+        bool $isFeatured = false
     ): self {
         $product = new self(
             id: $id,
@@ -56,6 +58,7 @@ final class Product extends AggregateRoot
             stock: $stock,
             images: [],
             active: true,
+            isFeatured: $isFeatured,
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable()
         );
@@ -81,6 +84,7 @@ final class Product extends AggregateRoot
         Stock $stock,
         array $images,
         bool $active,
+        bool $isFeatured,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt
     ): self {
@@ -97,6 +101,7 @@ final class Product extends AggregateRoot
             $stock,
             $images,
             $active,
+            $isFeatured,
             $createdAt,
             $updatedAt
         );
@@ -107,13 +112,15 @@ final class Product extends AggregateRoot
         ?string $description,
         ?string $shortDescription,
         Money $price,
-        ?CategoryId $categoryId
+        ?CategoryId $categoryId,
+        bool $isFeatured
     ): void {
         $this->name = $name;
         $this->description = $description;
         $this->shortDescription = $shortDescription;
         $this->price = $price;
         $this->categoryId = $categoryId;
+        $this->isFeatured = $isFeatured;
         $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new ProductUpdated($this->id, $this->tenantId));
@@ -219,6 +226,11 @@ final class Product extends AggregateRoot
     public function isActive(): bool
     {
         return $this->active;
+    }
+
+    public function isFeatured(): bool
+    {
+        return $this->isFeatured;
     }
 
     public function createdAt(): \DateTimeImmutable

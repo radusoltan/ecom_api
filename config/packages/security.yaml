@@ -47,11 +47,35 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }  # JWT login endpoint
         - { path: ^/api/docs, roles: PUBLIC_ACCESS }  # Allow access to API documentation
-        - { path: ^/api/translations, roles: PUBLIC_ACCESS }  # Allow access to translations
-        - { path: ^/api/categories, roles: PUBLIC_ACCESS }  # Allow public access to categories for storefront
-        - { path: ^/api/product_entities, roles: PUBLIC_ACCESS }  # Allow public access to products for storefront
+        - { path: ^/api/translations, roles: PUBLIC_ACCESS }  # Allow access to translations (UI strings)
+        - { path: ^/api/v1/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/docs, roles: PUBLIC_ACCESS }  # Allow access to API documentation
+        - { path: ^/api/v1/translations, roles: PUBLIC_ACCESS }  # Allow access to translations
+        - { path: ^/api/v1/storefront, roles: PUBLIC_ACCESS }  # Allow public access to storefront endpoints
+        - { path: ^/api/v1/categories, roles: PUBLIC_ACCESS }  # Allow public access to categories for storefront
+        - { path: ^/api/v1/category_entities, roles: PUBLIC_ACCESS }  # Allow public access to category entities for storefront filters
+        - { path: ^/api/v1/product_entities, roles: PUBLIC_ACCESS }  # Allow public access to products for storefront
+        - { path: ^/api/v1/search/products, roles: PUBLIC_ACCESS }  # Allow public access to products for storefront
+        - { path: ^/api/product-options, roles: PUBLIC_ACCESS }  # Allow public access to product options for storefront filters
+        - { path: ^/api/v1/product-options, roles: PUBLIC_ACCESS }  # Allow public access to product options for storefront filters (v1)
         - { path: ^/api/customers, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public customer registration
-        - { path: ^/api/orders, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public place orders
-        - { path: ^/api/orders, roles: PUBLIC_ACCESS, methods: [GET] }  # Allow public place orders
+        - { path: ^/api/v1/customers, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public customer registration (v1)
+        - { path: ^/api/v1/orders, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public place orders
+        - { path: ^/api/v1/orders, roles: PUBLIC_ACCESS, methods: [GET] }  # Allow public get orders (collection and item)
+        - { path: ^/api/orders, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public place orders (no v1)
+        - { path: ^/api/orders, roles: PUBLIC_ACCESS, methods: [GET] }  # Allow public get orders (no v1, collection and item)
+        - { path: ^/api/payments/stripe/create-intent, roles: PUBLIC_ACCESS }  # Allow public payment intent creation
+        - { path: ^/api/payments/stripe/verify-payment, roles: PUBLIC_ACCESS }  # Allow public payment verification
+        - { path: ^/api/payments/stripe/webhook, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks
+        - { path: ^/api/webhooks/stripe, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks (alternative path)
+        - { path: ^/api/payments/paypal, roles: PUBLIC_ACCESS }  # Allow public PayPal payment operations
+        - { path: ^/api/v1/payments/paypal, roles: PUBLIC_ACCESS }  # Allow public PayPal payment operations (v1)
+        - { path: ^/api/payments/2checkout, roles: PUBLIC_ACCESS }  # Allow public 2Checkout payment operations
+        - { path: ^/api/v1/payments/2checkout, roles: PUBLIC_ACCESS }  # Allow public 2Checkout payment operations (v1)
+        - { path: ^/api/v1/payments/stripe/create-intent, roles: PUBLIC_ACCESS }  # Allow public payment intent creation (v1)
+        - { path: ^/api/v1/payments/stripe/verify-payment, roles: PUBLIC_ACCESS }  # Allow public payment verification (v1)
+        - { path: ^/api/v1/payments/stripe/webhook, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks (v1)
+        - { path: ^/api/v1/webhooks/stripe, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks (v1)
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

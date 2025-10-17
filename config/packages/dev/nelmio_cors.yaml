@@ -1,0 +1,17 @@
+# Development CORS Configuration
+nelmio_cors:
+    defaults:
+        origin_regex: true
+        allow_origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3004', 'http://127.0.0.1:3000', 'http://127.0.0.1:3001', 'http://127.0.0.1:3004', 'http://192.168.88.159:3000', 'http://192.168.88.159:3001', 'http://192.168.88.159:3004']
+        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
+        allow_headers: ['Content-Type', 'Authorization', 'Accept', 'Accept-Language', 'X-Tenant-ID']
+        expose_headers: ['Link', 'Content-Language']
+        allow_credentials: true
+        max_age: 3600
+    paths:
+        '^/api':
+            allow_origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3004', 'http://127.0.0.1:3000', 'http://127.0.0.1:3001', 'http://127.0.0.1:3004', 'http://192.168.88.159:3000', 'http://192.168.88.159:3001', 'http://192.168.88.159:3004']
+            allow_headers: ['Content-Type', 'Authorization', 'Accept', 'Accept-Language', 'X-Tenant-ID']
+            allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
+            allow_credentials: true
+            max_age: 3600

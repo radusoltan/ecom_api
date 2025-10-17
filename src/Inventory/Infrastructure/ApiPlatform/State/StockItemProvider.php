@@ -12,6 +12,8 @@ use App\Inventory\Domain\Model\StockItemId;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Inventory\Infrastructure\ApiPlatform\Resource\StockItemResource;
 use App\Shared\Domain\ValueObject\TenantId;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -56,7 +58,13 @@ final class StockItemProvider implements ProviderInterface
 
     private function getStockItem(string $id): ?StockItemResource
     {
-        $stockItem = $this->stockItemRepository->findById(StockItemId::fromString($id));
+        try {
+            $stockItemId = StockItemId::fromString($id);
+        } catch (\InvalidArgumentException $exception) {
+            throw new NotFoundHttpException($exception->getMessage(), $exception);
+        }
+
+        $stockItem = $this->stockItemRepository->findById($stockItemId);
 
         if ($stockItem === null) {
             return null;
@@ -83,8 +91,14 @@ final class StockItemProvider implements ProviderInterface
 
     private function getStockByProduct(string $productId, TenantId $tenantId): array
     {
+        try {
+            $product = ProductId::fromString($productId);
+        } catch (\InvalidArgumentException $exception) {
+            throw new BadRequestHttpException($exception->getMessage(), $exception);
+        }
+
         $query = new GetStockByProductQuery(
-            ProductId::fromString($productId),
+            $product,
             $tenantId
         );
 
@@ -111,8 +125,14 @@ final class StockItemProvider implements ProviderInterface
 
     private function getStockByWarehouse(string $warehouseId, TenantId $tenantId): array
     {
+        try {
+            $warehouse = \App\Inventory\Domain\Model\WarehouseId::fromString($warehouseId);
+        } catch (\InvalidArgumentException $exception) {
+            throw new BadRequestHttpException($exception->getMessage(), $exception);
+        }
+
         $stockItems = $this->stockItemRepository->findByWarehouse(
-            \App\Inventory\Domain\Model\WarehouseId::fromString($warehouseId),
+            $warehouse,
             $tenantId
         );
 
@@ -166,10 +186,14 @@ final class StockItemProvider implements ProviderInterface
     {
         // Tenant ID is injected by TenantContextProvider decorator from X-Tenant-ID header
         if (isset($context['tenant_id'])) {
-            return TenantId::fromString($context['tenant_id']);
+            try {
+                return TenantId::fromString($context['tenant_id']);
+            } catch (\InvalidArgumentException $exception) {
+                throw new BadRequestHttpException($exception->getMessage(), $exception);
+            }
         }
 
         // In production, tenant ID is required for all operations
-        throw new \RuntimeException('Tenant ID not found in context. Ensure X-Tenant-ID header is provided.');
+        throw new BadRequestHttpException('Tenant ID not found in context. Ensure X-Tenant-ID header is provided.');
     }
 }

@@ -1,0 +1,322 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "catalog-overview",
+    "title": "Catalog Overview - E-Commerce Platform",
+    "tags": ["catalog", "ecommerce", "multi-tenant"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": {
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        },
+        "type": "graph",
+        "title": "API Request Rate (requests/sec)",
+        "targets": [
+          {
+            "expr": "rate(ecom_catalog_api_latency_seconds_count{job=\"ecommerce-backend\"}[5m])",
+            "legendFormat": "{{tenant}} - {{route}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "reqps",
+            "label": "Requests/sec"
+          }
+        ],
+        "legend": {
+          "show": true,
+          "alignAsTable": true,
+          "rightSide": false,
+          "values": true,
+          "current": true,
+          "avg": true,
+          "max": true
+        }
+      },
+      {
+        "id": 2,
+        "gridPos": {
+          "x": 12,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        },
+        "type": "graph",
+        "title": "API Latency p50/p95/p99 (seconds)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(ecom_catalog_api_latency_seconds_bucket{job=\"ecommerce-backend\"}[5m]))",
+            "legendFormat": "p50 - {{tenant}} - {{route}}",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(ecom_catalog_api_latency_seconds_bucket{job=\"ecommerce-backend\"}[5m]))",
+            "legendFormat": "p95 - {{tenant}} - {{route}}",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(ecom_catalog_api_latency_seconds_bucket{job=\"ecommerce-backend\"}[5m]))",
+            "legendFormat": "p99 - {{tenant}} - {{route}}",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "s",
+            "label": "Latency"
+          }
+        ],
+        "legend": {
+          "show": true,
+          "alignAsTable": true,
+          "values": true,
+          "current": true,
+          "avg": true,
+          "max": true
+        }
+      },
+      {
+        "id": 3,
+        "gridPos": {
+          "x": 0,
+          "y": 8,
+          "w": 8,
+          "h": 8
+        },
+        "type": "stat",
+        "title": "Products Created (total)",
+        "targets": [
+          {
+            "expr": "sum by(tenant) (ecom_catalog_product_created_total{job=\"ecommerce-backend\"})",
+            "legendFormat": "{{tenant}}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "orientation": "auto",
+          "textMode": "value_and_name",
+          "colorMode": "value",
+          "graphMode": "area"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 4,
+        "gridPos": {
+          "x": 8,
+          "y": 8,
+          "w": 8,
+          "h": 8
+        },
+        "type": "stat",
+        "title": "Categories Created (total)",
+        "targets": [
+          {
+            "expr": "sum by(tenant) (ecom_catalog_category_created_total{job=\"ecommerce-backend\"})",
+            "legendFormat": "{{tenant}}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "orientation": "auto",
+          "textMode": "value_and_name",
+          "colorMode": "value",
+          "graphMode": "area"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 5,
+        "gridPos": {
+          "x": 16,
+          "y": 8,
+          "w": 8,
+          "h": 8
+        },
+        "type": "stat",
+        "title": "Images Uploaded (total)",
+        "targets": [
+          {
+            "expr": "sum by(tenant) (ecom_catalog_image_upload_total{job=\"ecommerce-backend\"})",
+            "legendFormat": "{{tenant}}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          },
+          "orientation": "auto",
+          "textMode": "value_and_name",
+          "colorMode": "value",
+          "graphMode": "area"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 6,
+        "gridPos": {
+          "x": 0,
+          "y": 16,
+          "w": 12,
+          "h": 8
+        },
+        "type": "graph",
+        "title": "Thumbnail Generation Time (seconds)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(ecom_thumbnail_generation_seconds_bucket{job=\"ecommerce-backend\"}[5m]))",
+            "legendFormat": "p50 - {{tenant}}",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(ecom_thumbnail_generation_seconds_bucket{job=\"ecommerce-backend\"}[5m]))",
+            "legendFormat": "p95 - {{tenant}}",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(ecom_thumbnail_generation_seconds_bucket{job=\"ecommerce-backend\"}[5m]))",
+            "legendFormat": "p99 - {{tenant}}",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "s",
+            "label": "Duration"
+          }
+        ],
+        "alert": {
+          "name": "Slow Thumbnail Generation",
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [5],
+                "type": "gt"
+              },
+              "query": {
+                "params": ["C", "5m", "now"]
+              },
+              "reducer": {
+                "params": [],
+                "type": "avg"
+              },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "for": "5m",
+          "frequency": "1m",
+          "message": "Thumbnail generation is taking longer than 5 seconds (p99)",
+          "noDataState": "no_data",
+          "notifications": []
+        }
+      },
+      {
+        "id": 7,
+        "gridPos": {
+          "x": 12,
+          "y": 16,
+          "w": 12,
+          "h": 8
+        },
+        "type": "gauge",
+        "title": "Cache Hit Ratio",
+        "targets": [
+          {
+            "expr": "ecom_catalog_cache_hit_ratio{job=\"ecommerce-backend\"}",
+            "legendFormat": "{{tenant}}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true
+        },
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 1,
+            "unit": "percentunit",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "value": 0,
+                  "color": "red"
+                },
+                {
+                  "value": 0.7,
+                  "color": "yellow"
+                },
+                {
+                  "value": 0.9,
+                  "color": "green"
+                }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "tenant",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(ecom_catalog_product_created_total, tenant)",
+          "multi": true,
+          "includeAll": true,
+          "refresh": 1
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h"]
+    }
+  }
+}

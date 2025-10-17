@@ -123,6 +123,14 @@ final readonly class LocaleNegotiator
     }
 
     /**
+     * Get fallback locale (alias for getDefaultLocale)
+     */
+    public function getFallbackLocale(): string
+    {
+        return self::DEFAULT_LOCALE;
+    }
+
+    /**
      * Get locale information for API responses
      *
      * @return array{current: string, default: string, supported: string[]}

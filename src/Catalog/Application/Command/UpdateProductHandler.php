@@ -33,7 +33,8 @@ final readonly class UpdateProductHandler
             description: $command->description,
             shortDescription: $command->shortDescription,
             price: $command->price,
-            categoryId: $command->categoryId
+            categoryId: $command->categoryId,
+            isFeatured: $command->isFeatured
         );
 
         $this->productRepository->save($product);

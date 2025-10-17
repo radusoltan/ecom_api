@@ -7,6 +7,7 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "artprima/prometheus-metrics-bundle": "*",
         "doctrine/annotations": "^2.0",
         "elasticsearch/elasticsearch": "^9.1",
         "gedmo/doctrine-extensions": "^3.21",
@@ -14,8 +15,10 @@
         "nelmio/cors-bundle": "^2.5",
         "stof/doctrine-extensions-bundle": "^1.14",
         "stripe/stripe-php": "^18.0",
+        "symfony/amqp-messenger": "7.3.*",
         "symfony/asset": "7.3.*",
         "symfony/console": "7.3.*",
+        "symfony/doctrine-messenger": "7.3.*",
         "symfony/dotenv": "7.3.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.3.*",
@@ -151,7 +154,7 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": false,
+            "allow-contrib": true,
             "require": "7.3.*"
         }
     }

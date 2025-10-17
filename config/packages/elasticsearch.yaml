@@ -3,6 +3,7 @@ parameters:
     elasticsearch.host: '%env(ELASTICSEARCH_HOST)%'
     elasticsearch.user: '%env(ELASTICSEARCH_USER)%'
     elasticsearch.password: '%env(ELASTICSEARCH_PASSWORD)%'
+    elasticsearch.verify_ssl: '%env(bool:ELASTICSEARCH_VERIFY_SSL)%'
 
 services:
     # Elasticsearch Client
@@ -12,6 +13,7 @@ services:
             $host: '%elasticsearch.host%'
             $user: '%elasticsearch.user%'
             $password: '%elasticsearch.password%'
+            $verifySsl: '%elasticsearch.verify_ssl%'
 
     # Alias for easier injection
     elasticsearch.client:
@@ -25,6 +27,7 @@ when@test:
                 $host: '%elasticsearch.host%'
                 $user: '%elasticsearch.user%'
                 $password: '%elasticsearch.password%'
+                $verifySsl: '%elasticsearch.verify_ssl%'
             public: true
 
         # Make Elasticsearch services public in test environment for functional tests

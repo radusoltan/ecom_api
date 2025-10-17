@@ -29,4 +29,9 @@ final class TenantContext
     {
         $this->currentTenantId = null;
     }
+
+    public function getTenantId(): ?string
+    {
+        return $this->currentTenantId?->toString();
+    }
 }
