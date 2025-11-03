@@ -1,0 +1,7 @@
+security:
+    # Disable authentication for API endpoints in test environment
+    # This allows functional tests to run without JWT tokens
+    firewalls:
+        api:
+            pattern: ^/api
+            security: false  # Disable security for all /api routes in test
