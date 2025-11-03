@@ -98,7 +98,7 @@ final class PromotionApiTest extends ApiTestCase
     {
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('POST', '/api/promotions', [
+        $response = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -133,7 +133,7 @@ final class PromotionApiTest extends ApiTestCase
     {
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('POST', '/api/promotions', [
+        $response = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -163,7 +163,7 @@ final class PromotionApiTest extends ApiTestCase
     {
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('POST', '/api/promotions', [
+        $response = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -195,7 +195,7 @@ final class PromotionApiTest extends ApiTestCase
         $validFrom = '2025-06-01T00:00:00+00:00';
         $validTo = '2025-08-31T23:59:59+00:00';
 
-        $response = $client->request('POST', '/api/promotions', [
+        $response = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -225,7 +225,7 @@ final class PromotionApiTest extends ApiTestCase
     {
         $client = $this->createAuthenticatedClient();
 
-        $client->request('POST', '/api/promotions', [
+        $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -247,7 +247,7 @@ final class PromotionApiTest extends ApiTestCase
     {
         $client = $this->createAuthenticatedClient();
 
-        $client->request('POST', '/api/promotions', [
+        $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -269,7 +269,7 @@ final class PromotionApiTest extends ApiTestCase
     {
         $client = $this->createAuthenticatedClient();
 
-        $client->request('POST', '/api/promotions', [
+        $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -307,7 +307,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('GET', '/api/promotions/' . $promotion->id()->toString(), [
+        $response = $client->request('GET', '/api/v1/promotions/' . $promotion->id()->toString(), [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
             ],
@@ -328,7 +328,7 @@ final class PromotionApiTest extends ApiTestCase
     {
         $client = $this->createAuthenticatedClient();
 
-        $client->request('GET', '/api/promotions/01HQZXJ9K3M5N6P7Q8R9S0T1U2', [
+        $client->request('GET', '/api/v1/promotions/01HQZXJ9K3M5N6P7Q8R9S0T1U2', [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
             ],
@@ -374,7 +374,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('GET', '/api/promotions', [
+        $response = $client->request('GET', '/api/v1/promotions', [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
             ],
@@ -415,7 +415,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('GET', '/api/promotions', [
+        $response = $client->request('GET', '/api/v1/promotions', [
             'headers' => [
                 'X-Tenant-ID' => $differentTenantId->toString(),
             ],
@@ -448,7 +448,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('PUT', '/api/promotions/' . $promotion->id()->toString(), [
+        $response = $client->request('PUT', '/api/v1/promotions/' . $promotion->id()->toString(), [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -478,7 +478,7 @@ final class PromotionApiTest extends ApiTestCase
     {
         $client = $this->createAuthenticatedClient();
 
-        $client->request('PUT', '/api/promotions/01HQZXJ9K3M5N6P7Q8R9S0T1U2', [
+        $client->request('PUT', '/api/v1/promotions/01HQZXJ9K3M5N6P7Q8R9S0T1U2', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -517,7 +517,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('PATCH', '/api/promotions/' . $promotion->id()->toString() . '/activate', [
+        $response = $client->request('PATCH', '/api/v1/promotions/' . $promotion->id()->toString() . '/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -551,7 +551,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $client->request('PATCH', '/api/promotions/' . $promotion->id()->toString() . '/activate', [
+        $client->request('PATCH', '/api/v1/promotions/' . $promotion->id()->toString() . '/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -584,7 +584,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('PATCH', '/api/promotions/' . $promotion->id()->toString() . '/deactivate', [
+        $response = $client->request('PATCH', '/api/v1/promotions/' . $promotion->id()->toString() . '/deactivate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -616,7 +616,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $client->request('PATCH', '/api/promotions/' . $promotion->id()->toString() . '/deactivate', [
+        $client->request('PATCH', '/api/v1/promotions/' . $promotion->id()->toString() . '/deactivate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -634,7 +634,7 @@ final class PromotionApiTest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
 
         // 1. Create promotion
-        $createResponse = $client->request('POST', '/api/promotions', [
+        $createResponse = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -656,7 +656,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertFalse($createData['active']);
 
         // 2. Get promotion (verify creation)
-        $getResponse = $client->request('GET', '/api/promotions/' . $promotionId, [
+        $getResponse = $client->request('GET', '/api/v1/promotions/' . $promotionId, [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
             ],
@@ -667,7 +667,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertSame('Lifecycle Test Promotion', $getData['name']);
 
         // 3. Activate promotion
-        $activateResponse = $client->request('PATCH', '/api/promotions/' . $promotionId . '/activate', [
+        $activateResponse = $client->request('PATCH', '/api/v1/promotions/' . $promotionId . '/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -681,7 +681,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertTrue($activateData['active']);
 
         // 4. Update promotion
-        $updateResponse = $client->request('PUT', '/api/promotions/' . $promotionId, [
+        $updateResponse = $client->request('PUT', '/api/v1/promotions/' . $promotionId, [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -703,7 +703,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertEquals(30.0, $updateData['discountValue']);
 
         // 5. Deactivate promotion
-        $deactivateResponse = $client->request('PATCH', '/api/promotions/' . $promotionId . '/deactivate', [
+        $deactivateResponse = $client->request('PATCH', '/api/v1/promotions/' . $promotionId . '/deactivate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -717,7 +717,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertFalse($deactivateData['active']);
 
         // 6. Final verification
-        $finalResponse = $client->request('GET', '/api/promotions/' . $promotionId, [
+        $finalResponse = $client->request('GET', '/api/v1/promotions/' . $promotionId, [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
             ],
@@ -737,7 +737,7 @@ final class PromotionApiTest extends ApiTestCase
 
         // Create 3 different promotion types
         // 1. Cart Rule (highest priority in stacking)
-        $cartRuleResponse = $client->request('POST', '/api/promotions', [
+        $cartRuleResponse = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -755,7 +755,7 @@ final class PromotionApiTest extends ApiTestCase
         $cartRuleData = $cartRuleResponse->toArray();
 
         // 2. Catalog Rule
-        $catalogRuleResponse = $client->request('POST', '/api/promotions', [
+        $catalogRuleResponse = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -773,7 +773,7 @@ final class PromotionApiTest extends ApiTestCase
         $catalogRuleData = $catalogRuleResponse->toArray();
 
         // 3. Coupon (lowest priority in stacking)
-        $couponResponse = $client->request('POST', '/api/promotions', [
+        $couponResponse = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -792,7 +792,7 @@ final class PromotionApiTest extends ApiTestCase
         $couponData = $couponResponse->toArray();
 
         // Activate all promotions
-        $client->request('PATCH', '/api/promotions/' . $cartRuleData['id'] . '/activate', [
+        $client->request('PATCH', '/api/v1/promotions/' . $cartRuleData['id'] . '/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -801,7 +801,7 @@ final class PromotionApiTest extends ApiTestCase
         ]);
         $this->assertResponseStatusCodeSame(200);
 
-        $client->request('PATCH', '/api/promotions/' . $catalogRuleData['id'] . '/activate', [
+        $client->request('PATCH', '/api/v1/promotions/' . $catalogRuleData['id'] . '/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -810,7 +810,7 @@ final class PromotionApiTest extends ApiTestCase
         ]);
         $this->assertResponseStatusCodeSame(200);
 
-        $client->request('PATCH', '/api/promotions/' . $couponData['id'] . '/activate', [
+        $client->request('PATCH', '/api/v1/promotions/' . $couponData['id'] . '/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -820,7 +820,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(200);
 
         // Get all promotions and verify all 3 are active
-        $listResponse = $client->request('GET', '/api/promotions', [
+        $listResponse = $client->request('GET', '/api/v1/promotions', [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
             ],
@@ -837,5 +837,229 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertContains('cart_rule', $types);
         $this->assertContains('catalog_rule', $types);
         $this->assertContains('coupon', $types);
+    }
+
+    // ==================== GET /api/promotions/active ====================
+
+    public function testGetActivePromotionsOnly(): void
+    {
+        // Create mixed active/inactive promotions
+        $activePromotion1 = Promotion::create(
+            id: PromotionId::generate(),
+            tenantId: $this->tenantId,
+            name: 'Active Promotion 1',
+            type: PromotionType::cartRule(),
+            discount: Discount::percentage(10.0)
+        );
+        $activePromotion1->activate();
+
+        $activePromotion2 = Promotion::create(
+            id: PromotionId::generate(),
+            tenantId: $this->tenantId,
+            name: 'Active Promotion 2',
+            type: PromotionType::catalogRule(),
+            discount: Discount::percentage(15.0)
+        );
+        $activePromotion2->activate();
+
+        $inactivePromotion = Promotion::create(
+            id: PromotionId::generate(),
+            tenantId: $this->tenantId,
+            name: 'Inactive Promotion',
+            type: PromotionType::coupon(),
+            discount: Discount::percentage(20.0),
+            couponCode: CouponCode::fromString('INACTIVE20')
+        );
+
+        $this->promotionRepository->save($activePromotion1);
+        $this->promotionRepository->save($activePromotion2);
+        $this->promotionRepository->save($inactivePromotion);
+        $this->entityManager->flush();
+
+        $client = $this->createAuthenticatedClient();
+
+        $response = $client->request('GET', '/api/v1/active-promotions', [
+            'headers' => [
+                'X-Tenant-ID' => $this->tenantId->toString(),
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $data = $response->toArray();
+
+        // Controller returns direct array (not Hydra format)
+        $members = is_array($data) && isset($data[0]) ? $data : ($data['member'] ?? $data['hydra:member'] ?? []);
+
+        // Should only return 2 active promotions
+        $this->assertCount(2, $members);
+
+        // Verify all returned promotions are active
+        foreach ($members as $promotion) {
+            $this->assertArrayHasKey('active', $promotion);
+            $this->assertTrue($promotion['active']);
+        }
+
+        // Verify names
+        $names = array_column($members, 'name');
+        $this->assertContains('Active Promotion 1', $names);
+        $this->assertContains('Active Promotion 2', $names);
+        $this->assertNotContains('Inactive Promotion', $names);
+    }
+
+    // ==================== POST /api/promotions/preview ====================
+
+    public function testPreviewPromotionWithoutCoupon(): void
+    {
+        // Create and activate a cart rule promotion
+        $promotion = Promotion::create(
+            id: PromotionId::generate(),
+            tenantId: $this->tenantId,
+            name: 'Preview Test 20% Off',
+            type: PromotionType::cartRule(),
+            discount: Discount::percentage(20.0),
+            priority: 100
+        );
+        $promotion->activate();
+
+        $this->promotionRepository->save($promotion);
+        $this->entityManager->flush();
+
+        $client = $this->createAuthenticatedClient();
+
+        $response = $client->request('POST', '/api/v1/promotions/preview', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'X-Tenant-ID' => $this->tenantId->toString(),
+            ],
+            'json' => [
+                'subtotal' => 10000, // $100.00 in cents
+                'currency' => 'USD',
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $data = $response->toArray();
+
+        $this->assertArrayHasKey('success', $data);
+        $this->assertTrue($data['success']);
+
+        $this->assertArrayHasKey('preview', $data);
+        $preview = $data['preview'];
+
+        $this->assertSame(10000, $preview['originalSubtotal']);
+        $this->assertSame(2000, $preview['totalDiscount']); // 20% of 10000
+        $this->assertSame(8000, $preview['finalPrice']);
+        $this->assertSame('USD', $preview['currency']);
+        $this->assertSame(1, $preview['promotionsCount']);
+        $this->assertEquals(20.0, $preview['savingsPercentage']);
+    }
+
+    public function testPreviewPromotionWithCoupon(): void
+    {
+        // Create and activate a coupon promotion
+        $promotion = Promotion::create(
+            id: PromotionId::generate(),
+            tenantId: $this->tenantId,
+            name: 'Preview Coupon 15% Off',
+            type: PromotionType::coupon(),
+            discount: Discount::percentage(15.0),
+            priority: 100,
+            couponCode: CouponCode::fromString('PREVIEW15')
+        );
+        $promotion->activate();
+
+        $this->promotionRepository->save($promotion);
+        $this->entityManager->flush();
+
+        $client = $this->createAuthenticatedClient();
+
+        $response = $client->request('POST', '/api/v1/promotions/preview', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'X-Tenant-ID' => $this->tenantId->toString(),
+            ],
+            'json' => [
+                'subtotal' => 20000, // $200.00 in cents
+                'currency' => 'USD',
+                'couponCode' => 'PREVIEW15',
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $data = $response->toArray();
+
+        $this->assertTrue($data['success']);
+
+        $preview = $data['preview'];
+
+        $this->assertSame(20000, $preview['originalSubtotal']);
+        $this->assertSame(3000, $preview['totalDiscount']); // 15% of 20000
+        $this->assertSame(17000, $preview['finalPrice']);
+        $this->assertSame(1, $preview['promotionsCount']);
+        $this->assertEquals(15.0, $preview['savingsPercentage']);
+    }
+
+    public function testPreviewPromotionWithNoApplicablePromotions(): void
+    {
+        // Create an inactive promotion
+        $promotion = Promotion::create(
+            id: PromotionId::generate(),
+            tenantId: $this->tenantId,
+            name: 'Inactive Preview Promotion',
+            type: PromotionType::cartRule(),
+            discount: Discount::percentage(10.0)
+        );
+
+        $this->promotionRepository->save($promotion);
+        $this->entityManager->flush();
+
+        $client = $this->createAuthenticatedClient();
+
+        $response = $client->request('POST', '/api/v1/promotions/preview', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'X-Tenant-ID' => $this->tenantId->toString(),
+            ],
+            'json' => [
+                'subtotal' => 10000,
+                'currency' => 'USD',
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $data = $response->toArray();
+
+        $this->assertTrue($data['success']);
+
+        $preview = $data['preview'];
+
+        $this->assertSame(10000, $preview['originalSubtotal']);
+        $this->assertSame(0, $preview['totalDiscount']);
+        $this->assertSame(10000, $preview['finalPrice']);
+        $this->assertSame(0, $preview['promotionsCount']);
+        $this->assertEquals(0.0, $preview['savingsPercentage']);
+        $this->assertStringContainsString('No promotions applicable', $data['message']);
+    }
+
+    public function testPreviewPromotionRequiresSubtotal(): void
+    {
+        $client = $this->createAuthenticatedClient();
+
+        $client->request('POST', '/api/v1/promotions/preview', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'X-Tenant-ID' => $this->tenantId->toString(),
+            ],
+            'json' => [
+                'currency' => 'USD',
+                // Missing subtotal
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(400);
     }
 }

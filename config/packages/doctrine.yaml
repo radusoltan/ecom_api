@@ -44,6 +44,11 @@ doctrine:
             return_status: App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType
             fulfillment_id: App\Order\Infrastructure\Persistence\Doctrine\Type\FulfillmentIdType
             fulfillment_status: App\Order\Infrastructure\Persistence\Doctrine\Type\FulfillmentStatusType
+            consent_id: App\Privacy\Infrastructure\Persistence\Doctrine\Type\ConsentIdType
+            data_subject_request_id: App\Privacy\Infrastructure\Persistence\Doctrine\Type\DataSubjectRequestIdType
+            consent_purpose: App\Privacy\Infrastructure\Persistence\Doctrine\Type\ConsentPurposeType
+            request_type: App\Privacy\Infrastructure\Persistence\Doctrine\Type\RequestTypeType
+            request_status: App\Privacy\Infrastructure\Persistence\Doctrine\Type\RequestStatusType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
@@ -126,6 +131,18 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Returns/Infrastructure/Persistence/Doctrine/Entity'
                 prefix: 'App\Returns\Infrastructure\Persistence\Doctrine\Entity'
                 alias: Returns
+            Cart:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Cart/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Cart\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Cart
+            Privacy:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Privacy/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Privacy\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Privacy
         controller_resolver:
             auto_mapping: false
 

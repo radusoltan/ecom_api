@@ -15,12 +15,14 @@ use App\Customer\Domain\Model\Customer;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Customer\Presentation\Api\Processor\ActivateCustomerProcessor;
+use App\Customer\Presentation\Api\Processor\AwardLoyaltyPointsProcessor;
 use App\Customer\Presentation\Api\Processor\ChangeSegmentProcessor;
 use App\Customer\Presentation\Api\Processor\DeactivateCustomerProcessor;
 use App\Customer\Presentation\Api\Processor\RegisterCustomerProcessor;
 use App\Customer\Presentation\Api\Processor\UpdateCustomerProcessor;
 use App\Customer\Presentation\Api\Provider\CustomerCollectionProvider;
 use App\Customer\Presentation\Api\Provider\CustomerItemProvider;
+use App\Customer\Presentation\Api\Provider\CustomerOrdersProvider;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
 use DateTimeImmutable;
@@ -51,6 +53,14 @@ use Doctrine\ORM\Mapping as ORM;
         new Patch(
             uriTemplate: '/customers/{id}/segment',
             processor: ChangeSegmentProcessor::class
+        ),
+        new Post(
+            uriTemplate: '/customers/{id}/award-points',
+            processor: AwardLoyaltyPointsProcessor::class
+        ),
+        new Get(
+            uriTemplate: '/customers/{id}/orders',
+            provider: CustomerOrdersProvider::class
         ),
         new Delete(),
     ]

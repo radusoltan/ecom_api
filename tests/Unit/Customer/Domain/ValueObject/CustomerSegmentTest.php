@@ -17,7 +17,7 @@ final class CustomerSegmentTest extends TestCase
         self::assertEquals('regular', $segment->toString());
         self::assertTrue($segment->isRegular());
         self::assertFalse($segment->isVip());
-        self::assertFalse($segment->isPremium());
+        self::assertFalse($segment->isWholesale());
     }
 
     public function testVipFactoryMethod(): void
@@ -27,28 +27,28 @@ final class CustomerSegmentTest extends TestCase
         self::assertEquals('vip', $segment->toString());
         self::assertFalse($segment->isRegular());
         self::assertTrue($segment->isVip());
-        self::assertFalse($segment->isPremium());
+        self::assertFalse($segment->isWholesale());
     }
 
-    public function testPremiumFactoryMethod(): void
+    public function testWholesaleFactoryMethod(): void
     {
-        $segment = CustomerSegment::premium();
+        $segment = CustomerSegment::wholesale();
 
-        self::assertEquals('premium', $segment->toString());
+        self::assertEquals('wholesale', $segment->toString());
         self::assertFalse($segment->isRegular());
         self::assertFalse($segment->isVip());
-        self::assertTrue($segment->isPremium());
+        self::assertTrue($segment->isWholesale());
     }
 
     public function testFromStringWithValidSegment(): void
     {
         $regular = CustomerSegment::fromString('regular');
         $vip = CustomerSegment::fromString('vip');
-        $premium = CustomerSegment::fromString('premium');
+        $wholesale = CustomerSegment::fromString('wholesale');
 
         self::assertTrue($regular->isRegular());
         self::assertTrue($vip->isVip());
-        self::assertTrue($premium->isPremium());
+        self::assertTrue($wholesale->isWholesale());
     }
 
     public function testFromStringRejectsInvalidSegment(): void
@@ -88,13 +88,31 @@ final class CustomerSegmentTest extends TestCase
     {
         self::assertEquals('regular', CustomerSegment::regular()->value());
         self::assertEquals('vip', CustomerSegment::vip()->value());
-        self::assertEquals('premium', CustomerSegment::premium()->value());
+        self::assertEquals('wholesale', CustomerSegment::wholesale()->value());
     }
 
     public function testToStringReturnsSegmentString(): void
     {
         self::assertEquals('regular', CustomerSegment::regular()->toString());
         self::assertEquals('vip', CustomerSegment::vip()->toString());
-        self::assertEquals('premium', CustomerSegment::premium()->toString());
+        self::assertEquals('wholesale', CustomerSegment::wholesale()->toString());
+    }
+
+    public function testMagicToStringMethod(): void
+    {
+        self::assertEquals('regular', (string) CustomerSegment::regular());
+        self::assertEquals('vip', (string) CustomerSegment::vip());
+        self::assertEquals('wholesale', (string) CustomerSegment::wholesale());
+    }
+
+    public function testFromStringHandlesCaseInsensitivity(): void
+    {
+        $uppercase = CustomerSegment::fromString('VIP');
+        $mixedCase = CustomerSegment::fromString('Regular');
+        $lowercase = CustomerSegment::fromString('wholesale');
+
+        self::assertTrue($uppercase->isVip());
+        self::assertTrue($mixedCase->isRegular());
+        self::assertTrue($lowercase->isWholesale());
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Order\Application\Command;
 
 use App\Catalog\Domain\Model\ProductId;
+use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 use App\Order\Domain\Model\Order;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderLine;
@@ -24,6 +25,7 @@ final readonly class PlaceOrderCommandHandler
 {
     public function __construct(
         private OrderRepositoryInterface $orderRepository,
+        private ProductRepositoryInterface $productRepository,
         private PromotionApplicationService $promotionService,
         private TaxCalculationService $taxCalculationService,
         private PerformanceProfiler $profiler,
@@ -36,13 +38,33 @@ final readonly class PlaceOrderCommandHandler
         $this->profiler->start('order.place');
 
         try {
+            $tenantId = TenantId::fromString($command->tenantId);
+
+            // Create order lines, fetching prices from Catalog if not provided
             $lines = array_map(
-                fn(array $lineData) => OrderLine::create(
-                    ProductId::fromString($lineData['productId']),
-                    $lineData['productName'],
-                    $lineData['quantity'],
-                    Money::fromScalars($lineData['unitPriceAmount'], $lineData['unitPriceCurrency'])
-                ),
+                function (array $lineData) use ($tenantId) {
+                    $productId = ProductId::fromString($lineData['productId']);
+
+                    // If price is not provided, fetch from Catalog
+                    if (!isset($lineData['unitPriceAmount']) || !isset($lineData['unitPriceCurrency'])) {
+                        $product = $this->productRepository->findById($productId, $tenantId);
+
+                        if ($product === null) {
+                            throw new \RuntimeException(sprintf('Product with ID %s not found', $productId->toString()));
+                        }
+
+                        $unitPrice = $product->price();
+                    } else {
+                        $unitPrice = Money::fromScalars($lineData['unitPriceAmount'], $lineData['unitPriceCurrency']);
+                    }
+
+                    return OrderLine::create(
+                        $productId,
+                        $lineData['productName'],
+                        $lineData['quantity'],
+                        $unitPrice
+                    );
+                },
                 $command->lines
             );
 
@@ -72,7 +94,6 @@ final readonly class PlaceOrderCommandHandler
         $appliedPromotions = [];
         $discountAmount = null;
         $couponCode = $command->couponCode;
-        $tenantId = TenantId::fromString($command->tenantId);
 
         if ($couponCode !== null || !empty($command->promotionContext)) {
             $promotionResult = $this->promotionService->applyPromotions(

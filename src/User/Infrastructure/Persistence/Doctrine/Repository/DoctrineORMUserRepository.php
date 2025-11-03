@@ -44,6 +44,18 @@ final class DoctrineORMUserRepository extends ServiceEntityRepository implements
         $this->getEntityManager()->flush();
     }
 
+    public function delete(User $user): void
+    {
+        $entity = $this->find($user->id()->toString());
+
+        if ($entity === null) {
+            throw new \DomainException(sprintf('User with ID "%s" not found', $user->id()->toString()));
+        }
+
+        $this->getEntityManager()->remove($entity);
+        $this->getEntityManager()->flush();
+    }
+
     public function findById(UserId $id): ?User
     {
         $entity = $this->find($id->toString());

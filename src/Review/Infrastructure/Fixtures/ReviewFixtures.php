@@ -41,7 +41,7 @@ final class ReviewFixtures extends Fixture
 
         // Get all product IDs from database
         $productIds = $manager->getConnection()->executeQuery(
-            'SELECT id FROM products WHERE tenant_id = :tenant_id AND is_active = true ORDER BY created_at DESC LIMIT 100',
+            'SELECT id FROM catalog_products WHERE tenant_id = :tenant_id AND active = true ORDER BY created_at DESC LIMIT 100',
             ['tenant_id' => $tenantId->toString()]
         )->fetchFirstColumn();
 
@@ -85,12 +85,12 @@ final class ReviewFixtures extends Fixture
         echo "\n✓ Created {$reviewCount} product reviews\n";
 
         // Auto-approve all reviews (in real system this would be manual/automated moderation)
-        $manager->getConnection()->executeStatement(
-            "UPDATE product_reviews SET status = 'approved' WHERE tenant_id = :tenant_id",
-            ['tenant_id' => $tenantId->toString()]
-        );
+        // $manager->getConnection()->executeStatement(
+        //     "UPDATE product_reviews SET status = 'approved' WHERE tenant_id = :tenant_id",
+        //     ['tenant_id' => $tenantId->toString()]
+        // );
 
-        echo "✓ Approved all reviews\n";
+        // echo "✓ Approved all reviews\n";
 
         $manager->flush();
     }

@@ -122,7 +122,7 @@ final class CustomerEntityTest extends TestCase
         );
 
         // Modify state
-        $customer->changeSegment(CustomerSegment::premium());
+        $customer->changeSegment(CustomerSegment::wholesale());
         $customer->awardLoyaltyPoints(250, 'Test bonus');
 
         // Convert to entity and back

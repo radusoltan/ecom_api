@@ -36,7 +36,12 @@ final class ProductListingProvider implements ProviderInterface
             return [];
         }
 
+        // Try to get tenant ID from context first, fallback to header
         $tenantId = $this->tenantContext->getTenantId();
+        if (!$tenantId && $request->headers->has('X-Tenant-ID')) {
+            $tenantId = $request->headers->get('X-Tenant-ID');
+        }
+
         if (!$tenantId) {
             return [];
         }
@@ -67,7 +72,9 @@ final class ProductListingProvider implements ProviderInterface
         $qb->select('p')
             ->from('App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity', 'p')
             ->where('p.tenantId = :tenantId')
-            ->setParameter('tenantId', $tenantId);
+            ->andWhere('p.active = :active')
+            ->setParameter('tenantId', $tenantId)
+            ->setParameter('active', true);
 
         // Apply filters
         if (!empty($filters['q'])) {
@@ -76,8 +83,7 @@ final class ProductListingProvider implements ProviderInterface
         }
 
         if (!empty($filters['category'])) {
-            $qb->join('p.categories', 'c')
-                ->andWhere('c.id = :categoryId')
+            $qb->andWhere('p.categoryId = :categoryId')
                 ->setParameter('categoryId', $filters['category']);
         }
 
@@ -122,39 +128,32 @@ final class ProductListingProvider implements ProviderInterface
         $qb->setFirstResult($offset)
             ->setMaxResults($itemsPerPage);
 
-        // Execute query - translations are handled at entity level via setTranslatableLocale
+        // Execute query
         $query = $qb->getQuery();
-        $query->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER, 'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker');
-        $query->setHint(\Gedmo\Translatable\TranslatableListener::HINT_TRANSLATABLE_LOCALE, $locale);
         $productEntities = $query->getResult();
 
         // Map to DTOs
         $products = [];
         foreach ($productEntities as $entity) {
-            $product = $entity->toDomainModel();
-            $products[] = $this->mapToDto($product, $locale);
+            try {
+                $product = $entity->toDomainModel();
+                $products[] = $this->mapToDto($product, $locale);
+            } catch (\Exception $e) {
+                // Skip products that fail conversion
+                error_log('[ProductListingProvider] Failed to convert entity ' . $entity->getId() . ': ' . $e->getMessage());
+                continue;
+            }
         }
-
-        // Build response with pagination metadata
-        $response = [
-            'data' => $products,
-            'meta' => [
-                'total' => $total,
-                'page' => $page,
-                'itemsPerPage' => $itemsPerPage,
-                'totalPages' => (int)ceil($total / $itemsPerPage)
-            ],
-            'facets' => $this->buildFacets($tenantId, $filters) // TODO: Implement facets
-        ];
 
         // Cache the result
         if ($this->cache && isset($item)) {
-            $item->set($response);
+            $item->set($products);
             $item->expiresAfter(self::CACHE_TTL);
             $this->cache->save($item);
         }
 
-        return $response;
+        // Return simple array of products - API Platform will handle collection wrapping
+        return $products;
     }
 
     private function parseFilters($request): array
@@ -199,11 +198,11 @@ final class ProductListingProvider implements ProviderInterface
 
         return new StorefrontProductDto(
             id: $product->id()->toString(),
-            slug: $product->slug() ?? $product->id()->toString(),
+            slug: $product->slug()?->value() ?? $product->id()->toString(),
             name: $product->name()->value(),
             price: [
-                'amount' => $product->price()->amount(),
-                'currency' => $product->price()->currency()
+                'amount' => $product->price()->getAmount(),
+                'currency' => $product->price()->getCurrency()->getCurrencyCode()
             ],
             primaryImage: $primaryImage,
             isFeatured: $product->isFeatured(),

@@ -10,6 +10,7 @@ use App\Pricing\Domain\ValueObject\CouponCode;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use DateTimeImmutable;
+use Psr\Log\LoggerInterface;
 
 /**
  * Promotion Application Service.
@@ -26,7 +27,8 @@ final readonly class PromotionApplicationService
 {
     public function __construct(
         private PromotionRepositoryInterface $promotionRepository,
-        private PromotionStackingService $stackingService
+        private PromotionStackingService $stackingService,
+        private LoggerInterface $logger
     ) {
     }
 

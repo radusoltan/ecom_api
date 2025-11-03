@@ -9,14 +9,31 @@ use Stringable;
 
 final readonly class UserRole implements Stringable
 {
+    // Admin Panel Roles (for backend admin interface)
     public const ROLE_USER = 'ROLE_USER';
     public const ROLE_ADMIN = 'ROLE_ADMIN';
     public const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
+    public const ROLE_MANAGER = 'ROLE_MANAGER';
+    public const ROLE_VIEWER = 'ROLE_VIEWER';
+
+    // Storefront & Business Roles (for customers, tenants, vendors)
+    public const ROLE_CUSTOMER = 'ROLE_CUSTOMER';
+    public const ROLE_TENANT_ADMIN = 'ROLE_TENANT_ADMIN';
+    public const ROLE_TENANT_USER = 'ROLE_TENANT_USER';
+    public const ROLE_VENDOR = 'ROLE_VENDOR';
 
     private const VALID_ROLES = [
+        // Admin Panel Roles
         self::ROLE_USER,
         self::ROLE_ADMIN,
         self::ROLE_SUPER_ADMIN,
+        self::ROLE_MANAGER,
+        self::ROLE_VIEWER,
+        // Storefront & Business Roles
+        self::ROLE_CUSTOMER,
+        self::ROLE_TENANT_ADMIN,
+        self::ROLE_TENANT_USER,
+        self::ROLE_VENDOR,
     ];
 
     private function __construct(
@@ -33,6 +50,7 @@ final readonly class UserRole implements Stringable
         }
     }
 
+    // Admin Panel Role Factories
     public static function user(): self
     {
         return new self(self::ROLE_USER);
@@ -46,6 +64,37 @@ final readonly class UserRole implements Stringable
     public static function superAdmin(): self
     {
         return new self(self::ROLE_SUPER_ADMIN);
+    }
+
+    public static function manager(): self
+    {
+        return new self(self::ROLE_MANAGER);
+    }
+
+    public static function viewer(): self
+    {
+        return new self(self::ROLE_VIEWER);
+    }
+
+    // Storefront & Business Role Factories
+    public static function customer(): self
+    {
+        return new self(self::ROLE_CUSTOMER);
+    }
+
+    public static function tenantAdmin(): self
+    {
+        return new self(self::ROLE_TENANT_ADMIN);
+    }
+
+    public static function tenantUser(): self
+    {
+        return new self(self::ROLE_TENANT_USER);
+    }
+
+    public static function vendor(): self
+    {
+        return new self(self::ROLE_VENDOR);
     }
 
     public static function fromString(string $value): self
@@ -68,6 +117,7 @@ final readonly class UserRole implements Stringable
         return $this->value === $other->value;
     }
 
+    // Admin Panel Role Helpers
     public function isSuperAdmin(): bool
     {
         return $this->value === self::ROLE_SUPER_ADMIN;
@@ -76,5 +126,57 @@ final readonly class UserRole implements Stringable
     public function isAdmin(): bool
     {
         return in_array($this->value, [self::ROLE_ADMIN, self::ROLE_SUPER_ADMIN], true);
+    }
+
+    public function isManager(): bool
+    {
+        return $this->value === self::ROLE_MANAGER;
+    }
+
+    public function isViewer(): bool
+    {
+        return $this->value === self::ROLE_VIEWER;
+    }
+
+    // Storefront & Business Role Helpers
+    public function isCustomer(): bool
+    {
+        return $this->value === self::ROLE_CUSTOMER;
+    }
+
+    public function isTenantAdmin(): bool
+    {
+        return $this->value === self::ROLE_TENANT_ADMIN;
+    }
+
+    public function isTenantUser(): bool
+    {
+        return $this->value === self::ROLE_TENANT_USER;
+    }
+
+    public function isVendor(): bool
+    {
+        return $this->value === self::ROLE_VENDOR;
+    }
+
+    /**
+     * Check if user has administrative privileges (SUPER_ADMIN, ADMIN, MANAGER, TENANT_ADMIN)
+     */
+    public function hasAdminPrivileges(): bool
+    {
+        return in_array($this->value, [
+            self::ROLE_SUPER_ADMIN,
+            self::ROLE_ADMIN,
+            self::ROLE_MANAGER,
+            self::ROLE_TENANT_ADMIN,
+        ], true);
+    }
+
+    /**
+     * Check if user has read-only privileges (VIEWER)
+     */
+    public function isReadOnly(): bool
+    {
+        return $this->value === self::ROLE_VIEWER;
     }
 }

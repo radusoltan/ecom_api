@@ -78,6 +78,24 @@ final readonly class DoctrineORMPaymentRepository implements PaymentRepositoryIn
         );
     }
 
+    public function findByGatewayTransactionId(string $gatewayTransactionId, string $tenantId): ?Payment
+    {
+        $repository = $this->entityManager->getRepository(PaymentEntity::class);
+        $entity = $repository->findOneBy([
+            'gatewayTransactionId' => $gatewayTransactionId,
+            'tenantId' => $tenantId,
+        ]);
+
+        if (!$entity instanceof PaymentEntity) {
+            return null;
+        }
+
+        // Refresh entity from database to avoid stale data from identity map
+        $this->entityManager->refresh($entity);
+
+        return $entity->toDomainModel();
+    }
+
     public function findAll(TenantId $tenantId): array
     {
         $repository = $this->entityManager->getRepository(PaymentEntity::class);

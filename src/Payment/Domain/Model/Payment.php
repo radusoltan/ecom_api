@@ -165,7 +165,9 @@ final class Payment extends AggregateRoot
 
         $this->recordEvent(new PaymentCaptured(
             $this->id,
-            $this->amountInCents
+            $this->tenantId,
+            $this->amountInCents,
+            $this->orderId
         ));
     }
 

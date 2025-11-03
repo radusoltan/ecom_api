@@ -10,20 +10,20 @@ namespace App\Customer\Domain\ValueObject;
  * Represents customer segmentation for targeted marketing and promotions.
  *
  * Business Rules:
- * - regular: Default segment for new customers
- * - vip: High-value customers (lifetime value > $10,000)
- * - premium: Subscription/membership customers
+ * - regular: Default segment for new customers (B2C)
+ * - vip: High-value customers (lifetime value > $10,000 or loyalty points > 1000)
+ * - wholesale: B2B customers (bulk purchases, separate pricing, tax exemptions)
  */
 final readonly class CustomerSegment
 {
     private const REGULAR = 'regular';
     private const VIP = 'vip';
-    private const PREMIUM = 'premium';
+    private const WHOLESALE = 'wholesale';
 
     private const VALID_SEGMENTS = [
         self::REGULAR,
         self::VIP,
-        self::PREMIUM,
+        self::WHOLESALE,
     ];
 
     private function __construct(
@@ -46,9 +46,9 @@ final readonly class CustomerSegment
         return new self(self::VIP);
     }
 
-    public static function premium(): self
+    public static function wholesale(): self
     {
-        return new self(self::PREMIUM);
+        return new self(self::WHOLESALE);
     }
 
     public static function fromString(string $value): self
@@ -76,9 +76,9 @@ final readonly class CustomerSegment
         return $this->value === self::VIP;
     }
 
-    public function isPremium(): bool
+    public function isWholesale(): bool
     {
-        return $this->value === self::PREMIUM;
+        return $this->value === self::WHOLESALE;
     }
 
     public function equals(self $other): bool

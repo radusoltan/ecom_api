@@ -31,6 +31,7 @@ final readonly class UpdateOrderStatusCommandHandler
         }
 
         match ($command->newStatus) {
+            OrderStatus::PAID => $order->markAsPaid(),
             OrderStatus::PROCESSING => $order->startProcessing(),
             OrderStatus::SHIPPED => $order->markAsShipped(),
             OrderStatus::DELIVERED => $order->markAsDelivered(),

@@ -2,7 +2,8 @@ framework:
     cache:
         pools:
             cache.rate_limiter:
-                adapter: cache.adapter.filesystem
+                adapter: cache.adapter.redis
+                provider: 'redis://localhost:6379/3'  # Use DB 3 for rate limiting
 
     rate_limiter:
         # Stock operations rate limiter - per user/IP
@@ -43,3 +44,36 @@ framework:
             policy: 'sliding_window'
             limit: 100
             interval: '1 minute'
+
+        # Public API - unauthenticated requests (per IP)
+        api_public:
+            policy: 'sliding_window'
+            limit: 100
+            interval: '1 minute'
+
+        # Authenticated API - general tenant operations
+        api_authenticated:
+            policy: 'sliding_window'
+            limit: 1000
+            interval: '1 minute'
+
+        # Admin API - administrative operations (per user)
+        api_admin:
+            policy: 'sliding_window'
+            limit: 500
+            interval: '1 minute'
+
+        # Search API - per tenant to prevent search spam
+        api_search:
+            policy: 'sliding_window'
+            limit: 200
+            interval: '1 minute'
+
+        # Checkout API - per session, very restrictive
+        api_checkout:
+            policy: 'token_bucket'
+            limit: 50
+            interval: '1 minute'
+            rate:
+                interval: '1 minute'
+                amount: 50

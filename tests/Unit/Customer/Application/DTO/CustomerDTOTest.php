@@ -87,11 +87,11 @@ final class CustomerDTOTest extends TestCase
             'Customer'
         );
 
-        $customer->changeSegment(CustomerSegment::premium());
+        $customer->changeSegment(CustomerSegment::wholesale());
 
         $dto = CustomerDTO::fromDomain($customer);
 
-        self::assertEquals('premium', $dto->segment);
+        self::assertEquals('wholesale', $dto->segment);
     }
 
     public function testFromDomainWithLoyaltyPoints(): void

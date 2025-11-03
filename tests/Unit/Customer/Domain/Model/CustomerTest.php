@@ -192,7 +192,7 @@ final class CustomerTest extends TestCase
         self::assertInstanceOf(CustomerSegmentChanged::class, $events[0]);
     }
 
-    public function testChangeSegmentFromVipToPremium(): void
+    public function testChangeSegmentFromVipToWholesale(): void
     {
         $customer = Customer::register(
             $this->customerId,
@@ -205,9 +205,9 @@ final class CustomerTest extends TestCase
         $customer->changeSegment(CustomerSegment::vip());
         $customer->popEvents(); // Clear events
 
-        $customer->changeSegment(CustomerSegment::premium());
+        $customer->changeSegment(CustomerSegment::wholesale());
 
-        self::assertTrue($customer->segment()->isPremium());
+        self::assertTrue($customer->segment()->isWholesale());
 
         $events = $customer->popEvents();
         self::assertCount(1, $events);

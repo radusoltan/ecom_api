@@ -2,6 +2,22 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    # Role Hierarchy - defines which roles inherit permissions from others
+    # https://symfony.com/doc/current/security.html#hierarchical-roles
+    role_hierarchy:
+        # Admin Panel Hierarchy
+        ROLE_VIEWER:        ROLE_USER            # Viewer inherits base user privileges
+        ROLE_MANAGER:       ROLE_USER            # Manager inherits base user privileges
+        ROLE_ADMIN:         ROLE_MANAGER         # Admin inherits manager privileges
+        ROLE_SUPER_ADMIN:   ROLE_ADMIN           # Super Admin inherits admin privileges
+
+        # Tenant & Business Hierarchy
+        ROLE_TENANT_USER:   ROLE_USER            # Tenant user inherits base privileges
+        ROLE_TENANT_ADMIN:  ROLE_MANAGER         # Tenant admin similar to manager
+        ROLE_VENDOR:        ROLE_USER            # Vendor inherits base privileges
+        ROLE_CUSTOMER:      ROLE_USER            # Customer inherits base privileges
+
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         app_user_provider:
@@ -68,14 +84,23 @@ security:
         - { path: ^/api/orders, roles: PUBLIC_ACCESS, methods: [GET] }  # Allow public get orders (no v1, collection and item)
         - { path: ^/api/payments/stripe/create-intent, roles: PUBLIC_ACCESS }  # Allow public payment intent creation
         - { path: ^/api/payments/stripe/verify-payment, roles: PUBLIC_ACCESS }  # Allow public payment verification
+        - { path: ^/api/payments/stripe/capture-after-success, roles: PUBLIC_ACCESS }  # Allow public payment capture (dev only)
         - { path: ^/api/payments/stripe/webhook, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks
         - { path: ^/api/webhooks/stripe, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks (alternative path)
+        - { path: ^/api/payments, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public payment creation
+        - { path: ^/api/v1/payments, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public payment creation (v1)
         - { path: ^/api/payments/paypal, roles: PUBLIC_ACCESS }  # Allow public PayPal payment operations
         - { path: ^/api/v1/payments/paypal, roles: PUBLIC_ACCESS }  # Allow public PayPal payment operations (v1)
         - { path: ^/api/payments/2checkout, roles: PUBLIC_ACCESS }  # Allow public 2Checkout payment operations
         - { path: ^/api/v1/payments/2checkout, roles: PUBLIC_ACCESS }  # Allow public 2Checkout payment operations (v1)
         - { path: ^/api/v1/payments/stripe/create-intent, roles: PUBLIC_ACCESS }  # Allow public payment intent creation (v1)
         - { path: ^/api/v1/payments/stripe/verify-payment, roles: PUBLIC_ACCESS }  # Allow public payment verification (v1)
+        - { path: ^/api/v1/payments/stripe/capture-after-success, roles: PUBLIC_ACCESS }  # Allow public payment capture (v1, dev only)
         - { path: ^/api/v1/payments/stripe/webhook, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks (v1)
         - { path: ^/api/v1/webhooks/stripe, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks (v1)
+        - { path: ^/api/v1/dashboard/stats, roles: PUBLIC_ACCESS }  # Allow public access to dashboard stats (dev only)
+        - { path: ^/api/v1/inventory/stats, roles: PUBLIC_ACCESS }  # Allow public access to inventory stats (dev only)
+        - { path: ^/api/stock-items, roles: PUBLIC_ACCESS }  # Allow public access to stock items (dev only)
+        - { path: ^/api/v1/stock-items, roles: PUBLIC_ACCESS }  # Allow public access to stock items v1 (dev only)
+        - { path: ^/api/v1/validate-coupon, roles: PUBLIC_ACCESS }  # Allow public coupon validation for shopping cart
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

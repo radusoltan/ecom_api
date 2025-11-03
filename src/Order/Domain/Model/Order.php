@@ -150,6 +150,11 @@ final class Order extends AggregateRoot
         return $order;
     }
 
+    public function markAsPaid(): void
+    {
+        $this->changeStatus(OrderStatus::paid());
+    }
+
     public function startProcessing(): void
     {
         $this->changeStatus(OrderStatus::processing());
@@ -200,7 +205,7 @@ final class Order extends AggregateRoot
         $this->status = $newStatus;
         $this->updatedAt = new DateTimeImmutable();
 
-        $this->recordEvent(new OrderStatusChanged($this->id, $oldStatus, $newStatus));
+        $this->recordEvent(new OrderStatusChanged($this->id, $this->tenantId, $oldStatus, $newStatus));
     }
 
     public function subtotal(): Money

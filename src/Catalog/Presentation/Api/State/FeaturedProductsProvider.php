@@ -108,11 +108,11 @@ final class FeaturedProductsProvider implements ProviderInterface
 
         return new StorefrontProductDto(
             id: $product->id()->toString(),
-            slug: $product->slug() ?? $product->id()->toString(),
+            slug: $product->slug()?->value() ?? $product->id()->toString(),
             name: $product->name()->value(),
             price: [
-                'amount' => $product->price()->amount(),
-                'currency' => $product->price()->currency()
+                'amount' => $product->price()->getAmount(),
+                'currency' => $product->price()->getCurrency()->getCurrencyCode()
             ],
             primaryImage: $primaryImage,
             isFeatured: $product->isFeatured(),

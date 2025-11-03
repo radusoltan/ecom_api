@@ -35,7 +35,7 @@ final readonly class OrderStatus
     private const VALID_TRANSITIONS = [
         self::PENDING => [self::PAID, self::PROCESSING, self::CANCELLED],
         self::PAID => [self::PROCESSING, self::CANCELLED],
-        self::PROCESSING => [self::SHIPPED, self::CANCELLED],
+        self::PROCESSING => [self::PAID, self::SHIPPED, self::CANCELLED],
         self::SHIPPED => [self::DELIVERED],
         self::DELIVERED => [],
         self::CANCELLED => [],

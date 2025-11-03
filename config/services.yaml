@@ -193,6 +193,19 @@ services:
     App\Order\Domain\Repository\OrderRepositoryInterface:
         alias: App\Order\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMOrderRepository
 
+    # Cart Repository - inject event dispatcher for domain events
+    App\Cart\Infrastructure\Persistence\Doctrine\Repository\DoctrineCartRepository:
+        arguments:
+            $eventDispatcher: '@event_dispatcher'
+
+    # Cart Repository interface binding
+    App\Cart\Domain\Repository\CartRepositoryInterface:
+        alias: App\Cart\Infrastructure\Persistence\Doctrine\Repository\DoctrineCartRepository
+
+    # Cart Application Services
+    App\Cart\Application\Service\CartPriceCalculator: ~
+    App\Cart\Application\Service\StockValidator: ~
+
     # Command Handlers
     App\Tenant\Application\Command\CreateTenantCommandHandler:
         tags:
@@ -267,6 +280,36 @@ services:
             - { name: messenger.message_handler, bus: query.bus }
 
     App\Order\Application\Query\GetAllOrdersQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    # Cart Command Handlers
+    App\Cart\Application\Command\CreateCartHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Cart\Application\Command\AddItemToCartHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Cart\Application\Command\RemoveItemFromCartHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Cart\Application\Command\UpdateCartQuantityHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Cart\Application\Command\ClearCartHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    # Cart Query Handlers
+    App\Cart\Application\Query\GetCartHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Cart\Application\Query\GetCartSummaryHandler:
         tags:
             - { name: messenger.message_handler, bus: query.bus }
 
@@ -483,6 +526,19 @@ services:
             $stockOperationsPerTenantLimiter: '@limiter.stock_operations_per_tenant'
             $stockReservationsLimiter: '@limiter.stock_reservations'
             $bulkOperationsLimiter: '@limiter.bulk_operations'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    # Global API Rate Limiting
+    App\Shared\Infrastructure\Http\EventListener\GlobalApiRateLimitListener:
+        arguments:
+            $apiPublicLimiter: '@limiter.api_public'
+            $apiAuthenticatedLimiter: '@limiter.api_authenticated'
+            $apiAdminLimiter: '@limiter.api_admin'
+            $apiSearchLimiter: '@limiter.api_search'
+            $apiCheckoutLimiter: '@limiter.api_checkout'
+            $tokenStorage: '@security.token_storage'
+            $logger: '@logger'
         tags:
             - { name: kernel.event_subscriber }
 
@@ -944,6 +1000,84 @@ services:
         arguments:
             $taxRuleRepository: '@App\Tax\Domain\Repository\TaxRuleRepositoryInterface'
 
+    # Tax Context - Command Handlers
+    App\Tax\Application\Command\CreateTaxRuleHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Tax\Application\Command\UpdateTaxRuleHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    App\Tax\Application\Command\DeactivateTaxRuleHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    # Tax Context - Query Handlers
+    App\Tax\Application\Query\GetAllTaxRulesHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Tax\Application\Query\GetTaxRuleByIdHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Tax\Application\Query\CalculateTaxHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    # Tax Context - State Providers (inner services)
+    App\Tax\Presentation\Api\Provider\TaxRuleCollectionProvider: ~
+    App\Tax\Presentation\Api\Provider\TaxRuleItemProvider: ~
+    App\Tax\Presentation\Api\Provider\CalculateTaxProvider: ~
+
+    # Tax Context - State Processors (inner services)
+    App\Tax\Presentation\Api\Processor\CreateTaxRuleProcessor: ~
+    App\Tax\Presentation\Api\Processor\UpdateTaxRuleProcessor: ~
+    App\Tax\Presentation\Api\Processor\DeactivateTaxRuleProcessor: ~
+
+    # Decorate Tax providers with TenantContext
+    tenant_context_tax_rule_collection_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Tax\Presentation\Api\Provider\TaxRuleCollectionProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_tax_rule_item_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Tax\Presentation\Api\Provider\TaxRuleItemProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Decorate Tax processors with TenantContext
+    tenant_context_create_tax_rule_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Tax\Presentation\Api\Processor\CreateTaxRuleProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_update_tax_rule_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Tax\Presentation\Api\Processor\UpdateTaxRuleProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_deactivate_tax_rule_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Tax\Presentation\Api\Processor\DeactivateTaxRuleProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
     # Returns Context - Repository
     App\Returns\Domain\Repository\ReturnRequestRepositoryInterface:
         alias: App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository
@@ -1017,3 +1151,23 @@ services:
         arguments:
             $entityManager: '@doctrine.orm.entity_manager'
             $eventBus: '@messenger.default_bus'
+
+    # Search bounded context services
+    App\Search\Domain\Service\SearchServiceInterface:
+        alias: App\Search\Infrastructure\Elasticsearch\ElasticsearchSearchService
+
+    App\Search\Infrastructure\Elasticsearch\QueryBuilder:
+        autowire: true
+
+    App\Search\Infrastructure\Elasticsearch\ElasticsearchSearchService:
+        autowire: true
+        arguments:
+            $logger: '@logger'
+
+    # Internationalization (Translation Management) bounded context services
+    App\Internationalization\Domain\Repository\TranslationEntryRepositoryInterface:
+        alias: App\Internationalization\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslationEntryRepository
+
+    App\Internationalization\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslationEntryRepository:
+        arguments:
+            $connection: '@doctrine.dbal.default_connection'

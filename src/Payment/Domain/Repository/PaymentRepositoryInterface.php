@@ -16,6 +16,8 @@ interface PaymentRepositoryInterface
 
     public function findByOrderId(string $orderId, TenantId $tenantId): array;
 
+    public function findByGatewayTransactionId(string $gatewayTransactionId, string $tenantId): ?Payment;
+
     public function findAll(TenantId $tenantId): array;
 
     public function delete(Payment $payment): void;

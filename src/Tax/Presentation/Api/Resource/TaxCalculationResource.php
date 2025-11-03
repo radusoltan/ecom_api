@@ -7,7 +7,8 @@ namespace App\Tax\Presentation\Api\Resource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
-use App\Tax\Presentation\Api\Provider\CalculateTaxProvider;
+use App\Tax\Presentation\Api\Processor\CalculateTaxProcessor;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Tax Calculation API Resource
@@ -19,39 +20,40 @@ use App\Tax\Presentation\Api\Provider\CalculateTaxProvider;
     operations: [
         new Post(
             uriTemplate: '/tax_calculations',
-            provider: CalculateTaxProvider::class,
-            read: false
+            normalizationContext: ['groups' => ['tax_calculation:read']],
+            denormalizationContext: ['groups' => ['tax_calculation:write']],
+            processor: CalculateTaxProcessor::class
         ),
     ]
 )]
 final class TaxCalculationResource
 {
     // Input fields
-    #[ApiProperty(writable: true, readable: false)]
+    #[Groups(['tax_calculation:write'])]
     public ?int $amountInCents = null;
 
-    #[ApiProperty(writable: true, readable: false)]
+    #[Groups(['tax_calculation:write'])]
     public ?string $countryCode = null;
 
-    #[ApiProperty(writable: true, readable: false)]
+    #[Groups(['tax_calculation:write'])]
     public ?string $regionCode = null;
 
-    #[ApiProperty(writable: true, readable: false)]
+    #[Groups(['tax_calculation:write'])]
     public ?string $tenantId = null;
 
     // Output fields
-    #[ApiProperty(readable: true, writable: false)]
+    #[Groups(['tax_calculation:read'])]
     public ?int $taxAmount = null;
 
-    #[ApiProperty(readable: true, writable: false)]
+    #[Groups(['tax_calculation:read'])]
     public ?float $taxRate = null;
 
-    #[ApiProperty(readable: true, writable: false)]
+    #[Groups(['tax_calculation:read'])]
     public ?string $jurisdiction = null;
 
-    #[ApiProperty(readable: true, writable: false)]
+    #[Groups(['tax_calculation:read'])]
     public ?string $taxRuleId = null;
 
-    #[ApiProperty(readable: true, writable: false)]
+    #[Groups(['tax_calculation:read'])]
     public ?string $taxRuleName = null;
 }
