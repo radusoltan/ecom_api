@@ -103,4 +103,10 @@ security:
         - { path: ^/api/stock-items, roles: PUBLIC_ACCESS }  # Allow public access to stock items (dev only)
         - { path: ^/api/v1/stock-items, roles: PUBLIC_ACCESS }  # Allow public access to stock items v1 (dev only)
         - { path: ^/api/v1/validate-coupon, roles: PUBLIC_ACCESS }  # Allow public coupon validation for shopping cart
+        - { path: ^/api/v1/variant_entities, roles: PUBLIC_ACCESS }  # Allow public access to variants (dev only)
+        - { path: ^/api/variant_entities, roles: PUBLIC_ACCESS }  # Allow public access to variants (dev only - no v1)
+        - { path: ^/api/v1/product-options, roles: PUBLIC_ACCESS }  # Allow public access to product options (dev only)
+        - { path: ^/api/product-options, roles: PUBLIC_ACCESS }  # Allow public access to product options (dev only - no v1)
+        - { path: ^/api/v1/product-option-values, roles: PUBLIC_ACCESS }  # Allow public access to product option values (dev only)
+        - { path: ^/api/product-option-values, roles: PUBLIC_ACCESS }  # Allow public access to product option values (dev only - no v1)
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

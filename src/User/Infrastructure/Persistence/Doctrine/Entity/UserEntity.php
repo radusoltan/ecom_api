@@ -22,6 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: DoctrineORMUserRepository::class)]
 #[ORM\Table(name: 'users')]
 #[ApiResource(
+    shortName: 'User',
     operations: [
         new GetCollection(
             normalizationContext: ['groups' => ['user:read', 'user:list']],

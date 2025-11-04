@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Persistence\Doctrine\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Catalog\Domain\Model\OptionValue;
 use App\Catalog\Domain\Model\OptionValueId;
 use App\Catalog\Domain\ValueObject\LocalizedString;
@@ -17,6 +21,16 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'catalog_product_option_values')]
 #[ORM\UniqueConstraint(name: 'uniq_option_values_option_code', columns: ['option_id', 'code'])]
 #[ORM\Index(name: 'idx_option_values_position', columns: ['option_id', 'position'])]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/product-option-values'
+        ),
+        new Get(
+            uriTemplate: '/product-option-values/{id}'
+        )
+    ]
+)]
 class OptionValueEntity
 {
     #[ORM\Id]
@@ -25,6 +39,7 @@ class OptionValueEntity
 
     #[ORM\ManyToOne(targetEntity: OptionEntity::class, inversedBy: 'values')]
     #[ORM\JoinColumn(name: 'option_id', nullable: false, onDelete: 'CASCADE')]
+    #[ApiProperty(readable: false, writable: false)]
     private ?OptionEntity $option = null;
 
     #[ORM\Column(type: 'string', length: 32)]

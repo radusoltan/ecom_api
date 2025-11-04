@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Customer\Application\Query;
 
+use App\Customer\Domain\Repository\CustomerRepositoryInterface;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -11,6 +12,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetCustomerOrdersQueryHandler
 {
     public function __construct(
+        private CustomerRepositoryInterface $customerRepository,
         private OrderRepositoryInterface $orderRepository
     ) {
     }
@@ -20,18 +22,25 @@ final readonly class GetCustomerOrdersQueryHandler
      */
     public function __invoke(GetCustomerOrdersQuery $query): array
     {
-        $orders = $this->orderRepository->findByCustomerId($query->customerId());
+        // Find customer to get email
+        $customer = $this->customerRepository->findById($query->customerId(), $query->tenantId());
+
+        if ($customer === null) {
+            return [];
+        }
+
+        // Find orders by customer email
+        $orders = $this->orderRepository->findByCustomerEmail(
+            $customer->email()->toString(),
+            $query->tenantId()
+        );
 
         return array_map(
             function ($order) {
                 return [
                     'id' => $order->id()->toString(),
-                    'orderNumber' => $order->orderNumber(),
                     'status' => $order->status()->value(),
-                    'total' => [
-                        'amount' => $order->totalAmount()->getAmount()->toFloat(),
-                        'currency' => $order->totalAmount()->getCurrency()->getCurrencyCode(),
-                    ],
+                    'total' => $order->total()->toArray(),
                     'createdAt' => $order->createdAt()->format('c'),
                 ];
             },

@@ -194,8 +194,19 @@ final class Variant
      */
     public function matchesCombination(array $optionValueMap): bool
     {
-        // Both must have the same keys
-        if (array_keys($this->optionValueMap) !== array_keys($optionValueMap)) {
+        // Both must have the same number of keys
+        if (count($this->optionValueMap) !== count($optionValueMap)) {
+            return false;
+        }
+
+        // Sort keys for comparison (to handle different order)
+        $thisKeys = array_keys($this->optionValueMap);
+        $thatKeys = array_keys($optionValueMap);
+        sort($thisKeys);
+        sort($thatKeys);
+
+        // Both must have the same keys (after sorting)
+        if ($thisKeys !== $thatKeys) {
             return false;
         }
 

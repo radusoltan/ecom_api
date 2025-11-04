@@ -19,11 +19,13 @@ final readonly class CustomerSegment
     private const REGULAR = 'regular';
     private const VIP = 'vip';
     private const WHOLESALE = 'wholesale';
+    private const PREMIUM = 'premium';
 
     private const VALID_SEGMENTS = [
         self::REGULAR,
         self::VIP,
         self::WHOLESALE,
+        self::PREMIUM,
     ];
 
     private function __construct(
@@ -49,6 +51,11 @@ final readonly class CustomerSegment
     public static function wholesale(): self
     {
         return new self(self::WHOLESALE);
+    }
+
+    public static function premium(): self
+    {
+        return new self(self::PREMIUM);
     }
 
     public static function fromString(string $value): self
@@ -79,6 +86,11 @@ final readonly class CustomerSegment
     public function isWholesale(): bool
     {
         return $this->value === self::WHOLESALE;
+    }
+
+    public function isPremium(): bool
+    {
+        return $this->value === self::PREMIUM;
     }
 
     public function equals(self $other): bool

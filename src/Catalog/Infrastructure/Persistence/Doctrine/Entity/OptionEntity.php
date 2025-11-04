@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Persistence\Doctrine\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Catalog\Domain\Model\Option;
 use App\Catalog\Domain\Model\OptionId;
 use App\Catalog\Domain\ValueObject\LocalizedString;
@@ -19,6 +24,19 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'catalog_product_options')]
 #[ORM\UniqueConstraint(name: 'uniq_product_options_product_code', columns: ['configurable_product_id', 'code'])]
 #[ORM\Index(name: 'idx_product_options_position', columns: ['configurable_product_id', 'position'])]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/product-options'
+        ),
+        new Get(
+            uriTemplate: '/product-options/{id}'
+        ),
+        new Post(
+            uriTemplate: '/product-options'
+        )
+    ]
+)]
 class OptionEntity
 {
     #[ORM\Id]
@@ -27,6 +45,7 @@ class OptionEntity
 
     #[ORM\ManyToOne(targetEntity: ConfigurableProductEntity::class, inversedBy: 'options')]
     #[ORM\JoinColumn(name: 'configurable_product_id', nullable: false, onDelete: 'CASCADE')]
+    #[ApiProperty(readable: false, writable: false)]
     private ?ConfigurableProductEntity $configurableProduct = null;
 
     #[ORM\Column(type: 'string', length: 32)]

@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Persistence\Doctrine\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Catalog\Domain\Model\ProductImage;
 use App\Catalog\Domain\Model\Stock;
 use App\Catalog\Domain\Model\Variant;
@@ -20,6 +26,22 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\UniqueConstraint(name: 'uniq_product_variants_sku', columns: ['sku'])]
 #[ORM\Index(name: 'idx_product_variants_product', columns: ['configurable_product_id'])]
 #[ORM\Index(name: 'idx_product_variants_product_active', columns: ['configurable_product_id', 'is_active'])]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Post(
+            processor: \App\Catalog\Infrastructure\ApiPlatform\State\CreateVariantProcessor::class
+        ),
+        new Get(),
+        new Patch(
+            processor: \App\Catalog\Infrastructure\ApiPlatform\State\UpdateVariantProcessor::class
+        ),
+        new Delete(
+            processor: \App\Catalog\Infrastructure\ApiPlatform\State\DeleteVariantProcessor::class
+        )
+    ],
+    provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantCollectionProvider::class
+)]
 class VariantEntity
 {
     #[ORM\Id]
@@ -65,6 +87,12 @@ class VariantEntity
 
     #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
+
+    /**
+     * Temporary field to receive productId in API requests
+     * Not persisted to database
+     */
+    public ?string $productId = null;
 
     public function __construct()
     {
@@ -182,5 +210,36 @@ class VariantEntity
     public function getConfigurableProduct(): ?ConfigurableProductEntity
     {
         return $this->configurableProduct;
+    }
+
+    // Setters for API Platform deserialization
+    public function setSku(string $sku): void
+    {
+        $this->sku = $sku;
+    }
+
+    public function setOptionValueMap(array $optionValueMap): void
+    {
+        $this->optionValueMap = $optionValueMap;
+    }
+
+    public function setPriceAmount(int|string $priceAmount): void
+    {
+        $this->priceAmount = is_string($priceAmount) ? (int) $priceAmount : $priceAmount;
+    }
+
+    public function setPriceCurrency(string $priceCurrency): void
+    {
+        $this->priceCurrency = $priceCurrency;
+    }
+
+    public function setStockOnHand(int $stockOnHand): void
+    {
+        $this->stockOnHand = $stockOnHand;
+    }
+
+    public function setIsActive(bool $isActive): void
+    {
+        $this->isActive = $isActive;
     }
 }

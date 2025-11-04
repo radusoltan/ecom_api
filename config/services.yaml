@@ -789,6 +789,31 @@ services:
             $decorated: '@.inner'
             $requestStack: '@request_stack'
 
+    tenant_context_customer_orders_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Customer\Presentation\Api\Provider\CustomerOrdersProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Returns Context - Tenant decorators
+    tenant_context_return_request_item_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Returns\Presentation\Api\Provider\ReturnRequestItemProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_return_request_collection_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Returns\Presentation\Api\Provider\ReturnRequestCollectionProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
     # Payment Context - Gateway Adapters
     App\Payment\Infrastructure\Gateway\StripePaymentGateway:
         arguments:
