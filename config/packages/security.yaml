@@ -111,4 +111,7 @@ security:
         - { path: ^/api/product-option-values, roles: PUBLIC_ACCESS }  # Allow public access to product option values (dev only - no v1)
         - { path: ^/api/v1/cart, roles: PUBLIC_ACCESS }  # Allow public access to cart for guest users
         - { path: ^/api/cart, roles: PUBLIC_ACCESS }  # Allow public access to cart for guest users (no v1)
+        - { path: ^/api/v1/profile, roles: IS_AUTHENTICATED_FULLY }  # Require authentication for profile endpoints
+        - { path: ^/api/v1/profile/addresses, roles: IS_AUTHENTICATED_FULLY }  # Require authentication for addresses
+        - { path: ^/api/v1/profile/payment-methods, roles: IS_AUTHENTICATED_FULLY }  # Require authentication for payment methods
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

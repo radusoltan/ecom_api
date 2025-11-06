@@ -23,6 +23,7 @@ use App\Customer\Presentation\Api\Processor\UpdateCustomerProcessor;
 use App\Customer\Presentation\Api\Provider\CustomerCollectionProvider;
 use App\Customer\Presentation\Api\Provider\CustomerItemProvider;
 use App\Customer\Presentation\Api\Provider\CustomerOrdersProvider;
+use App\Customer\Presentation\Api\Provider\ProfileProvider;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
 use DateTimeImmutable;
@@ -63,6 +64,11 @@ use Doctrine\ORM\Mapping as ORM;
             provider: CustomerOrdersProvider::class
         ),
         new Delete(),
+        // Profile endpoint (authenticated user's own data)
+        new Get(
+            uriTemplate: '/profile',
+            provider: ProfileProvider::class
+        ),
     ]
 )]
 class CustomerEntity
