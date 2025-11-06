@@ -16,6 +16,8 @@ use App\Catalog\Domain\ValueObject\OptionCode;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * Doctrine entity for Option
@@ -24,23 +26,28 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'catalog_product_options')]
 #[ORM\UniqueConstraint(name: 'uniq_product_options_product_code', columns: ['configurable_product_id', 'code'])]
 #[ORM\Index(name: 'idx_product_options_position', columns: ['configurable_product_id', 'position'])]
-#[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: '/product-options'
-        ),
-        new Get(
-            uriTemplate: '/product-options/{id}'
-        ),
-        new Post(
-            uriTemplate: '/product-options'
-        )
-    ]
-)]
+// Disabled ApiResource to prevent conflicts with ProductOptionsResource
+// #[ApiResource(
+//     operations: [
+//         new GetCollection(
+//             uriTemplate: '/product-options',
+//             normalizationContext: ['groups' => ['option:read'], 'enable_max_depth' => true]
+//         ),
+//         new Get(
+//             uriTemplate: '/product-options/{id}',
+//             normalizationContext: ['groups' => ['option:read'], 'enable_max_depth' => true]
+//         ),
+//         new Post(
+//             uriTemplate: '/product-options'
+//         )
+//     ],
+//     normalizationContext: ['groups' => ['option:read'], 'skip_null_values' => false]
+// )]
 class OptionEntity
 {
     #[ORM\Id]
     #[ORM\Column(type: 'string', length: 36)]
+    #[Groups(['option:read'])]
     private string $id;
 
     #[ORM\ManyToOne(targetEntity: ConfigurableProductEntity::class, inversedBy: 'options')]
@@ -49,12 +56,15 @@ class OptionEntity
     private ?ConfigurableProductEntity $configurableProduct = null;
 
     #[ORM\Column(type: 'string', length: 32)]
+    #[Groups(['option:read'])]
     private string $code;
 
     #[ORM\Column(type: 'json', name: 'name_translations')]
+    #[Groups(['option:read'])]
     private array $nameTranslations = [];
 
     #[ORM\Column(type: 'integer')]
+    #[Groups(['option:read'])]
     private int $position = 0;
 
     /**
@@ -62,6 +72,9 @@ class OptionEntity
      */
     #[ORM\OneToMany(mappedBy: 'option', targetEntity: OptionValueEntity::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ApiProperty(readableLink: false)]
+    #[Groups(['option:read'])]
+    #[MaxDepth(1)]
     private Collection $values;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]

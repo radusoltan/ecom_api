@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\ApiPlatform\Resource;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Catalog\Infrastructure\ApiPlatform\State\ProductOptionsProvider;
@@ -72,6 +73,7 @@ final readonly class ProductOptionsResource
         public string $code,
         public string $name,
         public array $nameTranslations,
+        #[ApiProperty(readableLink: false)]
         public array $values,
     ) {}
 }

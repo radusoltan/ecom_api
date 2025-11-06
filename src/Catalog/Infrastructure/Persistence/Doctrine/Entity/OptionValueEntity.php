@@ -13,6 +13,7 @@ use App\Catalog\Domain\Model\OptionValueId;
 use App\Catalog\Domain\ValueObject\LocalizedString;
 use App\Catalog\Domain\ValueObject\OptionValueCode;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Doctrine entity for OptionValue
@@ -35,6 +36,7 @@ class OptionValueEntity
 {
     #[ORM\Id]
     #[ORM\Column(type: 'string', length: 36)]
+    #[Groups(['option:read'])]
     private string $id;
 
     #[ORM\ManyToOne(targetEntity: OptionEntity::class, inversedBy: 'values')]
@@ -43,12 +45,15 @@ class OptionValueEntity
     private ?OptionEntity $option = null;
 
     #[ORM\Column(type: 'string', length: 32)]
+    #[Groups(['option:read'])]
     private string $code;
 
     #[ORM\Column(type: 'json', name: 'name_translations')]
+    #[Groups(['option:read'])]
     private array $nameTranslations = [];
 
     #[ORM\Column(type: 'integer')]
+    #[Groups(['option:read'])]
     private int $position = 0;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
