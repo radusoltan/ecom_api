@@ -144,14 +144,20 @@ class StripePaymentController extends AbstractController
             if ($paymentIntent->status === 'succeeded') {
                 // Payment already succeeded in Stripe
                 // For test mode with automatic_payment_methods, Stripe captures automatically
-                // Just mark as captured in our system if not already captured
-                if ($payment->status()->value() !== 'captured') {
-                    // Directly mark payment as captured (skip gateway capture call)
+
+                // Step 1: Authorize payment if not already authorized
+                if ($payment->status()->value() === 'pending') {
+                    $payment->authorize($paymentIntent->id);
+                    $this->paymentRepository->save($payment);
+                }
+
+                // Step 2: Capture payment if not already captured
+                if ($payment->status()->value() === 'authorized') {
                     $payment->capture();
                     $this->paymentRepository->save($payment);
                 }
 
-                // Update order status to paid
+                // Step 3: Update order status to paid
                 $this->commandBus->dispatch(new UpdateOrderStatusCommand(
                     $payment->orderId(),
                     $tenantId,
@@ -161,7 +167,7 @@ class StripePaymentController extends AbstractController
                 return new JsonResponse([
                     'success' => true,
                     'status' => $paymentIntent->status,
-                    'message' => 'Payment captured and order updated successfully',
+                    'message' => 'Payment authorized, captured and order updated successfully',
                 ]);
             }
 

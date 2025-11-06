@@ -109,4 +109,6 @@ security:
         - { path: ^/api/product-options, roles: PUBLIC_ACCESS }  # Allow public access to product options (dev only - no v1)
         - { path: ^/api/v1/product-option-values, roles: PUBLIC_ACCESS }  # Allow public access to product option values (dev only)
         - { path: ^/api/product-option-values, roles: PUBLIC_ACCESS }  # Allow public access to product option values (dev only - no v1)
+        - { path: ^/api/v1/cart, roles: PUBLIC_ACCESS }  # Allow public access to cart for guest users
+        - { path: ^/api/cart, roles: PUBLIC_ACCESS }  # Allow public access to cart for guest users (no v1)
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

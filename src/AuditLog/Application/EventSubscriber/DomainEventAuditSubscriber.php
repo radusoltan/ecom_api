@@ -100,9 +100,9 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
             resourceType: 'order',
             resourceId: $event->orderId->toString(),
             metadata: [
-                'customerId' => $event->customerId->toString(),
-                'totalInCents' => $event->totalInCents,
-                'currency' => $event->currency,
+                'customerEmail' => $event->customerEmail,
+                'totalAmount' => $event->total->getAmount(),
+                'currency' => $event->total->getCurrency()->getCurrencyCode(),
                 'event' => 'OrderPlaced',
             ]
         );
@@ -161,7 +161,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
             resourceType: 'payment',
             resourceId: $event->paymentId->toString(),
             metadata: [
-                'orderId' => $event->orderId->toString(),
+                'orderId' => $event->orderId,
                 'amountInCents' => $event->amountInCents,
                 'currency' => $event->currency,
                 'gateway' => $event->gateway,
@@ -178,9 +178,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
             resourceType: 'payment',
             resourceId: $event->paymentId->toString(),
             metadata: [
-                'orderId' => $event->orderId->toString(),
-                'authorizedAmountInCents' => $event->authorizedAmountInCents,
-                'transactionId' => $event->transactionId,
+                'gatewayTransactionId' => $event->gatewayTransactionId,
                 'event' => 'PaymentAuthorized',
             ]
         );
@@ -194,9 +192,8 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
             resourceType: 'payment',
             resourceId: $event->paymentId->toString(),
             metadata: [
-                'orderId' => $event->orderId->toString(),
+                'orderId' => $event->orderId,
                 'capturedAmountInCents' => $event->capturedAmountInCents,
-                'transactionId' => $event->transactionId,
                 'event' => 'PaymentCaptured',
             ]
         );

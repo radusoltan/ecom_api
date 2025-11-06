@@ -69,6 +69,16 @@ final readonly class OrderPlacedCartClearingSubscriber implements EventSubscribe
      */
     public function onOrderPlaced(OrderPlaced $event): void
     {
+        // TODO: Re-enable after implementing guest cart support
+        // For now, skip cart clearing for orders placed without authentication
+        // Guest users don't have persisted carts in database yet
+        $this->logger->info('OrderPlaced event received, cart clearing skipped (guest checkout)', [
+            'order_id' => $event->orderId->toString(),
+            'tenant_id' => $event->tenantId->toString(),
+            'customer_email' => $event->customerEmail,
+        ]);
+        return;
+
         try {
             $this->logger->info('OrderPlaced event received, attempting to clear cart', [
                 'order_id' => $event->orderId->toString(),

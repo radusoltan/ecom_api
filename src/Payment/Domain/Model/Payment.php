@@ -148,6 +148,7 @@ final class Payment extends AggregateRoot
 
         $this->recordEvent(new PaymentAuthorized(
             $this->id,
+            $this->tenantId,
             $gatewayTransactionId
         ));
     }

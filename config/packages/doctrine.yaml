@@ -143,6 +143,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Privacy/Infrastructure/Persistence/Doctrine/Entity'
                 prefix: 'App\Privacy\Infrastructure\Persistence\Doctrine\Entity'
                 alias: Privacy
+            Wishlist:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Wishlist/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Wishlist\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Wishlist
         controller_resolver:
             auto_mapping: false
 

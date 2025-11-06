@@ -51,8 +51,8 @@ class OrderEntity
     #[ORM\Column(type: 'json', nullable: true, name: 'applied_promotions')]
     private ?array $appliedPromotions = null;
 
-    #[ORM\Column(type: 'float', nullable: true, name: 'discount_amount')]
-    private ?float $discountAmount = null;
+    #[ORM\Column(type: 'integer', nullable: true, name: 'discount_amount')]
+    private ?int $discountAmount = null;
 
     #[ORM\Column(type: 'string', length: 3, nullable: true, name: 'discount_currency')]
     private ?string $discountCurrency = null;
@@ -60,8 +60,8 @@ class OrderEntity
     #[ORM\Column(type: 'string', length: 20, nullable: true, name: 'coupon_code')]
     private ?string $couponCode = null;
 
-    #[ORM\Column(type: 'float', nullable: true, name: 'tax_amount')]
-    private ?float $taxAmount = null;
+    #[ORM\Column(type: 'integer', nullable: true, name: 'tax_amount')]
+    private ?int $taxAmount = null;
 
     #[ORM\Column(type: 'string', length: 3, nullable: true, name: 'tax_currency')]
     private ?string $taxCurrency = null;
