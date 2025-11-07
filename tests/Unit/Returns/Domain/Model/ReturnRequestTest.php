@@ -510,4 +510,206 @@ final class ReturnRequestTest extends TestCase
         $returnRequest->inspect(isResellable: true, inspectionNotes: 'Good condition');
         return $returnRequest;
     }
+
+    // Additional Edge Case Tests (Week 5, Day 11)
+
+    public function testCompleteWithZeroRefundAmountIsAllowed(): void
+    {
+        // Note: Zero refund is technically allowed by domain model
+        // as isNegative() returns false for zero
+        $returnRequest = $this->createInspectedReturn();
+
+        $returnRequest->complete(Money::fromScalars(0, 'USD'));
+
+        $this->assertTrue($returnRequest->status()->isCompleted());
+        $this->assertEquals(0, $returnRequest->refundAmount()->getAmount());
+    }
+
+    public function testCompleteWithDifferentCurrencies(): void
+    {
+        $returnRequest = $this->createInspectedReturn();
+
+        $refundAmount = Money::fromScalars(10000, 'EUR');
+        $returnRequest->complete($refundAmount);
+
+        $this->assertTrue($returnRequest->status()->isCompleted());
+        $this->assertEquals($refundAmount, $returnRequest->refundAmount());
+        $this->assertEquals('EUR', $returnRequest->refundAmount()->getCurrency()->getCurrencyCode());
+    }
+
+    public function testCompleteWithMaximumRefundAmount(): void
+    {
+        $returnRequest = $this->createInspectedReturn();
+
+        // Test with a very large amount (e.g., $100,000)
+        $refundAmount = Money::fromScalars(10000000, 'USD');
+        $returnRequest->complete($refundAmount);
+
+        $this->assertTrue($returnRequest->status()->isCompleted());
+        $this->assertEquals(10000000, $returnRequest->refundAmount()->getAmount());
+    }
+
+    public function testCompleteWithMinimumValidRefundAmount(): void
+    {
+        $returnRequest = $this->createInspectedReturn();
+
+        // Test with minimum valid amount (1 cent)
+        $refundAmount = Money::fromScalars(1, 'USD');
+        $returnRequest->complete($refundAmount);
+
+        $this->assertTrue($returnRequest->status()->isCompleted());
+        $this->assertEquals(1, $returnRequest->refundAmount()->getAmount());
+    }
+
+    public function testMarkAsReceivedWithDifferentWarehouseCodes(): void
+    {
+        $returnRequest = $this->createApprovedReturn();
+
+        $returnRequest->markAsReceived('WH-CENTRAL-001');
+
+        $this->assertTrue($returnRequest->status()->isReceived());
+        $this->assertEquals('WH-CENTRAL-001', $returnRequest->warehouseId());
+    }
+
+    public function testMarkAsReceivedWithVeryLongWarehouseId(): void
+    {
+        $returnRequest = $this->createApprovedReturn();
+
+        $longWarehouseId = 'WH-' . str_repeat('A', 100);
+        $returnRequest->markAsReceived($longWarehouseId);
+
+        $this->assertEquals($longWarehouseId, $returnRequest->warehouseId());
+    }
+
+    public function testInspectWithVeryLongInspectionNotes(): void
+    {
+        $returnRequest = $this->createReceivedReturn();
+
+        $longNotes = str_repeat('Item has minor scratches on the surface. ', 50); // ~2000 chars
+        $returnRequest->inspect(isResellable: false, inspectionNotes: $longNotes);
+
+        $this->assertEquals($longNotes, $returnRequest->inspectionNotes());
+    }
+
+    public function testInspectWithSpecialCharactersInNotes(): void
+    {
+        $returnRequest = $this->createReceivedReturn();
+
+        $notes = 'Item has defects: <tag>, "quotes", & special chars @ #, 日本語, émoji 😀';
+        $returnRequest->inspect(isResellable: false, inspectionNotes: $notes);
+
+        $this->assertEquals($notes, $returnRequest->inspectionNotes());
+    }
+
+    public function testRejectWithVeryLongRejectionReason(): void
+    {
+        $returnRequest = $this->createRequestedReturn();
+
+        $longReason = str_repeat('This return request violates our return policy. ', 20);
+        $returnRequest->reject($longReason);
+
+        $this->assertEquals($longReason, $returnRequest->rejectionReason());
+    }
+
+    public function testMultipleWarehouseReceiptScenario(): void
+    {
+        $returnRequest1 = $this->createApprovedReturn();
+        $returnRequest1->markAsReceived('WH001');
+
+        $returnRequest2 = ReturnRequest::create(
+            id: ReturnRequestId::generate(),
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            reason: ReturnReason::fromString('Different item for same order')
+        );
+        $returnRequest2->approve();
+        $returnRequest2->markAsReceived('WH002');
+
+        $this->assertEquals('WH001', $returnRequest1->warehouseId());
+        $this->assertEquals('WH002', $returnRequest2->warehouseId());
+    }
+
+    public function testReconstituteWithAllOptionalFieldsPopulated(): void
+    {
+        $createdAt = new \DateTimeImmutable('2025-01-01 10:00:00');
+        $updatedAt = new \DateTimeImmutable('2025-01-05 15:30:00');
+        $refundAmount = Money::fromScalars(12999, 'GBP');
+
+        $returnRequest = ReturnRequest::reconstituteFromPersistence(
+            id: $this->id,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            reason: ReturnReason::fromString('Customer ordered wrong size'),
+            status: ReturnStatus::completed(),
+            warehouseId: 'WH-UK-001',
+            refundAmount: $refundAmount,
+            isResellable: true,
+            inspectionNotes: 'Item in original packaging, tags attached',
+            rejectionReason: null,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt
+        );
+
+        $this->assertInstanceOf(ReturnRequest::class, $returnRequest);
+        $this->assertTrue($returnRequest->status()->isCompleted());
+        $this->assertEquals('WH-UK-001', $returnRequest->warehouseId());
+        $this->assertEquals($refundAmount, $returnRequest->refundAmount());
+        $this->assertTrue($returnRequest->isResellable());
+        $this->assertEquals('Item in original packaging, tags attached', $returnRequest->inspectionNotes());
+        $this->assertNull($returnRequest->rejectionReason());
+    }
+
+    public function testReconstituteWithRejectedStatus(): void
+    {
+        $createdAt = new \DateTimeImmutable('2025-01-01 10:00:00');
+        $updatedAt = new \DateTimeImmutable('2025-01-02 11:00:00');
+
+        $returnRequest = ReturnRequest::reconstituteFromPersistence(
+            id: $this->id,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            reason: ReturnReason::fromString('Return after 30 days'),
+            status: ReturnStatus::rejected(),
+            warehouseId: null,
+            refundAmount: null,
+            isResellable: null,
+            inspectionNotes: null,
+            rejectionReason: 'Return window of 30 days has expired',
+            createdAt: $createdAt,
+            updatedAt: $updatedAt
+        );
+
+        $this->assertTrue($returnRequest->status()->isRejected());
+        $this->assertEquals('Return window of 30 days has expired', $returnRequest->rejectionReason());
+        $this->assertNull($returnRequest->refundAmount());
+        $this->assertNull($returnRequest->isResellable());
+    }
+
+    public function testGettersReturnCorrectValues(): void
+    {
+        $returnRequest = $this->createInspectedReturn();
+
+        $this->assertInstanceOf(ReturnRequestId::class, $returnRequest->id());
+        $this->assertInstanceOf(TenantId::class, $returnRequest->tenantId());
+        $this->assertInstanceOf(OrderId::class, $returnRequest->orderId());
+        $this->assertInstanceOf(ReturnReason::class, $returnRequest->reason());
+        $this->assertInstanceOf(ReturnStatus::class, $returnRequest->status());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $returnRequest->createdAt());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $returnRequest->updatedAt());
+        $this->assertIsString($returnRequest->warehouseId());
+        $this->assertIsBool($returnRequest->isResellable());
+        $this->assertIsString($returnRequest->inspectionNotes());
+    }
+
+    public function testInspectTogglesResellableFlag(): void
+    {
+        $returnRequest = $this->createReceivedReturn();
+
+        // First mark as resellable
+        $returnRequest->inspect(isResellable: true, inspectionNotes: 'Perfect condition');
+        $this->assertTrue($returnRequest->isResellable());
+
+        // Note: In real implementation, you cannot re-inspect after already inspected
+        // This test validates the flag is set correctly
+    }
 }

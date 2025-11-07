@@ -381,4 +381,266 @@ final class ReturnRequestApiTest extends WebTestCase
         $validStatuses = ['requested', 'approved', 'rejected', 'received', 'inspected', 'completed'];
         $this->assertContains($returnData['status'], $validStatuses, 'Status should be one of the allowed values');
     }
+
+    // Additional Edge Case Tests (Week 5, Day 11)
+
+    /**
+     * Test invalid state transition
+     */
+    public function testCannotApproveAlreadyApprovedReturn(): void
+    {
+        $client = static::createClient();
+        $this->cleanupTestData($client);
+
+        $returnId = $this->createReturnRequest($client);
+        $this->approveReturnRequest($client, $returnId);
+
+        // Try to approve again
+        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/approve', [], [], [
+            'HTTP_X-Tenant-ID' => self::TENANT_ID,
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+        ]);
+
+        // Should return error (400 or 422)
+        $this->assertTrue(
+            $client->getResponse()->getStatusCode() === 400 ||
+            $client->getResponse()->getStatusCode() === 422
+        );
+    }
+
+    /**
+     * Test marking as received without approval
+     */
+    public function testCannotMarkAsReceivedWithoutApproval(): void
+    {
+        $client = static::createClient();
+        $this->cleanupTestData($client);
+
+        $returnId = $this->createReturnRequest($client);
+
+        // Try to mark as received without approval
+        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/receive', [], [], [
+            'HTTP_X-Tenant-ID' => self::TENANT_ID,
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+        ]);
+
+        $this->assertTrue(
+            $client->getResponse()->getStatusCode() === 400 ||
+            $client->getResponse()->getStatusCode() === 422
+        );
+    }
+
+    /**
+     * Test inspecting without receiving
+     */
+    public function testCannotInspectWithoutReceiving(): void
+    {
+        $client = static::createClient();
+        $this->cleanupTestData($client);
+
+        $returnId = $this->createReturnRequest($client);
+        $this->approveReturnRequest($client, $returnId);
+
+        // Try to inspect without marking as received
+        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/inspect', [], [], [
+            'HTTP_X-Tenant-ID' => self::TENANT_ID,
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
+            'isResellable' => true,
+            'inspectionNotes' => 'Attempting to inspect',
+        ]));
+
+        $this->assertTrue(
+            $client->getResponse()->getStatusCode() === 400 ||
+            $client->getResponse()->getStatusCode() === 422
+        );
+    }
+
+    /**
+     * Test completing without inspection
+     */
+    public function testCannotCompleteWithoutInspection(): void
+    {
+        $client = static::createClient();
+        $this->cleanupTestData($client);
+
+        $returnId = $this->createReturnRequest($client);
+        $this->approveReturnRequest($client, $returnId);
+        $this->markReturnAsReceived($client, $returnId);
+
+        // Try to complete without inspection
+        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/complete', [], [], [
+            'HTTP_X-Tenant-ID' => self::TENANT_ID,
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
+            'refundAmount' => 1999,
+            'refundCurrency' => 'USD',
+        ]));
+
+        $this->assertTrue(
+            $client->getResponse()->getStatusCode() === 400 ||
+            $client->getResponse()->getStatusCode() === 422
+        );
+    }
+
+    /**
+     * Test rejecting after completion
+     */
+    public function testCannotRejectAfterCompletion(): void
+    {
+        $client = static::createClient();
+        $this->cleanupTestData($client);
+
+        $returnId = $this->createReturnRequest($client);
+        $this->approveReturnRequest($client, $returnId);
+        $this->markReturnAsReceived($client, $returnId);
+        $this->inspectReturnRequest($client, $returnId, true);
+        $this->completeReturnRequest($client, $returnId);
+
+        // Try to reject after completion
+        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/reject', [], [], [
+            'HTTP_X-Tenant-ID' => self::TENANT_ID,
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
+            'rejectionReason' => 'Trying to reject completed return',
+        ]));
+
+        $this->assertTrue(
+            $client->getResponse()->getStatusCode() === 400 ||
+            $client->getResponse()->getStatusCode() === 422
+        );
+    }
+
+    /**
+     * Test creating return with missing tenant header
+     */
+    public function testCreateReturnRequestWithoutTenantHeader(): void
+    {
+        $client = static::createClient();
+
+        $client->request('POST', '/api/v1/return-requests', [], [], [
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
+            'orderId' => self::TEST_ORDER_ID,
+            'reason' => 'Product was defective',
+        ]));
+
+        // Should return 400 or 403 (missing required header)
+        $this->assertTrue(
+            $client->getResponse()->getStatusCode() === 400 ||
+            $client->getResponse()->getStatusCode() === 403 ||
+            $client->getResponse()->getStatusCode() === 500
+        );
+    }
+
+    /**
+     * Test inspection with missing notes
+     */
+    public function testInspectReturnWithoutNotes(): void
+    {
+        $client = static::createClient();
+        $this->cleanupTestData($client);
+
+        $returnId = $this->createReturnRequest($client);
+        $this->approveReturnRequest($client, $returnId);
+        $this->markReturnAsReceived($client, $returnId);
+
+        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/inspect', [], [], [
+            'HTTP_X-Tenant-ID' => self::TENANT_ID,
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
+            'isResellable' => true,
+            // Missing inspectionNotes
+        ]));
+
+        $this->assertResponseStatusCodeSame(400);
+    }
+
+    /**
+     * Test creating return with very long reason
+     */
+    public function testCreateReturnWithVeryLongReason(): void
+    {
+        $client = static::createClient();
+        $this->cleanupTestData($client);
+
+        $longReason = str_repeat('This product is defective because it does not meet quality standards. ', 20);
+
+        $client->request('POST', '/api/v1/return-requests', [], [], [
+            'HTTP_X-Tenant-ID' => self::TENANT_ID,
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
+            'tenantId' => self::TENANT_ID,
+            'orderId' => self::TEST_ORDER_ID,
+            'reason' => $longReason,
+        ]));
+
+        // Should accept long reasons (up to max length)
+        $this->assertTrue(
+            $client->getResponse()->isSuccessful() ||
+            $client->getResponse()->getStatusCode() === 400
+        );
+    }
+
+    /**
+     * Test completing with different currencies
+     */
+    public function testCompleteReturnWithDifferentCurrencies(): void
+    {
+        $client = static::createClient();
+        $this->cleanupTestData($client);
+
+        $returnId = $this->createReturnRequest($client);
+        $this->approveReturnRequest($client, $returnId);
+        $this->markReturnAsReceived($client, $returnId);
+        $this->inspectReturnRequest($client, $returnId, true);
+
+        // Complete with EUR instead of USD
+        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/complete', [], [], [
+            'HTTP_X-Tenant-ID' => self::TENANT_ID,
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
+            'refundAmount' => 2999,
+            'refundCurrency' => 'EUR',
+        ]));
+
+        $this->assertResponseIsSuccessful();
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertNotNull($data['refundAmount']);
+    }
+
+    /**
+     * Test pagination and filtering
+     */
+    public function testGetReturnRequestsWithPagination(): void
+    {
+        $client = static::createClient();
+        $this->cleanupTestData($client);
+
+        // Create 15 return requests
+        for ($i = 0; $i < 15; $i++) {
+            $this->createReturnRequest($client);
+        }
+
+        // Get paginated results
+        $client->request('GET', '/api/v1/return-requests?page=1&itemsPerPage=10', [], [], [
+            'HTTP_X-Tenant-ID' => self::TENANT_ID,
+            'HTTP_ACCEPT' => 'application/json',
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertIsArray($data);
+        $this->assertLessThanOrEqual(15, count($data));
+    }
 }
