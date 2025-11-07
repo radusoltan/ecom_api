@@ -49,3 +49,11 @@ test_*.php
 /public/media/*
 !/public/media/.gitkeep
 ###< temporary files ###
+
+###> node modules (testing tools) ###
+node_modules/
+package.json
+pnpm-lock.yaml
+###< node modules ###
+
+.deptrac.cache
