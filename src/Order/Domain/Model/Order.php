@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Order\Domain\Model;
 
 use App\Order\Domain\Event\OrderCancelled;
+use App\Order\Domain\Event\OrderDelivered;
 use App\Order\Domain\Event\OrderPlaced;
 use App\Order\Domain\Event\OrderStatusChanged;
 use App\Shared\Domain\Aggregate\AggregateRoot;
@@ -165,9 +166,19 @@ final class Order extends AggregateRoot
         $this->changeStatus(OrderStatus::shipped());
     }
 
-    public function markAsDelivered(): void
+    public function markAsDelivered(string $deliveryMethod = 'standard'): void
     {
         $this->changeStatus(OrderStatus::delivered());
+
+        // Record OrderDelivered event with additional delivery information
+        $this->recordEvent(new OrderDelivered(
+            $this->id,
+            $this->tenantId,
+            new DateTimeImmutable(),
+            $deliveryMethod,
+            $this->customerEmail,
+            new DateTimeImmutable()
+        ));
     }
 
     public function cancel(): void

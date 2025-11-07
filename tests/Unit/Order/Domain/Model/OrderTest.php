@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Order\Domain\Model;
 
 use App\Catalog\Domain\Model\ProductId;
 use App\Order\Domain\Event\OrderCancelled;
+use App\Order\Domain\Event\OrderDelivered;
 use App\Order\Domain\Event\OrderPlaced;
 use App\Order\Domain\Event\OrderStatusChanged;
 use App\Order\Domain\Model\Order;
@@ -460,6 +461,101 @@ final class OrderTest extends TestCase
 
         // Assert
         $this->assertEmpty($order->popEvents());
+    }
+
+    // =============================================
+    // Test OrderDelivered Event
+    // =============================================
+
+    public function testMarkAsDeliveredRecordsOrderDeliveredEvent(): void
+    {
+        // Arrange
+        $order = $this->createSampleOrder();
+        $order->popEvents(); // Clear placement event
+        $order->startProcessing();
+        $order->markAsShipped();
+        $order->popEvents(); // Clear status change events
+
+        // Act
+        $order->markAsDelivered();
+        $events = $order->popEvents();
+
+        // Assert - Should have 2 events: OrderStatusChanged + OrderDelivered
+        $this->assertCount(2, $events);
+        $this->assertInstanceOf(OrderStatusChanged::class, $events[0]);
+        $this->assertInstanceOf(OrderDelivered::class, $events[1]);
+    }
+
+    public function testOrderDeliveredEventContainsCorrectData(): void
+    {
+        // Arrange
+        $order = $this->createSampleOrder();
+        $order->popEvents();
+        $order->startProcessing();
+        $order->markAsShipped();
+        $order->popEvents();
+        $deliveryMethod = 'express';
+
+        // Act
+        $order->markAsDelivered($deliveryMethod);
+        $events = $order->popEvents();
+
+        // Assert
+        $deliveredEvent = $events[1]; // Second event is OrderDelivered
+        $this->assertInstanceOf(OrderDelivered::class, $deliveredEvent);
+        $this->assertTrue($deliveredEvent->orderId->equals($order->id()));
+        $this->assertTrue($deliveredEvent->tenantId->equals($order->tenantId()));
+        $this->assertSame($deliveryMethod, $deliveredEvent->deliveryMethod);
+        $this->assertSame($order->customerEmail(), $deliveredEvent->customerEmail);
+        $this->assertInstanceOf(\DateTimeImmutable::class, $deliveredEvent->deliveryDate);
+        $this->assertInstanceOf(\DateTimeImmutable::class, $deliveredEvent->occurredOn);
+    }
+
+    public function testMarkAsDeliveredUsesDefaultDeliveryMethod(): void
+    {
+        // Arrange
+        $order = $this->createSampleOrder();
+        $order->popEvents();
+        $order->startProcessing();
+        $order->markAsShipped();
+        $order->popEvents();
+
+        // Act
+        $order->markAsDelivered(); // No delivery method specified
+        $events = $order->popEvents();
+
+        // Assert
+        $deliveredEvent = $events[1];
+        $this->assertInstanceOf(OrderDelivered::class, $deliveredEvent);
+        $this->assertSame('standard', $deliveredEvent->deliveryMethod);
+    }
+
+    public function testMarkAsDeliveredChangesStatusToDelivered(): void
+    {
+        // Arrange
+        $order = $this->createSampleOrder();
+        $order->startProcessing();
+        $order->markAsShipped();
+
+        // Act
+        $order->markAsDelivered();
+
+        // Assert
+        $this->assertTrue($order->status()->isDelivered());
+    }
+
+    public function testMarkAsDeliveredThrowsExceptionWhenOrderNotShipped(): void
+    {
+        // Arrange
+        $order = $this->createSampleOrder();
+        $order->startProcessing(); // Only processing, not shipped
+
+        // Assert
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid status transition');
+
+        // Act
+        $order->markAsDelivered();
     }
 
     // =============================================

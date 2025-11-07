@@ -1,0 +1,43 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block email_title %}{{ 'emails.order.delivered.title'|trans }}{% endblock %}
+
+{% block header_icon %}✅{% endblock %}
+
+{% block header_title %}{{ 'emails.order.delivered.header'|trans }}{% endblock %}
+
+{% block content %}
+    <p>{{ 'emails.order.delivered.greeting'|trans({'%customer_name%': customerName}) }}</p>
+
+    <p>{{ 'emails.order.delivered.confirmation'|trans }}</p>
+
+    <div class="info-box">
+        <h3>{{ 'emails.order.delivery_details'|trans }}</h3>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.order_id'|trans }}:</span>
+            <span class="info-value"><strong>{{ orderId }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.delivery_date'|trans }}:</span>
+            <span class="info-value">{{ deliveryDate }} at {{ deliveryTime }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.delivery_method'|trans }}:</span>
+            <span class="info-value">{{ deliveryMethod }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.order.status'|trans }}:</span>
+            <span class="info-value"><span class="status-badge status-delivered">{{ 'emails.order.status.delivered'|trans }}</span></span>
+        </div>
+    </div>
+
+    <p style="text-align: center;">
+        <a href="{{ orderViewUrl }}" class="button">{{ 'emails.order.view_order'|trans }}</a>
+    </p>
+
+    <div class="divider"></div>
+
+    <p>{{ 'emails.order.delivered.enjoy_message'|trans }}</p>
+    <p>{{ 'emails.order.delivered.feedback_request'|trans }}</p>
+    <p>{{ 'emails.order.delivered.questions'|trans }}</p>
+{% endblock %}

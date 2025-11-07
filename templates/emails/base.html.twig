@@ -160,8 +160,10 @@
                 <p>{{ 'emails.footer.company'|trans }}</p>
                 <div class="divider"></div>
                 <p>
-                    <a href="{{ url('homepage') }}">{{ 'emails.footer.visit_site'|trans }}</a> |
-                    <a href="{{ url('contact') }}">{{ 'emails.footer.contact'|trans }}</a>
+                    {% if homepageUrl is defined %}
+                        <a href="{{ homepageUrl }}">{{ 'emails.footer.visit_site'|trans }}</a> |
+                        <a href="{{ contactUrl|default('#') }}">{{ 'emails.footer.contact'|trans }}</a>
+                    {% endif %}
                 </p>
                 <p>{{ 'emails.footer.copyright'|trans({'%year%': 'now'|date('Y')}) }}</p>
             {% endblock %}
