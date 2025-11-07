@@ -69,8 +69,8 @@ PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME <<S
 SET app.tenant_id = '$DEFAULT_TENANT_ID';
 
 -- Insert default test tenant (idempotent)
-INSERT INTO tenants (id, name, owner_email, status, created_at, slug)
-VALUES ('$DEFAULT_TENANT_ID', 'Test Tenant', 'test@example.com', 'active', NOW(), 'test-tenant')
+INSERT INTO tenants (id, name, owner_email, status, created_at, slug, default_locale, enabled_locales, translation_quota, translation_usage)
+VALUES ('$DEFAULT_TENANT_ID', 'Test Tenant', 'test@example.com', 'active', NOW(), 'test-tenant', 'en', '["en"]', 10000, 0)
 ON CONFLICT (id) DO NOTHING;
 
 -- Verify tenant created
