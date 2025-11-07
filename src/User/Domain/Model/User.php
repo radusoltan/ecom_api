@@ -6,12 +6,19 @@ namespace App\User\Domain\Model;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\Email;
+use App\User\Domain\Event\UserAccountLocked;
+use App\User\Domain\Event\UserAccountUnlocked;
 use App\User\Domain\Event\UserCreated;
+use App\User\Domain\Event\UserEmailVerified;
+use App\User\Domain\Event\UserPasswordChanged;
+use App\User\Domain\Event\UserRoleAdded;
+use App\User\Domain\Event\UserRoleRemoved;
 use App\User\Domain\ValueObject\HashedPassword;
 use App\User\Domain\ValueObject\UserId;
 use App\User\Domain\ValueObject\UserRole;
 use App\User\Domain\ValueObject\Username;
 use DateTimeImmutable;
+use DomainException;
 
 final class User extends AggregateRoot
 {
@@ -22,6 +29,11 @@ final class User extends AggregateRoot
     /** @var list<UserRole> */
     private array $roles;
     private DateTimeImmutable $createdAt;
+    private bool $emailVerified;
+    private ?DateTimeImmutable $emailVerifiedAt;
+    private bool $isLocked;
+    private ?string $lockReason;
+    private ?DateTimeImmutable $lockedAt;
 
     private function __construct(
         UserId $id,
@@ -29,7 +41,12 @@ final class User extends AggregateRoot
         Username $username,
         HashedPassword $password,
         array $roles,
-        DateTimeImmutable $createdAt
+        DateTimeImmutable $createdAt,
+        bool $emailVerified = false,
+        ?DateTimeImmutable $emailVerifiedAt = null,
+        bool $isLocked = false,
+        ?string $lockReason = null,
+        ?DateTimeImmutable $lockedAt = null
     ) {
         $this->id = $id;
         $this->email = $email;
@@ -37,6 +54,11 @@ final class User extends AggregateRoot
         $this->password = $password;
         $this->roles = $roles;
         $this->createdAt = $createdAt;
+        $this->emailVerified = $emailVerified;
+        $this->emailVerifiedAt = $emailVerifiedAt;
+        $this->isLocked = $isLocked;
+        $this->lockReason = $lockReason;
+        $this->lockedAt = $lockedAt;
     }
 
     public static function create(
@@ -78,7 +100,12 @@ final class User extends AggregateRoot
         Username $username,
         HashedPassword $password,
         array $roles,
-        DateTimeImmutable $createdAt
+        DateTimeImmutable $createdAt,
+        bool $emailVerified = false,
+        ?DateTimeImmutable $emailVerifiedAt = null,
+        bool $isLocked = false,
+        ?string $lockReason = null,
+        ?DateTimeImmutable $lockedAt = null
     ): self {
         return new self(
             $id,
@@ -86,7 +113,12 @@ final class User extends AggregateRoot
             $username,
             $password,
             $roles,
-            $createdAt
+            $createdAt,
+            $emailVerified,
+            $emailVerifiedAt,
+            $isLocked,
+            $lockReason,
+            $lockedAt
         );
     }
 
@@ -145,5 +177,132 @@ final class User extends AggregateRoot
     public function isSuperAdmin(): bool
     {
         return $this->hasRole(UserRole::superAdmin());
+    }
+
+    public function emailVerified(): bool
+    {
+        return $this->emailVerified;
+    }
+
+    public function emailVerifiedAt(): ?DateTimeImmutable
+    {
+        return $this->emailVerifiedAt;
+    }
+
+    public function isLocked(): bool
+    {
+        return $this->isLocked;
+    }
+
+    public function lockReason(): ?string
+    {
+        return $this->lockReason;
+    }
+
+    public function lockedAt(): ?DateTimeImmutable
+    {
+        return $this->lockedAt;
+    }
+
+    public function changePassword(HashedPassword $newPassword): void
+    {
+        if ($this->isLocked) {
+            throw new DomainException('Cannot change password for locked account');
+        }
+
+        $this->password = $newPassword;
+        $this->recordEvent(new UserPasswordChanged(
+            $this->id,
+            new DateTimeImmutable()
+        ));
+    }
+
+    public function addRole(UserRole $role): void
+    {
+        if ($this->hasRole($role)) {
+            throw new DomainException('User already has this role');
+        }
+
+        $this->roles[] = $role;
+        $this->recordEvent(new UserRoleAdded(
+            $this->id,
+            $role,
+            new DateTimeImmutable()
+        ));
+    }
+
+    public function removeRole(UserRole $role): void
+    {
+        if (!$this->hasRole($role)) {
+            throw new DomainException('User does not have this role');
+        }
+
+        // Cannot remove ROLE_USER if it's the only role
+        if ($role->equals(UserRole::user()) && count($this->roles) === 1) {
+            throw new DomainException('Cannot remove ROLE_USER when it is the only role');
+        }
+
+        $this->roles = array_values(array_filter(
+            $this->roles,
+            fn(UserRole $userRole) => !$userRole->equals($role)
+        ));
+
+        $this->recordEvent(new UserRoleRemoved(
+            $this->id,
+            $role,
+            new DateTimeImmutable()
+        ));
+    }
+
+    public function verifyEmail(): void
+    {
+        if ($this->emailVerified) {
+            throw new DomainException('Email is already verified');
+        }
+
+        $this->emailVerified = true;
+        $this->emailVerifiedAt = new DateTimeImmutable();
+
+        $this->recordEvent(new UserEmailVerified(
+            $this->id,
+            $this->emailVerifiedAt
+        ));
+    }
+
+    public function lock(string $reason): void
+    {
+        if ($this->isLocked) {
+            throw new DomainException('Account is already locked');
+        }
+
+        if (trim($reason) === '' || trim($reason) === '0') {
+            throw new DomainException('Lock reason cannot be empty');
+        }
+
+        $this->isLocked = true;
+        $this->lockReason = $reason;
+        $this->lockedAt = new DateTimeImmutable();
+
+        $this->recordEvent(new UserAccountLocked(
+            $this->id,
+            $reason,
+            $this->lockedAt
+        ));
+    }
+
+    public function unlock(): void
+    {
+        if (!$this->isLocked) {
+            throw new DomainException('Account is not locked');
+        }
+
+        $this->isLocked = false;
+        $this->lockReason = null;
+        $this->lockedAt = null;
+
+        $this->recordEvent(new UserAccountUnlocked(
+            $this->id,
+            new DateTimeImmutable()
+        ));
     }
 }
