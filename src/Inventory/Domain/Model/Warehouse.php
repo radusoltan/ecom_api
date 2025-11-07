@@ -152,6 +152,23 @@ final class Warehouse extends AggregateRoot
     }
 
     /**
+     * Set warehouse priority for routing
+     * Higher priority warehouses are preferred for order fulfillment
+     *
+     * @param int $priority Priority value (1-10, higher = more preferred)
+     * @throws \DomainException if priority is invalid
+     */
+    public function setPriority(int $priority): void
+    {
+        if ($priority < 1 || $priority > 10) {
+            throw new \DomainException('Warehouse priority must be between 1 and 10');
+        }
+
+        $this->priority = $priority;
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    /**
      * Check if warehouse can fulfill orders
      */
     public function canFulfillOrders(): bool

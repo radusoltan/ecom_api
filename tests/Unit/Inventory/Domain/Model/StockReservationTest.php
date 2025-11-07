@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Inventory\Domain\Model;
 use App\Inventory\Domain\Model\Quantity;
 use App\Inventory\Domain\Model\StockItemId;
 use App\Inventory\Domain\Model\StockReservation;
+use App\Inventory\Domain\Model\WarehouseId;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 
@@ -16,13 +17,15 @@ final class StockReservationTest extends TestCase
     {
         $reservationId = 'cart-123';
         $stockItemId = StockItemId::generate();
+        $warehouseId = WarehouseId::generate();
         $tenantId = TenantId::generate();
         $quantity = Quantity::fromInt(10);
 
-        $reservation = StockReservation::create($reservationId, $stockItemId, $tenantId, $quantity);
+        $reservation = StockReservation::create($reservationId, $stockItemId, $warehouseId, $tenantId, $quantity);
 
         $this->assertEquals($reservationId, $reservation->reservationId());
         $this->assertTrue($reservation->stockItemId()->equals($stockItemId));
+        $this->assertTrue($reservation->warehouseId()->equals($warehouseId));
         $this->assertTrue($reservation->tenantId()->equals($tenantId));
         $this->assertEquals(10, $reservation->quantity()->value());
         $this->assertFalse($reservation->isReleased());
@@ -34,6 +37,7 @@ final class StockReservationTest extends TestCase
         $reservation = StockReservation::create(
             'cart-123',
             StockItemId::generate(),
+            WarehouseId::generate(),
             TenantId::generate(),
             Quantity::fromInt(10)
         );
@@ -59,6 +63,7 @@ final class StockReservationTest extends TestCase
         $reservation = StockReservation::create(
             'cart-123',
             StockItemId::generate(),
+            WarehouseId::generate(),
             TenantId::generate(),
             Quantity::fromInt(10)
         );
@@ -88,6 +93,7 @@ final class StockReservationTest extends TestCase
         $reservation = StockReservation::create(
             'cart-123',
             StockItemId::generate(),
+            WarehouseId::generate(),
             TenantId::generate(),
             Quantity::fromInt(10)
         );
@@ -105,6 +111,7 @@ final class StockReservationTest extends TestCase
         $reservation = StockReservation::create(
             'cart-123',
             StockItemId::generate(),
+            WarehouseId::generate(),
             TenantId::generate(),
             Quantity::fromInt(10)
         );
@@ -123,6 +130,7 @@ final class StockReservationTest extends TestCase
         $reservation = StockReservation::create(
             'cart-123',
             StockItemId::generate(),
+            WarehouseId::generate(),
             TenantId::generate(),
             Quantity::fromInt(10)
         );
@@ -140,6 +148,7 @@ final class StockReservationTest extends TestCase
         $reservation = StockReservation::create(
             'cart-123',
             StockItemId::generate(),
+            WarehouseId::generate(),
             TenantId::generate(),
             Quantity::fromInt(10)
         );
@@ -149,5 +158,52 @@ final class StockReservationTest extends TestCase
         // Even after expiry time, released reservation should not be considered "expired"
         $afterExpiryTime = $reservation->expiresAt()->modify('+1 hour');
         $this->assertFalse($reservation->isExpired($afterExpiryTime));
+    }
+
+    public function testWarehouseIdIsStored(): void
+    {
+        $warehouseId = WarehouseId::generate();
+        $reservation = StockReservation::create(
+            'cart-123',
+            StockItemId::generate(),
+            $warehouseId,
+            TenantId::generate(),
+            Quantity::fromInt(10)
+        );
+
+        $this->assertTrue($reservation->warehouseId()->equals($warehouseId));
+    }
+
+    public function testReconstituteFromPersistenceIncludesWarehouseId(): void
+    {
+        $reservationId = 'cart-123';
+        $stockItemId = StockItemId::generate();
+        $warehouseId = WarehouseId::generate();
+        $tenantId = TenantId::generate();
+        $quantity = Quantity::fromInt(10);
+        $reservedAt = new \DateTimeImmutable('2025-01-01 12:00:00');
+        $expiresAt = new \DateTimeImmutable('2025-01-01 12:15:00');
+
+        $reservation = StockReservation::reconstituteFromPersistence(
+            $reservationId,
+            $stockItemId,
+            $warehouseId,
+            $tenantId,
+            $quantity,
+            $reservedAt,
+            $expiresAt,
+            false,
+            null
+        );
+
+        $this->assertEquals($reservationId, $reservation->reservationId());
+        $this->assertTrue($reservation->stockItemId()->equals($stockItemId));
+        $this->assertTrue($reservation->warehouseId()->equals($warehouseId));
+        $this->assertTrue($reservation->tenantId()->equals($tenantId));
+        $this->assertEquals(10, $reservation->quantity()->value());
+        $this->assertSame($reservedAt, $reservation->reservedAt());
+        $this->assertSame($expiresAt, $reservation->expiresAt());
+        $this->assertFalse($reservation->isReleased());
+        $this->assertNull($reservation->releasedAt());
     }
 }

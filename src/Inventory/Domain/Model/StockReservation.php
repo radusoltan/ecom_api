@@ -17,6 +17,7 @@ use App\Shared\Domain\ValueObject\TenantId;
  * - Each reservation expires after 15 minutes
  * - Expired reservations should be automatically released
  * - Reservations can be extended if user is still active
+ * - Each reservation is tied to a specific warehouse for order routing
  */
 final class StockReservation extends AggregateRoot
 {
@@ -24,6 +25,7 @@ final class StockReservation extends AggregateRoot
 
     private string $reservationId;
     private StockItemId $stockItemId;
+    private WarehouseId $warehouseId;
     private TenantId $tenantId;
     private Quantity $quantity;
     private \DateTimeImmutable $reservedAt;
@@ -34,6 +36,7 @@ final class StockReservation extends AggregateRoot
     private function __construct(
         string $reservationId,
         StockItemId $stockItemId,
+        WarehouseId $warehouseId,
         TenantId $tenantId,
         Quantity $quantity,
         \DateTimeImmutable $reservedAt,
@@ -41,6 +44,7 @@ final class StockReservation extends AggregateRoot
     ) {
         $this->reservationId = $reservationId;
         $this->stockItemId = $stockItemId;
+        $this->warehouseId = $warehouseId;
         $this->tenantId = $tenantId;
         $this->quantity = $quantity;
         $this->reservedAt = $reservedAt;
@@ -52,6 +56,7 @@ final class StockReservation extends AggregateRoot
     public static function create(
         string $reservationId,
         StockItemId $stockItemId,
+        WarehouseId $warehouseId,
         TenantId $tenantId,
         Quantity $quantity,
     ): self {
@@ -61,6 +66,7 @@ final class StockReservation extends AggregateRoot
         return new self(
             $reservationId,
             $stockItemId,
+            $warehouseId,
             $tenantId,
             $quantity,
             $reservedAt,
@@ -104,6 +110,11 @@ final class StockReservation extends AggregateRoot
         return $this->stockItemId;
     }
 
+    public function warehouseId(): WarehouseId
+    {
+        return $this->warehouseId;
+    }
+
     public function tenantId(): TenantId
     {
         return $this->tenantId;
@@ -137,6 +148,7 @@ final class StockReservation extends AggregateRoot
     public static function reconstituteFromPersistence(
         string $reservationId,
         StockItemId $stockItemId,
+        WarehouseId $warehouseId,
         TenantId $tenantId,
         Quantity $quantity,
         \DateTimeImmutable $reservedAt,
@@ -147,6 +159,7 @@ final class StockReservation extends AggregateRoot
         $reservation = new self(
             $reservationId,
             $stockItemId,
+            $warehouseId,
             $tenantId,
             $quantity,
             $reservedAt,

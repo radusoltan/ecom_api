@@ -437,4 +437,97 @@ final class WarehouseTest extends TestCase
         $warehouse->deactivate();
         $this->assertFalse($warehouse->isActive());
     }
+
+    public function testSetPriorityUpdatesValue(): void
+    {
+        $warehouse = Warehouse::create(
+            WarehouseId::generate(),
+            TenantId::generate(),
+            WarehouseCode::fromString('WH001'),
+            WarehouseName::fromString('Main Warehouse'),
+            $this->createTestAddress()
+        );
+
+        $warehouse->setPriority(8);
+
+        $this->assertSame(8, $warehouse->priority());
+    }
+
+    public function testSetPriorityWithMinValue(): void
+    {
+        $warehouse = Warehouse::create(
+            WarehouseId::generate(),
+            TenantId::generate(),
+            WarehouseCode::fromString('WH001'),
+            WarehouseName::fromString('Main Warehouse'),
+            $this->createTestAddress()
+        );
+
+        $warehouse->setPriority(1);
+
+        $this->assertSame(1, $warehouse->priority());
+    }
+
+    public function testSetPriorityWithMaxValue(): void
+    {
+        $warehouse = Warehouse::create(
+            WarehouseId::generate(),
+            TenantId::generate(),
+            WarehouseCode::fromString('WH001'),
+            WarehouseName::fromString('Main Warehouse'),
+            $this->createTestAddress()
+        );
+
+        $warehouse->setPriority(10);
+
+        $this->assertSame(10, $warehouse->priority());
+    }
+
+    public function testSetPriorityWithZeroThrowsException(): void
+    {
+        $warehouse = Warehouse::create(
+            WarehouseId::generate(),
+            TenantId::generate(),
+            WarehouseCode::fromString('WH001'),
+            WarehouseName::fromString('Main Warehouse'),
+            $this->createTestAddress()
+        );
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('priority must be between 1 and 10');
+
+        $warehouse->setPriority(0);
+    }
+
+    public function testSetPriorityWithNegativeValueThrowsException(): void
+    {
+        $warehouse = Warehouse::create(
+            WarehouseId::generate(),
+            TenantId::generate(),
+            WarehouseCode::fromString('WH001'),
+            WarehouseName::fromString('Main Warehouse'),
+            $this->createTestAddress()
+        );
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('priority must be between 1 and 10');
+
+        $warehouse->setPriority(-5);
+    }
+
+    public function testSetPriorityWithValueAboveMaxThrowsException(): void
+    {
+        $warehouse = Warehouse::create(
+            WarehouseId::generate(),
+            TenantId::generate(),
+            WarehouseCode::fromString('WH001'),
+            WarehouseName::fromString('Main Warehouse'),
+            $this->createTestAddress()
+        );
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('priority must be between 1 and 10');
+
+        $warehouse->setPriority(11);
+    }
 }
