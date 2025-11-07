@@ -25,7 +25,7 @@ final readonly class GetCustomerByIdQueryHandler
 
         $customer = $this->customerRepository->findById($customerId, $tenantId);
 
-        if ($customer === null) {
+        if (null === $customer) {
             return null;
         }
 

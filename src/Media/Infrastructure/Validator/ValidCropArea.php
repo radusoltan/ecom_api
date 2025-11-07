@@ -42,7 +42,7 @@ class ValidCropArea extends Constraint
         $this->aspectRatio = $aspectRatio;
         $this->aspectRatioTolerance = $aspectRatioTolerance;
 
-        if ($message !== null) {
+        if (null !== $message) {
             $this->message = $message;
         }
     }

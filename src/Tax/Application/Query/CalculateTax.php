@@ -7,7 +7,7 @@ namespace App\Tax\Application\Query;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Calculate Tax Query
+ * Calculate Tax Query.
  *
  * Calculates tax for given amount and destination.
  */

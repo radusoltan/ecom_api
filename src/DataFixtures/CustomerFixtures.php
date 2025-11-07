@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
-use App\Customer\Application\Command\RegisterCustomerCommand;
 use App\Customer\Application\Command\ChangeSegmentCommand;
 use App\Customer\Application\Command\DeactivateCustomerCommand;
+use App\Customer\Application\Command\RegisterCustomerCommand;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
@@ -19,7 +19,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Uid\Ulid;
 
 /**
- * Customer fixtures - creates diverse customers for testing
+ * Customer fixtures - creates diverse customers for testing.
  */
 class CustomerFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -35,7 +35,7 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         echo "👥 Creating customers...\n";
-        echo "   ℹ️  Default password for all test customers: " . self::DEFAULT_PASSWORD . "\n";
+        echo '   ℹ️  Default password for all test customers: '.self::DEFAULT_PASSWORD."\n";
 
         // Get first tenant ID from database
         $tenantIdString = $this->getFirstTenantId($manager);
@@ -95,7 +95,7 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
         $this->commandBus->dispatch($registerCommand);
 
         // Change segment if not regular
-        if ($segment !== 'regular') {
+        if ('regular' !== $segment) {
             $changeSegmentCommand = new ChangeSegmentCommand(
                 customerId: $customerId->toString(),
                 tenantId: $tenantId->toString(),
@@ -125,7 +125,7 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
     }
 
     /**
-     * Create a User entity for authentication when a customer is created via fixtures
+     * Create a User entity for authentication when a customer is created via fixtures.
      */
     private function createUserForCustomer(string $email, string $firstName, string $lastName): void
     {
@@ -141,9 +141,9 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
         $user->setEmail($email);
 
         // Generate username from name
-        $sanitized = strtolower(trim($firstName . ' ' . $lastName));
+        $sanitized = strtolower(trim($firstName.' '.$lastName));
         $sanitized = preg_replace('/[^a-z0-9]+/', '-', $sanitized);
-        $generatedUsername = sprintf('%s-%s', $sanitized !== '' ? trim($sanitized, '-') : 'customer', bin2hex(random_bytes(4)));
+        $generatedUsername = sprintf('%s-%s', '' !== $sanitized ? trim($sanitized, '-') : 'customer', bin2hex(random_bytes(4)));
         $user->setUsername($generatedUsername);
         $user->setRoles(['ROLE_CUSTOMER']); // Assign customer role
         $user->setCreatedAt(new \DateTimeImmutable());
@@ -168,4 +168,3 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
         return 5;
     }
 }
-

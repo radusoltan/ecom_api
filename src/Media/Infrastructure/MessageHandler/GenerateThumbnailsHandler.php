@@ -20,7 +20,8 @@ final class GenerateThumbnailsHandler
         private readonly ThumbnailGenerator $thumbnailGenerator,
         private readonly ThumbnailPolicy $thumbnailPolicy,
         private readonly LoggerInterface $logger
-    ) {}
+    ) {
+    }
 
     public function __invoke(GenerateThumbnailsMessage $message): void
     {
@@ -28,8 +29,9 @@ final class GenerateThumbnailsHandler
             $image = $this->imageRepository->findById($message->imageId);
             if (!$image) {
                 $this->logger->warning('Image not found for thumbnail generation', [
-                    'imageId' => $message->imageId->toString()
+                    'imageId' => $message->imageId->toString(),
                 ]);
+
                 return;
             }
 
@@ -38,12 +40,12 @@ final class GenerateThumbnailsHandler
                 SizeLabel::SMALL,
                 SizeLabel::MEDIUM,
                 SizeLabel::LARGE,
-                SizeLabel::EXTRA_LARGE
+                SizeLabel::EXTRA_LARGE,
             ];
 
             $this->logger->info('Starting async thumbnail generation', [
                 'imageId' => $message->imageId->toString(),
-                'sizes' => array_map(fn($size) => $size->value, $sizesToGenerate)
+                'sizes' => array_map(fn ($size) => $size->value, $sizesToGenerate),
             ]);
 
             foreach ($sizesToGenerate as $sizeLabel) {
@@ -70,13 +72,13 @@ final class GenerateThumbnailsHandler
                         'imageId' => $message->imageId->toString(),
                         'size' => $sizeLabel->value,
                         'width' => $dimensions['width'],
-                        'height' => $dimensions['height']
+                        'height' => $dimensions['height'],
                     ]);
                 } catch (\Exception $e) {
                     $this->logger->error('Failed to generate thumbnail', [
                         'imageId' => $message->imageId->toString(),
                         'size' => $sizeLabel->value,
-                        'error' => $e->getMessage()
+                        'error' => $e->getMessage(),
                     ]);
                 }
             }
@@ -86,14 +88,14 @@ final class GenerateThumbnailsHandler
 
             $this->logger->info('Completed async thumbnail generation', [
                 'imageId' => $message->imageId->toString(),
-                'thumbnailsGenerated' => count($sizesToGenerate)
+                'thumbnailsGenerated' => count($sizesToGenerate),
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error('Thumbnail generation failed', [
                 'imageId' => $message->imageId->toString(),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             throw $e; // Re-throw to trigger retry mechanism
         }
     }

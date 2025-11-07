@@ -10,10 +10,9 @@ use App\Order\Domain\Repository\OrderRepositoryInterface;
 use App\Privacy\Domain\Repository\ConsentRepositoryInterface;
 use App\Privacy\Domain\Service\PersonalDataInventoryInterface;
 use App\User\Domain\Repository\UserRepositoryInterface;
-use DateTimeImmutable;
 
 /**
- * Personal Data Inventory Service Implementation
+ * Personal Data Inventory Service Implementation.
  *
  * Coordinates data export and anonymization across bounded contexts
  */
@@ -31,7 +30,7 @@ final readonly class PersonalDataInventory implements PersonalDataInventoryInter
     {
         $customer = $this->customerRepository->findById($customerId);
 
-        if ($customer === null) {
+        if (null === $customer) {
             return [
                 'error' => 'Customer not found',
                 'customerId' => $customerId->toString(),
@@ -54,9 +53,9 @@ final readonly class PersonalDataInventory implements PersonalDataInventoryInter
 
         // Export user authentication data (if exists)
         $userData = null;
-        if ($this->userRepository !== null) {
+        if (null !== $this->userRepository) {
             $user = $this->userRepository->findByEmail($customer->email());
-            if ($user !== null) {
+            if (null !== $user) {
                 $userData = [
                     'id' => $user->id()->toString(),
                     'email' => $user->email()->value(),
@@ -111,7 +110,7 @@ final readonly class PersonalDataInventory implements PersonalDataInventoryInter
 
         // Metadata
         $metadata = [
-            'exportDate' => (new DateTimeImmutable())->format('c'),
+            'exportDate' => (new \DateTimeImmutable())->format('c'),
             'dataCategories' => array_keys($this->getDataCategories()),
             'retentionPolicies' => $this->getRetentionPoliciesForCustomer(),
             'format' => 'application/json',
@@ -131,10 +130,8 @@ final readonly class PersonalDataInventory implements PersonalDataInventoryInter
     {
         $customer = $this->customerRepository->findById($customerId);
 
-        if ($customer === null) {
-            throw new \InvalidArgumentException(
-                sprintf('Customer not found: %s', $customerId->toString())
-            );
+        if (null === $customer) {
+            throw new \InvalidArgumentException(sprintf('Customer not found: %s', $customerId->toString()));
         }
 
         // Anonymize customer profile
@@ -152,9 +149,7 @@ final readonly class PersonalDataInventory implements PersonalDataInventoryInter
         // Example: DeleteUserCommand
         // Example: AnonymizeOrderCustomerCommand
 
-        throw new \RuntimeException(
-            'Anonymization must be implemented by dispatching commands to each bounded context. See PersonalDataInventory::anonymizeCustomerData() for strategy.'
-        );
+        throw new \RuntimeException('Anonymization must be implemented by dispatching commands to each bounded context. See PersonalDataInventory::anonymizeCustomerData() for strategy.');
     }
 
     public function getDataCategories(): array
@@ -260,7 +255,7 @@ final readonly class PersonalDataInventory implements PersonalDataInventoryInter
 
             // Check if order is within retention period (7 years)
             $retentionDate = $order->createdAt()->modify('+7 years');
-            if ($retentionDate > new DateTimeImmutable()) {
+            if ($retentionDate > new \DateTimeImmutable()) {
                 // Order is within legal retention period
                 return false;
             }

@@ -10,7 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Tenant fixtures - creates multiple tenants for testing
+ * Tenant fixtures - creates multiple tenants for testing.
  */
 class TenantFixtures extends Fixture
 {

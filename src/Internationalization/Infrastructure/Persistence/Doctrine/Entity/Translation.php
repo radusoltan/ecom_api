@@ -8,7 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Translation Entity for Gedmo Translatable
+ * Translation Entity for Gedmo Translatable.
  *
  * This entity stores all translations for translatable fields across all entities.
  * It uses pure Doctrine attributes (no annotations) to work with Doctrine ORM 3.
@@ -59,6 +59,7 @@ class Translation
     public function setLocale(?string $locale): self
     {
         $this->locale = $locale;
+
         return $this;
     }
 
@@ -70,6 +71,7 @@ class Translation
     public function setObjectClass(?string $objectClass): self
     {
         $this->objectClass = $objectClass;
+
         return $this;
     }
 
@@ -81,6 +83,7 @@ class Translation
     public function setField(?string $field): self
     {
         $this->field = $field;
+
         return $this;
     }
 
@@ -92,6 +95,7 @@ class Translation
     public function setForeignKey(?string $foreignKey): self
     {
         $this->foreignKey = $foreignKey;
+
         return $this;
     }
 
@@ -103,6 +107,7 @@ class Translation
     public function setContent(?string $content): self
     {
         $this->content = $content;
+
         return $this;
     }
 

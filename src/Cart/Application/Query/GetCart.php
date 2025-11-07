@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Cart\Application\Query;
 
 /**
- * GetCart Query
+ * GetCart Query.
  *
  * Retrieves full cart details with all items
  */

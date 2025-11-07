@@ -41,6 +41,7 @@ class ThumbnailEntity
     private int $height;
 
     #[ORM\Column(type: 'json', name: 'crop_json')]
+    /** @var array<string, mixed> */
     private array $crop;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]

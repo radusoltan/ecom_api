@@ -18,7 +18,8 @@ final readonly class ProductIndexer
         private IndexManager $indexManager,
         private \Doctrine\ORM\EntityManagerInterface $entityManager,
         private \Doctrine\DBAL\Connection $connection
-    ) {}
+    ) {
+    }
 
     public function indexProduct(Product $product, Locale $locale): void
     {
@@ -152,12 +153,13 @@ final readonly class ProductIndexer
     }
 
     /**
-     * Get all category IDs including parent hierarchy
+     * Get all category IDs including parent hierarchy.
+     *
      * @return array<string>
      */
     private function getCategoryHierarchy(Product $product): array
     {
-        if ($product->categoryId() === null) {
+        if (null === $product->categoryId()) {
             return [];
         }
 
@@ -169,13 +171,13 @@ final readonly class ProductIndexer
             $product->categoryId()->toString()
         );
 
-        if ($categoryEntity === null) {
+        if (null === $categoryEntity) {
             return $categoryIds;
         }
 
         // Walk up the hierarchy to get all parent IDs
         $parentId = $categoryEntity->getParentId();
-        while ($parentId !== null) {
+        while (null !== $parentId) {
             $categoryIds[] = $parentId;
 
             $parentEntity = $this->entityManager->find(
@@ -183,7 +185,7 @@ final readonly class ProductIndexer
                 $parentId
             );
 
-            if ($parentEntity === null) {
+            if (null === $parentEntity) {
                 break;
             }
 
@@ -195,7 +197,8 @@ final readonly class ProductIndexer
 
     /**
      * Get product options if this is a configurable product
-     * Returns format: ['color' => ['red', 'blue'], 'size' => ['s', 'm', 'l']]
+     * Returns format: ['color' => ['red', 'blue'], 'size' => ['s', 'm', 'l']].
+     *
      * @return array<string, array<string>>
      */
     private function getProductOptions(Product $product): array
@@ -205,7 +208,7 @@ final readonly class ProductIndexer
             \App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ConfigurableProductEntity::class
         )->findOneBy(['productId' => $product->id()->toString()]);
 
-        if ($configurableProductEntity === null) {
+        if (null === $configurableProductEntity) {
             return [];
         }
 
@@ -227,7 +230,8 @@ final readonly class ProductIndexer
     }
 
     /**
-     * Get rating statistics for a product
+     * Get rating statistics for a product.
+     *
      * @return array{average_rating: float, review_count: int}
      */
     private function getRatingStats(string $productId, string $tenantId): array

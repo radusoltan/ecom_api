@@ -8,7 +8,7 @@ use App\Tax\Application\DTO\TaxRuleDTO;
 use App\Tax\Presentation\Api\Resource\TaxRuleResource;
 
 /**
- * Transforms TaxRuleDTO to TaxRuleResource
+ * Transforms TaxRuleDTO to TaxRuleResource.
  */
 final readonly class TaxRuleResourceTransformer
 {
@@ -30,6 +30,7 @@ final readonly class TaxRuleResourceTransformer
 
     /**
      * @param TaxRuleDTO[] $dtos
+     *
      * @return TaxRuleResource[]
      */
     public function fromDTOs(array $dtos): array

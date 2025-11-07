@@ -9,7 +9,7 @@ use App\Order\Domain\ValueObject\FulfillmentStatus;
 use Psr\Log\LoggerInterface;
 
 /**
- * Update Fulfillment Status Command Handler
+ * Update Fulfillment Status Command Handler.
  *
  * Transitions a fulfillment through its workflow states.
  */
@@ -25,7 +25,7 @@ final readonly class UpdateFulfillmentStatusHandler
     {
         $fulfillment = $this->fulfillmentRepository->findById($command->fulfillmentId);
 
-        if ($fulfillment === null) {
+        if (null === $fulfillment) {
             throw new \DomainException(sprintf('Fulfillment not found: %s', $command->fulfillmentId->toString()));
         }
 
@@ -42,7 +42,7 @@ final readonly class UpdateFulfillmentStatusHandler
         } elseif ($newStatus->equals(FulfillmentStatus::packing())) {
             $fulfillment->startPacking();
         } elseif ($newStatus->equals(FulfillmentStatus::shipping())) {
-            if ($command->carrier === null || $command->trackingNumber === null) {
+            if (null === $command->carrier || null === $command->trackingNumber) {
                 throw new \DomainException('Carrier and tracking number are required for shipping status');
             }
             $fulfillment->ship($command->carrier, $command->trackingNumber);
@@ -51,7 +51,7 @@ final readonly class UpdateFulfillmentStatusHandler
         } elseif ($newStatus->equals(FulfillmentStatus::cancelled())) {
             $fulfillment->cancel();
         } elseif ($newStatus->equals(FulfillmentStatus::failed())) {
-            if ($command->failureReason === null) {
+            if (null === $command->failureReason) {
                 throw new \DomainException('Failure reason is required for failed status');
             }
             $fulfillment->markAsFailed($command->failureReason);

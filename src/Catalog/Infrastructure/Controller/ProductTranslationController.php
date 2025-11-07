@@ -16,17 +16,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Controller for product translation endpoints
+ * Controller for product translation endpoints.
  */
 final class ProductTranslationController extends AbstractController
 {
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
         private readonly MessageBusInterface $messageBus
-    ) {}
+    ) {
+    }
 
     /**
-     * GET /api/products/{id}/translations
+     * GET /api/products/{id}/translations.
      */
     public function getTranslations(string $id, Request $request): JsonResponse
     {
@@ -84,14 +85,13 @@ final class ProductTranslationController extends AbstractController
                 'productId' => $id,
                 'translations' => $translations,
             ]);
-
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * PATCH /api/products/{id}/translations
+     * PATCH /api/products/{id}/translations.
      */
     public function updateTranslations(string $id, Request $request): JsonResponse
     {
@@ -103,7 +103,7 @@ final class ProductTranslationController extends AbstractController
 
         // Parse request body
         $data = json_decode($request->getContent(), true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        if (JSON_ERROR_NONE !== json_last_error()) {
             return $this->json(['error' => 'Invalid JSON payload'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -131,7 +131,6 @@ final class ProductTranslationController extends AbstractController
                 'productId' => $id,
                 'locale' => $locale,
             ]);
-
         } catch (\InvalidArgumentException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $e) {

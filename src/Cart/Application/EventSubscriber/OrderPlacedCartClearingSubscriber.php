@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Cart\Application\EventSubscriber;
 
 use App\Cart\Application\Command\ClearCart;
-use App\Cart\Domain\Model\CartId;
 use App\Cart\Domain\Repository\CartRepositoryInterface;
 use App\Order\Domain\Event\OrderPlaced;
 use Psr\Log\LoggerInterface;
@@ -13,7 +12,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * OrderPlacedCartClearingSubscriber
+ * OrderPlacedCartClearingSubscriber.
  *
  * Listens to OrderPlaced events and clears the associated cart.
  *
@@ -51,7 +50,7 @@ final readonly class OrderPlacedCartClearingSubscriber implements EventSubscribe
     }
 
     /**
-     * Handle OrderPlaced event
+     * Handle OrderPlaced event.
      *
      * Strategy:
      * - Find cart by session ID or customer ID (from order context)
@@ -77,6 +76,7 @@ final readonly class OrderPlacedCartClearingSubscriber implements EventSubscribe
             'tenant_id' => $event->tenantId->toString(),
             'customer_email' => $event->customerEmail,
         ]);
+
         return;
 
         try {
@@ -99,6 +99,7 @@ final readonly class OrderPlacedCartClearingSubscriber implements EventSubscribe
                     'order_id' => $event->orderId->toString(),
                     'customer_email' => $event->customerEmail,
                 ]);
+
                 return;
             }
 

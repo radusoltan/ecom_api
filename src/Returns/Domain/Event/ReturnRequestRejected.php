@@ -8,7 +8,7 @@ use App\Returns\Domain\ValueObject\ReturnRequestId;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Domain Event: ReturnRequestRejected
+ * Domain Event: ReturnRequestRejected.
  *
  * Triggered when a return request is rejected.
  *

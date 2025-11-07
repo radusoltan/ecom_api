@@ -9,7 +9,7 @@ use App\Catalog\Domain\Model\ProductId;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * StockValidator Service
+ * StockValidator Service.
  *
  * Responsibilities:
  * - Check stock availability for product+variant
@@ -34,12 +34,13 @@ final readonly class StockValidator
     }
 
     /**
-     * Validate that sufficient stock is available
+     * Validate that sufficient stock is available.
      *
-     * @param ProductId $productId The product to check
-     * @param string|null $variantId Optional variant ID
-     * @param TenantId $tenantId Tenant context
-     * @param int $requestedQuantity Quantity requested
+     * @param ProductId   $productId         The product to check
+     * @param string|null $variantId         Optional variant ID
+     * @param TenantId    $tenantId          Tenant context
+     * @param int         $requestedQuantity Quantity requested
+     *
      * @throws InsufficientStockException If insufficient stock available
      */
     public function validateStockAvailability(
@@ -51,20 +52,17 @@ final readonly class StockValidator
         $availableQuantity = $this->getAvailableQuantity($productId, $variantId, $tenantId);
 
         if ($availableQuantity < $requestedQuantity) {
-            throw InsufficientStockException::forProduct(
-                $productId->toString(),
-                $requestedQuantity,
-                $availableQuantity
-            );
+            throw InsufficientStockException::forProduct($productId->toString(), $requestedQuantity, $availableQuantity);
         }
     }
 
     /**
-     * Get available quantity for a product/variant
+     * Get available quantity for a product/variant.
      *
-     * @param ProductId $productId The product to check
+     * @param ProductId   $productId The product to check
      * @param string|null $variantId Optional variant ID
-     * @param TenantId $tenantId Tenant context
+     * @param TenantId    $tenantId  Tenant context
+     *
      * @return int Available quantity (aggregated across warehouses)
      */
     public function getAvailableQuantity(
@@ -86,11 +84,12 @@ final readonly class StockValidator
     }
 
     /**
-     * Check if a product is in stock (any quantity available)
+     * Check if a product is in stock (any quantity available).
      *
-     * @param ProductId $productId The product to check
+     * @param ProductId   $productId The product to check
      * @param string|null $variantId Optional variant ID
-     * @param TenantId $tenantId Tenant context
+     * @param TenantId    $tenantId  Tenant context
+     *
      * @return bool True if any stock available, false if out of stock
      */
     public function isInStock(
@@ -102,11 +101,12 @@ final readonly class StockValidator
     }
 
     /**
-     * Get stock availability details
+     * Get stock availability details.
      *
-     * @param ProductId $productId The product to check
+     * @param ProductId   $productId The product to check
      * @param string|null $variantId Optional variant ID
-     * @param TenantId $tenantId Tenant context
+     * @param TenantId    $tenantId  Tenant context
+     *
      * @return array{available: int, isInStock: bool, isLowStock: bool}
      */
     public function getStockDetails(

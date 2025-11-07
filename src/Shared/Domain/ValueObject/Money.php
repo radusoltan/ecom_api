@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
 
-use Brick\Money\Money as BrickMoney;
 use Brick\Money\Currency;
+use Brick\Money\Money as BrickMoney;
 
 final readonly class Money
 {
     private function __construct(
         private BrickMoney $money
-    ) {}
+    ) {
+    }
 
     public static function fromScalars(int $amount, string $currencyCode): self
     {

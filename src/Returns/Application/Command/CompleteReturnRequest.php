@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Returns\Application\Command;
 
 /**
- * Command: CompleteReturnRequest
+ * Command: CompleteReturnRequest.
  *
  * Complete the return process by issuing a refund.
  */

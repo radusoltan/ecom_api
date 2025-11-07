@@ -11,5 +11,6 @@ final readonly class DeleteReview
     public function __construct(
         public ReviewId $reviewId,
         public ?string $customerId = null
-    ) {}
+    ) {
+    }
 }

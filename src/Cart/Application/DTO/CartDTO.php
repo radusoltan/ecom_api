@@ -7,19 +7,22 @@ namespace App\Cart\Application\DTO;
 use App\Cart\Domain\Model\Cart;
 
 /**
- * CartDTO - Data Transfer Object for Cart
+ * CartDTO - Data Transfer Object for Cart.
  *
  * Used for read operations (queries)
  */
 final readonly class CartDTO
 {
+    /**
+     * @param array<int, array<string, mixed>> $items Array of CartItemDTO
+     */
     public function __construct(
         public string $id,
         public string $tenantId,
         public ?string $customerId,
         public ?string $sessionId,
         public string $status,
-        public array $items, // Array of CartItemDTO
+        public array $items,
         public int $totalAmount,
         public string $totalCurrency,
         public int $itemCount,
@@ -31,7 +34,7 @@ final readonly class CartDTO
     public static function fromDomain(Cart $cart): self
     {
         $items = array_map(
-            fn($item) => [
+            fn ($item) => [
                 'id' => $item->id()->toString(),
                 'productId' => $item->productId()->toString(),
                 'variantId' => $item->variantId(),

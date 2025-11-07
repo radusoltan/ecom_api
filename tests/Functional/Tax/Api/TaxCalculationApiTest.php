@@ -7,7 +7,7 @@ namespace App\Tests\Functional\Tax\Api;
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 
 /**
- * Comprehensive Functional Tests for Tax Calculation API Endpoint
+ * Comprehensive Functional Tests for Tax Calculation API Endpoint.
  *
  * Tests the Tax Calculation endpoint:
  * - POST /api/tax_calculations (Calculate Tax)
@@ -24,7 +24,7 @@ final class TaxCalculationApiTest extends ApiTestCase
     private ?string $currentTenantId = null;
 
     /**
-     * Create an authenticated client with JWT token and optional X-Tenant-ID header
+     * Create an authenticated client with JWT token and optional X-Tenant-ID header.
      */
     protected function createAuthenticatedClient(
         string $email = 'admin@admin.com',
@@ -43,7 +43,7 @@ final class TaxCalculationApiTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash');
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -61,11 +61,11 @@ final class TaxCalculationApiTest extends ApiTestCase
             'exp' => time() + 3600,
         ]);
 
-        $headers = ['authorization' => 'Bearer ' . $token];
+        $headers = ['authorization' => 'Bearer '.$token];
 
         // Add X-Tenant-ID if provided or if we have a current tenant
         $tenantIdToUse = $tenantId ?? $this->currentTenantId;
-        if ($tenantIdToUse !== null) {
+        if (null !== $tenantIdToUse) {
             $headers['X-Tenant-ID'] = $tenantIdToUse;
         }
 
@@ -73,7 +73,7 @@ final class TaxCalculationApiTest extends ApiTestCase
     }
 
     /**
-     * Generate a unique email address for testing
+     * Generate a unique email address for testing.
      */
     private function generateUniqueEmail(string $prefix = 'user'): string
     {
@@ -81,14 +81,14 @@ final class TaxCalculationApiTest extends ApiTestCase
     }
 
     /**
-     * Create a valid tenant for testing
+     * Create a valid tenant for testing.
      */
     private function createTenant(): string
     {
         $client = $this->createAuthenticatedClient();
         $response = $client->request('POST', '/api/v1/tenants', [
             'json' => [
-                'name' => 'Test Tenant ' . uniqid(),
+                'name' => 'Test Tenant '.uniqid(),
                 'ownerEmail' => $this->generateUniqueEmail('tenant'),
             ],
         ]);
@@ -100,7 +100,7 @@ final class TaxCalculationApiTest extends ApiTestCase
     }
 
     /**
-     * Helper method to create a tax rule via the API
+     * Helper method to create a tax rule via the API.
      *
      * @return array<string, mixed> The created tax rule data
      */
@@ -118,7 +118,7 @@ final class TaxCalculationApiTest extends ApiTestCase
             'ratePercentage' => $ratePercentage,
         ];
 
-        if ($regionCode !== null) {
+        if (null !== $regionCode) {
             $payload['regionCode'] = $regionCode;
         }
 
@@ -342,7 +342,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $taxRule = $this->createTaxRule($tenantId, 'France VAT', 'FR', 20.0);
 
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('PATCH', '/api/tax_rules/' . $taxRule['id'] . '/deactivate');
+            ->request('PATCH', '/api/tax_rules/'.$taxRule['id'].'/deactivate');
 
         // Try to calculate tax with deactivated rule
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
@@ -537,7 +537,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         ];
 
         foreach ($euCountries as $country) {
-            $this->createTaxRule($tenantId, $country['code'] . ' VAT', $country['code'], $country['rate']);
+            $this->createTaxRule($tenantId, $country['code'].' VAT', $country['code'], $country['rate']);
 
             $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
                 ->request('POST', '/api/v1/tax_calculations', [

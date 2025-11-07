@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Catalog\Application\Command;
 
 use App\Catalog\Domain\Model\CategoryId;
-use App\Shared\Domain\ValueObject\TenantId;
 use App\Catalog\Domain\Model\CategoryName;
+use App\Shared\Domain\ValueObject\TenantId;
 
 final readonly class CreateCategory
 {
@@ -18,5 +18,6 @@ final readonly class CreateCategory
         public ?CategoryId $parentId,
         public int $position = 0,
         public bool $showOnFront = false
-    ) {}
+    ) {
+    }
 }

@@ -19,5 +19,6 @@ final readonly class CreateStockItemCommand
         public Quantity $initialQuantity,
         public ?Quantity $lowStockThreshold,
         public TenantId $tenantId,
-    ) {}
+    ) {
+    }
 }

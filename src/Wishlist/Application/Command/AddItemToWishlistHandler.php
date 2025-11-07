@@ -14,7 +14,8 @@ final readonly class AddItemToWishlistHandler
 {
     public function __construct(
         private WishlistRepositoryInterface $wishlistRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(AddItemToWishlist $command): void
     {
@@ -24,7 +25,7 @@ final readonly class AddItemToWishlistHandler
             $command->tenantId
         );
 
-        if ($wishlist === null) {
+        if (null === $wishlist) {
             $wishlist = Wishlist::create(
                 WishlistId::generate(),
                 $command->customerId,

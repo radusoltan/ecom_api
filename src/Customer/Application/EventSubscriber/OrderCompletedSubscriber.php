@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Event Subscriber that re-evaluates customer segment after order completion
+ * Event Subscriber that re-evaluates customer segment after order completion.
  *
  * Listens to OrderPlaced events and triggers segment evaluation based on:
  * - Total amount spent by customer
@@ -41,7 +41,7 @@ final readonly class OrderCompletedSubscriber implements EventSubscriberInterfac
     }
 
     /**
-     * Handle order placed event - re-evaluate customer segment
+     * Handle order placed event - re-evaluate customer segment.
      */
     public function onOrderPlaced(OrderPlaced $event): void
     {
@@ -50,12 +50,13 @@ final readonly class OrderCompletedSubscriber implements EventSubscriberInterfac
             $email = Email::fromString($event->customerEmail);
             $customer = $this->customerRepository->findByEmail($email, $event->tenantId);
 
-            if ($customer === null) {
+            if (null === $customer) {
                 $this->logger->warning('Customer not found for order', [
                     'email' => $event->customerEmail,
                     'tenant_id' => $event->tenantId->toString(),
                     'order_id' => $event->orderId->toString(),
                 ]);
+
                 return;
             }
 
@@ -70,6 +71,7 @@ final readonly class OrderCompletedSubscriber implements EventSubscriberInterfac
                     'total_spent' => $totalSpent->getAmount(),
                     'loyalty_points' => $customer->loyaltyPoints(),
                 ]);
+
                 return;
             }
 
@@ -93,7 +95,6 @@ final readonly class OrderCompletedSubscriber implements EventSubscriberInterfac
             );
 
             $this->commandBus->dispatch($command);
-
         } catch (\Exception $e) {
             // Log error but don't fail the order placement
             $this->logger->error('Failed to re-evaluate customer segment after order', [
@@ -105,7 +106,7 @@ final readonly class OrderCompletedSubscriber implements EventSubscriberInterfac
     }
 
     /**
-     * Calculate total spent by customer across all completed orders
+     * Calculate total spent by customer across all completed orders.
      */
     private function calculateTotalSpent(Email $customerEmail, \App\Shared\Domain\ValueObject\TenantId $tenantId): Money
     {

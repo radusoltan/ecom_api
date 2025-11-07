@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Search\Application\Query;
 
 /**
- * AutocompleteProducts Query DTO
+ * AutocompleteProducts Query DTO.
  *
  * Represents a request for product autocomplete suggestions.
  */

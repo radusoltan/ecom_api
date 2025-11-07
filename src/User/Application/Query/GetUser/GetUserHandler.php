@@ -21,7 +21,7 @@ final readonly class GetUserHandler
     {
         $user = $this->userRepository->findById(UserId::fromString($query->userId));
 
-        if ($user === null) {
+        if (null === $user) {
             throw new \DomainException(sprintf('User with ID "%s" not found', $query->userId));
         }
 

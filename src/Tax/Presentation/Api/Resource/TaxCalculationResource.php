@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tax\Presentation\Api\Resource;
 
-use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
 use App\Tax\Presentation\Api\Processor\CalculateTaxProcessor;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Tax Calculation API Resource
+ * Tax Calculation API Resource.
  *
  * Represents a tax calculation request and response.
  */

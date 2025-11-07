@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tenant\Application\Command;
 
+use App\Shared\Application\Service\PerformanceProfiler;
 use App\Shared\Domain\ValueObject\Email;
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
 use App\Tenant\Domain\Exception\TenantAlreadyExistsException;
 use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
@@ -56,6 +56,7 @@ final readonly class CreateTenantCommandHandler
             }
         } catch (\Throwable $e) {
             $this->profiler->stop('tenant.create');
+
             throw $e;
         }
     }

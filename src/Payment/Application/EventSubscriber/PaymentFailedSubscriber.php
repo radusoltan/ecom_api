@@ -11,7 +11,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
 /**
- * Payment Failed Subscriber
+ * Payment Failed Subscriber.
  *
  * Handles actions when a payment fails.
  * - Sends payment failure notification email to customer
@@ -58,7 +58,6 @@ final readonly class PaymentFailedSubscriber implements EventSubscriberInterface
             $this->logger->info('Payment failed subscriber completed successfully', [
                 'payment_id' => $event->paymentId->toString(),
             ]);
-
         } catch (\Throwable $e) {
             // Log error but don't throw
             $this->logger->error('PaymentFailedSubscriber failed', [
@@ -90,7 +89,6 @@ final readonly class PaymentFailedSubscriber implements EventSubscriberInterface
             $this->logger->info('Payment failure notification email sent', [
                 'payment_id' => $event->paymentId->toString(),
             ]);
-
         } catch (\Throwable $e) {
             // Log email failure but don't throw
             $this->logger->error('Failed to send payment failure notification email', [
@@ -195,7 +193,7 @@ final readonly class PaymentFailedSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Sanitize error message to avoid exposing sensitive gateway details
+     * Sanitize error message to avoid exposing sensitive gateway details.
      */
     private function sanitizeErrorMessage(string $errorMessage): string
     {
@@ -221,7 +219,7 @@ final readonly class PaymentFailedSubscriber implements EventSubscriberInterface
         ];
 
         foreach ($errorMap as $code => $message) {
-            if (stripos($sanitized, $code) !== false) {
+            if (false !== stripos($sanitized, $code)) {
                 return $message;
             }
         }

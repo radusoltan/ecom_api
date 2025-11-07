@@ -12,7 +12,8 @@ final readonly class GetStockByProductHandler
 {
     public function __construct(
         private StockItemRepositoryInterface $stockItemRepository,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<StockItemDTO>
@@ -25,7 +26,7 @@ final readonly class GetStockByProductHandler
         );
 
         return array_map(
-            fn($stockItem) => StockItemDTO::fromStockItem($stockItem),
+            fn ($stockItem) => StockItemDTO::fromStockItem($stockItem),
             $stockItems
         );
     }

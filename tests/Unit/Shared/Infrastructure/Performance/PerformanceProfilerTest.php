@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Shared\Infrastructure\Performance;
 
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
+use App\Shared\Application\Service\PerformanceProfiler;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -115,8 +115,8 @@ final class PerformanceProfilerTest extends TestCase
             ->with(
                 'Slow query detected',
                 self::callback(function (array $context) {
-                    return $context['duration_ms'] === 150.0
-                        && $context['threshold_ms'] === 100;
+                    return 150.0 === $context['duration_ms']
+                        && 100 === $context['threshold_ms'];
                 })
             );
 
@@ -214,6 +214,7 @@ final class PerformanceProfilerTest extends TestCase
         // When: Profiling a callable that returns a value
         $result = $this->profiler->profile('test_callable', function () {
             usleep(1000); // 1ms
+
             return 'test_result';
         });
 
@@ -252,7 +253,7 @@ final class PerformanceProfilerTest extends TestCase
             ->with(
                 'Slow section detected',
                 self::callback(function (array $context) {
-                    return $context['section'] === 'slow_section'
+                    return 'slow_section' === $context['section']
                         && $context['metrics']['duration_ms'] >= 200.0;
                 })
             );
@@ -272,7 +273,7 @@ final class PerformanceProfilerTest extends TestCase
             ->with(
                 'Section profiled',
                 self::callback(function (array $context) {
-                    return $context['section'] === 'fast_section'
+                    return 'fast_section' === $context['section']
                         && $context['metrics']['duration_ms'] < 200.0;
                 })
             );

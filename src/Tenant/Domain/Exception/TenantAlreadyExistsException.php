@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tenant\Domain\Exception;
 
-use DomainException;
-use App\Tenant\Domain\ValueObject\TenantId;
+use App\Shared\Domain\ValueObject\TenantId;
 
-final class TenantAlreadyExistsException extends DomainException
+final class TenantAlreadyExistsException extends \DomainException
 {
     public static function withId(TenantId $id): self
     {

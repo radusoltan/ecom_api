@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Returns\Application\Command;
 
 /**
- * Command: RejectReturnRequest
+ * Command: RejectReturnRequest.
  *
  * Reject a return request with a reason.
  */

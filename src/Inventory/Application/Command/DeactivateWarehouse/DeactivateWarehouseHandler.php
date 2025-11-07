@@ -12,13 +12,14 @@ final readonly class DeactivateWarehouseHandler
 {
     public function __construct(
         private WarehouseRepositoryInterface $warehouseRepository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(DeactivateWarehouse $command): void
     {
         $warehouse = $this->warehouseRepository->findById($command->id);
 
-        if ($warehouse === null) {
+        if (null === $warehouse) {
             throw new \DomainException('Warehouse not found');
         }
 

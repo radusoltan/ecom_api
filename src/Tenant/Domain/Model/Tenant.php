@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tenant\Domain\Model;
 
-use DateTimeImmutable;
-use DomainException;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\LanguageCode;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\Event\TenantActivated;
 use App\Tenant\Domain\Event\TenantCreated;
 use App\Tenant\Domain\Event\TenantDeactivated;
@@ -16,7 +15,6 @@ use App\Tenant\Domain\Event\TenantReactivated;
 use App\Tenant\Domain\Event\TenantSuspended;
 use App\Tenant\Domain\Event\TenantUpdated;
 use App\Tenant\Domain\Exception\TranslationQuotaExceededException;
-use App\Tenant\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\ValueObject\TenantName;
 use App\Tenant\Domain\ValueObject\TenantStatus;
 
@@ -38,7 +36,7 @@ final class Tenant extends AggregateRoot
         private TenantName $name,
         private Email $ownerEmail,
         private TenantStatus $status,
-        private readonly DateTimeImmutable $createdAt,
+        private readonly \DateTimeImmutable $createdAt,
         private ?LanguageCode $defaultLocale = null,
         ?array $enabledLocales = null,
         private int $translationQuota = self::DEFAULT_TRANSLATION_QUOTA,
@@ -58,7 +56,7 @@ final class Tenant extends AggregateRoot
             $name,
             $ownerEmail,
             TenantStatus::active(),
-            new DateTimeImmutable()
+            new \DateTimeImmutable()
         );
     }
 
@@ -67,7 +65,7 @@ final class Tenant extends AggregateRoot
         TenantName $name,
         Email $ownerEmail,
         TenantStatus $status,
-        DateTimeImmutable $createdAt,
+        \DateTimeImmutable $createdAt,
         ?LanguageCode $defaultLocale = null,
         ?array $enabledLocales = null,
         int $translationQuota = self::DEFAULT_TRANSLATION_QUOTA,
@@ -92,7 +90,7 @@ final class Tenant extends AggregateRoot
     public function activate(): void
     {
         if ($this->status->isActive()) {
-            throw new DomainException('Tenant is already active');
+            throw new \DomainException('Tenant is already active');
         }
         $this->status = TenantStatus::active();
         $this->recordEvent(new TenantActivated($this->id));
@@ -101,7 +99,7 @@ final class Tenant extends AggregateRoot
     public function deactivate(): void
     {
         if (!$this->status->isActive()) {
-            throw new DomainException('Tenant is not active');
+            throw new \DomainException('Tenant is not active');
         }
         $this->status = TenantStatus::inactive();
         $this->recordEvent(new TenantDeactivated($this->id));
@@ -110,10 +108,10 @@ final class Tenant extends AggregateRoot
     public function suspend(): void
     {
         if ($this->status->isSuspended()) {
-            throw new DomainException('Tenant is already suspended');
+            throw new \DomainException('Tenant is already suspended');
         }
         if ($this->status->isInactive()) {
-            throw new DomainException('Cannot suspend an inactive tenant');
+            throw new \DomainException('Cannot suspend an inactive tenant');
         }
         $this->status = TenantStatus::suspended();
         $this->recordEvent(new TenantSuspended($this->id));
@@ -122,10 +120,10 @@ final class Tenant extends AggregateRoot
     public function reactivate(): void
     {
         if ($this->status->isActive()) {
-            throw new DomainException('Tenant is already active');
+            throw new \DomainException('Tenant is already active');
         }
         if (!$this->status->isSuspended()) {
-            throw new DomainException('Only suspended tenants can be reactivated');
+            throw new \DomainException('Only suspended tenants can be reactivated');
         }
         $this->status = TenantStatus::active();
         $this->recordEvent(new TenantReactivated($this->id));
@@ -141,7 +139,7 @@ final class Tenant extends AggregateRoot
     public function setDefaultLocale(LanguageCode $locale): void
     {
         if (!$this->isLocaleEnabled($locale)) {
-            throw new DomainException('Cannot set default locale to a disabled locale');
+            throw new \DomainException('Cannot set default locale to a disabled locale');
         }
         $this->defaultLocale = $locale;
     }
@@ -149,7 +147,7 @@ final class Tenant extends AggregateRoot
     public function enableLocale(LanguageCode $locale): void
     {
         if ($this->isLocaleEnabled($locale)) {
-            throw new DomainException('Locale is already enabled');
+            throw new \DomainException('Locale is already enabled');
         }
         $this->enabledLocales[] = $locale;
     }
@@ -157,15 +155,15 @@ final class Tenant extends AggregateRoot
     public function disableLocale(LanguageCode $locale): void
     {
         if (!$this->isLocaleEnabled($locale)) {
-            throw new DomainException('Locale is not enabled');
+            throw new \DomainException('Locale is not enabled');
         }
         if ($this->defaultLocale->equals($locale)) {
-            throw new DomainException('Cannot disable the default locale');
+            throw new \DomainException('Cannot disable the default locale');
         }
         $this->enabledLocales = array_values(
             array_filter(
                 $this->enabledLocales,
-                fn(LanguageCode $l) => !$l->equals($locale)
+                fn (LanguageCode $l) => !$l->equals($locale)
             )
         );
     }
@@ -177,43 +175,40 @@ final class Tenant extends AggregateRoot
                 return true;
             }
         }
+
         return false;
     }
 
     private function validateDefaultLocaleIsEnabled(): void
     {
         if (!$this->isLocaleEnabled($this->defaultLocale)) {
-            throw new DomainException('Default locale must be in enabled locales');
+            throw new \DomainException('Default locale must be in enabled locales');
         }
     }
 
     private function validateTranslationQuota(): void
     {
         if ($this->translationQuota < 0) {
-            throw new DomainException('Translation quota cannot be negative');
+            throw new \DomainException('Translation quota cannot be negative');
         }
         if ($this->translationUsage < 0) {
-            throw new DomainException('Translation usage cannot be negative');
+            throw new \DomainException('Translation usage cannot be negative');
         }
         if ($this->translationUsage > $this->translationQuota) {
-            throw new DomainException('Translation usage cannot exceed quota');
+            throw new \DomainException('Translation usage cannot exceed quota');
         }
     }
 
     public function incrementTranslationUsage(int $count = 1): void
     {
         if ($count < 1) {
-            throw new DomainException('Translation usage increment must be positive');
+            throw new \DomainException('Translation usage increment must be positive');
         }
 
         $newUsage = $this->translationUsage + $count;
 
         if ($newUsage > $this->translationQuota) {
-            throw TranslationQuotaExceededException::forTenant(
-                $this->id->toString(),
-                $this->translationQuota,
-                $this->translationUsage
-            );
+            throw TranslationQuotaExceededException::forTenant($this->id->toString(), $this->translationQuota, $this->translationUsage);
         }
 
         $this->translationUsage = $newUsage;
@@ -222,10 +217,10 @@ final class Tenant extends AggregateRoot
     public function setTranslationQuota(int $quota): void
     {
         if ($quota < 0) {
-            throw new DomainException('Translation quota cannot be negative');
+            throw new \DomainException('Translation quota cannot be negative');
         }
         if ($quota > 1000000) {
-            throw new DomainException('Translation quota cannot exceed 1,000,000');
+            throw new \DomainException('Translation quota cannot exceed 1,000,000');
         }
         $this->translationQuota = $quota;
     }
@@ -266,7 +261,7 @@ final class Tenant extends AggregateRoot
         return $this->status;
     }
 
-    public function createdAt(): DateTimeImmutable
+    public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }

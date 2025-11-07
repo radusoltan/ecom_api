@@ -11,5 +11,6 @@ final readonly class GetAllWarehouses
     public function __construct(
         public TenantId $tenantId,
         public bool $activeOnly = false,
-    ) {}
+    ) {
+    }
 }

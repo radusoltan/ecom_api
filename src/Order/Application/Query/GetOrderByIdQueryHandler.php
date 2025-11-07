@@ -7,8 +7,8 @@ namespace App\Order\Application\Query;
 use App\Order\Application\DTO\OrderDTO;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
+use App\Shared\Application\Service\PerformanceProfiler;
 use App\Shared\Domain\ValueObject\TenantId;
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -47,6 +47,7 @@ final readonly class GetOrderByIdQueryHandler
             return $result;
         } catch (\Throwable $e) {
             $this->profiler->stop('order.get_by_id');
+
             throw $e;
         }
     }

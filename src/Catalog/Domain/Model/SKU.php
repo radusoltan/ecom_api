@@ -12,9 +12,7 @@ final readonly class SKU
         private string $value
     ) {
         if (!preg_match(self::PATTERN, $value)) {
-            throw new \InvalidArgumentException(
-                'SKU must match pattern: PRD-123456 (3 uppercase letters, hyphen, 6 digits)'
-            );
+            throw new \InvalidArgumentException('SKU must match pattern: PRD-123456 (3 uppercase letters, hyphen, 6 digits)');
         }
     }
 

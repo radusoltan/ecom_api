@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Privacy\Application\DTO;
 
 use App\Privacy\Domain\Model\DataSubjectRequest;
-use DateTimeImmutable;
 
 final readonly class DataSubjectRequestDTO
 {
@@ -19,14 +18,14 @@ final readonly class DataSubjectRequestDTO
         public ?string $reviewNotes,
         public ?string $rejectionReason,
         public ?array $exportData,
-        public DateTimeImmutable $submittedAt,
-        public ?DateTimeImmutable $completedAt,
-        public DateTimeImmutable $deadline,
+        public \DateTimeImmutable $submittedAt,
+        public ?\DateTimeImmutable $completedAt,
+        public \DateTimeImmutable $deadline,
         public bool $isExtended,
         public bool $isOverdue,
         public int $daysUntilDeadline,
-        public DateTimeImmutable $createdAt,
-        public DateTimeImmutable $updatedAt
+        public \DateTimeImmutable $createdAt,
+        public \DateTimeImmutable $updatedAt
     ) {
     }
 

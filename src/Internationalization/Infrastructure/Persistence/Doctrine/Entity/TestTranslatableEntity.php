@@ -9,7 +9,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Translatable\Translatable;
 
 /**
- * Test Entity for Translatable Behavior
+ * Test Entity for Translatable Behavior.
  *
  * This is a simple test entity to verify Gedmo Translatable behavior is working.
  * It will be used in Task 1.7 for the demo.

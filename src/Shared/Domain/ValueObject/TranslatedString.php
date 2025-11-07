@@ -98,18 +98,12 @@ final readonly class TranslatedString
 
         foreach (array_keys($this->translations) as $langCode) {
             if (!in_array($langCode, $supportedLanguages, true)) {
-                throw new InvalidArgumentException(
-                    sprintf(
-                        'Language code "%s" is not supported. Supported languages: %s',
-                        $langCode,
-                        implode(', ', $supportedLanguages)
-                    )
-                );
+                throw new InvalidArgumentException(sprintf('Language code "%s" is not supported. Supported languages: %s', $langCode, implode(', ', $supportedLanguages)));
             }
         }
 
         foreach ($this->translations as $text) {
-            if (!is_string($text) || trim($text) === '') {
+            if (!is_string($text) || '' === trim($text)) {
                 throw new InvalidArgumentException('Translation text cannot be empty');
             }
         }

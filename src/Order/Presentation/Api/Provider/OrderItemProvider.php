@@ -8,7 +8,6 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Order\Application\Query\GetOrderByIdQuery;
 use App\Order\Presentation\Api\Resource\OrderResource;
-use InvalidArgumentException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -21,10 +20,10 @@ final readonly class OrderItemProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?OrderResource
     {
-        $orderId = $uriVariables['id'] ?? throw new InvalidArgumentException('Order ID is required');
+        $orderId = $uriVariables['id'] ?? throw new \InvalidArgumentException('Order ID is required');
 
         // Get tenantId from context (should be injected by security layer)
-        $tenantId = $context['tenant_id'] ?? throw new InvalidArgumentException('Tenant ID is required');
+        $tenantId = $context['tenant_id'] ?? throw new \InvalidArgumentException('Tenant ID is required');
 
         $envelope = $this->queryBus->dispatch(new GetOrderByIdQuery($orderId, $tenantId));
         $handledStamp = $envelope->last(HandledStamp::class);
@@ -35,7 +34,7 @@ final readonly class OrderItemProvider implements ProviderInterface
 
         $orderDTO = $handledStamp->getResult();
 
-        if ($orderDTO === null) {
+        if (null === $orderDTO) {
             return null;
         }
 

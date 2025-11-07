@@ -14,7 +14,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Doctrine repository implementation for ConfigurableProduct
+ * Doctrine repository implementation for ConfigurableProduct.
  */
 class DoctrineConfigurableProductRepository extends ServiceEntityRepository implements ConfigurableProductRepositoryInterface
 {
@@ -95,7 +95,7 @@ class DoctrineConfigurableProductRepository extends ServiceEntityRepository impl
         );
 
         return array_map(
-            fn(ConfigurableProductEntity $entity) => $entity->toDomainModel(),
+            fn (ConfigurableProductEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }

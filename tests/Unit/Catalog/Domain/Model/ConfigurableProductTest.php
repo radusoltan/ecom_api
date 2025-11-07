@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Catalog\Domain\Model;
 
 // Load ConfigurableProduct file which contains multiple classes
-require_once __DIR__ . '/../../../../../src/Catalog/Domain/Model/ConfigurableProduct.php';
-require_once __DIR__ . '/../../../../../src/Catalog/Domain/Model/Option.php';
-require_once __DIR__ . '/../../../../../src/Catalog/Domain/Model/Variant.php';
+require_once __DIR__.'/../../../../../src/Catalog/Domain/Model/ConfigurableProduct.php';
+require_once __DIR__.'/../../../../../src/Catalog/Domain/Model/Option.php';
+require_once __DIR__.'/../../../../../src/Catalog/Domain/Model/Variant.php';
 
 use App\Catalog\Domain\Model\ConfigurableProduct;
 use App\Catalog\Domain\Model\ConfigurableProductId;
@@ -25,7 +25,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Unit tests for ConfigurableProduct aggregate
+ * Unit tests for ConfigurableProduct aggregate.
  */
 final class ConfigurableProductTest extends TestCase
 {
@@ -41,7 +41,7 @@ final class ConfigurableProductTest extends TestCase
     }
 
     /**
-     * Test that defineOption() enforces max 10 options rule
+     * Test that defineOption() enforces max 10 options rule.
      */
     public function testDefineOptionEnforcesMaxTenOptionsRule(): void
     {
@@ -53,7 +53,7 @@ final class ConfigurableProductTest extends TestCase
         );
 
         // Add 10 options (maximum allowed)
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 10; ++$i) {
             $option = Option::create(
                 OptionId::generate(),
                 OptionCode::fromString("option{$i}"),
@@ -79,7 +79,7 @@ final class ConfigurableProductTest extends TestCase
     }
 
     /**
-     * Test that addVariant() prevents duplicate option value combinations
+     * Test that addVariant() prevents duplicate option value combinations.
      */
     public function testAddVariantPreventsDuplicateCombinations(): void
     {
@@ -140,7 +140,7 @@ final class ConfigurableProductTest extends TestCase
     }
 
     /**
-     * Test that ConfigurableProduct can be created successfully
+     * Test that ConfigurableProduct can be created successfully.
      */
     public function testConfigurableProductCanBeCreated(): void
     {
@@ -161,7 +161,7 @@ final class ConfigurableProductTest extends TestCase
     }
 
     /**
-     * Test that options can be defined successfully
+     * Test that options can be defined successfully.
      */
     public function testOptionsCanBeDefined(): void
     {
@@ -190,7 +190,7 @@ final class ConfigurableProductTest extends TestCase
     }
 
     /**
-     * Test that variants can be added successfully
+     * Test that variants can be added successfully.
      */
     public function testVariantsCanBeAdded(): void
     {

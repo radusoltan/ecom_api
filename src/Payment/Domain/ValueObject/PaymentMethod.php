@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Payment\Domain\ValueObject;
 
 /**
- * Payment Method Value Object
+ * Payment Method Value Object.
  *
  * Supported payment methods:
  * - card: Credit/debit card payments
@@ -28,13 +28,7 @@ final readonly class PaymentMethod
         private string $value
     ) {
         if (!in_array($value, self::VALID_METHODS, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid payment method: "%s". Allowed: %s',
-                    $value,
-                    implode(', ', self::VALID_METHODS)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid payment method: "%s". Allowed: %s', $value, implode(', ', self::VALID_METHODS)));
         }
     }
 
@@ -65,17 +59,17 @@ final readonly class PaymentMethod
 
     public function isCard(): bool
     {
-        return $this->value === self::CARD;
+        return self::CARD === $this->value;
     }
 
     public function isPaypal(): bool
     {
-        return $this->value === self::PAYPAL;
+        return self::PAYPAL === $this->value;
     }
 
     public function isBankTransfer(): bool
     {
-        return $this->value === self::BANK_TRANSFER;
+        return self::BANK_TRANSFER === $this->value;
     }
 
     public function equals(self $other): bool

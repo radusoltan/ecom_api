@@ -17,7 +17,7 @@ use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Provider for retrieving a single tax rule
+ * Provider for retrieving a single tax rule.
  */
 final class TaxRuleItemProvider implements ProviderInterface
 {
@@ -58,7 +58,7 @@ final class TaxRuleItemProvider implements ProviderInterface
         // Execute query
         $dto = $this->handle($query);
 
-        if ($dto === null) {
+        if (null === $dto) {
             throw new NotFoundHttpException('Tax rule not found');
         }
 

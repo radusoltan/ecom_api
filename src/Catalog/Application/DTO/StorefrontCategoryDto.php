@@ -8,29 +8,30 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 final class StorefrontCategoryDto
 {
+    /**
+     * @param array<string, string>|null $image ['urlSm' => string, 'urlMd' => string, 'urlLg' => string]
+     */
     public function __construct(
         #[Groups(['storefront:read'])]
         public readonly string $id,
-
         #[Groups(['storefront:read'])]
         public readonly string $slug,
-
         #[Groups(['storefront:read'])]
         public readonly string $name,
-
         #[Groups(['storefront:read'])]
-        public readonly ?array $image = null, // ['urlSm' => string, 'urlMd' => string, 'urlLg' => string]
-
+        public readonly ?array $image = null,
         #[Groups(['storefront:read'])]
         public readonly bool $showOnFront = false,
-
         #[Groups(['storefront:read'])]
         public readonly int $childrenCount = 0,
-
         #[Groups(['storefront:read'])]
         public readonly ?string $description = null
-    ) {}
+    ) {
+    }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data): self
     {
         return new self(

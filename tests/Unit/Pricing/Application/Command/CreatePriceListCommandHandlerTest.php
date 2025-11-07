@@ -10,9 +10,8 @@ use App\Pricing\Domain\Model\PriceList;
 use App\Pricing\Domain\Model\PriceListId;
 use App\Pricing\Domain\Model\PriceListName;
 use App\Pricing\Domain\Repository\PriceListRepositoryInterface;
+use App\Shared\Application\Service\PerformanceProfiler;
 use App\Shared\Domain\ValueObject\TenantId;
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
-use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -54,7 +53,7 @@ final class CreatePriceListCommandHandlerTest extends TestCase
                 return $priceList->id()->equals($priceListId)
                     && $priceList->tenantId()->equals($tenantId)
                     && $priceList->name()->equals($name)
-                    && $priceList->priority() === 100  // Default priority
+                    && 100 === $priceList->priority()  // Default priority
                     && !$priceList->isActive();  // Created inactive
             }));
 
@@ -73,7 +72,7 @@ final class CreatePriceListCommandHandlerTest extends TestCase
         $this->repository->expects($this->once())
             ->method('save')
             ->with($this->callback(function (PriceList $priceList) {
-                return $priceList->priority() === 500;
+                return 500 === $priceList->priority();
             }));
 
         ($this->handler)($command);
@@ -81,8 +80,8 @@ final class CreatePriceListCommandHandlerTest extends TestCase
 
     public function testHandleCreatesWithValidityDates(): void
     {
-        $validFrom = new DateTimeImmutable('2025-06-01');
-        $validTo = new DateTimeImmutable('2025-08-31');
+        $validFrom = new \DateTimeImmutable('2025-06-01');
+        $validTo = new \DateTimeImmutable('2025-08-31');
 
         $command = new CreatePriceListCommand(
             PriceListId::generate(),
@@ -117,8 +116,8 @@ final class CreatePriceListCommandHandlerTest extends TestCase
         $this->repository->expects($this->once())
             ->method('save')
             ->with($this->callback(function (PriceList $priceList) {
-                return $priceList->validFrom() === null
-                    && $priceList->validTo() === null;
+                return null === $priceList->validFrom()
+                    && null === $priceList->validTo();
             }));
 
         ($this->handler)($command);

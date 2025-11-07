@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tenant\Infrastructure\Persistence\Doctrine\Type;
 
-use InvalidArgumentException;
 use App\Tenant\Domain\ValueObject\TenantStatus;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
@@ -31,7 +30,7 @@ final class TenantStatusType extends Type
 
         try {
             return TenantStatus::fromString((string) $value);
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             throw ConversionException::conversionFailedFormat($value, $this->getName(), '"active" or "inactive"', $e);
         }
     }

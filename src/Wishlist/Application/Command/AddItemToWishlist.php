@@ -13,5 +13,6 @@ final readonly class AddItemToWishlist
         public string $customerId,
         public ProductId $productId,
         public TenantId $tenantId
-    ) {}
+    ) {
+    }
 }

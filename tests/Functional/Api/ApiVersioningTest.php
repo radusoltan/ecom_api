@@ -7,7 +7,7 @@ namespace App\Tests\Functional\Api;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * API Versioning Functional Tests
+ * API Versioning Functional Tests.
  *
  * Tests EPIC 3.1 - API Versioning implementation:
  * - Routes accessible at /api/v1/*
@@ -107,7 +107,7 @@ final class ApiVersioningTest extends WebTestCase
 
         $response = $client->getResponse();
 
-        if ($response->getStatusCode() === 200) {
+        if (200 === $response->getStatusCode()) {
             $docs = json_decode($response->getContent(), true);
             $this->assertArrayHasKey('info', $docs);
             $this->assertStringContainsString('v1', $docs['info']['version'] ?? $docs['info']['description']);

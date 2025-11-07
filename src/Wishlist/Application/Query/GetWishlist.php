@@ -11,5 +11,6 @@ final readonly class GetWishlist
     public function __construct(
         public string $customerId,
         public TenantId $tenantId
-    ) {}
+    ) {
+    }
 }

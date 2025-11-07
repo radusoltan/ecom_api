@@ -10,8 +10,6 @@ use App\Cart\Application\Command\ClearCart;
 use App\Cart\Application\Query\GetCart;
 use App\Cart\Domain\Exception\CartNotFoundException;
 use App\Cart\Presentation\Api\Resource\CartResource;
-use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
@@ -32,9 +30,9 @@ final readonly class ClearCartProcessor implements ProcessorInterface
     {
         // Get cart ID from context or from X-Cart-ID header
         $cartId = $context['cart_id'] ?? null;
-        if ($cartId === null) {
+        if (null === $cartId) {
             $request = $this->requestStack->getCurrentRequest();
-            $cartId = $request?->headers->get('X-Cart-ID') ?? throw new InvalidArgumentException('Cart ID is required (provide via X-Cart-ID header or context)');
+            $cartId = $request?->headers->get('X-Cart-ID') ?? throw new \InvalidArgumentException('Cart ID is required (provide via X-Cart-ID header or context)');
         }
 
         $command = new ClearCart(cartId: $cartId);
@@ -46,12 +44,12 @@ final readonly class ClearCartProcessor implements ProcessorInterface
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {
-            throw new RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for query');
         }
 
         $cartDTO = $handledStamp->getResult();
 
-        if ($cartDTO === null) {
+        if (null === $cartDTO) {
             throw CartNotFoundException::withId($cartId);
         }
 

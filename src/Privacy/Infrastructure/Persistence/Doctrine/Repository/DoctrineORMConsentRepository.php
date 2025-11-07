@@ -34,7 +34,7 @@ final class DoctrineORMConsentRepository extends ServiceEntityRepository impleme
         // Find existing entity or create new one
         $entity = $entityManager->find(ConsentEntity::class, $consent->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             $entity = ConsentEntity::fromDomainModel($consent);
             $entityManager->persist($entity);
         } else {
@@ -83,7 +83,7 @@ final class DoctrineORMConsentRepository extends ServiceEntityRepository impleme
             ->getResult();
 
         return array_map(
-            fn(ConsentEntity $entity) => $entity->toDomainModel(),
+            fn (ConsentEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -99,7 +99,7 @@ final class DoctrineORMConsentRepository extends ServiceEntityRepository impleme
             ->getResult();
 
         return array_map(
-            fn(ConsentEntity $entity) => $entity->toDomainModel(),
+            fn (ConsentEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -114,13 +114,13 @@ final class DoctrineORMConsentRepository extends ServiceEntityRepository impleme
             ->getResult();
 
         return array_map(
-            fn(ConsentEntity $entity) => $entity->toDomainModel(),
+            fn (ConsentEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
 
     public function hasActiveConsent(CustomerId $customerId, ConsentPurpose $purpose): bool
     {
-        return $this->findActiveByCustomerAndPurpose($customerId, $purpose) !== null;
+        return null !== $this->findActiveByCustomerAndPurpose($customerId, $purpose);
     }
 }

@@ -46,7 +46,7 @@ final class AwardLoyaltyPointsCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('save')
             ->with(self::callback(function (Customer $savedCustomer) {
-                return $savedCustomer->loyaltyPoints() === 100;
+                return 100 === $savedCustomer->loyaltyPoints();
             }));
 
         $command = new AwardLoyaltyPointsCommand(
@@ -111,7 +111,7 @@ final class AwardLoyaltyPointsCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('save')
             ->with(self::callback(function (Customer $savedCustomer) {
-                return $savedCustomer->loyaltyPoints() === 150;
+                return 150 === $savedCustomer->loyaltyPoints();
             }));
 
         $command = new AwardLoyaltyPointsCommand(

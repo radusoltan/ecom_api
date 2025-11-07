@@ -8,7 +8,7 @@ use App\Tax\Domain\ValueObject\TaxRate;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Comprehensive tests for TaxRate Value Object
+ * Comprehensive tests for TaxRate Value Object.
  *
  * Tests all edge cases including boundary values, calculations, and validation.
  */

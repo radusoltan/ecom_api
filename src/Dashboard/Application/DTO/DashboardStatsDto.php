@@ -14,20 +14,28 @@ use App\Dashboard\Presentation\Api\Provider\DashboardStatsProvider;
         new Get(
             uriTemplate: '/dashboard/stats',
             provider: DashboardStatsProvider::class
-        )
+        ),
     ]
 )]
 final class DashboardStatsDto
 {
     public function __construct(
+        /** @var array<string, mixed> */
         public readonly array $summary,
+        /** @var array<string, mixed> */
         public readonly array $orders,
+        /** @var array<string, mixed> */
         public readonly array $revenue,
+        /** @var array<string, mixed> */
         public readonly array $products,
+        /** @var array<string, mixed> */
         public readonly array $customers,
+        /** @var array<string, mixed> */
         public readonly array $recentOrders,
+        /** @var array<string, mixed> */
         public readonly array $topProducts,
         public readonly string $period,
         public readonly string $generatedAt
-    ) {}
+    ) {
+    }
 }

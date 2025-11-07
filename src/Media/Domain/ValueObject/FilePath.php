@@ -8,17 +8,18 @@ final readonly class FilePath
 {
     private function __construct(
         private string $value
-    ) {}
+    ) {
+    }
 
     public static function fromString(string $value): self
     {
         $trimmed = trim($value);
 
-        if ($trimmed === '') {
+        if ('' === $trimmed) {
             throw new \InvalidArgumentException('File path cannot be empty.');
         }
 
-        if ($trimmed[0] !== '/') {
+        if ('/' !== $trimmed[0]) {
             throw new \InvalidArgumentException('File path must be absolute.');
         }
 

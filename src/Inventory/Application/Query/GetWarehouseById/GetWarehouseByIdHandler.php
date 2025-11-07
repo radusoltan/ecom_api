@@ -13,7 +13,8 @@ final readonly class GetWarehouseByIdHandler
 {
     public function __construct(
         private WarehouseRepositoryInterface $warehouseRepository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(GetWarehouseById $query): ?WarehouseDTO
     {

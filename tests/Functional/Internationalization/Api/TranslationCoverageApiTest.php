@@ -13,6 +13,7 @@ use App\Shared\Domain\ValueObject\TenantId;
  * @covers \App\Internationalization\Application\Query\GetMissingTranslationsHandler
  * @covers \App\Internationalization\Application\Query\GetTranslationStatsHandler
  * @covers \App\Internationalization\Domain\Service\TranslationCoverageService
+ *
  * @group functional
  */
 final class TranslationCoverageApiTest extends ApiTestCase
@@ -32,7 +33,7 @@ final class TranslationCoverageApiTest extends ApiTestCase
         $this->seedTestTranslations();
     }
 
-    public function testGetMissingTranslations_ValidRequest_ReturnsArray(): void
+    public function testGetMissingTranslationsValidRequestReturnsArray(): void
     {
         $client = static::createClient();
 
@@ -61,7 +62,7 @@ final class TranslationCoverageApiTest extends ApiTestCase
         }
     }
 
-    public function testGetMissingTranslations_WithDomainFilter_FiltersResults(): void
+    public function testGetMissingTranslationsWithDomainFilterFiltersResults(): void
     {
         $client = static::createClient();
 
@@ -86,7 +87,7 @@ final class TranslationCoverageApiTest extends ApiTestCase
         }
     }
 
-    public function testGetMissingTranslations_MissingTargetLocale_Returns400(): void
+    public function testGetMissingTranslationsMissingTargetLocaleReturns400(): void
     {
         $client = static::createClient();
 
@@ -99,7 +100,7 @@ final class TranslationCoverageApiTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(400);
     }
 
-    public function testGetTranslationStats_ValidRequest_ReturnsStatistics(): void
+    public function testGetTranslationStatsValidRequestReturnsStatistics(): void
     {
         $client = static::createClient();
 
@@ -126,7 +127,7 @@ final class TranslationCoverageApiTest extends ApiTestCase
         $this->assertIsInt($data['overall']['domains']);
     }
 
-    public function testGetTranslationStats_VerifyDomainStructure(): void
+    public function testGetTranslationStatsVerifyDomainStructure(): void
     {
         $client = static::createClient();
 
@@ -161,7 +162,7 @@ final class TranslationCoverageApiTest extends ApiTestCase
         }
     }
 
-    public function testGetTranslationStats_VerifyLocaleStructure(): void
+    public function testGetTranslationStatsVerifyLocaleStructure(): void
     {
         $client = static::createClient();
 
@@ -190,7 +191,7 @@ final class TranslationCoverageApiTest extends ApiTestCase
         }
     }
 
-    public function testGetTranslationStats_PerformanceUnder500ms(): void
+    public function testGetTranslationStatsPerformanceUnder500ms(): void
     {
         $client = static::createClient();
 
@@ -212,7 +213,7 @@ final class TranslationCoverageApiTest extends ApiTestCase
         ));
     }
 
-    public function testGetMissingTranslations_PerformanceUnder500ms(): void
+    public function testGetMissingTranslationsPerformanceUnder500ms(): void
     {
         $client = static::createClient();
 
@@ -237,7 +238,7 @@ final class TranslationCoverageApiTest extends ApiTestCase
         ));
     }
 
-    public function testCoverageHeatmap_CalculatesCorrectly(): void
+    public function testCoverageHeatmapCalculatesCorrectly(): void
     {
         $client = static::createClient();
 

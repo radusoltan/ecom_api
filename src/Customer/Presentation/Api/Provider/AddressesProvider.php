@@ -43,7 +43,7 @@ final readonly class AddressesProvider implements ProviderInterface
         $request = $this->requestStack->getCurrentRequest();
         $tenantId = $request?->headers->get('X-Tenant-ID');
 
-        if ($tenantId === null) {
+        if (null === $tenantId) {
             throw new \InvalidArgumentException('Tenant ID is required');
         }
 

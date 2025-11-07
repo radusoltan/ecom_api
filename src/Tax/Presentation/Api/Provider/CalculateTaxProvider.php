@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Provider for calculating tax
+ * Provider for calculating tax.
  */
 final class CalculateTaxProvider implements ProviderInterface
 {
@@ -35,7 +35,7 @@ final class CalculateTaxProvider implements ProviderInterface
         }
 
         // Validate required fields
-        if ($data->amountInCents === null) {
+        if (null === $data->amountInCents) {
             throw new BadRequestHttpException('amountInCents is required');
         }
 

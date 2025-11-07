@@ -13,7 +13,8 @@ final readonly class ReviewRejected implements DomainEvent
         public ReviewId $reviewId,
         public string $reason,
         public \DateTimeImmutable $occurredAt
-    ) {}
+    ) {
+    }
 
     public function occurredOn(): \DateTimeImmutable
     {

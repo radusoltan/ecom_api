@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Inventory\Application\Command\ReserveStock;
 
-use App\Inventory\Domain\Model\StockItem;
-use App\Inventory\Domain\Model\StockItemId;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -14,7 +12,8 @@ final readonly class ReserveStockHandler
 {
     public function __construct(
         private StockItemRepositoryInterface $stockItemRepository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(ReserveStockCommand $command): void
     {
@@ -25,14 +24,8 @@ final readonly class ReserveStockHandler
             $command->tenantId
         );
 
-        if ($stockItem === null) {
-            throw new \DomainException(
-                sprintf(
-                    'Stock item not found for product %s in warehouse %s',
-                    $command->productId->toString(),
-                    $command->warehouseId->toString()
-                )
-            );
+        if (null === $stockItem) {
+            throw new \DomainException(sprintf('Stock item not found for product %s in warehouse %s', $command->productId->toString(), $command->warehouseId->toString()));
         }
 
         $stockItem->reserve($command->quantity, $command->reservationId);

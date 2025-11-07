@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Tenant\Domain\Event;
 
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\Event\TenantDeactivated;
-use App\Tenant\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 
 final class TenantDeactivatedTest extends TestCase

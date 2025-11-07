@@ -6,10 +6,9 @@ namespace App\Pricing\Domain\Model;
 
 use App\Catalog\Domain\Model\ProductId;
 use App\Shared\Domain\ValueObject\Money;
-use InvalidArgumentException;
 
 /**
- * Value Object representing a pricing rule with conditions and discount
+ * Value Object representing a pricing rule with conditions and discount.
  *
  * Business Rules:
  * - scope: 'product', 'category', 'all'
@@ -32,27 +31,23 @@ final readonly class PricingRule
         private ?Money $minPurchaseAmount
     ) {
         if (!in_array($this->scope, [self::SCOPE_PRODUCT, self::SCOPE_CATEGORY, self::SCOPE_ALL], true)) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid pricing rule scope "%s"', $this->scope)
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid pricing rule scope "%s"', $this->scope));
         }
 
-        if ($this->scope === self::SCOPE_PRODUCT && $this->productId === null) {
-            throw new InvalidArgumentException('Product scope requires a product ID');
+        if (self::SCOPE_PRODUCT === $this->scope && null === $this->productId) {
+            throw new \InvalidArgumentException('Product scope requires a product ID');
         }
 
-        if ($this->scope === self::SCOPE_CATEGORY && $this->categoryId === null) {
-            throw new InvalidArgumentException('Category scope requires a category ID');
+        if (self::SCOPE_CATEGORY === $this->scope && null === $this->categoryId) {
+            throw new \InvalidArgumentException('Category scope requires a category ID');
         }
 
         if ($this->minQuantity < 1) {
-            throw new InvalidArgumentException(
-                sprintf('Minimum quantity must be at least 1, got %d', $this->minQuantity)
-            );
+            throw new \InvalidArgumentException(sprintf('Minimum quantity must be at least 1, got %d', $this->minQuantity));
         }
 
-        if ($this->minPurchaseAmount !== null && $this->minPurchaseAmount->isNegative()) {
-            throw new InvalidArgumentException('Minimum purchase amount cannot be negative');
+        if (null !== $this->minPurchaseAmount && $this->minPurchaseAmount->isNegative()) {
+            throw new \InvalidArgumentException('Minimum purchase amount cannot be negative');
         }
     }
 
@@ -134,7 +129,7 @@ final readonly class PricingRule
     }
 
     /**
-     * Check if this rule applies to a given product, quantity, and amount
+     * Check if this rule applies to a given product, quantity, and amount.
      */
     public function appliesTo(
         ProductId $productId,
@@ -143,11 +138,11 @@ final readonly class PricingRule
         Money $amount
     ): bool {
         // Check scope match
-        if ($this->scope === self::SCOPE_PRODUCT && !$this->productId->equals($productId)) {
+        if (self::SCOPE_PRODUCT === $this->scope && !$this->productId->equals($productId)) {
             return false;
         }
 
-        if ($this->scope === self::SCOPE_CATEGORY && $this->categoryId !== $categoryId) {
+        if (self::SCOPE_CATEGORY === $this->scope && $this->categoryId !== $categoryId) {
             return false;
         }
 
@@ -157,7 +152,7 @@ final readonly class PricingRule
         }
 
         // Check minimum purchase amount
-        if ($this->minPurchaseAmount !== null && $amount->isLessThan($this->minPurchaseAmount)) {
+        if (null !== $this->minPurchaseAmount && $amount->isLessThan($this->minPurchaseAmount)) {
             return false;
         }
 

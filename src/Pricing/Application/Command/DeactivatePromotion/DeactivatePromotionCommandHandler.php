@@ -19,10 +19,8 @@ final readonly class DeactivatePromotionCommandHandler
     {
         $promotion = $this->promotionRepository->findById($command->promotionId, $command->tenantId);
 
-        if ($promotion === null) {
-            throw new \DomainException(
-                sprintf('Promotion with ID "%s" not found', $command->promotionId->toString())
-            );
+        if (null === $promotion) {
+            throw new \DomainException(sprintf('Promotion with ID "%s" not found', $command->promotionId->toString()));
         }
 
         $promotion->deactivate();

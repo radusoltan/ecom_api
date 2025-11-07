@@ -12,7 +12,7 @@ use App\Internationalization\Infrastructure\Parser\JSONTranslationParser;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Import Translations Command Handler
+ * Import Translations Command Handler.
  *
  * Orchestrates the translation import process:
  * 1. Parse uploaded file (CSV or JSON)
@@ -29,7 +29,8 @@ final readonly class ImportTranslationsHandler
         private CSVTranslationParser $csvParser,
         private JSONTranslationParser $jsonParser,
         private TranslationCacheService $cacheService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(ImportTranslations $command): ImportResult
     {
@@ -37,10 +38,7 @@ final readonly class ImportTranslationsHandler
         $data = match ($command->format) {
             'csv' => $this->csvParser->parse($command->file),
             'json' => $this->jsonParser->parse($command->file),
-            default => throw new \InvalidArgumentException(sprintf(
-                'Unsupported format "%s". Supported formats: csv, json',
-                $command->format
-            )),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported format "%s". Supported formats: csv, json', $command->format)),
         };
 
         // Import translations

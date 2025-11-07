@@ -12,5 +12,6 @@ final readonly class UpdateReview
         public ReviewId $reviewId,
         public string $title,
         public string $content
-    ) {}
+    ) {
+    }
 }

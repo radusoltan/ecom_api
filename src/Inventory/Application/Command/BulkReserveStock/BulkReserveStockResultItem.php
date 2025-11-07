@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Inventory\Application\Command\BulkReserveStock;
 
 /**
- * Result item for a single product in bulk reservation
+ * Result item for a single product in bulk reservation.
  */
 final readonly class BulkReserveStockResultItem
 {

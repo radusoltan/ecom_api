@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tenant\Application\Query;
 
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
-use App\Tenant\Domain\Model\Tenant;
+use App\Shared\Application\Service\PerformanceProfiler;
 use App\Tenant\Application\DTO\TenantDTO;
+use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -49,6 +49,7 @@ final readonly class GetAllTenantsQueryHandler
             return $result;
         } catch (\Throwable $e) {
             $this->profiler->stop('tenant.get_all');
+
             throw $e;
         }
     }

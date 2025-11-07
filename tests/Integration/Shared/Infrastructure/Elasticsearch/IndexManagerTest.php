@@ -113,7 +113,7 @@ final class IndexManagerTest extends KernelTestCase
 
     public function testIndexExistsReturnsFalseForNonExistentIndex(): void
     {
-        $exists = $this->indexManager->indexExists('definitely_does_not_exist_' . uniqid());
+        $exists = $this->indexManager->indexExists('definitely_does_not_exist_'.uniqid());
 
         $this->assertFalse($exists);
     }

@@ -26,7 +26,7 @@ final readonly class CancelPaymentProcessor implements ProcessorInterface
     {
         $reason = $data->getErrorMessage();
 
-        if ($reason === null || $reason === '') {
+        if (null === $reason || '' === $reason) {
             throw new \RuntimeException('Cancellation reason is required');
         }
 

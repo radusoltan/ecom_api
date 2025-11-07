@@ -19,7 +19,7 @@ final class CouponCodeType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?CouponCode
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
@@ -28,7 +28,7 @@ final class CouponCodeType extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 

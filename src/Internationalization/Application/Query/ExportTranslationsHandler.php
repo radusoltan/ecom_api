@@ -10,7 +10,7 @@ use App\Internationalization\Infrastructure\Parser\JSONTranslationParser;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Export Translations Query Handler
+ * Export Translations Query Handler.
  *
  * Orchestrates the translation export process:
  * 1. Fetch translations from repository with filters
@@ -25,7 +25,8 @@ final readonly class ExportTranslationsHandler
         private TranslationExportService $exportService,
         private CSVTranslationParser $csvParser,
         private JSONTranslationParser $jsonParser,
-    ) {}
+    ) {
+    }
 
     public function __invoke(ExportTranslations $query): string
     {
@@ -42,10 +43,7 @@ final readonly class ExportTranslationsHandler
         return match ($query->format) {
             'csv' => $this->csvParser->generateCSV($data, includeHeader: true),
             'json' => $this->jsonParser->generateJSON($data, prettyPrint: true),
-            default => throw new \InvalidArgumentException(sprintf(
-                'Unsupported format "%s". Supported formats: csv, json',
-                $query->format
-            )),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported format "%s". Supported formats: csv, json', $query->format)),
         };
     }
 }

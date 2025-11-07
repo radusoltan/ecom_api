@@ -8,7 +8,7 @@ use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Tenant\Presentation\Api\TenantResource;
 
 /**
- * Comprehensive Functional Tests for Tenant API Endpoints
+ * Comprehensive Functional Tests for Tenant API Endpoints.
  *
  * Tests all 5 Tenant API endpoints using API Platform testing best practices:
  * - GET /api/tenants (Collection)
@@ -24,7 +24,7 @@ final class TenantApiTest extends ApiTestCase
     private static int $counter = 0;
 
     /**
-     * Create an authenticated client with JWT token
+     * Create an authenticated client with JWT token.
      */
     protected function createAuthenticatedClient(string $email = 'admin@admin.com', array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'])
     {
@@ -42,7 +42,7 @@ final class TenantApiTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash'); // Dummy password (not used for JWT)
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -62,11 +62,11 @@ final class TenantApiTest extends ApiTestCase
         ]);
 
         // Create authenticated client with token in headers (API Platform recommended way)
-        return static::createClient([], ['headers' => ['authorization' => 'Bearer ' . $token]]);
+        return static::createClient([], ['headers' => ['authorization' => 'Bearer '.$token]]);
     }
 
     /**
-     * Generate a unique email address for testing
+     * Generate a unique email address for testing.
      */
     private function generateUniqueEmail(string $prefix = 'test'): string
     {
@@ -74,7 +74,7 @@ final class TenantApiTest extends ApiTestCase
     }
 
     /**
-     * Helper method to create a tenant via the API
+     * Helper method to create a tenant via the API.
      *
      * @return array<string, mixed> The created tenant data
      */
@@ -95,7 +95,7 @@ final class TenantApiTest extends ApiTestCase
     }
 
     /**
-     * Extract tenant ID from API response
+     * Extract tenant ID from API response.
      */
     private function extractTenantId(array $tenantData): string
     {
@@ -172,7 +172,7 @@ final class TenantApiTest extends ApiTestCase
     public function testGetCollectionIncludesPaginationMetadata(): void
     {
         // Arrange - Create multiple tenants
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 5; ++$i) {
             $this->createTenant("Company $i", $this->generateUniqueEmail("company$i"));
         }
 
@@ -834,10 +834,11 @@ final class TenantApiTest extends ApiTestCase
                 $this->assertSame('Collection Test Company', $tenant['name']);
                 $this->assertSame($email, $tenant['ownerEmail']);
                 $this->assertSame('active', $tenant['status']);
+
                 break;
             }
         }
 
-        $this->assertTrue($found, "Created tenant should appear in collection");
+        $this->assertTrue($found, 'Created tenant should appear in collection');
     }
 }

@@ -17,7 +17,7 @@ use App\Tax\Presentation\Api\Provider\TaxRuleCollectionProvider;
 use App\Tax\Presentation\Api\Provider\TaxRuleItemProvider;
 
 /**
- * Tax Rule API Resource
+ * Tax Rule API Resource.
  *
  * Represents tax rules for multi-jurisdiction tax calculation.
  */

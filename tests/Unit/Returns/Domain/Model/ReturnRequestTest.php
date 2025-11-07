@@ -494,6 +494,7 @@ final class ReturnRequestTest extends TestCase
     {
         $returnRequest = $this->createRequestedReturn();
         $returnRequest->approve();
+
         return $returnRequest;
     }
 
@@ -501,6 +502,7 @@ final class ReturnRequestTest extends TestCase
     {
         $returnRequest = $this->createApprovedReturn();
         $returnRequest->markAsReceived('WH001');
+
         return $returnRequest;
     }
 
@@ -508,6 +510,7 @@ final class ReturnRequestTest extends TestCase
     {
         $returnRequest = $this->createReceivedReturn();
         $returnRequest->inspect(isResellable: true, inspectionNotes: 'Good condition');
+
         return $returnRequest;
     }
 
@@ -575,7 +578,7 @@ final class ReturnRequestTest extends TestCase
     {
         $returnRequest = $this->createApprovedReturn();
 
-        $longWarehouseId = 'WH-' . str_repeat('A', 100);
+        $longWarehouseId = 'WH-'.str_repeat('A', 100);
         $returnRequest->markAsReceived($longWarehouseId);
 
         $this->assertEquals($longWarehouseId, $returnRequest->warehouseId());

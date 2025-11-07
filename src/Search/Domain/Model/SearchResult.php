@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Search\Domain\Model;
 
 /**
- * SearchResult Aggregate
+ * SearchResult Aggregate.
  *
  * Encapsulates search results with metadata and facets.
  */
@@ -13,7 +13,7 @@ final readonly class SearchResult
 {
     /**
      * @param array<ProductSearchHit> $hits
-     * @param array<SearchFacet> $facets
+     * @param array<SearchFacet>      $facets
      */
     public function __construct(
         public array $hits,
@@ -22,7 +22,8 @@ final readonly class SearchResult
         public int $perPage,
         public array $facets,
         public float $took, // milliseconds
-    ) {}
+    ) {
+    }
 
     public function hasResults(): bool
     {
@@ -36,7 +37,7 @@ final readonly class SearchResult
 
     public function totalPages(): int
     {
-        if ($this->total === 0) {
+        if (0 === $this->total) {
             return 0;
         }
 
@@ -54,7 +55,8 @@ final readonly class SearchResult
     }
 
     /**
-     * Convert to array for API serialization
+     * Convert to array for API serialization.
+     *
      * @return array<string, mixed>
      */
     public function toArray(): array

@@ -42,7 +42,7 @@ final readonly class CreateStockItemProcessor implements ProcessorInterface
             ProductId::fromString($data->productId),
             WarehouseId::fromString($data->warehouseId),
             Quantity::fromInt($data->initialQuantity),
-            $data->lowStockThreshold !== null ? Quantity::fromInt($data->lowStockThreshold) : null,
+            null !== $data->lowStockThreshold ? Quantity::fromInt($data->lowStockThreshold) : null,
             $tenantId
         );
 

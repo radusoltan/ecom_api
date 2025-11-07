@@ -8,11 +8,11 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
-use App\Wishlist\Presentation\Api\State\WishlistProvider;
 use App\Wishlist\Presentation\Api\State\AddItemProcessor;
-use App\Wishlist\Presentation\Api\State\RemoveItemProcessor;
 use App\Wishlist\Presentation\Api\State\ClearWishlistProcessor;
+use App\Wishlist\Presentation\Api\State\RemoveItemProcessor;
 use App\Wishlist\Presentation\Api\State\WishlistCountProvider;
+use App\Wishlist\Presentation\Api\State\WishlistProvider;
 
 #[ApiResource(
     shortName: 'Wishlist',

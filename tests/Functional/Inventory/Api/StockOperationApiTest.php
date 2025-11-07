@@ -74,7 +74,7 @@ final class StockOperationApiTest extends ApiTestCase
     }
 
     /**
-     * Create an authenticated client with JWT token
+     * Create an authenticated client with JWT token.
      */
     protected function createAuthenticatedClient(string $email = 'admin@admin.com', array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'])
     {
@@ -90,7 +90,7 @@ final class StockOperationApiTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash');
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -110,9 +110,9 @@ final class StockOperationApiTest extends ApiTestCase
 
         return static::createClient([], [
             'headers' => [
-                'authorization' => 'Bearer ' . $token,
+                'authorization' => 'Bearer '.$token,
                 'X-Tenant-ID' => $this->tenantId->toString(),
-            ]
+            ],
         ]);
     }
 

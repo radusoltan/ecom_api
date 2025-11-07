@@ -8,13 +8,12 @@ use App\Catalog\Domain\Model\CategoryId;
 use App\Catalog\Domain\Model\ProductId;
 use App\Catalog\Domain\ValueObject\Locale;
 use App\Shared\Domain\ValueObject\TenantId;
-use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 /**
  * Service for caching translated content
- * Key format: i18n:{tenant}:{entity}:{id}:{locale}
+ * Key format: i18n:{tenant}:{entity}:{id}:{locale}.
  */
 final class I18nCacheService
 {
@@ -23,10 +22,11 @@ final class I18nCacheService
 
     public function __construct(
         private readonly TagAwareCacheInterface $cache
-    ) {}
+    ) {
+    }
 
     /**
-     * Get cached product translations
+     * Get cached product translations.
      */
     public function getProductTranslations(
         TenantId $tenantId,
@@ -40,6 +40,7 @@ final class I18nCacheService
                 // If not in cache, return null (will be populated by caller)
                 $item->expiresAfter(self::CACHE_TTL);
                 $item->tag($this->getProductTags($tenantId, $productId));
+
                 return null;
             });
         } catch (\Exception) {
@@ -48,7 +49,7 @@ final class I18nCacheService
     }
 
     /**
-     * Cache product translations
+     * Cache product translations.
      */
     public function setProductTranslations(
         TenantId $tenantId,
@@ -61,12 +62,13 @@ final class I18nCacheService
         $this->cache->get($key, function (ItemInterface $item) use ($translations, $tenantId, $productId) {
             $item->expiresAfter(self::CACHE_TTL);
             $item->tag($this->getProductTags($tenantId, $productId));
+
             return $translations;
         }, INF); // Force save
     }
 
     /**
-     * Get cached category translations
+     * Get cached category translations.
      */
     public function getCategoryTranslations(
         TenantId $tenantId,
@@ -80,6 +82,7 @@ final class I18nCacheService
                 // If not in cache, return null
                 $item->expiresAfter(self::CACHE_TTL);
                 $item->tag($this->getCategoryTags($tenantId, $categoryId));
+
                 return null;
             });
         } catch (\Exception) {
@@ -88,7 +91,7 @@ final class I18nCacheService
     }
 
     /**
-     * Cache category translations
+     * Cache category translations.
      */
     public function setCategoryTranslations(
         TenantId $tenantId,
@@ -101,19 +104,20 @@ final class I18nCacheService
         $this->cache->get($key, function (ItemInterface $item) use ($translations, $tenantId, $categoryId) {
             $item->expiresAfter(self::CACHE_TTL);
             $item->tag($this->getCategoryTags($tenantId, $categoryId));
+
             return $translations;
         }, INF); // Force save
     }
 
     /**
-     * Invalidate all cached translations for a product
+     * Invalidate all cached translations for a product.
      */
     public function invalidateProduct(
         TenantId $tenantId,
         ProductId $productId,
         ?Locale $locale = null
     ): void {
-        if ($locale !== null) {
+        if (null !== $locale) {
             // Invalidate specific locale
             $key = $this->buildProductKey($tenantId, $productId, $locale);
             $this->cache->delete($key);
@@ -125,14 +129,14 @@ final class I18nCacheService
     }
 
     /**
-     * Invalidate all cached translations for a category
+     * Invalidate all cached translations for a category.
      */
     public function invalidateCategory(
         TenantId $tenantId,
         CategoryId $categoryId,
         ?Locale $locale = null
     ): void {
-        if ($locale !== null) {
+        if (null !== $locale) {
             // Invalidate specific locale
             $key = $this->buildCategoryKey($tenantId, $categoryId, $locale);
             $this->cache->delete($key);
@@ -144,7 +148,7 @@ final class I18nCacheService
     }
 
     /**
-     * Invalidate all cached translations for a tenant
+     * Invalidate all cached translations for a tenant.
      */
     public function invalidateTenant(TenantId $tenantId): void
     {
@@ -153,7 +157,7 @@ final class I18nCacheService
     }
 
     /**
-     * Warm cache for multiple products
+     * Warm cache for multiple products.
      */
     public function warmProductsCache(
         TenantId $tenantId,
@@ -169,7 +173,7 @@ final class I18nCacheService
     }
 
     /**
-     * Warm cache for multiple categories
+     * Warm cache for multiple categories.
      */
     public function warmCategoriesCache(
         TenantId $tenantId,
@@ -223,8 +227,9 @@ final class I18nCacheService
     }
 
     /**
-     * Get cache statistics for monitoring
+     * Get cache statistics for monitoring.
      */
+    /** @return array<string, mixed> */
     public function getStatistics(): array
     {
         // This would integrate with cache adapter to get hit/miss ratios

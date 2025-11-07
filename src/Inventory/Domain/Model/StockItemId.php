@@ -11,7 +11,8 @@ final readonly class StockItemId implements \Stringable
 {
     private function __construct(
         private string $value,
-    ) {}
+    ) {
+    }
 
     public static function generate(): self
     {

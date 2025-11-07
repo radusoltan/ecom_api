@@ -13,12 +13,14 @@ final readonly class WarehouseDTO
         public string $tenantId,
         public string $code,
         public string $name,
+        /** @var array<string, mixed> */
         public array $address,
         public int $priority,
         public bool $isActive,
         public string $createdAt,
         public string $updatedAt,
-    ) {}
+    ) {
+    }
 
     public static function fromDomainModel(Warehouse $warehouse): self
     {

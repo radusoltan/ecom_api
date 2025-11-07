@@ -58,7 +58,7 @@ final class OrderVoter extends AbstractResourceVoter
 
         // VIEWER: only view permission
         if ($this->isViewer($token)) {
-            return $attribute === self::VIEW;
+            return self::VIEW === $attribute;
         }
 
         // ADMIN, MANAGER, TENANT_ADMIN: full access
@@ -69,13 +69,14 @@ final class OrderVoter extends AbstractResourceVoter
         // CUSTOMER: can create orders and view own orders
         if ($this->hasRole($token, 'ROLE_CUSTOMER')) {
             // Can always create orders
-            if ($attribute === self::CREATE) {
+            if (self::CREATE === $attribute) {
                 return true;
             }
 
             // Can view and cancel own orders
             if ($subject instanceof Order && in_array($attribute, [self::VIEW, self::CANCEL], true)) {
                 $user = $this->getUser($token);
+
                 // TODO: Implement customer ownership check when customer_id is added
                 // For now, allow view and cancel for all customers
                 return true;
@@ -86,7 +87,7 @@ final class OrderVoter extends AbstractResourceVoter
 
         // VENDOR: can view orders related to their products
         if ($this->hasRole($token, 'ROLE_VENDOR')) {
-            if ($attribute === self::VIEW) {
+            if (self::VIEW === $attribute) {
                 // TODO: Implement vendor-related order check
                 return true;
             }

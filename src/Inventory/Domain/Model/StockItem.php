@@ -14,7 +14,7 @@ use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * StockItem Aggregate Root
+ * StockItem Aggregate Root.
  *
  * Represents inventory for a specific product at a specific warehouse.
  *
@@ -82,20 +82,14 @@ final class StockItem extends AggregateRoot
 
     /**
      * Reserve stock (soft hold) for a cart/checkout session
-     * Typically used when adding to cart or during checkout
+     * Typically used when adding to cart or during checkout.
      */
     public function reserve(Quantity $quantity, string $reservationId): void
     {
         $available = $this->calculateAvailable();
 
         if ($available->isLessThan($quantity)) {
-            throw new \DomainException(
-                sprintf(
-                    'Insufficient stock to reserve. Available: %d, Requested: %d',
-                    $available->value(),
-                    $quantity->value()
-                )
-            );
+            throw new \DomainException(sprintf('Insufficient stock to reserve. Available: %d, Requested: %d', $available->value(), $quantity->value()));
         }
 
         $this->reserved = $this->reserved->add($quantity);
@@ -113,20 +107,14 @@ final class StockItem extends AggregateRoot
 
     /**
      * Allocate stock (hard allocation) when order is confirmed
-     * Moves stock from reserved to allocated
+     * Moves stock from reserved to allocated.
      */
     public function allocate(Quantity $quantity, string $orderId): void
     {
         $available = $this->calculateAvailable();
 
         if ($available->isLessThan($quantity)) {
-            throw new \DomainException(
-                sprintf(
-                    'Insufficient stock to allocate. Available: %d, Requested: %d',
-                    $available->value(),
-                    $quantity->value()
-                )
-            );
+            throw new \DomainException(sprintf('Insufficient stock to allocate. Available: %d, Requested: %d', $available->value(), $quantity->value()));
         }
 
         // If stock was previously reserved, reduce reserved amount
@@ -149,7 +137,7 @@ final class StockItem extends AggregateRoot
 
     /**
      * Release reserved or allocated stock
-     * Used when cart expires, order is cancelled, or items are returned
+     * Used when cart expires, order is cancelled, or items are returned.
      */
     public function release(Quantity $quantity, string $reason): void
     {
@@ -176,14 +164,7 @@ final class StockItem extends AggregateRoot
                     $this->reserved = $this->reserved->subtract($remainingToRelease);
                 }
             } else {
-                throw new \DomainException(
-                    sprintf(
-                        'Cannot release more than reserved/allocated. Reserved: %d, Allocated: %d, Requested: %d',
-                        $this->reserved->value(),
-                        $this->allocated->value(),
-                        $quantity->value()
-                    )
-                );
+                throw new \DomainException(sprintf('Cannot release more than reserved/allocated. Reserved: %d, Allocated: %d, Requested: %d', $this->reserved->value(), $this->allocated->value(), $quantity->value()));
             }
         }
 
@@ -198,7 +179,7 @@ final class StockItem extends AggregateRoot
     }
 
     /**
-     * Adjust on-hand quantity (manual correction, restocking, inventory count)
+     * Adjust on-hand quantity (manual correction, restocking, inventory count).
      */
     public function adjust(Quantity $newQuantity, string $reason): void
     {
@@ -207,13 +188,7 @@ final class StockItem extends AggregateRoot
         // Ensure new quantity can accommodate reserved + allocated
         $totalCommitted = $this->reserved->add($this->allocated);
         if ($newQuantity->isLessThan($totalCommitted)) {
-            throw new \DomainException(
-                sprintf(
-                    'Cannot adjust to %d. Reserved + Allocated = %d',
-                    $newQuantity->value(),
-                    $totalCommitted->value()
-                )
-            );
+            throw new \DomainException(sprintf('Cannot adjust to %d. Reserved + Allocated = %d', $newQuantity->value(), $totalCommitted->value()));
         }
 
         $this->onHand = $newQuantity;
@@ -231,18 +206,12 @@ final class StockItem extends AggregateRoot
     }
 
     /**
-     * Decrement on-hand when items are shipped
+     * Decrement on-hand when items are shipped.
      */
     public function decrementOnShipment(Quantity $quantity): void
     {
         if ($this->allocated->isLessThan($quantity)) {
-            throw new \DomainException(
-                sprintf(
-                    'Cannot ship more than allocated. Allocated: %d, Requested: %d',
-                    $this->allocated->value(),
-                    $quantity->value()
-                )
-            );
+            throw new \DomainException(sprintf('Cannot ship more than allocated. Allocated: %d, Requested: %d', $this->allocated->value(), $quantity->value()));
         }
 
         $this->onHand = $this->onHand->subtract($quantity);
@@ -253,7 +222,7 @@ final class StockItem extends AggregateRoot
     }
 
     /**
-     * Update low stock threshold
+     * Update low stock threshold.
      */
     public function updateLowStockThreshold(Quantity $threshold): void
     {
@@ -264,7 +233,7 @@ final class StockItem extends AggregateRoot
     }
 
     /**
-     * Calculate available quantity for reservation/allocation
+     * Calculate available quantity for reservation/allocation.
      */
     public function calculateAvailable(): Quantity
     {
@@ -274,7 +243,7 @@ final class StockItem extends AggregateRoot
     }
 
     /**
-     * Check if stock is below threshold and record event
+     * Check if stock is below threshold and record event.
      */
     private function checkLowStock(): void
     {
@@ -345,7 +314,7 @@ final class StockItem extends AggregateRoot
     }
 
     /**
-     * Reconstitute aggregate from persistence
+     * Reconstitute aggregate from persistence.
      */
     public static function reconstituteFromPersistence(
         StockItemId $id,

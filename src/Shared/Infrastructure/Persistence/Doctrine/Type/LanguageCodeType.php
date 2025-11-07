@@ -17,24 +17,18 @@ final class LanguageCodeType extends Type
         return $platform->getStringTypeDeclarationSQL(['length' => 2]);
     }
 
-    /**
-     * @param mixed $value
-     */
     public function convertToPHPValue($value, AbstractPlatform $platform): ?LanguageCode
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
         return LanguageCode::fromString((string) $value);
     }
 
-    /**
-     * @param mixed $value
-     */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 

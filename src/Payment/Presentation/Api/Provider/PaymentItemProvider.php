@@ -38,7 +38,7 @@ final readonly class PaymentItemProvider implements ProviderInterface
 
         $dto = $handledStamp->getResult();
 
-        if ($dto === null) {
+        if (null === $dto) {
             return null;
         }
 

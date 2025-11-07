@@ -13,7 +13,7 @@ use App\Shared\Infrastructure\Metrics\MetricsCollector;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Payment Metrics Subscriber
+ * Payment Metrics Subscriber.
  *
  * Collects metrics for payment lifecycle events:
  * - payment_total (counter)

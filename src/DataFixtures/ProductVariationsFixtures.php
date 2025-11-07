@@ -10,7 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * Product Variations Fixtures - Creates configurable products with options and variants
+ * Product Variations Fixtures - Creates configurable products with options and variants.
  *
  * Adds Color and Size options to selected products and generates variants
  */
@@ -53,6 +53,7 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
 
         if (empty($products)) {
             echo "⚠️  No products found. Please run ProductFixtures first.\n";
+
             return;
         }
 
@@ -78,7 +79,7 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
             );
 
             $variantsCreated += count($variants);
-            $configurableProductsCreated++;
+            ++$configurableProductsCreated;
         }
 
         $manager->flush();
@@ -91,8 +92,8 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
         string $productId,
         string $tenantId
     ): void {
-        $sql = "INSERT INTO catalog_configurable_products (id, product_id, tenant_id, created_at, updated_at)
-                VALUES (:id, :product_id, :tenant_id, NOW(), NOW())";
+        $sql = 'INSERT INTO catalog_configurable_products (id, product_id, tenant_id, created_at, updated_at)
+                VALUES (:id, :product_id, :tenant_id, NOW(), NOW())';
 
         $manager->getConnection()->executeStatement($sql, [
             'id' => $configurableProductId,
@@ -106,8 +107,8 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
         $optionId = Uuid::v4()->toString();
 
         // Create option
-        $sql = "INSERT INTO catalog_product_options (id, configurable_product_id, code, name_translations, position, created_at)
-                VALUES (:id, :configurable_product_id, :code, :name_translations, :position, NOW())";
+        $sql = 'INSERT INTO catalog_product_options (id, configurable_product_id, code, name_translations, position, created_at)
+                VALUES (:id, :configurable_product_id, :code, :name_translations, :position, NOW())';
 
         $manager->getConnection()->executeStatement($sql, [
             'id' => $optionId,
@@ -116,7 +117,7 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
             'name_translations' => json_encode([
                 'en' => 'Color',
                 'fr' => 'Couleur',
-                'de' => 'Farbe'
+                'de' => 'Farbe',
             ]),
             'position' => 1,
         ]);
@@ -125,8 +126,8 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
         $position = 1;
         foreach (self::COLORS as $code => $translations) {
             $valueId = Uuid::v4()->toString();
-            $sql = "INSERT INTO catalog_product_option_values (id, option_id, code, name_translations, position, created_at)
-                    VALUES (:id, :option_id, :code, :name_translations, :position, NOW())";
+            $sql = 'INSERT INTO catalog_product_option_values (id, option_id, code, name_translations, position, created_at)
+                    VALUES (:id, :option_id, :code, :name_translations, :position, NOW())';
 
             $manager->getConnection()->executeStatement($sql, [
                 'id' => $valueId,
@@ -145,8 +146,8 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
         $optionId = Uuid::v4()->toString();
 
         // Create option
-        $sql = "INSERT INTO catalog_product_options (id, configurable_product_id, code, name_translations, position, created_at)
-                VALUES (:id, :configurable_product_id, :code, :name_translations, :position, NOW())";
+        $sql = 'INSERT INTO catalog_product_options (id, configurable_product_id, code, name_translations, position, created_at)
+                VALUES (:id, :configurable_product_id, :code, :name_translations, :position, NOW())';
 
         $manager->getConnection()->executeStatement($sql, [
             'id' => $optionId,
@@ -155,7 +156,7 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
             'name_translations' => json_encode([
                 'en' => 'Size',
                 'fr' => 'Taille',
-                'de' => 'Größe'
+                'de' => 'Größe',
             ]),
             'position' => 2,
         ]);
@@ -164,8 +165,8 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
         $position = 1;
         foreach (self::SIZES as $code => $translations) {
             $valueId = Uuid::v4()->toString();
-            $sql = "INSERT INTO catalog_product_option_values (id, option_id, code, name_translations, position, created_at)
-                    VALUES (:id, :option_id, :code, :name_translations, :position, NOW())";
+            $sql = 'INSERT INTO catalog_product_option_values (id, option_id, code, name_translations, position, created_at)
+                    VALUES (:id, :option_id, :code, :name_translations, :position, NOW())';
 
             $manager->getConnection()->executeStatement($sql, [
                 'id' => $valueId,
@@ -201,20 +202,20 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
                 $variantId = Uuid::v4()->toString();
 
                 // Generate SKU: base_product_SKU-color-size (lowercase suffix as per VariantSKU rules)
-                $sku = $product['sku'] . '-' . strtolower($colorCode) . '-' . strtolower($sizeCode);
+                $sku = $product['sku'].'-'.strtolower($colorCode).'-'.strtolower($sizeCode);
 
                 // Vary price slightly (+/- 10%)
                 $priceVariation = rand(-10, 10);
-                $variantPrice = $basePrice + (int)($basePrice * $priceVariation / 100);
+                $variantPrice = $basePrice + (int) ($basePrice * $priceVariation / 100);
 
                 // Vary stock
                 $variantStock = rand(5, $baseStock);
 
-                $sql = "INSERT INTO catalog_product_variants
+                $sql = 'INSERT INTO catalog_product_variants
                         (id, configurable_product_id, sku, option_value_map, price_amount, price_currency,
                          stock_on_hand, stock_reserved, track_inventory, allow_backorder, is_active, images, created_at, updated_at)
                         VALUES (:id, :configurable_product_id, :sku, :option_value_map, :price_amount, :price_currency,
-                                :stock_on_hand, :stock_reserved, :track_inventory, :allow_backorder, :is_active, :images, NOW(), NOW())";
+                                :stock_on_hand, :stock_reserved, :track_inventory, :allow_backorder, :is_active, :images, NOW(), NOW())';
 
                 $manager->getConnection()->executeStatement($sql, [
                     'id' => $variantId,
@@ -235,7 +236,7 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
                 ]);
 
                 $variants[] = $variantId;
-                $variantIndex++;
+                ++$variantIndex;
             }
         }
 
@@ -253,11 +254,11 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
     private function getProductsForVariations(ObjectManager $manager, int $limit = 10): array
     {
         $connection = $manager->getConnection();
-        $sql = "SELECT id, sku, price_amount, stock_quantity
+        $sql = 'SELECT id, sku, price_amount, stock_quantity
                 FROM catalog_products
                 WHERE active = true
                 ORDER BY created_at ASC
-                LIMIT :limit";
+                LIMIT :limit';
 
         return $connection->executeQuery($sql, ['limit' => $limit])->fetchAllAssociative();
     }

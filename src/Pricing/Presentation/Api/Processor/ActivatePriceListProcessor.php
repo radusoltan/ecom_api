@@ -11,8 +11,6 @@ use App\Pricing\Application\Query\GetPriceListById\GetPriceListByIdQuery;
 use App\Pricing\Domain\Model\PriceListId;
 use App\Pricing\Presentation\Api\Resource\PriceListResource;
 use App\Shared\Domain\ValueObject\TenantId;
-use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -27,11 +25,11 @@ final readonly class ActivatePriceListProcessor implements ProcessorInterface
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): PriceListResource
     {
         if (!$data instanceof PriceListResource) {
-            throw new InvalidArgumentException('Expected PriceListResource');
+            throw new \InvalidArgumentException('Expected PriceListResource');
         }
 
-        $priceListId = PriceListId::fromString($uriVariables['id'] ?? throw new InvalidArgumentException('Price list ID is required'));
-        $tenantId = TenantId::fromString($data->tenantId ?? throw new InvalidArgumentException('Tenant ID is required'));
+        $priceListId = PriceListId::fromString($uriVariables['id'] ?? throw new \InvalidArgumentException('Price list ID is required'));
+        $tenantId = TenantId::fromString($data->tenantId ?? throw new \InvalidArgumentException('Tenant ID is required'));
 
         $command = new ActivatePriceListCommand($priceListId);
         $this->commandBus->dispatch($command);
@@ -44,13 +42,13 @@ final readonly class ActivatePriceListProcessor implements ProcessorInterface
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {
-            throw new RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for query');
         }
 
         $priceListDTO = $handledStamp->getResult();
 
-        if ($priceListDTO === null) {
-            throw new RuntimeException('PriceList not found');
+        if (null === $priceListDTO) {
+            throw new \RuntimeException('PriceList not found');
         }
 
         $resource = new PriceListResource();

@@ -15,5 +15,6 @@ final readonly class UpdateWarehouse
         public WarehouseName $name,
         public Address $address,
         public int $priority,
-    ) {}
+    ) {
+    }
 }

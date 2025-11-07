@@ -6,10 +6,10 @@ namespace App\Tests\Unit\Internationalization\Application\Service;
 
 use App\Internationalization\Application\Service\TranslationQuotaService;
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\Exception\TranslationQuotaExceededException;
 use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
-use App\Tenant\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\ValueObject\TenantName;
 use App\Tenant\Domain\ValueObject\TenantStatus;
 use PHPUnit\Framework\TestCase;

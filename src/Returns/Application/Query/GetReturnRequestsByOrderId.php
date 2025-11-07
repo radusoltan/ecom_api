@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Returns\Application\Query;
 
 /**
- * Query: GetReturnRequestsByOrderId
+ * Query: GetReturnRequestsByOrderId.
  *
  * Retrieve all return requests for a specific order.
  */

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Returns\Domain\ValueObject;
 
 /**
- * ReturnInspection Value Object
+ * ReturnInspection Value Object.
  *
  * Encapsulates the inspection details of a returned item.
  *
@@ -30,9 +30,10 @@ final readonly class ReturnInspection
     /**
      * Create a new inspection result.
      *
-     * @param bool $isResellable Whether the item can be resold
-     * @param string $notes Inspector's notes about the item condition
-     * @param \DateTimeImmutable|null $inspectedAt Timestamp of inspection (defaults to now)
+     * @param bool                    $isResellable Whether the item can be resold
+     * @param string                  $notes        Inspector's notes about the item condition
+     * @param \DateTimeImmutable|null $inspectedAt  Timestamp of inspection (defaults to now)
+     *
      * @throws \InvalidArgumentException If notes are invalid
      */
     public static function create(
@@ -47,23 +48,11 @@ final readonly class ReturnInspection
         }
 
         if (mb_strlen($trimmedNotes) < self::MIN_NOTES_LENGTH) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Inspection notes must be at least %d characters long. Got: %d',
-                    self::MIN_NOTES_LENGTH,
-                    mb_strlen($trimmedNotes)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Inspection notes must be at least %d characters long. Got: %d', self::MIN_NOTES_LENGTH, mb_strlen($trimmedNotes)));
         }
 
         if (mb_strlen($trimmedNotes) > self::MAX_NOTES_LENGTH) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Inspection notes cannot exceed %d characters. Got: %d',
-                    self::MAX_NOTES_LENGTH,
-                    mb_strlen($trimmedNotes)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Inspection notes cannot exceed %d characters. Got: %d', self::MAX_NOTES_LENGTH, mb_strlen($trimmedNotes)));
         }
 
         return new self(
@@ -113,6 +102,7 @@ final readonly class ReturnInspection
     public function getAgeInDays(\DateTimeImmutable $now = new \DateTimeImmutable()): int
     {
         $interval = $this->inspectedAt->diff($now);
+
         return (int) $interval->format('%a');
     }
 

@@ -9,7 +9,7 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 final class UploadedFileDenormalizer implements DenormalizerInterface
 {
-    public function denormalize(mixed $data, string $type, string $format = null, array $context = []): UploadedFile
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): UploadedFile
     {
         if (!$data instanceof UploadedFile) {
             throw new \InvalidArgumentException('Expected uploaded file instance.');
@@ -18,7 +18,7 @@ final class UploadedFileDenormalizer implements DenormalizerInterface
         return $data;
     }
 
-    public function supportsDenormalization(mixed $data, string $type, string $format = null, array $context = []): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return $data instanceof UploadedFile;
     }

@@ -11,8 +11,8 @@ use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 final class CustomerSegmentationServiceTest extends TestCase
 {
@@ -24,7 +24,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_assigns_regular_segment_for_new_customer_with_zero_spent(): void
+    public function itAssignsRegularSegmentForNewCustomerWithZeroSpent(): void
     {
         // Arrange
         $customer = $this->createCustomerWithLoyaltyPoints(0);
@@ -38,7 +38,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_assigns_regular_segment_for_customer_below_all_thresholds(): void
+    public function itAssignsRegularSegmentForCustomerBelowAllThresholds(): void
     {
         // Arrange
         $customer = $this->createCustomerWithLoyaltyPoints(400); // Below 500
@@ -52,7 +52,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_assigns_vip_segment_when_total_spent_exceeds_threshold(): void
+    public function itAssignsVipSegmentWhenTotalSpentExceedsThreshold(): void
     {
         // Arrange
         $customer = $this->createCustomerWithLoyaltyPoints(0);
@@ -66,7 +66,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_assigns_vip_segment_when_total_spent_exactly_meets_threshold(): void
+    public function itAssignsVipSegmentWhenTotalSpentExactlyMeetsThreshold(): void
     {
         // Arrange
         $customer = $this->createCustomerWithLoyaltyPoints(0);
@@ -80,7 +80,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_does_not_assign_vip_when_total_spent_exactly_at_threshold(): void
+    public function itDoesNotAssignVipWhenTotalSpentExactlyAtThreshold(): void
     {
         // Arrange
         $customer = $this->createCustomerWithLoyaltyPoints(0);
@@ -94,7 +94,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_assigns_vip_segment_when_loyalty_points_exceed_threshold(): void
+    public function itAssignsVipSegmentWhenLoyaltyPointsExceedThreshold(): void
     {
         // Arrange
         $customer = $this->createCustomerWithLoyaltyPoints(600); // Above 500
@@ -108,7 +108,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_assigns_vip_segment_when_loyalty_points_exactly_meet_threshold(): void
+    public function itAssignsVipSegmentWhenLoyaltyPointsExactlyMeetThreshold(): void
     {
         // Arrange
         $customer = $this->createCustomerWithLoyaltyPoints(501); // Just above 500
@@ -122,7 +122,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_does_not_assign_vip_when_loyalty_points_exactly_at_threshold(): void
+    public function itDoesNotAssignVipWhenLoyaltyPointsExactlyAtThreshold(): void
     {
         // Arrange
         $customer = $this->createCustomerWithLoyaltyPoints(500); // Exactly 500 - not above
@@ -136,7 +136,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_assigns_vip_when_both_thresholds_are_exceeded(): void
+    public function itAssignsVipWhenBothThresholdsAreExceeded(): void
     {
         // Arrange
         $customer = $this->createCustomerWithLoyaltyPoints(600);
@@ -150,7 +150,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_returns_false_when_customer_already_in_recommended_segment(): void
+    public function itReturnsFalseWhenCustomerAlreadyInRecommendedSegment(): void
     {
         // Arrange - Customer already VIP with qualifying points
         $customer = $this->createCustomerWithLoyaltyPoints(600, CustomerSegment::vip());
@@ -164,7 +164,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_returns_true_when_customer_should_be_upgraded_to_vip(): void
+    public function itReturnsTrueWhenCustomerShouldBeUpgradedToVip(): void
     {
         // Arrange - Customer is Regular but qualifies for VIP
         $customer = $this->createCustomerWithLoyaltyPoints(600, CustomerSegment::regular());
@@ -178,7 +178,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_null_total_spent_gracefully(): void
+    public function itHandlesNullTotalSpentGracefully(): void
     {
         // Arrange
         $customer = $this->createCustomerWithLoyaltyPoints(100);
@@ -191,7 +191,7 @@ final class CustomerSegmentationServiceTest extends TestCase
     }
 
     /**
-     * Helper: Create a customer with specific loyalty points and segment
+     * Helper: Create a customer with specific loyalty points and segment.
      */
     private function createCustomerWithLoyaltyPoints(int $loyaltyPoints, ?CustomerSegment $segment = null): Customer
     {

@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Processor to start packing process (PATCH /api/fulfillments/{id}/start-packing)
+ * Processor to start packing process (PATCH /api/fulfillments/{id}/start-packing).
  */
 final readonly class StartPackingProcessor implements ProcessorInterface
 {
@@ -27,12 +27,12 @@ final readonly class StartPackingProcessor implements ProcessorInterface
     {
         $id = $uriVariables['id'] ?? null;
 
-        if ($id === null) {
+        if (null === $id) {
             throw new BadRequestHttpException('Fulfillment ID is required');
         }
 
         $tenantIdString = $context['tenant_id'] ?? null;
-        if ($tenantIdString === null) {
+        if (null === $tenantIdString) {
             throw new \RuntimeException('Tenant ID not found in context');
         }
         $tenantId = TenantId::fromString($tenantIdString);

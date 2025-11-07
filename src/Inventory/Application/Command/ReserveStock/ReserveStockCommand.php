@@ -17,5 +17,6 @@ final readonly class ReserveStockCommand
         public Quantity $quantity,
         public string $reservationId,
         public TenantId $tenantId,
-    ) {}
+    ) {
+    }
 }

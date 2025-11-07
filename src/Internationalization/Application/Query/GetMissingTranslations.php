@@ -7,7 +7,7 @@ namespace App\Internationalization\Application\Query;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Get Missing Translations Query
+ * Get Missing Translations Query.
  *
  * Retrieves translations that exist in source locale but missing in target locale.
  *
@@ -23,5 +23,6 @@ final readonly class GetMissingTranslations
         public string $targetLocale,
         public ?string $sourceLocale = null,
         public ?string $domain = null,
-    ) {}
+    ) {
+    }
 }

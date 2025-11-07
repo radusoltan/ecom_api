@@ -10,7 +10,7 @@ use App\Shared\Domain\ValueObject\LanguageCode;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Translation Coverage Service
+ * Translation Coverage Service.
  *
  * Domain service responsible for analyzing translation coverage:
  * - Detect missing translations per locale
@@ -26,16 +26,17 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class TranslationCoverageService
 {
     /**
-     * Default source locale for missing translation detection
+     * Default source locale for missing translation detection.
      */
     private const DEFAULT_SOURCE_LOCALE = 'en';
 
     public function __construct(
         private TranslationEntryRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     /**
-     * Find missing translations for a target locale
+     * Find missing translations for a target locale.
      *
      * Compares translations in source locale (default: 'en') with target locale
      * and returns keys that exist in source but missing in target.
@@ -59,14 +60,12 @@ final readonly class TranslationCoverageService
     }
 
     /**
-     * Get comprehensive translation statistics
+     * Get comprehensive translation statistics.
      *
      * Returns coverage data grouped by:
      * - Domain (messages, validators, emails, etc.)
      * - Locale (en, fr, de, ro)
      * - Overall totals
-     *
-     * @return TranslationStatistics
      */
     public function getStatistics(TenantId $tenantId): TranslationStatistics
     {
@@ -76,7 +75,7 @@ final readonly class TranslationCoverageService
     }
 
     /**
-     * Get coverage heatmap data
+     * Get coverage heatmap data.
      *
      * Returns a matrix of coverage percentages for visualization:
      * [domain][locale] = coverage%
@@ -91,7 +90,7 @@ final readonly class TranslationCoverageService
     }
 
     /**
-     * Get list of supported locales with data
+     * Get list of supported locales with data.
      *
      * @return string[]
      */
@@ -103,7 +102,7 @@ final readonly class TranslationCoverageService
     }
 
     /**
-     * Get list of domains with data
+     * Get list of domains with data.
      *
      * @return string[]
      */
@@ -116,7 +115,7 @@ final readonly class TranslationCoverageService
 }
 
 /**
- * Translation Statistics Value Object
+ * Translation Statistics Value Object.
  *
  * Encapsulates translation coverage statistics with convenient accessors
  */
@@ -127,10 +126,11 @@ final readonly class TranslationStatistics
      */
     public function __construct(
         private array $data,
-    ) {}
+    ) {
+    }
 
     /**
-     * Get all raw data
+     * Get all raw data.
      *
      * @return array<string, mixed>
      */
@@ -140,7 +140,7 @@ final readonly class TranslationStatistics
     }
 
     /**
-     * Get statistics grouped by domain
+     * Get statistics grouped by domain.
      *
      * @return array<string, array{totalKeys: int, locales: array<string, array{translatedKeys: int, coverage: float}>}>
      */
@@ -150,7 +150,7 @@ final readonly class TranslationStatistics
     }
 
     /**
-     * Get statistics grouped by locale
+     * Get statistics grouped by locale.
      *
      * @return array<string, array{totalKeys: int, translatedKeys: int, coverage: float, domains: array<string, mixed>}>
      */
@@ -160,7 +160,7 @@ final readonly class TranslationStatistics
     }
 
     /**
-     * Get overall statistics
+     * Get overall statistics.
      *
      * @return array{totalKeys: int, domains: int}
      */
@@ -170,7 +170,7 @@ final readonly class TranslationStatistics
     }
 
     /**
-     * Get coverage heatmap data: [domain][locale] = coverage%
+     * Get coverage heatmap data: [domain][locale] = coverage%.
      *
      * @return array<string, array<string, float>>
      */
@@ -190,7 +190,7 @@ final readonly class TranslationStatistics
     }
 
     /**
-     * Get list of locales present in data
+     * Get list of locales present in data.
      *
      * @return string[]
      */
@@ -200,7 +200,7 @@ final readonly class TranslationStatistics
     }
 
     /**
-     * Get list of domains present in data
+     * Get list of domains present in data.
      *
      * @return string[]
      */
@@ -210,7 +210,7 @@ final readonly class TranslationStatistics
     }
 
     /**
-     * Get coverage for a specific domain and locale
+     * Get coverage for a specific domain and locale.
      */
     public function getCoverageForDomainLocale(string $domain, string $locale): ?float
     {
@@ -218,7 +218,7 @@ final readonly class TranslationStatistics
     }
 
     /**
-     * Get total translated keys for a locale
+     * Get total translated keys for a locale.
      */
     public function getTranslatedKeysForLocale(string $locale): int
     {
@@ -226,7 +226,7 @@ final readonly class TranslationStatistics
     }
 
     /**
-     * Get overall coverage for a locale
+     * Get overall coverage for a locale.
      */
     public function getCoverageForLocale(string $locale): float
     {

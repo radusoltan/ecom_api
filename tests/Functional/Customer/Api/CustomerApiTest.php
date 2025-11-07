@@ -13,7 +13,7 @@ final class CustomerApiTest extends ApiTestCase
     private ?string $currentTenantId = null;
 
     /**
-     * Create an authenticated client with JWT token and optional X-Tenant-ID header
+     * Create an authenticated client with JWT token and optional X-Tenant-ID header.
      */
     protected function createAuthenticatedClient(string $email = 'admin@admin.com', array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'], ?string $tenantId = null)
     {
@@ -29,7 +29,7 @@ final class CustomerApiTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash');
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -47,11 +47,11 @@ final class CustomerApiTest extends ApiTestCase
             'exp' => time() + 3600,
         ]);
 
-        $headers = ['authorization' => 'Bearer ' . $token];
+        $headers = ['authorization' => 'Bearer '.$token];
 
         // Add X-Tenant-ID if provided or if we have a current tenant
         $tenantIdToUse = $tenantId ?? $this->currentTenantId;
-        if ($tenantIdToUse !== null) {
+        if (null !== $tenantIdToUse) {
             $headers['X-Tenant-ID'] = $tenantIdToUse;
         }
 
@@ -59,7 +59,7 @@ final class CustomerApiTest extends ApiTestCase
     }
 
     /**
-     * Generate a unique email address for testing
+     * Generate a unique email address for testing.
      */
     private function generateUniqueEmail(string $prefix = 'customer'): string
     {
@@ -67,14 +67,14 @@ final class CustomerApiTest extends ApiTestCase
     }
 
     /**
-     * Create a valid tenant for testing
+     * Create a valid tenant for testing.
      */
     private function createTenant(): string
     {
         $client = $this->createAuthenticatedClient();
         $response = $client->request('POST', '/api/tenants', [
             'json' => [
-                'name' => 'Test Tenant ' . uniqid(),
+                'name' => 'Test Tenant '.uniqid(),
                 'ownerEmail' => $this->generateUniqueEmail('tenant'),
             ],
         ]);
@@ -83,6 +83,7 @@ final class CustomerApiTest extends ApiTestCase
         $data = json_decode($response->getContent(), true);
 
         $this->currentTenantId = $data['id'];
+
         return $data['id'];
     }
 
@@ -196,7 +197,7 @@ final class CustomerApiTest extends ApiTestCase
         $customerId = $createData['id'];
 
         // Get customer
-        $response = $client->request('GET', '/api/customers/' . $customerId);
+        $response = $client->request('GET', '/api/customers/'.$customerId);
 
         self::assertResponseIsSuccessful();
         $responseData = $response->toArray();
@@ -227,7 +228,7 @@ final class CustomerApiTest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
 
         // Create multiple customers
-        for ($i = 1; $i <= 3; $i++) {
+        for ($i = 1; $i <= 3; ++$i) {
             $client->request('POST', '/api/customers', [
                 'json' => [
                     'email' => $this->generateUniqueEmail("list{$i}"),
@@ -270,7 +271,7 @@ final class CustomerApiTest extends ApiTestCase
         $customerId = $createData['id'];
 
         // Change to VIP segment
-        $client->request('PATCH', '/api/customers/' . $customerId . '/segment', [
+        $client->request('PATCH', '/api/customers/'.$customerId.'/segment', [
             'json' => [
                 'segment' => 'vip',
             ],
@@ -316,7 +317,7 @@ final class CustomerApiTest extends ApiTestCase
         $customerId = $createData['id'];
 
         // Update customer
-        $response = $client->request('PUT', '/api/customers/' . $customerId, [
+        $response = $client->request('PUT', '/api/customers/'.$customerId, [
             'json' => [
                 'firstName' => 'Updated',
                 'lastName' => 'Name',
@@ -372,7 +373,7 @@ final class CustomerApiTest extends ApiTestCase
         self::assertEquals('regular', $createData['segment'], 'Customer should be created with regular segment');
 
         // Change segment to VIP
-        $response = $client->request('PATCH', '/api/customers/' . $customerId . '/segment', [
+        $response = $client->request('PATCH', '/api/customers/'.$customerId.'/segment', [
             'json' => [
                 'segment' => 'vip',
             ],
@@ -403,7 +404,7 @@ final class CustomerApiTest extends ApiTestCase
         $customerId = $createData['id'];
 
         // Try invalid segment
-        $client->request('PATCH', '/api/customers/' . $customerId . '/segment', [
+        $client->request('PATCH', '/api/customers/'.$customerId.'/segment', [
             'json' => [
                 'segment' => 'platinum',
             ],
@@ -431,7 +432,7 @@ final class CustomerApiTest extends ApiTestCase
         $customerId = $createData['id'];
 
         // Try to set to same segment - should fail with 500 error
-        $client->request('PATCH', '/api/customers/' . $customerId . '/segment', [
+        $client->request('PATCH', '/api/customers/'.$customerId.'/segment', [
             'json' => [
                 'segment' => 'regular',
             ],
@@ -466,13 +467,13 @@ final class CustomerApiTest extends ApiTestCase
         $customerId = $createData['id'];
 
         // Deactivate first
-        $client->request('PATCH', '/api/customers/' . $customerId . '/deactivate', [
+        $client->request('PATCH', '/api/customers/'.$customerId.'/deactivate', [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
         // Now activate
-        $response = $client->request('PATCH', '/api/customers/' . $customerId . '/activate', [
+        $response = $client->request('PATCH', '/api/customers/'.$customerId.'/activate', [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -502,7 +503,7 @@ final class CustomerApiTest extends ApiTestCase
         $customerId = $createData['id'];
 
         // Try to activate already active customer - should fail with 500 error
-        $client->request('PATCH', '/api/customers/' . $customerId . '/activate', [
+        $client->request('PATCH', '/api/customers/'.$customerId.'/activate', [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -535,7 +536,7 @@ final class CustomerApiTest extends ApiTestCase
         $customerId = $createData['id'];
 
         // Deactivate
-        $response = $client->request('PATCH', '/api/customers/' . $customerId . '/deactivate', [
+        $response = $client->request('PATCH', '/api/customers/'.$customerId.'/deactivate', [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -566,14 +567,14 @@ final class CustomerApiTest extends ApiTestCase
         $customerId = $createData['id'];
 
         // Deactivate first time - should succeed
-        $client->request('PATCH', '/api/customers/' . $customerId . '/deactivate', [
+        $client->request('PATCH', '/api/customers/'.$customerId.'/deactivate', [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
         self::assertResponseIsSuccessful();
 
         // Try to deactivate again - should fail with 500 error
-        $client->request('PATCH', '/api/customers/' . $customerId . '/deactivate', [
+        $client->request('PATCH', '/api/customers/'.$customerId.'/deactivate', [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -608,11 +609,11 @@ final class CustomerApiTest extends ApiTestCase
         $customerId = $createData['id'];
 
         // 2. Get customer
-        $client->request('GET', '/api/customers/' . $customerId);
+        $client->request('GET', '/api/customers/'.$customerId);
         self::assertResponseIsSuccessful();
 
         // 3. Update profile
-        $client->request('PUT', '/api/customers/' . $customerId, [
+        $client->request('PUT', '/api/customers/'.$customerId, [
             'json' => [
                 'firstName' => 'Updated',
                 'lastName' => 'Lifecycle',
@@ -622,7 +623,7 @@ final class CustomerApiTest extends ApiTestCase
         self::assertResponseIsSuccessful();
 
         // 4. Upgrade to VIP
-        $client->request('PATCH', '/api/customers/' . $customerId . '/segment', [
+        $client->request('PATCH', '/api/customers/'.$customerId.'/segment', [
             'json' => [
                 'segment' => 'vip',
             ],
@@ -631,21 +632,21 @@ final class CustomerApiTest extends ApiTestCase
         self::assertResponseIsSuccessful();
 
         // 5. Deactivate
-        $client->request('PATCH', '/api/customers/' . $customerId . '/deactivate', [
+        $client->request('PATCH', '/api/customers/'.$customerId.'/deactivate', [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
         self::assertResponseIsSuccessful();
 
         // 6. Reactivate
-        $client->request('PATCH', '/api/customers/' . $customerId . '/activate', [
+        $client->request('PATCH', '/api/customers/'.$customerId.'/activate', [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
         self::assertResponseIsSuccessful();
 
         // 7. Verify final state
-        $finalResponse = $client->request('GET', '/api/customers/' . $customerId);
+        $finalResponse = $client->request('GET', '/api/customers/'.$customerId);
         $finalData = $finalResponse->toArray();
 
         self::assertEquals('Updated', $finalData['firstName']);

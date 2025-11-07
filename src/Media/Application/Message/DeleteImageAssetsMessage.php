@@ -12,5 +12,6 @@ final class DeleteImageAssetsMessage
     public function __construct(
         public readonly string $imagePath,
         public readonly array $thumbnailPaths
-    ) {}
+    ) {
+    }
 }

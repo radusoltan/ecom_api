@@ -7,7 +7,7 @@ namespace App\Tests\Functional\Api;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * Locale Headers Functional Tests
+ * Locale Headers Functional Tests.
  *
  * Tests EPIC 3.2 - i18n Headers Compliance:
  * - X-Content-Language header present

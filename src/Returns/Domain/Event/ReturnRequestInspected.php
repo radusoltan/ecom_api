@@ -8,7 +8,7 @@ use App\Returns\Domain\ValueObject\ReturnRequestId;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Domain Event: ReturnRequestInspected
+ * Domain Event: ReturnRequestInspected.
  *
  * Triggered when the returned item has been inspected.
  *

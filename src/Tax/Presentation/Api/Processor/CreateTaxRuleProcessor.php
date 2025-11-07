@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Processor for creating new tax rules
+ * Processor for creating new tax rules.
  */
 final readonly class CreateTaxRuleProcessor implements ProcessorInterface
 {
@@ -47,7 +47,7 @@ final readonly class CreateTaxRuleProcessor implements ProcessorInterface
             throw new BadRequestHttpException('countryCode is required');
         }
 
-        if ($data->ratePercentage === null) {
+        if (null === $data->ratePercentage) {
             throw new BadRequestHttpException('ratePercentage is required');
         }
 

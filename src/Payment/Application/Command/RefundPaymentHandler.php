@@ -23,16 +23,12 @@ final readonly class RefundPaymentHandler
     {
         $payment = $this->paymentRepository->findById($command->id, $command->tenantId);
 
-        if ($payment === null) {
-            throw new \RuntimeException(
-                sprintf('Payment with ID "%s" not found', $command->id->toString())
-            );
+        if (null === $payment) {
+            throw new \RuntimeException(sprintf('Payment with ID "%s" not found', $command->id->toString()));
         }
 
-        if ($payment->gatewayTransactionId() === null) {
-            throw new \RuntimeException(
-                sprintf('Payment "%s" has not been captured yet', $command->id->toString())
-            );
+        if (null === $payment->gatewayTransactionId()) {
+            throw new \RuntimeException(sprintf('Payment "%s" has not been captured yet', $command->id->toString()));
         }
 
         $this->logger->info('Refunding payment via gateway', [

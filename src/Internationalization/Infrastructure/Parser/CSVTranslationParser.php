@@ -7,7 +7,7 @@ namespace App\Internationalization\Infrastructure\Parser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * CSV Translation Parser
+ * CSV Translation Parser.
  *
  * Parses CSV files to translation array format.
  * Expected CSV format: locale,domain,key,value
@@ -27,10 +27,10 @@ final class CSVTranslationParser
     private const COLUMN_VALUE = 3;
 
     /**
-     * Parse CSV file to array format
+     * Parse CSV file to array format.
      *
-     * @param UploadedFile $file
      * @return array<array{locale: string, domain: string, key: string, value: string}>
+     *
      * @throws \RuntimeException If file cannot be read or parsed
      */
     public function parse(UploadedFile $file): array
@@ -40,12 +40,12 @@ final class CSVTranslationParser
         }
 
         $filePath = $file->getRealPath();
-        if ($filePath === false) {
+        if (false === $filePath) {
             throw new \RuntimeException('Could not read uploaded file');
         }
 
         $handle = fopen($filePath, 'r');
-        if ($handle === false) {
+        if (false === $handle) {
             throw new \RuntimeException('Could not open file for reading');
         }
 
@@ -55,28 +55,24 @@ final class CSVTranslationParser
 
         try {
             while (($row = fgetcsv($handle)) !== false) {
-                $lineNumber++;
+                ++$lineNumber;
 
                 // Skip empty lines
-                if (count($row) === 0 || (count($row) === 1 && trim($row[0] ?? '') === '')) {
+                if (0 === count($row) || (1 === count($row) && '' === trim($row[0] ?? ''))) {
                     continue;
                 }
 
                 // Auto-detect and skip header row
                 if ($isFirstLine && $this->isHeaderRow($row)) {
                     $isFirstLine = false;
+
                     continue;
                 }
                 $isFirstLine = false;
 
                 // Validate column count
-                if (count($row) !== self::EXPECTED_COLUMNS) {
-                    throw new \RuntimeException(sprintf(
-                        'Line %d: Expected %d columns, got %d. Format: locale,domain,key,value',
-                        $lineNumber,
-                        self::EXPECTED_COLUMNS,
-                        count($row)
-                    ));
+                if (self::EXPECTED_COLUMNS !== count($row)) {
+                    throw new \RuntimeException(sprintf('Line %d: Expected %d columns, got %d. Format: locale,domain,key,value', $lineNumber, self::EXPECTED_COLUMNS, count($row)));
                 }
 
                 $translations[] = [
@@ -98,9 +94,10 @@ final class CSVTranslationParser
     }
 
     /**
-     * Parse CSV content from string
+     * Parse CSV content from string.
      *
      * @param string $content CSV content
+     *
      * @return array<array{locale: string, domain: string, key: string, value: string}>
      */
     public function parseString(string $content): array
@@ -113,7 +110,7 @@ final class CSVTranslationParser
             $line = trim($line);
 
             // Skip empty lines
-            if ($line === '') {
+            if ('' === $line) {
                 continue;
             }
 
@@ -122,18 +119,14 @@ final class CSVTranslationParser
             // Auto-detect and skip header row
             if ($isFirstLine && $this->isHeaderRow($row)) {
                 $isFirstLine = false;
+
                 continue;
             }
             $isFirstLine = false;
 
             // Validate column count
-            if (count($row) !== self::EXPECTED_COLUMNS) {
-                throw new \RuntimeException(sprintf(
-                    'Line %d: Expected %d columns, got %d. Format: locale,domain,key,value',
-                    $lineNumber + 1,
-                    self::EXPECTED_COLUMNS,
-                    count($row)
-                ));
+            if (self::EXPECTED_COLUMNS !== count($row)) {
+                throw new \RuntimeException(sprintf('Line %d: Expected %d columns, got %d. Format: locale,domain,key,value', $lineNumber + 1, self::EXPECTED_COLUMNS, count($row)));
             }
 
             $translations[] = [
@@ -144,7 +137,7 @@ final class CSVTranslationParser
             ];
         }
 
-        if (count($translations) === 0) {
+        if (0 === count($translations)) {
             throw new \RuntimeException('No translations found in CSV content');
         }
 
@@ -152,7 +145,7 @@ final class CSVTranslationParser
     }
 
     /**
-     * Generate CSV content from translations array
+     * Generate CSV content from translations array.
      *
      * @param array<array{locale: string, domain: string, key: string, value: string}> $translations
      */
@@ -175,25 +168,26 @@ final class CSVTranslationParser
             // Escape values that contain commas or quotes
             $escapedRow = array_map(function ($value) {
                 if (str_contains($value, ',') || str_contains($value, '"') || str_contains($value, "\n")) {
-                    return '"' . str_replace('"', '""', $value) . '"';
+                    return '"'.str_replace('"', '""', $value).'"';
                 }
+
                 return $value;
             }, $row);
 
-            $output .= implode(',', $escapedRow) . "\n";
+            $output .= implode(',', $escapedRow)."\n";
         }
 
         return $output;
     }
 
     /**
-     * Check if row is a header row
+     * Check if row is a header row.
      *
      * @param array<int, string|null> $row
      */
     private function isHeaderRow(array $row): bool
     {
         // Check if first column contains 'locale' (case-insensitive)
-        return isset($row[0]) && strtolower(trim($row[0] ?? '')) === 'locale';
+        return isset($row[0]) && 'locale' === strtolower(trim($row[0] ?? ''));
     }
 }

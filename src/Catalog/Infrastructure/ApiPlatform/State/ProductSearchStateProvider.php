@@ -24,19 +24,20 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
         private MessageBusInterface $queryBus,
         private RequestStack $requestStack,
         private Connection $connection,
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        if ($request === null) {
+        if (null === $request) {
             return [];
         }
 
         // Get tenant ID from header
         $tenantIdString = $request->headers->get('X-Tenant-ID');
-        if ($tenantIdString === null) {
+        if (null === $tenantIdString) {
             throw new \InvalidArgumentException('X-Tenant-ID header is required');
         }
 
@@ -44,7 +45,7 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
 
         // Get locale from query parameter or Accept-Language header
         $localeString = $request->query->get('locale');
-        if ($localeString === null) {
+        if (null === $localeString) {
             $localeString = $this->getLocaleFromAcceptLanguage($request->headers->get('Accept-Language'));
         }
         // Locale::fromString now accepts both "en" and "en_US" formats
@@ -56,15 +57,15 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
             locale: $locale,
             query: $request->query->get('q'),
             categoryIds: $this->parseCategoryIds($request->query->get('category')),
-            minPrice: $request->query->get('minPrice') !== null ? (float) $request->query->get('minPrice') : null,
-            maxPrice: $request->query->get('maxPrice') !== null ? (float) $request->query->get('maxPrice') : null,
+            minPrice: null !== $request->query->get('minPrice') ? (float) $request->query->get('minPrice') : null,
+            maxPrice: null !== $request->query->get('maxPrice') ? (float) $request->query->get('maxPrice') : null,
             status: $request->query->get('status', 'active'),
             sortBy: $request->query->get('sortBy', 'relevance'),
             page: $request->query->getInt('page', 1),
             limit: min($request->query->getInt('limit', 20), 100), // Max 100 items per page
             options: $this->parseOptions($request->query->all()),
-            minRating: $request->query->get('minRating') !== null ? (int) $request->query->get('minRating') : null,
-            featured: $request->query->get('featured') === '1' || $request->query->get('featured') === 'true' ? true : null,
+            minRating: null !== $request->query->get('minRating') ? (int) $request->query->get('minRating') : null,
+            featured: '1' === $request->query->get('featured') || 'true' === $request->query->get('featured') ? true : null,
         );
 
         // Execute query
@@ -78,7 +79,7 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
         $result = $handledStamp->getResult();
 
         // Get inventory data for all products
-        $productIds = array_map(fn($p) => $p->id, $result->products);
+        $productIds = array_map(fn ($p) => $p->id, $result->products);
         $inventoryData = $this->getInventoryData($productIds);
 
         // Convert to API resources
@@ -104,11 +105,11 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
 
             // Get inventory info for this product
             $inventory = $inventoryData[$productDto->id] ?? null;
-            $resource->inStock = $inventory !== null && $inventory['totalAvailable'] > 0;
-            $resource->trackInventory = $inventory !== null; // If has inventory records, we track it
+            $resource->inStock = null !== $inventory && $inventory['totalAvailable'] > 0;
+            $resource->trackInventory = null !== $inventory; // If has inventory records, we track it
             $resource->allowBackorder = false; // TODO: Get from product config
             $resource->inventoryTotalAvailable = $inventory['totalAvailable'] ?? 0;
-            $resource->inventoryIsLow = $inventory !== null && $inventory['totalAvailable'] <= $inventory['lowStockThreshold'];
+            $resource->inventoryIsLow = null !== $inventory && $inventory['totalAvailable'] <= $inventory['lowStockThreshold'];
             $resource->inventoryWarehouses = $inventory['warehouses'] ?? [];
 
             $resource->categoryIds = $productDto->categoryIds;
@@ -142,21 +143,22 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
 
     private function parseCategoryIds(?string $categoryIdsString): ?array
     {
-        if ($categoryIdsString === null || $categoryIdsString === '') {
+        if (null === $categoryIdsString || '' === $categoryIdsString) {
             return null;
         }
 
         return array_filter(
             array_map('trim', explode(',', $categoryIdsString)),
-            fn($id) => $id !== ''
+            fn ($id) => '' !== $id
         );
     }
 
     /**
      * Parse option parameters from query string
-     * Converts option[color]=red,blue&option[size]=m,l to ['color' => ['red', 'blue'], 'size' => ['m', 'l']]
+     * Converts option[color]=red,blue&option[size]=m,l to ['color' => ['red', 'blue'], 'size' => ['m', 'l']].
      *
      * @param array<string, mixed> $queryParams
+     *
      * @return array<string, array<string>>|null
      */
     private function parseOptions(array $queryParams): ?array
@@ -169,10 +171,10 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
                 $optionCode = $matches[1];
 
                 // Parse comma-separated values
-                if (is_string($value) && $value !== '') {
+                if (is_string($value) && '' !== $value) {
                     $values = array_filter(
                         array_map('trim', explode(',', $value)),
-                        fn($v) => $v !== ''
+                        fn ($v) => '' !== $v
                     );
 
                     if (!empty($values)) {
@@ -187,7 +189,7 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
 
     /**
      * Get inventory data for a list of product IDs
-     * Returns: [productId => ['totalAvailable' => int, 'lowStockThreshold' => int, 'warehouses' => [...]]]
+     * Returns: [productId => ['totalAvailable' => int, 'lowStockThreshold' => int, 'warehouses' => [...]]].
      */
     private function getInventoryData(array $productIds): array
     {
@@ -216,19 +218,19 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
         $results = $this->connection->executeQuery(
             $sql,
             [$productIds],
-            [\Doctrine\DBAL\Connection::PARAM_STR_ARRAY]
+            [Connection::PARAM_STR_ARRAY]
         )->fetchAllAssociative();
 
         // Aggregate by product ID
         $inventoryData = [];
         foreach ($results as $row) {
             $productId = $row['product_id'];
-            $available = (int)$row['on_hand'] - (int)$row['reserved'] - (int)$row['allocated'];
+            $available = (int) $row['on_hand'] - (int) $row['reserved'] - (int) $row['allocated'];
 
             if (!isset($inventoryData[$productId])) {
                 $inventoryData[$productId] = [
                     'totalAvailable' => 0,
-                    'lowStockThreshold' => (int)$row['low_stock_threshold'],
+                    'lowStockThreshold' => (int) $row['low_stock_threshold'],
                     'warehouses' => [],
                 ];
             }
@@ -239,9 +241,9 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
                 'warehouse_name' => $row['warehouse_name'],
                 'warehouse_code' => $row['warehouse_code'],
                 'available' => $available,
-                'on_hand' => (int)$row['on_hand'],
-                'reserved' => (int)$row['reserved'],
-                'allocated' => (int)$row['allocated'],
+                'on_hand' => (int) $row['on_hand'],
+                'reserved' => (int) $row['reserved'],
+                'allocated' => (int) $row['allocated'],
             ];
         }
 
@@ -250,7 +252,7 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
 
     private function getLocaleFromAcceptLanguage(?string $acceptLanguage): ?string
     {
-        if ($acceptLanguage === null) {
+        if (null === $acceptLanguage) {
             return null;
         }
 
@@ -267,6 +269,7 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
             // Try to create Locale (now accepts both "en" and "en_US" formats)
             try {
                 Locale::fromString($locale);
+
                 return $locale;
             } catch (\InvalidArgumentException) {
                 // If full locale fails, try just the language part
@@ -274,11 +277,13 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
                 if (count($parts) > 1) {
                     try {
                         Locale::fromString($parts[0]);
+
                         return $parts[0];
                     } catch (\InvalidArgumentException) {
                         continue;
                     }
                 }
+
                 continue;
             }
         }

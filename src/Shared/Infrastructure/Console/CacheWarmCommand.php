@@ -32,7 +32,8 @@ final class CacheWarmCommand extends Command
         $this
             ->addArgument('tenant-id', InputArgument::OPTIONAL, 'Tenant ID to warm cache for (leave empty for all tenants)')
             ->addOption('locale', 'l', InputOption::VALUE_OPTIONAL, 'Locale to warm (e.g., en_US, ro_RO)', 'en_US')
-            ->setHelp(<<<'EOF'
+            ->setHelp(
+                <<<'EOF'
 The <info>%command.name%</info> command warms the cache with frequently accessed data.
 
 Warm cache for specific tenant:
@@ -62,7 +63,7 @@ EOF
         $io->title('Cache Warming Service');
 
         try {
-            if ($tenantIdString !== null) {
+            if (null !== $tenantIdString) {
                 // Warm specific tenant
                 $tenantId = TenantId::fromString($tenantIdString);
                 $locale = Locale::fromString($localeString);
@@ -111,10 +112,12 @@ EOF
             return Command::SUCCESS;
         } catch (\InvalidArgumentException $e) {
             $io->error($e->getMessage());
+
             return Command::FAILURE;
         } catch (\Throwable $e) {
-            $io->error('Cache warming failed: ' . $e->getMessage());
+            $io->error('Cache warming failed: '.$e->getMessage());
             $io->note('Check logs for more details');
+
             return Command::FAILURE;
         }
     }

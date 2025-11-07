@@ -14,7 +14,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Handles OrderStatusChanged domain events by notifying customers of order progress
+ * Handles OrderStatusChanged domain events by notifying customers of order progress.
  *
  * Business Rules:
  * - Notify customer on every status change
@@ -81,10 +81,11 @@ final readonly class OrderStatusChangedSubscriber implements EventSubscriberInte
         // Fetch order to get customer email and details
         $order = $this->orderRepository->findById($event->orderId);
 
-        if ($order === null) {
+        if (null === $order) {
             $this->logger->warning('Cannot send status change email - order not found', [
                 'orderId' => $event->orderId->toString(),
             ]);
+
             return;
         }
 

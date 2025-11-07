@@ -7,7 +7,7 @@ namespace App\Payment\Domain\ValueObject;
 use Symfony\Component\Uid\Ulid;
 
 /**
- * Payment ID Value Object
+ * Payment ID Value Object.
  *
  * Unique identifier for payment transactions using ULID for:
  * - Sortable by creation time
@@ -20,9 +20,7 @@ final readonly class PaymentId
         private string $value
     ) {
         if (!Ulid::isValid($value)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid Payment ID format: "%s". Must be a valid ULID.', $value)
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid Payment ID format: "%s". Must be a valid ULID.', $value));
         }
     }
 

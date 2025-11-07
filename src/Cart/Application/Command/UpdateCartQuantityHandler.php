@@ -26,7 +26,7 @@ final readonly class UpdateCartQuantityHandler
         $cartId = CartId::fromString($command->cartId);
         $cart = $this->cartRepository->findById($cartId);
 
-        if ($cart === null) {
+        if (null === $cart) {
             throw CartNotFoundException::withId($command->cartId);
         }
 
@@ -36,11 +36,12 @@ final readonly class UpdateCartQuantityHandler
         foreach ($cart->items() as $item) {
             if ($item->id()->equals($cartItemId)) {
                 $cartItem = $item;
+
                 break;
             }
         }
 
-        if ($cartItem !== null) {
+        if (null !== $cartItem) {
             // Validate stock availability for the new quantity
             $this->stockValidator->validateStockAvailability(
                 $cartItem->productId(),

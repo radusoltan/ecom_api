@@ -6,11 +6,10 @@ namespace App\Tests\Unit\Catalog\Infrastructure\Persistence\Doctrine\Entity;
 
 use App\Catalog\Domain\Model\Category;
 use App\Catalog\Domain\Model\CategoryId;
-use App\Catalog\Domain\Model\Slug;
+use App\Catalog\Domain\Model\CategoryName;
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\CategoryEntity;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
-use App\Catalog\Domain\Model\CategoryName;
 
 final class CategoryEntityTest extends TestCase
 {

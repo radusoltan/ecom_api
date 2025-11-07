@@ -56,7 +56,7 @@ final class CapturePaymentCommandHandlerTest extends TestCase
         $payment = Payment::create(
             id: $paymentId,
             tenantId: $tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 9999,
             currency: 'USD',
             method: PaymentMethod::card(),
@@ -76,7 +76,7 @@ final class CapturePaymentCommandHandlerTest extends TestCase
             ->willReturn([
                 'transaction_id' => 'pi_abc123xyz',
                 'captured_amount' => 9999,
-                'status' => 'captured'
+                'status' => 'captured',
             ]);
 
         $this->repository->expects($this->once())
@@ -86,7 +86,7 @@ final class CapturePaymentCommandHandlerTest extends TestCase
 
         $this->repository->expects($this->once())
             ->method('save')
-            ->with($this->callback(fn(Payment $p) => $p->status()->isCaptured()));
+            ->with($this->callback(fn (Payment $p) => $p->status()->isCaptured()));
 
         // Act
         ($this->handler)($command);

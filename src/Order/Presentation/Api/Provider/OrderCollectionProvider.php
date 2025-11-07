@@ -9,7 +9,6 @@ use ApiPlatform\State\ProviderInterface;
 use App\Order\Application\Query\GetAllOrdersQuery;
 use App\Order\Application\Query\GetOrdersByCustomerQuery;
 use App\Order\Presentation\Api\Resource\OrderResource;
-use InvalidArgumentException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -23,12 +22,12 @@ final readonly class OrderCollectionProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
         // Get tenantId from context (should be injected by security layer)
-        $tenantId = $context['tenant_id'] ?? throw new InvalidArgumentException('Tenant ID is required');
+        $tenantId = $context['tenant_id'] ?? throw new \InvalidArgumentException('Tenant ID is required');
 
         // Check if filtering by customer email
         $customerEmail = $context['filters']['customerEmail'] ?? null;
 
-        if ($customerEmail !== null) {
+        if (null !== $customerEmail) {
             $query = new GetOrdersByCustomerQuery($customerEmail, $tenantId);
         } else {
             $query = new GetAllOrdersQuery($tenantId);

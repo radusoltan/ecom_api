@@ -6,7 +6,7 @@ namespace App\Catalog\Domain\ValueObject;
 
 /**
  * Value object for localized strings
- * Stores translations as a map of locale => string
+ * Stores translations as a map of locale => string.
  */
 final class LocalizedString
 {
@@ -33,7 +33,7 @@ final class LocalizedString
     }
 
     /**
-     * Create with a single translation
+     * Create with a single translation.
      */
     public static function fromSingleTranslation(string $locale, string $value): self
     {
@@ -41,7 +41,7 @@ final class LocalizedString
     }
 
     /**
-     * Get translation for a specific locale
+     * Get translation for a specific locale.
      */
     public function getTranslation(Locale $locale): ?string
     {
@@ -49,7 +49,8 @@ final class LocalizedString
     }
 
     /**
-     * Get translation with fallback chain
+     * Get translation with fallback chain.
+     *
      * @param Locale[] $fallbackChain Array of locales in order of preference
      */
     public function getTranslationWithFallback(array $fallbackChain): ?string
@@ -60,7 +61,7 @@ final class LocalizedString
             }
 
             $translation = $this->getTranslation($locale);
-            if ($translation !== null) {
+            if (null !== $translation) {
                 return $translation;
             }
         }
@@ -74,27 +75,29 @@ final class LocalizedString
     }
 
     /**
-     * Add or update a translation
+     * Add or update a translation.
      */
     public function withTranslation(Locale $locale, string $value): self
     {
         $translations = $this->translations;
         $translations[$locale->toString()] = $value;
+
         return new self($translations);
     }
 
     /**
-     * Remove a translation
+     * Remove a translation.
      */
     public function withoutTranslation(Locale $locale): self
     {
         $translations = $this->translations;
         unset($translations[$locale->toString()]);
+
         return new self($translations);
     }
 
     /**
-     * Merge with another LocalizedString, with other's values taking precedence
+     * Merge with another LocalizedString, with other's values taking precedence.
      */
     public function merge(self $other): self
     {
@@ -102,7 +105,8 @@ final class LocalizedString
     }
 
     /**
-     * Get all translations
+     * Get all translations.
+     *
      * @return array<string, string>
      */
     public function toArray(): array
@@ -111,7 +115,7 @@ final class LocalizedString
     }
 
     /**
-     * Check if translation exists for a locale
+     * Check if translation exists for a locale.
      */
     public function hasTranslation(Locale $locale): bool
     {
@@ -119,19 +123,20 @@ final class LocalizedString
     }
 
     /**
-     * Get all available locales
+     * Get all available locales.
+     *
      * @return Locale[]
      */
     public function getAvailableLocales(): array
     {
         return array_map(
-            fn(string $locale) => Locale::fromString($locale),
+            fn (string $locale) => Locale::fromString($locale),
             array_keys($this->translations)
         );
     }
 
     /**
-     * Check if any translations exist
+     * Check if any translations exist.
      */
     public function isEmpty(): bool
     {
@@ -139,7 +144,7 @@ final class LocalizedString
     }
 
     /**
-     * Count number of translations
+     * Count number of translations.
      */
     public function count(): int
     {
@@ -152,7 +157,7 @@ final class LocalizedString
     }
 
     /**
-     * Get JSON representation for database storage
+     * Get JSON representation for database storage.
      */
     public function toJson(): string
     {
@@ -160,7 +165,7 @@ final class LocalizedString
     }
 
     /**
-     * Create from JSON string
+     * Create from JSON string.
      */
     public static function fromJson(string $json): self
     {
@@ -169,6 +174,7 @@ final class LocalizedString
             if (!is_array($data)) {
                 return self::empty();
             }
+
             return new self($data);
         } catch (\JsonException) {
             return self::empty();
@@ -176,7 +182,8 @@ final class LocalizedString
     }
 
     /**
-     * Validate translations array
+     * Validate translations array.
+     *
      * @param array<string, string> $translations
      */
     private function validate(array $translations): void
@@ -186,18 +193,12 @@ final class LocalizedString
             try {
                 Locale::fromString($locale);
             } catch (\InvalidArgumentException $e) {
-                throw new \InvalidArgumentException(
-                    sprintf('Invalid locale in translations: %s', $locale),
-                    0,
-                    $e
-                );
+                throw new \InvalidArgumentException(sprintf('Invalid locale in translations: %s', $locale), 0, $e);
             }
 
             // Validate translation is a string
             if (!is_string($value)) {
-                throw new \InvalidArgumentException(
-                    sprintf('Translation for locale %s must be a string', $locale)
-                );
+                throw new \InvalidArgumentException(sprintf('Translation for locale %s must be a string', $locale));
             }
         }
     }

@@ -18,7 +18,6 @@ use App\Privacy\Presentation\Api\Processor\WithdrawConsentProcessor;
 use App\Privacy\Presentation\Api\Provider\ConsentCollectionProvider;
 use App\Privacy\Presentation\Api\Provider\ConsentItemProvider;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -77,16 +76,16 @@ class ConsentEntity
     private string $consentVersion;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private ?DateTimeImmutable $grantedAt;
+    private ?\DateTimeImmutable $grantedAt;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private ?DateTimeImmutable $withdrawnAt;
+    private ?\DateTimeImmutable $withdrawnAt;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $updatedAt;
 
     public static function fromDomainModel(Consent $consent): self
     {
@@ -180,22 +179,22 @@ class ConsentEntity
         return $this->consentVersion;
     }
 
-    public function getGrantedAt(): ?DateTimeImmutable
+    public function getGrantedAt(): ?\DateTimeImmutable
     {
         return $this->grantedAt;
     }
 
-    public function getWithdrawnAt(): ?DateTimeImmutable
+    public function getWithdrawnAt(): ?\DateTimeImmutable
     {
         return $this->withdrawnAt;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

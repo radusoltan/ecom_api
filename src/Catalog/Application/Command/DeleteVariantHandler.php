@@ -8,14 +8,15 @@ use App\Catalog\Domain\Repository\ConfigurableProductRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Handler for DeleteVariant command
+ * Handler for DeleteVariant command.
  */
 #[AsMessageHandler]
 final readonly class DeleteVariantHandler
 {
     public function __construct(
         private ConfigurableProductRepositoryInterface $configurableProductRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(DeleteVariant $command): void
     {
@@ -26,10 +27,7 @@ final readonly class DeleteVariantHandler
         );
 
         if (!$configurableProduct) {
-            throw new \DomainException(sprintf(
-                'Configurable product not found for product %s',
-                $command->productId->toString()
-            ));
+            throw new \DomainException(sprintf('Configurable product not found for product %s', $command->productId->toString()));
         }
 
         // Find the variant
@@ -37,16 +35,13 @@ final readonly class DeleteVariantHandler
         foreach ($configurableProduct->getVariants() as $v) {
             if ($v->getId()->equals($command->variantId)) {
                 $variant = $v;
+
                 break;
             }
         }
 
         if (!$variant) {
-            throw new \DomainException(sprintf(
-                'Variant %s not found for product %s',
-                $command->variantId->toString(),
-                $command->productId->toString()
-            ));
+            throw new \DomainException(sprintf('Variant %s not found for product %s', $command->variantId->toString(), $command->productId->toString()));
         }
 
         // Remove variant from configurable product

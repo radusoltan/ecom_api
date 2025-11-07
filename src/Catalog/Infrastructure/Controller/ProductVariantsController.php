@@ -20,18 +20,19 @@ use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Controller for product variants management
+ * Controller for product variants management.
  */
 final class ProductVariantsController extends AbstractController
 {
     public function __construct(
         private readonly MessageBusInterface $commandBus,
         private readonly MessageBusInterface $queryBus
-    ) {}
+    ) {
+    }
 
     /**
      * Get variants for a product with optional filters
-     * GET /api/products/{id}/variants
+     * GET /api/products/{id}/variants.
      */
     #[Route('/api/products/{id}/variants', methods: ['GET'])]
     public function getVariants(string $id, Request $request): JsonResponse
@@ -65,7 +66,6 @@ final class ProductVariantsController extends AbstractController
             $result = $handledStamp->getResult();
 
             return $this->json($result);
-
         } catch (\InvalidArgumentException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $e) {
@@ -75,7 +75,7 @@ final class ProductVariantsController extends AbstractController
 
     /**
      * Generate variants for a product
-     * POST /api/products/{id}/variants:generate
+     * POST /api/products/{id}/variants:generate.
      */
     #[Route('/api/products/{id}/variants:generate', methods: ['POST'])]
     public function generateVariants(string $id, Request $request): JsonResponse
@@ -111,7 +111,6 @@ final class ProductVariantsController extends AbstractController
                 ['message' => 'Variants generated successfully'],
                 Response::HTTP_CREATED
             );
-
         } catch (\InvalidArgumentException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\DomainException $e) {
@@ -123,7 +122,7 @@ final class ProductVariantsController extends AbstractController
 
     /**
      * Update a specific variant
-     * PATCH /api/variants/{id}
+     * PATCH /api/variants/{id}.
      */
     #[Route('/api/variants/{id}', methods: ['PATCH'])]
     public function updateVariant(string $id, Request $request): JsonResponse
@@ -134,7 +133,7 @@ final class ProductVariantsController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        if (JSON_ERROR_NONE !== json_last_error()) {
             return $this->json(['error' => 'Invalid JSON payload'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -167,7 +166,6 @@ final class ProductVariantsController extends AbstractController
             $this->commandBus->dispatch($command);
 
             return $this->json(['message' => 'Variant updated successfully']);
-
         } catch (\InvalidArgumentException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\DomainException $e) {

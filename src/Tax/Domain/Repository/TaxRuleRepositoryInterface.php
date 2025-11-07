@@ -10,7 +10,7 @@ use App\Tax\Domain\ValueObject\TaxJurisdiction;
 use App\Tax\Domain\ValueObject\TaxRuleId;
 
 /**
- * Tax Rule Repository Interface
+ * Tax Rule Repository Interface.
  *
  * Port for persisting and retrieving tax rules.
  */
@@ -21,7 +21,7 @@ interface TaxRuleRepositoryInterface
     public function findById(TaxRuleId $id, TenantId $tenantId): ?TaxRule;
 
     /**
-     * Find active tax rule for jurisdiction
+     * Find active tax rule for jurisdiction.
      */
     public function findByJurisdiction(TaxJurisdiction $jurisdiction, TenantId $tenantId): ?TaxRule;
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Inventory\Infrastructure\EventSubscriber;
 
+use App\Inventory\Domain\Event\StockAdjusted;
 use App\Inventory\Domain\Event\StockAllocated;
 use App\Inventory\Domain\Event\StockReleased;
 use App\Inventory\Domain\Event\StockReserved;
-use App\Inventory\Domain\Event\StockAdjusted;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 
 /**
- * Stock Level Change Notification Subscriber
+ * Stock Level Change Notification Subscriber.
  *
  * Publishes real-time notifications via Mercure when stock levels change.
  * Clients can subscribe to stock updates for specific products/warehouses.
@@ -139,7 +139,7 @@ final readonly class StockLevelChangeNotificationSubscriber implements EventSubs
     }
 
     /**
-     * Publish a Mercure update for stock level changes
+     * Publish a Mercure update for stock level changes.
      */
     private function publishUpdate(
         \App\Inventory\Domain\Model\StockItem $stockItem,

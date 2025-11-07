@@ -11,7 +11,7 @@ use App\Catalog\Domain\ValueObject\VariantSKU;
 use App\Shared\Domain\Event\DomainEvent;
 
 /**
- * Domain event: Variant was added to a configurable product
+ * Domain event: Variant was added to a configurable product.
  */
 final readonly class VariantAdded implements DomainEvent
 {
@@ -25,7 +25,8 @@ final readonly class VariantAdded implements DomainEvent
         private VariantSKU $sku,
         private array $optionValueMap,
         private \DateTimeImmutable $occurredOn = new \DateTimeImmutable()
-    ) {}
+    ) {
+    }
 
     public function getConfigurableProductId(): ConfigurableProductId
     {

@@ -16,7 +16,7 @@ if ($_SERVER['APP_DEBUG']) {
 
 // Set default tenant ID for tests to avoid RLS violations
 // This UUID is used by all tests that need tenant context
-if ($_SERVER['APP_ENV'] === 'test') {
+if ('test' === $_SERVER['APP_ENV']) {
     // Use a fixed UUID v4 for the default test tenant
     // Format: xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx (v4 with variant bits)
     $_ENV['DEFAULT_TENANT_ID'] = '00000000-0000-4000-8000-000000000001';

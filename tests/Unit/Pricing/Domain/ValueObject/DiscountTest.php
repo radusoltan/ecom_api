@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Pricing\Domain\ValueObject;
 
 use App\Pricing\Domain\ValueObject\Discount;
-use App\Pricing\Domain\ValueObject\DiscountType;
 use App\Shared\Domain\ValueObject\Money;
 use PHPUnit\Framework\TestCase;
 

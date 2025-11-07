@@ -24,14 +24,14 @@ final readonly class GetAllCustomersQueryHandler
     {
         $tenantId = TenantId::fromString($query->tenantId);
 
-        if ($query->segment !== null) {
+        if (null !== $query->segment) {
             $customers = $this->customerRepository->findBySegment($query->segment, $tenantId);
         } else {
             $customers = $this->customerRepository->findAll($tenantId);
         }
 
         return array_map(
-            fn($customer) => CustomerDTO::fromDomain($customer),
+            fn ($customer) => CustomerDTO::fromDomain($customer),
             $customers
         );
     }

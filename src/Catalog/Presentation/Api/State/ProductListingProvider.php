@@ -27,7 +27,8 @@ final class ProductListingProvider implements ProviderInterface
         private readonly RequestStack $requestStack,
         private readonly Pagination $pagination,
         private readonly ?CacheItemPoolInterface $cache = null
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
@@ -52,8 +53,8 @@ final class ProductListingProvider implements ProviderInterface
 
         // Parse filters from query parameters
         $filters = $this->parseFilters($request);
-        $page = (int)$request->query->get('page', 1);
-        $itemsPerPage = (int)$request->query->get('itemsPerPage', self::DEFAULT_ITEMS_PER_PAGE);
+        $page = (int) $request->query->get('page', 1);
+        $itemsPerPage = (int) $request->query->get('itemsPerPage', self::DEFAULT_ITEMS_PER_PAGE);
         $itemsPerPage = min($itemsPerPage, 48); // Max 48 items per page
 
         // Generate cache key based on filters
@@ -79,7 +80,7 @@ final class ProductListingProvider implements ProviderInterface
         // Apply filters
         if (!empty($filters['q'])) {
             $qb->andWhere('p.name LIKE :search OR p.description LIKE :search')
-                ->setParameter('search', '%' . $filters['q'] . '%');
+                ->setParameter('search', '%'.$filters['q'].'%');
         }
 
         if (!empty($filters['category'])) {
@@ -102,16 +103,20 @@ final class ProductListingProvider implements ProviderInterface
         switch ($sort) {
             case 'price_asc':
                 $qb->orderBy('p.priceAmount', 'ASC');
+
                 break;
             case 'price_desc':
                 $qb->orderBy('p.priceAmount', 'DESC');
+
                 break;
             case 'name':
                 $qb->orderBy('p.name', 'ASC');
+
                 break;
             case 'newest':
             default:
                 $qb->orderBy('p.createdAt', 'DESC');
+
                 break;
         }
 
@@ -121,7 +126,7 @@ final class ProductListingProvider implements ProviderInterface
             ->resetDQLPart('orderBy')
             ->setFirstResult(0)
             ->setMaxResults(null);
-        $total = (int)$countQb->getQuery()->getSingleScalarResult();
+        $total = (int) $countQb->getQuery()->getSingleScalarResult();
 
         // Apply pagination
         $offset = ($page - 1) * $itemsPerPage;
@@ -140,7 +145,8 @@ final class ProductListingProvider implements ProviderInterface
                 $products[] = $this->mapToDto($product, $locale);
             } catch (\Exception $e) {
                 // Skip products that fail conversion
-                error_log('[ProductListingProvider] Failed to convert entity ' . $entity->getId() . ': ' . $e->getMessage());
+                error_log('[ProductListingProvider] Failed to convert entity '.$entity->getId().': '.$e->getMessage());
+
                 continue;
             }
         }
@@ -164,13 +170,14 @@ final class ProductListingProvider implements ProviderInterface
             'priceMin' => $request->query->get('priceMin'),
             'priceMax' => $request->query->get('priceMax'),
             'sort' => $request->query->get('sort', 'newest'),
-            'attributes' => $request->query->all('attributes') ?? []
+            'attributes' => $request->query->all('attributes') ?? [],
         ];
     }
 
     private function generateCacheKey(string $tenantId, string $locale, array $filters, int $page, int $itemsPerPage): string
     {
         $filterHash = md5(json_encode($filters));
+
         return sprintf(
             '%s:%s:%s:%s:%d:%d',
             self::CACHE_KEY_PREFIX,
@@ -192,7 +199,7 @@ final class ProductListingProvider implements ProviderInterface
             $primaryImage = [
                 'urlSm' => $firstImage->url() ?? '',
                 'urlMd' => $firstImage->url() ?? '',
-                'urlLg' => $firstImage->url() ?? ''
+                'urlLg' => $firstImage->url() ?? '',
             ];
         }
 
@@ -202,7 +209,7 @@ final class ProductListingProvider implements ProviderInterface
             name: $product->name()->value(),
             price: [
                 'amount' => $product->price()->getAmount(),
-                'currency' => $product->price()->getCurrency()->getCurrencyCode()
+                'currency' => $product->price()->getCurrency()->getCurrencyCode(),
             ],
             primaryImage: $primaryImage,
             isFeatured: $product->isFeatured(),
@@ -221,7 +228,7 @@ final class ProductListingProvider implements ProviderInterface
         return [
             'categories' => [],
             'priceRanges' => [],
-            'attributes' => []
+            'attributes' => [],
         ];
     }
 
@@ -233,6 +240,7 @@ final class ProductListingProvider implements ProviderInterface
         }
 
         $locale = explode(';', $locales[0])[0];
+
         return strtolower(trim($locale));
     }
 }

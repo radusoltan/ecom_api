@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Provider for ProductEntity collection operations
  * Filters products by tenant_id from X-Tenant-ID header
- * Supports Gedmo Translatable for automatic product translation
+ * Supports Gedmo Translatable for automatic product translation.
  *
  * @implements ProviderInterface<ProductEntity>
  */
@@ -30,7 +30,7 @@ final readonly class ProductCollectionProvider implements ProviderInterface
         // Get tenant ID from context (injected by TenantContextProvider decorator)
         $tenantId = $context['tenant_id'] ?? null;
 
-        if ($tenantId === null) {
+        if (null === $tenantId) {
             throw new \RuntimeException('Tenant ID is required but not provided in X-Tenant-ID header');
         }
 

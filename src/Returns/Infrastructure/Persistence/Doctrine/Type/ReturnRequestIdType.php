@@ -28,11 +28,11 @@ final class ReturnRequestIdType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
-        if (! $value instanceof ReturnRequestId) {
+        if (!$value instanceof ReturnRequestId) {
             throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', ReturnRequestId::class]);
         }
 
@@ -41,7 +41,7 @@ final class ReturnRequestIdType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?ReturnRequestId
     {
-        if ($value === null || $value === '') {
+        if (null === $value || '' === $value) {
             return null;
         }
 

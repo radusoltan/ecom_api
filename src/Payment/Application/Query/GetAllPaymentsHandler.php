@@ -24,7 +24,7 @@ final readonly class GetAllPaymentsHandler
         $payments = $this->paymentRepository->findAll($query->tenantId);
 
         return array_map(
-            fn($payment) => PaymentDTO::fromDomainModel($payment),
+            fn ($payment) => PaymentDTO::fromDomainModel($payment),
             $payments
         );
     }

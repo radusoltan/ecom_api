@@ -15,7 +15,7 @@ use App\Wishlist\Domain\ValueObject\WishlistItem;
 
 /**
  * Wishlist Aggregate Root
- * Represents a customer's wishlist of desired products
+ * Represents a customer's wishlist of desired products.
  *
  * Business Rules:
  * - One wishlist per customer per tenant
@@ -36,10 +36,11 @@ final class Wishlist extends AggregateRoot
         private TenantId $tenantId,
         private \DateTimeImmutable $createdAt,
         private \DateTimeImmutable $updatedAt
-    ) {}
+    ) {
+    }
 
     /**
-     * Create a new wishlist for a customer
+     * Create a new wishlist for a customer.
      */
     public static function create(
         WishlistId $id,
@@ -56,7 +57,7 @@ final class Wishlist extends AggregateRoot
     }
 
     /**
-     * Reconstitute from persistence
+     * Reconstitute from persistence.
      */
     public static function reconstituteFromPersistence(
         WishlistId $id,
@@ -73,7 +74,7 @@ final class Wishlist extends AggregateRoot
     }
 
     /**
-     * Add a product to the wishlist
+     * Add a product to the wishlist.
      */
     public function addItem(ProductId $productId): void
     {
@@ -86,9 +87,7 @@ final class Wishlist extends AggregateRoot
 
         // Business rule: maximum items limit
         if (count($this->items) >= self::MAX_ITEMS) {
-            throw new \DomainException(
-                sprintf('Wishlist cannot contain more than %d items', self::MAX_ITEMS)
-            );
+            throw new \DomainException(sprintf('Wishlist cannot contain more than %d items', self::MAX_ITEMS));
         }
 
         $item = WishlistItem::create($productId);
@@ -104,7 +103,7 @@ final class Wishlist extends AggregateRoot
     }
 
     /**
-     * Remove a product from the wishlist
+     * Remove a product from the wishlist.
      */
     public function removeItem(ProductId $productId): void
     {
@@ -126,13 +125,13 @@ final class Wishlist extends AggregateRoot
     }
 
     /**
-     * Clear all items from the wishlist
+     * Clear all items from the wishlist.
      */
     public function clear(): void
     {
         $itemCount = count($this->items);
 
-        if ($itemCount === 0) {
+        if (0 === $itemCount) {
             return;
         }
 
@@ -148,7 +147,7 @@ final class Wishlist extends AggregateRoot
     }
 
     /**
-     * Check if a product is in the wishlist
+     * Check if a product is in the wishlist.
      */
     public function hasItem(ProductId $productId): bool
     {
@@ -156,7 +155,7 @@ final class Wishlist extends AggregateRoot
     }
 
     /**
-     * Get the number of items in the wishlist
+     * Get the number of items in the wishlist.
      */
     public function itemCount(): int
     {
@@ -164,7 +163,7 @@ final class Wishlist extends AggregateRoot
     }
 
     /**
-     * Check if the wishlist is empty
+     * Check if the wishlist is empty.
      */
     public function isEmpty(): bool
     {

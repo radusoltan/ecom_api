@@ -10,14 +10,15 @@ use App\Catalog\Domain\Repository\ConfigurableProductRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Handler for CreateVariant command
+ * Handler for CreateVariant command.
  */
 #[AsMessageHandler]
 final readonly class CreateVariantHandler
 {
     public function __construct(
         private ConfigurableProductRepositoryInterface $configurableProductRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(CreateVariant $command): void
     {
@@ -28,10 +29,7 @@ final readonly class CreateVariantHandler
         );
 
         if (!$configurableProduct) {
-            throw new \DomainException(sprintf(
-                'Configurable product not found for product %s',
-                $command->productId->toString()
-            ));
+            throw new \DomainException(sprintf('Configurable product not found for product %s', $command->productId->toString()));
         }
 
         // Create stock object

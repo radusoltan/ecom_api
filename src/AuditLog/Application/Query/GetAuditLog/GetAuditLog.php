@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\AuditLog\Application\Query\GetAuditLog;
 
 /**
- * Query to retrieve audit log entries with filters
+ * Query to retrieve audit log entries with filters.
  */
 final readonly class GetAuditLog
 {

@@ -11,10 +11,10 @@ use App\Pricing\Application\Query\GetPromotionById\GetPromotionByIdQuery;
 use App\Pricing\Domain\ValueObject\PromotionId;
 use App\Pricing\Infrastructure\Persistence\Doctrine\Entity\PromotionEntity;
 use App\Shared\Domain\ValueObject\TenantId;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 final readonly class CreatePromotionProcessor implements ProcessorInterface
 {
@@ -30,7 +30,7 @@ final readonly class CreatePromotionProcessor implements ProcessorInterface
 
         // Get tenant ID from context (set by TenantContextProvider)
         $tenantId = $context['tenant_id'] ?? null;
-        if ($tenantId === null) {
+        if (null === $tenantId) {
             throw new \RuntimeException('Tenant ID not found in context');
         }
 
@@ -75,7 +75,7 @@ final readonly class CreatePromotionProcessor implements ProcessorInterface
 
         $promotionDTO = $handledStamp->getResult();
 
-        if ($promotionDTO === null) {
+        if (null === $promotionDTO) {
             throw new \RuntimeException('Promotion not found after creation');
         }
 

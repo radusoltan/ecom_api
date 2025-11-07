@@ -17,7 +17,8 @@ final readonly class CategoryCreatedSubscriber implements EventSubscriberInterfa
         private CategoryRepositoryInterface $categoryRepository,
         private CategoryIndexer $categoryIndexer,
         private LoggerInterface $logger,
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -31,10 +32,11 @@ final readonly class CategoryCreatedSubscriber implements EventSubscriberInterfa
         try {
             $category = $this->categoryRepository->findById($event->categoryId);
 
-            if ($category === null) {
+            if (null === $category) {
                 $this->logger->warning('Category not found for indexing', [
                     'category_id' => $event->categoryId->toString(),
                 ]);
+
                 return;
             }
 
@@ -47,7 +49,7 @@ final readonly class CategoryCreatedSubscriber implements EventSubscriberInterfa
 
             $this->logger->info('Category indexed in Elasticsearch', [
                 'category_id' => $event->categoryId->toString(),
-                'locales' => array_map(fn($l) => $l->toString(), $enabledLocales),
+                'locales' => array_map(fn ($l) => $l->toString(), $enabledLocales),
             ]);
         } catch (\Exception $e) {
             $this->logger->error('Failed to index category', [

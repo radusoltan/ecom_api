@@ -7,7 +7,7 @@ namespace App\Tests\Functional\Integration;
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 
 /**
- * End-to-End Tests for Tax + Promotion Integration
+ * End-to-End Tests for Tax + Promotion Integration.
  *
  * Purpose: Verify that Tax and Promotion systems work correctly together
  * in real-world checkout scenarios.
@@ -55,7 +55,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash');
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -72,10 +72,10 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
             'exp' => time() + 3600,
         ]);
 
-        $headers = ['authorization' => 'Bearer ' . $token];
+        $headers = ['authorization' => 'Bearer '.$token];
 
         $tenantIdToUse = $tenantId ?? $this->currentTenantId;
-        if ($tenantIdToUse !== null) {
+        if (null !== $tenantIdToUse) {
             $headers['X-Tenant-ID'] = $tenantIdToUse;
         }
 
@@ -87,7 +87,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
         $response = $client->request('POST', '/api/v1/tenants', [
             'json' => [
-                'name' => 'Test Tenant ' . uniqid(),
+                'name' => 'Test Tenant '.uniqid(),
                 'ownerEmail' => sprintf('tenant-%d-%s@example.com', ++self::$counter, uniqid()),
             ],
         ]);
@@ -444,7 +444,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
     // ========================================================================
 
     /**
-     * Critical E2E Test: Tax is calculated AFTER discount
+     * Critical E2E Test: Tax is calculated AFTER discount.
      *
      * Scenario:
      * - Subtotal: €100.00
@@ -519,7 +519,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
     }
 
     /**
-     * E2E Test: Multiple stacked promotions + tax
+     * E2E Test: Multiple stacked promotions + tax.
      *
      * Scenario:
      * - Subtotal: €200.00
@@ -619,7 +619,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
     }
 
     /**
-     * E2E Test: Coupon with minimum purchase + tax
+     * E2E Test: Coupon with minimum purchase + tax.
      *
      * Scenario:
      * - Subtotal: €75.00
@@ -693,7 +693,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
     // ========================================================================
 
     /**
-     * Test: Different EU countries have different VAT rates
+     * Test: Different EU countries have different VAT rates.
      */
     public function testMultipleEUCountryVATRates(): void
     {
@@ -763,7 +763,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
     }
 
     /**
-     * Test: Cross-border VAT (destination-based taxation)
+     * Test: Cross-border VAT (destination-based taxation).
      */
     public function testCrossBorderVATDestinationBased(): void
     {
@@ -807,7 +807,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
     // ========================================================================
 
     /**
-     * Test: Promotion cannot reduce price below zero
+     * Test: Promotion cannot reduce price below zero.
      */
     public function testPromotionCannotReducePriceBelowZero(): void
     {
@@ -843,7 +843,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
     }
 
     /**
-     * Test: Invalid coupon code returns error
+     * Test: Invalid coupon code returns error.
      */
     public function testInvalidCouponCodeValidation(): void
     {
@@ -867,7 +867,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
     }
 
     /**
-     * Test: Tax calculation with very large amount
+     * Test: Tax calculation with very large amount.
      */
     public function testTaxCalculationWithLargeAmount(): void
     {
@@ -904,7 +904,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
     }
 
     /**
-     * Test: Multi-tenant isolation (promotions don't leak across tenants)
+     * Test: Multi-tenant isolation (promotions don't leak across tenants).
      */
     public function testMultiTenantIsolationForPromotions(): void
     {
@@ -940,7 +940,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
     }
 
     /**
-     * Test: Deactivated promotion is not applied
+     * Test: Deactivated promotion is not applied.
      */
     public function testDeactivatedPromotionNotApplied(): void
     {

@@ -30,10 +30,8 @@ final readonly class CompleteReturnRequestHandler
             ReturnRequestId::fromString($command->returnRequestId)
         );
 
-        if ($returnRequest === null) {
-            throw new \DomainException(
-                sprintf('Return request with ID "%s" not found.', $command->returnRequestId)
-            );
+        if (null === $returnRequest) {
+            throw new \DomainException(sprintf('Return request with ID "%s" not found.', $command->returnRequestId));
         }
 
         $refundAmount = Money::fromScalars($command->refundAmount, $command->refundCurrency);

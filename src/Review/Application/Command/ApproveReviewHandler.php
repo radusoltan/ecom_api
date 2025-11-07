@@ -12,13 +12,14 @@ final readonly class ApproveReviewHandler
 {
     public function __construct(
         private ProductReviewRepositoryInterface $reviewRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(ApproveReview $command): void
     {
         $review = $this->reviewRepository->findById($command->reviewId);
 
-        if ($review === null) {
+        if (null === $review) {
             throw new \DomainException('Review not found');
         }
 

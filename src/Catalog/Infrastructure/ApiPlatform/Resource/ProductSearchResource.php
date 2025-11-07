@@ -6,7 +6,6 @@ namespace App\Catalog\Infrastructure\ApiPlatform\Resource;
 
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Catalog\Infrastructure\ApiPlatform\State\ProductSearchStateProvider;
 
@@ -42,6 +41,7 @@ final class ProductSearchResource
     public ?bool $inStock = null;
     public ?bool $trackInventory = null;
     public ?bool $allowBackorder = null;
+    /** @var array<int, string>|null */
     public ?array $categoryIds = null;
     public ?string $imageUrl = null;
     public ?string $locale = null;
@@ -50,6 +50,7 @@ final class ProductSearchResource
     // Inventory information
     public ?int $inventoryTotalAvailable = null;
     public ?bool $inventoryIsLow = null;
+    /** @var array<int, array<string, mixed>>|null */
     public ?array $inventoryWarehouses = null;
 
     // Rating and review information

@@ -7,7 +7,7 @@ namespace App\Tests\Functional\Metrics;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * Prometheus Metrics Functional Tests
+ * Prometheus Metrics Functional Tests.
  *
  * Tests EPIC 3.3 - Observability & Tracing:
  * - /metrics endpoint accessible

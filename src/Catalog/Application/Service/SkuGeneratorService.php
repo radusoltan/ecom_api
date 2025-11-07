@@ -9,7 +9,6 @@ use App\Catalog\Domain\Model\SKU;
 use App\Catalog\Domain\Repository\CategoryRepositoryInterface;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
-use App\Tenant\Domain\ValueObject\TenantId as TenantDomainId;
 use Doctrine\DBAL\Connection;
 
 final class SkuGeneratorService
@@ -18,7 +17,8 @@ final class SkuGeneratorService
         private readonly Connection $connection,
         private readonly CategoryRepositoryInterface $categoryRepository,
         private readonly TenantRepositoryInterface $tenantRepository
-    ) {}
+    ) {
+    }
 
     public function generate(TenantId $tenantId, ?CategoryId $categoryId = null): SKU
     {
@@ -32,13 +32,13 @@ final class SkuGeneratorService
 
     private function resolvePrefix(TenantId $tenantId, ?CategoryId $categoryId): string
     {
-        if ($categoryId === null) {
+        if (null === $categoryId) {
             return 'PRD';
         }
 
         $category = $this->categoryRepository->findById($categoryId);
 
-        if ($category === null || !$category->tenantId()->equals($tenantId)) {
+        if (null === $category || !$category->tenantId()->equals($tenantId)) {
             return 'PRD';
         }
 
@@ -48,14 +48,14 @@ final class SkuGeneratorService
     private function buildCode(string $value, string $default): string
     {
         $transliterated = iconv('UTF-8', 'ASCII//TRANSLIT', $value);
-        if ($transliterated === false) {
+        if (false === $transliterated) {
             $transliterated = $value;
         }
 
         $upper = strtoupper($transliterated);
         $filtered = preg_replace('/[^A-Z0-9]/', '', $upper);
 
-        if ($filtered === null || $filtered === '') {
+        if (null === $filtered || '' === $filtered) {
             return $default;
         }
 
@@ -84,7 +84,7 @@ SQL,
             ]
         );
 
-        if ($result === false) {
+        if (false === $result) {
             throw new \RuntimeException('Failed to generate SKU sequence.');
         }
 

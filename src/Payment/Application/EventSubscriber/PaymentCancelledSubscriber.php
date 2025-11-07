@@ -11,7 +11,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
 /**
- * Payment Cancelled Subscriber
+ * Payment Cancelled Subscriber.
  *
  * Handles actions when a payment is cancelled.
  * - Sends cancellation notification email to customer
@@ -58,7 +58,6 @@ final readonly class PaymentCancelledSubscriber implements EventSubscriberInterf
             $this->logger->info('Payment cancelled subscriber completed successfully', [
                 'payment_id' => $event->paymentId->toString(),
             ]);
-
         } catch (\Throwable $e) {
             // Log error but don't throw
             $this->logger->error('PaymentCancelledSubscriber failed', [
@@ -90,7 +89,6 @@ final readonly class PaymentCancelledSubscriber implements EventSubscriberInterf
             $this->logger->info('Payment cancellation notification email sent', [
                 'payment_id' => $event->paymentId->toString(),
             ]);
-
         } catch (\Throwable $e) {
             // Log email failure but don't throw
             $this->logger->error('Failed to send payment cancellation notification email', [
@@ -103,6 +101,7 @@ final readonly class PaymentCancelledSubscriber implements EventSubscriberInterf
     private function buildHtmlEmailBody(PaymentCancelled $event): string
     {
         $currentDate = date('F j, Y \a\t g:i A');
+
         return <<<HTML
         <!DOCTYPE html>
         <html>
@@ -150,6 +149,7 @@ final readonly class PaymentCancelledSubscriber implements EventSubscriberInterf
     private function buildTextEmailBody(PaymentCancelled $event): string
     {
         $currentDate = date('F j, Y \a\t g:i A');
+
         return <<<TEXT
         PAYMENT CANCELLED
 

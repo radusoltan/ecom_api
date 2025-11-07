@@ -17,14 +17,15 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * API Platform processor for updating product translations
- * Endpoint: PATCH /api/products/{id}/translations
+ * Endpoint: PATCH /api/products/{id}/translations.
  */
 final class UpdateProductTranslationsProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly MessageBusInterface $messageBus,
         private readonly RequestStack $requestStack
-    ) {}
+    ) {
+    }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
@@ -57,7 +58,7 @@ final class UpdateProductTranslationsProcessor implements ProcessorInterface
         try {
             $localeVO = Locale::fromString($locale);
         } catch (\InvalidArgumentException $e) {
-            throw new BadRequestHttpException('Invalid locale format: ' . $e->getMessage());
+            throw new BadRequestHttpException('Invalid locale format: '.$e->getMessage());
         }
 
         // Create command

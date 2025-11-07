@@ -15,7 +15,8 @@ final readonly class IndexManager
     public function __construct(
         private Client $client,
         private SynonymManager $synonymManager
-    ) {}
+    ) {
+    }
 
     public function createProductIndex(TenantId $tenantId, Locale $locale): void
     {
@@ -68,7 +69,7 @@ final readonly class IndexManager
     {
         try {
             return $this->client->indices()->exists(['index' => $indexName])->asBool();
-        } catch (ClientResponseException | ServerResponseException) {
+        } catch (ClientResponseException|ServerResponseException) {
             return false;
         }
     }
@@ -85,12 +86,14 @@ final readonly class IndexManager
     public function getProductIndexName(TenantId $tenantId, Locale $locale): string
     {
         $localeString = str_replace('_', '', strtolower($locale->toString()));
+
         return sprintf('%s_products_%s', $tenantId->toString(), $localeString);
     }
 
     public function getCategoryIndexName(TenantId $tenantId, Locale $locale): string
     {
         $localeString = str_replace('_', '', strtolower($locale->toString()));
+
         return sprintf('%s_categories_%s', $tenantId->toString(), $localeString);
     }
 
@@ -114,7 +117,7 @@ final readonly class IndexManager
                             'lowercase',
                             'asciifolding',
                             'product_synonym_filter',
-                            $analyzer . '_stemmer',
+                            $analyzer.'_stemmer',
                             'unique',
                         ],
                     ],
@@ -125,13 +128,13 @@ final readonly class IndexManager
                             'lowercase',
                             'asciifolding',
                             'product_synonym_filter',
-                            $analyzer . '_stemmer',
+                            $analyzer.'_stemmer',
                             'unique',
                         ],
                     ],
                 ],
                 'filter' => [
-                    $analyzer . '_stemmer' => [
+                    $analyzer.'_stemmer' => [
                         'type' => 'stemmer',
                         'language' => $analyzer,
                     ],
@@ -164,13 +167,13 @@ final readonly class IndexManager
                             'lowercase',
                             'asciifolding',
                             'category_synonym_filter',
-                            $analyzer . '_stemmer',
+                            $analyzer.'_stemmer',
                             'unique',
                         ],
                     ],
                 ],
                 'filter' => [
-                    $analyzer . '_stemmer' => [
+                    $analyzer.'_stemmer' => [
                         'type' => 'stemmer',
                         'language' => $analyzer,
                     ],

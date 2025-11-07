@@ -44,7 +44,7 @@ final readonly class LanguageCode
 
     public static function fromAcceptLanguageHeader(?string $header): self
     {
-        if ($header === null || $header === '') {
+        if (null === $header || '' === $header) {
             return self::default();
         }
 
@@ -75,7 +75,7 @@ final readonly class LanguageCode
 
     public function isDefault(): bool
     {
-        return $this->code === self::DEFAULT_LANGUAGE;
+        return self::DEFAULT_LANGUAGE === $this->code;
     }
 
     /**
@@ -87,7 +87,7 @@ final readonly class LanguageCode
     }
 
     /**
-     * Alias for supportedLanguages() for compatibility
+     * Alias for supportedLanguages() for compatibility.
      *
      * @return array<string>
      */

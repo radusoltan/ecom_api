@@ -6,7 +6,6 @@ namespace App\Customer\Domain\Event;
 
 use App\Customer\Domain\ValueObject\CustomerId;
 
-
 final readonly class CustomerUpdated
 {
     public function __construct(

@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace App\Privacy\Domain\ValueObject;
 
-use InvalidArgumentException;
-use Stringable;
-
 /**
- * Data Subject Request Status Value Object
+ * Data Subject Request Status Value Object.
  *
  * GDPR Compliance: Requests must be processed within 30 days (Article 12)
  *
  * Status flow:
  * PENDING → UNDER_REVIEW → [COMPLETED | REJECTED]
  */
-final readonly class RequestStatus implements Stringable
+final readonly class RequestStatus implements \Stringable
 {
     private const PENDING = 'pending';
     private const UNDER_REVIEW = 'under_review';
@@ -39,13 +36,7 @@ final readonly class RequestStatus implements Stringable
     private function __construct(private string $value)
     {
         if (!in_array($value, self::VALID_STATUSES, true)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Invalid request status: "%s". Valid statuses: %s',
-                    $value,
-                    implode(', ', self::VALID_STATUSES)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid request status: "%s". Valid statuses: %s', $value, implode(', ', self::VALID_STATUSES)));
         }
     }
 

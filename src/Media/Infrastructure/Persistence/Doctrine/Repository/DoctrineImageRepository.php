@@ -4,28 +4,29 @@ declare(strict_types=1);
 
 namespace App\Media\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\Media\Application\Message\DeleteImageAssetsMessage;
 use App\Media\Domain\Model\Image;
 use App\Media\Domain\Repository\ImageRepositoryInterface;
 use App\Media\Domain\ValueObject\ImageId;
 use App\Media\Domain\ValueObject\OwnerReference;
-use App\Shared\Domain\ValueObject\TenantId;
 use App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity;
+use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use App\Media\Application\Message\DeleteImageAssetsMessage;
 
 final class DoctrineImageRepository implements ImageRepositoryInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $messageBus
-    ) {}
+    ) {
+    }
 
     public function save(Image $image): void
     {
         $entity = $this->entityManager->find(ImageEntity::class, $image->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             $entity = ImageEntity::fromDomain($image);
             $this->entityManager->persist($entity);
         } else {
@@ -39,7 +40,7 @@ final class DoctrineImageRepository implements ImageRepositoryInterface
     {
         $entity = $this->entityManager->find(ImageEntity::class, $id->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             return null;
         }
 
@@ -85,13 +86,13 @@ final class DoctrineImageRepository implements ImageRepositoryInterface
     {
         $entity = $this->entityManager->find(ImageEntity::class, $image->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             return;
         }
 
         $this->messageBus->dispatch(new DeleteImageAssetsMessage(
             $image->originalPath()->toString(),
-            array_map(static fn($thumbnail) => $thumbnail->path()->toString(), $image->thumbnails())
+            array_map(static fn ($thumbnail) => $thumbnail->path()->toString(), $image->thumbnails())
         ));
 
         $this->entityManager->remove($entity);

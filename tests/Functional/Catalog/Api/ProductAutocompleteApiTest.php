@@ -117,7 +117,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
     public function testAutocompleteRespectsLimit(): void
     {
         // Create and index multiple products
-        for ($i = 1; $i <= 15; $i++) {
+        for ($i = 1; $i <= 15; ++$i) {
             $this->createAndIndexProduct("Laptop Model $i");
         }
 
@@ -271,6 +271,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
     {
         $product = $this->createProduct($name);
         $this->productIndexer->indexProduct($product, $this->locale);
+
         return $product;
     }
 

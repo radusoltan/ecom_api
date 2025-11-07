@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tax\Domain\ValueObject;
 
 /**
- * Tax Rate Value Object
+ * Tax Rate Value Object.
  *
  * Represents a tax rate as a percentage (0-100).
  * Examples: 19% VAT, 20% VAT, 5% reduced rate.
@@ -16,9 +16,7 @@ final readonly class TaxRate
         private float $value
     ) {
         if ($value < 0 || $value > 100) {
-            throw new \InvalidArgumentException(
-                sprintf('Tax rate must be between 0 and 100, got %.2f', $value)
-            );
+            throw new \InvalidArgumentException(sprintf('Tax rate must be between 0 and 100, got %.2f', $value));
         }
     }
 
@@ -33,7 +31,7 @@ final readonly class TaxRate
     }
 
     /**
-     * Get tax rate as percentage (e.g., 19.0 for 19%)
+     * Get tax rate as percentage (e.g., 19.0 for 19%).
      */
     public function getPercentage(): float
     {
@@ -41,7 +39,7 @@ final readonly class TaxRate
     }
 
     /**
-     * Get tax rate as decimal (e.g., 0.19 for 19%)
+     * Get tax rate as decimal (e.g., 0.19 for 19%).
      */
     public function getDecimal(): float
     {
@@ -49,7 +47,7 @@ final readonly class TaxRate
     }
 
     /**
-     * Calculate tax amount for given price in cents
+     * Calculate tax amount for given price in cents.
      */
     public function calculateTaxAmount(int $priceInCents): int
     {
@@ -57,7 +55,7 @@ final readonly class TaxRate
     }
 
     /**
-     * Calculate price including tax
+     * Calculate price including tax.
      */
     public function calculatePriceWithTax(int $priceInCents): int
     {

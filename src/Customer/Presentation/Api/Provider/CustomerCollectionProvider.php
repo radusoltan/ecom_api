@@ -9,7 +9,6 @@ use ApiPlatform\State\ProviderInterface;
 use App\Customer\Application\DTO\CustomerDTO;
 use App\Customer\Application\Query\GetAllCustomersQuery;
 use App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity;
-use InvalidArgumentException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -29,7 +28,7 @@ final readonly class CustomerCollectionProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
         // Get tenant ID from context (set by TenantContextProvider or similar)
-        $tenantId = $context['tenant_id'] ?? throw new InvalidArgumentException('Tenant ID is required');
+        $tenantId = $context['tenant_id'] ?? throw new \InvalidArgumentException('Tenant ID is required');
 
         // Get optional segment filter from query parameters
         $segment = $context['filters']['segment'] ?? null;
@@ -43,13 +42,13 @@ final readonly class CustomerCollectionProvider implements ProviderInterface
 
         $customerDTOs = $handledStamp->getResult();
 
-        if ($customerDTOs === null || !is_array($customerDTOs)) {
+        if (null === $customerDTOs || !is_array($customerDTOs)) {
             return [];
         }
 
         // Convert DTOs to entities for API Platform
         return array_map(
-            fn($dto) => $this->populateEntityFromDTO(new CustomerEntity(), $dto),
+            fn ($dto) => $this->populateEntityFromDTO(new CustomerEntity(), $dto),
             $customerDTOs
         );
     }

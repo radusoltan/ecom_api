@@ -7,7 +7,7 @@ namespace App\Search\Domain\Model;
 use App\Catalog\Domain\Model\ProductId;
 
 /**
- * ProductSearchHit Value Object
+ * ProductSearchHit Value Object.
  *
  * Represents a single product search result with relevance score.
  */
@@ -30,7 +30,8 @@ final readonly class ProductSearchHit
         public array $categoryIds = [],
         public ?float $averageRating = null,
         public ?int $reviewCount = null,
-    ) {}
+    ) {
+    }
 
     public function hasImage(): bool
     {
@@ -43,7 +44,8 @@ final readonly class ProductSearchHit
     }
 
     /**
-     * Convert to array for API serialization
+     * Convert to array for API serialization.
+     *
      * @return array<string, mixed>
      */
     public function toArray(): array

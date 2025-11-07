@@ -58,7 +58,7 @@ final readonly class GlobalApiRateLimitListener implements EventSubscriberInterf
 
         // Determine which rate limiter to use based on route
         $limiterConfig = $this->determineRateLimiter($path);
-        if ($limiterConfig === null) {
+        if (null === $limiterConfig) {
             return; // No rate limiting for this route
         }
 
@@ -119,12 +119,14 @@ final readonly class GlobalApiRateLimitListener implements EventSubscriberInterf
         if (preg_match('#^/api/(orders|checkout|cart)#', $path)) {
             $sessionId = $request->getSession()->getId();
             $tenantId = $request->headers->get('X-Tenant-ID', 'default');
+
             return [$this->apiCheckoutLimiter, sprintf('%s:%s', $sessionId, $tenantId)];
         }
 
         // Search routes - per tenant
         if (preg_match('#^/api/(search|products/search)#', $path)) {
             $tenantId = $request->headers->get('X-Tenant-ID', 'default');
+
             return [$this->apiSearchLimiter, $tenantId];
         }
 
@@ -134,17 +136,20 @@ final readonly class GlobalApiRateLimitListener implements EventSubscriberInterf
             $userId = is_object($user) && method_exists($user, 'getUserIdentifier')
                 ? $user->getUserIdentifier()
                 : 'anonymous';
+
             return [$this->apiAdminLimiter, $userId];
         }
 
         // Authenticated API routes - per tenant
         if ($request->headers->has('X-Tenant-ID')) {
             $tenantId = $request->headers->get('X-Tenant-ID');
+
             return [$this->apiAuthenticatedLimiter, $tenantId];
         }
 
         // Public API routes - per IP
         $clientIp = $request->getClientIp() ?? 'unknown';
+
         return [$this->apiPublicLimiter, $clientIp];
     }
 }

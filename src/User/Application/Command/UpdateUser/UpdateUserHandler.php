@@ -7,8 +7,8 @@ namespace App\User\Application\Command\UpdateUser;
 use App\User\Domain\Model\User;
 use App\User\Domain\Repository\UserRepositoryInterface;
 use App\User\Domain\ValueObject\UserId;
-use App\User\Domain\ValueObject\UserRole;
 use App\User\Domain\ValueObject\Username;
+use App\User\Domain\ValueObject\UserRole;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -23,19 +23,19 @@ final readonly class UpdateUserHandler
     {
         // Find user
         $user = $this->userRepository->findById(UserId::fromString($command->userId));
-        if ($user === null) {
+        if (null === $user) {
             throw new \DomainException(sprintf('User with ID "%s" not found', $command->userId));
         }
 
         // Check if username is taken by another user
         $existingUser = $this->userRepository->findByUsername(Username::fromString($command->username));
-        if ($existingUser !== null && !$existingUser->id()->equals($user->id())) {
+        if (null !== $existingUser && !$existingUser->id()->equals($user->id())) {
             throw new \DomainException(sprintf('Username "%s" is already taken', $command->username));
         }
 
         // Convert string roles to UserRole value objects
         $roles = array_map(
-            fn(string $role) => UserRole::fromString($role),
+            fn (string $role) => UserRole::fromString($role),
             $command->roles
         );
 

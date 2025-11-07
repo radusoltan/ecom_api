@@ -23,7 +23,8 @@ final readonly class SearchQueryLogger
 {
     public function __construct(
         private LoggerInterface $logger
-    ) {}
+    ) {
+    }
 
     public function logSearch(
         SearchProductsQuery $query,
@@ -76,19 +77,19 @@ final readonly class SearchQueryLogger
     {
         $filters = [];
 
-        if ($query->categoryIds !== null && count($query->categoryIds) > 0) {
+        if (null !== $query->categoryIds && count($query->categoryIds) > 0) {
             $filters['category_ids'] = $query->categoryIds;
         }
 
-        if ($query->minPrice !== null) {
+        if (null !== $query->minPrice) {
             $filters['min_price'] = $query->minPrice;
         }
 
-        if ($query->maxPrice !== null) {
+        if (null !== $query->maxPrice) {
             $filters['max_price'] = $query->maxPrice;
         }
 
-        if ($query->status !== null) {
+        if (null !== $query->status) {
             $filters['status'] = $query->status;
         }
 

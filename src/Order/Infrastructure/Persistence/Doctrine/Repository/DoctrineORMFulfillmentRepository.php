@@ -16,7 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Doctrine ORM Fulfillment Repository
+ * Doctrine ORM Fulfillment Repository.
  *
  * Implements persistence for Fulfillment aggregate using Doctrine ORM.
  */
@@ -33,7 +33,7 @@ final readonly class DoctrineORMFulfillmentRepository implements FulfillmentRepo
         $repository = $this->entityManager->getRepository(FulfillmentEntity::class);
         $entity = $repository->find($fulfillment->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             // Create new entity
             $entity = FulfillmentEntity::fromDomainModel($fulfillment);
             $this->entityManager->persist($entity);
@@ -75,7 +75,7 @@ final readonly class DoctrineORMFulfillmentRepository implements FulfillmentRepo
         );
 
         return array_map(
-            fn(FulfillmentEntity $entity) => $entity->toDomainModel(),
+            fn (FulfillmentEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -92,7 +92,7 @@ final readonly class DoctrineORMFulfillmentRepository implements FulfillmentRepo
         );
 
         return array_map(
-            fn(FulfillmentEntity $entity) => $entity->toDomainModel(),
+            fn (FulfillmentEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -109,7 +109,7 @@ final readonly class DoctrineORMFulfillmentRepository implements FulfillmentRepo
         );
 
         return array_map(
-            fn(FulfillmentEntity $entity) => $entity->toDomainModel(),
+            fn (FulfillmentEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -134,7 +134,7 @@ final readonly class DoctrineORMFulfillmentRepository implements FulfillmentRepo
         $entities = $qb->getQuery()->getResult();
 
         return array_map(
-            fn(FulfillmentEntity $entity) => $entity->toDomainModel(),
+            fn (FulfillmentEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }

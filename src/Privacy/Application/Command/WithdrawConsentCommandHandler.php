@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Privacy\Application\Command;
 
 use App\Privacy\Domain\Repository\ConsentRepositoryInterface;
-use InvalidArgumentException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -20,10 +19,8 @@ final readonly class WithdrawConsentCommandHandler
     {
         $consent = $this->consentRepository->findById($command->consentId);
 
-        if ($consent === null) {
-            throw new InvalidArgumentException(
-                sprintf('Consent not found: %s', $command->consentId->toString())
-            );
+        if (null === $consent) {
+            throw new \InvalidArgumentException(sprintf('Consent not found: %s', $command->consentId->toString()));
         }
 
         $consent->withdraw();

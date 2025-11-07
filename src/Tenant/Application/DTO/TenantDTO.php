@@ -25,7 +25,7 @@ final readonly class TenantDTO
     public static function fromAggregate(Tenant $tenant): self
     {
         $enabledLocales = array_map(
-            fn($locale) => $locale->value(),
+            fn ($locale) => $locale->value(),
             $tenant->enabledLocales()
         );
 

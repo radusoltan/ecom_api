@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Processor for updating tax rules
+ * Processor for updating tax rules.
  */
 final readonly class UpdateTaxRuleProcessor implements ProcessorInterface
 {
@@ -47,7 +47,7 @@ final readonly class UpdateTaxRuleProcessor implements ProcessorInterface
             throw new BadRequestHttpException('name is required');
         }
 
-        if ($data->ratePercentage === null) {
+        if (null === $data->ratePercentage) {
             throw new BadRequestHttpException('ratePercentage is required');
         }
 

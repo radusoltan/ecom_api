@@ -11,7 +11,7 @@ use App\Shared\Domain\ValueObject\LanguageCode;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Translation Export Service
+ * Translation Export Service.
  *
  * Domain service responsible for export formatting:
  * - Filter translations by criteria
@@ -27,12 +27,14 @@ final readonly class TranslationExportService
 {
     public function __construct(
         private TranslationEntryRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     /**
-     * Export translations with optional filters
+     * Export translations with optional filters.
      *
      * @param array<string, mixed> $filters
+     *
      * @return TranslationEntry[]
      */
     public function export(
@@ -72,7 +74,7 @@ final readonly class TranslationExportService
     }
 
     /**
-     * Export translations for a specific domain
+     * Export translations for a specific domain.
      *
      * @return TranslationEntry[]
      */
@@ -84,7 +86,7 @@ final readonly class TranslationExportService
     }
 
     /**
-     * Export translations for a specific locale
+     * Export translations for a specific locale.
      *
      * @return TranslationEntry[]
      */
@@ -96,7 +98,7 @@ final readonly class TranslationExportService
     }
 
     /**
-     * Export translations for a specific domain and locale
+     * Export translations for a specific domain and locale.
      *
      * @return TranslationEntry[]
      */
@@ -112,15 +114,16 @@ final readonly class TranslationExportService
     }
 
     /**
-     * Convert translation entries to array format (domain-agnostic)
+     * Convert translation entries to array format (domain-agnostic).
      *
      * @param TranslationEntry[] $entries
+     *
      * @return array<array{locale: string, domain: string, key: string, value: string}>
      */
     public function toArrayFormat(array $entries): array
     {
         return array_map(
-            fn(TranslationEntry $entry) => [
+            fn (TranslationEntry $entry) => [
                 'locale' => $entry->locale->value(),
                 'domain' => $entry->domain->value(),
                 'key' => $entry->key->value(),

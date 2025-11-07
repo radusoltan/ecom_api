@@ -12,15 +12,12 @@ use App\Cart\Domain\Event\ItemRemovedFromCart;
 use App\Cart\Domain\Exception\CartItemNotFoundException;
 use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Model\CartId;
-use App\Cart\Domain\Model\CartStatus;
 use App\Cart\Domain\Model\Quantity;
 use App\Cart\Domain\Model\SessionId;
 use App\Catalog\Domain\Model\ProductId;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class CartTest extends TestCase
@@ -97,11 +94,11 @@ final class CartTest extends TestCase
         $cartId = CartId::generate();
         $tenantId = TenantId::generate();
         $sessionId = SessionId::generate();
-        $beforeCreation = new DateTimeImmutable();
+        $beforeCreation = new \DateTimeImmutable();
 
         // Act
         $cart = Cart::create($cartId, $tenantId, null, $sessionId);
-        $afterCreation = new DateTimeImmutable();
+        $afterCreation = new \DateTimeImmutable();
 
         // Assert
         $this->assertGreaterThanOrEqual($beforeCreation, $cart->createdAt());
@@ -192,12 +189,12 @@ final class CartTest extends TestCase
         $unitPrice = Money::fromScalars(1000, 'USD');
 
         // Add 100 items (max limit)
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             $cart->addItem(ProductId::generate(), null, Quantity::fromInt(1), $unitPrice);
         }
 
         // Expect
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot add more than 100 items to cart');
 
         // Act
@@ -211,7 +208,7 @@ final class CartTest extends TestCase
         $cart->markAsExpired();
 
         // Expect
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot add items to a non-active cart');
 
         // Act
@@ -277,7 +274,7 @@ final class CartTest extends TestCase
         $cart->markAsExpired();
 
         // Expect
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot remove items from a non-active cart');
 
         // Act
@@ -488,7 +485,7 @@ final class CartTest extends TestCase
         $cart->markAsExpired();
 
         // Expect
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Only active carts can be converted to orders');
 
         // Act

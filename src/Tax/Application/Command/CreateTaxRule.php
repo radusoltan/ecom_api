@@ -8,7 +8,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Domain\ValueObject\TaxRuleId;
 
 /**
- * Create Tax Rule Command
+ * Create Tax Rule Command.
  *
  * Creates a new tax rule for a jurisdiction.
  */

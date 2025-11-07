@@ -14,7 +14,7 @@ use App\Internationalization\Infrastructure\ApiPlatform\State\TranslationManagem
 use App\Internationalization\Infrastructure\ApiPlatform\State\TranslationManagementProvider;
 
 /**
- * Translation Management API Resource
+ * Translation Management API Resource.
  *
  * Provides CRUD operations for managing translations.
  *
@@ -63,5 +63,6 @@ final class TranslationManagementResource
         public ?string $value = null,
         public ?string $createdAt = null,
         public ?string $updatedAt = null,
-    ) {}
+    ) {
+    }
 }

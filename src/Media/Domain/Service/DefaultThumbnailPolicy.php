@@ -48,12 +48,7 @@ final class DefaultThumbnailPolicy implements ThumbnailPolicy
         }
 
         if ($width < (int) floor($expected['width'] * 0.5) || $height < (int) floor($expected['height'] * 0.5)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Thumbnail dimensions for %s are too small. Expected at least %dx%d pixels.',
-                $sizeLabel->value,
-                $expected['width'],
-                $expected['height']
-            ));
+            throw new \InvalidArgumentException(sprintf('Thumbnail dimensions for %s are too small. Expected at least %dx%d pixels.', $sizeLabel->value, $expected['width'], $expected['height']));
         }
     }
 }

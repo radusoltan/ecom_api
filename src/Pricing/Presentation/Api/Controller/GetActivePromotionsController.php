@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Pricing\Presentation\Api\Controller;
 
 use App\Pricing\Application\Query\GetActivePromotions\GetActivePromotionsQuery;
-use App\Pricing\Infrastructure\Persistence\Doctrine\Entity\PromotionEntity;
 use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +14,7 @@ use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * Get Active Promotions API Controller
+ * Get Active Promotions API Controller.
  *
  * Returns only currently active promotions for the current tenant.
  */
@@ -32,7 +31,7 @@ final readonly class GetActivePromotionsController
     {
         // Get tenant ID from header
         $tenantIdString = $request->headers->get('X-Tenant-ID');
-        if ($tenantIdString === null) {
+        if (null === $tenantIdString) {
             return new JsonResponse([
                 'error' => 'Tenant ID is required',
             ], 400);

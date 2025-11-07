@@ -7,7 +7,6 @@ namespace App\Catalog\Domain\Model;
 use App\Internationalization\Domain\Model\Locale;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 
 /**
  * SearchQuery aggregate for tracking search analytics.
@@ -36,8 +35,9 @@ final class SearchQuery extends AggregateRoot
         private readonly int $responseTimeMs,
         private readonly ?array $filters,
         private readonly ?string $sortBy,
-        private readonly DateTimeImmutable $executedAt
-    ) {}
+        private readonly \DateTimeImmutable $executedAt
+    ) {
+    }
 
     public static function create(
         SearchQueryId $id,
@@ -58,7 +58,7 @@ final class SearchQuery extends AggregateRoot
             responseTimeMs: $responseTimeMs,
             filters: $filters,
             sortBy: $sortBy,
-            executedAt: new DateTimeImmutable()
+            executedAt: new \DateTimeImmutable()
         );
 
         // Domain event could be recorded here if needed for further processing
@@ -107,14 +107,14 @@ final class SearchQuery extends AggregateRoot
         return $this->sortBy;
     }
 
-    public function executedAt(): DateTimeImmutable
+    public function executedAt(): \DateTimeImmutable
     {
         return $this->executedAt;
     }
 
     public function isZeroResults(): bool
     {
-        return $this->resultsCount === 0;
+        return 0 === $this->resultsCount;
     }
 
     public function isSlow(): bool
@@ -125,6 +125,6 @@ final class SearchQuery extends AggregateRoot
 
     public function hasFilters(): bool
     {
-        return $this->filters !== null && count($this->filters) > 0;
+        return null !== $this->filters && count($this->filters) > 0;
     }
 }

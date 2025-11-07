@@ -13,7 +13,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 /**
- * Translation Cache Service
+ * Translation Cache Service.
  *
  * Manages Redis caching for translations with:
  * - Cache key pattern: translations:{tenantId}:{locale}:{domain}
@@ -30,12 +30,12 @@ use Symfony\Contracts\Cache\ItemInterface;
 final readonly class TranslationCacheService
 {
     /**
-     * Cache key prefix
+     * Cache key prefix.
      */
     private const CACHE_PREFIX = 'translations';
 
     /**
-     * Default TTL: 24 hours
+     * Default TTL: 24 hours.
      */
     private const DEFAULT_TTL = 86400;
 
@@ -44,10 +44,11 @@ final readonly class TranslationCacheService
         private TranslationEntryRepositoryInterface $repository,
         private LoggerInterface $logger,
         private int $cacheTtl = self::DEFAULT_TTL,
-    ) {}
+    ) {
+    }
 
     /**
-     * Get translations for a locale and domain (cached)
+     * Get translations for a locale and domain (cached).
      *
      * @return array<string, string> Key-value pairs of translations
      */
@@ -83,7 +84,7 @@ final readonly class TranslationCacheService
     }
 
     /**
-     * Invalidate cache for a specific locale and domain
+     * Invalidate cache for a specific locale and domain.
      */
     public function invalidate(
         TenantId $tenantId,
@@ -112,7 +113,7 @@ final readonly class TranslationCacheService
 
     /**
      * Bulk invalidate cache for all locales and domains
-     * Used after bulk import operations
+     * Used after bulk import operations.
      */
     public function invalidateAll(TenantId $tenantId): void
     {
@@ -142,7 +143,7 @@ final readonly class TranslationCacheService
 
     /**
      * Warm cache for all locales and domains
-     * Should be called on deployment or cache clear
+     * Should be called on deployment or cache clear.
      */
     public function warmCache(TenantId $tenantId): int
     {
@@ -160,7 +161,7 @@ final readonly class TranslationCacheService
                     $translations = $this->getTranslations($tenantId, $locale, $domain);
 
                     if (count($translations) > 0) {
-                        $warmedCount++;
+                        ++$warmedCount;
                     }
 
                     $this->logger->debug('Cache warmed', [
@@ -187,7 +188,7 @@ final readonly class TranslationCacheService
     }
 
     /**
-     * Clear all translation caches for a tenant
+     * Clear all translation caches for a tenant.
      */
     public function clearCache(TenantId $tenantId): void
     {
@@ -199,7 +200,7 @@ final readonly class TranslationCacheService
     }
 
     /**
-     * Build cache key
+     * Build cache key.
      */
     private function buildCacheKey(
         TenantId $tenantId,
@@ -216,7 +217,7 @@ final readonly class TranslationCacheService
     }
 
     /**
-     * Load translations from database
+     * Load translations from database.
      *
      * @return array<string, string> Key-value pairs
      */
@@ -244,7 +245,7 @@ final readonly class TranslationCacheService
     }
 
     /**
-     * Get cache statistics
+     * Get cache statistics.
      *
      * @return array{hits: int, misses: int, hitRate: float}
      */

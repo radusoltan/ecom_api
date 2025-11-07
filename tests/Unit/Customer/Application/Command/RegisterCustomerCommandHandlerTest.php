@@ -11,7 +11,6 @@ use App\Customer\Domain\Repository\CustomerRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class RegisterCustomerCommandHandlerTest extends TestCase
@@ -83,7 +82,7 @@ final class RegisterCustomerCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('save');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Customer with email "john.doe@example.com" already exists for this tenant');
 
         $this->handler->__invoke($command);

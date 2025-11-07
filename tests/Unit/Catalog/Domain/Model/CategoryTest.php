@@ -6,9 +6,9 @@ namespace App\Tests\Unit\Catalog\Domain\Model;
 
 use App\Catalog\Domain\Model\Category;
 use App\Catalog\Domain\Model\CategoryId;
+use App\Catalog\Domain\Model\CategoryName;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
-use App\Catalog\Domain\Model\CategoryName;
 
 final class CategoryTest extends TestCase
 {

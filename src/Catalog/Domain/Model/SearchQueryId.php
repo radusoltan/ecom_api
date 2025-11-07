@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Catalog\Domain\Model;
 
-use InvalidArgumentException;
 use Symfony\Component\Uid\Ulid;
 
 /**
@@ -16,7 +15,7 @@ final readonly class SearchQueryId
         private string $value
     ) {
         if (!Ulid::isValid($value)) {
-            throw new InvalidArgumentException(sprintf('Invalid SearchQueryId: %s', $value));
+            throw new \InvalidArgumentException(sprintf('Invalid SearchQueryId: %s', $value));
         }
     }
 

@@ -9,13 +9,12 @@ use App\Catalog\Domain\Event\OptionRemoved;
 use App\Catalog\Domain\Event\VariantAdded;
 use App\Catalog\Domain\Event\VariantRemoved;
 use App\Catalog\Domain\ValueObject\OptionCode;
-use App\Catalog\Domain\ValueObject\OptionValueCode;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
  * ConfigurableProduct Aggregate Root
- * Represents a product with configurable options and variants
+ * Represents a product with configurable options and variants.
  *
  * Business Rules:
  * - Must be associated with a base Product
@@ -36,7 +35,7 @@ final class ConfigurableProduct extends AggregateRoot
     private const MAX_VARIANTS = 1000;
 
     /**
-     * @param Option[] $options
+     * @param Option[]  $options
      * @param Variant[] $variants
      */
     private function __construct(
@@ -53,7 +52,7 @@ final class ConfigurableProduct extends AggregateRoot
     }
 
     /**
-     * Create a new configurable product
+     * Create a new configurable product.
      */
     public static function create(
         ConfigurableProductId $id,
@@ -72,9 +71,9 @@ final class ConfigurableProduct extends AggregateRoot
     }
 
     /**
-     * Reconstitute from persistence
+     * Reconstitute from persistence.
      *
-     * @param Option[] $options
+     * @param Option[]  $options
      * @param Variant[] $variants
      */
     public static function reconstituteFromPersistence(
@@ -98,22 +97,18 @@ final class ConfigurableProduct extends AggregateRoot
     }
 
     /**
-     * Define a new option for this product
+     * Define a new option for this product.
      */
     public function defineOption(Option $option): void
     {
         // Check if option code already exists
         if ($this->hasOption($option->getCode())) {
-            throw new \DomainException(
-                sprintf('Option with code "%s" already exists', $option->getCode()->toString())
-            );
+            throw new \DomainException(sprintf('Option with code "%s" already exists', $option->getCode()->toString()));
         }
 
         // Check max options limit
         if (count($this->options) >= self::MAX_OPTIONS) {
-            throw new \DomainException(
-                sprintf('Cannot add more than %d options', self::MAX_OPTIONS)
-            );
+            throw new \DomainException(sprintf('Cannot add more than %d options', self::MAX_OPTIONS));
         }
 
         $this->options[] = $option;
@@ -129,26 +124,24 @@ final class ConfigurableProduct extends AggregateRoot
 
     /**
      * Remove an option from this product
-     * Warning: This will also remove all variants that use this option
+     * Warning: This will also remove all variants that use this option.
      */
     public function removeOption(OptionCode $optionCode): void
     {
         if (!$this->hasOption($optionCode)) {
-            throw new \DomainException(
-                sprintf('Option with code "%s" does not exist', $optionCode->toString())
-            );
+            throw new \DomainException(sprintf('Option with code "%s" does not exist', $optionCode->toString()));
         }
 
         // Remove the option
         $this->options = array_filter(
             $this->options,
-            fn(Option $opt) => !$opt->getCode()->equals($optionCode)
+            fn (Option $opt) => !$opt->getCode()->equals($optionCode)
         );
 
         // Remove all variants that use this option
         $this->variants = array_filter(
             $this->variants,
-            fn(Variant $variant) => !array_key_exists(
+            fn (Variant $variant) => !array_key_exists(
                 $optionCode->value(),
                 $variant->getOptionValueMap()
             )
@@ -160,15 +153,13 @@ final class ConfigurableProduct extends AggregateRoot
     }
 
     /**
-     * Add a variant to this product
+     * Add a variant to this product.
      */
     public function addVariant(Variant $variant): void
     {
         // Check max variants limit
         if (count($this->variants) >= self::MAX_VARIANTS) {
-            throw new \DomainException(
-                sprintf('Cannot add more than %d variants', self::MAX_VARIANTS)
-            );
+            throw new \DomainException(sprintf('Cannot add more than %d variants', self::MAX_VARIANTS));
         }
 
         // Validate variant matches current options
@@ -192,7 +183,7 @@ final class ConfigurableProduct extends AggregateRoot
     }
 
     /**
-     * Remove a variant from this product
+     * Remove a variant from this product.
      */
     public function removeVariant(VariantId $variantId): void
     {
@@ -200,7 +191,7 @@ final class ConfigurableProduct extends AggregateRoot
 
         $this->variants = array_filter(
             $this->variants,
-            fn(Variant $v) => !$v->getId()->equals($variantId)
+            fn (Variant $v) => !$v->getId()->equals($variantId)
         );
 
         if (count($this->variants) === $initialCount) {
@@ -213,7 +204,7 @@ final class ConfigurableProduct extends AggregateRoot
     }
 
     /**
-     * Get option by code
+     * Get option by code.
      */
     public function getOption(OptionCode $code): ?Option
     {
@@ -222,19 +213,20 @@ final class ConfigurableProduct extends AggregateRoot
                 return $option;
             }
         }
+
         return null;
     }
 
     /**
-     * Check if option exists
+     * Check if option exists.
      */
     public function hasOption(OptionCode $code): bool
     {
-        return $this->getOption($code) !== null;
+        return null !== $this->getOption($code);
     }
 
     /**
-     * Get variant by ID
+     * Get variant by ID.
      */
     public function getVariant(VariantId $id): ?Variant
     {
@@ -243,11 +235,12 @@ final class ConfigurableProduct extends AggregateRoot
                 return $variant;
             }
         }
+
         return null;
     }
 
     /**
-     * Find variant by option value combination
+     * Find variant by option value combination.
      *
      * @param array<string, string> $optionValueMap
      */
@@ -258,11 +251,12 @@ final class ConfigurableProduct extends AggregateRoot
                 return $variant;
             }
         }
+
         return null;
     }
 
     /**
-     * Get all active variants
+     * Get all active variants.
      *
      * @return Variant[]
      */
@@ -270,19 +264,20 @@ final class ConfigurableProduct extends AggregateRoot
     {
         return array_filter(
             $this->variants,
-            fn(Variant $variant) => $variant->isActive()
+            fn (Variant $variant) => $variant->isActive()
         );
     }
 
     /**
-     * Get variants sorted by position
+     * Get variants sorted by position.
      *
      * @return Option[]
      */
     public function getSortedOptions(): array
     {
         $options = $this->options;
-        usort($options, fn(Option $a, Option $b) => $a->getPosition() <=> $b->getPosition());
+        usort($options, fn (Option $a, Option $b) => $a->getPosition() <=> $b->getPosition());
+
         return $options;
     }
 
@@ -329,7 +324,7 @@ final class ConfigurableProduct extends AggregateRoot
     }
 
     /**
-     * Validate options array
+     * Validate options array.
      *
      * @param Option[] $options
      */
@@ -343,16 +338,14 @@ final class ConfigurableProduct extends AggregateRoot
 
             $code = $option->getCode()->toString();
             if (isset($codes[$code])) {
-                throw new \DomainException(
-                    sprintf('Duplicate option code "%s"', $code)
-                );
+                throw new \DomainException(sprintf('Duplicate option code "%s"', $code));
             }
             $codes[$code] = true;
         }
     }
 
     /**
-     * Validate variants array
+     * Validate variants array.
      *
      * @param Variant[] $variants
      */
@@ -366,13 +359,13 @@ final class ConfigurableProduct extends AggregateRoot
     }
 
     /**
-     * Check if variant matches current option structure
+     * Check if variant matches current option structure.
      */
     private function validateVariantMatchesOptions(Variant $variant): void
     {
         $variantOptions = array_keys($variant->getOptionValueMap());
         $productOptions = array_map(
-            fn(Option $opt) => $opt->getCode()->value(),
+            fn (Option $opt) => $opt->getCode()->value(),
             $this->options
         );
 
@@ -380,14 +373,12 @@ final class ConfigurableProduct extends AggregateRoot
         sort($productOptions);
 
         if ($variantOptions !== $productOptions) {
-            throw new \DomainException(
-                'Variant option structure does not match product options'
-            );
+            throw new \DomainException('Variant option structure does not match product options');
         }
     }
 
     /**
-     * Check if a duplicate variant exists
+     * Check if a duplicate variant exists.
      */
     private function hasDuplicateVariant(Variant $newVariant): bool
     {
@@ -396,12 +387,13 @@ final class ConfigurableProduct extends AggregateRoot
                 return true;
             }
         }
+
         return false;
     }
 }
 
 /**
- * Value object for ConfigurableProduct ID
+ * Value object for ConfigurableProduct ID.
  */
 final readonly class ConfigurableProductId
 {

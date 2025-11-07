@@ -24,10 +24,11 @@ final class Category extends AggregateRoot
         private ?string $coverImage,
         private \DateTimeImmutable $createdAt,
         private \DateTimeImmutable $updatedAt
-    ) {}
+    ) {
+    }
 
     /**
-     * Factory method for creating new category
+     * Factory method for creating new category.
      */
     public static function create(
         CategoryId $id,
@@ -60,7 +61,7 @@ final class Category extends AggregateRoot
     }
 
     /**
-     * Reconstitute from persistence
+     * Reconstitute from persistence.
      */
     public static function reconstituteFromPersistence(
         CategoryId $id,
@@ -199,6 +200,7 @@ final class Category extends AggregateRoot
         $slug = strtolower($name);
         $slug = (string) preg_replace('/[^a-z0-9]+/', '-', $slug);
         $slug = trim($slug, '-');
+
         return $slug;
     }
 }

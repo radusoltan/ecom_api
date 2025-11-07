@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Persistence\Doctrine\Type;
 
-use InvalidArgumentException;
 use App\Shared\Domain\ValueObject\Email;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
@@ -31,7 +30,7 @@ final class EmailType extends Type
 
         try {
             return Email::fromString((string) $value);
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             throw ConversionException::conversionFailedFormat($value, $this->getName(), 'valid email address', $e);
         }
     }

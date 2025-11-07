@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Pricing\Application\Command\ActivatePriceList;
 
 use App\Pricing\Domain\Repository\PriceListRepositoryInterface;
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
+use App\Shared\Application\Service\PerformanceProfiler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use InvalidArgumentException;
 
 #[AsMessageHandler]
 final readonly class ActivatePriceListCommandHandler
@@ -27,10 +26,8 @@ final readonly class ActivatePriceListCommandHandler
         try {
             $priceList = $this->priceListRepository->findById($command->priceListId);
 
-            if ($priceList === null) {
-                throw new InvalidArgumentException(
-                    sprintf('PriceList with ID %s not found', $command->priceListId->toString())
-                );
+            if (null === $priceList) {
+                throw new \InvalidArgumentException(sprintf('PriceList with ID %s not found', $command->priceListId->toString()));
             }
 
             $priceList->activate();
@@ -48,6 +45,7 @@ final readonly class ActivatePriceListCommandHandler
             }
         } catch (\Throwable $e) {
             $this->profiler->stop('price_list.activate');
+
             throw $e;
         }
     }

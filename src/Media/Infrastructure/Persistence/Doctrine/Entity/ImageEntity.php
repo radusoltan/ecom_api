@@ -112,6 +112,7 @@ class ImageEntity
             if (isset($existingBySize[$sizeKey])) {
                 $existingBySize[$sizeKey]->updateFromDomain($thumbnail);
                 unset($existingBySize[$sizeKey]);
+
                 continue;
             }
 

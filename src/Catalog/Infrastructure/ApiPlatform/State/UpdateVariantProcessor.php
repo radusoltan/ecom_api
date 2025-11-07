@@ -16,14 +16,15 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Processor for updating variants
+ * Processor for updating variants.
  */
 final readonly class UpdateVariantProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
         private RequestStack $requestStack
-    ) {}
+    ) {
+    }
 
     public function process(
         mixed $data,

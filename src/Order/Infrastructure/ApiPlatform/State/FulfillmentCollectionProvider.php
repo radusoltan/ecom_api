@@ -11,7 +11,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Provider for fulfillment collection (GET /api/fulfillments)
+ * Provider for fulfillment collection (GET /api/fulfillments).
  */
 final readonly class FulfillmentCollectionProvider implements ProviderInterface
 {
@@ -25,7 +25,7 @@ final readonly class FulfillmentCollectionProvider implements ProviderInterface
     {
         // Get tenant ID from context (set by TenantContextProvider)
         $tenantIdString = $context['tenant_id'] ?? null;
-        if ($tenantIdString === null) {
+        if (null === $tenantIdString) {
             throw new \RuntimeException('Tenant ID not found in context');
         }
         $tenantId = TenantId::fromString($tenantIdString);
@@ -39,14 +39,14 @@ final readonly class FulfillmentCollectionProvider implements ProviderInterface
         $fulfillments = [];
 
         // Filter by specific criteria if provided
-        if ($orderId !== null) {
+        if (null !== $orderId) {
             $orderId = \App\Order\Domain\Model\OrderId::fromString($orderId);
             $fulfillment = $this->fulfillmentRepository->findByOrderId($orderId);
-            $fulfillments = $fulfillment !== null ? [$fulfillment] : [];
-        } elseif ($warehouseId !== null) {
+            $fulfillments = null !== $fulfillment ? [$fulfillment] : [];
+        } elseif (null !== $warehouseId) {
             $warehouseId = \App\Inventory\Domain\Model\WarehouseId::fromString($warehouseId);
             $fulfillments = $this->fulfillmentRepository->findByWarehouse($warehouseId, $tenantId);
-        } elseif ($status !== null) {
+        } elseif (null !== $status) {
             $status = \App\Order\Domain\ValueObject\FulfillmentStatus::fromString($status);
             $fulfillments = $this->fulfillmentRepository->findByStatus($status, $tenantId);
         } else {
@@ -56,7 +56,7 @@ final readonly class FulfillmentCollectionProvider implements ProviderInterface
 
         // Convert domain models to entities
         return array_map(
-            fn($fulfillment) => \App\Order\Infrastructure\Persistence\Doctrine\Entity\FulfillmentEntity::fromDomainModel($fulfillment),
+            fn ($fulfillment) => \App\Order\Infrastructure\Persistence\Doctrine\Entity\FulfillmentEntity::fromDomainModel($fulfillment),
             $fulfillments
         );
     }

@@ -10,5 +10,6 @@ final readonly class ActivateWarehouse
 {
     public function __construct(
         public WarehouseId $id,
-    ) {}
+    ) {
+    }
 }

@@ -9,7 +9,7 @@ use Symfony\Component\Translation\Translator;
 use Twig\Environment;
 
 /**
- * Email Template Rendering Tests
+ * Email Template Rendering Tests.
  *
  * Tests all email templates for:
  * - Correct rendering with expected variables

@@ -33,7 +33,7 @@ final readonly class UpdateUserProcessor implements ProcessorInterface
         $command = new UpdateUser(
             userId: $data->getId(),
             username: $data->getUsername(),
-            roles: array_values(array_filter($data->getRoles(), fn(string $role) => $role !== 'ROLE_USER'))
+            roles: array_values(array_filter($data->getRoles(), fn (string $role) => 'ROLE_USER' !== $role))
         );
 
         // Dispatch command

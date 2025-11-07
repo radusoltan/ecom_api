@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\User\Domain\ValueObject;
 
-use InvalidArgumentException;
-use Stringable;
-
-final readonly class UserRole implements Stringable
+final readonly class UserRole implements \Stringable
 {
     // Admin Panel Roles (for backend admin interface)
     public const ROLE_USER = 'ROLE_USER';
@@ -40,13 +37,7 @@ final readonly class UserRole implements Stringable
         private string $value
     ) {
         if (!in_array($value, self::VALID_ROLES, true)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Invalid user role: "%s". Must be one of: %s',
-                    $value,
-                    implode(', ', self::VALID_ROLES)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid user role: "%s". Must be one of: %s', $value, implode(', ', self::VALID_ROLES)));
         }
     }
 
@@ -120,7 +111,7 @@ final readonly class UserRole implements Stringable
     // Admin Panel Role Helpers
     public function isSuperAdmin(): bool
     {
-        return $this->value === self::ROLE_SUPER_ADMIN;
+        return self::ROLE_SUPER_ADMIN === $this->value;
     }
 
     public function isAdmin(): bool
@@ -130,37 +121,37 @@ final readonly class UserRole implements Stringable
 
     public function isManager(): bool
     {
-        return $this->value === self::ROLE_MANAGER;
+        return self::ROLE_MANAGER === $this->value;
     }
 
     public function isViewer(): bool
     {
-        return $this->value === self::ROLE_VIEWER;
+        return self::ROLE_VIEWER === $this->value;
     }
 
     // Storefront & Business Role Helpers
     public function isCustomer(): bool
     {
-        return $this->value === self::ROLE_CUSTOMER;
+        return self::ROLE_CUSTOMER === $this->value;
     }
 
     public function isTenantAdmin(): bool
     {
-        return $this->value === self::ROLE_TENANT_ADMIN;
+        return self::ROLE_TENANT_ADMIN === $this->value;
     }
 
     public function isTenantUser(): bool
     {
-        return $this->value === self::ROLE_TENANT_USER;
+        return self::ROLE_TENANT_USER === $this->value;
     }
 
     public function isVendor(): bool
     {
-        return $this->value === self::ROLE_VENDOR;
+        return self::ROLE_VENDOR === $this->value;
     }
 
     /**
-     * Check if user has administrative privileges (SUPER_ADMIN, ADMIN, MANAGER, TENANT_ADMIN)
+     * Check if user has administrative privileges (SUPER_ADMIN, ADMIN, MANAGER, TENANT_ADMIN).
      */
     public function hasAdminPrivileges(): bool
     {
@@ -173,10 +164,10 @@ final readonly class UserRole implements Stringable
     }
 
     /**
-     * Check if user has read-only privileges (VIEWER)
+     * Check if user has read-only privileges (VIEWER).
      */
     public function isReadOnly(): bool
     {
-        return $this->value === self::ROLE_VIEWER;
+        return self::ROLE_VIEWER === $this->value;
     }
 }

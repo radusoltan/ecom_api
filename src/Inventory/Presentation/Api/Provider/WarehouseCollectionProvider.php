@@ -20,7 +20,8 @@ final readonly class WarehouseCollectionProvider implements ProviderInterface
 {
     public function __construct(
         private MessageBusInterface $queryBus,
-    ) {}
+    ) {
+    }
 
     /**
      * @return WarehouseResource[]
@@ -32,7 +33,7 @@ final readonly class WarehouseCollectionProvider implements ProviderInterface
     ): array {
         // Get tenant ID from context (set by TenantContextProvider)
         $tenantId = $context['tenant_id'] ?? null;
-        if ($tenantId === null) {
+        if (null === $tenantId) {
             throw new \RuntimeException('Tenant ID not found in context');
         }
 

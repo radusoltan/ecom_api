@@ -11,7 +11,6 @@ use App\Customer\Domain\Repository\CustomerRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class ChangeSegmentCommandHandlerTest extends TestCase
@@ -77,7 +76,7 @@ final class ChangeSegmentCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('save');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/Customer with ID ".*" not found/');
 
         $this->handler->__invoke($command);
@@ -111,7 +110,7 @@ final class ChangeSegmentCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('save');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Customer is already in segment: regular');
 
         $this->handler->__invoke($command);

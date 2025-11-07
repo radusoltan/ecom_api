@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Order\Infrastructure\Persistence\Doctrine\Entity\OrderEntity;
-use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * Order fixtures - creates sample orders for testing
+ * Order fixtures - creates sample orders for testing.
  */
 class OrderFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -37,13 +36,13 @@ class OrderFixtures extends Fixture implements DependentFixtureInterface
         ];
 
         // Create 20 orders with varying statuses and dates
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 20; ++$i) {
             $orderId = Uuid::v4()->toString();
             $customerEmail = $customerEmails[$i % count($customerEmails)];
             $status = $statuses[$i % count($statuses)];
 
             // Get random products from database
-            $productIds = $connection->executeQuery('SELECT id FROM catalog_products ORDER BY RANDOM() LIMIT ' . rand(1, 3))->fetchFirstColumn();
+            $productIds = $connection->executeQuery('SELECT id FROM catalog_products ORDER BY RANDOM() LIMIT '.rand(1, 3))->fetchFirstColumn();
             $lines = [];
 
             foreach ($productIds as $productId) {
@@ -94,10 +93,10 @@ class OrderFixtures extends Fixture implements DependentFixtureInterface
             // Orders from the past 30 days
             $daysAgo = rand(0, 30);
             $createdAtProperty = $reflection->getProperty('createdAt');
-            $createdAtProperty->setValue($order, new DateTimeImmutable("-{$daysAgo} days"));
+            $createdAtProperty->setValue($order, new \DateTimeImmutable("-{$daysAgo} days"));
 
             $updatedAtProperty = $reflection->getProperty('updatedAt');
-            $updatedAtProperty->setValue($order, new DateTimeImmutable("-{$daysAgo} days"));
+            $updatedAtProperty->setValue($order, new \DateTimeImmutable("-{$daysAgo} days"));
 
             $manager->persist($order);
         }
@@ -111,7 +110,7 @@ class OrderFixtures extends Fixture implements DependentFixtureInterface
         $prefixes = ['lap', 'pho', 'acc', 'men', 'wom', 'kid', 'fur', 'dec', 'kit'];
         $refs = [];
 
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; ++$i) {
             $prefix = $prefixes[array_rand($prefixes)];
             $number = rand(1, 10);
             $refs[] = sprintf('product_%s_%d', $prefix, $number);

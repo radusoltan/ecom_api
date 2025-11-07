@@ -56,7 +56,7 @@ final class CancelPaymentCommandHandlerTest extends TestCase
         $payment = Payment::create(
             id: $paymentId,
             tenantId: $tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 9999,
             currency: 'USD',
             method: PaymentMethod::card(),
@@ -76,7 +76,7 @@ final class CancelPaymentCommandHandlerTest extends TestCase
 
         $this->repository->expects($this->once())
             ->method('save')
-            ->with($this->callback(fn(Payment $p) => $p->status()->isCancelled()));
+            ->with($this->callback(fn (Payment $p) => $p->status()->isCancelled()));
 
         // Act
         ($this->handler)($command);
@@ -93,7 +93,7 @@ final class CancelPaymentCommandHandlerTest extends TestCase
         $payment = Payment::create(
             id: $paymentId,
             tenantId: $tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 5000,
             currency: 'EUR',
             method: PaymentMethod::paypal(),
@@ -112,13 +112,13 @@ final class CancelPaymentCommandHandlerTest extends TestCase
             ->method('cancel')
             ->with('paypal_tx_123', 'Timeout')
             ->willReturn([
-                'status' => 'cancelled'
+                'status' => 'cancelled',
             ]);
 
         $this->repository->method('findById')->willReturn($payment);
         $this->repository->expects($this->once())
             ->method('save')
-            ->with($this->callback(fn(Payment $p) => $p->status()->isCancelled()));
+            ->with($this->callback(fn (Payment $p) => $p->status()->isCancelled()));
 
         // Act
         ($this->handler)($command);

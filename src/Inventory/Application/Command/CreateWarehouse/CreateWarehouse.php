@@ -19,5 +19,6 @@ final readonly class CreateWarehouse
         public WarehouseName $name,
         public Address $address,
         public ?int $priority = null,
-    ) {}
+    ) {
+    }
 }

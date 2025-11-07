@@ -9,7 +9,7 @@ use App\Payment\Domain\ValueObject\PaymentMethod;
 use Psr\Log\LoggerInterface;
 
 /**
- * Fake PayPal Payment Gateway for Testing
+ * Fake PayPal Payment Gateway for Testing.
  *
  * Simulates PayPal API responses without making real HTTP calls.
  * Used in test environment to avoid dependency on external services.
@@ -35,13 +35,13 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
         ]);
 
         // Generate fake transaction ID (PayPal format)
-        $transactionId = 'PAYID-' . strtoupper(bin2hex(random_bytes(16)));
+        $transactionId = 'PAYID-'.strtoupper(bin2hex(random_bytes(16)));
 
         return [
             'transaction_id' => $transactionId,
             'status' => 'AUTHORIZED',
             'metadata' => [
-                'payer_id' => 'PAYER' . bin2hex(random_bytes(6)),
+                'payer_id' => 'PAYER'.bin2hex(random_bytes(6)),
                 'amount' => $amountInCents,
                 'currency' => strtoupper($currency),
             ],
@@ -72,7 +72,7 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
         ]);
 
         // Generate fake refund ID
-        $refundId = 'REFUND-' . strtoupper(bin2hex(random_bytes(12)));
+        $refundId = 'REFUND-'.strtoupper(bin2hex(random_bytes(12)));
 
         return [
             'refund_id' => $refundId,

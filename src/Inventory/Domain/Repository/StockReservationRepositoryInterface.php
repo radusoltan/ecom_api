@@ -14,14 +14,14 @@ interface StockReservationRepositoryInterface
     public function findByReservationId(string $reservationId): ?StockReservation;
 
     /**
-     * Find all expired reservations that haven't been released yet
+     * Find all expired reservations that haven't been released yet.
      *
      * @return StockReservation[]
      */
     public function findExpiredReservations(?\DateTimeImmutable $now = null): array;
 
     /**
-     * Find all active (non-released, non-expired) reservations for a tenant
+     * Find all active (non-released, non-expired) reservations for a tenant.
      *
      * @return StockReservation[]
      */

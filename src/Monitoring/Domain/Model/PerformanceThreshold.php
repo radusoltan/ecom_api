@@ -7,7 +7,7 @@ namespace App\Monitoring\Domain\Model;
 use App\Monitoring\Domain\ValueObject\AlertSeverity;
 
 /**
- * Performance Threshold Configuration
+ * Performance Threshold Configuration.
  *
  * Defines performance thresholds for monitoring and alerting
  *
@@ -109,13 +109,14 @@ final readonly class PerformanceThreshold
     public function evaluate(float $value): ?AlertSeverity
     {
         // For cache hit rate, lower is worse (inverted threshold)
-        if ($this->metricName === 'cache_hit_rate') {
+        if ('cache_hit_rate' === $this->metricName) {
             if ($value <= $this->criticalThreshold) {
                 return AlertSeverity::critical();
             }
             if ($value <= $this->warningThreshold) {
                 return AlertSeverity::warning();
             }
+
             return null;
         }
 
@@ -133,6 +134,6 @@ final readonly class PerformanceThreshold
 
     public function isViolated(float $value): bool
     {
-        return $this->evaluate($value) !== null;
+        return null !== $this->evaluate($value);
     }
 }

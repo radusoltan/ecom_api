@@ -10,7 +10,7 @@ use App\Catalog\Domain\Model\VariantId;
 use App\Shared\Domain\Event\DomainEvent;
 
 /**
- * Domain event: Variant was removed from a configurable product
+ * Domain event: Variant was removed from a configurable product.
  */
 final readonly class VariantRemoved implements DomainEvent
 {
@@ -19,7 +19,8 @@ final readonly class VariantRemoved implements DomainEvent
         private ProductId $productId,
         private VariantId $variantId,
         private \DateTimeImmutable $occurredOn = new \DateTimeImmutable()
-    ) {}
+    ) {
+    }
 
     public function getConfigurableProductId(): ConfigurableProductId
     {

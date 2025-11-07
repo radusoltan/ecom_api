@@ -66,9 +66,9 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
                 $this->callback(function ($options) {
                     return isset($options['headers']['X-Avangate-Authentication'])
                         && isset($options['json'])
-                        && $options['json']['Demo'] === 'Y' // Sandbox mode
-                        && $options['json']['Currency'] === 'USD'
-                        && $options['json']['Items'][0]['Price'] === '100.00';
+                        && 'Y' === $options['json']['Demo'] // Sandbox mode
+                        && 'USD' === $options['json']['Currency']
+                        && '100.00' === $options['json']['Items'][0]['Price'];
                 })
             )
             ->willReturn($response);
@@ -121,10 +121,11 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
                 $this->callback(function ($options) {
                     // Verify default billing details are used
                     $payload = $options['json'];
-                    return $payload['BillingDetails']['FirstName'] === 'John'
-                        && $payload['BillingDetails']['LastName'] === 'Doe'
-                        && $payload['BillingDetails']['Email'] === 'customer@example.com'
-                        && $payload['BillingDetails']['CountryCode'] === 'US';
+
+                    return 'John' === $payload['BillingDetails']['FirstName']
+                        && 'Doe' === $payload['BillingDetails']['LastName']
+                        && 'customer@example.com' === $payload['BillingDetails']['Email']
+                        && 'US' === $payload['BillingDetails']['CountryCode'];
                 })
             )
             ->willReturn($response);
@@ -243,8 +244,8 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
                 'https://api.2checkout.com/rest/6.0/orders/2CO123456789/refund/',
                 $this->callback(function ($options) {
                     return isset($options['json']['amount'])
-                        && $options['json']['amount'] === '50.00'
-                        && $options['json']['comment'] === 'Customer requested refund';
+                        && '50.00' === $options['json']['amount']
+                        && 'Customer requested refund' === $options['json']['comment'];
                 })
             )
             ->willReturn($response);
@@ -295,7 +296,7 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
                 'https://api.2checkout.com/rest/6.0/orders/2CO123456789/',
                 $this->callback(function ($options) {
                     return isset($options['json']['Reason'])
-                        && $options['json']['Reason'] === 'Customer cancelled';
+                        && 'Customer cancelled' === $options['json']['Reason'];
                 })
             )
             ->willReturn($response);
@@ -405,7 +406,7 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
                 $this->callback(function ($options) {
                     // Verify Demo parameter is present
                     return isset($options['json']['Demo'])
-                        && $options['json']['Demo'] === 'Y';
+                        && 'Y' === $options['json']['Demo'];
                 })
             )
             ->willReturn($response);
@@ -473,7 +474,8 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
                 $this->callback(function ($options) {
                     // Verify HMAC signature format
                     $auth = $options['headers']['X-Avangate-Authentication'];
-                    return str_contains($auth, 'code="' . self::MERCHANT_CODE . '"')
+
+                    return str_contains($auth, 'code="'.self::MERCHANT_CODE.'"')
                         && str_contains($auth, 'date=')
                         && str_contains($auth, 'hash=');
                 })

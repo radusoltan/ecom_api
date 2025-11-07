@@ -10,7 +10,7 @@ use ApiPlatform\Metadata\GetCollection;
 use App\Internationalization\Infrastructure\ApiPlatform\State\TranslationsProvider;
 
 /**
- * API Resource for Translation Strings
+ * API Resource for Translation Strings.
  *
  * Exposes Symfony translations to frontend applications via REST API.
  * Supports multiple domains (messages, validators, emails) and locales (en, fr, de).
@@ -33,8 +33,8 @@ use App\Internationalization\Infrastructure\ApiPlatform\State\TranslationsProvid
 final class TranslationResource
 {
     /**
-     * @param string $domain Translation domain (messages, validators, emails)
-     * @param string $locale Language code (en, fr, de)
+     * @param string               $domain       Translation domain (messages, validators, emails)
+     * @param string               $locale       Language code (en, fr, de)
      * @param array<string, mixed> $translations Flattened translation keys and values
      */
     public function __construct(

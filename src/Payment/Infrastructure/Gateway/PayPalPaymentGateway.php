@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
- * PayPal Payment Gateway Adapter
+ * PayPal Payment Gateway Adapter.
  *
  * Implements payment operations using PayPal REST API.
  * Supports PayPal payments with authorize + capture flow.
@@ -90,10 +90,7 @@ final readonly class PayPalPaymentGateway implements PaymentGatewayInterface
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('PayPal authorization failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('PayPal authorization failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -113,7 +110,7 @@ final readonly class PayPalPaymentGateway implements PaymentGatewayInterface
 
             // Capture the authorization
             $captureData = [];
-            if ($amountInCents !== null) {
+            if (null !== $amountInCents) {
                 $amountFormatted = number_format($amountInCents / 100, 2, '.', '');
                 $captureData['amount'] = [
                     'currency_code' => $orderData['purchase_units'][0]['amount']['currency_code'],
@@ -153,10 +150,7 @@ final readonly class PayPalPaymentGateway implements PaymentGatewayInterface
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('PayPal capture failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('PayPal capture failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -212,10 +206,7 @@ final readonly class PayPalPaymentGateway implements PaymentGatewayInterface
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('PayPal refund failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('PayPal refund failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -258,10 +249,7 @@ final readonly class PayPalPaymentGateway implements PaymentGatewayInterface
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('PayPal cancellation failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('PayPal cancellation failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -289,10 +277,7 @@ final readonly class PayPalPaymentGateway implements PaymentGatewayInterface
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('PayPal status retrieval failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('PayPal status retrieval failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -302,7 +287,7 @@ final readonly class PayPalPaymentGateway implements PaymentGatewayInterface
     }
 
     /**
-     * Get OAuth 2.0 access token from PayPal
+     * Get OAuth 2.0 access token from PayPal.
      */
     private function getAccessToken(): string
     {
@@ -315,14 +300,15 @@ final readonly class PayPalPaymentGateway implements PaymentGatewayInterface
             ]);
 
             $data = $response->toArray();
+
             return $data['access_token'];
         } catch (\Throwable $e) {
-            throw new \RuntimeException('Failed to obtain PayPal access token: ' . $e->getMessage(), previous: $e);
+            throw new \RuntimeException('Failed to obtain PayPal access token: '.$e->getMessage(), previous: $e);
         }
     }
 
     /**
-     * Get order details from PayPal
+     * Get order details from PayPal.
      */
     private function getOrderDetails(string $orderId, string $accessToken): array
     {
@@ -336,7 +322,7 @@ final readonly class PayPalPaymentGateway implements PaymentGatewayInterface
     }
 
     /**
-     * Get capture details from PayPal
+     * Get capture details from PayPal.
      */
     private function getCaptureDetails(string $captureId, string $accessToken): array
     {
@@ -350,7 +336,7 @@ final readonly class PayPalPaymentGateway implements PaymentGatewayInterface
     }
 
     /**
-     * Extract authorization ID from order data
+     * Extract authorization ID from order data.
      */
     private function getAuthorizationId(array $orderData): string
     {
@@ -362,12 +348,12 @@ final readonly class PayPalPaymentGateway implements PaymentGatewayInterface
     }
 
     /**
-     * Extract approval URL from links array
+     * Extract approval URL from links array.
      */
     private function getApprovalUrl(array $links): ?string
     {
         foreach ($links as $link) {
-            if ($link['rel'] === 'approve') {
+            if ('approve' === $link['rel']) {
                 return $link['href'];
             }
         }

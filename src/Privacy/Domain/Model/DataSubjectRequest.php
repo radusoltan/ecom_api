@@ -13,11 +13,9 @@ use App\Privacy\Domain\ValueObject\RequestStatus;
 use App\Privacy\Domain\ValueObject\RequestType;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
-use InvalidArgumentException;
 
 /**
- * Data Subject Request Aggregate Root
+ * Data Subject Request Aggregate Root.
  *
  * Business Rules (GDPR Compliance):
  * - Requests must be processed within 30 days (Article 12)
@@ -41,12 +39,12 @@ final class DataSubjectRequest extends AggregateRoot
     private ?string $reviewNotes;
     private ?string $rejectionReason;
     private ?array $exportData;
-    private DateTimeImmutable $submittedAt;
-    private ?DateTimeImmutable $completedAt;
-    private DateTimeImmutable $deadline;
+    private \DateTimeImmutable $submittedAt;
+    private ?\DateTimeImmutable $completedAt;
+    private \DateTimeImmutable $deadline;
     private bool $isExtended;
-    private DateTimeImmutable $createdAt;
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $updatedAt;
 
     private function __construct()
     {
@@ -59,7 +57,7 @@ final class DataSubjectRequest extends AggregateRoot
         RequestType $requestType,
         ?string $reason = null
     ): self {
-        if ($reason !== null) {
+        if (null !== $reason) {
             self::validateReason($reason);
         }
 
@@ -73,12 +71,12 @@ final class DataSubjectRequest extends AggregateRoot
         $request->reviewNotes = null;
         $request->rejectionReason = null;
         $request->exportData = null;
-        $request->submittedAt = new DateTimeImmutable();
+        $request->submittedAt = new \DateTimeImmutable();
         $request->completedAt = null;
         $request->deadline = $request->submittedAt->modify(sprintf('+%d days', self::STANDARD_PROCESSING_DAYS));
         $request->isExtended = false;
-        $request->createdAt = new DateTimeImmutable();
-        $request->updatedAt = new DateTimeImmutable();
+        $request->createdAt = new \DateTimeImmutable();
+        $request->updatedAt = new \DateTimeImmutable();
 
         $request->recordEvent(new DataSubjectRequestSubmitted(
             $request->id,
@@ -109,12 +107,12 @@ final class DataSubjectRequest extends AggregateRoot
         ?string $reviewNotes,
         ?string $rejectionReason,
         ?array $exportData,
-        DateTimeImmutable $submittedAt,
-        ?DateTimeImmutable $completedAt,
-        DateTimeImmutable $deadline,
+        \DateTimeImmutable $submittedAt,
+        ?\DateTimeImmutable $completedAt,
+        \DateTimeImmutable $deadline,
         bool $isExtended,
-        DateTimeImmutable $createdAt,
-        DateTimeImmutable $updatedAt
+        \DateTimeImmutable $createdAt,
+        \DateTimeImmutable $updatedAt
     ): self {
         $request = new self();
         $request->id = $id;
@@ -144,7 +142,7 @@ final class DataSubjectRequest extends AggregateRoot
 
         $this->status = RequestStatus::underReview();
         $this->reviewNotes = $reviewNotes;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function complete(?array $exportData = null): void
@@ -152,15 +150,15 @@ final class DataSubjectRequest extends AggregateRoot
         $this->ensureCanTransition(RequestStatus::completed());
 
         if ($this->requestType->equals(RequestType::access()) || $this->requestType->equals(RequestType::portability())) {
-            if ($exportData === null || empty($exportData)) {
-                throw new InvalidArgumentException('Export data is required for access/portability requests');
+            if (null === $exportData || empty($exportData)) {
+                throw new \InvalidArgumentException('Export data is required for access/portability requests');
             }
         }
 
         $this->status = RequestStatus::completed();
         $this->exportData = $exportData;
-        $this->completedAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
+        $this->completedAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new DataSubjectRequestCompleted(
             $this->id,
@@ -177,33 +175,33 @@ final class DataSubjectRequest extends AggregateRoot
 
         $this->status = RequestStatus::rejected();
         $this->rejectionReason = $rejectionReason;
-        $this->completedAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
+        $this->completedAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function extendDeadline(): void
     {
         if ($this->isExtended) {
-            throw new InvalidArgumentException('Request deadline has already been extended once');
+            throw new \InvalidArgumentException('Request deadline has already been extended once');
         }
 
         if ($this->status->isFinal()) {
-            throw new InvalidArgumentException('Cannot extend deadline for completed/rejected requests');
+            throw new \InvalidArgumentException('Cannot extend deadline for completed/rejected requests');
         }
 
         $this->deadline = $this->submittedAt->modify(sprintf('+%d days', self::EXTENDED_PROCESSING_DAYS));
         $this->isExtended = true;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function isOverdue(): bool
     {
-        return !$this->status->isFinal() && new DateTimeImmutable() > $this->deadline;
+        return !$this->status->isFinal() && new \DateTimeImmutable() > $this->deadline;
     }
 
     public function daysUntilDeadline(): int
     {
-        $now = new DateTimeImmutable();
+        $now = new \DateTimeImmutable();
         $diff = $now->diff($this->deadline);
 
         return $diff->invert ? -$diff->days : $diff->days;
@@ -212,67 +210,51 @@ final class DataSubjectRequest extends AggregateRoot
     private function ensureCanTransition(RequestStatus $newStatus): void
     {
         if (!$this->status->canTransitionTo($newStatus)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Cannot transition from status "%s" to "%s"',
-                    $this->status->value(),
-                    $newStatus->value()
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Cannot transition from status "%s" to "%s"', $this->status->value(), $newStatus->value()));
         }
     }
 
     private static function validateReason(?string $reason): void
     {
-        if ($reason === null) {
+        if (null === $reason) {
             return;
         }
 
         $trimmed = trim($reason);
-        if ($trimmed !== '' && strlen($trimmed) < 10) {
-            throw new InvalidArgumentException(
-                'Request reason must be at least 10 characters if provided'
-            );
+        if ('' !== $trimmed && strlen($trimmed) < 10) {
+            throw new \InvalidArgumentException('Request reason must be at least 10 characters if provided');
         }
 
         if (strlen($trimmed) > 1000) {
-            throw new InvalidArgumentException(
-                sprintf('Request reason too long. Maximum 1000 characters. Got: %d', strlen($trimmed))
-            );
+            throw new \InvalidArgumentException(sprintf('Request reason too long. Maximum 1000 characters. Got: %d', strlen($trimmed)));
         }
     }
 
     private static function validateReviewNotes(string $reviewNotes): void
     {
         $trimmed = trim($reviewNotes);
-        if ($trimmed === '') {
-            throw new InvalidArgumentException('Review notes cannot be empty');
+        if ('' === $trimmed) {
+            throw new \InvalidArgumentException('Review notes cannot be empty');
         }
 
         if (strlen($trimmed) > 2000) {
-            throw new InvalidArgumentException(
-                sprintf('Review notes too long. Maximum 2000 characters. Got: %d', strlen($trimmed))
-            );
+            throw new \InvalidArgumentException(sprintf('Review notes too long. Maximum 2000 characters. Got: %d', strlen($trimmed)));
         }
     }
 
     private static function validateRejectionReason(string $rejectionReason): void
     {
         $trimmed = trim($rejectionReason);
-        if ($trimmed === '') {
-            throw new InvalidArgumentException('Rejection reason cannot be empty');
+        if ('' === $trimmed) {
+            throw new \InvalidArgumentException('Rejection reason cannot be empty');
         }
 
         if (strlen($trimmed) < 20) {
-            throw new InvalidArgumentException(
-                'Rejection reason must be at least 20 characters for GDPR compliance'
-            );
+            throw new \InvalidArgumentException('Rejection reason must be at least 20 characters for GDPR compliance');
         }
 
         if (strlen($trimmed) > 2000) {
-            throw new InvalidArgumentException(
-                sprintf('Rejection reason too long. Maximum 2000 characters. Got: %d', strlen($trimmed))
-            );
+            throw new \InvalidArgumentException(sprintf('Rejection reason too long. Maximum 2000 characters. Got: %d', strlen($trimmed)));
         }
     }
 
@@ -322,17 +304,17 @@ final class DataSubjectRequest extends AggregateRoot
         return $this->exportData;
     }
 
-    public function submittedAt(): DateTimeImmutable
+    public function submittedAt(): \DateTimeImmutable
     {
         return $this->submittedAt;
     }
 
-    public function completedAt(): ?DateTimeImmutable
+    public function completedAt(): ?\DateTimeImmutable
     {
         return $this->completedAt;
     }
 
-    public function deadline(): DateTimeImmutable
+    public function deadline(): \DateTimeImmutable
     {
         return $this->deadline;
     }
@@ -342,12 +324,12 @@ final class DataSubjectRequest extends AggregateRoot
         return $this->isExtended;
     }
 
-    public function createdAt(): DateTimeImmutable
+    public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function updatedAt(): DateTimeImmutable
+    public function updatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

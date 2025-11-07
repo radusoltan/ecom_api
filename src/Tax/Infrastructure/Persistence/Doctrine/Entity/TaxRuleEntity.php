@@ -12,7 +12,7 @@ use App\Tax\Domain\ValueObject\TaxRuleId;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Tax Rule Doctrine Entity
+ * Tax Rule Doctrine Entity.
  *
  * ORM adapter for TaxRule aggregate.
  */
@@ -73,7 +73,7 @@ class TaxRuleEntity
 
     public function toDomainModel(): TaxRule
     {
-        $jurisdiction = $this->regionCode !== null
+        $jurisdiction = null !== $this->regionCode
             ? TaxJurisdiction::fromCountryAndRegion($this->countryCode, $this->regionCode)
             : TaxJurisdiction::fromCountry($this->countryCode);
 

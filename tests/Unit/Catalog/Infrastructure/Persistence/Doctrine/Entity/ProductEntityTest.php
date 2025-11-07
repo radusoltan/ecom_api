@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Catalog\Infrastructure\Persistence\Doctrine\Entity;
 
-use App\Catalog\Domain\Model\Category;
 use App\Catalog\Domain\Model\CategoryId;
 use App\Catalog\Domain\Model\Product;
 use App\Catalog\Domain\Model\ProductId;
 use App\Catalog\Domain\Model\ProductImage;
 use App\Catalog\Domain\Model\ProductName;
 use App\Catalog\Domain\Model\SKU;
-use App\Catalog\Domain\Model\Slug;
 use App\Catalog\Domain\Model\Stock;
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity;
 use App\Shared\Domain\ValueObject\Money;

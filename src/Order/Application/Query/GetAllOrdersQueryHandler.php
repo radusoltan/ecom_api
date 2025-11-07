@@ -24,7 +24,7 @@ final readonly class GetAllOrdersQueryHandler
         );
 
         return array_map(
-            fn($order) => OrderDTO::fromDomain($order),
+            fn ($order) => OrderDTO::fromDomain($order),
             $orders
         );
     }

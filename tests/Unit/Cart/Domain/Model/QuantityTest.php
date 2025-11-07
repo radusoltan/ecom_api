@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Cart\Domain\Model;
 
 use App\Cart\Domain\Model\Quantity;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class QuantityTest extends TestCase
@@ -18,20 +17,20 @@ final class QuantityTest extends TestCase
 
     public function testItThrowsExceptionForZeroQuantity(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Quantity must be at least 1');
         Quantity::fromInt(0);
     }
 
     public function testItThrowsExceptionForNegativeQuantity(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         Quantity::fromInt(-5);
     }
 
     public function testItThrowsExceptionForQuantityAboveMaximum(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Quantity cannot exceed 999');
         Quantity::fromInt(1000);
     }

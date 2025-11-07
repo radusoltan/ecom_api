@@ -18,7 +18,7 @@ use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Controller for product options management
+ * Controller for product options management.
  */
 #[Route('/api/products/{id}/options')]
 final class ProductOptionsController extends AbstractController
@@ -26,11 +26,12 @@ final class ProductOptionsController extends AbstractController
     public function __construct(
         private readonly MessageBusInterface $commandBus,
         private readonly MessageBusInterface $queryBus
-    ) {}
+    ) {
+    }
 
     /**
      * Get all options for a product
-     * GET /api/products/{id}/options
+     * GET /api/products/{id}/options.
      */
     #[Route('', methods: ['GET'])]
     public function getOptions(string $id, Request $request): JsonResponse
@@ -51,7 +52,6 @@ final class ProductOptionsController extends AbstractController
             $options = $handledStamp->getResult();
 
             return $this->json($options);
-
         } catch (\InvalidArgumentException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $e) {
@@ -61,7 +61,7 @@ final class ProductOptionsController extends AbstractController
 
     /**
      * Define a new option for a product
-     * POST /api/products/{id}/options
+     * POST /api/products/{id}/options.
      */
     #[Route('', methods: ['POST'])]
     public function defineOption(string $id, Request $request): JsonResponse
@@ -72,7 +72,7 @@ final class ProductOptionsController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        if (JSON_ERROR_NONE !== json_last_error()) {
             return $this->json(['error' => 'Invalid JSON payload'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -97,7 +97,6 @@ final class ProductOptionsController extends AbstractController
                 ['message' => 'Option defined successfully'],
                 Response::HTTP_CREATED
             );
-
         } catch (\InvalidArgumentException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\DomainException $e) {
@@ -109,7 +108,7 @@ final class ProductOptionsController extends AbstractController
 
     /**
      * Add a value to an existing option
-     * POST /api/products/{id}/options/{code}/values
+     * POST /api/products/{id}/options/{code}/values.
      */
     #[Route('/{code}/values', methods: ['POST'])]
     public function addOptionValue(string $id, string $code, Request $request): JsonResponse
@@ -120,7 +119,7 @@ final class ProductOptionsController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        if (JSON_ERROR_NONE !== json_last_error()) {
             return $this->json(['error' => 'Invalid JSON payload'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -145,7 +144,6 @@ final class ProductOptionsController extends AbstractController
                 ['message' => 'Option value added successfully'],
                 Response::HTTP_CREATED
             );
-
         } catch (\InvalidArgumentException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\DomainException $e) {

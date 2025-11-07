@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
 
-use Stringable;
-use InvalidArgumentException;
-
-final readonly class Email implements Stringable
+final readonly class Email implements \Stringable
 {
     private function __construct(private string $value)
     {
         if (strlen($value) > 255) {
-            throw new InvalidArgumentException('Email address cannot exceed 255 characters');
+            throw new \InvalidArgumentException('Email address cannot exceed 255 characters');
         }
 
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException(sprintf('Invalid email address: "%s"', $value));
+            throw new \InvalidArgumentException(sprintf('Invalid email address: "%s"', $value));
         }
     }
 

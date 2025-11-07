@@ -13,7 +13,7 @@ use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Warehouse Aggregate Root
+ * Warehouse Aggregate Root.
  *
  * Represents a physical location where inventory is stored and managed.
  *
@@ -59,7 +59,7 @@ final class Warehouse extends AggregateRoot
     }
 
     /**
-     * Factory method to create a new warehouse
+     * Factory method to create a new warehouse.
      */
     public static function create(
         WarehouseId $id,
@@ -91,7 +91,7 @@ final class Warehouse extends AggregateRoot
     }
 
     /**
-     * Update warehouse details
+     * Update warehouse details.
      */
     public function update(
         WarehouseName $name,
@@ -115,7 +115,7 @@ final class Warehouse extends AggregateRoot
     }
 
     /**
-     * Activate warehouse - allows it to be used for order fulfillment
+     * Activate warehouse - allows it to be used for order fulfillment.
      */
     public function activate(): void
     {
@@ -134,7 +134,7 @@ final class Warehouse extends AggregateRoot
 
     /**
      * Deactivate warehouse - prevents new allocations
-     * Note: Existing allocations remain until fulfilled
+     * Note: Existing allocations remain until fulfilled.
      */
     public function deactivate(): void
     {
@@ -153,9 +153,10 @@ final class Warehouse extends AggregateRoot
 
     /**
      * Set warehouse priority for routing
-     * Higher priority warehouses are preferred for order fulfillment
+     * Higher priority warehouses are preferred for order fulfillment.
      *
      * @param int $priority Priority value (1-10, higher = more preferred)
+     *
      * @throws \DomainException if priority is invalid
      */
     public function setPriority(int $priority): void
@@ -169,7 +170,7 @@ final class Warehouse extends AggregateRoot
     }
 
     /**
-     * Check if warehouse can fulfill orders
+     * Check if warehouse can fulfill orders.
      */
     public function canFulfillOrders(): bool
     {
@@ -223,7 +224,7 @@ final class Warehouse extends AggregateRoot
     }
 
     /**
-     * Reconstitute aggregate from persistence
+     * Reconstitute aggregate from persistence.
      */
     public static function reconstituteFromPersistence(
         WarehouseId $id,

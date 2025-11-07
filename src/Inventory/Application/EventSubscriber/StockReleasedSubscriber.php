@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Handles StockReleased domain events for audit logging
+ * Handles StockReleased domain events for audit logging.
  *
  * Business Rules:
  * - Log all stock releases for audit trail

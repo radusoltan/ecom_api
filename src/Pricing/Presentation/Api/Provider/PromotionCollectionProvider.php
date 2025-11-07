@@ -7,7 +7,6 @@ namespace App\Pricing\Presentation\Api\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Pricing\Application\Query\GetAllPromotions\GetAllPromotionsQuery;
-use App\Pricing\Domain\ValueObject\PromotionId;
 use App\Pricing\Infrastructure\Persistence\Doctrine\Entity\PromotionEntity;
 use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\Messenger\HandleTrait;
@@ -28,6 +27,6 @@ final class PromotionCollectionProvider implements ProviderInterface
             tenantId: TenantId::fromString($context['tenant_id'] ?? '')
         ));
 
-        return array_map(fn($dto) => PromotionEntity::fromDTO($dto), $dtos);
+        return array_map(fn ($dto) => PromotionEntity::fromDTO($dto), $dtos);
     }
 }

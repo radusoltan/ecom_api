@@ -6,12 +6,12 @@ namespace App\Pricing\Application\Command\CreatePriceList;
 
 use App\Pricing\Domain\Model\PriceList;
 use App\Pricing\Domain\Repository\PriceListRepositoryInterface;
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
+use App\Shared\Application\Service\PerformanceProfiler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Handler: Create a new PriceList
+ * Handler: Create a new PriceList.
  */
 #[AsMessageHandler]
 final readonly class CreatePriceListCommandHandler
@@ -50,6 +50,7 @@ final readonly class CreatePriceListCommandHandler
             }
         } catch (\Throwable $e) {
             $this->profiler->stop('price_list.create');
+
             throw $e;
         }
     }

@@ -9,7 +9,7 @@ use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
 use App\Tax\Domain\ValueObject\TaxJurisdiction;
 
 /**
- * Tax Calculation Service
+ * Tax Calculation Service.
  *
  * Domain service for calculating taxes based on jurisdiction.
  * Implements destination-based tax calculation (based on shipping address).
@@ -28,7 +28,7 @@ final readonly class TaxCalculationService
     }
 
     /**
-     * Calculate tax for given jurisdiction and amount
+     * Calculate tax for given jurisdiction and amount.
      *
      * @return array{
      *     taxAmount: int,
@@ -47,7 +47,7 @@ final readonly class TaxCalculationService
         $taxRule = $this->taxRuleRepository->findByJurisdiction($jurisdiction, $tenantId);
 
         // No tax rule = no tax
-        if ($taxRule === null) {
+        if (null === $taxRule) {
             return [
                 'taxAmount' => 0,
                 'taxRate' => 0.0,
@@ -70,9 +70,10 @@ final readonly class TaxCalculationService
     }
 
     /**
-     * Calculate tax for multiple line items
+     * Calculate tax for multiple line items.
      *
      * @param array<array{amountInCents: int, quantity: int}> $lineItems
+     *
      * @return array{
      *     subtotal: int,
      *     taxAmount: int,
@@ -109,23 +110,23 @@ final readonly class TaxCalculationService
     }
 
     /**
-     * Check if taxation is required for jurisdiction
+     * Check if taxation is required for jurisdiction.
      */
     public function isTaxable(TaxJurisdiction $jurisdiction, TenantId $tenantId): bool
     {
         $taxRule = $this->taxRuleRepository->findByJurisdiction($jurisdiction, $tenantId);
 
-        return $taxRule !== null && $taxRule->isActive();
+        return null !== $taxRule && $taxRule->isActive();
     }
 
     /**
-     * Get tax rate for jurisdiction (returns 0 if no rule)
+     * Get tax rate for jurisdiction (returns 0 if no rule).
      */
     public function getTaxRate(TaxJurisdiction $jurisdiction, TenantId $tenantId): float
     {
         $taxRule = $this->taxRuleRepository->findByJurisdiction($jurisdiction, $tenantId);
 
-        if ($taxRule === null || !$taxRule->isActive()) {
+        if (null === $taxRule || !$taxRule->isActive()) {
             return 0.0;
         }
 

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Order\Domain\Event;
 
 use App\Inventory\Domain\Model\WarehouseId;
-use App\Order\Domain\ValueObject\FulfillmentId;
 use App\Order\Domain\Model\OrderId;
+use App\Order\Domain\ValueObject\FulfillmentId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Fulfillment Started Domain Event
+ * Fulfillment Started Domain Event.
  *
  * Emitted when a fulfillment process is initiated for an order.
  */

@@ -18,7 +18,8 @@ final readonly class SearchProductsQueryHandler
         private IndexManager $indexManager,
         private SearchBoostingService $boostingService,
         private SearchQueryLogger $searchLogger
-    ) {}
+    ) {
+    }
 
     public function __invoke(SearchProductsQuery $query): SearchProductsResult
     {
@@ -44,7 +45,7 @@ final readonly class SearchProductsQueryHandler
         }
 
         $baseQuery = $this->buildQuery($query);
-        $enhancedQuery = $query->sortBy === 'relevance'
+        $enhancedQuery = 'relevance' === $query->sortBy
             ? $this->boostingService->applyFunctionScores($baseQuery, $query->query)
             : $baseQuery;
 
@@ -81,37 +82,37 @@ final readonly class SearchProductsQueryHandler
             ['term' => ['locale' => $query->locale->toString()]],
         ];
 
-        if ($query->status !== null) {
+        if (null !== $query->status) {
             $mustClauses[] = ['term' => ['status' => $query->status]];
         }
 
         $filterClauses = [];
 
         // Category filter
-        if ($query->categoryIds !== null && count($query->categoryIds) > 0) {
+        if (null !== $query->categoryIds && count($query->categoryIds) > 0) {
             $filterClauses[] = ['terms' => ['category_ids' => $query->categoryIds]];
         }
 
         // Price range filter
-        if ($query->minPrice !== null || $query->maxPrice !== null) {
+        if (null !== $query->minPrice || null !== $query->maxPrice) {
             $rangeQuery = ['range' => ['price' => []]];
-            if ($query->minPrice !== null) {
+            if (null !== $query->minPrice) {
                 $rangeQuery['range']['price']['gte'] = $query->minPrice;
             }
-            if ($query->maxPrice !== null) {
+            if (null !== $query->maxPrice) {
                 $rangeQuery['range']['price']['lte'] = $query->maxPrice;
             }
             $filterClauses[] = $rangeQuery;
         }
 
         // Product options filter (color, size, etc.)
-        if ($query->options !== null && count($query->options) > 0) {
+        if (null !== $query->options && count($query->options) > 0) {
             foreach ($query->options as $optionCode => $optionValues) {
                 if (!empty($optionValues)) {
                     // Use "terms" query to match any of the selected values for this option
                     $filterClauses[] = [
                         'terms' => [
-                            'options.' . $optionCode => $optionValues,
+                            'options.'.$optionCode => $optionValues,
                         ],
                     ];
                 }
@@ -119,7 +120,7 @@ final readonly class SearchProductsQueryHandler
         }
 
         // Rating filter
-        if ($query->minRating !== null && $query->minRating > 0) {
+        if (null !== $query->minRating && $query->minRating > 0) {
             $filterClauses[] = [
                 'range' => [
                     'average_rating' => ['gte' => $query->minRating],
@@ -128,7 +129,7 @@ final readonly class SearchProductsQueryHandler
         }
 
         // Featured filter
-        if ($query->featured === true) {
+        if (true === $query->featured) {
             $filterClauses[] = ['term' => ['is_featured' => true]];
         }
 
@@ -140,7 +141,7 @@ final readonly class SearchProductsQueryHandler
         ];
 
         // Full-text search with enhanced relevance
-        if ($query->query !== null && trim($query->query) !== '') {
+        if (null !== $query->query && '' !== trim($query->query)) {
             $fuzzyConfig = $this->boostingService->getFuzzyConfig();
             $fieldBoosts = $this->boostingService->getFieldBoosts();
 
@@ -148,10 +149,10 @@ final readonly class SearchProductsQueryHandler
                 'multi_match' => [
                     'query' => $query->query,
                     'fields' => [
-                        'name^' . $fieldBoosts['name'],
-                        'sku^' . $fieldBoosts['sku'],
-                        'description^' . $fieldBoosts['description'],
-                        'category_names^' . $fieldBoosts['category_names'],
+                        'name^'.$fieldBoosts['name'],
+                        'sku^'.$fieldBoosts['sku'],
+                        'description^'.$fieldBoosts['description'],
+                        'category_names^'.$fieldBoosts['category_names'],
                     ],
                     'type' => 'best_fields',
                     'fuzziness' => $fuzzyConfig['fuzziness'],
@@ -223,7 +224,7 @@ final readonly class SearchProductsQueryHandler
         $aggregations = $response['aggregations'] ?? [];
 
         $products = array_map(
-            fn(array $hit) => ProductSearchDTO::fromElasticsearchHit($hit),
+            fn (array $hit) => ProductSearchDTO::fromElasticsearchHit($hit),
             $hits
         );
 
@@ -240,6 +241,7 @@ final readonly class SearchProductsQueryHandler
 
     /**
      * @param array<string, mixed> $aggregations
+     *
      * @return array<string, mixed>
      */
     private function parseFacets(array $aggregations): array
@@ -249,7 +251,7 @@ final readonly class SearchProductsQueryHandler
         // Categories facet
         if (isset($aggregations['categories']['buckets'])) {
             $facets['categories'] = array_map(
-                fn(array $bucket) => [
+                fn (array $bucket) => [
                     'id' => $bucket['key'],
                     'count' => $bucket['doc_count'],
                 ],
@@ -260,7 +262,7 @@ final readonly class SearchProductsQueryHandler
         // Price ranges facet
         if (isset($aggregations['price_ranges']['buckets'])) {
             $facets['price_ranges'] = array_map(
-                fn(array $bucket) => [
+                fn (array $bucket) => [
                     'key' => $bucket['key'],
                     'count' => $bucket['doc_count'],
                     'from' => $bucket['from'] ?? null,

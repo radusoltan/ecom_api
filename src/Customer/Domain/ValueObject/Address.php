@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Customer\Domain\ValueObject;
 
-use InvalidArgumentException;
-
 /**
- * Address Value Object
+ * Address Value Object.
  *
  * Business Rules:
  * - Street, city, postal code, and country are required
@@ -46,37 +44,35 @@ final readonly class Address
 
     private function validate(): void
     {
-        if (trim($this->street) === '') {
-            throw new InvalidArgumentException('Street address is required');
+        if ('' === trim($this->street)) {
+            throw new \InvalidArgumentException('Street address is required');
         }
 
-        if (trim($this->city) === '') {
-            throw new InvalidArgumentException('City is required');
+        if ('' === trim($this->city)) {
+            throw new \InvalidArgumentException('City is required');
         }
 
-        if (trim($this->postalCode) === '') {
-            throw new InvalidArgumentException('Postal code is required');
+        if ('' === trim($this->postalCode)) {
+            throw new \InvalidArgumentException('Postal code is required');
         }
 
-        if (trim($this->country) === '') {
-            throw new InvalidArgumentException('Country is required');
+        if ('' === trim($this->country)) {
+            throw new \InvalidArgumentException('Country is required');
         }
 
         if (!in_array($this->type, [self::TYPE_BILLING, self::TYPE_SHIPPING], true)) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid address type: %s. Must be either "billing" or "shipping"', $this->type)
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid address type: %s. Must be either "billing" or "shipping"', $this->type));
         }
     }
 
     public function isBilling(): bool
     {
-        return $this->type === self::TYPE_BILLING;
+        return self::TYPE_BILLING === $this->type;
     }
 
     public function isShipping(): bool
     {
-        return $this->type === self::TYPE_SHIPPING;
+        return self::TYPE_SHIPPING === $this->type;
     }
 
     public function equals(Address $other): bool
@@ -88,6 +84,7 @@ final readonly class Address
             && $this->state === $other->state;
     }
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [

@@ -11,11 +11,9 @@ use App\Privacy\Domain\ValueObject\ConsentId;
 use App\Privacy\Domain\ValueObject\ConsentPurpose;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
-use InvalidArgumentException;
 
 /**
- * Consent Aggregate Root
+ * Consent Aggregate Root.
  *
  * Business Rules (GDPR Compliance):
  * - Consent must be freely given, specific, informed, and unambiguous (Article 4)
@@ -37,10 +35,10 @@ final class Consent extends AggregateRoot
     private string $userAgent;
     private string $consentText;
     private string $consentVersion;
-    private ?DateTimeImmutable $grantedAt;
-    private ?DateTimeImmutable $withdrawnAt;
-    private DateTimeImmutable $createdAt;
-    private DateTimeImmutable $updatedAt;
+    private ?\DateTimeImmutable $grantedAt;
+    private ?\DateTimeImmutable $withdrawnAt;
+    private \DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $updatedAt;
 
     private function __construct()
     {
@@ -71,10 +69,10 @@ final class Consent extends AggregateRoot
         $consent->userAgent = $userAgent;
         $consent->consentText = $consentText;
         $consent->consentVersion = $consentVersion;
-        $consent->grantedAt = new DateTimeImmutable();
+        $consent->grantedAt = new \DateTimeImmutable();
         $consent->withdrawnAt = null;
-        $consent->createdAt = new DateTimeImmutable();
-        $consent->updatedAt = new DateTimeImmutable();
+        $consent->createdAt = new \DateTimeImmutable();
+        $consent->updatedAt = new \DateTimeImmutable();
 
         $consent->recordEvent(new ConsentGranted(
             $consent->id,
@@ -96,10 +94,10 @@ final class Consent extends AggregateRoot
         string $userAgent,
         string $consentText,
         string $consentVersion,
-        ?DateTimeImmutable $grantedAt,
-        ?DateTimeImmutable $withdrawnAt,
-        DateTimeImmutable $createdAt,
-        DateTimeImmutable $updatedAt
+        ?\DateTimeImmutable $grantedAt,
+        ?\DateTimeImmutable $withdrawnAt,
+        \DateTimeImmutable $createdAt,
+        \DateTimeImmutable $updatedAt
     ): self {
         $consent = new self();
         $consent->id = $id;
@@ -122,14 +120,12 @@ final class Consent extends AggregateRoot
     public function withdraw(): void
     {
         if (!$this->isGranted) {
-            throw new InvalidArgumentException(
-                sprintf('Consent for purpose "%s" is already withdrawn', $this->purpose->value())
-            );
+            throw new \InvalidArgumentException(sprintf('Consent for purpose "%s" is already withdrawn', $this->purpose->value()));
         }
 
         $this->isGranted = false;
-        $this->withdrawnAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
+        $this->withdrawnAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new ConsentWithdrawn(
             $this->id,
@@ -141,53 +137,45 @@ final class Consent extends AggregateRoot
 
     private static function validateIpAddress(string $ipAddress): void
     {
-        if (filter_var($ipAddress, FILTER_VALIDATE_IP) === false) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid IP address: "%s"', $ipAddress)
-            );
+        if (false === filter_var($ipAddress, FILTER_VALIDATE_IP)) {
+            throw new \InvalidArgumentException(sprintf('Invalid IP address: "%s"', $ipAddress));
         }
     }
 
     private static function validateUserAgent(string $userAgent): void
     {
         $trimmed = trim($userAgent);
-        if ($trimmed === '') {
-            throw new InvalidArgumentException('User agent cannot be empty');
+        if ('' === $trimmed) {
+            throw new \InvalidArgumentException('User agent cannot be empty');
         }
 
         if (strlen($trimmed) > 500) {
-            throw new InvalidArgumentException(
-                sprintf('User agent too long. Maximum 500 characters. Got: %d', strlen($trimmed))
-            );
+            throw new \InvalidArgumentException(sprintf('User agent too long. Maximum 500 characters. Got: %d', strlen($trimmed)));
         }
     }
 
     private static function validateConsentText(string $consentText): void
     {
         $trimmed = trim($consentText);
-        if ($trimmed === '') {
-            throw new InvalidArgumentException('Consent text cannot be empty');
+        if ('' === $trimmed) {
+            throw new \InvalidArgumentException('Consent text cannot be empty');
         }
 
         if (strlen($trimmed) < 50) {
-            throw new InvalidArgumentException(
-                'Consent text too short. Must be at least 50 characters for GDPR compliance'
-            );
+            throw new \InvalidArgumentException('Consent text too short. Must be at least 50 characters for GDPR compliance');
         }
     }
 
     private static function validateConsentVersion(string $consentVersion): void
     {
         $trimmed = trim($consentVersion);
-        if ($trimmed === '') {
-            throw new InvalidArgumentException('Consent version cannot be empty');
+        if ('' === $trimmed) {
+            throw new \InvalidArgumentException('Consent version cannot be empty');
         }
 
         // Semantic versioning format: v1.0.0
         if (!preg_match('/^v\d+\.\d+\.\d+$/', $trimmed)) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid consent version format. Expected: v1.0.0. Got: "%s"', $trimmed)
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid consent version format. Expected: v1.0.0. Got: "%s"', $trimmed));
         }
     }
 
@@ -237,22 +225,22 @@ final class Consent extends AggregateRoot
         return $this->consentVersion;
     }
 
-    public function grantedAt(): ?DateTimeImmutable
+    public function grantedAt(): ?\DateTimeImmutable
     {
         return $this->grantedAt;
     }
 
-    public function withdrawnAt(): ?DateTimeImmutable
+    public function withdrawnAt(): ?\DateTimeImmutable
     {
         return $this->withdrawnAt;
     }
 
-    public function createdAt(): DateTimeImmutable
+    public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function updatedAt(): DateTimeImmutable
+    public function updatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

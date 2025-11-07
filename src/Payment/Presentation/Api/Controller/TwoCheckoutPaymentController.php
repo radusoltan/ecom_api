@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * 2Checkout Payment Controller
+ * 2Checkout Payment Controller.
  *
  * Handles 2Checkout payment operations via REST API.
  */
@@ -27,7 +27,7 @@ final class TwoCheckoutPaymentController extends AbstractController
     }
 
     /**
-     * Create 2Checkout Order
+     * Create 2Checkout Order.
      *
      * Creates a 2Checkout order and returns the reference number.
      */
@@ -98,13 +98,13 @@ final class TwoCheckoutPaymentController extends AbstractController
             ]);
 
             return new JsonResponse([
-                'error' => 'Failed to create 2Checkout order: ' . $e->getMessage(),
+                'error' => 'Failed to create 2Checkout order: '.$e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * Get 2Checkout Order Status
+     * Get 2Checkout Order Status.
      *
      * Retrieves the status of a 2Checkout order.
      */
@@ -135,13 +135,13 @@ final class TwoCheckoutPaymentController extends AbstractController
             ]);
 
             return new JsonResponse([
-                'error' => 'Failed to fetch 2Checkout order status: ' . $e->getMessage(),
+                'error' => 'Failed to fetch 2Checkout order status: '.$e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * Complete 2Checkout Order
+     * Complete 2Checkout Order.
      *
      * Marks a 2Checkout order as completed after successful payment.
      * Note: 2Checkout auto-captures, so this is mainly for verification.
@@ -186,7 +186,7 @@ final class TwoCheckoutPaymentController extends AbstractController
             ]);
 
             return new JsonResponse([
-                'error' => 'Failed to complete 2Checkout order: ' . $e->getMessage(),
+                'error' => 'Failed to complete 2Checkout order: '.$e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

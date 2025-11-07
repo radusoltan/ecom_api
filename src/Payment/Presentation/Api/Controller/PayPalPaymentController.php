@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * PayPal Payment Controller
+ * PayPal Payment Controller.
  *
  * Handles PayPal payment operations via REST API.
  */
@@ -27,7 +27,7 @@ final class PayPalPaymentController extends AbstractController
     }
 
     /**
-     * Create PayPal Order
+     * Create PayPal Order.
      *
      * Creates a PayPal order and returns the order ID and approval URL.
      */
@@ -84,13 +84,13 @@ final class PayPalPaymentController extends AbstractController
             ]);
 
             return new JsonResponse([
-                'error' => 'Failed to create PayPal order: ' . $e->getMessage(),
+                'error' => 'Failed to create PayPal order: '.$e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * Capture PayPal Order
+     * Capture PayPal Order.
      *
      * Captures a previously authorized PayPal order.
      */
@@ -136,13 +136,13 @@ final class PayPalPaymentController extends AbstractController
             ]);
 
             return new JsonResponse([
-                'error' => 'Failed to capture PayPal order: ' . $e->getMessage(),
+                'error' => 'Failed to capture PayPal order: '.$e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * Get PayPal Order Status
+     * Get PayPal Order Status.
      *
      * Retrieves the status of a PayPal order.
      */
@@ -173,7 +173,7 @@ final class PayPalPaymentController extends AbstractController
             ]);
 
             return new JsonResponse([
-                'error' => 'Failed to fetch PayPal order status: ' . $e->getMessage(),
+                'error' => 'Failed to fetch PayPal order status: '.$e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

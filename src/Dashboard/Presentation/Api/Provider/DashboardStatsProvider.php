@@ -15,7 +15,8 @@ final class DashboardStatsProvider implements ProviderInterface
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly TenantContext $tenantContext
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
@@ -52,28 +53,28 @@ final class DashboardStatsProvider implements ProviderInterface
                 'totalOrders' => $totalOrders,
                 'totalCustomers' => $totalCustomers,
                 'totalProducts' => $totalProducts,
-                'averageOrderValue' => $averageOrderValue
+                'averageOrderValue' => $averageOrderValue,
             ],
             orders: [
                 'byStatus' => $ordersByStatus,
                 'trend' => $ordersTrend,
                 'currentPeriod' => $totalOrders,
                 'previousPeriod' => 0,  // TODO: Calculate previous period
-                'changePercent' => 0     // TODO: Calculate change percent
+                'changePercent' => 0,     // TODO: Calculate change percent
             ],
             revenue: [
                 'trend' => $revenueTrend,
                 'currentPeriod' => $totalRevenue,
                 'previousPeriod' => 0,   // TODO: Calculate previous period
-                'changePercent' => 0      // TODO: Calculate change percent
+                'changePercent' => 0,      // TODO: Calculate change percent
             ],
             products: [
                 'byCategory' => [],      // TODO: Implement category breakdown
-                'lowStockCount' => 0     // TODO: Implement low stock count
+                'lowStockCount' => 0,     // TODO: Implement low stock count
             ],
             customers: [
                 'newCustomers' => $totalCustomers,
-                'returningCustomers' => 0  // TODO: Implement returning customers
+                'returningCustomers' => 0,  // TODO: Implement returning customers
             ],
             recentOrders: $recentOrders,
             topProducts: $topProducts,
@@ -90,28 +91,28 @@ final class DashboardStatsProvider implements ProviderInterface
                 'totalOrders' => 0,
                 'totalCustomers' => 0,
                 'totalProducts' => 0,
-                'averageOrderValue' => 0
+                'averageOrderValue' => 0,
             ],
             orders: [
                 'byStatus' => [],
                 'trend' => [],
                 'currentPeriod' => 0,
                 'previousPeriod' => 0,
-                'changePercent' => 0
+                'changePercent' => 0,
             ],
             revenue: [
                 'trend' => [],
                 'currentPeriod' => 0,
                 'previousPeriod' => 0,
-                'changePercent' => 0
+                'changePercent' => 0,
             ],
             products: [
                 'byCategory' => [],
-                'lowStockCount' => 0
+                'lowStockCount' => 0,
             ],
             customers: [
                 'newCustomers' => 0,
-                'returningCustomers' => 0
+                'returningCustomers' => 0,
             ],
             recentOrders: [],
             topProducts: [],
@@ -180,7 +181,7 @@ final class DashboardStatsProvider implements ProviderInterface
         return array_map(function ($row) {
             return [
                 'status' => $row['status'],
-                'count' => (int) $row['count']
+                'count' => (int) $row['count'],
             ];
         }, $result);
     }
@@ -200,7 +201,7 @@ final class DashboardStatsProvider implements ProviderInterface
         return array_map(function ($row) {
             return [
                 'date' => $row['date'],
-                'count' => (int) $row['count']
+                'count' => (int) $row['count'],
             ];
         }, $result);
     }
@@ -221,7 +222,7 @@ final class DashboardStatsProvider implements ProviderInterface
         return array_map(function ($row) {
             return [
                 'date' => $row['date'],
-                'revenue' => (int) $row['revenue']
+                'revenue' => (int) $row['revenue'],
             ];
         }, $result);
     }
@@ -244,7 +245,7 @@ final class DashboardStatsProvider implements ProviderInterface
                 'customer_email' => $order['customer_email'] ?? 'guest@example.com',
                 'total_amount' => 10000, // Mock data - TODO: calculate from lines JSON
                 'status' => $order['status'],
-                'created_at' => $order['created_at']
+                'created_at' => $order['created_at'],
             ];
         }, $orders);
     }
@@ -272,7 +273,7 @@ final class DashboardStatsProvider implements ProviderInterface
                 'sku' => $product['sku'] ?? 'N/A',
                 'price' => (int) $product['price_amount'] / 100, // Convert cents to dollars
                 'order_count' => 0,  // TODO: Calculate from order_items
-                'total_revenue' => 0  // TODO: Calculate from order_items
+                'total_revenue' => 0,  // TODO: Calculate from order_items
             ];
         }, $products);
     }

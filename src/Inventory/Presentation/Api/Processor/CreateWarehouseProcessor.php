@@ -26,7 +26,8 @@ final readonly class CreateWarehouseProcessor implements ProcessorInterface
     public function __construct(
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
-    ) {}
+    ) {
+    }
 
     public function process(
         mixed $data,
@@ -44,7 +45,7 @@ final readonly class CreateWarehouseProcessor implements ProcessorInterface
 
         // Get tenant ID from context (set by TenantContextProvider)
         $tenantId = $context['tenant_id'] ?? null;
-        if ($tenantId === null) {
+        if (null === $tenantId) {
             throw new \RuntimeException('Tenant ID not found in context');
         }
 

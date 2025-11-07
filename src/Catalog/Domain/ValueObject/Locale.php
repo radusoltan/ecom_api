@@ -6,7 +6,7 @@ namespace App\Catalog\Domain\ValueObject;
 
 /**
  * Locale value object for handling language codes
- * Supports formats: ll (e.g., "en") or ll_CC (e.g., "en_US")
+ * Supports formats: ll (e.g., "en") or ll_CC (e.g., "en_US").
  */
 final class Locale
 {
@@ -55,30 +55,32 @@ final class Locale
     }
 
     /**
-     * Get the language code without country (e.g., "en" from "en_US")
+     * Get the language code without country (e.g., "en" from "en_US").
      */
     public function getLanguageCode(): string
     {
         if (str_contains($this->value, '_')) {
             return substr($this->value, 0, 2);
         }
+
         return $this->value;
     }
 
     /**
-     * Get the country code if present (e.g., "US" from "en_US")
+     * Get the country code if present (e.g., "US" from "en_US").
      */
     public function getCountryCode(): ?string
     {
         if (str_contains($this->value, '_')) {
             return substr($this->value, 3, 2);
         }
+
         return null;
     }
 
     /**
      * Check if this locale matches or is compatible with another locale
-     * en_US matches en_US (exact), en (language match)
+     * en_US matches en_US (exact), en (language match).
      */
     public function isCompatibleWith(self $other): bool
     {
@@ -92,7 +94,7 @@ final class Locale
     }
 
     /**
-     * Get the base language locale (e.g., "en" from "en_US")
+     * Get the base language locale (e.g., "en" from "en_US").
      */
     public function getBaseLocale(): self
     {
@@ -100,11 +102,12 @@ final class Locale
         if ($languageCode === $this->value) {
             return $this;
         }
+
         return self::fromString($languageCode);
     }
 
     /**
-     * Get suggested fallback locale
+     * Get suggested fallback locale.
      */
     public function getFallback(): ?self
     {
@@ -118,36 +121,29 @@ final class Locale
     }
 
     /**
-     * Create a locale with normalized format (lowercase language, uppercase country)
+     * Create a locale with normalized format (lowercase language, uppercase country).
      */
     public static function normalize(string $value): self
     {
         $parts = explode('_', str_replace('-', '_', $value));
 
-        if (count($parts) === 1) {
+        if (1 === count($parts)) {
             return self::fromString(strtolower($parts[0]));
         }
 
-        if (count($parts) === 2) {
+        if (2 === count($parts)) {
             return self::fromString(
-                strtolower($parts[0]) . '_' . strtoupper($parts[1])
+                strtolower($parts[0]).'_'.strtoupper($parts[1])
             );
         }
 
-        throw new \InvalidArgumentException(
-            sprintf('Invalid locale format: %s', $value)
-        );
+        throw new \InvalidArgumentException(sprintf('Invalid locale format: %s', $value));
     }
 
     private function validate(string $value): void
     {
         if (!preg_match(self::PATTERN, $value)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid locale format: %s. Expected format: ll or ll_CC (e.g., "en" or "en_US")',
-                    $value
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid locale format: %s. Expected format: ll or ll_CC (e.g., "en" or "en_US")', $value));
         }
     }
 }

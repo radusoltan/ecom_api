@@ -14,14 +14,15 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Processor for deleting variants
+ * Processor for deleting variants.
  */
 final readonly class DeleteVariantProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
         private RequestStack $requestStack
-    ) {}
+    ) {
+    }
 
     public function process(
         mixed $data,

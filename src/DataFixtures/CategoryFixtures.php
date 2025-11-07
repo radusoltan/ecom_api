@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\CategoryEntity;
-use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -13,7 +12,7 @@ use Symfony\Component\Uid\Uuid;
 
 /**
  * Category fixtures - creates hierarchical categories with translations
- * 3 root categories, each with 3 subcategories (12 total)
+ * 3 root categories, each with 3 subcategories (12 total).
  */
 class CategoryFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -51,12 +50,12 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
             [
                 'en' => 'Electronics',
                 'fr' => 'Électronique',
-                'de' => 'Elektronik'
+                'de' => 'Elektronik',
             ],
             [
                 'en' => 'Latest electronic devices and gadgets',
                 'fr' => 'Derniers appareils électroniques et gadgets',
-                'de' => 'Neueste elektronische Geräte und Gadgets'
+                'de' => 'Neueste elektronische Geräte und Gadgets',
             ],
             null,
             1,
@@ -71,12 +70,12 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
             [
                 'en' => 'Laptops & Computers',
                 'fr' => 'Ordinateurs portables',
-                'de' => 'Laptops & Computer'
+                'de' => 'Laptops & Computer',
             ],
             [
                 'en' => 'High-performance laptops and desktop computers',
                 'fr' => 'Ordinateurs portables et de bureau haute performance',
-                'de' => 'Hochleistungs-Laptops und Desktop-Computer'
+                'de' => 'Hochleistungs-Laptops und Desktop-Computer',
             ],
             $electronicsId,
             1,
@@ -89,12 +88,12 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
             [
                 'en' => 'Smartphones & Tablets',
                 'fr' => 'Smartphones et tablettes',
-                'de' => 'Smartphones & Tablets'
+                'de' => 'Smartphones & Tablets',
             ],
             [
                 'en' => 'Latest smartphones and tablets',
                 'fr' => 'Derniers smartphones et tablettes',
-                'de' => 'Neueste Smartphones und Tablets'
+                'de' => 'Neueste Smartphones und Tablets',
             ],
             $electronicsId,
             2,
@@ -107,12 +106,12 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
             [
                 'en' => 'Electronics Accessories',
                 'fr' => 'Accessoires électroniques',
-                'de' => 'Elektronik-Zubehör'
+                'de' => 'Elektronik-Zubehör',
             ],
             [
                 'en' => 'Chargers, cases, and more',
                 'fr' => 'Chargeurs, étuis et plus',
-                'de' => 'Ladegeräte, Hüllen und mehr'
+                'de' => 'Ladegeräte, Hüllen und mehr',
             ],
             $electronicsId,
             3,
@@ -127,12 +126,12 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
             [
                 'en' => 'Fashion & Apparel',
                 'fr' => 'Mode et vêtements',
-                'de' => 'Mode & Bekleidung'
+                'de' => 'Mode & Bekleidung',
             ],
             [
                 'en' => 'Stylish clothing for everyone',
                 'fr' => 'Vêtements élégants pour tous',
-                'de' => 'Stilvolle Kleidung für alle'
+                'de' => 'Stilvolle Kleidung für alle',
             ],
             null,
             2,
@@ -147,12 +146,12 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
             [
                 'en' => "Men's Clothing",
                 'fr' => 'Vêtements pour hommes',
-                'de' => 'Herrenbekleidung'
+                'de' => 'Herrenbekleidung',
             ],
             [
-                'en' => "Stylish clothing and accessories for men",
+                'en' => 'Stylish clothing and accessories for men',
                 'fr' => 'Vêtements et accessoires élégants pour hommes',
-                'de' => 'Stilvolle Kleidung und Accessoires für Herren'
+                'de' => 'Stilvolle Kleidung und Accessoires für Herren',
             ],
             $fashionId,
             1,
@@ -165,12 +164,12 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
             [
                 'en' => "Women's Clothing",
                 'fr' => 'Vêtements pour femmes',
-                'de' => 'Damenbekleidung'
+                'de' => 'Damenbekleidung',
             ],
             [
-                'en' => "Fashion-forward clothing and accessories for women",
+                'en' => 'Fashion-forward clothing and accessories for women',
                 'fr' => 'Vêtements et accessoires tendance pour femmes',
-                'de' => 'Modische Kleidung und Accessoires für Damen'
+                'de' => 'Modische Kleidung und Accessoires für Damen',
             ],
             $fashionId,
             2,
@@ -183,12 +182,12 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
             [
                 'en' => "Kids' Clothing",
                 'fr' => 'Vêtements pour enfants',
-                'de' => 'Kinderbekleidung'
+                'de' => 'Kinderbekleidung',
             ],
             [
                 'en' => 'Comfortable and fun clothing for children',
                 'fr' => 'Vêtements confortables et amusants pour enfants',
-                'de' => 'Bequeme und lustige Kleidung für Kinder'
+                'de' => 'Bequeme und lustige Kleidung für Kinder',
             ],
             $fashionId,
             3,
@@ -203,12 +202,12 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
             [
                 'en' => 'Home & Living',
                 'fr' => 'Maison et vie',
-                'de' => 'Haus & Wohnen'
+                'de' => 'Haus & Wohnen',
             ],
             [
                 'en' => 'Everything for your home',
                 'fr' => 'Tout pour votre maison',
-                'de' => 'Alles für Ihr Zuhause'
+                'de' => 'Alles für Ihr Zuhause',
             ],
             null,
             3,
@@ -223,12 +222,12 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
             [
                 'en' => 'Furniture',
                 'fr' => 'Meubles',
-                'de' => 'Möbel'
+                'de' => 'Möbel',
             ],
             [
                 'en' => 'Quality furniture for every room',
                 'fr' => 'Meubles de qualité pour chaque pièce',
-                'de' => 'Hochwertige Möbel für jeden Raum'
+                'de' => 'Hochwertige Möbel für jeden Raum',
             ],
             $homeId,
             1,
@@ -241,12 +240,12 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
             [
                 'en' => 'Home Decor',
                 'fr' => 'Décoration intérieure',
-                'de' => 'Wohndekoration'
+                'de' => 'Wohndekoration',
             ],
             [
                 'en' => 'Beautiful decorations for your home',
                 'fr' => 'Belles décorations pour votre maison',
-                'de' => 'Schöne Dekorationen für Ihr Zuhause'
+                'de' => 'Schöne Dekorationen für Ihr Zuhause',
             ],
             $homeId,
             2,
@@ -259,12 +258,12 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
             [
                 'en' => 'Kitchen & Dining',
                 'fr' => 'Cuisine et salle à manger',
-                'de' => 'Küche & Esszimmer'
+                'de' => 'Küche & Esszimmer',
             ],
             [
                 'en' => 'Cookware, utensils, and dining essentials',
                 'fr' => 'Ustensiles de cuisine et essentiels pour la salle à manger',
-                'de' => 'Kochgeschirr, Utensilien und Essentials fürs Esszimmer'
+                'de' => 'Kochgeschirr, Utensilien und Essentials fürs Esszimmer',
             ],
             $homeId,
             3,
@@ -295,7 +294,7 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
         $category->setShowOnFront(true);
         $category->setCoverImage($coverImage);
 
-        if ($parentId !== null) {
+        if (null !== $parentId) {
             $category->setParentId($parentId);
         }
 
@@ -306,10 +305,10 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
         $idProperty->setValue($category, $categoryId);
 
         $createdAtProperty = $reflection->getProperty('createdAt');
-        $createdAtProperty->setValue($category, new DateTimeImmutable());
+        $createdAtProperty->setValue($category, new \DateTimeImmutable());
 
         $updatedAtProperty = $reflection->getProperty('updatedAt');
-        $updatedAtProperty->setValue($category, new DateTimeImmutable());
+        $updatedAtProperty->setValue($category, new \DateTimeImmutable());
 
         // Set English content only (translations can be added via admin panel later)
         $category->setTranslatableLocale('en');
@@ -342,4 +341,3 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
         return 3;
     }
 }
-

@@ -7,7 +7,7 @@ namespace App\Privacy\Domain\Service;
 use App\Customer\Domain\ValueObject\CustomerId;
 
 /**
- * Personal Data Inventory Service
+ * Personal Data Inventory Service.
  *
  * GDPR Compliance - tracks all personal data across bounded contexts
  *
@@ -20,7 +20,7 @@ use App\Customer\Domain\ValueObject\CustomerId;
 interface PersonalDataInventoryInterface
 {
     /**
-     * Export all personal data for a customer across all contexts
+     * Export all personal data for a customer across all contexts.
      *
      * Returns machine-readable JSON format (GDPR Article 20)
      *
@@ -36,7 +36,7 @@ interface PersonalDataInventoryInterface
     public function exportCustomerData(CustomerId $customerId): array;
 
     /**
-     * Anonymize customer data across all contexts
+     * Anonymize customer data across all contexts.
      *
      * GDPR Article 17 - Right to erasure
      *
@@ -53,7 +53,7 @@ interface PersonalDataInventoryInterface
     public function anonymizeCustomerData(CustomerId $customerId): void;
 
     /**
-     * List all data categories we process
+     * List all data categories we process.
      *
      * GDPR Article 30 - Records of processing activities
      *
@@ -68,7 +68,7 @@ interface PersonalDataInventoryInterface
     public function getDataCategories(): array;
 
     /**
-     * List all processing purposes
+     * List all processing purposes.
      *
      * @return array<string, array{
      *     purpose: string,
@@ -80,7 +80,7 @@ interface PersonalDataInventoryInterface
     public function getProcessingPurposes(): array;
 
     /**
-     * Check if customer data can be safely deleted
+     * Check if customer data can be safely deleted.
      *
      * Returns false if there are active orders, pending transactions, etc.
      */

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Pricing\Domain\Model;
 
-use InvalidArgumentException;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * Value Object representing a unique identifier for a PriceList aggregate
+ * Value Object representing a unique identifier for a PriceList aggregate.
  *
  * Uses UUID v4 for globally unique identification
  */
@@ -18,9 +17,7 @@ final readonly class PriceListId
         private string $value
     ) {
         if (!Uuid::isValid($this->value)) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid PriceListId: "%s" is not a valid UUID', $this->value)
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid PriceListId: "%s" is not a valid UUID', $this->value));
         }
     }
 

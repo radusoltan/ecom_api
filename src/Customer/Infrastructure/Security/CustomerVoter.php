@@ -56,7 +56,7 @@ final class CustomerVoter extends AbstractResourceVoter
 
         // VIEWER: only view permission
         if ($this->isViewer($token)) {
-            return $attribute === self::VIEW;
+            return self::VIEW === $attribute;
         }
 
         // ADMIN, MANAGER, TENANT_ADMIN: full CRUD access
@@ -68,6 +68,7 @@ final class CustomerVoter extends AbstractResourceVoter
         if ($this->hasRole($token, 'ROLE_CUSTOMER')) {
             if ($subject instanceof Customer && in_array($attribute, [self::VIEW, self::EDIT], true)) {
                 $user = $this->getUser($token);
+
                 // TODO: Implement ownership check when user-customer relationship is established
                 // For now, allow view and edit for all customers
                 return true;

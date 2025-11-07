@@ -34,7 +34,7 @@ final class GetAllPaymentsQueryHandlerTest extends TestCase
         $payment1 = Payment::create(
             id: PaymentId::generate(),
             tenantId: $tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 5000,
             currency: 'USD',
             method: PaymentMethod::card(),
@@ -44,7 +44,7 @@ final class GetAllPaymentsQueryHandlerTest extends TestCase
         $payment2 = Payment::create(
             id: PaymentId::generate(),
             tenantId: $tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 10000,
             currency: 'EUR',
             method: PaymentMethod::paypal(),
@@ -94,11 +94,11 @@ final class GetAllPaymentsQueryHandlerTest extends TestCase
         $tenantId = TenantId::generate();
 
         $payments = [];
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 5; ++$i) {
             $payments[] = Payment::create(
                 id: PaymentId::generate(),
                 tenantId: $tenantId,
-                orderId: '01JCEX' . bin2hex(random_bytes(10)),
+                orderId: '01JCEX'.bin2hex(random_bytes(10)),
                 amountInCents: 1000 * ($i + 1),
                 currency: 'USD',
                 method: PaymentMethod::card(),

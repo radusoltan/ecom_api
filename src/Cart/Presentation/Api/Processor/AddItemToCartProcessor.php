@@ -13,10 +13,6 @@ use App\Cart\Domain\Exception\CartNotFoundException;
 use App\Cart\Domain\Model\CartId;
 use App\Cart\Domain\Model\SessionId;
 use App\Cart\Presentation\Api\Resource\CartResource;
-use App\Customer\Domain\ValueObject\CustomerId;
-use App\Shared\Domain\ValueObject\TenantId;
-use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
@@ -36,14 +32,14 @@ final readonly class AddItemToCartProcessor implements ProcessorInterface
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): CartResource
     {
         if (!$data instanceof CartResource) {
-            throw new InvalidArgumentException('Expected CartResource');
+            throw new \InvalidArgumentException('Expected CartResource');
         }
 
         if (!$data->productId || !$data->quantity) {
-            throw new InvalidArgumentException('Product ID and quantity are required');
+            throw new \InvalidArgumentException('Product ID and quantity are required');
         }
 
-        $tenantId = $data->tenantId ?? throw new InvalidArgumentException('Tenant ID is required');
+        $tenantId = $data->tenantId ?? throw new \InvalidArgumentException('Tenant ID is required');
 
         // Get or create cart
         $cartId = $this->getOrCreateCart($tenantId, $data->customerId, $context);
@@ -72,10 +68,11 @@ final readonly class AddItemToCartProcessor implements ProcessorInterface
         // Try to get existing cart ID from context (could be from session)
         $existingCartId = $context['cart_id'] ?? null;
 
-        if ($existingCartId !== null) {
+        if (null !== $existingCartId) {
             // Verify cart exists
             try {
                 $this->retrieveCart($existingCartId);
+
                 return $existingCartId;
             } catch (CartNotFoundException) {
                 // Cart doesn't exist, create a new one
@@ -103,7 +100,7 @@ final readonly class AddItemToCartProcessor implements ProcessorInterface
         $request = $this->requestStack->getCurrentRequest();
         $session = $request?->getSession();
 
-        if ($session === null) {
+        if (null === $session) {
             // Generate new session ID
             return SessionId::generate()->toString();
         }
@@ -121,12 +118,12 @@ final readonly class AddItemToCartProcessor implements ProcessorInterface
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {
-            throw new RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for query');
         }
 
         $cartDTO = $handledStamp->getResult();
 
-        if ($cartDTO === null) {
+        if (null === $cartDTO) {
             throw CartNotFoundException::withId($cartId);
         }
 

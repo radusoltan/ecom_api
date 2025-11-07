@@ -17,12 +17,9 @@ final class TranslatedStringType extends Type
         return $platform->getJsonTypeDeclarationSQL($column);
     }
 
-    /**
-     * @param mixed $value
-     */
     public function convertToPHPValue($value, AbstractPlatform $platform): ?TranslatedString
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
@@ -35,12 +32,9 @@ final class TranslatedStringType extends Type
         return TranslatedString::fromArray($data);
     }
 
-    /**
-     * @param mixed $value
-     */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 

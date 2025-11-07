@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Internationalization\Domain\Model;
 
-use InvalidArgumentException;
-
 final readonly class Locale implements \Stringable
 {
     private const SUPPORTED_LOCALES = [
@@ -29,24 +27,23 @@ final readonly class Locale implements \Stringable
         // Support both "en" and "en_US" formats
         $parts = explode('_', $locale);
 
-        if (count($parts) === 1) {
+        if (1 === count($parts)) {
             // Short format (e.g., "en") - add default country
             $language = strtolower($parts[0]);
             $country = self::getDefaultCountryForLanguage($language);
+
             return new self($language, $country);
         }
 
-        if (count($parts) !== 2) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid locale format "%s". Expected format: language or language_COUNTRY (e.g., "en" or "en_US")', $locale)
-            );
+        if (2 !== count($parts)) {
+            throw new \InvalidArgumentException(sprintf('Invalid locale format "%s". Expected format: language or language_COUNTRY (e.g., "en" or "en_US")', $locale));
         }
 
         return new self(strtolower($parts[0]), strtoupper($parts[1]));
     }
 
     /**
-     * Get default country for a given language code
+     * Get default country for a given language code.
      */
     private static function getDefaultCountryForLanguage(string $language): string
     {
@@ -73,7 +70,7 @@ final readonly class Locale implements \Stringable
 
     public function toString(): string
     {
-        return $this->language . '_' . $this->country;
+        return $this->language.'_'.$this->country;
     }
 
     public function __toString(): string
@@ -99,13 +96,7 @@ final readonly class Locale implements \Stringable
         $localeString = $this->toString();
 
         if (!in_array($localeString, self::SUPPORTED_LOCALES, true)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Unsupported locale "%s". Supported locales: %s',
-                    $localeString,
-                    implode(', ', self::SUPPORTED_LOCALES)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Unsupported locale "%s". Supported locales: %s', $localeString, implode(', ', self::SUPPORTED_LOCALES)));
         }
     }
 }

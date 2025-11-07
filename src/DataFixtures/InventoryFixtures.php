@@ -22,7 +22,7 @@ use Symfony\Component\Uid\Ulid;
 
 /**
  * Inventory fixtures - creates warehouses and stock items
- * Depends on: TenantFixtures, CatalogFixtures
+ * Depends on: TenantFixtures, CatalogFixtures.
  */
 class InventoryFixtures extends Fixture
 {
@@ -43,6 +43,7 @@ class InventoryFixtures extends Fixture
 
         if (!$tenantIdString) {
             echo "   ⚠️  No tenants found. Skipping inventory fixtures.\n";
+
             return;
         }
 
@@ -59,10 +60,11 @@ class InventoryFixtures extends Fixture
 
         if (empty($products)) {
             echo "   ⚠️  No products found. Skipping stock items.\n";
+
             return;
         }
 
-        echo "   Creating stock items for " . count($products) . " products...\n";
+        echo '   Creating stock items for '.count($products)." products...\n";
 
         // Create stock items for each product
         $stockItemsCreated = 0;
@@ -81,7 +83,7 @@ class InventoryFixtures extends Fixture
                 $mainWarehouseId,
                 $mainStockQuantity
             );
-            $stockItemsCreated++;
+            ++$stockItemsCreated;
 
             // 30% chance to also have stock in secondary warehouse
             if (random_int(1, 100) <= 30) {
@@ -92,7 +94,7 @@ class InventoryFixtures extends Fixture
                     $secondaryWarehouseId,
                     $secondaryStockQuantity
                 );
-                $stockItemsCreated++;
+                ++$stockItemsCreated;
             }
         }
 

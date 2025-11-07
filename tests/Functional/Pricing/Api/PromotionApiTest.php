@@ -51,7 +51,7 @@ final class PromotionApiTest extends ApiTestCase
     }
 
     /**
-     * Create an authenticated client with JWT token for API testing
+     * Create an authenticated client with JWT token for API testing.
      */
     protected function createAuthenticatedClient(string $email = 'test@example.com', array $roles = ['ROLE_USER'])
     {
@@ -69,7 +69,7 @@ final class PromotionApiTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash'); // Dummy password (not used for JWT)
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -89,7 +89,7 @@ final class PromotionApiTest extends ApiTestCase
         ]);
 
         // Create authenticated client with token in headers (API Platform recommended way)
-        return static::createClient([], ['headers' => ['authorization' => 'Bearer ' . $token]]);
+        return static::createClient([], ['headers' => ['authorization' => 'Bearer '.$token]]);
     }
 
     // ==================== POST /api/promotions ====================
@@ -307,7 +307,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('GET', '/api/v1/promotions/' . $promotion->id()->toString(), [
+        $response = $client->request('GET', '/api/v1/promotions/'.$promotion->id()->toString(), [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
             ],
@@ -448,7 +448,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('PUT', '/api/v1/promotions/' . $promotion->id()->toString(), [
+        $response = $client->request('PUT', '/api/v1/promotions/'.$promotion->id()->toString(), [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -517,7 +517,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('PATCH', '/api/v1/promotions/' . $promotion->id()->toString() . '/activate', [
+        $response = $client->request('PATCH', '/api/v1/promotions/'.$promotion->id()->toString().'/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -551,7 +551,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $client->request('PATCH', '/api/v1/promotions/' . $promotion->id()->toString() . '/activate', [
+        $client->request('PATCH', '/api/v1/promotions/'.$promotion->id()->toString().'/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -584,7 +584,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $response = $client->request('PATCH', '/api/v1/promotions/' . $promotion->id()->toString() . '/deactivate', [
+        $response = $client->request('PATCH', '/api/v1/promotions/'.$promotion->id()->toString().'/deactivate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -616,7 +616,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client = $this->createAuthenticatedClient();
 
-        $client->request('PATCH', '/api/v1/promotions/' . $promotion->id()->toString() . '/deactivate', [
+        $client->request('PATCH', '/api/v1/promotions/'.$promotion->id()->toString().'/deactivate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -656,7 +656,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertFalse($createData['active']);
 
         // 2. Get promotion (verify creation)
-        $getResponse = $client->request('GET', '/api/v1/promotions/' . $promotionId, [
+        $getResponse = $client->request('GET', '/api/v1/promotions/'.$promotionId, [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
             ],
@@ -667,7 +667,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertSame('Lifecycle Test Promotion', $getData['name']);
 
         // 3. Activate promotion
-        $activateResponse = $client->request('PATCH', '/api/v1/promotions/' . $promotionId . '/activate', [
+        $activateResponse = $client->request('PATCH', '/api/v1/promotions/'.$promotionId.'/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -681,7 +681,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertTrue($activateData['active']);
 
         // 4. Update promotion
-        $updateResponse = $client->request('PUT', '/api/v1/promotions/' . $promotionId, [
+        $updateResponse = $client->request('PUT', '/api/v1/promotions/'.$promotionId, [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -703,7 +703,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertEquals(30.0, $updateData['discountValue']);
 
         // 5. Deactivate promotion
-        $deactivateResponse = $client->request('PATCH', '/api/v1/promotions/' . $promotionId . '/deactivate', [
+        $deactivateResponse = $client->request('PATCH', '/api/v1/promotions/'.$promotionId.'/deactivate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -717,7 +717,7 @@ final class PromotionApiTest extends ApiTestCase
         $this->assertFalse($deactivateData['active']);
 
         // 6. Final verification
-        $finalResponse = $client->request('GET', '/api/v1/promotions/' . $promotionId, [
+        $finalResponse = $client->request('GET', '/api/v1/promotions/'.$promotionId, [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
             ],
@@ -792,7 +792,7 @@ final class PromotionApiTest extends ApiTestCase
         $couponData = $couponResponse->toArray();
 
         // Activate all promotions
-        $client->request('PATCH', '/api/v1/promotions/' . $cartRuleData['id'] . '/activate', [
+        $client->request('PATCH', '/api/v1/promotions/'.$cartRuleData['id'].'/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -801,7 +801,7 @@ final class PromotionApiTest extends ApiTestCase
         ]);
         $this->assertResponseStatusCodeSame(200);
 
-        $client->request('PATCH', '/api/v1/promotions/' . $catalogRuleData['id'] . '/activate', [
+        $client->request('PATCH', '/api/v1/promotions/'.$catalogRuleData['id'].'/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -810,7 +810,7 @@ final class PromotionApiTest extends ApiTestCase
         ]);
         $this->assertResponseStatusCodeSame(200);
 
-        $client->request('PATCH', '/api/v1/promotions/' . $couponData['id'] . '/activate', [
+        $client->request('PATCH', '/api/v1/promotions/'.$couponData['id'].'/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'X-Tenant-ID' => $this->tenantId->toString(),

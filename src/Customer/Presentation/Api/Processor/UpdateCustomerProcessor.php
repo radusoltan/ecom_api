@@ -10,8 +10,6 @@ use App\Customer\Application\Command\UpdateCustomerCommand;
 use App\Customer\Application\DTO\CustomerDTO;
 use App\Customer\Application\Query\GetCustomerByIdQuery;
 use App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity;
-use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -29,19 +27,19 @@ final readonly class UpdateCustomerProcessor implements ProcessorInterface
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): CustomerEntity
     {
         if (!$data instanceof CustomerEntity) {
-            throw new InvalidArgumentException('Expected CustomerEntity');
+            throw new \InvalidArgumentException('Expected CustomerEntity');
         }
 
         // Get tenant ID from context (injected by TenantContextProcessor decorator)
         if (!isset($context['tenant_id'])) {
-            throw new RuntimeException('Tenant ID is required');
+            throw new \RuntimeException('Tenant ID is required');
         }
 
         $tenantId = $context['tenant_id'];
-        $customerId = $uriVariables['id'] ?? throw new InvalidArgumentException('Customer ID is required');
+        $customerId = $uriVariables['id'] ?? throw new \InvalidArgumentException('Customer ID is required');
 
         if (!$data->getFirstName() || !$data->getLastName()) {
-            throw new InvalidArgumentException('First name and last name are required');
+            throw new \InvalidArgumentException('First name and last name are required');
         }
 
         $command = new UpdateCustomerCommand(
@@ -59,13 +57,13 @@ final readonly class UpdateCustomerProcessor implements ProcessorInterface
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {
-            throw new RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for query');
         }
 
         $customerDTO = $handledStamp->getResult();
 
-        if ($customerDTO === null) {
-            throw new RuntimeException('Customer not found after update');
+        if (null === $customerDTO) {
+            throw new \RuntimeException('Customer not found after update');
         }
 
         // Convert DTO back to entity for API Platform
@@ -89,6 +87,7 @@ final readonly class UpdateCustomerProcessor implements ProcessorInterface
         $entity->setIsActive($dto->isActive);
         $entity->setCreatedAt(new \DateTimeImmutable($dto->createdAt));
         $entity->setUpdatedAt(new \DateTimeImmutable($dto->updatedAt));
+
         return $entity;
     }
 }

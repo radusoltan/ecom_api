@@ -25,13 +25,7 @@ final readonly class PromotionType
     private function __construct(private string $value)
     {
         if (!in_array($this->value, self::VALID_TYPES, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid PromotionType: "%s". Must be one of: %s',
-                    $this->value,
-                    implode(', ', self::VALID_TYPES)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid PromotionType: "%s". Must be one of: %s', $this->value, implode(', ', self::VALID_TYPES)));
         }
     }
 
@@ -67,16 +61,16 @@ final readonly class PromotionType
 
     public function isCartRule(): bool
     {
-        return $this->value === self::CART_RULE;
+        return self::CART_RULE === $this->value;
     }
 
     public function isCatalogRule(): bool
     {
-        return $this->value === self::CATALOG_RULE;
+        return self::CATALOG_RULE === $this->value;
     }
 
     public function isCoupon(): bool
     {
-        return $this->value === self::COUPON;
+        return self::COUPON === $this->value;
     }
 }

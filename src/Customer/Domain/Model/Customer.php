@@ -15,8 +15,6 @@ use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
-use InvalidArgumentException;
 
 /**
  * Customer Aggregate Root.
@@ -41,8 +39,8 @@ final class Customer extends AggregateRoot
     private CustomerSegment $segment;
     private int $loyaltyPoints;
     private bool $isActive;
-    private DateTimeImmutable $createdAt;
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $updatedAt;
 
     private function __construct()
     {
@@ -59,7 +57,7 @@ final class Customer extends AggregateRoot
         self::validateName($firstName, 'First name');
         self::validateName($lastName, 'Last name');
 
-        if ($phoneNumber !== null) {
+        if (null !== $phoneNumber) {
             self::validatePhoneNumber($phoneNumber);
         }
 
@@ -73,8 +71,8 @@ final class Customer extends AggregateRoot
         $customer->segment = CustomerSegment::regular();
         $customer->loyaltyPoints = 0;
         $customer->isActive = true; // Auto-activate on registration
-        $customer->createdAt = new DateTimeImmutable();
-        $customer->updatedAt = new DateTimeImmutable();
+        $customer->createdAt = new \DateTimeImmutable();
+        $customer->updatedAt = new \DateTimeImmutable();
 
         $customer->recordEvent(new CustomerCreated(
             $customer->id,
@@ -97,8 +95,8 @@ final class Customer extends AggregateRoot
         CustomerSegment $segment,
         int $loyaltyPoints,
         bool $isActive,
-        DateTimeImmutable $createdAt,
-        DateTimeImmutable $updatedAt
+        \DateTimeImmutable $createdAt,
+        \DateTimeImmutable $updatedAt
     ): self {
         $customer = new self();
         $customer->id = $id;
@@ -124,14 +122,14 @@ final class Customer extends AggregateRoot
         self::validateName($firstName, 'First name');
         self::validateName($lastName, 'Last name');
 
-        if ($phoneNumber !== null) {
+        if (null !== $phoneNumber) {
             self::validatePhoneNumber($phoneNumber);
         }
 
         $this->firstName = trim($firstName);
         $this->lastName = trim($lastName);
         $this->phoneNumber = $phoneNumber;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new CustomerUpdated(
             $this->id,
@@ -144,14 +142,12 @@ final class Customer extends AggregateRoot
     public function changeSegment(CustomerSegment $newSegment): void
     {
         if ($this->segment->equals($newSegment)) {
-            throw new InvalidArgumentException(
-                sprintf('Customer is already in segment: %s', $newSegment->value())
-            );
+            throw new \InvalidArgumentException(sprintf('Customer is already in segment: %s', $newSegment->value()));
         }
 
         $oldSegment = $this->segment;
         $this->segment = $newSegment;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new CustomerSegmentChanged(
             $this->id,
@@ -163,11 +159,11 @@ final class Customer extends AggregateRoot
     public function awardLoyaltyPoints(int $points, string $reason): void
     {
         if ($points <= 0) {
-            throw new InvalidArgumentException('Loyalty points to award must be greater than 0');
+            throw new \InvalidArgumentException('Loyalty points to award must be greater than 0');
         }
 
         $this->loyaltyPoints += $points;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new LoyaltyPointsAwarded(
             $this->id,
@@ -180,29 +176,25 @@ final class Customer extends AggregateRoot
     public function redeemLoyaltyPoints(int $points): void
     {
         if ($points <= 0) {
-            throw new InvalidArgumentException('Loyalty points to redeem must be greater than 0');
+            throw new \InvalidArgumentException('Loyalty points to redeem must be greater than 0');
         }
 
         if ($points > $this->loyaltyPoints) {
-            throw new InvalidArgumentException(
-                sprintf('Insufficient loyalty points. Available: %d, Requested: %d', $this->loyaltyPoints, $points)
-            );
+            throw new \InvalidArgumentException(sprintf('Insufficient loyalty points. Available: %d, Requested: %d', $this->loyaltyPoints, $points));
         }
 
         $this->loyaltyPoints -= $points;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function activate(): void
     {
         if ($this->isActive) {
-            throw new InvalidArgumentException(
-                sprintf('Customer "%s %s" is already active', $this->firstName, $this->lastName)
-            );
+            throw new \InvalidArgumentException(sprintf('Customer "%s %s" is already active', $this->firstName, $this->lastName));
         }
 
         $this->isActive = true;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new CustomerActivated($this->id));
     }
@@ -210,13 +202,11 @@ final class Customer extends AggregateRoot
     public function deactivate(): void
     {
         if (!$this->isActive) {
-            throw new InvalidArgumentException(
-                sprintf('Customer "%s %s" is already inactive', $this->firstName, $this->lastName)
-            );
+            throw new \InvalidArgumentException(sprintf('Customer "%s %s" is already inactive', $this->firstName, $this->lastName));
         }
 
         $this->isActive = false;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new CustomerDeactivated($this->id));
     }
@@ -232,9 +222,7 @@ final class Customer extends AggregateRoot
         $length = mb_strlen($trimmed);
 
         if ($length < 2 || $length > 50) {
-            throw new InvalidArgumentException(
-                sprintf('%s must be between 2 and 50 characters. Got: %d', $fieldName, $length)
-            );
+            throw new \InvalidArgumentException(sprintf('%s must be between 2 and 50 characters. Got: %d', $fieldName, $length));
         }
     }
 
@@ -242,9 +230,7 @@ final class Customer extends AggregateRoot
     {
         // E.164 format: +[country code][number] (max 15 digits)
         if (!preg_match('/^\+[1-9]\d{1,14}$/', $phoneNumber)) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid phone number format. Must be E.164 format (e.g., +1234567890): "%s"', $phoneNumber)
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid phone number format. Must be E.164 format (e.g., +1234567890): "%s"', $phoneNumber));
         }
     }
 
@@ -294,12 +280,12 @@ final class Customer extends AggregateRoot
         return $this->isActive;
     }
 
-    public function createdAt(): DateTimeImmutable
+    public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function updatedAt(): DateTimeImmutable
+    public function updatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

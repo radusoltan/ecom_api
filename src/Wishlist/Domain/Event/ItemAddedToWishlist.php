@@ -8,7 +8,7 @@ use App\Catalog\Domain\Model\ProductId;
 use App\Wishlist\Domain\ValueObject\WishlistId;
 
 /**
- * Domain event: Item was added to wishlist
+ * Domain event: Item was added to wishlist.
  */
 final readonly class ItemAddedToWishlist
 {
@@ -17,5 +17,6 @@ final readonly class ItemAddedToWishlist
         public ProductId $productId,
         public string $customerId,
         public \DateTimeImmutable $occurredAt
-    ) {}
+    ) {
+    }
 }

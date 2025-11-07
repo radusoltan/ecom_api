@@ -6,12 +6,11 @@ namespace App\Tests\Functional\Order\Api;
 
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Order\Domain\Model\OrderId;
-use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * End-to-End Order Workflow Test
+ * End-to-End Order Workflow Test.
  *
  * Tests the complete order lifecycle from placement to fulfillment:
  * 1. Place Order (POST /api/orders)
@@ -127,7 +126,7 @@ final class OrderWorkflowE2ETest extends WebTestCase
         $orderId = $this->placeOrder($client);
 
         // Cancel order
-        $client->request('PATCH', '/api/orders/' . $orderId . '/cancel', [], [], [
+        $client->request('PATCH', '/api/orders/'.$orderId.'/cancel', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -171,7 +170,7 @@ final class OrderWorkflowE2ETest extends WebTestCase
         $fulfillmentId = $this->createTestFulfillment($client, $orderId);
 
         // Try to ship without going through picking/packing
-        $client->request('PATCH', '/api/fulfillments/' . $fulfillmentId . '/ship', [], [], [
+        $client->request('PATCH', '/api/fulfillments/'.$fulfillmentId.'/ship', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -208,15 +207,15 @@ final class OrderWorkflowE2ETest extends WebTestCase
         $orderId = $this->placeOrder($client);
 
         // Try to access with different tenant ID
-        $client->request('GET', '/api/orders/' . $orderId, [], [], [
+        $client->request('GET', '/api/orders/'.$orderId, [], [], [
             'HTTP_X-Tenant-ID' => '00000000-0000-0000-0000-000000000000', // Different tenant
             'HTTP_ACCEPT' => 'application/json',
         ]);
 
         // Should return 404 or empty result (not found for this tenant)
         $this->assertTrue(
-            $client->getResponse()->getStatusCode() === Response::HTTP_NOT_FOUND ||
-            $client->getResponse()->getStatusCode() === Response::HTTP_INTERNAL_SERVER_ERROR
+            Response::HTTP_NOT_FOUND === $client->getResponse()->getStatusCode()
+            || Response::HTTP_INTERNAL_SERVER_ERROR === $client->getResponse()->getStatusCode()
         );
 
         $this->cleanupTestData();
@@ -255,7 +254,7 @@ final class OrderWorkflowE2ETest extends WebTestCase
 
     private function retrieveOrder($client, string $orderId): array
     {
-        $client->request('GET', '/api/orders/' . $orderId, [], [], [
+        $client->request('GET', '/api/orders/'.$orderId, [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
         ]);
@@ -267,7 +266,7 @@ final class OrderWorkflowE2ETest extends WebTestCase
 
     private function updateOrderStatus($client, string $orderId, string $newStatus): void
     {
-        $client->request('PATCH', '/api/orders/' . $orderId . '/status', [], [], [
+        $client->request('PATCH', '/api/orders/'.$orderId.'/status', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -302,7 +301,7 @@ final class OrderWorkflowE2ETest extends WebTestCase
 
     private function retrieveFulfillment($client, string $fulfillmentId): array
     {
-        $client->request('GET', '/api/fulfillments/' . $fulfillmentId, [], [], [
+        $client->request('GET', '/api/fulfillments/'.$fulfillmentId, [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
         ]);
@@ -314,7 +313,7 @@ final class OrderWorkflowE2ETest extends WebTestCase
 
     private function startPicking($client, string $fulfillmentId): void
     {
-        $client->request('PATCH', '/api/fulfillments/' . $fulfillmentId . '/start-picking', [], [], [
+        $client->request('PATCH', '/api/fulfillments/'.$fulfillmentId.'/start-picking', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -325,7 +324,7 @@ final class OrderWorkflowE2ETest extends WebTestCase
 
     private function startPacking($client, string $fulfillmentId): void
     {
-        $client->request('PATCH', '/api/fulfillments/' . $fulfillmentId . '/start-packing', [], [], [
+        $client->request('PATCH', '/api/fulfillments/'.$fulfillmentId.'/start-packing', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -336,7 +335,7 @@ final class OrderWorkflowE2ETest extends WebTestCase
 
     private function shipFulfillment($client, string $fulfillmentId, string $carrier, string $trackingNumber): void
     {
-        $client->request('PATCH', '/api/fulfillments/' . $fulfillmentId . '/ship', [], [], [
+        $client->request('PATCH', '/api/fulfillments/'.$fulfillmentId.'/ship', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -350,7 +349,7 @@ final class OrderWorkflowE2ETest extends WebTestCase
 
     private function markAsDelivered($client, string $fulfillmentId): void
     {
-        $client->request('PATCH', '/api/fulfillments/' . $fulfillmentId . '/deliver', [], [], [
+        $client->request('PATCH', '/api/fulfillments/'.$fulfillmentId.'/deliver', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -386,7 +385,7 @@ final class OrderWorkflowE2ETest extends WebTestCase
 
         // Validate status is one of allowed values
         $this->assertContains($data['status'], [
-            'pending', 'confirmed', 'processing', 'paid', 'shipped', 'delivered', 'cancelled'
+            'pending', 'confirmed', 'processing', 'paid', 'shipped', 'delivered', 'cancelled',
         ]);
 
         // Validate currency is ISO 4217 format

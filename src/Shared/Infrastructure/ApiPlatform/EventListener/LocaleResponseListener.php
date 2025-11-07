@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Locale Response Listener
+ * Locale Response Listener.
  *
  * Adds locale information to API responses via HTTP headers:
  * - X-Content-Language: Current locale used for response

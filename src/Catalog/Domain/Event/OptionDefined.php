@@ -11,7 +11,7 @@ use App\Catalog\Domain\ValueObject\OptionCode;
 use App\Shared\Domain\Event\DomainEvent;
 
 /**
- * Domain event: Option was defined for a configurable product
+ * Domain event: Option was defined for a configurable product.
  */
 final readonly class OptionDefined implements DomainEvent
 {
@@ -21,7 +21,8 @@ final readonly class OptionDefined implements DomainEvent
         private OptionCode $optionCode,
         private LocalizedString $nameTranslations,
         private \DateTimeImmutable $occurredOn = new \DateTimeImmutable()
-    ) {}
+    ) {
+    }
 
     public function getConfigurableProductId(): ConfigurableProductId
     {

@@ -17,5 +17,6 @@ final readonly class AdjustStockCommand
         public Quantity $newQuantity,
         public string $reason,
         public TenantId $tenantId,
-    ) {}
+    ) {
+    }
 }

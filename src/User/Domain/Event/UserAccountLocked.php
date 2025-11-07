@@ -6,14 +6,13 @@ namespace App\User\Domain\Event;
 
 use App\Shared\Domain\Event\DomainEvent;
 use App\User\Domain\ValueObject\UserId;
-use DateTimeImmutable;
 
 final readonly class UserAccountLocked implements DomainEvent
 {
     public function __construct(
         private UserId $userId,
         private string $reason,
-        private DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn
     ) {
     }
 
@@ -27,7 +26,7 @@ final readonly class UserAccountLocked implements DomainEvent
         return $this->reason;
     }
 
-    public function occurredOn(): DateTimeImmutable
+    public function occurredOn(): \DateTimeImmutable
     {
         return $this->occurredOn;
     }

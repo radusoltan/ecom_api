@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Pricing\Domain\Model;
 
 use App\Shared\Domain\ValueObject\Money;
-use InvalidArgumentException;
 
 /**
- * Value Object representing a discount (percentage or fixed amount)
+ * Value Object representing a discount (percentage or fixed amount).
  *
  * Business Rules:
  * - type: 'percentage' or 'fixed'
@@ -27,43 +26,34 @@ final readonly class Discount
         private ?Money $fixedAmount
     ) {
         if (!in_array($this->type, [self::TYPE_PERCENTAGE, self::TYPE_FIXED], true)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Invalid discount type "%s". Must be "%s" or "%s"',
-                    $this->type,
-                    self::TYPE_PERCENTAGE,
-                    self::TYPE_FIXED
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid discount type "%s". Must be "%s" or "%s"', $this->type, self::TYPE_PERCENTAGE, self::TYPE_FIXED));
         }
 
-        if ($this->type === self::TYPE_PERCENTAGE) {
-            if ($this->percentage === null) {
-                throw new InvalidArgumentException('Percentage discount requires a percentage value');
+        if (self::TYPE_PERCENTAGE === $this->type) {
+            if (null === $this->percentage) {
+                throw new \InvalidArgumentException('Percentage discount requires a percentage value');
             }
 
             if ($this->percentage < 0 || $this->percentage > 100) {
-                throw new InvalidArgumentException(
-                    sprintf('Discount percentage must be between 0 and 100, got %.2f', $this->percentage)
-                );
+                throw new \InvalidArgumentException(sprintf('Discount percentage must be between 0 and 100, got %.2f', $this->percentage));
             }
 
-            if ($this->fixedAmount !== null) {
-                throw new InvalidArgumentException('Percentage discount cannot have a fixed amount');
+            if (null !== $this->fixedAmount) {
+                throw new \InvalidArgumentException('Percentage discount cannot have a fixed amount');
             }
         }
 
-        if ($this->type === self::TYPE_FIXED) {
-            if ($this->fixedAmount === null) {
-                throw new InvalidArgumentException('Fixed discount requires a fixed amount');
+        if (self::TYPE_FIXED === $this->type) {
+            if (null === $this->fixedAmount) {
+                throw new \InvalidArgumentException('Fixed discount requires a fixed amount');
             }
 
             if ($this->fixedAmount->isNegative()) {
-                throw new InvalidArgumentException('Fixed discount amount cannot be negative');
+                throw new \InvalidArgumentException('Fixed discount amount cannot be negative');
             }
 
-            if ($this->percentage !== null) {
-                throw new InvalidArgumentException('Fixed discount cannot have a percentage');
+            if (null !== $this->percentage) {
+                throw new \InvalidArgumentException('Fixed discount cannot have a percentage');
             }
         }
     }
@@ -80,12 +70,12 @@ final readonly class Discount
 
     public function isPercentage(): bool
     {
-        return $this->type === self::TYPE_PERCENTAGE;
+        return self::TYPE_PERCENTAGE === $this->type;
     }
 
     public function isFixed(): bool
     {
-        return $this->type === self::TYPE_FIXED;
+        return self::TYPE_FIXED === $this->type;
     }
 
     public function getType(): string
@@ -104,7 +94,7 @@ final readonly class Discount
     }
 
     /**
-     * Calculate discount amount for a given price
+     * Calculate discount amount for a given price.
      */
     public function calculateDiscountAmount(Money $price): Money
     {
@@ -121,11 +111,12 @@ final readonly class Discount
     }
 
     /**
-     * Apply discount to a price and return final price
+     * Apply discount to a price and return final price.
      */
     public function apply(Money $price): Money
     {
         $discountAmount = $this->calculateDiscountAmount($price);
+
         return $price->subtract($discountAmount);
     }
 

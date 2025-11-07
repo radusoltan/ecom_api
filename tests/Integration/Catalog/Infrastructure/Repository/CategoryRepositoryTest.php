@@ -6,11 +6,10 @@ namespace App\Tests\Integration\Catalog\Infrastructure\Repository;
 
 use App\Catalog\Domain\Model\Category;
 use App\Catalog\Domain\Model\CategoryId;
+use App\Catalog\Domain\Model\CategoryName;
 use App\Catalog\Domain\Model\Slug;
 use App\Catalog\Domain\Repository\CategoryRepositoryInterface;
 use App\Shared\Domain\ValueObject\TenantId;
-use DAMA\DoctrineTestBundle\Doctrine\DBAL\StaticDriver;
-use App\Catalog\Domain\Model\CategoryName;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class CategoryRepositoryTest extends KernelTestCase
@@ -172,7 +171,7 @@ final class CategoryRepositoryTest extends KernelTestCase
 
         $this->assertGreaterThanOrEqual(2, count($children));
 
-        $childNames = array_map(fn($c) => $c->name()->value(), $children);
+        $childNames = array_map(fn ($c) => $c->name()->value(), $children);
         $this->assertContains('Child Category 1', $childNames);
         $this->assertContains('Child Category 2', $childNames);
     }
@@ -313,7 +312,7 @@ final class CategoryRepositoryTest extends KernelTestCase
 
         $rootCategories = $this->repository->findByParent($tenantId, null);
 
-        $rootNames = array_map(fn($c) => $c->name()->value(), $rootCategories);
+        $rootNames = array_map(fn ($c) => $c->name()->value(), $rootCategories);
 
         $this->assertContains('Root Category 1', $rootNames);
         $this->assertContains('Root Category 2', $rootNames);
@@ -406,8 +405,8 @@ final class CategoryRepositoryTest extends KernelTestCase
         $tenant1Categories = $this->repository->findByTenant($tenant1Id);
         $tenant2Categories = $this->repository->findByTenant($tenant2Id);
 
-        $tenant1Names = array_map(fn($c) => $c->name()->value(), $tenant1Categories);
-        $tenant2Names = array_map(fn($c) => $c->name()->value(), $tenant2Categories);
+        $tenant1Names = array_map(fn ($c) => $c->name()->value(), $tenant1Categories);
+        $tenant2Names = array_map(fn ($c) => $c->name()->value(), $tenant2Categories);
 
         $this->assertContains('Tenant 1 Category', $tenant1Names);
         $this->assertNotContains('Tenant 2 Category', $tenant1Names);
@@ -452,11 +451,11 @@ final class CategoryRepositoryTest extends KernelTestCase
 
         $categories = $this->repository->findByTenant($tenantId);
 
-        usort($categories, fn($a, $b) => $a->position() <=> $b->position());
+        usort($categories, fn ($a, $b) => $a->position() <=> $b->position());
 
-        $positions = array_map(fn($c) => $c->position(), $categories);
+        $positions = array_map(fn ($c) => $c->position(), $categories);
 
-        for ($i = 0; $i < count($positions) - 1; $i++) {
+        for ($i = 0; $i < count($positions) - 1; ++$i) {
             $this->assertLessThanOrEqual($positions[$i + 1], $positions[$i]);
         }
     }

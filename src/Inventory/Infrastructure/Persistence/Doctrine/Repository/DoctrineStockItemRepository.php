@@ -92,7 +92,7 @@ final class DoctrineStockItemRepository extends ServiceEntityRepository implemen
 
         $entities = $qb->getQuery()->getResult();
 
-        return array_map(fn($entity) => $entity->toDomainModel(), $entities);
+        return array_map(fn ($entity) => $entity->toDomainModel(), $entities);
     }
 
     public function findByWarehouse(WarehouseId $warehouseId, TenantId $tenantId): array
@@ -105,7 +105,7 @@ final class DoctrineStockItemRepository extends ServiceEntityRepository implemen
 
         $entities = $qb->getQuery()->getResult();
 
-        return array_map(fn($entity) => $entity->toDomainModel(), $entities);
+        return array_map(fn ($entity) => $entity->toDomainModel(), $entities);
     }
 
     public function findLowStockItems(TenantId $tenantId): array
@@ -117,7 +117,7 @@ final class DoctrineStockItemRepository extends ServiceEntityRepository implemen
 
         $entities = $qb->getQuery()->getResult();
 
-        return array_map(fn($entity) => $entity->toDomainModel(), $entities);
+        return array_map(fn ($entity) => $entity->toDomainModel(), $entities);
     }
 
     public function findByTenant(TenantId $tenantId): array
@@ -128,7 +128,7 @@ final class DoctrineStockItemRepository extends ServiceEntityRepository implemen
 
         $entities = $qb->getQuery()->getResult();
 
-        return array_map(fn($entity) => $entity->toDomainModel(), $entities);
+        return array_map(fn ($entity) => $entity->toDomainModel(), $entities);
     }
 
     public function delete(StockItem $stockItem): void
@@ -139,7 +139,7 @@ final class DoctrineStockItemRepository extends ServiceEntityRepository implemen
 
         $entity = $qb->getQuery()->getOneOrNullResult();
 
-        if ($entity !== null) {
+        if (null !== $entity) {
             $this->getEntityManager()->remove($entity);
             $this->getEntityManager()->flush();
         }

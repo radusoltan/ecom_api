@@ -19,7 +19,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->parser = new JSONTranslationParser();
     }
 
-    public function testParseString_ValidJSON_ReturnsArray(): void
+    public function testParseStringValidJSONReturnsArray(): void
     {
         $json = json_encode([
             ['locale' => 'en', 'domain' => 'messages', 'key' => 'hello', 'value' => 'Hello'],
@@ -37,7 +37,7 @@ final class JSONTranslationParserTest extends TestCase
         ], $result);
     }
 
-    public function testParseString_InvalidJSON_ThrowsException(): void
+    public function testParseStringInvalidJSONThrowsException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessageMatches('/Invalid JSON/');
@@ -45,7 +45,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->parser->parseString('not valid json');
     }
 
-    public function testParseString_NotArray_ThrowsException(): void
+    public function testParseStringNotArrayThrowsException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessageMatches('/JSON must be an array|Item at index/');
@@ -53,7 +53,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->parser->parseString('{"locale": "en"}');
     }
 
-    public function testParseString_ItemNotObject_ThrowsException(): void
+    public function testParseStringItemNotObjectThrowsException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Item at index 0 is not an object');
@@ -61,7 +61,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->parser->parseString('["string"]');
     }
 
-    public function testParseString_MissingLocale_ThrowsException(): void
+    public function testParseStringMissingLocaleThrowsException(): void
     {
         $json = json_encode([
             ['domain' => 'messages', 'key' => 'hello', 'value' => 'Hello'],
@@ -73,7 +73,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->parser->parseString($json);
     }
 
-    public function testParseString_MissingDomain_ThrowsException(): void
+    public function testParseStringMissingDomainThrowsException(): void
     {
         $json = json_encode([
             ['locale' => 'en', 'key' => 'hello', 'value' => 'Hello'],
@@ -85,7 +85,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->parser->parseString($json);
     }
 
-    public function testParseString_MissingKey_ThrowsException(): void
+    public function testParseStringMissingKeyThrowsException(): void
     {
         $json = json_encode([
             ['locale' => 'en', 'domain' => 'messages', 'value' => 'Hello'],
@@ -97,7 +97,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->parser->parseString($json);
     }
 
-    public function testParseString_MissingValue_ThrowsException(): void
+    public function testParseStringMissingValueThrowsException(): void
     {
         $json = json_encode([
             ['locale' => 'en', 'domain' => 'messages', 'key' => 'hello'],
@@ -109,7 +109,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->parser->parseString($json);
     }
 
-    public function testParseString_FieldNotString_ThrowsException(): void
+    public function testParseStringFieldNotStringThrowsException(): void
     {
         $json = json_encode([
             ['locale' => 123, 'domain' => 'messages', 'key' => 'hello', 'value' => 'Hello'],
@@ -121,7 +121,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->parser->parseString($json);
     }
 
-    public function testParseString_EmptyArray_ThrowsException(): void
+    public function testParseStringEmptyArrayThrowsException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('No translations found in JSON file');
@@ -129,7 +129,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->parser->parseString('[]');
     }
 
-    public function testGenerateJSON_ValidData_ReturnsJSONString(): void
+    public function testGenerateJSONValidDataReturnsJSONString(): void
     {
         $data = [
             ['locale' => 'en', 'domain' => 'messages', 'key' => 'hello', 'value' => 'Hello'],
@@ -143,7 +143,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->assertEquals($data, $decoded);
     }
 
-    public function testGenerateJSON_PrettyPrint_FormatsWithIndentation(): void
+    public function testGenerateJSONPrettyPrintFormatsWithIndentation(): void
     {
         $data = [
             ['locale' => 'en', 'domain' => 'messages', 'key' => 'hello', 'value' => 'Hello'],
@@ -155,7 +155,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->assertStringContainsString('    ', $result); // Indentation
     }
 
-    public function testGenerateJSON_PreservesUnicode(): void
+    public function testGenerateJSONPreservesUnicode(): void
     {
         $data = [
             ['locale' => 'ro', 'domain' => 'messages', 'key' => 'hello', 'value' => 'Bună ziua'],
@@ -167,7 +167,7 @@ final class JSONTranslationParserTest extends TestCase
         $this->assertStringNotContainsString('\\u', $result); // Not escaped
     }
 
-    public function testRoundTrip_ParseAndGenerate_PreservesData(): void
+    public function testRoundTripParseAndGeneratePreservesData(): void
     {
         $original = [
             ['locale' => 'en', 'domain' => 'messages', 'key' => 'hello', 'value' => 'Hello'],

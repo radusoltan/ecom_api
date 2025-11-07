@@ -52,7 +52,7 @@ final readonly class AwardLoyaltyPointsProcessor implements ProcessorInterface
             \App\Shared\Domain\ValueObject\TenantId::fromString($tenantId)
         );
 
-        if ($customer === null) {
+        if (null === $customer) {
             throw new \RuntimeException(sprintf('Customer with ID "%s" not found', $customerId));
         }
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Returns\Application\Command;
 
 /**
- * Command: MarkReturnAsReceived
+ * Command: MarkReturnAsReceived.
  *
  * Warehouse marks a returned item as received.
  */

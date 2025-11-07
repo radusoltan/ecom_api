@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tenant\Infrastructure\Persistence\Doctrine\Type;
 
-use InvalidArgumentException;
-use App\Tenant\Domain\ValueObject\TenantId;
+use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
@@ -31,7 +30,7 @@ final class TenantIdType extends Type
 
         try {
             return TenantId::fromString((string) $value);
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             throw ConversionException::conversionFailedFormat($value, $this->getName(), 'UUID v4 string', $e);
         }
     }

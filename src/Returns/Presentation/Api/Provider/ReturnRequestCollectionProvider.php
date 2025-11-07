@@ -46,7 +46,7 @@ final class ReturnRequestCollectionProvider implements ProviderInterface
         }
 
         return array_map(
-            fn($dto) => ReturnRequestResourceTransformer::fromDTO($dto),
+            fn ($dto) => ReturnRequestResourceTransformer::fromDTO($dto),
             $dtos
         );
     }

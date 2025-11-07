@@ -31,7 +31,7 @@ final readonly class RefundPaymentProcessor implements ProcessorInterface
             throw new \RuntimeException('Refund amount must be greater than 0');
         }
 
-        if ($errorMessage === null || $errorMessage === '') {
+        if (null === $errorMessage || '' === $errorMessage) {
             throw new \RuntimeException('Refund reason is required');
         }
 

@@ -14,13 +14,14 @@ final readonly class CreateProductHandler
 {
     public function __construct(
         private ProductRepositoryInterface $productRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(CreateProduct $command): void
     {
         // Business rule: Check if SKU already exists
         $existing = $this->productRepository->findBySKU($command->tenantId, $command->sku);
-        if ($existing !== null) {
+        if (null !== $existing) {
             throw new \DomainException('Product with this SKU already exists');
         }
 

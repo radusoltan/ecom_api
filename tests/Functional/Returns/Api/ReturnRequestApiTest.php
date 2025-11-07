@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Functional Tests for Return Request API Endpoints
+ * Functional Tests for Return Request API Endpoints.
  *
  * Tests all Returns/RMA API endpoints:
  * 1. GET /api/v1/return-requests - Get all return requests
@@ -45,7 +45,7 @@ final class ReturnRequestApiTest extends WebTestCase
     }
 
     /**
-     * Test complete return request workflow from creation to completion
+     * Test complete return request workflow from creation to completion.
      */
     public function testCompleteReturnRequestWorkflowE2E(): void
     {
@@ -86,7 +86,7 @@ final class ReturnRequestApiTest extends WebTestCase
     }
 
     /**
-     * Test rejection workflow
+     * Test rejection workflow.
      */
     public function testReturnRequestRejectionWorkflow(): void
     {
@@ -97,7 +97,7 @@ final class ReturnRequestApiTest extends WebTestCase
         $returnRequestId = $this->createReturnRequest($client);
 
         // Reject return request
-        $client->request('PATCH', '/api/v1/return-requests/' . $returnRequestId . '/reject', [], [], [
+        $client->request('PATCH', '/api/v1/return-requests/'.$returnRequestId.'/reject', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -114,7 +114,7 @@ final class ReturnRequestApiTest extends WebTestCase
     }
 
     /**
-     * Test failed inspection workflow
+     * Test failed inspection workflow.
      */
     public function testReturnRequestFailedInspectionWorkflow(): void
     {
@@ -135,7 +135,7 @@ final class ReturnRequestApiTest extends WebTestCase
     }
 
     /**
-     * Test getting all return requests
+     * Test getting all return requests.
      */
     public function testGetAllReturnRequests(): void
     {
@@ -167,7 +167,7 @@ final class ReturnRequestApiTest extends WebTestCase
     }
 
     /**
-     * Test getting return requests by order ID
+     * Test getting return requests by order ID.
      */
     public function testGetReturnRequestsByOrderId(): void
     {
@@ -178,7 +178,7 @@ final class ReturnRequestApiTest extends WebTestCase
         $returnId = $this->createReturnRequest($client);
 
         // Get return requests by order ID
-        $client->request('GET', '/api/v1/return-requests?orderId=' . self::TEST_ORDER_ID, [], [], [
+        $client->request('GET', '/api/v1/return-requests?orderId='.self::TEST_ORDER_ID, [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
         ]);
@@ -196,7 +196,7 @@ final class ReturnRequestApiTest extends WebTestCase
     }
 
     /**
-     * Test validation errors
+     * Test validation errors.
      */
     public function testCreateReturnRequestValidationErrors(): void
     {
@@ -218,7 +218,7 @@ final class ReturnRequestApiTest extends WebTestCase
     }
 
     /**
-     * Test invalid reason
+     * Test invalid reason.
      */
     public function testCreateReturnRequestInvalidReason(): void
     {
@@ -237,7 +237,7 @@ final class ReturnRequestApiTest extends WebTestCase
     }
 
     /**
-     * Test tenant isolation
+     * Test tenant isolation.
      */
     public function testTenantIsolation(): void
     {
@@ -248,20 +248,20 @@ final class ReturnRequestApiTest extends WebTestCase
         $returnId = $this->createReturnRequest($client);
 
         // Try to access with different tenant ID
-        $client->request('GET', '/api/v1/return-requests/' . $returnId, [], [], [
+        $client->request('GET', '/api/v1/return-requests/'.$returnId, [], [], [
             'HTTP_X-Tenant-ID' => '00000000-0000-0000-0000-000000000000', // Different tenant
             'HTTP_ACCEPT' => 'application/json',
         ]);
 
         // Should return 404 or empty result (not found for this tenant)
         $this->assertTrue(
-            $client->getResponse()->getStatusCode() === Response::HTTP_NOT_FOUND ||
-            $client->getResponse()->getStatusCode() === Response::HTTP_INTERNAL_SERVER_ERROR
+            Response::HTTP_NOT_FOUND === $client->getResponse()->getStatusCode()
+            || Response::HTTP_INTERNAL_SERVER_ERROR === $client->getResponse()->getStatusCode()
         );
     }
 
     /**
-     * Test content type negotiation
+     * Test content type negotiation.
      */
     public function testContentTypeNegotiation(): void
     {
@@ -298,7 +298,7 @@ final class ReturnRequestApiTest extends WebTestCase
 
     private function getReturnRequest($client, string $returnRequestId): array
     {
-        $client->request('GET', '/api/v1/return-requests/' . $returnRequestId, [], [], [
+        $client->request('GET', '/api/v1/return-requests/'.$returnRequestId, [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
         ]);
@@ -310,7 +310,7 @@ final class ReturnRequestApiTest extends WebTestCase
 
     private function approveReturnRequest($client, string $returnRequestId): void
     {
-        $client->request('PATCH', '/api/v1/return-requests/' . $returnRequestId . '/approve', [], [], [
+        $client->request('PATCH', '/api/v1/return-requests/'.$returnRequestId.'/approve', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -321,7 +321,7 @@ final class ReturnRequestApiTest extends WebTestCase
 
     private function markReturnAsReceived($client, string $returnRequestId): void
     {
-        $client->request('PATCH', '/api/v1/return-requests/' . $returnRequestId . '/receive', [], [], [
+        $client->request('PATCH', '/api/v1/return-requests/'.$returnRequestId.'/receive', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -332,7 +332,7 @@ final class ReturnRequestApiTest extends WebTestCase
 
     private function inspectReturnRequest($client, string $returnRequestId, bool $isResellable, string $notes = ''): void
     {
-        $client->request('PATCH', '/api/v1/return-requests/' . $returnRequestId . '/inspect', [], [], [
+        $client->request('PATCH', '/api/v1/return-requests/'.$returnRequestId.'/inspect', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -346,7 +346,7 @@ final class ReturnRequestApiTest extends WebTestCase
 
     private function completeReturnRequest($client, string $returnRequestId): void
     {
-        $client->request('PATCH', '/api/v1/return-requests/' . $returnRequestId . '/complete', [], [], [
+        $client->request('PATCH', '/api/v1/return-requests/'.$returnRequestId.'/complete', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -385,7 +385,7 @@ final class ReturnRequestApiTest extends WebTestCase
     // Additional Edge Case Tests (Week 5, Day 11)
 
     /**
-     * Test invalid state transition
+     * Test invalid state transition.
      */
     public function testCannotApproveAlreadyApprovedReturn(): void
     {
@@ -396,7 +396,7 @@ final class ReturnRequestApiTest extends WebTestCase
         $this->approveReturnRequest($client, $returnId);
 
         // Try to approve again
-        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/approve', [], [], [
+        $client->request('PATCH', '/api/v1/return-requests/'.$returnId.'/approve', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -404,13 +404,13 @@ final class ReturnRequestApiTest extends WebTestCase
 
         // Should return error (400 or 422)
         $this->assertTrue(
-            $client->getResponse()->getStatusCode() === 400 ||
-            $client->getResponse()->getStatusCode() === 422
+            400 === $client->getResponse()->getStatusCode()
+            || 422 === $client->getResponse()->getStatusCode()
         );
     }
 
     /**
-     * Test marking as received without approval
+     * Test marking as received without approval.
      */
     public function testCannotMarkAsReceivedWithoutApproval(): void
     {
@@ -420,20 +420,20 @@ final class ReturnRequestApiTest extends WebTestCase
         $returnId = $this->createReturnRequest($client);
 
         // Try to mark as received without approval
-        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/receive', [], [], [
+        $client->request('PATCH', '/api/v1/return-requests/'.$returnId.'/receive', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
         ]);
 
         $this->assertTrue(
-            $client->getResponse()->getStatusCode() === 400 ||
-            $client->getResponse()->getStatusCode() === 422
+            400 === $client->getResponse()->getStatusCode()
+            || 422 === $client->getResponse()->getStatusCode()
         );
     }
 
     /**
-     * Test inspecting without receiving
+     * Test inspecting without receiving.
      */
     public function testCannotInspectWithoutReceiving(): void
     {
@@ -444,7 +444,7 @@ final class ReturnRequestApiTest extends WebTestCase
         $this->approveReturnRequest($client, $returnId);
 
         // Try to inspect without marking as received
-        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/inspect', [], [], [
+        $client->request('PATCH', '/api/v1/return-requests/'.$returnId.'/inspect', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -454,13 +454,13 @@ final class ReturnRequestApiTest extends WebTestCase
         ]));
 
         $this->assertTrue(
-            $client->getResponse()->getStatusCode() === 400 ||
-            $client->getResponse()->getStatusCode() === 422
+            400 === $client->getResponse()->getStatusCode()
+            || 422 === $client->getResponse()->getStatusCode()
         );
     }
 
     /**
-     * Test completing without inspection
+     * Test completing without inspection.
      */
     public function testCannotCompleteWithoutInspection(): void
     {
@@ -472,7 +472,7 @@ final class ReturnRequestApiTest extends WebTestCase
         $this->markReturnAsReceived($client, $returnId);
 
         // Try to complete without inspection
-        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/complete', [], [], [
+        $client->request('PATCH', '/api/v1/return-requests/'.$returnId.'/complete', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -482,13 +482,13 @@ final class ReturnRequestApiTest extends WebTestCase
         ]));
 
         $this->assertTrue(
-            $client->getResponse()->getStatusCode() === 400 ||
-            $client->getResponse()->getStatusCode() === 422
+            400 === $client->getResponse()->getStatusCode()
+            || 422 === $client->getResponse()->getStatusCode()
         );
     }
 
     /**
-     * Test rejecting after completion
+     * Test rejecting after completion.
      */
     public function testCannotRejectAfterCompletion(): void
     {
@@ -502,7 +502,7 @@ final class ReturnRequestApiTest extends WebTestCase
         $this->completeReturnRequest($client, $returnId);
 
         // Try to reject after completion
-        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/reject', [], [], [
+        $client->request('PATCH', '/api/v1/return-requests/'.$returnId.'/reject', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -511,13 +511,13 @@ final class ReturnRequestApiTest extends WebTestCase
         ]));
 
         $this->assertTrue(
-            $client->getResponse()->getStatusCode() === 400 ||
-            $client->getResponse()->getStatusCode() === 422
+            400 === $client->getResponse()->getStatusCode()
+            || 422 === $client->getResponse()->getStatusCode()
         );
     }
 
     /**
-     * Test creating return with missing tenant header
+     * Test creating return with missing tenant header.
      */
     public function testCreateReturnRequestWithoutTenantHeader(): void
     {
@@ -533,14 +533,14 @@ final class ReturnRequestApiTest extends WebTestCase
 
         // Should return 400 or 403 (missing required header)
         $this->assertTrue(
-            $client->getResponse()->getStatusCode() === 400 ||
-            $client->getResponse()->getStatusCode() === 403 ||
-            $client->getResponse()->getStatusCode() === 500
+            400 === $client->getResponse()->getStatusCode()
+            || 403 === $client->getResponse()->getStatusCode()
+            || 500 === $client->getResponse()->getStatusCode()
         );
     }
 
     /**
-     * Test inspection with missing notes
+     * Test inspection with missing notes.
      */
     public function testInspectReturnWithoutNotes(): void
     {
@@ -551,7 +551,7 @@ final class ReturnRequestApiTest extends WebTestCase
         $this->approveReturnRequest($client, $returnId);
         $this->markReturnAsReceived($client, $returnId);
 
-        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/inspect', [], [], [
+        $client->request('PATCH', '/api/v1/return-requests/'.$returnId.'/inspect', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -564,7 +564,7 @@ final class ReturnRequestApiTest extends WebTestCase
     }
 
     /**
-     * Test creating return with very long reason
+     * Test creating return with very long reason.
      */
     public function testCreateReturnWithVeryLongReason(): void
     {
@@ -585,13 +585,13 @@ final class ReturnRequestApiTest extends WebTestCase
 
         // Should accept long reasons (up to max length)
         $this->assertTrue(
-            $client->getResponse()->isSuccessful() ||
-            $client->getResponse()->getStatusCode() === 400
+            $client->getResponse()->isSuccessful()
+            || 400 === $client->getResponse()->getStatusCode()
         );
     }
 
     /**
-     * Test completing with different currencies
+     * Test completing with different currencies.
      */
     public function testCompleteReturnWithDifferentCurrencies(): void
     {
@@ -604,7 +604,7 @@ final class ReturnRequestApiTest extends WebTestCase
         $this->inspectReturnRequest($client, $returnId, true);
 
         // Complete with EUR instead of USD
-        $client->request('PATCH', '/api/v1/return-requests/' . $returnId . '/complete', [], [], [
+        $client->request('PATCH', '/api/v1/return-requests/'.$returnId.'/complete', [], [], [
             'HTTP_X-Tenant-ID' => self::TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/json',
@@ -619,7 +619,7 @@ final class ReturnRequestApiTest extends WebTestCase
     }
 
     /**
-     * Test pagination and filtering
+     * Test pagination and filtering.
      */
     public function testGetReturnRequestsWithPagination(): void
     {
@@ -627,7 +627,7 @@ final class ReturnRequestApiTest extends WebTestCase
         $this->cleanupTestData($client);
 
         // Create 15 return requests
-        for ($i = 0; $i < 15; $i++) {
+        for ($i = 0; $i < 15; ++$i) {
             $this->createReturnRequest($client);
         }
 

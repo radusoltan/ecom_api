@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Handler for DefineOption command
+ * Handler for DefineOption command.
  */
 #[AsMessageHandler]
 final readonly class DefineOptionHandler
@@ -27,7 +27,8 @@ final readonly class DefineOptionHandler
     public function __construct(
         private ConfigurableProductRepositoryInterface $configurableProductRepository,
         private MessageBusInterface $eventBus
-    ) {}
+    ) {
+    }
 
     public function __invoke(DefineOption $command): void
     {

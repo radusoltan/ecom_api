@@ -41,7 +41,7 @@ final class BulkReserveStockProcessor implements ProcessorInterface
 
         // Convert API resource items to command items
         $commandItems = array_map(
-            fn($item) => new BulkReserveStockItem(
+            fn ($item) => new BulkReserveStockItem(
                 ProductId::fromString($item->productId),
                 WarehouseId::fromString($item->warehouseId),
                 Quantity::fromInt($item->quantity)
@@ -70,7 +70,7 @@ final class BulkReserveStockProcessor implements ProcessorInterface
         // Convert result items to API resource
         $resultItems = array_merge(
             array_map(
-                fn($item) => new BulkStockOperationResultItem(
+                fn ($item) => new BulkStockOperationResultItem(
                     productId: $item->productId,
                     warehouseId: $item->warehouseId,
                     quantity: $item->quantity,
@@ -81,7 +81,7 @@ final class BulkReserveStockProcessor implements ProcessorInterface
                 $result->reservedItems
             ),
             array_map(
-                fn($item) => new BulkStockOperationResultItem(
+                fn ($item) => new BulkStockOperationResultItem(
                     productId: $item->productId,
                     warehouseId: $item->warehouseId,
                     quantity: $item->quantity,

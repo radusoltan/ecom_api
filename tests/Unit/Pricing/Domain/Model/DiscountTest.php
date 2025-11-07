@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Pricing\Domain\Model;
 
 use App\Pricing\Domain\Model\Discount;
 use App\Shared\Domain\ValueObject\Money;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class DiscountTest extends TestCase
@@ -34,7 +33,7 @@ final class DiscountTest extends TestCase
 
     public function testPercentageThrowsExceptionForNegativeValue(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Discount percentage must be between 0 and 100');
 
         Discount::percentage(-5.0);
@@ -42,7 +41,7 @@ final class DiscountTest extends TestCase
 
     public function testPercentageThrowsExceptionForValueOverHundred(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Discount percentage must be between 0 and 100');
 
         Discount::percentage(101.0);
@@ -136,7 +135,7 @@ final class DiscountTest extends TestCase
         $this->assertSame('fixed', $array['type']);
         $this->assertNull($array['percentage']);
         $this->assertIsArray($array['fixed_amount']);
-        $this->assertSame(2500, (int)$array['fixed_amount']['amount']);
+        $this->assertSame(2500, (int) $array['fixed_amount']['amount']);
         $this->assertSame('USD', $array['fixed_amount']['currency']);
     }
 

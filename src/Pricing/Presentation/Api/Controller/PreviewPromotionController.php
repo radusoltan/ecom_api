@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * Preview Promotion API Controller
+ * Preview Promotion API Controller.
  *
  * Provides endpoint for previewing how promotions will be applied to a cart
  * before actual order placement. Used for admin UI to test promotions.
@@ -34,7 +34,7 @@ final readonly class PreviewPromotionController
         try {
             // Get tenant ID from header
             $tenantIdString = $request->headers->get('X-Tenant-ID');
-            if ($tenantIdString === null) {
+            if (null === $tenantIdString) {
                 return new JsonResponse([
                     'success' => false,
                     'message' => 'Tenant ID is required',
@@ -45,7 +45,7 @@ final readonly class PreviewPromotionController
 
             // Parse request body
             $data = json_decode($request->getContent(), true);
-            if ($data === null) {
+            if (null === $data) {
                 return new JsonResponse([
                     'success' => false,
                     'message' => 'Invalid JSON',
@@ -58,7 +58,7 @@ final readonly class PreviewPromotionController
             $couponCode = $data['couponCode'] ?? null;
             $productIds = $data['productIds'] ?? [];
 
-            if ($subtotal === null) {
+            if (null === $subtotal) {
                 return new JsonResponse([
                     'success' => false,
                     'message' => 'Subtotal is required',
@@ -72,7 +72,7 @@ final readonly class PreviewPromotionController
             $result = $this->promotionService->applyPromotions(
                 $tenantId,
                 $subtotalMoney,
-                $couponCode !== null ? strtoupper($couponCode) : null,
+                null !== $couponCode ? strtoupper($couponCode) : null,
                 $productIds
             );
 
@@ -85,7 +85,7 @@ final readonly class PreviewPromotionController
                 'success' => true,
                 'preview' => [
                     'originalSubtotal' => $subtotalMoney->getAmount(),
-                    'totalDiscount' => $discount !== null ? $discount->getAmount() : 0,
+                    'totalDiscount' => null !== $discount ? $discount->getAmount() : 0,
                     'finalPrice' => $finalPrice->getAmount(),
                     'currency' => $currency,
                     'appliedPromotions' => array_map(function ($promotion) {
@@ -99,7 +99,7 @@ final readonly class PreviewPromotionController
                     }, $appliedPromotions),
                     'promotionsCount' => count($appliedPromotions),
                     'savingsPercentage' => $subtotalMoney->getAmount() > 0
-                        ? round(($discount !== null ? $discount->getAmount() : 0) / $subtotalMoney->getAmount() * 100, 2)
+                        ? round((null !== $discount ? $discount->getAmount() : 0) / $subtotalMoney->getAmount() * 100, 2)
                         : 0,
                 ],
                 'message' => count($appliedPromotions) > 0

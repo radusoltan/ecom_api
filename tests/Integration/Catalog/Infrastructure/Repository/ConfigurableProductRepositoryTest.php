@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Catalog\Infrastructure\Repository;
 
 // Load files that contain multiple classes
-require_once __DIR__ . '/../../../../../src/Catalog/Domain/Model/ConfigurableProduct.php';
-require_once __DIR__ . '/../../../../../src/Catalog/Domain/Model/Option.php';
-require_once __DIR__ . '/../../../../../src/Catalog/Domain/Model/Variant.php';
+require_once __DIR__.'/../../../../../src/Catalog/Domain/Model/ConfigurableProduct.php';
+require_once __DIR__.'/../../../../../src/Catalog/Domain/Model/Option.php';
+require_once __DIR__.'/../../../../../src/Catalog/Domain/Model/Variant.php';
 
 use App\Catalog\Domain\Model\ConfigurableProduct;
 use App\Catalog\Domain\Model\ConfigurableProductId;
@@ -26,7 +26,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
- * Integration tests for ConfigurableProduct repository
+ * Integration tests for ConfigurableProduct repository.
  */
 final class ConfigurableProductRepositoryTest extends KernelTestCase
 {
@@ -66,7 +66,7 @@ final class ConfigurableProductRepositoryTest extends KernelTestCase
     }
 
     /**
-     * Test that we can save and retrieve a configurable product with options and variants
+     * Test that we can save and retrieve a configurable product with options and variants.
      */
     public function testSaveAndRetrieveWithOptionsAndVariants(): void
     {
@@ -167,7 +167,7 @@ final class ConfigurableProductRepositoryTest extends KernelTestCase
     }
 
     /**
-     * Test that we can find a configurable product by its product ID
+     * Test that we can find a configurable product by its product ID.
      */
     public function testFindByProductId(): void
     {

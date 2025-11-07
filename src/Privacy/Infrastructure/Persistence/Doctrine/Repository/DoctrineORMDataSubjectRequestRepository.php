@@ -12,7 +12,6 @@ use App\Privacy\Domain\ValueObject\RequestStatus;
 use App\Privacy\Domain\ValueObject\RequestType;
 use App\Privacy\Infrastructure\Persistence\Doctrine\Entity\DataSubjectRequestEntity;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -36,7 +35,7 @@ final class DoctrineORMDataSubjectRequestRepository extends ServiceEntityReposit
         // Find existing entity or create new one
         $entity = $entityManager->find(DataSubjectRequestEntity::class, $request->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             $entity = DataSubjectRequestEntity::fromDomainModel($request);
             $entityManager->persist($entity);
         } else {
@@ -68,7 +67,7 @@ final class DoctrineORMDataSubjectRequestRepository extends ServiceEntityReposit
             ->getResult();
 
         return array_map(
-            fn(DataSubjectRequestEntity $entity) => $entity->toDomainModel(),
+            fn (DataSubjectRequestEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -83,7 +82,7 @@ final class DoctrineORMDataSubjectRequestRepository extends ServiceEntityReposit
             ->getResult();
 
         return array_map(
-            fn(DataSubjectRequestEntity $entity) => $entity->toDomainModel(),
+            fn (DataSubjectRequestEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -94,7 +93,7 @@ final class DoctrineORMDataSubjectRequestRepository extends ServiceEntityReposit
             ->where('dsr.status = :status')
             ->setParameter('status', $status->value());
 
-        if ($tenantId !== null) {
+        if (null !== $tenantId) {
             $qb->andWhere('dsr.tenantId = :tenantId')
                 ->setParameter('tenantId', $tenantId->toString());
         }
@@ -104,7 +103,7 @@ final class DoctrineORMDataSubjectRequestRepository extends ServiceEntityReposit
             ->getResult();
 
         return array_map(
-            fn(DataSubjectRequestEntity $entity) => $entity->toDomainModel(),
+            fn (DataSubjectRequestEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -115,7 +114,7 @@ final class DoctrineORMDataSubjectRequestRepository extends ServiceEntityReposit
             ->where('dsr.requestType = :type')
             ->setParameter('type', $type->value());
 
-        if ($tenantId !== null) {
+        if (null !== $tenantId) {
             $qb->andWhere('dsr.tenantId = :tenantId')
                 ->setParameter('tenantId', $tenantId->toString());
         }
@@ -125,14 +124,14 @@ final class DoctrineORMDataSubjectRequestRepository extends ServiceEntityReposit
             ->getResult();
 
         return array_map(
-            fn(DataSubjectRequestEntity $entity) => $entity->toDomainModel(),
+            fn (DataSubjectRequestEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
 
     public function findOverdueRequests(?TenantId $tenantId = null): array
     {
-        $now = new DateTimeImmutable();
+        $now = new \DateTimeImmutable();
 
         $qb = $this->createQueryBuilder('dsr')
             ->where('dsr.deadline < :now')
@@ -143,7 +142,7 @@ final class DoctrineORMDataSubjectRequestRepository extends ServiceEntityReposit
                 RequestStatus::underReview()->value(),
             ]);
 
-        if ($tenantId !== null) {
+        if (null !== $tenantId) {
             $qb->andWhere('dsr.tenantId = :tenantId')
                 ->setParameter('tenantId', $tenantId->toString());
         }
@@ -153,7 +152,7 @@ final class DoctrineORMDataSubjectRequestRepository extends ServiceEntityReposit
             ->getResult();
 
         return array_map(
-            fn(DataSubjectRequestEntity $entity) => $entity->toDomainModel(),
+            fn (DataSubjectRequestEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }

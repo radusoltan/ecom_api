@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Catalog\Domain\ValueObject;
 
 /**
- * ProductStatus Value Object
+ * ProductStatus Value Object.
  *
  * Represents the lifecycle status of a product.
  *
@@ -34,13 +34,7 @@ final readonly class ProductStatus
         private string $value
     ) {
         if (!in_array($value, self::VALID_STATUSES, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid product status "%s". Valid statuses are: %s',
-                    $value,
-                    implode(', ', self::VALID_STATUSES)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid product status "%s". Valid statuses are: %s', $value, implode(', ', self::VALID_STATUSES)));
         }
     }
 
@@ -76,22 +70,22 @@ final readonly class ProductStatus
 
     public function isDraft(): bool
     {
-        return $this->value === self::DRAFT;
+        return self::DRAFT === $this->value;
     }
 
     public function isActive(): bool
     {
-        return $this->value === self::ACTIVE;
+        return self::ACTIVE === $this->value;
     }
 
     public function isInactive(): bool
     {
-        return $this->value === self::INACTIVE;
+        return self::INACTIVE === $this->value;
     }
 
     public function isDiscontinued(): bool
     {
-        return $this->value === self::DISCONTINUED;
+        return self::DISCONTINUED === $this->value;
     }
 
     public function canTransitionTo(self $newStatus): bool

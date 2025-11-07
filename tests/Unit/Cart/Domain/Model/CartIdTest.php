@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Cart\Domain\Model;
 
 use App\Cart\Domain\Model\CartId;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class CartIdTest extends TestCase
@@ -29,14 +28,14 @@ final class CartIdTest extends TestCase
 
     public function testItThrowsExceptionForEmptyString(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('CartId cannot be empty');
         CartId::fromString('');
     }
 
     public function testItThrowsExceptionForInvalidUlidFormat(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid CartId format');
         CartId::fromString('invalid-ulid');
     }

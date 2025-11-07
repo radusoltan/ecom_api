@@ -38,7 +38,7 @@ final readonly class OrderDTO
             customerEmail: $order->customerEmail(),
             status: $order->status()->value(),
             lines: array_map(
-                fn($line) => [
+                fn ($line) => [
                     'productId' => $line->productId()->toString(),
                     'productName' => $line->productName(),
                     'quantity' => $line->quantity(),

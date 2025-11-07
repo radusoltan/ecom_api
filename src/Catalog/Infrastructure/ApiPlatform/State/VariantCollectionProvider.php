@@ -15,14 +15,15 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
- * Provider for variant collection
+ * Provider for variant collection.
  */
 final readonly class VariantCollectionProvider implements ProviderInterface
 {
     public function __construct(
         private MessageBusInterface $queryBus,
         private RequestStack $requestStack
-    ) {}
+    ) {
+    }
 
     /**
      * @return VariantEntity[]
@@ -57,11 +58,11 @@ final readonly class VariantCollectionProvider implements ProviderInterface
             // Parse filters from query string (e.g., ?color=red&size=xl)
             $queryParams = $request->query->all();
             foreach ($queryParams as $key => $value) {
-                if ($key === 'active') {
+                if ('active' === $key) {
                     $activeOnly = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-                } elseif ($key === 'page') {
+                } elseif ('page' === $key) {
                     $page = max(1, (int) $value);
-                } elseif ($key === 'limit') {
+                } elseif ('limit' === $key) {
                     $limit = max(1, min(100, (int) $value));
                 } elseif (!in_array($key, ['active', 'page', 'limit'], true)) {
                     // Treat other parameters as option filters

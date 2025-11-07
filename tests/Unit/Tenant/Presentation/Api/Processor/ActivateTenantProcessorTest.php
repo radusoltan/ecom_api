@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Tenant\Presentation\Api\Processor;
 
+use ApiPlatform\Metadata\Patch;
 use App\Tenant\Application\Command\ActivateTenantCommand;
 use App\Tenant\Application\DTO\TenantDTO;
 use App\Tenant\Application\Query\GetTenantByIdQuery;
 use App\Tenant\Presentation\Api\Processor\ActivateTenantProcessor;
 use App\Tenant\Presentation\Api\TenantResource;
-use ApiPlatform\Metadata\Patch;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
@@ -81,7 +79,7 @@ final class ActivateTenantProcessorTest extends TestCase
 
         // No mock expectations - exception should be thrown before any dispatch
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Tenant ID is required');
 
         $this->processor->process($resource, new Patch(), []);
@@ -93,7 +91,7 @@ final class ActivateTenantProcessorTest extends TestCase
 
         // No mock expectations - exception should be thrown before any dispatch
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Tenant ID is required');
 
         $this->processor->process($resource, new Patch(), ['id' => null]);
@@ -117,7 +115,7 @@ final class ActivateTenantProcessorTest extends TestCase
             ->method('dispatch')
             ->willReturn($envelope);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('No handler found for query');
 
         $this->processor->process($resource, new Patch(), ['id' => $tenantId]);
@@ -144,7 +142,7 @@ final class ActivateTenantProcessorTest extends TestCase
             ->method('dispatch')
             ->willReturn($envelope);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Tenant not found after activation');
 
         $this->processor->process($resource, new Patch(), ['id' => $tenantId]);

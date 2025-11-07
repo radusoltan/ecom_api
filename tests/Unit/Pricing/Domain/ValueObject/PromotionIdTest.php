@@ -53,7 +53,7 @@ final class PromotionIdTest extends TestCase
     public function testGenerateCreatesUniqueIds(): void
     {
         $ids = [];
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             $ids[] = PromotionId::generate()->toString();
         }
 

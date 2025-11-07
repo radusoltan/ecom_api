@@ -18,7 +18,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 /**
- * Unit tests for TranslationCacheService
+ * Unit tests for TranslationCacheService.
  *
  * Tests:
  * - Cache hit with existing data
@@ -144,6 +144,7 @@ final class TranslationCacheServiceTest extends TestCase
             ->method('get')
             ->willReturnCallback(function ($key, $callback) {
                 $item = $this->createMock(ItemInterface::class);
+
                 return $callback($item);
             });
 
@@ -246,11 +247,12 @@ final class TranslationCacheServiceTest extends TestCase
         $this->cache->expects($this->exactly(30))
             ->method('delete')
             ->willReturnCallback(function () use (&$callCount) {
-                $callCount++;
+                ++$callCount;
                 // Throw exception on 5th call (caught by invalidate's internal try-catch)
-                if ($callCount === 5) {
+                if (5 === $callCount) {
                     throw new \RuntimeException('Delete failed');
                 }
+
                 return true;
             });
 
@@ -278,8 +280,9 @@ final class TranslationCacheServiceTest extends TestCase
         // Expect 30 cache get calls (3 locales × 10 domains)
         $this->cache->expects($this->exactly(30))
             ->method('get')
-            ->willReturnCallback(function ($key, $callback) use ($entry) {
+            ->willReturnCallback(function ($key, $callback) {
                 $item = $this->createMock(ItemInterface::class);
+
                 // Return callback result which will call repository
                 return $callback($item);
             });
@@ -315,15 +318,17 @@ final class TranslationCacheServiceTest extends TestCase
         // All 30 combinations are attempted
         $this->cache->expects($this->any())
             ->method('get')
-            ->willReturnCallback(function ($key, $callback) use (&$callCount, $entry) {
+            ->willReturnCallback(function ($key, $callback) use (&$callCount) {
                 $item = $this->createMock(ItemInterface::class);
+
                 return $callback($item);
             });
 
         $this->repository->expects($this->any())
             ->method('findAll')
             ->willReturnCallback(function () use (&$callCount, $entry) {
-                $callCount++;
+                ++$callCount;
+
                 // First 15 calls return translations, rest return empty
                 return $callCount <= 15 ? [$entry] : [];
             });
@@ -350,13 +355,14 @@ final class TranslationCacheServiceTest extends TestCase
 
         $this->cache->expects($this->any())
             ->method('get')
-            ->willReturnCallback(function ($key, $callback) use (&$callCount, $entry) {
-                $callCount++;
+            ->willReturnCallback(function ($key, $callback) use (&$callCount) {
+                ++$callCount;
                 // On the 5th call, throw exception (caught by getTranslations, falls back to DB)
-                if ($callCount === 5) {
+                if (5 === $callCount) {
                     throw new \RuntimeException('Cache error');
                 }
                 $item = $this->createMock(ItemInterface::class);
+
                 return $callback($item);
             });
 

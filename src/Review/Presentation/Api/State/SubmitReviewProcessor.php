@@ -20,7 +20,8 @@ final readonly class SubmitReviewProcessor implements ProcessorInterface
     public function __construct(
         private MessageBusInterface $commandBus,
         private RequestStack $requestStack
-    ) {}
+    ) {
+    }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ProductReviewResource
     {

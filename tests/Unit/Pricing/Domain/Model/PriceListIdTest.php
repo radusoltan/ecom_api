@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Pricing\Domain\Model;
 
 use App\Pricing\Domain\Model\PriceListId;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class PriceListIdTest extends TestCase
@@ -32,7 +31,7 @@ final class PriceListIdTest extends TestCase
 
     public function testFromStringThrowsExceptionForInvalidUuid(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid PriceListId');
 
         PriceListId::fromString('invalid-uuid');
@@ -40,7 +39,7 @@ final class PriceListIdTest extends TestCase
 
     public function testFromStringThrowsExceptionForEmptyString(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         PriceListId::fromString('');
     }

@@ -101,6 +101,7 @@ final class PaymentCancelledSubscriberTest extends TestCase
             ->method('send')
             ->with($this->callback(function (Email $email) {
                 $htmlBody = $email->getHtmlBody();
+
                 return str_contains($htmlBody, 'no charges')
                     || str_contains($htmlBody, 'not charged');
             }));
@@ -127,8 +128,8 @@ final class PaymentCancelledSubscriberTest extends TestCase
             ->method('error')
             ->with(
                 $this->anything(),
-                $this->callback(fn(array $context) =>
-                    isset($context['payment_id']) && isset($context['error'])
+                $this->callback(
+                    fn (array $context) => isset($context['payment_id']) && isset($context['error'])
                 )
             );
 

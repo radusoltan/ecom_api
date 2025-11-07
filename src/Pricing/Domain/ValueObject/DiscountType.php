@@ -22,13 +22,7 @@ final readonly class DiscountType
     private function __construct(private string $value)
     {
         if (!in_array($this->value, self::VALID_TYPES, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid DiscountType: "%s". Must be one of: %s',
-                    $this->value,
-                    implode(', ', self::VALID_TYPES)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid DiscountType: "%s". Must be one of: %s', $this->value, implode(', ', self::VALID_TYPES)));
         }
     }
 
@@ -59,11 +53,11 @@ final readonly class DiscountType
 
     public function isPercentage(): bool
     {
-        return $this->value === self::PERCENTAGE;
+        return self::PERCENTAGE === $this->value;
     }
 
     public function isFixedAmount(): bool
     {
-        return $this->value === self::FIXED_AMOUNT;
+        return self::FIXED_AMOUNT === $this->value;
     }
 }

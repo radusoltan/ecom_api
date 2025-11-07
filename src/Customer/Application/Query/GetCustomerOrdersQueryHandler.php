@@ -25,7 +25,7 @@ final readonly class GetCustomerOrdersQueryHandler
         // Find customer to get email
         $customer = $this->customerRepository->findById($query->customerId(), $query->tenantId());
 
-        if ($customer === null) {
+        if (null === $customer) {
             return [];
         }
 

@@ -13,7 +13,8 @@ final class MultipartDecoder implements DecoderInterface
 
     public function __construct(
         private readonly RequestStack $requestStack
-    ) {}
+    ) {
+    }
 
     public function decode(string $data, string $format, array $context = []): ?array
     {
@@ -46,7 +47,7 @@ final class MultipartDecoder implements DecoderInterface
 
         $trimmed = trim($value);
 
-        if ($trimmed === '') {
+        if ('' === $trimmed) {
             return $value;
         }
 

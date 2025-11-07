@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Stripe Webhook Controller
+ * Stripe Webhook Controller.
  *
  * Endpoint public pentru primirea webhook-urilor de la Stripe.
  * NU NECESITĂ autentificare JWT (Stripe trimite evenimente direct).
@@ -24,7 +24,7 @@ final class StripeWebhookController extends AbstractController
     }
 
     /**
-     * Primește și procesează webhook events de la Stripe
+     * Primește și procesează webhook events de la Stripe.
      *
      * @Route("/api/webhooks/stripe", name="stripe_webhook", methods={"POST"})
      */

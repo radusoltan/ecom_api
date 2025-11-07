@@ -16,17 +16,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Controller for category translation endpoints
+ * Controller for category translation endpoints.
  */
 final class CategoryTranslationController extends AbstractController
 {
     public function __construct(
         private readonly CategoryRepositoryInterface $categoryRepository,
         private readonly MessageBusInterface $messageBus
-    ) {}
+    ) {
+    }
 
     /**
-     * GET /api/categories/{id}/translations
+     * GET /api/categories/{id}/translations.
      */
     public function getTranslations(string $id, Request $request): JsonResponse
     {
@@ -74,14 +75,13 @@ final class CategoryTranslationController extends AbstractController
                 'categoryId' => $id,
                 'translations' => $translations,
             ]);
-
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * PATCH /api/categories/{id}/translations
+     * PATCH /api/categories/{id}/translations.
      */
     public function updateTranslations(string $id, Request $request): JsonResponse
     {
@@ -93,7 +93,7 @@ final class CategoryTranslationController extends AbstractController
 
         // Parse request body
         $data = json_decode($request->getContent(), true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        if (JSON_ERROR_NONE !== json_last_error()) {
             return $this->json(['error' => 'Invalid JSON payload'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -120,7 +120,6 @@ final class CategoryTranslationController extends AbstractController
                 'categoryId' => $id,
                 'locale' => $locale,
             ]);
-
         } catch (\InvalidArgumentException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $e) {

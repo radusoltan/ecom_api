@@ -19,14 +19,15 @@ final class DoctrineProductRepository implements ProductRepositoryInterface
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $eventBus
-    ) {}
+    ) {
+    }
 
     public function save(Product $product): void
     {
         // Check if entity already exists
         $existingEntity = $this->entityManager->find(ProductEntity::class, $product->id()->toString());
 
-        if ($existingEntity !== null) {
+        if (null !== $existingEntity) {
             // Update existing entity - use its setters instead of creating new instance
             $existingEntity->setTenantId($product->tenantId()->toString());
             $existingEntity->setSku($product->sku()->value());
@@ -39,10 +40,10 @@ final class DoctrineProductRepository implements ProductRepositoryInterface
             $existingEntity->setStockQuantity($product->stock()->quantity());
             $existingEntity->setTrackInventory($product->stock()->trackInventory());
             $existingEntity->setAllowBackorder($product->stock()->allowBackorder());
-            $existingEntity->setImages(array_map(fn($img) => $img->toArray(), $product->images()));
+            $existingEntity->setImages(array_map(fn ($img) => $img->toArray(), $product->images()));
             $existingEntity->setActive($product->isActive());
             $existingEntity->setIsFeatured($product->isFeatured());
-            // Doctrine will auto-detect changes and update on flush
+        // Doctrine will auto-detect changes and update on flush
         } else {
             // Create new entity
             $entity = ProductEntity::fromDomainModel($product);
@@ -61,7 +62,7 @@ final class DoctrineProductRepository implements ProductRepositoryInterface
     {
         $entity = $this->entityManager->find(ProductEntity::class, $id->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             return null;
         }
 
@@ -77,7 +78,7 @@ final class DoctrineProductRepository implements ProductRepositoryInterface
             'sku' => $sku->value(),
         ]);
 
-        if ($entity === null) {
+        if (null === $entity) {
             return null;
         }
 
@@ -93,7 +94,7 @@ final class DoctrineProductRepository implements ProductRepositoryInterface
             'slug' => $slug->value(),
         ]);
 
-        if ($entity === null) {
+        if (null === $entity) {
             return null;
         }
 
@@ -121,7 +122,7 @@ final class DoctrineProductRepository implements ProductRepositoryInterface
     {
         $entity = $this->entityManager->find(ProductEntity::class, $id->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             return;
         }
 

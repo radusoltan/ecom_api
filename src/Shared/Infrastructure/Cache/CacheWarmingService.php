@@ -33,7 +33,8 @@ final readonly class CacheWarmingService
         private CacheService $cacheService,
         private Connection $connection,
         private LoggerInterface $logger
-    ) {}
+    ) {
+    }
 
     /**
      * Warm cache for a specific tenant.
@@ -49,7 +50,7 @@ final readonly class CacheWarmingService
 
         try {
             // Warm translations
-            if ($locale !== null) {
+            if (null !== $locale) {
                 $stats['translations'] = $this->warmTranslations($tenantId, $locale);
             }
 

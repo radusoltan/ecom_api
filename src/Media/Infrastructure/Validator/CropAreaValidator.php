@@ -24,24 +24,28 @@ class CropAreaValidator extends ConstraintValidator
         // If it's already a CropArea object, validate it
         if ($value instanceof CropArea) {
             $this->validateCropArea($value, $constraint);
+
             return;
         }
 
         // If it's an array, validate the structure
         if (is_array($value)) {
             $this->validateCropArray($value, $constraint);
+
             return;
         }
 
         // If it's JSON string, decode and validate
         if (is_string($value)) {
             $decoded = json_decode($value, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
+            if (JSON_ERROR_NONE !== json_last_error()) {
                 $this->context->buildViolation($constraint->invalidJsonMessage)
                     ->addViolation();
+
                 return;
             }
             $this->validateCropArray($decoded, $constraint);
+
             return;
         }
 
@@ -54,32 +58,33 @@ class CropAreaValidator extends ConstraintValidator
         // Check if dimensions are positive
         if ($cropArea->width() <= 0 || $cropArea->height() <= 0) {
             $this->context->buildViolation($constraint->invalidDimensionsMessage)
-                ->setParameter('{{ width }}', (string)$cropArea->width())
-                ->setParameter('{{ height }}', (string)$cropArea->height())
+                ->setParameter('{{ width }}', (string) $cropArea->width())
+                ->setParameter('{{ height }}', (string) $cropArea->height())
                 ->addViolation();
+
             return;
         }
 
         // Check if crop area doesn't exceed image bounds (if max dimensions are provided)
-        if ($constraint->maxWidth !== null && $constraint->maxHeight !== null) {
-            if ($cropArea->x() + $cropArea->width() > $constraint->maxWidth ||
-                $cropArea->y() + $cropArea->height() > $constraint->maxHeight) {
+        if (null !== $constraint->maxWidth && null !== $constraint->maxHeight) {
+            if ($cropArea->x() + $cropArea->width() > $constraint->maxWidth
+                || $cropArea->y() + $cropArea->height() > $constraint->maxHeight) {
                 $this->context->buildViolation($constraint->outOfBoundsMessage)
-                    ->setParameter('{{ maxWidth }}', (string)$constraint->maxWidth)
-                    ->setParameter('{{ maxHeight }}', (string)$constraint->maxHeight)
+                    ->setParameter('{{ maxWidth }}', (string) $constraint->maxWidth)
+                    ->setParameter('{{ maxHeight }}', (string) $constraint->maxHeight)
                     ->addViolation();
             }
         }
 
         // Check aspect ratio if specified
-        if ($constraint->aspectRatio !== null) {
+        if (null !== $constraint->aspectRatio) {
             $actualRatio = $cropArea->width() / $cropArea->height();
             $tolerance = $constraint->aspectRatioTolerance;
 
             if (abs($actualRatio - $constraint->aspectRatio) > $tolerance) {
                 $this->context->buildViolation($constraint->invalidAspectRatioMessage)
-                    ->setParameter('{{ expected }}', (string)$constraint->aspectRatio)
-                    ->setParameter('{{ actual }}', (string)round($actualRatio, 2))
+                    ->setParameter('{{ expected }}', (string) $constraint->aspectRatio)
+                    ->setParameter('{{ actual }}', (string) round($actualRatio, 2))
                     ->addViolation();
             }
         }
@@ -91,23 +96,25 @@ class CropAreaValidator extends ConstraintValidator
         if (!isset($value['x'], $value['y'], $value['width'], $value['height'])) {
             $this->context->buildViolation($constraint->missingFieldsMessage)
                 ->addViolation();
+
             return;
         }
 
         // Validate numeric values
-        if (!is_numeric($value['x']) || !is_numeric($value['y']) ||
-            !is_numeric($value['width']) || !is_numeric($value['height'])) {
+        if (!is_numeric($value['x']) || !is_numeric($value['y'])
+            || !is_numeric($value['width']) || !is_numeric($value['height'])) {
             $this->context->buildViolation($constraint->nonNumericMessage)
                 ->addViolation();
+
             return;
         }
 
         try {
             $cropArea = CropArea::fromDimensions(
-                (int)$value['x'],
-                (int)$value['y'],
-                (int)$value['width'],
-                (int)$value['height']
+                (int) $value['x'],
+                (int) $value['y'],
+                (int) $value['width'],
+                (int) $value['height']
             );
             $this->validateCropArea($cropArea, $constraint);
         } catch (\InvalidArgumentException $e) {

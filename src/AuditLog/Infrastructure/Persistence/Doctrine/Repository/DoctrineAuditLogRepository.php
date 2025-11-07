@@ -37,7 +37,7 @@ final class DoctrineAuditLogRepository extends ServiceEntityRepository implement
     {
         $entity = $this->findOneBy([
             'id' => $id->toString(),
-            'tenantId' => $tenantId->toString()
+            'tenantId' => $tenantId->toString(),
         ]);
 
         return $entity ? $entity->toDomainModel() : null;
@@ -103,7 +103,7 @@ final class DoctrineAuditLogRepository extends ServiceEntityRepository implement
         $entities = $qb->getQuery()->getResult();
 
         return array_map(
-            fn(AuditLogEntryEntity $entity) => $entity->toDomainModel(),
+            fn (AuditLogEntryEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -113,7 +113,7 @@ final class DoctrineAuditLogRepository extends ServiceEntityRepository implement
         return $this->findByTenant($tenantId, [
             'userId' => $userId,
             'limit' => $limit,
-            'offset' => $offset
+            'offset' => $offset,
         ]);
     }
 
@@ -128,7 +128,7 @@ final class DoctrineAuditLogRepository extends ServiceEntityRepository implement
             'resourceType' => $resourceType,
             'resourceId' => $resourceId,
             'limit' => $limit,
-            'offset' => $offset
+            'offset' => $offset,
         ]);
     }
 

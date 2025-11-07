@@ -6,13 +6,13 @@ namespace App\Monitoring\Infrastructure\Service;
 
 use App\Monitoring\Domain\Model\PerformanceThreshold;
 use App\Monitoring\Domain\ValueObject\AlertSeverity;
+use App\Shared\Application\Service\PerformanceProfiler;
 use App\Shared\Infrastructure\Metrics\MetricsCollector;
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
- * Application Performance Monitor (APM)
+ * Application Performance Monitor (APM).
  *
  * Comprehensive performance monitoring service that:
  * - Tracks application performance metrics
@@ -37,6 +37,7 @@ final class ApplicationPerformanceMonitor
     /** @var array<string, array{timestamp: float, value: float, severity: string}> */
     private array $activeAlerts = [];
 
+    /** @var array<string, mixed> */
     private array $performanceHistory = [];
 
     public function __construct(
@@ -62,7 +63,7 @@ final class ApplicationPerformanceMonitor
     }
 
     /**
-     * Track API request performance
+     * Track API request performance.
      */
     public function trackApiRequest(
         string $route,
@@ -89,7 +90,7 @@ final class ApplicationPerformanceMonitor
         $threshold = $this->thresholds['api_response_time'];
         $severity = $threshold->evaluate($durationMs);
 
-        if ($severity !== null) {
+        if (null !== $severity) {
             $this->triggerAlert(
                 'api_response_time',
                 $durationMs,
@@ -104,14 +105,14 @@ final class ApplicationPerformanceMonitor
     }
 
     /**
-     * Track database query performance
+     * Track database query performance.
      */
     public function trackDatabaseQuery(string $query, float $durationMs): void
     {
         $threshold = $this->thresholds['database_query_time'];
         $severity = $threshold->evaluate($durationMs);
 
-        if ($severity !== null) {
+        if (null !== $severity) {
             $this->triggerAlert(
                 'database_query_time',
                 $durationMs,
@@ -125,7 +126,7 @@ final class ApplicationPerformanceMonitor
     }
 
     /**
-     * Track cache performance
+     * Track cache performance.
      */
     public function trackCacheOperation(string $operation, bool $hit, float $durationMs = 0): void
     {
@@ -142,13 +143,13 @@ final class ApplicationPerformanceMonitor
     }
 
     /**
-     * Get cache hit rate
+     * Get cache hit rate.
      */
     public function getCacheHitRate(int $periodSeconds = 3600): float
     {
         // This would typically query from a time-series database
         // For now, we'll calculate from recent metrics
-        $cacheKey = 'apm_cache_hit_rate_' . $periodSeconds;
+        $cacheKey = 'apm_cache_hit_rate_'.$periodSeconds;
 
         return $this->cache->get($cacheKey, function () {
             // Calculate from metrics (simplified)
@@ -158,7 +159,7 @@ final class ApplicationPerformanceMonitor
     }
 
     /**
-     * Check all thresholds and return violations
+     * Check all thresholds and return violations.
      *
      * @return array<string, array{metric: string, value: float, threshold: float, severity: string}>
      */
@@ -173,7 +174,7 @@ final class ApplicationPerformanceMonitor
         $memoryUsagePercent = ($summary['memory_current_mb'] / (int) ini_get('memory_limit')) * 100;
         $memorySeverity = $this->thresholds['memory_usage']->evaluate($memoryUsagePercent);
 
-        if ($memorySeverity !== null) {
+        if (null !== $memorySeverity) {
             $violations['memory_usage'] = [
                 'metric' => 'memory_usage',
                 'value' => $memoryUsagePercent,
@@ -200,7 +201,7 @@ final class ApplicationPerformanceMonitor
     }
 
     /**
-     * Get current performance status
+     * Get current performance status.
      */
     public function getPerformanceStatus(): array
     {
@@ -213,7 +214,7 @@ final class ApplicationPerformanceMonitor
             'summary' => $summary,
             'violations' => $violations,
             'active_alerts' => $this->activeAlerts,
-            'thresholds' => array_map(fn($t) => [
+            'thresholds' => array_map(fn ($t) => [
                 'metric' => $t->metricName,
                 'warning' => $t->warningThreshold,
                 'critical' => $t->criticalThreshold,
@@ -224,7 +225,7 @@ final class ApplicationPerformanceMonitor
     }
 
     /**
-     * Get performance metrics for a specific time period
+     * Get performance metrics for a specific time period.
      */
     public function getPerformanceMetrics(string $metric, int $periodSeconds = 3600): array
     {
@@ -236,12 +237,12 @@ final class ApplicationPerformanceMonitor
 
         return array_filter(
             $this->performanceHistory[$metric],
-            fn($entry) => $entry['timestamp'] >= $cutoffTime
+            fn ($entry) => $entry['timestamp'] >= $cutoffTime
         );
     }
 
     /**
-     * Get aggregated statistics for a metric
+     * Get aggregated statistics for a metric.
      */
     public function getMetricStatistics(string $metric, int $periodSeconds = 3600): ?array
     {
@@ -269,7 +270,7 @@ final class ApplicationPerformanceMonitor
     }
 
     /**
-     * Trigger performance alert
+     * Trigger performance alert.
      */
     private function triggerAlert(
         string $metric,
@@ -278,7 +279,7 @@ final class ApplicationPerformanceMonitor
         string $message,
         array $context = []
     ): void {
-        $alertKey = $metric . '_' . $severity->value();
+        $alertKey = $metric.'_'.$severity->value();
 
         // Prevent alert spam (only trigger if not recently triggered)
         if (isset($this->activeAlerts[$alertKey])) {
@@ -316,7 +317,7 @@ final class ApplicationPerformanceMonitor
     }
 
     /**
-     * Record performance metric in history
+     * Record performance metric in history.
      */
     private function recordPerformanceMetric(string $metric, float $value, array $labels = []): void
     {
@@ -337,7 +338,7 @@ final class ApplicationPerformanceMonitor
     }
 
     /**
-     * Clear all alerts
+     * Clear all alerts.
      */
     public function clearAlerts(): void
     {
@@ -346,12 +347,12 @@ final class ApplicationPerformanceMonitor
     }
 
     /**
-     * Get health check status
+     * Get health check status.
      */
     public function getHealthCheck(): array
     {
         $status = $this->getPerformanceStatus();
-        $isHealthy = $status['status'] === 'healthy';
+        $isHealthy = 'healthy' === $status['status'];
 
         return [
             'status' => $isHealthy ? 'pass' : 'warn',

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Cart\Application\Command;
 
 /**
- * AddItemToCart Command
+ * AddItemToCart Command.
  *
  * Adds a product (with optional variant) to the cart
  *

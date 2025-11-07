@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tenant\Application\Command;
 
+use App\Shared\Application\Service\PerformanceProfiler;
 use App\Shared\Domain\ValueObject\LanguageCode;
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
-use App\Tenant\Domain\Model\Tenant;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\Exception\TenantNotFoundException;
+use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
-use App\Tenant\Domain\ValueObject\TenantId;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -55,6 +55,7 @@ final readonly class DisableLocaleCommandHandler
             }
         } catch (\Throwable $e) {
             $this->profiler->stop('tenant.disable_locale');
+
             throw $e;
         }
     }

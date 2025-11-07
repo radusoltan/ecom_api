@@ -17,7 +17,7 @@ interface ConsentRepositoryInterface
     public function findById(ConsentId $id): ?Consent;
 
     /**
-     * Find active consent for a specific customer and purpose
+     * Find active consent for a specific customer and purpose.
      */
     public function findActiveByCustomerAndPurpose(
         CustomerId $customerId,
@@ -25,28 +25,28 @@ interface ConsentRepositoryInterface
     ): ?Consent;
 
     /**
-     * Find all consents for a customer (both active and withdrawn)
+     * Find all consents for a customer (both active and withdrawn).
      *
      * @return Consent[]
      */
     public function findByCustomerId(CustomerId $customerId): array;
 
     /**
-     * Find all active consents for a customer
+     * Find all active consents for a customer.
      *
      * @return Consent[]
      */
     public function findActiveByCustomerId(CustomerId $customerId): array;
 
     /**
-     * Find all consents for a tenant
+     * Find all consents for a tenant.
      *
      * @return Consent[]
      */
     public function findByTenantId(TenantId $tenantId): array;
 
     /**
-     * Check if customer has granted consent for a specific purpose
+     * Check if customer has granted consent for a specific purpose.
      */
     public function hasActiveConsent(CustomerId $customerId, ConsentPurpose $purpose): bool;
 }

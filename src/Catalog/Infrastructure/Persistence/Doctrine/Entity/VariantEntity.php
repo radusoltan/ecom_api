@@ -19,7 +19,7 @@ use App\Shared\Domain\ValueObject\Money;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Doctrine entity for Variant
+ * Doctrine entity for Variant.
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'catalog_product_variants')]
@@ -38,7 +38,7 @@ use Doctrine\ORM\Mapping as ORM;
         ),
         new Delete(
             processor: \App\Catalog\Infrastructure\ApiPlatform\State\DeleteVariantProcessor::class
-        )
+        ),
     ],
     provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantCollectionProvider::class
 )]
@@ -56,6 +56,7 @@ class VariantEntity
     private string $sku;
 
     #[ORM\Column(type: 'json', name: 'option_value_map')]
+    /** @var array<string, mixed> */
     private array $optionValueMap = [];
 
     #[ORM\Column(type: 'bigint', name: 'price_amount')]
@@ -90,7 +91,7 @@ class VariantEntity
 
     /**
      * Temporary field to receive productId in API requests
-     * Not persisted to database
+     * Not persisted to database.
      */
     public ?string $productId = null;
 
@@ -101,7 +102,7 @@ class VariantEntity
     }
 
     /**
-     * Create entity from domain model
+     * Create entity from domain model.
      */
     public static function fromDomainModel(Variant $variant): self
     {
@@ -116,13 +117,13 @@ class VariantEntity
         $entity->trackInventory = $variant->getStock()->trackInventory();
         $entity->allowBackorder = $variant->getStock()->allowBackorder();
         $entity->isActive = $variant->isActive();
-        $entity->images = array_map(fn($img) => $img->toArray(), $variant->getImages());
+        $entity->images = array_map(fn ($img) => $img->toArray(), $variant->getImages());
 
         return $entity;
     }
 
     /**
-     * Convert to domain model
+     * Convert to domain model.
      */
     public function toDomainModel(): Variant
     {
@@ -135,7 +136,7 @@ class VariantEntity
             $this->optionValueMap,
             Money::fromScalars($this->priceAmount, $this->priceCurrency),
             Stock::create($availableStock, $this->trackInventory, $this->allowBackorder),
-            array_map(fn($data) => ProductImage::fromArray($data), $this->images),
+            array_map(fn ($data) => ProductImage::fromArray($data), $this->images),
             $this->isActive,
             $this->createdAt,
             $this->updatedAt
@@ -143,7 +144,7 @@ class VariantEntity
     }
 
     /**
-     * Update entity from domain model
+     * Update entity from domain model.
      */
     public function updateFromDomainModel(Variant $variant): void
     {
@@ -156,7 +157,7 @@ class VariantEntity
         $this->trackInventory = $variant->getStock()->trackInventory();
         $this->allowBackorder = $variant->getStock()->allowBackorder();
         $this->isActive = $variant->isActive();
-        $this->images = array_map(fn($img) => $img->toArray(), $variant->getImages());
+        $this->images = array_map(fn ($img) => $img->toArray(), $variant->getImages());
         $this->updatedAt = new \DateTimeImmutable();
     }
 

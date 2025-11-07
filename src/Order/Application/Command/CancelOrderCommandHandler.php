@@ -7,7 +7,6 @@ namespace App\Order\Application\Command;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
 use App\Shared\Domain\ValueObject\TenantId;
-use RuntimeException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -25,8 +24,8 @@ final readonly class CancelOrderCommandHandler
             TenantId::fromString($command->tenantId)
         );
 
-        if ($order === null) {
-            throw new RuntimeException(sprintf('Order with ID "%s" not found', $command->orderId));
+        if (null === $order) {
+            throw new \RuntimeException(sprintf('Order with ID "%s" not found', $command->orderId));
         }
 
         $order->cancel();

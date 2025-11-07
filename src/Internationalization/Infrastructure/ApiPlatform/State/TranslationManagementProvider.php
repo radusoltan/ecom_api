@@ -13,7 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
- * Translation Management Provider
+ * Translation Management Provider.
  *
  * State provider for GET operations on translations.
  */
@@ -22,7 +22,8 @@ final readonly class TranslationManagementProvider implements ProviderInterface
     public function __construct(
         private MessageBusInterface $queryBus,
         private RequestStack $requestStack,
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {

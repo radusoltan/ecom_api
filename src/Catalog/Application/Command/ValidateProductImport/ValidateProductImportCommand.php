@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Catalog\Application\Command\ValidateProductImport;
 
 /**
- * Command to validate product import data
+ * Command to validate product import data.
  */
 final readonly class ValidateProductImportCommand
 {

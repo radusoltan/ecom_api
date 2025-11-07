@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Monitoring\Presentation\Api\Controller;
 
 use App\Monitoring\Infrastructure\Service\ApplicationPerformanceMonitor;
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
+use App\Shared\Application\Service\PerformanceProfiler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Performance Monitoring API Controller
+ * Performance Monitoring API Controller.
  *
  * Provides REST API endpoints for performance monitoring:
  * - GET /api/monitoring/performance - Overall performance status
@@ -34,7 +34,7 @@ final class PerformanceMonitoringController extends AbstractController
     }
 
     /**
-     * Get overall performance status
+     * Get overall performance status.
      *
      * @Route("/performance", name="performance_status", methods={"GET"})
      */
@@ -47,7 +47,7 @@ final class PerformanceMonitoringController extends AbstractController
     }
 
     /**
-     * Get specific metric statistics
+     * Get specific metric statistics.
      *
      * @Route("/performance/metrics/{metric}", name="metric_stats", methods={"GET"})
      */
@@ -58,7 +58,7 @@ final class PerformanceMonitoringController extends AbstractController
 
         $statistics = $this->apm->getMetricStatistics($metric, $period);
 
-        if ($statistics === null) {
+        if (null === $statistics) {
             return $this->json([
                 'error' => 'No data available for metric',
                 'metric' => $metric,
@@ -70,7 +70,7 @@ final class PerformanceMonitoringController extends AbstractController
     }
 
     /**
-     * Get slow queries
+     * Get slow queries.
      *
      * @Route("/performance/slow-queries", name="slow_queries", methods={"GET"})
      */
@@ -86,7 +86,7 @@ final class PerformanceMonitoringController extends AbstractController
     }
 
     /**
-     * Get all queries (for debugging)
+     * Get all queries (for debugging).
      *
      * @Route("/performance/queries", name="all_queries", methods={"GET"})
      */
@@ -103,7 +103,7 @@ final class PerformanceMonitoringController extends AbstractController
     }
 
     /**
-     * Get active performance alerts
+     * Get active performance alerts.
      *
      * @Route("/performance/alerts", name="performance_alerts", methods={"GET"})
      */
@@ -120,7 +120,7 @@ final class PerformanceMonitoringController extends AbstractController
     }
 
     /**
-     * Clear all performance alerts
+     * Clear all performance alerts.
      *
      * @Route("/performance/alerts/clear", name="clear_alerts", methods={"POST"})
      */
@@ -136,7 +136,7 @@ final class PerformanceMonitoringController extends AbstractController
     }
 
     /**
-     * Health check endpoint (RFC 8631 compliant)
+     * Health check endpoint (RFC 8631 compliant).
      *
      * @Route("/health", name="health_check", methods={"GET"})
      */
@@ -145,13 +145,13 @@ final class PerformanceMonitoringController extends AbstractController
     {
         $health = $this->apm->getHealthCheck();
 
-        $statusCode = $health['status'] === 'pass' ? 200 : 503;
+        $statusCode = 'pass' === $health['status'] ? 200 : 503;
 
         return $this->json($health, $statusCode);
     }
 
     /**
-     * Get performance summary for dashboard
+     * Get performance summary for dashboard.
      *
      * @Route("/performance/dashboard", name="performance_dashboard", methods={"GET"})
      */

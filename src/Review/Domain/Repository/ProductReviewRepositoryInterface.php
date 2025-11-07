@@ -28,12 +28,12 @@ interface ProductReviewRepositoryInterface
     public function delete(ProductReview $review): void;
 
     /**
-     * Get average rating for a product
+     * Get average rating for a product.
      */
     public function getAverageRating(ProductId $productId, TenantId $tenantId): ?float;
 
     /**
-     * Get review count for a product
+     * Get review count for a product.
      */
     public function getReviewCount(ProductId $productId, TenantId $tenantId): int;
 }

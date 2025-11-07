@@ -34,7 +34,8 @@ final class RegenerateThumbnailsProcessor implements ProcessorInterface
         private readonly MessageBusInterface $messageBus,
         private readonly ValidatorInterface $validator,
         private readonly bool $asyncThumbnails = true
-    ) {}
+    ) {
+    }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
@@ -99,7 +100,7 @@ final class RegenerateThumbnailsProcessor implements ProcessorInterface
                 SizeLabel::SMALL,
                 SizeLabel::MEDIUM,
                 SizeLabel::LARGE,
-                SizeLabel::EXTRA_LARGE
+                SizeLabel::EXTRA_LARGE,
             ];
         }
 
@@ -109,10 +110,10 @@ final class RegenerateThumbnailsProcessor implements ProcessorInterface
             $cropData = is_string($data->cropJson) ? json_decode($data->cropJson, true) : $data->cropJson;
             foreach ($sizesToRegenerate as $sizeLabel) {
                 $crops[$sizeLabel->value] = CropArea::fromDimensions(
-                    (int)($cropData['x'] ?? 0),
-                    (int)($cropData['y'] ?? 0),
-                    (int)($cropData['width'] ?? 100),
-                    (int)($cropData['height'] ?? 100)
+                    (int) ($cropData['x'] ?? 0),
+                    (int) ($cropData['y'] ?? 0),
+                    (int) ($cropData['width'] ?? 100),
+                    (int) ($cropData['height'] ?? 100)
                 );
             }
         }

@@ -56,7 +56,7 @@ final class ProductVoter extends AbstractResourceVoter
 
         // VIEWER: only view permission
         if ($this->isViewer($token)) {
-            return $attribute === self::VIEW;
+            return self::VIEW === $attribute;
         }
 
         // ADMIN, MANAGER, TENANT_ADMIN: full CRUD access
@@ -67,7 +67,7 @@ final class ProductVoter extends AbstractResourceVoter
         // VENDOR: full access to own products only
         if ($this->hasRole($token, 'ROLE_VENDOR')) {
             // For CREATE operation, vendor can create products (no subject needed)
-            if ($attribute === self::CREATE) {
+            if (self::CREATE === $attribute) {
                 return true;
             }
 

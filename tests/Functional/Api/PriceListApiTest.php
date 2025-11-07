@@ -7,7 +7,7 @@ namespace App\Tests\Functional\Api;
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 
 /**
- * Functional Tests for PriceList API Endpoints
+ * Functional Tests for PriceList API Endpoints.
  *
  * Tests 5 PriceList API endpoints:
  * - GET /api/price_lists (Collection)
@@ -35,7 +35,7 @@ final class PriceListApiTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash');
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -52,11 +52,11 @@ final class PriceListApiTest extends ApiTestCase
             'exp' => time() + 3600,
         ]);
 
-        $headers = ['authorization' => 'Bearer ' . $token];
+        $headers = ['authorization' => 'Bearer '.$token];
 
         // Add X-Tenant-ID if provided or if we have a current tenant
         $tenantIdToUse = $tenantId ?? $this->currentTenantId;
-        if ($tenantIdToUse !== null) {
+        if (null !== $tenantIdToUse) {
             $headers['X-Tenant-ID'] = $tenantIdToUse;
         }
 
@@ -68,7 +68,7 @@ final class PriceListApiTest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
         $response = $client->request('POST', '/api/tenants', [
             'json' => [
-                'name' => 'Test Tenant ' . uniqid(),
+                'name' => 'Test Tenant '.uniqid(),
                 'ownerEmail' => sprintf('tenant-%d-%s@example.com', ++self::$counter, uniqid()),
             ],
         ]);

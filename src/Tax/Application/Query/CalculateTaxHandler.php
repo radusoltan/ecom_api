@@ -9,7 +9,7 @@ use App\Tax\Domain\ValueObject\TaxJurisdiction;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Calculate Tax Query Handler
+ * Calculate Tax Query Handler.
  *
  * Returns tax calculation details.
  */
@@ -32,7 +32,7 @@ final readonly class CalculateTaxHandler
      */
     public function __invoke(CalculateTax $query): array
     {
-        $jurisdiction = $query->regionCode !== null
+        $jurisdiction = null !== $query->regionCode
             ? TaxJurisdiction::fromCountryAndRegion($query->countryCode, $query->regionCode)
             : TaxJurisdiction::fromCountry($query->countryCode);
 

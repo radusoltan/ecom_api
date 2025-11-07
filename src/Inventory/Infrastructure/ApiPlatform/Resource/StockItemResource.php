@@ -8,16 +8,16 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\GraphQl\Mutation;
 use ApiPlatform\Metadata\GraphQl\Query;
 use ApiPlatform\Metadata\GraphQl\QueryCollection;
-use ApiPlatform\Metadata\GraphQl\Mutation;
 use ApiPlatform\Metadata\Post;
-use App\Inventory\Infrastructure\ApiPlatform\State\StockItemProvider;
 use App\Inventory\Infrastructure\ApiPlatform\State\CreateStockItemProcessor;
+use App\Inventory\Infrastructure\ApiPlatform\State\StockItemProvider;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * API Resource for Stock Items
+ * API Resource for Stock Items.
  *
  * Represents inventory stock for a product at a specific warehouse.
  *
@@ -69,23 +69,18 @@ final class StockItemResource
     public function __construct(
         #[ApiProperty(identifier: true)]
         public ?string $id = null,
-
         #[Assert\NotBlank(groups: ['create'])]
         #[Assert\Uuid]
         public ?string $tenantId = null,
-
         #[Assert\NotBlank(groups: ['create'])]
         #[Assert\Uuid]
         public ?string $productId = null,
-
         #[Assert\NotBlank(groups: ['create'])]
         #[Assert\Ulid]
         public ?string $warehouseId = null,
-
         #[Assert\NotBlank(groups: ['create'])]
         #[Assert\PositiveOrZero]
         public ?int $initialQuantity = null,
-
         #[Assert\PositiveOrZero]
         public ?int $lowStockThreshold = 10,
 

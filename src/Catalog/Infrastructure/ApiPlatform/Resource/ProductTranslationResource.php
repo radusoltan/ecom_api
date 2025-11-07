@@ -16,7 +16,7 @@ use App\Catalog\Infrastructure\ApiPlatform\State\UpdateProductTranslationsProces
 
 /**
  * API resource for product translations
- * Provides endpoints for managing translations of product content
+ * Provides endpoints for managing translations of product content.
  */
 #[ApiResource(
     shortName: 'ProductTranslation',
@@ -91,5 +91,6 @@ use App\Catalog\Infrastructure\ApiPlatform\State\UpdateProductTranslationsProces
 class ProductTranslationResource
 {
     public string $productId;
+    /** @var array<string, string> */
     public array $translations = [];
 }

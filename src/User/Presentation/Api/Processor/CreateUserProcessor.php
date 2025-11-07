@@ -34,7 +34,7 @@ final readonly class CreateUserProcessor implements ProcessorInterface
             email: $data->getEmail(),
             username: $data->getUsername(),
             plainPassword: $data->getPassword(),
-            roles: array_values(array_filter($data->getRoles(), fn(string $role) => $role !== 'ROLE_USER'))
+            roles: array_values(array_filter($data->getRoles(), fn (string $role) => 'ROLE_USER' !== $role))
         );
 
         // Dispatch command

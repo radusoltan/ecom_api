@@ -30,7 +30,7 @@ final readonly class PaymentCollectionProvider implements ProviderInterface
         // Check if filtering by order_id
         $orderId = $context['filters']['orderId'] ?? null;
 
-        if ($orderId !== null) {
+        if (null !== $orderId) {
             $query = new GetPaymentsByOrder(
                 orderId: $orderId,
                 tenantId: TenantId::fromString($tenantId)
@@ -66,6 +66,7 @@ final readonly class PaymentCollectionProvider implements ProviderInterface
             $entity->setRefundedAmountInCents($dto->refundedAmountInCents);
             $entity->setCreatedAt($dto->createdAt);
             $entity->setUpdatedAt($dto->updatedAt);
+
             return $entity;
         }, $dtos);
     }

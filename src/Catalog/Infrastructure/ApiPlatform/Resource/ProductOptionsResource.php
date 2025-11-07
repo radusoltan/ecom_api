@@ -10,7 +10,7 @@ use ApiPlatform\Metadata\GetCollection;
 use App\Catalog\Infrastructure\ApiPlatform\State\ProductOptionsProvider;
 
 /**
- * API Resource for Product Configuration Options
+ * API Resource for Product Configuration Options.
  *
  * Exposes all unique product options (color, size, etc.) across the catalog
  * for use in product filtering and search interfaces.
@@ -64,10 +64,10 @@ use App\Catalog\Infrastructure\ApiPlatform\State\ProductOptionsProvider;
 final readonly class ProductOptionsResource
 {
     /**
-     * @param string $code Option code (e.g., 'color', 'size')
-     * @param string $name Localized option name for current locale
-     * @param array<string, string> $nameTranslations All translations for option name
-     * @param ProductOptionValueResource[] $values Available values for this option
+     * @param string                       $code             Option code (e.g., 'color', 'size')
+     * @param string                       $name             Localized option name for current locale
+     * @param array<string, string>        $nameTranslations All translations for option name
+     * @param ProductOptionValueResource[] $values           Available values for this option
      */
     public function __construct(
         public string $code,
@@ -75,5 +75,6 @@ final readonly class ProductOptionsResource
         public array $nameTranslations,
         #[ApiProperty(readableLink: false)]
         public array $values,
-    ) {}
+    ) {
+    }
 }

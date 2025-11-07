@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Privacy\Domain\ValueObject;
 
-use InvalidArgumentException;
-use Stringable;
-
 /**
- * Data Subject Request Type Value Object
+ * Data Subject Request Type Value Object.
  *
  * GDPR Rights:
  * - ACCESS: Right to access (Article 15) - Export all personal data
@@ -18,7 +15,7 @@ use Stringable;
  * - RESTRICTION: Right to restriction of processing (Article 18) - Limit processing
  * - OBJECTION: Right to object (Article 21) - Object to processing
  */
-final readonly class RequestType implements Stringable
+final readonly class RequestType implements \Stringable
 {
     private const ACCESS = 'access';
     private const RECTIFICATION = 'rectification';
@@ -39,13 +36,7 @@ final readonly class RequestType implements Stringable
     private function __construct(private string $value)
     {
         if (!in_array($value, self::VALID_TYPES, true)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Invalid request type: "%s". Valid types: %s',
-                    $value,
-                    implode(', ', self::VALID_TYPES)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid request type: "%s". Valid types: %s', $value, implode(', ', self::VALID_TYPES)));
         }
     }
 
@@ -91,7 +82,7 @@ final readonly class RequestType implements Stringable
 
     public function isDestructive(): bool
     {
-        return $this->value === self::ERASURE;
+        return self::ERASURE === $this->value;
     }
 
     public function requiresManualReview(): bool

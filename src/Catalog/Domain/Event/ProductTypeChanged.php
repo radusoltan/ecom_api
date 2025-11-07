@@ -16,5 +16,6 @@ final readonly class ProductTypeChanged
         public ProductType $oldType,
         public ProductType $newType,
         public \DateTimeImmutable $occurredAt
-    ) {}
+    ) {
+    }
 }

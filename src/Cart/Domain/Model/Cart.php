@@ -10,17 +10,14 @@ use App\Cart\Domain\Event\CartQuantityUpdated;
 use App\Cart\Domain\Event\ItemAddedToCart;
 use App\Cart\Domain\Event\ItemRemovedFromCart;
 use App\Cart\Domain\Exception\CartItemNotFoundException;
-use App\Cart\Domain\Exception\InvalidQuantityException;
 use App\Catalog\Domain\Model\ProductId;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
-use InvalidArgumentException;
 
 /**
- * Cart Aggregate Root
+ * Cart Aggregate Root.
  *
  * Business Rules:
  * - Max 100 items per cart
@@ -42,8 +39,8 @@ final class Cart extends AggregateRoot
     private CartStatus $status;
     /** @var CartItem[] */
     private array $items = [];
-    private DateTimeImmutable $createdAt;
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $updatedAt;
 
     private function __construct()
     {
@@ -62,8 +59,8 @@ final class Cart extends AggregateRoot
         $cart->sessionId = $sessionId;
         $cart->status = CartStatus::active();
         $cart->items = [];
-        $cart->createdAt = new DateTimeImmutable();
-        $cart->updatedAt = new DateTimeImmutable();
+        $cart->createdAt = new \DateTimeImmutable();
+        $cart->updatedAt = new \DateTimeImmutable();
 
         $cart->recordEvent(new CartCreated(
             $cart->id,
@@ -85,8 +82,8 @@ final class Cart extends AggregateRoot
         ?SessionId $sessionId,
         CartStatus $status,
         array $items,
-        DateTimeImmutable $createdAt,
-        DateTimeImmutable $updatedAt
+        \DateTimeImmutable $createdAt,
+        \DateTimeImmutable $updatedAt
     ): self {
         $cart = new self();
         $cart->id = $id;
@@ -107,8 +104,8 @@ final class Cart extends AggregateRoot
         Quantity $quantity,
         Money $unitPrice
     ): void {
-        if ($this->status !== CartStatus::ACTIVE) {
-            throw new InvalidArgumentException('Cannot add items to a non-active cart');
+        if (CartStatus::ACTIVE !== $this->status) {
+            throw new \InvalidArgumentException('Cannot add items to a non-active cart');
         }
 
         // Check for duplicate item (same product+variant)
@@ -116,7 +113,7 @@ final class Cart extends AggregateRoot
             if ($existingItem->isSameAs($productId, $variantId)) {
                 // Merge by increasing quantity
                 $existingItem->increaseQuantity($quantity);
-                $this->updatedAt = new DateTimeImmutable();
+                $this->updatedAt = new \DateTimeImmutable();
 
                 $this->recordEvent(new CartQuantityUpdated(
                     $this->id,
@@ -133,9 +130,7 @@ final class Cart extends AggregateRoot
 
         // Check max items limit
         if (count($this->items) >= self::MAX_ITEMS) {
-            throw new InvalidArgumentException(
-                sprintf('Cannot add more than %d items to cart', self::MAX_ITEMS)
-            );
+            throw new \InvalidArgumentException(sprintf('Cannot add more than %d items to cart', self::MAX_ITEMS));
         }
 
         // Create new item
@@ -148,7 +143,7 @@ final class Cart extends AggregateRoot
         );
 
         $this->items[] = $item;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new ItemAddedToCart(
             $this->id,
@@ -163,8 +158,8 @@ final class Cart extends AggregateRoot
 
     public function removeItem(CartItemId $cartItemId): void
     {
-        if ($this->status !== CartStatus::ACTIVE) {
-            throw new InvalidArgumentException('Cannot remove items from a non-active cart');
+        if (CartStatus::ACTIVE !== $this->status) {
+            throw new \InvalidArgumentException('Cannot remove items from a non-active cart');
         }
 
         $itemIndex = null;
@@ -174,19 +169,18 @@ final class Cart extends AggregateRoot
             if ($item->id()->equals($cartItemId)) {
                 $itemIndex = $index;
                 $removedItem = $item;
+
                 break;
             }
         }
 
-        if ($itemIndex === null || $removedItem === null) {
-            throw new CartItemNotFoundException(
-                sprintf('Cart item with ID "%s" not found', $cartItemId->toString())
-            );
+        if (null === $itemIndex || null === $removedItem) {
+            throw new CartItemNotFoundException(sprintf('Cart item with ID "%s" not found', $cartItemId->toString()));
         }
 
         array_splice($this->items, (int) $itemIndex, 1);
         $this->items = array_values($this->items); // Reindex array
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new ItemRemovedFromCart(
             $this->id,
@@ -199,14 +193,14 @@ final class Cart extends AggregateRoot
 
     public function updateQuantity(CartItemId $cartItemId, Quantity $newQuantity): void
     {
-        if ($this->status !== CartStatus::ACTIVE) {
-            throw new InvalidArgumentException('Cannot update quantities in a non-active cart');
+        if (CartStatus::ACTIVE !== $this->status) {
+            throw new \InvalidArgumentException('Cannot update quantities in a non-active cart');
         }
 
         foreach ($this->items as $item) {
             if ($item->id()->equals($cartItemId)) {
                 $item->updateQuantity($newQuantity);
-                $this->updatedAt = new DateTimeImmutable();
+                $this->updatedAt = new \DateTimeImmutable();
 
                 $this->recordEvent(new CartQuantityUpdated(
                     $this->id,
@@ -221,9 +215,7 @@ final class Cart extends AggregateRoot
             }
         }
 
-        throw new CartItemNotFoundException(
-            sprintf('Cart item with ID "%s" not found', $cartItemId->toString())
-        );
+        throw new CartItemNotFoundException(sprintf('Cart item with ID "%s" not found', $cartItemId->toString()));
     }
 
     public function clear(): void
@@ -233,7 +225,7 @@ final class Cart extends AggregateRoot
         }
 
         $this->items = [];
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new CartCleared($this->id, $this->tenantId));
     }
@@ -255,40 +247,40 @@ final class Cart extends AggregateRoot
 
     public function isExpired(): bool
     {
-        if ($this->status === CartStatus::EXPIRED) {
+        if (CartStatus::EXPIRED === $this->status) {
             return true;
         }
 
         $expiryDate = $this->updatedAt->modify(sprintf('+%d days', self::EXPIRY_DAYS));
-        $now = new DateTimeImmutable();
+        $now = new \DateTimeImmutable();
 
         return $now >= $expiryDate;
     }
 
     public function markAsExpired(): void
     {
-        if ($this->status !== CartStatus::ACTIVE) {
+        if (CartStatus::ACTIVE !== $this->status) {
             return;
         }
 
         $this->status = CartStatus::expired();
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function markAsConverted(): void
     {
-        if ($this->status !== CartStatus::ACTIVE) {
-            throw new InvalidArgumentException('Only active carts can be converted to orders');
+        if (CartStatus::ACTIVE !== $this->status) {
+            throw new \InvalidArgumentException('Only active carts can be converted to orders');
         }
 
         $this->status = CartStatus::converted();
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function assignToCustomer(CustomerId $customerId): void
     {
         $this->customerId = $customerId;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getItemCount(): int
@@ -297,6 +289,7 @@ final class Cart extends AggregateRoot
         foreach ($this->items as $item) {
             $count += $item->quantity()->toInt();
         }
+
         return $count;
     }
 
@@ -335,18 +328,18 @@ final class Cart extends AggregateRoot
         return $this->items;
     }
 
-    public function createdAt(): DateTimeImmutable
+    public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function updatedAt(): DateTimeImmutable
+    public function updatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
     /**
-     * Check if cart is active (can be modified)
+     * Check if cart is active (can be modified).
      */
     public function isActive(): bool
     {
@@ -354,7 +347,7 @@ final class Cart extends AggregateRoot
     }
 
     /**
-     * Check if cart is empty (has no items)
+     * Check if cart is empty (has no items).
      */
     public function isEmpty(): bool
     {

@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
- * Translation Stats Provider
+ * Translation Stats Provider.
  *
  * Handles GET /api/translations/stats
  *
@@ -26,17 +26,19 @@ final readonly class TranslationStatsProvider implements ProviderInterface
         private MessageBusInterface $queryBus,
         private TenantContextProvider $tenantContext,
         private RequestStack $requestStack,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $uriVariables
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
         $request = $this->requestStack->getCurrentRequest();
-        if ($request === null) {
+        if (null === $request) {
             throw new BadRequestHttpException('No request found');
         }
 
@@ -49,7 +51,7 @@ final readonly class TranslationStatsProvider implements ProviderInterface
         $envelope = $this->queryBus->dispatch($query);
         $handledStamp = $envelope->last(HandledStamp::class);
 
-        if ($handledStamp === null) {
+        if (null === $handledStamp) {
             throw new \RuntimeException('Query was not handled');
         }
 

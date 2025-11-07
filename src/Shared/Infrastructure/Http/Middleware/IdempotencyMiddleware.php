@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Http\Middleware;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Psr\Log\LoggerInterface;
 
 /**
- * IdempotencyMiddleware
+ * IdempotencyMiddleware.
  *
  * Ensures idempotent POST requests by caching responses based on Idempotency-Key header.
  * Implements best practices from Stripe's idempotency approach.
@@ -48,7 +48,7 @@ final class IdempotencyMiddleware
         $request = $event->getRequest();
 
         // Only process POST requests with Idempotency-Key
-        if ($request->getMethod() !== Request::METHOD_POST) {
+        if (Request::METHOD_POST !== $request->getMethod()) {
             return;
         }
 
@@ -63,6 +63,7 @@ final class IdempotencyMiddleware
                 'key' => $idempotencyKey,
                 'path' => $request->getPathInfo(),
             ]);
+
             return;
         }
 
@@ -77,7 +78,7 @@ final class IdempotencyMiddleware
                 return null;
             });
 
-            if ($cachedData !== null) {
+            if (null !== $cachedData) {
                 // Check if payload matches
                 if ($cachedData['request_hash'] !== $requestHash) {
                     $this->logger->warning('Idempotency key reused with different payload', [
@@ -97,6 +98,7 @@ final class IdempotencyMiddleware
                         ['Content-Type' => 'application/problem+json']
                     );
                     $event->setResponse($response);
+
                     return;
                 }
 
@@ -117,6 +119,7 @@ final class IdempotencyMiddleware
                     )
                 );
                 $event->setResponse($response);
+
                 return;
             }
 
@@ -186,7 +189,7 @@ final class IdempotencyMiddleware
     private function isValidIdempotencyKey(string $key): bool
     {
         // Allow alphanumeric, hyphens, underscores, max 255 chars
-        return preg_match('/^[a-zA-Z0-9_-]{1,255}$/', $key) === 1;
+        return 1 === preg_match('/^[a-zA-Z0-9_-]{1,255}$/', $key);
     }
 
     private function buildCacheKey(string $tenantId, string $idempotencyKey): string
@@ -209,6 +212,7 @@ final class IdempotencyMiddleware
             }
             $headers[$name] = $values;
         }
+
         return $headers;
     }
 }

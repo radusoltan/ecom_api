@@ -26,7 +26,7 @@ final readonly class GetCustomerConsentsQueryHandler
             : $this->consentRepository->findByCustomerId($query->customerId);
 
         return array_map(
-            fn($consent) => ConsentDTO::fromDomainModel($consent),
+            fn ($consent) => ConsentDTO::fromDomainModel($consent),
             $consents
         );
     }

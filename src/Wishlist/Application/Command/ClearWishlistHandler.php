@@ -12,7 +12,8 @@ final readonly class ClearWishlistHandler
 {
     public function __construct(
         private WishlistRepositoryInterface $wishlistRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(ClearWishlist $command): void
     {
@@ -21,7 +22,7 @@ final readonly class ClearWishlistHandler
             $command->tenantId
         );
 
-        if ($wishlist === null) {
+        if (null === $wishlist) {
             // Nothing to clear
             return;
         }

@@ -10,10 +10,9 @@ use App\AuditLog\Domain\ValueObject\ResourceType;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\User\Domain\ValueObject\UserId;
-use DateTimeImmutable;
 
 /**
- * AuditLogEntry Aggregate Root
+ * AuditLogEntry Aggregate Root.
  *
  * Represents an immutable audit trail entry that records user actions in the system.
  *
@@ -31,11 +30,15 @@ final class AuditLogEntry extends AggregateRoot
     private ActionType $actionType;
     private ResourceType $resourceType;
     private string $resourceId;
+    /** @var array<string, mixed> */
     private array $metadata;
     private ?string $ipAddress;
     private ?string $userAgent;
-    private DateTimeImmutable $occurredAt;
+    private \DateTimeImmutable $occurredAt;
 
+    /**
+     * @param array<string, mixed> $metadata
+     */
     private function __construct(
         AuditLogId $id,
         TenantId $tenantId,
@@ -46,7 +49,7 @@ final class AuditLogEntry extends AggregateRoot
         array $metadata,
         ?string $ipAddress,
         ?string $userAgent,
-        DateTimeImmutable $occurredAt
+        \DateTimeImmutable $occurredAt
     ) {
         $this->id = $id;
         $this->tenantId = $tenantId;
@@ -61,7 +64,9 @@ final class AuditLogEntry extends AggregateRoot
     }
 
     /**
-     * Create a new audit log entry
+     * Create a new audit log entry.
+     *
+     * @param array<string, mixed> $metadata
      */
     public static function log(
         TenantId $tenantId,
@@ -74,7 +79,7 @@ final class AuditLogEntry extends AggregateRoot
         ?string $userAgent = null
     ): self {
         $id = AuditLogId::generate();
-        $occurredAt = new DateTimeImmutable();
+        $occurredAt = new \DateTimeImmutable();
 
         return new self(
             $id,
@@ -91,7 +96,9 @@ final class AuditLogEntry extends AggregateRoot
     }
 
     /**
-     * Reconstitute from persistence
+     * Reconstitute from persistence.
+     *
+     * @param array<string, mixed> $metadata
      */
     public static function reconstitute(
         AuditLogId $id,
@@ -103,7 +110,7 @@ final class AuditLogEntry extends AggregateRoot
         array $metadata,
         ?string $ipAddress,
         ?string $userAgent,
-        DateTimeImmutable $occurredAt
+        \DateTimeImmutable $occurredAt
     ): self {
         return new self(
             $id,
@@ -149,6 +156,9 @@ final class AuditLogEntry extends AggregateRoot
         return $this->resourceId;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function metadata(): array
     {
         return $this->metadata;
@@ -164,17 +174,17 @@ final class AuditLogEntry extends AggregateRoot
         return $this->userAgent;
     }
 
-    public function occurredAt(): DateTimeImmutable
+    public function occurredAt(): \DateTimeImmutable
     {
         return $this->occurredAt;
     }
 
     /**
-     * Check if this action was performed by a specific user
+     * Check if this action was performed by a specific user.
      */
     public function wasPerformedBy(UserId $userId): bool
     {
-        if ($this->userId === null) {
+        if (null === $this->userId) {
             return false;
         }
 
@@ -182,7 +192,7 @@ final class AuditLogEntry extends AggregateRoot
     }
 
     /**
-     * Check if this action was performed on a specific resource
+     * Check if this action was performed on a specific resource.
      */
     public function affectedResource(ResourceType $resourceType, string $resourceId): bool
     {
@@ -190,10 +200,10 @@ final class AuditLogEntry extends AggregateRoot
     }
 
     /**
-     * Check if this is a system-initiated action (no user)
+     * Check if this is a system-initiated action (no user).
      */
     public function isSystemAction(): bool
     {
-        return $this->userId === null;
+        return null === $this->userId;
     }
 }

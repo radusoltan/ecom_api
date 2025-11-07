@@ -25,7 +25,7 @@ final readonly class GrantConsentCommandHandler
             $command->purpose
         );
 
-        if ($existingConsent !== null) {
+        if (null !== $existingConsent) {
             // Consent already granted, return existing ID
             return $existingConsent->id();
         }

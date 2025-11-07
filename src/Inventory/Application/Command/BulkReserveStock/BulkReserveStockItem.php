@@ -9,7 +9,7 @@ use App\Inventory\Domain\Model\Quantity;
 use App\Inventory\Domain\Model\WarehouseId;
 
 /**
- * Single item in a bulk reservation request
+ * Single item in a bulk reservation request.
  */
 final readonly class BulkReserveStockItem
 {

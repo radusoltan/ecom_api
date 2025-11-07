@@ -13,16 +13,16 @@ use App\Catalog\Domain\Model\ProductId;
 use App\Catalog\Domain\Model\ProductName;
 use App\Catalog\Domain\Model\SKU;
 use App\Catalog\Domain\Model\Stock;
-use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 use App\Catalog\Domain\Repository\CategoryRepositoryInterface;
+use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 use App\Media\Domain\Repository\ImageRepositoryInterface;
 use App\Media\Presentation\Api\Resource\ImageResource;
 use App\Media\Presentation\Api\State\ImageUploadProcessor;
 use App\Shared\Domain\ValueObject\Money;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Shared\Domain\ValueObject\TenantId as SharedTenantId;
 use App\Shared\Infrastructure\Doctrine\TenantConnectionSubscriber;
 use App\Shared\Infrastructure\Tenant\TenantContext;
-use App\Tenant\Domain\ValueObject\TenantId;
 use Doctrine\DBAL\Events;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -77,11 +77,11 @@ final class ImageUploadProcessorTest extends KernelTestCase
         $storageBase = (string) $container->getParameter('media.storage.local.base_path');
         $thumbnailBase = (string) $container->getParameter('media.thumbnail.local.base_path');
 
-        if ($storageBase !== '') {
+        if ('' !== $storageBase) {
             $this->filesystem->remove($storageBase);
         }
 
-        if ($thumbnailBase !== '') {
+        if ('' !== $thumbnailBase) {
             $this->filesystem->remove($thumbnailBase);
         }
 
@@ -296,20 +296,20 @@ final class ImageUploadProcessorTest extends KernelTestCase
     private function createProductRepositoryStub(): ProductRepositoryInterface
     {
         return new class implements ProductRepositoryInterface {
-            /** @var array<string, \App\Catalog\Domain\Model\Product> */
+            /** @var array<string, Product> */
             private array $products = [];
 
-            public function save(\App\Catalog\Domain\Model\Product $product): void
+            public function save(Product $product): void
             {
                 $this->products[$product->id()->toString()] = $product;
             }
 
-            public function findById(\App\Catalog\Domain\Model\ProductId $id): ?\App\Catalog\Domain\Model\Product
+            public function findById(ProductId $id): ?Product
             {
                 return $this->products[$id->toString()] ?? null;
             }
 
-            public function findBySKU(\App\Shared\Domain\ValueObject\TenantId $tenantId, \App\Catalog\Domain\Model\SKU $sku): ?\App\Catalog\Domain\Model\Product
+            public function findBySKU(TenantId $tenantId, SKU $sku): ?Product
             {
                 foreach ($this->products as $product) {
                     if ($product->tenantId()->equals($tenantId) && $product->sku()->equals($sku)) {
@@ -320,7 +320,7 @@ final class ImageUploadProcessorTest extends KernelTestCase
                 return null;
             }
 
-            public function findBySlug(\App\Shared\Domain\ValueObject\TenantId $tenantId, \App\Catalog\Domain\Model\Slug $slug): ?\App\Catalog\Domain\Model\Product
+            public function findBySlug(TenantId $tenantId, \App\Catalog\Domain\Model\Slug $slug): ?Product
             {
                 foreach ($this->products as $product) {
                     if ($product->tenantId()->equals($tenantId) && $product->slug()->equals($slug)) {
@@ -331,17 +331,17 @@ final class ImageUploadProcessorTest extends KernelTestCase
                 return null;
             }
 
-            public function findByTenant(\App\Shared\Domain\ValueObject\TenantId $tenantId, int $limit = 100, int $offset = 0): array
+            public function findByTenant(TenantId $tenantId, int $limit = 100, int $offset = 0): array
             {
                 $filtered = array_filter(
                     $this->products,
-                    static fn(\App\Catalog\Domain\Model\Product $product): bool => $product->tenantId()->equals($tenantId)
+                    static fn (Product $product): bool => $product->tenantId()->equals($tenantId)
                 );
 
                 return array_slice(array_values($filtered), $offset, $limit);
             }
 
-            public function delete(\App\Catalog\Domain\Model\ProductId $id): void
+            public function delete(ProductId $id): void
             {
                 unset($this->products[$id->toString()]);
             }
@@ -351,20 +351,20 @@ final class ImageUploadProcessorTest extends KernelTestCase
     private function createCategoryRepositoryStub(): CategoryRepositoryInterface
     {
         return new class implements CategoryRepositoryInterface {
-            /** @var array<string, \App\Catalog\Domain\Model\Category> */
+            /** @var array<string, Category> */
             private array $categories = [];
 
-            public function save(\App\Catalog\Domain\Model\Category $category): void
+            public function save(Category $category): void
             {
                 $this->categories[$category->id()->toString()] = $category;
             }
 
-            public function findById(\App\Catalog\Domain\Model\CategoryId $id): ?\App\Catalog\Domain\Model\Category
+            public function findById(CategoryId $id): ?Category
             {
                 return $this->categories[$id->toString()] ?? null;
             }
 
-            public function findBySlug(\App\Shared\Domain\ValueObject\TenantId $tenantId, \App\Catalog\Domain\Model\Slug $slug): ?\App\Catalog\Domain\Model\Category
+            public function findBySlug(TenantId $tenantId, \App\Catalog\Domain\Model\Slug $slug): ?Category
             {
                 foreach ($this->categories as $category) {
                     if ($category->tenantId()->equals($tenantId) && $category->slug()->equals($slug)) {
@@ -375,25 +375,25 @@ final class ImageUploadProcessorTest extends KernelTestCase
                 return null;
             }
 
-            public function findByTenant(\App\Shared\Domain\ValueObject\TenantId $tenantId): array
+            public function findByTenant(TenantId $tenantId): array
             {
                 return array_values(array_filter(
                     $this->categories,
-                    static fn(\App\Catalog\Domain\Model\Category $category): bool => $category->tenantId()->equals($tenantId)
+                    static fn (Category $category): bool => $category->tenantId()->equals($tenantId)
                 ));
             }
 
-            public function findByParent(\App\Shared\Domain\ValueObject\TenantId $tenantId, ?\App\Catalog\Domain\Model\CategoryId $parentId): array
+            public function findByParent(TenantId $tenantId, ?CategoryId $parentId): array
             {
                 return array_values(array_filter(
                     $this->categories,
-                    static fn(\App\Catalog\Domain\Model\Category $category): bool => $category->tenantId()->equals($tenantId)
-                        && (($parentId === null && $category->parentId() === null)
-                            || ($parentId !== null && $category->parentId()?->equals($parentId)))
+                    static fn (Category $category): bool => $category->tenantId()->equals($tenantId)
+                        && ((null === $parentId && null === $category->parentId())
+                            || (null !== $parentId && $category->parentId()?->equals($parentId)))
                 ));
             }
 
-            public function delete(\App\Catalog\Domain\Model\CategoryId $id): void
+            public function delete(CategoryId $id): void
             {
                 unset($this->categories[$id->toString()]);
             }

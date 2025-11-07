@@ -10,5 +10,6 @@ final readonly class GetLowStockItemsQuery
 {
     public function __construct(
         public TenantId $tenantId,
-    ) {}
+    ) {
+    }
 }

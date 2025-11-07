@@ -20,7 +20,7 @@ final readonly class GetPaymentByIdHandler
     {
         $payment = $this->paymentRepository->findById($query->id, $query->tenantId);
 
-        if ($payment === null) {
+        if (null === $payment) {
             return null;
         }
 

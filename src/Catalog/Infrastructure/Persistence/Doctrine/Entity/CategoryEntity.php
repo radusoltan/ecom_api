@@ -20,7 +20,6 @@ use App\Internationalization\Infrastructure\Persistence\Doctrine\Entity\Translat
 use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Gedmo\Translatable\Translatable;
 
 #[Gedmo\TranslationEntity(class: Translation::class)]
 #[ORM\Entity]
@@ -35,14 +34,13 @@ use Gedmo\Translatable\Translatable;
     operations: [
         new GetCollection(
             provider: CategoryCollectionProvider::class,
-
         ),
         new Post(
             processor: CreateCategoryProcessor::class
         ),
         new Get(),
         new Patch(),
-        new Delete()
+        new Delete(),
     ]
 )]
 class CategoryEntity
@@ -118,7 +116,7 @@ class CategoryEntity
             name: CategoryName::fromString($this->name),
             description: $this->description,
             slug: Slug::fromString($this->slug),
-            parentId: $this->parentId !== null ? CategoryId::fromString($this->parentId) : null,
+            parentId: null !== $this->parentId ? CategoryId::fromString($this->parentId) : null,
             position: $this->position,
             active: $this->active,
             showOnFront: $this->showOnFront,

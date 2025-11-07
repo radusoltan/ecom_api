@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Order\Domain\Event;
 
-use App\Order\Domain\ValueObject\FulfillmentId;
 use App\Order\Domain\Model\OrderId;
+use App\Order\Domain\ValueObject\FulfillmentId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Fulfillment Completed Domain Event
+ * Fulfillment Completed Domain Event.
  *
  * Emitted when an order fulfillment is successfully completed (delivered).
  */

@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * API Platform provider for retrieving products with locale-aware translations
- * Resolves locale from Accept-Language header and applies translations
+ * Resolves locale from Accept-Language header and applies translations.
  */
 final readonly class ProductCollectionProviderWithTranslations implements ProviderInterface
 {
@@ -25,7 +25,8 @@ final readonly class ProductCollectionProviderWithTranslations implements Provid
         private RequestStack $requestStack,
         private LocalizationPolicy $localizationPolicy,
         private I18nCacheService $cacheService
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
@@ -71,13 +72,13 @@ final readonly class ProductCollectionProviderWithTranslations implements Provid
             // Search by name (in default field for now)
             if ($request->query->has('search')) {
                 $qb->andWhere('LOWER(p.name) LIKE :search')
-                    ->setParameter('search', '%' . strtolower($request->query->get('search')) . '%');
+                    ->setParameter('search', '%'.strtolower($request->query->get('search')).'%');
             }
 
             // Sort
             $sort = $request->query->get('sort', 'createdAt');
             $order = $request->query->get('order', 'DESC');
-            $qb->orderBy('p.' . $sort, $order);
+            $qb->orderBy('p.'.$sort, $order);
 
             // Pagination
             $page = (int) $request->query->get('page', 1);
@@ -104,7 +105,7 @@ final readonly class ProductCollectionProviderWithTranslations implements Provid
     }
 
     /**
-     * Resolve locale from request
+     * Resolve locale from request.
      */
     private function resolveLocale($request): Locale
     {
@@ -132,7 +133,7 @@ final readonly class ProductCollectionProviderWithTranslations implements Provid
     }
 
     /**
-     * Apply translations to product based on locale
+     * Apply translations to product based on locale.
      */
     private function applyTranslations(
         ProductEntityWithTranslations $product,
@@ -150,14 +151,14 @@ final readonly class ProductCollectionProviderWithTranslations implements Provid
             'price' => [
                 'amount' => $product->getPriceAmount() / 100, // Convert to major units for display
                 'currency' => $product->getPriceCurrency(),
-                'formatted' => $this->formatPrice($product->getPriceAmount(), $product->getPriceCurrency())
+                'formatted' => $this->formatPrice($product->getPriceAmount(), $product->getPriceCurrency()),
             ],
             'categoryId' => $product->getCategoryId(),
             'stock' => [
                 'quantity' => $product->getStockQuantity(),
                 'trackInventory' => $product->isTrackInventory(),
                 'allowBackorder' => $product->isAllowBackorder(),
-                'inStock' => $product->getStockQuantity() > 0 || $product->isAllowBackorder()
+                'inStock' => $product->getStockQuantity() > 0 || $product->isAllowBackorder(),
             ],
             'images' => $product->getImages(),
             'active' => $product->isActive(),
@@ -168,32 +169,32 @@ final readonly class ProductCollectionProviderWithTranslations implements Provid
             '_translations' => [
                 'name' => $product->getNameTranslations(),
                 'description' => $product->getDescriptionTranslations(),
-                'shortDescription' => $product->getShortDescriptionTranslations()
-            ]
+                'shortDescription' => $product->getShortDescriptionTranslations(),
+            ],
         ];
 
         return $productArray;
     }
 
     /**
-     * Format price for display
+     * Format price for display.
      */
     private function formatPrice(int $amountInMinorUnits, string $currencyCode): string
     {
         $amount = $amountInMinorUnits / 100;
 
         // Simple formatting - in production use proper money formatter
-        return match($currencyCode) {
-            'USD' => '$' . number_format($amount, 2),
-            'EUR' => '€' . number_format($amount, 2),
-            'GBP' => '£' . number_format($amount, 2),
-            'RON' => number_format($amount, 2) . ' RON',
-            default => $currencyCode . ' ' . number_format($amount, 2)
+        return match ($currencyCode) {
+            'USD' => '$'.number_format($amount, 2),
+            'EUR' => '€'.number_format($amount, 2),
+            'GBP' => '£'.number_format($amount, 2),
+            'RON' => number_format($amount, 2).' RON',
+            default => $currencyCode.' '.number_format($amount, 2)
         };
     }
 
     /**
-     * Warm cache for products
+     * Warm cache for products.
      */
     private function warmCache(array $products, Locale $locale, TenantId $tenantId): void
     {
@@ -210,7 +211,7 @@ final readonly class ProductCollectionProviderWithTranslations implements Provid
                 [
                     'name' => $product['name'],
                     'description' => $product['description'],
-                    'shortDescription' => $product['shortDescription']
+                    'shortDescription' => $product['shortDescription'],
                 ]
             );
         }

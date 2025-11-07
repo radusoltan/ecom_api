@@ -8,7 +8,7 @@ use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Deactivate Tax Rule Command Handler
+ * Deactivate Tax Rule Command Handler.
  */
 #[AsMessageHandler]
 final readonly class DeactivateTaxRuleHandler
@@ -22,10 +22,8 @@ final readonly class DeactivateTaxRuleHandler
     {
         $taxRule = $this->taxRuleRepository->findById($command->id, $command->tenantId);
 
-        if ($taxRule === null) {
-            throw new \DomainException(
-                sprintf('Tax rule "%s" not found', $command->id->toString())
-            );
+        if (null === $taxRule) {
+            throw new \DomainException(sprintf('Tax rule "%s" not found', $command->id->toString()));
         }
 
         $taxRule->deactivate();

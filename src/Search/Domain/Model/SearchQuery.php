@@ -8,7 +8,7 @@ use App\Internationalization\Domain\Model\Locale;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * SearchQuery Value Object
+ * SearchQuery Value Object.
  *
  * Encapsulates all search parameters with validation.
  *
@@ -53,11 +53,7 @@ final readonly class SearchQuery
 
         $validSortFields = ['relevance', 'price', 'name', 'created_at'];
         if (null !== $this->sortBy && !\in_array($this->sortBy, $validSortFields, true)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Invalid sort field: %s. Allowed: %s',
-                $this->sortBy,
-                implode(', ', $validSortFields)
-            ));
+            throw new \InvalidArgumentException(sprintf('Invalid sort field: %s. Allowed: %s', $this->sortBy, implode(', ', $validSortFields)));
         }
 
         if (null !== $this->sortOrder && !\in_array($this->sortOrder, ['asc', 'desc'], true)) {

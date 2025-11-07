@@ -9,11 +9,11 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use App\Pricing\Presentation\Api\Processor\CreatePriceListProcessor;
 use App\Pricing\Presentation\Api\Processor\ActivatePriceListProcessor;
+use App\Pricing\Presentation\Api\Processor\CreatePriceListProcessor;
 use App\Pricing\Presentation\Api\Processor\DeactivatePriceListProcessor;
-use App\Pricing\Presentation\Api\Provider\PriceListItemProvider;
 use App\Pricing\Presentation\Api\Provider\PriceListCollectionProvider;
+use App\Pricing\Presentation\Api\Provider\PriceListItemProvider;
 
 #[ApiResource(
     shortName: 'PriceList',
@@ -45,6 +45,7 @@ class PriceListResource
     public ?string $tenantId = null;
     public ?string $name = null;
     public ?int $priority = null;
+    /** @var array<string, mixed> */
     public array $rules = [];
     public ?string $validFrom = null;
     public ?string $validTo = null;

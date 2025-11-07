@@ -9,7 +9,6 @@ use ApiPlatform\State\ProviderInterface;
 use App\Pricing\Application\Query\GetActivePriceLists\GetActivePriceListsQuery;
 use App\Pricing\Presentation\Api\Resource\PriceListResource;
 use App\Shared\Domain\ValueObject\TenantId;
-use InvalidArgumentException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -27,7 +26,7 @@ final readonly class PriceListCollectionProvider implements ProviderInterface
     {
         // Extract tenant ID from context (injected by TenantContextProvider)
         $tenantId = TenantId::fromString(
-            $context['tenant_id'] ?? throw new InvalidArgumentException('Tenant ID is required')
+            $context['tenant_id'] ?? throw new \InvalidArgumentException('Tenant ID is required')
         );
 
         $envelope = $this->queryBus->dispatch(

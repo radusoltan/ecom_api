@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Catalog\Application\Command\BulkImportProducts;
 
 /**
- * Command to bulk import products from array data
+ * Command to bulk import products from array data.
  */
 final readonly class BulkImportProductsCommand
 {

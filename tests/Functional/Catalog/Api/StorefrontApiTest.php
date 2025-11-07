@@ -17,8 +17,8 @@ class StorefrontApiTest extends ApiTestCase
             'headers' => [
                 'Accept' => 'application/json',
                 'Accept-Language' => 'en-US,en;q=0.9',
-                'X-Tenant-ID' => self::TEST_TENANT_ID
-            ]
+                'X-Tenant-ID' => self::TEST_TENANT_ID,
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -55,8 +55,8 @@ class StorefrontApiTest extends ApiTestCase
             'headers' => [
                 'Accept' => 'application/json',
                 'Accept-Language' => 'en-US,en;q=0.9',
-                'X-Tenant-ID' => self::TEST_TENANT_ID
-            ]
+                'X-Tenant-ID' => self::TEST_TENANT_ID,
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -89,12 +89,12 @@ class StorefrontApiTest extends ApiTestCase
             'headers' => [
                 'Accept' => 'application/json',
                 'Accept-Language' => 'en-US,en;q=0.9',
-                'X-Tenant-ID' => self::TEST_TENANT_ID
+                'X-Tenant-ID' => self::TEST_TENANT_ID,
             ],
             'query' => [
                 'page' => 1,
-                'itemsPerPage' => 12
-            ]
+                'itemsPerPage' => 12,
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -125,15 +125,15 @@ class StorefrontApiTest extends ApiTestCase
         $response = $client->request('GET', '/api/v1/storefront/products', [
             'headers' => [
                 'Accept' => 'application/json',
-                'X-Tenant-ID' => self::TEST_TENANT_ID
+                'X-Tenant-ID' => self::TEST_TENANT_ID,
             ],
             'query' => [
                 'q' => 'test',
                 'priceMin' => 1000,
                 'priceMax' => 5000,
                 'sort' => 'price_asc',
-                'page' => 1
-            ]
+                'page' => 1,
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -154,12 +154,12 @@ class StorefrontApiTest extends ApiTestCase
             $response = $client->request('GET', '/api/v1/storefront/products', [
                 'headers' => [
                     'Accept' => 'application/json',
-                    'X-Tenant-ID' => self::TEST_TENANT_ID
+                    'X-Tenant-ID' => self::TEST_TENANT_ID,
                 ],
                 'query' => [
                     'sort' => $sort,
-                    'page' => 1
-                ]
+                    'page' => 1,
+                ],
             ]);
 
             $this->assertResponseIsSuccessful();
@@ -174,8 +174,8 @@ class StorefrontApiTest extends ApiTestCase
         $response = $client->request('GET', '/api/v1/storefront/featured-products', [
             'headers' => [
                 'Accept' => 'application/json',
-                'X-Tenant-ID' => self::TEST_TENANT_ID
-            ]
+                'X-Tenant-ID' => self::TEST_TENANT_ID,
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -189,8 +189,8 @@ class StorefrontApiTest extends ApiTestCase
             'headers' => [
                 'Accept' => 'application/json',
                 'X-Tenant-ID' => self::TEST_TENANT_ID,
-                'If-None-Match' => $etag
-            ]
+                'If-None-Match' => $etag,
+            ],
         ]);
 
         $this->assertResponseStatusCodeSame(304); // Not Modified
@@ -207,8 +207,8 @@ class StorefrontApiTest extends ApiTestCase
         $response1 = $client->request('GET', '/api/v1/storefront/products', [
             'headers' => [
                 'Accept' => 'application/json',
-                'X-Tenant-ID' => $tenant1Id
-            ]
+                'X-Tenant-ID' => $tenant1Id,
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -218,8 +218,8 @@ class StorefrontApiTest extends ApiTestCase
         $response2 = $client->request('GET', '/api/v1/storefront/products', [
             'headers' => [
                 'Accept' => 'application/json',
-                'X-Tenant-ID' => $tenant2Id
-            ]
+                'X-Tenant-ID' => $tenant2Id,
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();

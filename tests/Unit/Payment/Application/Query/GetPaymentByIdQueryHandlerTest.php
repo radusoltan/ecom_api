@@ -31,7 +31,7 @@ final class GetPaymentByIdQueryHandlerTest extends TestCase
         // Arrange
         $paymentId = PaymentId::generate();
         $tenantId = TenantId::generate();
-        $orderId = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId = '01JCEX'.bin2hex(random_bytes(10));
 
         $payment = Payment::create(
             id: $paymentId,
@@ -99,7 +99,7 @@ final class GetPaymentByIdQueryHandlerTest extends TestCase
         $payment = Payment::create(
             id: $paymentId,
             tenantId: $tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 5000,
             currency: 'EUR',
             method: PaymentMethod::card(),

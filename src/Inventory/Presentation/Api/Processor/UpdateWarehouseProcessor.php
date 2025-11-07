@@ -24,7 +24,8 @@ final readonly class UpdateWarehouseProcessor implements ProcessorInterface
     public function __construct(
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
-    ) {}
+    ) {
+    }
 
     public function process(
         mixed $data,

@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tenant\Domain\ValueObject;
 
-use Stringable;
-use InvalidArgumentException;
-
-final readonly class TenantStatus implements Stringable
+final readonly class TenantStatus implements \Stringable
 {
     private const STATUS_ACTIVE = 'active';
     private const STATUS_INACTIVE = 'inactive';
@@ -16,7 +13,7 @@ final readonly class TenantStatus implements Stringable
     private function __construct(private string $value)
     {
         if (!in_array($value, [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_SUSPENDED], true)) {
-            throw new InvalidArgumentException(sprintf('Invalid tenant status: "%s". Must be "active", "inactive", or "suspended"', $value));
+            throw new \InvalidArgumentException(sprintf('Invalid tenant status: "%s". Must be "active", "inactive", or "suspended"', $value));
         }
     }
 

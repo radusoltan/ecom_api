@@ -28,10 +28,8 @@ final readonly class ReturnRequestId
 
     public static function fromString(string $value): self
     {
-        if (! Ulid::isValid($value)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid ReturnRequestId: "%s". Must be a valid ULID.', $value)
-            );
+        if (!Ulid::isValid($value)) {
+            throw new \InvalidArgumentException(sprintf('Invalid ReturnRequestId: "%s". Must be a valid ULID.', $value));
         }
 
         return new self($value);

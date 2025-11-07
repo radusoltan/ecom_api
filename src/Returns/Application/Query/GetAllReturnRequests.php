@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Returns\Application\Query;
 
 /**
- * Query: GetAllReturnRequests
+ * Query: GetAllReturnRequests.
  *
  * Retrieve all return requests for a tenant.
  * Optional filter by status.

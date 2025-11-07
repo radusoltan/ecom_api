@@ -7,7 +7,7 @@ namespace App\Tests\Functional\Api;
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 
 /**
- * Functional Tests for Authentication Flow
+ * Functional Tests for Authentication Flow.
  *
  * Tests JWT authentication with protected endpoints:
  * - Token generation and usage
@@ -18,10 +18,11 @@ use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 final class AuthenticationTest extends ApiTestCase
 {
     /**
-     * Create an authenticated client with JWT token
+     * Create an authenticated client with JWT token.
      *
      * @param string $email User email
-     * @param array $roles User roles
+     * @param array  $roles User roles
+     *
      * @return \Symfony\Bundle\FrameworkBundle\KernelBrowser
      */
     protected function createAuthenticatedClient(string $email = 'admin@admin.com', array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'])
@@ -40,7 +41,7 @@ final class AuthenticationTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash'); // Dummy password (not used for JWT)
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -60,7 +61,7 @@ final class AuthenticationTest extends ApiTestCase
         ]);
 
         // Create authenticated client with token in headers (API Platform recommended way)
-        return static::createClient([], ['headers' => ['authorization' => 'Bearer ' . $token]]);
+        return static::createClient([], ['headers' => ['authorization' => 'Bearer '.$token]]);
     }
 
     // ========================================================================
@@ -175,7 +176,7 @@ final class AuthenticationTest extends ApiTestCase
         // Act
         $client->request('GET', '/api/tenants', [
             'headers' => [
-                'Authorization' => 'Bearer ' . $token,
+                'Authorization' => 'Bearer '.$token,
                 'Accept' => 'application/json',
             ],
         ]);
@@ -272,7 +273,7 @@ final class AuthenticationTest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
 
         // Act & Assert - Make multiple requests with same token
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 3; ++$i) {
             $client->request('GET', '/api/tenants');
             $this->assertResponseIsSuccessful();
         }
@@ -282,7 +283,7 @@ final class AuthenticationTest extends ApiTestCase
     {
         // Arrange
         $client = $this->createAuthenticatedClient();
-        $uniqueEmail = 'authtest-' . bin2hex(random_bytes(4)) . '@example.com';
+        $uniqueEmail = 'authtest-'.bin2hex(random_bytes(4)).'@example.com';
 
         // Act
         $client->request('POST', '/api/tenants', [
@@ -303,7 +304,7 @@ final class AuthenticationTest extends ApiTestCase
     {
         // Arrange - Create a tenant first
         $client = $this->createAuthenticatedClient();
-        $uniqueEmail = 'activate-' . bin2hex(random_bytes(4)) . '@example.com';
+        $uniqueEmail = 'activate-'.bin2hex(random_bytes(4)).'@example.com';
 
         $createResponse = $client->request('POST', '/api/tenants', [
             'json' => [

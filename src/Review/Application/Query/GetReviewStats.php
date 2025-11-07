@@ -12,5 +12,6 @@ final readonly class GetReviewStats
     public function __construct(
         public ProductId $productId,
         public TenantId $tenantId
-    ) {}
+    ) {
+    }
 }

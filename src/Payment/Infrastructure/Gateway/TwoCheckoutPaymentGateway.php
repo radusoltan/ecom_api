@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
- * 2Checkout Payment Gateway Adapter
+ * 2Checkout Payment Gateway Adapter.
  *
  * Implements payment operations using 2Checkout API (now Verifone).
  * Supports card payments with authorize + capture flow.
@@ -91,7 +91,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
             // Generate HMAC signature
             $signature = $this->generateSignature($payload, $date);
 
-            $response = $this->httpClient->request('POST', self::API_BASE_URL . "/rest/6.0/orders/", [
+            $response = $this->httpClient->request('POST', self::API_BASE_URL.'/rest/6.0/orders/', [
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'X-Avangate-Authentication' => $signature,
@@ -119,10 +119,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('2Checkout authorization failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('2Checkout authorization failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -138,7 +135,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
             // This method retrieves the order status to confirm capture
 
             $date = gmdate('Y-m-d H:i:s');
-            $endpoint = self::API_BASE_URL . "/rest/6.0/orders/{$transactionId}/";
+            $endpoint = self::API_BASE_URL."/rest/6.0/orders/{$transactionId}/";
 
             $signature = $this->generateGetSignature($endpoint, $date);
 
@@ -173,10 +170,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('2Checkout capture failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('2Checkout capture failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -201,7 +195,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
 
             $response = $this->httpClient->request(
                 'POST',
-                self::API_BASE_URL . "/rest/6.0/orders/{$transactionId}/refund/",
+                self::API_BASE_URL."/rest/6.0/orders/{$transactionId}/refund/",
                 [
                     'headers' => [
                         'Content-Type' => 'application/json',
@@ -229,10 +223,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('2Checkout refund failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('2Checkout refund failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -254,7 +245,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
 
             $this->httpClient->request(
                 'DELETE',
-                self::API_BASE_URL . "/rest/6.0/orders/{$transactionId}/",
+                self::API_BASE_URL."/rest/6.0/orders/{$transactionId}/",
                 [
                     'headers' => [
                         'Content-Type' => 'application/json',
@@ -277,10 +268,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('2Checkout cancellation failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('2Checkout cancellation failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -288,7 +276,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
     {
         try {
             $date = gmdate('Y-m-d H:i:s');
-            $endpoint = self::API_BASE_URL . "/rest/6.0/orders/{$transactionId}/";
+            $endpoint = self::API_BASE_URL."/rest/6.0/orders/{$transactionId}/";
 
             $signature = $this->generateGetSignature($endpoint, $date);
 
@@ -321,10 +309,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('2Checkout status retrieval failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('2Checkout status retrieval failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -334,12 +319,12 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
     }
 
     /**
-     * Generate HMAC signature for POST/DELETE requests
+     * Generate HMAC signature for POST/DELETE requests.
      */
     private function generateSignature(array $payload, string $date): string
     {
         $serializedPayload = $this->serializePayload($payload);
-        $stringToHash = strlen($serializedPayload) . $serializedPayload . $date;
+        $stringToHash = strlen($serializedPayload).$serializedPayload.$date;
 
         $hash = hash_hmac('md5', $stringToHash, $this->secretKey);
 
@@ -352,13 +337,13 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
     }
 
     /**
-     * Generate HMAC signature for GET requests
+     * Generate HMAC signature for GET requests.
      */
     private function generateGetSignature(string $endpoint, string $date): string
     {
         // Extract path from endpoint
         $path = parse_url($endpoint, PHP_URL_PATH);
-        $stringToHash = strlen($path) . $path . $date;
+        $stringToHash = strlen($path).$path.$date;
 
         $hash = hash_hmac('md5', $stringToHash, $this->secretKey);
 
@@ -371,7 +356,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
     }
 
     /**
-     * Serialize payload for HMAC calculation
+     * Serialize payload for HMAC calculation.
      */
     private function serializePayload(array $payload): string
     {
@@ -384,7 +369,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
             } else {
                 // Convert all values to string for serialization
                 $valueStr = (string) $value;
-                $serialized .= strlen($valueStr) . $valueStr;
+                $serialized .= strlen($valueStr).$valueStr;
             }
         }
 
@@ -392,7 +377,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
     }
 
     /**
-     * Map PaymentMethod to 2Checkout payment method type
+     * Map PaymentMethod to 2Checkout payment method type.
      */
     private function mapPaymentMethod(PaymentMethod $method): array
     {
@@ -401,9 +386,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
                 'Type' => 'CC',
                 'Vendor' => '2CO',
             ],
-            default => throw new \InvalidArgumentException(
-                sprintf('Payment method "%s" is not supported by 2Checkout gateway', $method->value())
-            ),
+            default => throw new \InvalidArgumentException(sprintf('Payment method "%s" is not supported by 2Checkout gateway', $method->value())),
         };
     }
 }

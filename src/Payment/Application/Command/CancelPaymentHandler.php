@@ -23,14 +23,12 @@ final readonly class CancelPaymentHandler
     {
         $payment = $this->paymentRepository->findById($command->id, $command->tenantId);
 
-        if ($payment === null) {
-            throw new \RuntimeException(
-                sprintf('Payment with ID "%s" not found', $command->id->toString())
-            );
+        if (null === $payment) {
+            throw new \RuntimeException(sprintf('Payment with ID "%s" not found', $command->id->toString()));
         }
 
         // Only cancel via gateway if payment was authorized (has transaction ID)
-        if ($payment->gatewayTransactionId() !== null) {
+        if (null !== $payment->gatewayTransactionId()) {
             $this->logger->info('Cancelling payment via gateway', [
                 'payment_id' => $command->id->toString(),
                 'gateway' => $payment->gateway()->value(),

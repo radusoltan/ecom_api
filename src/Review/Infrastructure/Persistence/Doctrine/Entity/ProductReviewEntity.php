@@ -16,7 +16,7 @@ use Gedmo\Translatable\Translatable;
 
 /**
  * Doctrine entity for ProductReview
- * Translatable fields: title, content
+ * Translatable fields: title, content.
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'product_reviews')]
@@ -76,7 +76,7 @@ class ProductReviewEntity implements Translatable
     }
 
     /**
-     * Create entity from domain model
+     * Create entity from domain model.
      */
     public static function fromDomainModel(ProductReview $review): self
     {
@@ -98,7 +98,7 @@ class ProductReviewEntity implements Translatable
     }
 
     /**
-     * Convert to domain model
+     * Convert to domain model.
      */
     public function toDomainModel(): ProductReview
     {
@@ -119,7 +119,7 @@ class ProductReviewEntity implements Translatable
     }
 
     /**
-     * Update entity from domain model
+     * Update entity from domain model.
      */
     public function updateFromDomainModel(ProductReview $review): void
     {

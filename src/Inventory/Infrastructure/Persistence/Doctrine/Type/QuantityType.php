@@ -19,7 +19,7 @@ final class QuantityType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?Quantity
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
@@ -28,7 +28,7 @@ final class QuantityType extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?int
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Customer\Domain\ValueObject;
 
 use App\Customer\Domain\ValueObject\CustomerId;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class CustomerIdTest extends TestCase
@@ -26,7 +25,7 @@ final class CustomerIdTest extends TestCase
     public function testGenerateCreatesUniqueIds(): void
     {
         $ids = [];
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             $ids[] = CustomerId::generate()->toString();
         }
 
@@ -46,7 +45,7 @@ final class CustomerIdTest extends TestCase
 
     public function testFromStringRejectsInvalidFormat(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid customer ID:');
 
         CustomerId::fromString('not-a-valid-uuid');
@@ -54,7 +53,7 @@ final class CustomerIdTest extends TestCase
 
     public function testFromStringRejectsEmptyString(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid customer ID:');
 
         CustomerId::fromString('');

@@ -18,14 +18,15 @@ final class DoctrineCategoryRepository implements CategoryRepositoryInterface
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $eventBus
-    ) {}
+    ) {
+    }
 
     public function save(Category $category): void
     {
         // Check if entity already exists
         $existingEntity = $this->entityManager->find(CategoryEntity::class, $category->id()->toString());
 
-        if ($existingEntity !== null) {
+        if (null !== $existingEntity) {
             // Update existing entity - use its setters instead of creating new instance
             $existingEntity->setTenantId($category->tenantId()->toString());
             $existingEntity->setName($category->name()->value());
@@ -35,7 +36,7 @@ final class DoctrineCategoryRepository implements CategoryRepositoryInterface
             $existingEntity->setActive($category->isActive());
             $existingEntity->setShowOnFront($category->showOnFront());
             $existingEntity->setCoverImage($category->coverImage());
-            // Doctrine will auto-detect changes and update on flush
+        // Doctrine will auto-detect changes and update on flush
         } else {
             // Create new entity
             $entity = CategoryEntity::fromDomainModel($category);
@@ -54,7 +55,7 @@ final class DoctrineCategoryRepository implements CategoryRepositoryInterface
     {
         $entity = $this->entityManager->find(CategoryEntity::class, $id->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             return null;
         }
 
@@ -70,7 +71,7 @@ final class DoctrineCategoryRepository implements CategoryRepositoryInterface
             'slug' => $slug->value(),
         ]);
 
-        if ($entity === null) {
+        if (null === $entity) {
             return null;
         }
 
@@ -114,7 +115,7 @@ final class DoctrineCategoryRepository implements CategoryRepositoryInterface
     {
         $entity = $this->entityManager->find(CategoryEntity::class, $id->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             return;
         }
 

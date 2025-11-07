@@ -11,29 +11,29 @@ use App\Shared\Domain\ValueObject\LanguageCode;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Translation Entry Repository Interface (Port)
+ * Translation Entry Repository Interface (Port).
  *
  * Contract for translation persistence operations.
  */
 interface TranslationEntryRepositoryInterface
 {
     /**
-     * Save a translation entry (create or update)
+     * Save a translation entry (create or update).
      */
     public function save(TranslationEntry $entry): void;
 
     /**
-     * Delete a translation entry by ID
+     * Delete a translation entry by ID.
      */
     public function delete(int $id, TenantId $tenantId): void;
 
     /**
-     * Find a translation by ID
+     * Find a translation by ID.
      */
     public function findById(int $id, TenantId $tenantId): ?TranslationEntry;
 
     /**
-     * Find a specific translation by locale, domain, and key
+     * Find a specific translation by locale, domain, and key.
      */
     public function findByKey(
         TenantId $tenantId,
@@ -43,9 +43,10 @@ interface TranslationEntryRepositoryInterface
     ): ?TranslationEntry;
 
     /**
-     * Find all translations with optional filters
+     * Find all translations with optional filters.
      *
      * @param array<string, mixed> $filters
+     *
      * @return TranslationEntry[]
      */
     public function findAll(
@@ -56,14 +57,14 @@ interface TranslationEntryRepositoryInterface
     ): array;
 
     /**
-     * Count total translations with filters
+     * Count total translations with filters.
      *
      * @param array<string, mixed> $filters
      */
     public function count(TenantId $tenantId, array $filters = []): int;
 
     /**
-     * Find translations that exist in one locale but missing in another
+     * Find translations that exist in one locale but missing in another.
      *
      * @return array<array{key: string, domain: string}> Array of missing translation keys with their domains
      */
@@ -75,7 +76,7 @@ interface TranslationEntryRepositoryInterface
     ): array;
 
     /**
-     * Get translation statistics per locale per domain
+     * Get translation statistics per locale per domain.
      *
      * @return array<string, mixed>
      */

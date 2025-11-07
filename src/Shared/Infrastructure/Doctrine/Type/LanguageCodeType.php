@@ -9,7 +9,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 
 /**
- * Doctrine Custom Type for LanguageCode Value Object
+ * Doctrine Custom Type for LanguageCode Value Object.
  *
  * Maps LanguageCode to VARCHAR(2) in database
  */
@@ -24,7 +24,7 @@ final class LanguageCodeType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?LanguageCode
     {
-        if ($value === null || $value === '') {
+        if (null === $value || '' === $value) {
             return null;
         }
 
@@ -37,7 +37,7 @@ final class LanguageCodeType extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 

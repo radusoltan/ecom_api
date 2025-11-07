@@ -29,16 +29,19 @@ final readonly class CacheService
     public function __construct(
         private CacheInterface $cache,
         private LoggerInterface $logger
-    ) {}
+    ) {
+    }
 
     /**
      * Get cached value or compute and store it.
      *
      * @template T
-     * @param string $key Cache key
+     *
+     * @param string        $key      Cache key
      * @param callable(): T $callback Function to compute value if not cached
-     * @param int $ttl Time to live in seconds
-     * @param array<string> $tags Tags for cache invalidation
+     * @param int           $ttl      Time to live in seconds
+     * @param array<string> $tags     Tags for cache invalidation
+     *
      * @return T
      */
     public function get(string $key, callable $callback, int $ttl = 3600, array $tags = []): mixed
@@ -144,7 +147,7 @@ final readonly class CacheService
      * Warm cache with predefined data.
      *
      * @param array<string, mixed> $data Key => value pairs
-     * @param int $ttl Time to live
+     * @param int                  $ttl  Time to live
      */
     public function warmMultiple(array $data, int $ttl = 3600): void
     {
@@ -155,9 +158,10 @@ final readonly class CacheService
             try {
                 $this->cache->get($key, function (ItemInterface $item) use ($value, $ttl) {
                     $item->expiresAfter($ttl);
+
                     return $value;
                 });
-                $count++;
+                ++$count;
             } catch (\Throwable $e) {
                 $this->logger->warning('Cache warming failed for key', [
                     'key' => $key,

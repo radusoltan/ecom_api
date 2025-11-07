@@ -14,6 +14,7 @@ use App\Shared\Domain\ValueObject\TenantId;
  * @covers \App\Internationalization\Application\Query\ExportTranslationsHandler
  * @covers \App\Internationalization\Domain\Service\TranslationImportService
  * @covers \App\Internationalization\Domain\Service\TranslationExportService
+ *
  * @group functional
  */
 final class ImportExportApiTest extends ApiTestCase
@@ -25,7 +26,7 @@ final class ImportExportApiTest extends ApiTestCase
         self::$tenantId = TenantId::generate()->toString();
     }
 
-    public function testImportTranslations_ValidCSV_ReturnsSuccess(): void
+    public function testImportTranslationsValidCSVReturnsSuccess(): void
     {
         $client = static::createClient();
 
@@ -83,7 +84,7 @@ CSV;
         @unlink($tempFile);
     }
 
-    public function testImportTranslations_ValidJSON_ReturnsSuccess(): void
+    public function testImportTranslationsValidJSONReturnsSuccess(): void
     {
         $client = static::createClient();
 
@@ -128,7 +129,7 @@ CSV;
         @unlink($tempFile);
     }
 
-    public function testImportTranslations_DryRun_DoesNotPersist(): void
+    public function testImportTranslationsDryRunDoesNotPersist(): void
     {
         $client = static::createClient();
 
@@ -175,8 +176,9 @@ CSV;
         // Check that test.dryrun was not persisted
         $hasDryRun = false;
         foreach ($exportData as $item) {
-            if ($item['key'] === 'test.dryrun') {
+            if ('test.dryrun' === $item['key']) {
                 $hasDryRun = true;
+
                 break;
             }
         }
@@ -185,7 +187,7 @@ CSV;
         @unlink($tempFile);
     }
 
-    public function testImportTranslations_MissingFile_Returns400(): void
+    public function testImportTranslationsMissingFileReturns400(): void
     {
         $client = static::createClient();
 
@@ -199,7 +201,7 @@ CSV;
         $this->assertResponseStatusCodeSame(400);
     }
 
-    public function testImportTranslations_InvalidFormat_Returns400(): void
+    public function testImportTranslationsInvalidFormatReturns400(): void
     {
         $client = static::createClient();
 
@@ -227,7 +229,7 @@ CSV;
         @unlink($tempFile);
     }
 
-    public function testExportTranslations_CSV_ReturnsFile(): void
+    public function testExportTranslationsCSVReturnsFile(): void
     {
         $client = static::createClient();
 
@@ -244,7 +246,7 @@ CSV;
         $this->assertStringContainsString('locale,domain,key,value', $content);
     }
 
-    public function testExportTranslations_JSON_ReturnsFile(): void
+    public function testExportTranslationsJSONReturnsFile(): void
     {
         $client = static::createClient();
 
@@ -262,7 +264,7 @@ CSV;
         $this->assertIsArray($data);
     }
 
-    public function testExportTranslations_WithDomainFilter_FiltersResults(): void
+    public function testExportTranslationsWithDomainFilterFiltersResults(): void
     {
         $client = static::createClient();
 
@@ -284,7 +286,7 @@ CSV;
         }
     }
 
-    public function testExportTranslations_WithLocaleFilter_FiltersResults(): void
+    public function testExportTranslationsWithLocaleFilterFiltersResults(): void
     {
         $client = static::createClient();
 
@@ -306,7 +308,7 @@ CSV;
         }
     }
 
-    public function testExportTranslations_MissingFormat_Returns400(): void
+    public function testExportTranslationsMissingFormatReturns400(): void
     {
         $client = static::createClient();
 
@@ -317,7 +319,7 @@ CSV;
         $this->assertResponseStatusCodeSame(400);
     }
 
-    public function testExportTranslations_InvalidFormat_Returns400(): void
+    public function testExportTranslationsInvalidFormatReturns400(): void
     {
         $client = static::createClient();
 
@@ -329,7 +331,7 @@ CSV;
         $this->assertResponseStatusCodeSame(400);
     }
 
-    public function testImportExport_RoundTrip_PreservesData(): void
+    public function testImportExportRoundTripPreservesData(): void
     {
         $client = static::createClient();
 
@@ -379,11 +381,11 @@ CSV;
         $foundFr = false;
 
         foreach ($exported as $item) {
-            if ($item['key'] === 'roundtrip.test') {
-                if ($item['locale'] === 'en') {
+            if ('roundtrip.test' === $item['key']) {
+                if ('en' === $item['locale']) {
                     $this->assertEquals('Test Value', $item['value']);
                     $foundEn = true;
-                } elseif ($item['locale'] === 'fr') {
+                } elseif ('fr' === $item['locale']) {
                     $this->assertEquals('Valeur de Test', $item['value']);
                     $foundFr = true;
                 }

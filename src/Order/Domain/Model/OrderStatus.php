@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Order\Domain\Model;
 
-use InvalidArgumentException;
-
 /**
- * Order Status Value Object
+ * Order Status Value Object.
  *
  * Business Rules:
  * - Valid transitions: pending → processing → shipped → delivered
@@ -44,9 +42,7 @@ final readonly class OrderStatus
     private function __construct(private string $value)
     {
         if (!in_array($value, self::VALID_STATUSES, true)) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid order status: "%s". Valid statuses are: %s', $value, implode(', ', self::VALID_STATUSES))
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid order status: "%s". Valid statuses are: %s', $value, implode(', ', self::VALID_STATUSES)));
         }
     }
 
@@ -97,32 +93,32 @@ final readonly class OrderStatus
 
     public function isPending(): bool
     {
-        return $this->value === self::PENDING;
+        return self::PENDING === $this->value;
     }
 
     public function isPaid(): bool
     {
-        return $this->value === self::PAID;
+        return self::PAID === $this->value;
     }
 
     public function isProcessing(): bool
     {
-        return $this->value === self::PROCESSING;
+        return self::PROCESSING === $this->value;
     }
 
     public function isShipped(): bool
     {
-        return $this->value === self::SHIPPED;
+        return self::SHIPPED === $this->value;
     }
 
     public function isDelivered(): bool
     {
-        return $this->value === self::DELIVERED;
+        return self::DELIVERED === $this->value;
     }
 
     public function isCancelled(): bool
     {
-        return $this->value === self::CANCELLED;
+        return self::CANCELLED === $this->value;
     }
 
     public function canTransitionTo(OrderStatus $newStatus): bool
@@ -132,7 +128,7 @@ final readonly class OrderStatus
 
     public function isFinal(): bool
     {
-        return $this->value === self::DELIVERED || $this->value === self::CANCELLED;
+        return self::DELIVERED === $this->value || self::CANCELLED === $this->value;
     }
 
     public function __toString(): string

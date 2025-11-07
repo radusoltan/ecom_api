@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Doctrine entity for ConfigurableProduct
- * Maps the domain model to database
+ * Maps the domain model to database.
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'catalog_configurable_products')]
@@ -61,7 +61,7 @@ class ConfigurableProductEntity
     }
 
     /**
-     * Create entity from domain model
+     * Create entity from domain model.
      */
     public static function fromDomainModel(ConfigurableProduct $configurableProduct): self
     {
@@ -88,7 +88,7 @@ class ConfigurableProductEntity
     }
 
     /**
-     * Convert to domain model
+     * Convert to domain model.
      */
     public function toDomainModel(): ConfigurableProduct
     {
@@ -116,7 +116,7 @@ class ConfigurableProductEntity
     }
 
     /**
-     * Update entity from domain model
+     * Update entity from domain model.
      */
     public function updateFromDomainModel(ConfigurableProduct $configurableProduct): void
     {

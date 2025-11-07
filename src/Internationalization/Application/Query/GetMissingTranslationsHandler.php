@@ -10,7 +10,7 @@ use App\Shared\Domain\ValueObject\LanguageCode;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Get Missing Translations Query Handler
+ * Get Missing Translations Query Handler.
  *
  * Returns list of translation keys that exist in source locale
  * but are missing in target locale.
@@ -26,7 +26,8 @@ final readonly class GetMissingTranslationsHandler
 {
     public function __construct(
         private TranslationCoverageService $coverageService,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<array{key: string, domain: string}>
@@ -35,11 +36,11 @@ final readonly class GetMissingTranslationsHandler
     {
         $targetLocale = LanguageCode::fromString($query->targetLocale);
 
-        $sourceLocale = $query->sourceLocale !== null
+        $sourceLocale = null !== $query->sourceLocale
             ? LanguageCode::fromString($query->sourceLocale)
             : null;
 
-        $domain = $query->domain !== null
+        $domain = null !== $query->domain
             ? TranslationDomain::fromString($query->domain)
             : null;
 

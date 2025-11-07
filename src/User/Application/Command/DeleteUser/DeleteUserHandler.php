@@ -20,7 +20,7 @@ final readonly class DeleteUserHandler
     {
         // Find user
         $user = $this->userRepository->findById(UserId::fromString($command->userId));
-        if ($user === null) {
+        if (null === $user) {
             throw new \DomainException(sprintf('User with ID "%s" not found', $command->userId));
         }
 

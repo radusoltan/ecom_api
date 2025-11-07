@@ -13,5 +13,6 @@ final readonly class RemoveItemFromWishlist
         public string $customerId,
         public ProductId $productId,
         public TenantId $tenantId
-    ) {}
+    ) {
+    }
 }

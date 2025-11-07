@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Tenant\Application\Query;
 
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Application\DTO\TenantDTO;
 use App\Tenant\Application\Query\GetTenantByIdQuery;
 use App\Tenant\Application\Query\GetTenantByIdQueryHandler;
 use App\Tenant\Domain\Exception\TenantNotFoundException;
 use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
-use App\Tenant\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\ValueObject\TenantName;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

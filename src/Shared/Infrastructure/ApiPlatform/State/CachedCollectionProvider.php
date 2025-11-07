@@ -39,20 +39,22 @@ final readonly class CachedCollectionProvider implements ProviderInterface
         private CacheService $cacheService,
         private RequestStack $requestStack,
         private LoggerInterface $logger
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $request = $this->requestStack->getCurrentRequest();
 
         // Only cache GET requests
-        if ($request === null || $request->getMethod() !== 'GET') {
+        if (null === $request || 'GET' !== $request->getMethod()) {
             return $this->decorated->provide($operation, $uriVariables, $context);
         }
 
         // Skip caching if explicitly disabled
-        if ($request->headers->get('X-No-Cache') === 'true') {
+        if ('true' === $request->headers->get('X-No-Cache')) {
             $this->logger->debug('Cache bypassed by request header');
+
             return $this->decorated->provide($operation, $uriVariables, $context);
         }
 
@@ -78,7 +80,7 @@ final readonly class CachedCollectionProvider implements ProviderInterface
         try {
             $result = $this->cacheService->get(
                 key: $cacheKey,
-                callback: fn() => $this->decorated->provide($operation, $uriVariables, $context),
+                callback: fn () => $this->decorated->provide($operation, $uriVariables, $context),
                 ttl: $ttl,
                 tags: $tags
             );
@@ -159,22 +161,22 @@ final readonly class CachedCollectionProvider implements ProviderInterface
 
         $tags = [
             'api',
-            'tenant:' . $tenantId,
+            'tenant:'.$tenantId,
         ];
 
         // Add resource-specific tags
         if (str_contains($shortName, 'Product')) {
             $tags[] = 'products';
-            $tags[] = 'tenant:' . $tenantId . ':products';
+            $tags[] = 'tenant:'.$tenantId.':products';
         } elseif (str_contains($shortName, 'Category')) {
             $tags[] = 'categories';
-            $tags[] = 'tenant:' . $tenantId . ':categories';
+            $tags[] = 'tenant:'.$tenantId.':categories';
         } elseif (str_contains($shortName, 'PriceList')) {
             $tags[] = 'price_lists';
-            $tags[] = 'tenant:' . $tenantId . ':price_lists';
+            $tags[] = 'tenant:'.$tenantId.':price_lists';
         } elseif (str_contains($shortName, 'Warehouse')) {
             $tags[] = 'warehouses';
-            $tags[] = 'tenant:' . $tenantId . ':warehouses';
+            $tags[] = 'tenant:'.$tenantId.':warehouses';
         } elseif (str_contains($shortName, 'Tenant')) {
             $tags[] = 'tenants';
         }

@@ -10,7 +10,7 @@ use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Fulfillment Status Changed Domain Event
+ * Fulfillment Status Changed Domain Event.
  *
  * Emitted when a fulfillment transitions to a new status (picking, packing, shipping, etc.)
  */

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\AuditLog\Domain\ValueObject;
 
-use InvalidArgumentException;
-
 /**
- * Represents the type of action performed in the audit log
+ * Represents the type of action performed in the audit log.
  */
 final class ActionType
 {
@@ -48,9 +46,7 @@ final class ActionType
     private function __construct(string $value)
     {
         if (!in_array($value, self::VALID_ACTIONS, true)) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid action type: %s. Valid actions are: %s', $value, implode(', ', self::VALID_ACTIONS))
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid action type: %s. Valid actions are: %s', $value, implode(', ', self::VALID_ACTIONS)));
         }
 
         $this->value = $value;
@@ -143,26 +139,26 @@ final class ActionType
 
     public function isCreate(): bool
     {
-        return $this->value === self::CREATE;
+        return self::CREATE === $this->value;
     }
 
     public function isUpdate(): bool
     {
-        return $this->value === self::UPDATE;
+        return self::UPDATE === $this->value;
     }
 
     public function isDelete(): bool
     {
-        return $this->value === self::DELETE;
+        return self::DELETE === $this->value;
     }
 
     public function isLogin(): bool
     {
-        return $this->value === self::LOGIN;
+        return self::LOGIN === $this->value;
     }
 
     public function isLogout(): bool
     {
-        return $this->value === self::LOGOUT;
+        return self::LOGOUT === $this->value;
     }
 }

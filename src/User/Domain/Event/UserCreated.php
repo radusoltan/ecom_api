@@ -6,7 +6,6 @@ namespace App\User\Domain\Event;
 
 use App\Shared\Domain\Event\DomainEvent;
 use App\User\Domain\ValueObject\UserId;
-use DateTimeImmutable;
 
 final readonly class UserCreated implements DomainEvent
 {
@@ -14,7 +13,7 @@ final readonly class UserCreated implements DomainEvent
         private UserId $userId,
         private string $email,
         private string $username,
-        private DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn
     ) {
     }
 
@@ -33,7 +32,7 @@ final readonly class UserCreated implements DomainEvent
         return $this->username;
     }
 
-    public function occurredOn(): DateTimeImmutable
+    public function occurredOn(): \DateTimeImmutable
     {
         return $this->occurredOn;
     }

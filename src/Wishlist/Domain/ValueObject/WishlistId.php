@@ -7,7 +7,7 @@ namespace App\Wishlist\Domain\ValueObject;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * Value object for Wishlist ID
+ * Value object for Wishlist ID.
  */
 final readonly class WishlistId
 {

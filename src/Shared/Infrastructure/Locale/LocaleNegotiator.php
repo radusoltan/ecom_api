@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Locale Negotiator Service
+ * Locale Negotiator Service.
  *
  * Provides consistent locale detection across the application using content negotiation.
  *
@@ -38,7 +38,7 @@ final readonly class LocaleNegotiator
     }
 
     /**
-     * Negotiate locale from request
+     * Negotiate locale from request.
      *
      * @return string The negotiated locale code (en, fr, de)
      */
@@ -46,7 +46,7 @@ final readonly class LocaleNegotiator
     {
         $request = $request ?? $this->requestStack->getCurrentRequest();
 
-        if ($request === null) {
+        if (null === $request) {
             return self::DEFAULT_LOCALE;
         }
 
@@ -58,7 +58,7 @@ final readonly class LocaleNegotiator
 
         // Priority 2: Accept-Language header
         $preferredLanguage = $request->getPreferredLanguage($this->getSupportedLocales());
-        if ($preferredLanguage !== null && $this->isValidLocale($preferredLanguage)) {
+        if (null !== $preferredLanguage && $this->isValidLocale($preferredLanguage)) {
             return $this->normalizeLocale($preferredLanguage);
         }
 
@@ -67,7 +67,7 @@ final readonly class LocaleNegotiator
     }
 
     /**
-     * Get the current locale from the current request
+     * Get the current locale from the current request.
      */
     public function getCurrentLocale(): string
     {
@@ -75,7 +75,7 @@ final readonly class LocaleNegotiator
     }
 
     /**
-     * Check if a locale is supported
+     * Check if a locale is supported.
      */
     public function isValidLocale(string $locale): bool
     {
@@ -84,6 +84,7 @@ final readonly class LocaleNegotiator
 
         try {
             LanguageCode::fromString($baseLocale);
+
             return true;
         } catch (\Throwable) {
             return false;
@@ -91,7 +92,7 @@ final readonly class LocaleNegotiator
     }
 
     /**
-     * Normalize locale to base language code (en, fr, de)
+     * Normalize locale to base language code (en, fr, de).
      */
     public function normalizeLocale(string $locale): string
     {
@@ -105,7 +106,7 @@ final readonly class LocaleNegotiator
     }
 
     /**
-     * Get all supported locales
+     * Get all supported locales.
      *
      * @return string[]
      */
@@ -115,7 +116,7 @@ final readonly class LocaleNegotiator
     }
 
     /**
-     * Get default locale
+     * Get default locale.
      */
     public function getDefaultLocale(): string
     {
@@ -123,7 +124,7 @@ final readonly class LocaleNegotiator
     }
 
     /**
-     * Get fallback locale (alias for getDefaultLocale)
+     * Get fallback locale (alias for getDefaultLocale).
      */
     public function getFallbackLocale(): string
     {
@@ -131,7 +132,7 @@ final readonly class LocaleNegotiator
     }
 
     /**
-     * Get locale information for API responses
+     * Get locale information for API responses.
      *
      * @return array{current: string, default: string, supported: string[]}
      */
@@ -145,13 +146,14 @@ final readonly class LocaleNegotiator
     }
 
     /**
-     * Create locale-aware cache key
+     * Create locale-aware cache key.
      *
      * Useful for caching translated content per locale
      */
     public function createCacheKey(string $baseKey, ?string $locale = null): string
     {
         $locale = $locale ?? $this->getCurrentLocale();
+
         return sprintf('%s_%s', $baseKey, $locale);
     }
 }

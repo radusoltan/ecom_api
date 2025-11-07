@@ -10,7 +10,7 @@ use App\Catalog\Domain\ValueObject\OptionCode;
 use App\Shared\Domain\Event\DomainEvent;
 
 /**
- * Domain event: Option was removed from a configurable product
+ * Domain event: Option was removed from a configurable product.
  */
 final readonly class OptionRemoved implements DomainEvent
 {
@@ -19,7 +19,8 @@ final readonly class OptionRemoved implements DomainEvent
         private ProductId $productId,
         private OptionCode $optionCode,
         private \DateTimeImmutable $occurredOn = new \DateTimeImmutable()
-    ) {}
+    ) {
+    }
 
     public function getConfigurableProductId(): ConfigurableProductId
     {

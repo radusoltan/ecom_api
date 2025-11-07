@@ -10,7 +10,7 @@ use App\Inventory\Domain\Repository\StockReservationRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Handler for Bulk Stock Reservation
+ * Handler for Bulk Stock Reservation.
  *
  * Reserves multiple stock items in a single transaction.
  * If any item cannot be reserved, the entire operation is rolled back.
@@ -38,7 +38,7 @@ final readonly class BulkReserveStockHandler
                     $command->tenantId
                 );
 
-                if ($stockItem === null) {
+                if (null === $stockItem) {
                     $failedItems[] = new BulkReserveStockResultItem(
                         productId: $item->productId->toString(),
                         warehouseId: $item->warehouseId->toString(),
@@ -46,6 +46,7 @@ final readonly class BulkReserveStockHandler
                         success: false,
                         error: 'Stock item not found',
                     );
+
                     continue;
                 }
 

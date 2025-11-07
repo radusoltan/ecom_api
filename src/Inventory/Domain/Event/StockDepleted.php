@@ -21,7 +21,8 @@ final readonly class StockDepleted implements DomainEvent
         public Quantity $availableQuantity,
         public Quantity $threshold,
         public \DateTimeImmutable $occurredOn,
-    ) {}
+    ) {
+    }
 
     public function occurredOn(): \DateTimeImmutable
     {

@@ -21,5 +21,6 @@ final readonly class SubmitReview
         public ?string $title = null,
         public ?string $content = null,
         public bool $isVerifiedPurchase = false
-    ) {}
+    ) {
+    }
 }

@@ -91,7 +91,7 @@ final readonly class DoctrineORMCustomerRepository implements CustomerRepository
         );
 
         return array_map(
-            fn(CustomerEntity $entity) => $entity->toDomainModel(),
+            fn (CustomerEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -105,7 +105,7 @@ final readonly class DoctrineORMCustomerRepository implements CustomerRepository
         ]);
 
         return array_map(
-            fn(CustomerEntity $entity) => $entity->toDomainModel(),
+            fn (CustomerEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }

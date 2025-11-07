@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Pricing\Application\DTO;
 
 use App\Pricing\Domain\Model\PriceList;
-use DateTimeImmutable;
 
 /**
- * Data Transfer Object for PriceList
+ * Data Transfer Object for PriceList.
  *
  * Used for API responses and query results
  */
@@ -38,12 +37,12 @@ final readonly class PriceListDTO
             tenantId: $priceList->tenantId()->toString(),
             name: $priceList->name()->value(),
             priority: $priceList->priority(),
-            rules: array_map(fn($rule) => $rule->toArray(), $priceList->rules()),
-            validFrom: $priceList->validFrom()?->format(DateTimeImmutable::ATOM),
-            validTo: $priceList->validTo()?->format(DateTimeImmutable::ATOM),
+            rules: array_map(fn ($rule) => $rule->toArray(), $priceList->rules()),
+            validFrom: $priceList->validFrom()?->format(\DateTimeImmutable::ATOM),
+            validTo: $priceList->validTo()?->format(\DateTimeImmutable::ATOM),
             isActive: $priceList->isActive(),
-            createdAt: $priceList->createdAt()->format(DateTimeImmutable::ATOM),
-            updatedAt: $priceList->updatedAt()->format(DateTimeImmutable::ATOM)
+            createdAt: $priceList->createdAt()->format(\DateTimeImmutable::ATOM),
+            updatedAt: $priceList->updatedAt()->format(\DateTimeImmutable::ATOM)
         );
     }
 

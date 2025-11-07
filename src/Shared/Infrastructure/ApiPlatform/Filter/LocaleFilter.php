@@ -12,7 +12,7 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\PropertyInfo\Type;
 
 /**
- * Locale Filter for API Platform
+ * Locale Filter for API Platform.
  *
  * Automatically filters translatable entities by locale.
  * This filter is transparent - it doesn't add query parameters but respects
@@ -72,7 +72,7 @@ final class LocaleFilter extends AbstractFilter
     }
 
     /**
-     * Get current locale for filtering
+     * Get current locale for filtering.
      */
     public function getCurrentLocale(): string
     {

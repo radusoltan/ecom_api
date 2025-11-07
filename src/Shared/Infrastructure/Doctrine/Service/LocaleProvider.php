@@ -7,7 +7,7 @@ namespace App\Shared\Infrastructure\Doctrine\Service;
 use App\Shared\Infrastructure\Locale\LocaleNegotiator;
 
 /**
- * Locale Provider Service
+ * Locale Provider Service.
  *
  * Provides the current locale for the application based on:
  * 1. Query parameter (?locale=fr)
@@ -26,7 +26,7 @@ final readonly class LocaleProvider
     }
 
     /**
-     * Get the current locale from request or default
+     * Get the current locale from request or default.
      */
     public function getCurrentLocale(): string
     {
@@ -34,7 +34,7 @@ final readonly class LocaleProvider
     }
 
     /**
-     * Get all supported locales
+     * Get all supported locales.
      *
      * @return string[]
      */

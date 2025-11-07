@@ -13,14 +13,15 @@ use App\Catalog\Domain\ValueObject\OptionValueCode;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Handler for DefineOptionValue command
+ * Handler for DefineOptionValue command.
  */
 #[AsMessageHandler]
 final readonly class DefineOptionValueHandler
 {
     public function __construct(
         private ConfigurableProductRepositoryInterface $configurableProductRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(DefineOptionValue $command): void
     {
@@ -31,10 +32,7 @@ final readonly class DefineOptionValueHandler
         );
 
         if (!$configurableProduct) {
-            throw new \DomainException(sprintf(
-                'Configurable product not found for product %s',
-                $command->productId->toString()
-            ));
+            throw new \DomainException(sprintf('Configurable product not found for product %s', $command->productId->toString()));
         }
 
         // Find the option
@@ -44,16 +42,13 @@ final readonly class DefineOptionValueHandler
         foreach ($configurableProduct->getOptions() as $opt) {
             if ($opt->getCode()->equals($optionCode)) {
                 $option = $opt;
+
                 break;
             }
         }
 
         if (!$option) {
-            throw new \DomainException(sprintf(
-                'Option with code "%s" not found for product %s',
-                $command->optionCode,
-                $command->productId->toString()
-            ));
+            throw new \DomainException(sprintf('Option with code "%s" not found for product %s', $command->optionCode, $command->productId->toString()));
         }
 
         // Create and add the option value

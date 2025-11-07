@@ -1,0 +1,99 @@
+nelmio_security:
+    # Prevents clickjacking by controlling framing of the site
+    # X-Frame-Options: DENY
+    clickjacking:
+        paths:
+            '^/.*': DENY
+
+    # Disables content type sniffing for script resources
+    # X-Content-Type-Options: nosniff
+    content_type:
+        nosniff: true
+
+    # Referrer-Policy: Controls how much referrer information is sent
+    referrer_policy:
+        enabled: true
+        policies:
+            - 'no-referrer'
+            - 'strict-origin-when-cross-origin'
+
+    # Content Security Policy (CSP)
+    # Prevents XSS, clickjacking, and other code injection attacks
+    csp:
+        enabled: true
+        hosts: []
+        content_types: []
+        enforce:
+            level1_fallback: true
+            # Default: Only allow resources from same origin
+            default-src:
+                - 'self'
+            # Scripts: Allow from same origin (for API Platform)
+            script-src:
+                - 'self'
+                - 'unsafe-inline' # Required for API Platform admin
+            # Styles: Allow from same origin
+            style-src:
+                - 'self'
+                - 'unsafe-inline' # Required for API Platform admin
+            # Images: Allow from same origin, data URIs, and HTTPS
+            img-src:
+                - 'self'
+                - 'data:'
+                - 'https:'
+            # Fonts: Allow from same origin and data URIs
+            font-src:
+                - 'self'
+                - 'data:'
+            # AJAX/WebSocket/EventSource: Allow from same origin
+            connect-src:
+                - 'self'
+            # Frames: Deny all (redundant with X-Frame-Options but belt-and-suspenders)
+            frame-ancestors:
+                - "'none'"
+            # Object/Embed/Applet: Deny all (Flash, Java, etc.)
+            object-src:
+                - "'none'"
+            # Base tag: Restrict to same origin
+            base-uri:
+                - 'self'
+            # Form actions: Restrict to same origin
+            form-action:
+                - 'self'
+            # Upgrade insecure requests (HTTP -> HTTPS)
+            upgrade-insecure-requests: true
+            # Block mixed content
+            block-all-mixed-content: true
+
+    # Strict-Transport-Security (HSTS)
+    # Forces HTTPS for 1 year, including subdomains
+    forced_ssl:
+        enabled: false # Disable in development, enable in production
+        hsts_max_age: 31536000 # 1 year
+        hsts_subdomains: true
+        hsts_preload: true
+        redirect_status_code: 302
+
+    # Permissions-Policy (formerly Feature-Policy)
+    # Controls which browser features can be used
+    # Commented out until needed - uncomment and configure per feature
+    # permissions_policy:
+    #     enabled: true
+    #     policies:
+    #         camera: []
+    #         microphone: []
+    #         geolocation: []
+
+    # Signed cookies - not configured (optional feature)
+    # signed_cookie:
+    #     names: []
+    #     secret: '%kernel.secret%'
+
+    # Encrypted cookies - not configured (optional feature)
+    # encrypted_cookie:
+    #     names: []
+    #     secret: '%kernel.secret%'
+
+    # Flexible SSL - not configured (optional feature)
+    # flexible_ssl:
+    #     enabled: false

@@ -21,7 +21,8 @@ final class Thumbnail
         private int $height,
         private CropArea $cropArea,
         private readonly \DateTimeImmutable $createdAt
-    ) {}
+    ) {
+    }
 
     public static function create(
         ThumbnailId $id,

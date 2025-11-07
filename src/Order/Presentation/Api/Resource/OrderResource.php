@@ -14,8 +14,6 @@ use App\Order\Presentation\Api\Processor\PlaceOrderProcessor;
 use App\Order\Presentation\Api\Processor\UpdateOrderStatusProcessor;
 use App\Order\Presentation\Api\Provider\OrderCollectionProvider;
 use App\Order\Presentation\Api\Provider\OrderItemProvider;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 #[ApiResource(
     shortName: 'Order',
@@ -47,6 +45,7 @@ class OrderResource
     public ?string $tenantId = null;
     public ?string $customerEmail = null;
     public ?string $status = null;
+    /** @var array<string, mixed> */
     public array $lines = [];
     public ?array $shippingAddress = null;
     public ?array $billingAddress = null;

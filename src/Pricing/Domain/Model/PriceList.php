@@ -5,19 +5,17 @@ declare(strict_types=1);
 namespace App\Pricing\Domain\Model;
 
 use App\Catalog\Domain\Model\ProductId;
-use App\Shared\Domain\Aggregate\AggregateRoot;
-use App\Shared\Domain\ValueObject\Money;
-use App\Shared\Domain\ValueObject\TenantId;
-use App\Pricing\Domain\Event\PriceListCreated;
 use App\Pricing\Domain\Event\PriceListActivated;
+use App\Pricing\Domain\Event\PriceListCreated;
 use App\Pricing\Domain\Event\PriceListDeactivated;
 use App\Pricing\Domain\Event\PricingRuleAdded;
 use App\Pricing\Domain\Event\PricingRuleRemoved;
-use DateTimeImmutable;
-use InvalidArgumentException;
+use App\Shared\Domain\Aggregate\AggregateRoot;
+use App\Shared\Domain\ValueObject\Money;
+use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * PriceList Aggregate Root
+ * PriceList Aggregate Root.
  *
  * Manages dynamic pricing rules for products with priority and validity periods
  *
@@ -39,11 +37,11 @@ final class PriceList extends AggregateRoot
         private PriceListName $name,
         private int $priority,
         private array $rules,
-        private ?DateTimeImmutable $validFrom,
-        private ?DateTimeImmutable $validTo,
+        private ?\DateTimeImmutable $validFrom,
+        private ?\DateTimeImmutable $validTo,
         private bool $isActive,
-        private readonly DateTimeImmutable $createdAt,
-        private DateTimeImmutable $updatedAt
+        private readonly \DateTimeImmutable $createdAt,
+        private \DateTimeImmutable $updatedAt
     ) {
         $this->validatePriority();
         $this->validateDateRange();
@@ -51,17 +49,17 @@ final class PriceList extends AggregateRoot
     }
 
     /**
-     * Create a new PriceList
+     * Create a new PriceList.
      */
     public static function create(
         PriceListId $id,
         TenantId $tenantId,
         PriceListName $name,
         int $priority = 100,
-        ?DateTimeImmutable $validFrom = null,
-        ?DateTimeImmutable $validTo = null
+        ?\DateTimeImmutable $validFrom = null,
+        ?\DateTimeImmutable $validTo = null
     ): self {
-        $now = new DateTimeImmutable();
+        $now = new \DateTimeImmutable();
 
         $priceList = new self(
             $id,
@@ -88,7 +86,7 @@ final class PriceList extends AggregateRoot
     }
 
     /**
-     * Reconstitute from persistence
+     * Reconstitute from persistence.
      *
      * @param array<PricingRule> $rules
      */
@@ -98,11 +96,11 @@ final class PriceList extends AggregateRoot
         PriceListName $name,
         int $priority,
         array $rules,
-        ?DateTimeImmutable $validFrom,
-        ?DateTimeImmutable $validTo,
+        ?\DateTimeImmutable $validFrom,
+        ?\DateTimeImmutable $validTo,
         bool $isActive,
-        DateTimeImmutable $createdAt,
-        DateTimeImmutable $updatedAt
+        \DateTimeImmutable $createdAt,
+        \DateTimeImmutable $updatedAt
     ): self {
         return new self(
             $id,
@@ -119,25 +117,23 @@ final class PriceList extends AggregateRoot
     }
 
     /**
-     * Add a pricing rule to this price list
+     * Add a pricing rule to this price list.
      */
     public function addRule(PricingRule $rule): void
     {
         if (count($this->rules) >= self::MAX_RULES) {
-            throw new InvalidArgumentException(
-                sprintf('Cannot add more than %d rules to a price list', self::MAX_RULES)
-            );
+            throw new \InvalidArgumentException(sprintf('Cannot add more than %d rules to a price list', self::MAX_RULES));
         }
 
         // Check for overlapping rules (same scope + same product/category)
         foreach ($this->rules as $existingRule) {
             if ($this->rulesOverlap($existingRule, $rule)) {
-                throw new InvalidArgumentException('Cannot add overlapping pricing rule');
+                throw new \InvalidArgumentException('Cannot add overlapping pricing rule');
             }
         }
 
         $this->rules[] = $rule;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new PricingRuleAdded(
             $this->id->toString(),
@@ -146,18 +142,18 @@ final class PriceList extends AggregateRoot
     }
 
     /**
-     * Remove a pricing rule by index
+     * Remove a pricing rule by index.
      */
     public function removeRule(int $index): void
     {
         if (!isset($this->rules[$index])) {
-            throw new InvalidArgumentException(sprintf('Rule at index %d does not exist', $index));
+            throw new \InvalidArgumentException(sprintf('Rule at index %d does not exist', $index));
         }
 
         $removedRule = $this->rules[$index];
         unset($this->rules[$index]);
         $this->rules = array_values($this->rules); // Re-index array
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new PricingRuleRemoved(
             $this->id->toString(),
@@ -166,16 +162,16 @@ final class PriceList extends AggregateRoot
     }
 
     /**
-     * Activate the price list
+     * Activate the price list.
      */
     public function activate(): void
     {
         if ($this->isActive) {
-            throw new InvalidArgumentException('PriceList is already active');
+            throw new \InvalidArgumentException('PriceList is already active');
         }
 
         $this->isActive = true;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new PriceListActivated(
             $this->id->toString(),
@@ -184,16 +180,16 @@ final class PriceList extends AggregateRoot
     }
 
     /**
-     * Deactivate the price list
+     * Deactivate the price list.
      */
     public function deactivate(): void
     {
         if (!$this->isActive) {
-            throw new InvalidArgumentException('PriceList is already inactive');
+            throw new \InvalidArgumentException('PriceList is already inactive');
         }
 
         $this->isActive = false;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new PriceListDeactivated(
             $this->id->toString(),
@@ -202,26 +198,26 @@ final class PriceList extends AggregateRoot
     }
 
     /**
-     * Update basic properties
+     * Update basic properties.
      */
     public function update(
         PriceListName $name,
         int $priority,
-        ?DateTimeImmutable $validFrom,
-        ?DateTimeImmutable $validTo
+        ?\DateTimeImmutable $validFrom,
+        ?\DateTimeImmutable $validTo
     ): void {
         $this->name = $name;
         $this->priority = $priority;
         $this->validFrom = $validFrom;
         $this->validTo = $validTo;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->validatePriority();
         $this->validateDateRange();
     }
 
     /**
-     * Calculate price for a product considering all applicable rules
+     * Calculate price for a product considering all applicable rules.
      *
      * Returns the original price if no rules apply
      */
@@ -257,7 +253,7 @@ final class PriceList extends AggregateRoot
     }
 
     /**
-     * Check if this price list is currently valid
+     * Check if this price list is currently valid.
      */
     public function isValidNow(): bool
     {
@@ -265,13 +261,13 @@ final class PriceList extends AggregateRoot
             return false;
         }
 
-        $now = new DateTimeImmutable();
+        $now = new \DateTimeImmutable();
 
-        if ($this->validFrom !== null && $now < $this->validFrom) {
+        if (null !== $this->validFrom && $now < $this->validFrom) {
             return false;
         }
 
-        if ($this->validTo !== null && $now > $this->validTo) {
+        if (null !== $this->validTo && $now > $this->validTo) {
             return false;
         }
 
@@ -279,7 +275,7 @@ final class PriceList extends AggregateRoot
     }
 
     /**
-     * Check if two rules overlap (same scope + same target)
+     * Check if two rules overlap (same scope + same target).
      */
     private function rulesOverlap(PricingRule $rule1, PricingRule $rule2): bool
     {
@@ -287,32 +283,30 @@ final class PriceList extends AggregateRoot
             return false;
         }
 
-        if ($rule1->getScope() === PricingRule::SCOPE_PRODUCT) {
+        if (PricingRule::SCOPE_PRODUCT === $rule1->getScope()) {
             return $rule1->getProductId()?->equals($rule2->getProductId()) ?? false;
         }
 
-        if ($rule1->getScope() === PricingRule::SCOPE_CATEGORY) {
+        if (PricingRule::SCOPE_CATEGORY === $rule1->getScope()) {
             return $rule1->getCategoryId() === $rule2->getCategoryId();
         }
 
         // SCOPE_ALL always overlaps with another SCOPE_ALL
-        return $rule1->getScope() === PricingRule::SCOPE_ALL;
+        return PricingRule::SCOPE_ALL === $rule1->getScope();
     }
 
     private function validatePriority(): void
     {
         if ($this->priority < 0 || $this->priority > 1000) {
-            throw new InvalidArgumentException(
-                sprintf('Priority must be between 0 and 1000, got %d', $this->priority)
-            );
+            throw new \InvalidArgumentException(sprintf('Priority must be between 0 and 1000, got %d', $this->priority));
         }
     }
 
     private function validateDateRange(): void
     {
-        if ($this->validFrom !== null && $this->validTo !== null) {
+        if (null !== $this->validFrom && null !== $this->validTo) {
             if ($this->validFrom >= $this->validTo) {
-                throw new InvalidArgumentException('validFrom must be before validTo');
+                throw new \InvalidArgumentException('validFrom must be before validTo');
             }
         }
     }
@@ -320,9 +314,7 @@ final class PriceList extends AggregateRoot
     private function validateRulesCount(): void
     {
         if (count($this->rules) > self::MAX_RULES) {
-            throw new InvalidArgumentException(
-                sprintf('PriceList cannot have more than %d rules', self::MAX_RULES)
-            );
+            throw new \InvalidArgumentException(sprintf('PriceList cannot have more than %d rules', self::MAX_RULES));
         }
     }
 
@@ -353,12 +345,12 @@ final class PriceList extends AggregateRoot
         return $this->rules;
     }
 
-    public function validFrom(): ?DateTimeImmutable
+    public function validFrom(): ?\DateTimeImmutable
     {
         return $this->validFrom;
     }
 
-    public function validTo(): ?DateTimeImmutable
+    public function validTo(): ?\DateTimeImmutable
     {
         return $this->validTo;
     }
@@ -368,12 +360,12 @@ final class PriceList extends AggregateRoot
         return $this->isActive;
     }
 
-    public function createdAt(): DateTimeImmutable
+    public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function updatedAt(): DateTimeImmutable
+    public function updatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

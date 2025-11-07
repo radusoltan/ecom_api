@@ -19,13 +19,14 @@ final readonly class DoctrineProductReviewRepository implements ProductReviewRep
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MessageBusInterface $eventBus
-    ) {}
+    ) {
+    }
 
     public function save(ProductReview $review): void
     {
         $entity = $this->entityManager->find(ProductReviewEntity::class, $review->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             $entity = ProductReviewEntity::fromDomainModel($review);
             $this->entityManager->persist($entity);
         } else {
@@ -55,7 +56,7 @@ final readonly class DoctrineProductReviewRepository implements ProductReviewRep
                 ['createdAt' => 'DESC']
             );
 
-        return array_map(fn($entity) => $entity->toDomainModel(), $entities);
+        return array_map(fn ($entity) => $entity->toDomainModel(), $entities);
     }
 
     public function findApprovedByProductId(ProductId $productId, TenantId $tenantId): array
@@ -65,19 +66,19 @@ final readonly class DoctrineProductReviewRepository implements ProductReviewRep
                 [
                     'productId' => $productId->toString(),
                     'tenantId' => $tenantId->toString(),
-                    'status' => ReviewStatus::APPROVED->value
+                    'status' => ReviewStatus::APPROVED->value,
                 ],
                 ['createdAt' => 'DESC']
             );
 
-        return array_map(fn($entity) => $entity->toDomainModel(), $entities);
+        return array_map(fn ($entity) => $entity->toDomainModel(), $entities);
     }
 
     public function delete(ProductReview $review): void
     {
         $entity = $this->entityManager->find(ProductReviewEntity::class, $review->id()->toString());
 
-        if ($entity !== null) {
+        if (null !== $entity) {
             $this->entityManager->remove($entity);
             $this->entityManager->flush();
         }
@@ -97,7 +98,7 @@ final readonly class DoctrineProductReviewRepository implements ProductReviewRep
             ->getQuery()
             ->getSingleScalarResult();
 
-        return $result !== null ? (float) $result : null;
+        return null !== $result ? (float) $result : null;
     }
 
     public function getReviewCount(ProductId $productId, TenantId $tenantId): int

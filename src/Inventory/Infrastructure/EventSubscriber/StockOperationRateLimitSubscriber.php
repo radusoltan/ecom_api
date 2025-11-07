@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace App\Inventory\Infrastructure\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 /**
- * Rate Limiter for Stock Operations
+ * Rate Limiter for Stock Operations.
  *
  * Applies rate limiting to stock operation endpoints to prevent abuse:
  * - Reserve/Allocate/Release operations: 100 requests per minute per user
@@ -58,60 +57,36 @@ final readonly class StockOperationRateLimitSubscriber implements EventSubscribe
         $limit = $limiter->consume(1);
 
         if (!$limit->isAccepted()) {
-            throw new TooManyRequestsHttpException(
-                $limit->getRetryAfter()->getTimestamp() - time(),
-                sprintf(
-                    'Too many stock operations. Please retry after %d seconds.',
-                    $limit->getRetryAfter()->getTimestamp() - time()
-                )
-            );
+            throw new TooManyRequestsHttpException($limit->getRetryAfter()->getTimestamp() - time(), sprintf('Too many stock operations. Please retry after %d seconds.', $limit->getRetryAfter()->getTimestamp() - time()));
         }
 
         // Apply per-tenant rate limit
-        if ($tenantId !== null) {
+        if (null !== $tenantId) {
             $tenantLimiter = $this->stockOperationsPerTenantLimiter->create($tenantId);
             $tenantLimit = $tenantLimiter->consume(1);
 
             if (!$tenantLimit->isAccepted()) {
-                throw new TooManyRequestsHttpException(
-                    $tenantLimit->getRetryAfter()->getTimestamp() - time(),
-                    sprintf(
-                        'Tenant rate limit exceeded. Please retry after %d seconds.',
-                        $tenantLimit->getRetryAfter()->getTimestamp() - time()
-                    )
-                );
+                throw new TooManyRequestsHttpException($tenantLimit->getRetryAfter()->getTimestamp() - time(), sprintf('Tenant rate limit exceeded. Please retry after %d seconds.', $tenantLimit->getRetryAfter()->getTimestamp() - time()));
             }
         }
 
         // Apply stricter limits for reservation endpoints
         if ($this->isReservationRoute($request->getPathInfo())) {
-            $reservationLimiter = $this->stockReservationsLimiter->create($userIdentifier . '_reservation');
+            $reservationLimiter = $this->stockReservationsLimiter->create($userIdentifier.'_reservation');
             $reservationLimit = $reservationLimiter->consume(1);
 
             if (!$reservationLimit->isAccepted()) {
-                throw new TooManyRequestsHttpException(
-                    $reservationLimit->getRetryAfter()->getTimestamp() - time(),
-                    sprintf(
-                        'Too many reservation requests. Please retry after %d seconds.',
-                        $reservationLimit->getRetryAfter()->getTimestamp() - time()
-                    )
-                );
+                throw new TooManyRequestsHttpException($reservationLimit->getRetryAfter()->getTimestamp() - time(), sprintf('Too many reservation requests. Please retry after %d seconds.', $reservationLimit->getRetryAfter()->getTimestamp() - time()));
             }
         }
 
         // Apply very strict limits for bulk operations
         if ($this->isBulkOperationRoute($request->getPathInfo())) {
-            $bulkLimiter = $this->bulkOperationsLimiter->create($userIdentifier . '_bulk');
+            $bulkLimiter = $this->bulkOperationsLimiter->create($userIdentifier.'_bulk');
             $bulkLimit = $bulkLimiter->consume(1);
 
             if (!$bulkLimit->isAccepted()) {
-                throw new TooManyRequestsHttpException(
-                    $bulkLimit->getRetryAfter()->getTimestamp() - time(),
-                    sprintf(
-                        'Too many bulk operation requests. Please retry after %d seconds.',
-                        $bulkLimit->getRetryAfter()->getTimestamp() - time()
-                    )
-                );
+                throw new TooManyRequestsHttpException($bulkLimit->getRetryAfter()->getTimestamp() - time(), sprintf('Too many bulk operation requests. Please retry after %d seconds.', $bulkLimit->getRetryAfter()->getTimestamp() - time()));
             }
         }
 
@@ -140,11 +115,11 @@ final readonly class StockOperationRateLimitSubscriber implements EventSubscribe
     {
         // Try to get authenticated user
         $user = $request->attributes->get('_user');
-        if ($user !== null) {
-            return 'user_' . $user;
+        if (null !== $user) {
+            return 'user_'.$user;
         }
 
         // Fallback to IP address
-        return 'ip_' . $request->getClientIp();
+        return 'ip_'.$request->getClientIp();
     }
 }

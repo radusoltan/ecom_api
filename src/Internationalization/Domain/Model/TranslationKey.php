@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Internationalization\Domain\Model;
 
 /**
- * TranslationKey Value Object
+ * TranslationKey Value Object.
  *
  * Represents a translation key (e.g., "common.save", "buttons.add_to_cart")
  */
@@ -16,7 +16,8 @@ final readonly class TranslationKey
 
     private function __construct(
         private string $value,
-    ) {}
+    ) {
+    }
 
     public static function fromString(string $value): self
     {
@@ -27,16 +28,12 @@ final readonly class TranslationKey
         }
 
         if (strlen($trimmed) > self::MAX_LENGTH) {
-            throw new \InvalidArgumentException(
-                sprintf('Translation key cannot exceed %d characters', self::MAX_LENGTH)
-            );
+            throw new \InvalidArgumentException(sprintf('Translation key cannot exceed %d characters', self::MAX_LENGTH));
         }
 
         // Validate key format (alphanumeric, dots, underscores, hyphens)
         if (!preg_match('/^[a-zA-Z0-9._-]+$/', $trimmed)) {
-            throw new \InvalidArgumentException(
-                'Translation key must contain only alphanumeric characters, dots, underscores, and hyphens'
-            );
+            throw new \InvalidArgumentException('Translation key must contain only alphanumeric characters, dots, underscores, and hyphens');
         }
 
         return new self($trimmed);

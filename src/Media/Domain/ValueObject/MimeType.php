@@ -16,13 +16,14 @@ final readonly class MimeType
 
     private function __construct(
         private string $value
-    ) {}
+    ) {
+    }
 
     public static function fromString(string $value): self
     {
         $trimmed = trim($value);
 
-        if ($trimmed === '') {
+        if ('' === $trimmed) {
             throw new \InvalidArgumentException('Mime type cannot be empty.');
         }
 

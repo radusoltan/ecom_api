@@ -8,7 +8,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Domain\ValueObject\TaxRuleId;
 
 /**
- * Update Tax Rule Command
+ * Update Tax Rule Command.
  *
  * Updates tax rule name and rate.
  * Note: Jurisdiction cannot be changed (create new rule instead).

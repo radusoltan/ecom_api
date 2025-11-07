@@ -9,7 +9,7 @@ use App\Catalog\Domain\ValueObject\LocalizedString;
 
 /**
  * Domain service for handling localization fallback chains
- * Encapsulates the business logic for resolving translations
+ * Encapsulates the business logic for resolving translations.
  */
 final class LocalizationPolicy
 {
@@ -20,11 +20,12 @@ final class LocalizationPolicy
      */
     public function __construct(
         private readonly array $supportedLocales = []
-    ) {}
+    ) {
+    }
 
     /**
      * Build a fallback chain for a requested locale
-     * Chain: requested locale → base language → tenant default → system default
+     * Chain: requested locale → base language → tenant default → system default.
      *
      * @return Locale[]
      */
@@ -47,7 +48,7 @@ final class LocalizationPolicy
         }
 
         // 3. Add tenant default if provided and different
-        if ($tenantDefaultLocale !== null && !isset($seen[$tenantDefaultLocale->toString()])) {
+        if (null !== $tenantDefaultLocale && !isset($seen[$tenantDefaultLocale->toString()])) {
             $chain[] = $tenantDefaultLocale;
             $seen[$tenantDefaultLocale->toString()] = true;
 
@@ -76,7 +77,7 @@ final class LocalizationPolicy
     }
 
     /**
-     * Resolve a string from LocalizedString using fallback chain
+     * Resolve a string from LocalizedString using fallback chain.
      */
     public function resolveString(
         LocalizedString $localizedString,
@@ -88,12 +89,15 @@ final class LocalizationPolicy
         }
 
         $fallbackChain = $this->buildFallbackChain($requestedLocale, $tenantDefaultLocale);
+
         return $localizedString->getTranslationWithFallback($fallbackChain);
     }
 
     /**
-     * Resolve multiple strings at once
+     * Resolve multiple strings at once.
+     *
      * @param array<string, LocalizedString> $localizedStrings
+     *
      * @return array<string, ?string>
      */
     public function resolveMultiple(
@@ -117,7 +121,7 @@ final class LocalizationPolicy
 
     /**
      * Get the depth of fallback used to resolve a translation
-     * Useful for metrics and debugging
+     * Useful for metrics and debugging.
      */
     public function getFallbackDepth(
         LocalizedString $localizedString,
@@ -141,7 +145,7 @@ final class LocalizationPolicy
     }
 
     /**
-     * Determine which locale was actually used to resolve a translation
+     * Determine which locale was actually used to resolve a translation.
      */
     public function getResolvedLocale(
         LocalizedString $localizedString,
@@ -162,11 +166,12 @@ final class LocalizationPolicy
 
         // If none in chain, return first available
         $available = $localizedString->getAvailableLocales();
+
         return !empty($available) ? $available[0] : null;
     }
 
     /**
-     * Check if a locale is supported
+     * Check if a locale is supported.
      */
     public function isLocaleSupported(Locale $locale): bool
     {
@@ -185,7 +190,7 @@ final class LocalizationPolicy
 
     /**
      * Parse Accept-Language header and return ordered list of locales
-     * Example: "ro-RO, ro;q=0.8, en-US;q=0.6" → [ro_RO, ro, en_US]
+     * Example: "ro-RO, ro;q=0.8, en-US;q=0.6" → [ro_RO, ro, en_US].
      */
     public static function parseAcceptLanguageHeader(string $header): array
     {
@@ -211,14 +216,14 @@ final class LocalizationPolicy
         }
 
         // Sort by quality (highest first)
-        usort($locales, fn($a, $b) => $b['quality'] <=> $a['quality']);
+        usort($locales, fn ($a, $b) => $b['quality'] <=> $a['quality']);
 
         // Return just the locale objects
-        return array_map(fn($item) => $item['locale'], $locales);
+        return array_map(fn ($item) => $item['locale'], $locales);
     }
 
     /**
-     * Get the best matching locale from Accept-Language header
+     * Get the best matching locale from Accept-Language header.
      */
     public function negotiateLocale(
         string $acceptLanguageHeader,

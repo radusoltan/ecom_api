@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Adds Rate Limit Headers to API Responses
+ * Adds Rate Limit Headers to API Responses.
  *
  * Adds standard rate limit headers:
  * - X-RateLimit-Limit: Maximum requests allowed

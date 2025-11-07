@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\AuditLog\Domain\ValueObject;
 
-use InvalidArgumentException;
-
 /**
- * Represents the type of resource being audited
+ * Represents the type of resource being audited.
  */
 final class ResourceType
 {
@@ -54,9 +52,7 @@ final class ResourceType
     private function __construct(string $value)
     {
         if (!in_array($value, self::VALID_RESOURCES, true)) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid resource type: %s. Valid resources are: %s', $value, implode(', ', self::VALID_RESOURCES))
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid resource type: %s. Valid resources are: %s', $value, implode(', ', self::VALID_RESOURCES)));
         }
 
         $this->value = $value;

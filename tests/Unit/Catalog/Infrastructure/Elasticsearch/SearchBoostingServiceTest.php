@@ -52,6 +52,7 @@ final class SearchBoostingServiceTest extends TestCase
                 $this->assertEquals($searchTerm, $function['filter']['term']['name.keyword']);
                 $this->assertEquals(5.0, $function['weight']);
                 $hasExactMatchBoost = true;
+
                 break;
             }
         }
@@ -89,6 +90,7 @@ final class SearchBoostingServiceTest extends TestCase
                 $this->assertEquals(0.5, $gaussConfig['decay']);
                 $this->assertEquals(1.5, $function['weight']);
                 $hasRecencyBoost = true;
+
                 break;
             }
         }
@@ -106,9 +108,10 @@ final class SearchBoostingServiceTest extends TestCase
         // Find active status boost
         $hasActiveBoost = false;
         foreach ($functions as $function) {
-            if (isset($function['filter']['term']['status']) && $function['filter']['term']['status'] === 'active') {
+            if (isset($function['filter']['term']['status']) && 'active' === $function['filter']['term']['status']) {
                 $this->assertEquals(2.0, $function['weight']);
                 $hasActiveBoost = true;
+
                 break;
             }
         }
@@ -131,6 +134,7 @@ final class SearchBoostingServiceTest extends TestCase
                 $this->assertEquals(strtoupper($searchTerm), $function['filter']['term']['sku']);
                 $this->assertEquals(10.0, $function['weight']);
                 $hasSKUBoost = true;
+
                 break;
             }
         }

@@ -15,17 +15,16 @@ final readonly class UpdateProductTranslationsHandler
     public function __construct(
         private ProductRepositoryInterface $productRepository,
         private I18nCacheService $cacheService
-    ) {}
+    ) {
+    }
 
     public function __invoke(UpdateProductTranslations $command): void
     {
         // Find the product
         $product = $this->productRepository->findById($command->productId);
 
-        if ($product === null) {
-            throw new \DomainException(
-                sprintf('Product with ID %s not found', $command->productId->toString())
-            );
+        if (null === $product) {
+            throw new \DomainException(sprintf('Product with ID %s not found', $command->productId->toString()));
         }
 
         // Verify tenant

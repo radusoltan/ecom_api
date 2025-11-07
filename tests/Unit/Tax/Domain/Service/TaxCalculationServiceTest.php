@@ -14,7 +14,7 @@ use App\Tax\Domain\ValueObject\TaxRuleId;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for Tax Calculation Service
+ * Tests for Tax Calculation Service.
  *
  * Verifies EU VAT calculation logic works correctly for all scenarios.
  */

@@ -7,13 +7,13 @@ namespace App\Inventory\Infrastructure\ApiPlatform\Resource;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GraphQl\Mutation;
 use ApiPlatform\Metadata\Post;
-use App\Inventory\Infrastructure\ApiPlatform\State\ReserveStockProcessor;
 use App\Inventory\Infrastructure\ApiPlatform\State\AllocateStockProcessor;
 use App\Inventory\Infrastructure\ApiPlatform\State\ReleaseStockProcessor;
+use App\Inventory\Infrastructure\ApiPlatform\State\ReserveStockProcessor;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * API Resource for Stock Operations
+ * API Resource for Stock Operations.
  *
  * Handles reserve, allocate, and release operations on stock items.
  *
@@ -68,15 +68,12 @@ final class StockOperationResource
         #[Assert\NotBlank]
         #[Assert\Uuid]
         public ?string $productId = null,
-
         #[Assert\NotBlank]
         #[Assert\Ulid]
         public ?string $warehouseId = null,
-
         #[Assert\NotBlank]
         #[Assert\Positive]
         public ?int $quantity = null,
-
         #[Assert\NotBlank]
         public ?string $referenceId = null, // reservation ID, order ID, or reason
 

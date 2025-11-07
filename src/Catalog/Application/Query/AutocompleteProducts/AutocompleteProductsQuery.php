@@ -14,5 +14,6 @@ final readonly class AutocompleteProductsQuery
         public Locale $locale,
         public string $query,
         public int $limit = 10,
-    ) {}
+    ) {
+    }
 }

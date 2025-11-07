@@ -38,9 +38,11 @@ final class LoadWarehouseFixturesCommand extends Command
         try {
             $fixtures->load($manager);
             $io->success('Warehouse fixtures loaded successfully!');
+
             return Command::SUCCESS;
         } catch (\Throwable $e) {
-            $io->error('Failed to load warehouse fixtures: ' . $e->getMessage());
+            $io->error('Failed to load warehouse fixtures: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }

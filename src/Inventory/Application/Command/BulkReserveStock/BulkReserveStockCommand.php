@@ -7,7 +7,7 @@ namespace App\Inventory\Application\Command\BulkReserveStock;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Command to reserve stock for multiple products in a single transaction
+ * Command to reserve stock for multiple products in a single transaction.
  *
  * Used for cart checkout scenarios where multiple items need to be reserved atomically.
  */

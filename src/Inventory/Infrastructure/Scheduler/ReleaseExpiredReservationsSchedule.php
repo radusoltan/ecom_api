@@ -11,7 +11,7 @@ use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
 
 /**
- * Schedule for releasing expired stock reservations
+ * Schedule for releasing expired stock reservations.
  *
  * Runs every minute to check for and release expired reservations.
  * Reservations expire after 15 minutes of inactivity.

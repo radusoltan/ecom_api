@@ -16,7 +16,7 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Warehouse fixtures - creates multiple warehouses for inventory management
+ * Warehouse fixtures - creates multiple warehouses for inventory management.
  */
 class WarehouseFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -165,4 +165,3 @@ class WarehouseFixtures extends Fixture implements DependentFixtureInterface
         return 6;
     }
 }
-

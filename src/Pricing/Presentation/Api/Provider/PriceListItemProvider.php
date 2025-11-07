@@ -25,7 +25,7 @@ final readonly class PriceListItemProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?PriceListResource
     {
         $priceListIdValue = $uriVariables['id'] ?? null;
-        if ($priceListIdValue === null) {
+        if (null === $priceListIdValue) {
             throw new BadRequestHttpException('Price list ID is required');
         }
 
@@ -37,7 +37,7 @@ final readonly class PriceListItemProvider implements ProviderInterface
 
         // Extract tenant ID from context (injected by TenantContextProvider)
         $tenantIdValue = $context['tenant_id'] ?? null;
-        if ($tenantIdValue === null) {
+        if (null === $tenantIdValue) {
             throw new BadRequestHttpException('Tenant ID is required');
         }
 
@@ -59,7 +59,7 @@ final readonly class PriceListItemProvider implements ProviderInterface
 
         $priceListDTO = $handledStamp->getResult();
 
-        if ($priceListDTO === null) {
+        if (null === $priceListDTO) {
             return null;
         }
 

@@ -20,10 +20,8 @@ final readonly class UpdatePromotionCommandHandler
     {
         $promotion = $this->promotionRepository->findById($command->promotionId, $command->tenantId);
 
-        if ($promotion === null) {
-            throw new \DomainException(
-                sprintf('Promotion with ID "%s" not found', $command->promotionId->toString())
-            );
+        if (null === $promotion) {
+            throw new \DomainException(sprintf('Promotion with ID "%s" not found', $command->promotionId->toString()));
         }
 
         $promotion->update(
@@ -31,8 +29,8 @@ final readonly class UpdatePromotionCommandHandler
             discount: Discount::fromTypeAndValue($command->discountType, $command->discountValue),
             priority: $command->priority,
             conditions: $command->conditions,
-            validFrom: $command->validFrom !== null ? new \DateTimeImmutable($command->validFrom) : null,
-            validTo: $command->validTo !== null ? new \DateTimeImmutable($command->validTo) : null
+            validFrom: null !== $command->validFrom ? new \DateTimeImmutable($command->validFrom) : null,
+            validTo: null !== $command->validTo ? new \DateTimeImmutable($command->validTo) : null
         );
 
         $this->promotionRepository->save($promotion);

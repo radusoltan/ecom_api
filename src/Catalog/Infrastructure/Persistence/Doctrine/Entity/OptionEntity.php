@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
- * Doctrine entity for Option
+ * Doctrine entity for Option.
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'catalog_product_options')]
@@ -61,6 +61,7 @@ class OptionEntity
 
     #[ORM\Column(type: 'json', name: 'name_translations')]
     #[Groups(['option:read'])]
+    /** @var array<string, mixed> */
     private array $nameTranslations = [];
 
     #[ORM\Column(type: 'integer')]
@@ -87,7 +88,7 @@ class OptionEntity
     }
 
     /**
-     * Create entity from domain model
+     * Create entity from domain model.
      */
     public static function fromDomainModel(Option $option): self
     {
@@ -108,7 +109,7 @@ class OptionEntity
     }
 
     /**
-     * Convert to domain model
+     * Convert to domain model.
      */
     public function toDomainModel(): Option
     {

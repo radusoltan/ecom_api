@@ -18,7 +18,7 @@ use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * ReturnRequest Aggregate Root
+ * ReturnRequest Aggregate Root.
  *
  * Represents a customer's request to return an order item.
  *
@@ -56,8 +56,8 @@ final class ReturnRequest
     /**
      * Create a new return request (RMA).
      *
-     * @param OrderId $orderId The order for which return is requested
-     * @param ReturnReason $reason Customer's reason for return
+     * @param OrderId      $orderId The order for which return is requested
+     * @param ReturnReason $reason  Customer's reason for return
      */
     public static function create(
         ReturnRequestId $id,
@@ -98,10 +98,8 @@ final class ReturnRequest
      */
     public function approve(): void
     {
-        if (! $this->status->isRequested()) {
-            throw new \DomainException(
-                sprintf('Cannot approve return request in status "%s". Must be "requested".', $this->status->value())
-            );
+        if (!$this->status->isRequested()) {
+            throw new \DomainException(sprintf('Cannot approve return request in status "%s". Must be "requested".', $this->status->value()));
         }
 
         $this->status = ReturnStatus::approved();
@@ -121,13 +119,11 @@ final class ReturnRequest
      */
     public function markAsReceived(string $warehouseId): void
     {
-        if (! $this->status->isApproved()) {
-            throw new \DomainException(
-                sprintf('Cannot mark return as received in status "%s". Must be "approved".', $this->status->value())
-            );
+        if (!$this->status->isApproved()) {
+            throw new \DomainException(sprintf('Cannot mark return as received in status "%s". Must be "approved".', $this->status->value()));
         }
 
-        if (trim($warehouseId) === '') {
+        if ('' === trim($warehouseId)) {
             throw new \InvalidArgumentException('Warehouse ID is required when marking return as received.');
         }
 
@@ -150,13 +146,11 @@ final class ReturnRequest
      */
     public function inspect(bool $isResellable, string $inspectionNotes): void
     {
-        if (! $this->status->isReceived()) {
-            throw new \DomainException(
-                sprintf('Cannot inspect return in status "%s". Must be "received".', $this->status->value())
-            );
+        if (!$this->status->isReceived()) {
+            throw new \DomainException(sprintf('Cannot inspect return in status "%s". Must be "received".', $this->status->value()));
         }
 
-        if (trim($inspectionNotes) === '') {
+        if ('' === trim($inspectionNotes)) {
             throw new \InvalidArgumentException('Inspection notes are required.');
         }
 
@@ -180,10 +174,8 @@ final class ReturnRequest
      */
     public function complete(Money $refundAmount): void
     {
-        if (! $this->status->isInspected()) {
-            throw new \DomainException(
-                sprintf('Cannot complete return in status "%s". Must be "inspected".', $this->status->value())
-            );
+        if (!$this->status->isInspected()) {
+            throw new \DomainException(sprintf('Cannot complete return in status "%s". Must be "inspected".', $this->status->value()));
         }
 
         if ($refundAmount->isNegative()) {
@@ -213,16 +205,11 @@ final class ReturnRequest
      */
     public function reject(string $rejectionReason): void
     {
-        if (! $this->status->isRequested() && ! $this->status->isInspected()) {
-            throw new \DomainException(
-                sprintf(
-                    'Cannot reject return in status "%s". Must be "requested" or "inspected".',
-                    $this->status->value()
-                )
-            );
+        if (!$this->status->isRequested() && !$this->status->isInspected()) {
+            throw new \DomainException(sprintf('Cannot reject return in status "%s". Must be "requested" or "inspected".', $this->status->value()));
         }
 
-        if (trim($rejectionReason) === '') {
+        if ('' === trim($rejectionReason)) {
             throw new \InvalidArgumentException('Rejection reason is required.');
         }
 

@@ -7,7 +7,7 @@ namespace App\Internationalization\Application\Query;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Export Translations Query
+ * Export Translations Query.
  *
  * Triggers export of translations with optional filters.
  *
@@ -31,5 +31,6 @@ final readonly class ExportTranslations
         public TenantId $tenantId,
         public string $format, // 'csv' or 'json'
         public array $filters = [],
-    ) {}
+    ) {
+    }
 }

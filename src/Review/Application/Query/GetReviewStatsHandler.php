@@ -12,7 +12,8 @@ final readonly class GetReviewStatsHandler
 {
     public function __construct(
         private ProductReviewRepositoryInterface $reviewRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(GetReviewStats $query): array
     {

@@ -8,7 +8,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Domain\ValueObject\TaxRuleId;
 
 /**
- * Deactivate Tax Rule Command
+ * Deactivate Tax Rule Command.
  */
 final readonly class DeactivateTaxRule
 {

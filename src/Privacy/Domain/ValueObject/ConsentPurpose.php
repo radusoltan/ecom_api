@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Privacy\Domain\ValueObject;
 
-use InvalidArgumentException;
-use Stringable;
-
 /**
- * Consent Purpose Value Object
+ * Consent Purpose Value Object.
  *
  * GDPR Article 6 lawful bases for processing:
  * - MARKETING: Email/SMS marketing communications (requires explicit consent)
@@ -18,7 +15,7 @@ use Stringable;
  * - LEGAL: Legal obligation compliance (no consent needed, always allowed)
  * - THIRD_PARTY_SHARING: Data sharing with partners (requires explicit consent)
  */
-final readonly class ConsentPurpose implements Stringable
+final readonly class ConsentPurpose implements \Stringable
 {
     private const MARKETING = 'marketing';
     private const ANALYTICS = 'analytics';
@@ -39,13 +36,7 @@ final readonly class ConsentPurpose implements Stringable
     private function __construct(private string $value)
     {
         if (!in_array($value, self::VALID_PURPOSES, true)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Invalid consent purpose: "%s". Valid purposes: %s',
-                    $value,
-                    implode(', ', self::VALID_PURPOSES)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid consent purpose: "%s". Valid purposes: %s', $value, implode(', ', self::VALID_PURPOSES)));
         }
     }
 

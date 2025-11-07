@@ -30,7 +30,7 @@ final class GetPaymentsByOrderIdQueryHandlerTest extends TestCase
     {
         // Arrange
         $tenantId = TenantId::generate();
-        $orderId = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId = '01JCEX'.bin2hex(random_bytes(10));
 
         $payment1 = Payment::create(
             id: PaymentId::generate(),
@@ -78,7 +78,7 @@ final class GetPaymentsByOrderIdQueryHandlerTest extends TestCase
     {
         // Arrange
         $query = new GetPaymentsByOrder(
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             tenantId: TenantId::generate()
         );
 
@@ -98,7 +98,7 @@ final class GetPaymentsByOrderIdQueryHandlerTest extends TestCase
     {
         // Arrange
         $tenantId = TenantId::generate();
-        $orderId = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId = '01JCEX'.bin2hex(random_bytes(10));
 
         $payment = Payment::create(
             id: PaymentId::generate(),

@@ -2,7 +2,7 @@
 <?php
 
 /**
- * Test Data Generation Script for Load Testing
+ * Test Data Generation Script for Load Testing.
  *
  * Generates realistic test data for performance testing:
  * - Products (100-1000)
@@ -24,10 +24,10 @@ declare(strict_types=1);
 
 use Symfony\Component\Dotenv\Dotenv;
 
-require_once __DIR__ . '/../../../vendor/autoload.php';
+require_once __DIR__.'/../../../vendor/autoload.php';
 
 // Load environment
-(new Dotenv())->bootEnv(__DIR__ . '/../../../.env');
+(new Dotenv())->bootEnv(__DIR__.'/../../../.env');
 
 // Database connection
 $dbHost = $_ENV['DATABASE_HOST'] ?? '127.0.0.1';
@@ -44,7 +44,7 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
 } catch (PDOException $e) {
-    echo "❌ Database connection failed: " . $e->getMessage() . "\n";
+    echo '❌ Database connection failed: '.$e->getMessage()."\n";
     exit(1);
 }
 
@@ -92,27 +92,27 @@ $pdo->beginTransaction();
 
 try {
     // 1. Generate Categories
-    echo "📦 Generating categories... ";
+    echo '📦 Generating categories... ';
     $categoryIds = generateCategories($pdo, $tenantId, $config['categories']);
     echo "✓ {$config['categories']} categories created\n";
 
     // 2. Generate Warehouses
-    echo "🏭 Generating warehouses... ";
+    echo '🏭 Generating warehouses... ';
     generateWarehouses($pdo, $tenantId, $config['warehouses']);
     echo "✓ {$config['warehouses']} warehouses created\n";
 
     // 3. Generate Products
-    echo "🛍️  Generating products... ";
+    echo '🛍️  Generating products... ';
     generateProducts($pdo, $tenantId, $categoryIds, $config['products']);
     echo "✓ {$config['products']} products created\n";
 
     // 4. Generate Translations
-    echo "🌐 Generating translations... ";
+    echo '🌐 Generating translations... ';
     generateTranslations($pdo, $tenantId, $config['translations']);
     echo "✓ {$config['translations']} translations created\n";
 
     // 5. Generate Orders
-    echo "📋 Generating orders... ";
+    echo '📋 Generating orders... ';
     generateOrders($pdo, $tenantId, $config['orders']);
     echo "✓ {$config['orders']} orders created\n";
 
@@ -131,10 +131,9 @@ try {
     echo "   export TENANT_ID='$tenantId'\n";
     echo "   k6 run tests/Performance/k6/smoke_test.js\n";
     echo "   k6 run tests/Performance/k6/api_load_test.js\n";
-
 } catch (Exception $e) {
     $pdo->rollBack();
-    echo "❌ Error: " . $e->getMessage() . "\n";
+    echo '❌ Error: '.$e->getMessage()."\n";
     exit(1);
 }
 
@@ -153,8 +152,8 @@ function getOrCreateTestTenant(PDO $pdo): string
     // Create new test tenant
     $id = generateUuid();
     $stmt = $pdo->prepare(
-        "INSERT INTO tenants (id, name, slug, status, created_at, updated_at)
-         VALUES (:id, :name, :slug, :status, NOW(), NOW())"
+        'INSERT INTO tenants (id, name, slug, status, created_at, updated_at)
+         VALUES (:id, :name, :slug, :status, NOW(), NOW())'
     );
     $stmt->execute([
         'id' => $id,
@@ -172,11 +171,11 @@ function generateCategories(PDO $pdo, string $tenantId, int $count): array
     $categories = ['Electronics', 'Computers', 'Phones', 'Tablets', 'Accessories', 'Home', 'Fashion', 'Sports', 'Books', 'Toys'];
 
     $stmt = $pdo->prepare(
-        "INSERT INTO categories (id, tenant_id, slug, name_translations, is_active, position, created_at, updated_at)
-         VALUES (:id, :tenant_id, :slug, :name_translations, :is_active, :position, NOW(), NOW())"
+        'INSERT INTO categories (id, tenant_id, slug, name_translations, is_active, position, created_at, updated_at)
+         VALUES (:id, :tenant_id, :slug, :name_translations, :is_active, :position, NOW(), NOW())'
     );
 
-    for ($i = 0; $i < min($count, count($categories)); $i++) {
+    for ($i = 0; $i < min($count, count($categories)); ++$i) {
         $id = generateUuid();
         $name = $categories[$i];
         $slug = strtolower(str_replace(' ', '-', $name));
@@ -207,11 +206,11 @@ function generateWarehouses(PDO $pdo, string $tenantId, int $count): void
     ];
 
     $stmt = $pdo->prepare(
-        "INSERT INTO warehouses (id, tenant_id, name, code, address, is_active, priority, created_at, updated_at)
-         VALUES (:id, :tenant_id, :name, :code, :address, :is_active, :priority, NOW(), NOW())"
+        'INSERT INTO warehouses (id, tenant_id, name, code, address, is_active, priority, created_at, updated_at)
+         VALUES (:id, :tenant_id, :name, :code, :address, :is_active, :priority, NOW(), NOW())'
     );
 
-    for ($i = 0; $i < min($count, count($warehouses)); $i++) {
+    for ($i = 0; $i < min($count, count($warehouses)); ++$i) {
         $w = $warehouses[$i];
         $stmt->execute([
             'id' => generateUuid(),
@@ -231,11 +230,11 @@ function generateProducts(PDO $pdo, string $tenantId, array $categoryIds, int $c
     $brands = ['Apple', 'Samsung', 'Dell', 'HP', 'Lenovo', 'Sony', 'LG', 'Asus'];
 
     $stmt = $pdo->prepare(
-        "INSERT INTO products (id, tenant_id, sku, name_translations, description_translations, price_amount, price_currency, status, created_at, updated_at)
-         VALUES (:id, :tenant_id, :sku, :name_translations, :description_translations, :price_amount, :price_currency, :status, NOW(), NOW())"
+        'INSERT INTO products (id, tenant_id, sku, name_translations, description_translations, price_amount, price_currency, status, created_at, updated_at)
+         VALUES (:id, :tenant_id, :sku, :name_translations, :description_translations, :price_amount, :price_currency, :status, NOW(), NOW())'
     );
 
-    for ($i = 0; $i < $count; $i++) {
+    for ($i = 0; $i < $count; ++$i) {
         $product = $products[array_rand($products)];
         $brand = $brands[array_rand($brands)];
         $name = "$brand $product";
@@ -262,17 +261,17 @@ function generateTranslations(PDO $pdo, string $tenantId, int $count): void
     $values = ['Welcome!', 'Goodbye!', 'Hello!', 'Thank you!', 'Error occurred', 'Success!', 'Warning', 'Information'];
 
     $stmt = $pdo->prepare(
-        "INSERT INTO translations (id, tenant_id, domain, key, locale, value, created_at, updated_at)
+        'INSERT INTO translations (id, tenant_id, domain, key, locale, value, created_at, updated_at)
          VALUES (:id, :tenant_id, :domain, :key, :locale, :value, NOW(), NOW())
-         ON CONFLICT (tenant_id, domain, key, locale) DO NOTHING"
+         ON CONFLICT (tenant_id, domain, key, locale) DO NOTHING'
     );
 
-    for ($i = 0; $i < $count; $i++) {
+    for ($i = 0; $i < $count; ++$i) {
         $stmt->execute([
             'id' => generateUuid(),
             'tenant_id' => $tenantId,
             'domain' => $domains[array_rand($domains)],
-            'key' => $keys[array_rand($keys)] . '_' . $i,
+            'key' => $keys[array_rand($keys)].'_'.$i,
             'locale' => 'en_US',
             'value' => $values[array_rand($values)],
         ]);
@@ -284,11 +283,11 @@ function generateOrders(PDO $pdo, string $tenantId, int $count): void
     $statuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
 
     $stmt = $pdo->prepare(
-        "INSERT INTO orders (id, tenant_id, order_number, customer_email, status, total_amount, total_currency, created_at, updated_at)
-         VALUES (:id, :tenant_id, :order_number, :customer_email, :status, :total_amount, :total_currency, NOW(), NOW())"
+        'INSERT INTO orders (id, tenant_id, order_number, customer_email, status, total_amount, total_currency, created_at, updated_at)
+         VALUES (:id, :tenant_id, :order_number, :customer_email, :status, :total_amount, :total_currency, NOW(), NOW())'
     );
 
-    for ($i = 0; $i < $count; $i++) {
+    for ($i = 0; $i < $count; ++$i) {
         $orderNumber = sprintf('ORD-%08d', $i + 1);
         $customerEmail = "customer{$i}@example.com";
         $totalAmount = rand(50, 5000) * 100; // $50 - $5000
@@ -323,10 +322,10 @@ function generateUuid(): string
 {
     return sprintf(
         '%08x-%04x-%04x-%04x-%012x',
-        mt_rand(0, 0xffffffff),
-        mt_rand(0, 0xffff),
-        mt_rand(0, 0x0fff) | 0x4000,
-        mt_rand(0, 0x3fff) | 0x8000,
-        mt_rand(0, 0xffffffffffff)
+        mt_rand(0, 0xFFFFFFFF),
+        mt_rand(0, 0xFFFF),
+        mt_rand(0, 0x0FFF) | 0x4000,
+        mt_rand(0, 0x3FFF) | 0x8000,
+        mt_rand(0, 0xFFFFFFFFFFFF)
     );
 }

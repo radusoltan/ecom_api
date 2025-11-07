@@ -16,19 +16,20 @@ final class ImageItemProvider implements ProviderInterface
     public function __construct(
         private readonly ImageRepositoryInterface $imageRepository,
         private readonly ImageResourceTransformer $transformer
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?ImageResource
     {
         $id = $uriVariables['id'] ?? null;
 
-        if ($id === null) {
+        if (null === $id) {
             return null;
         }
 
         $image = $this->imageRepository->findById(ImageId::fromString((string) $id));
 
-        if ($image === null) {
+        if (null === $image) {
             return null;
         }
 

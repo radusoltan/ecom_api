@@ -10,5 +10,6 @@ final readonly class ApproveReview
 {
     public function __construct(
         public ReviewId $reviewId
-    ) {}
+    ) {
+    }
 }

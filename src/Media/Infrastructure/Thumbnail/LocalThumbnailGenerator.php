@@ -92,7 +92,7 @@ final class LocalThumbnailGenerator implements ThumbnailGenerator
     private function detectMimeType(string $path): string
     {
         $info = @getimagesize($path);
-        if ($info === false || !isset($info['mime'])) {
+        if (false === $info || !isset($info['mime'])) {
             throw new \RuntimeException(sprintf('Unable to detect mime type for image "%s".', $path));
         }
 
@@ -103,7 +103,7 @@ final class LocalThumbnailGenerator implements ThumbnailGenerator
     {
         $handler = self::SUPPORTED_MIME_HANDLERS[$mime] ?? null;
 
-        if ($handler === null) {
+        if (null === $handler) {
             throw new \RuntimeException(sprintf('Unsupported image mime type "%s".', $mime));
         }
 
@@ -119,7 +119,7 @@ final class LocalThumbnailGenerator implements ThumbnailGenerator
 
     private function ensureResource(mixed $resource)
     {
-        if ($resource === false || $resource === null) {
+        if (false === $resource || null === $resource) {
             throw new \RuntimeException('Failed to create image resource.');
         }
 
@@ -160,7 +160,7 @@ final class LocalThumbnailGenerator implements ThumbnailGenerator
     private function cropImage($resource, array $crop)
     {
         $cropped = imagecrop($resource, $crop);
-        if ($cropped === false) {
+        if (false === $cropped) {
             throw new \RuntimeException('Failed to crop image.');
         }
 
@@ -170,7 +170,7 @@ final class LocalThumbnailGenerator implements ThumbnailGenerator
     private function resizeImage($resource, int $targetWidth, int $targetHeight, string $mime)
     {
         $resized = imagecreatetruecolor($targetWidth, $targetHeight);
-        if ($resized === false) {
+        if (false === $resized) {
             throw new \RuntimeException('Failed to create target image.');
         }
 
@@ -189,8 +189,9 @@ final class LocalThumbnailGenerator implements ThumbnailGenerator
             imagesy($resource)
         );
 
-        if ($result === false) {
+        if (false === $result) {
             imagedestroy($resized);
+
             throw new \RuntimeException('Failed to resize image.');
         }
 
@@ -214,24 +215,29 @@ final class LocalThumbnailGenerator implements ThumbnailGenerator
         switch ($mime) {
             case 'image/jpeg':
                 imagejpeg($resource, $path, 90);
+
                 break;
             case 'image/png':
                 imagepng($resource, $path, 6);
+
                 break;
             case 'image/webp':
                 if (!function_exists('imagewebp')) {
                     throw new \RuntimeException('WEBP support not available in current GD build.');
                 }
                 imagewebp($resource, $path, 80);
+
                 break;
             case 'image/gif':
                 imagegif($resource, $path);
+
                 break;
             case 'image/avif':
                 if (!function_exists('imageavif')) {
                     throw new \RuntimeException('AVIF support not available in current GD build.');
                 }
                 imageavif($resource, $path, 50);
+
                 break;
             default:
                 throw new \RuntimeException(sprintf('Unable to save image of type "%s".', $mime));

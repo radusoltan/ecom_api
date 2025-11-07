@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * Metrics Controller
+ * Metrics Controller.
  *
  * Exposes Prometheus metrics endpoint at /metrics
  *

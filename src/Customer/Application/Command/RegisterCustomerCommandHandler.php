@@ -26,10 +26,8 @@ final readonly class RegisterCustomerCommandHandler
 
         // Check if customer with same email already exists
         $existing = $this->customerRepository->findByEmail($email, $tenantId);
-        if ($existing !== null) {
-            throw new \InvalidArgumentException(
-                sprintf('Customer with email "%s" already exists for this tenant', $command->email)
-            );
+        if (null !== $existing) {
+            throw new \InvalidArgumentException(sprintf('Customer with email "%s" already exists for this tenant', $command->email));
         }
 
         $customer = Customer::register(

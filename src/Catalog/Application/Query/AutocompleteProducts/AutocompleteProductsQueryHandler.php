@@ -14,7 +14,8 @@ final readonly class AutocompleteProductsQueryHandler
     public function __construct(
         private Client $client,
         private IndexManager $indexManager
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<array<string, mixed>>
@@ -52,6 +53,7 @@ final readonly class AutocompleteProductsQueryHandler
 
     /**
      * @param array<string, mixed> $response
+     *
      * @return array<array<string, mixed>>
      */
     private function parseSuggestions(array $response): array

@@ -13,7 +13,8 @@ final readonly class GetAllWarehousesHandler
 {
     public function __construct(
         private WarehouseRepositoryInterface $warehouseRepository,
-    ) {}
+    ) {
+    }
 
     /**
      * @return WarehouseDTO[]

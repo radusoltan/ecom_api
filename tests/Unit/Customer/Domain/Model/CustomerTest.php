@@ -15,7 +15,6 @@ use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class CustomerTest extends TestCase
@@ -75,7 +74,7 @@ final class CustomerTest extends TestCase
 
     public function testRegisterValidatesFirstNameMinLength(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('First name must be between 2 and 50 characters');
 
         Customer::register(
@@ -89,7 +88,7 @@ final class CustomerTest extends TestCase
 
     public function testRegisterValidatesFirstNameMaxLength(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('First name must be between 2 and 50 characters');
 
         Customer::register(
@@ -103,7 +102,7 @@ final class CustomerTest extends TestCase
 
     public function testRegisterValidatesLastNameMinLength(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Last name must be between 2 and 50 characters');
 
         Customer::register(
@@ -117,7 +116,7 @@ final class CustomerTest extends TestCase
 
     public function testRegisterValidatesLastNameMaxLength(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Last name must be between 2 and 50 characters');
 
         Customer::register(
@@ -164,7 +163,7 @@ final class CustomerTest extends TestCase
             'Doe'
         );
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('First name must be between 2 and 50 characters');
 
         $customer->updateProfile('J', 'Smith', null);
@@ -224,7 +223,7 @@ final class CustomerTest extends TestCase
             'Doe'
         );
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Customer is already in segment: regular');
 
         $customer->changeSegment(CustomerSegment::regular());
@@ -266,7 +265,7 @@ final class CustomerTest extends TestCase
             'Doe'
         );
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Loyalty points to award must be greater than 0');
 
         $customer->awardLoyaltyPoints(0, 'Test');
@@ -300,7 +299,7 @@ final class CustomerTest extends TestCase
 
         $customer->awardLoyaltyPoints(50, 'Test');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Insufficient loyalty points. Available: 50, Requested: 100');
 
         $customer->redeemLoyaltyPoints(100);
@@ -316,7 +315,7 @@ final class CustomerTest extends TestCase
             'Doe'
         );
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Loyalty points to redeem must be greater than 0');
 
         $customer->redeemLoyaltyPoints(0);
@@ -356,7 +355,7 @@ final class CustomerTest extends TestCase
 
         $customer->deactivate();
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Customer "John Doe" is already inactive');
 
         $customer->deactivate();
@@ -395,7 +394,7 @@ final class CustomerTest extends TestCase
             'Doe'
         );
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Customer "John Doe" is already active');
 
         $customer->activate();

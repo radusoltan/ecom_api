@@ -15,7 +15,8 @@ final readonly class StockAllocated implements DomainEvent
         public Quantity $quantity,
         public string $orderId,
         public \DateTimeImmutable $occurredOn,
-    ) {}
+    ) {
+    }
 
     public function occurredOn(): \DateTimeImmutable
     {

@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Processor to start picking process (PATCH /api/fulfillments/{id}/start-picking)
+ * Processor to start picking process (PATCH /api/fulfillments/{id}/start-picking).
  */
 final readonly class StartPickingProcessor implements ProcessorInterface
 {
@@ -27,13 +27,13 @@ final readonly class StartPickingProcessor implements ProcessorInterface
     {
         $id = $uriVariables['id'] ?? null;
 
-        if ($id === null) {
+        if (null === $id) {
             throw new BadRequestHttpException('Fulfillment ID is required');
         }
 
         // Get tenant ID from context (set by TenantContextProvider)
         $tenantIdString = $context['tenant_id'] ?? null;
-        if ($tenantIdString === null) {
+        if (null === $tenantIdString) {
             throw new \RuntimeException('Tenant ID not found in context');
         }
         $tenantId = TenantId::fromString($tenantIdString);

@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Provider for retrieving tax rule collections
+ * Provider for retrieving tax rule collections.
  */
 final class TaxRuleCollectionProvider implements ProviderInterface
 {
@@ -45,7 +45,7 @@ final class TaxRuleCollectionProvider implements ProviderInterface
         }
 
         // Get query parameters
-        $activeOnly = $request->query->get('activeOnly', 'false') === 'true';
+        $activeOnly = 'true' === $request->query->get('activeOnly', 'false');
         $limit = (int) $request->query->get('limit', 30);
         $offset = (int) $request->query->get('offset', 0);
 

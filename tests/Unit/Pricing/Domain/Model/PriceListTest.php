@@ -17,8 +17,6 @@ use App\Pricing\Domain\Model\PriceListName;
 use App\Pricing\Domain\Model\PricingRule;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class PriceListTest extends TestCase
@@ -57,8 +55,8 @@ final class PriceListTest extends TestCase
 
     public function testCreateWithValidityDates(): void
     {
-        $validFrom = new DateTimeImmutable('2025-01-01');
-        $validTo = new DateTimeImmutable('2025-12-31');
+        $validFrom = new \DateTimeImmutable('2025-01-01');
+        $validTo = new \DateTimeImmutable('2025-12-31');
 
         $priceList = PriceList::create(
             PriceListId::generate(),
@@ -119,12 +117,12 @@ final class PriceListTest extends TestCase
         $priceList = $this->createPriceList();
 
         // Add 100 rules (maximum)
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             $productId = ProductId::generate();
             $priceList->addRule(PricingRule::forProduct($productId, Discount::percentage(5.0)));
         }
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot add more than 100 rules');
 
         // Try to add 101st rule
@@ -138,7 +136,7 @@ final class PriceListTest extends TestCase
 
         $priceList->addRule(PricingRule::forProduct($productId, Discount::percentage(10.0)));
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('overlapping pricing rule');
 
         // Try to add another rule for same product
@@ -151,7 +149,7 @@ final class PriceListTest extends TestCase
 
         $priceList->addRule(PricingRule::forCategory('electronics', Discount::percentage(10.0)));
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('overlapping pricing rule');
 
         // Try to add another rule for same category
@@ -164,7 +162,7 @@ final class PriceListTest extends TestCase
 
         $priceList->addRule(PricingRule::forAll(Discount::percentage(5.0)));
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('overlapping pricing rule');
 
         // Try to add another "all" rule
@@ -221,7 +219,7 @@ final class PriceListTest extends TestCase
     {
         $priceList = $this->createPriceList();
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Rule at index 0 does not exist');
 
         $priceList->removeRule(0);
@@ -277,7 +275,7 @@ final class PriceListTest extends TestCase
         $priceList = $this->createPriceList();
         $priceList->activate();
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('already active');
 
         $priceList->activate();
@@ -311,7 +309,7 @@ final class PriceListTest extends TestCase
         $priceList = $this->createPriceList();
         $this->assertFalse($priceList->isActive());
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('already inactive');
 
         $priceList->deactivate();
@@ -325,8 +323,8 @@ final class PriceListTest extends TestCase
     {
         $priceList = $this->createPriceList();
         $newName = PriceListName::fromString('Updated Name');
-        $validFrom = new DateTimeImmutable('2025-06-01');
-        $validTo = new DateTimeImmutable('2025-12-31');
+        $validFrom = new \DateTimeImmutable('2025-06-01');
+        $validTo = new \DateTimeImmutable('2025-12-31');
 
         $priceList->update($newName, 200, $validFrom, $validTo);
 
@@ -357,7 +355,7 @@ final class PriceListTest extends TestCase
 
     public function testIsValidNowReturnsFalseBeforeValidFrom(): void
     {
-        $validFrom = new DateTimeImmutable('+1 day');
+        $validFrom = new \DateTimeImmutable('+1 day');
         $priceList = $this->createPriceListWithDates($validFrom, null);
         $priceList->activate();
 
@@ -366,7 +364,7 @@ final class PriceListTest extends TestCase
 
     public function testIsValidNowReturnsTrueAfterValidFrom(): void
     {
-        $validFrom = new DateTimeImmutable('-1 day');
+        $validFrom = new \DateTimeImmutable('-1 day');
         $priceList = $this->createPriceListWithDates($validFrom, null);
         $priceList->activate();
 
@@ -375,7 +373,7 @@ final class PriceListTest extends TestCase
 
     public function testIsValidNowReturnsFalseAfterValidTo(): void
     {
-        $validTo = new DateTimeImmutable('-1 day');
+        $validTo = new \DateTimeImmutable('-1 day');
         $priceList = $this->createPriceListWithDates(null, $validTo);
         $priceList->activate();
 
@@ -384,7 +382,7 @@ final class PriceListTest extends TestCase
 
     public function testIsValidNowReturnsTrueBeforeValidTo(): void
     {
-        $validTo = new DateTimeImmutable('+1 day');
+        $validTo = new \DateTimeImmutable('+1 day');
         $priceList = $this->createPriceListWithDates(null, $validTo);
         $priceList->activate();
 
@@ -393,8 +391,8 @@ final class PriceListTest extends TestCase
 
     public function testIsValidNowWithinDateRange(): void
     {
-        $validFrom = new DateTimeImmutable('-1 day');
-        $validTo = new DateTimeImmutable('+1 day');
+        $validFrom = new \DateTimeImmutable('-1 day');
+        $validTo = new \DateTimeImmutable('+1 day');
         $priceList = $this->createPriceListWithDates($validFrom, $validTo);
         $priceList->activate();
 
@@ -511,7 +509,7 @@ final class PriceListTest extends TestCase
 
     public function testCreateThrowsExceptionForInvalidPriority(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Priority must be between 0 and 1000');
 
         PriceList::create(
@@ -524,7 +522,7 @@ final class PriceListTest extends TestCase
 
     public function testCreateThrowsExceptionForNegativePriority(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Priority must be between 0 and 1000');
 
         PriceList::create(
@@ -537,10 +535,10 @@ final class PriceListTest extends TestCase
 
     public function testCreateThrowsExceptionWhenValidFromAfterValidTo(): void
     {
-        $validFrom = new DateTimeImmutable('2025-12-31');
-        $validTo = new DateTimeImmutable('2025-01-01');
+        $validFrom = new \DateTimeImmutable('2025-12-31');
+        $validTo = new \DateTimeImmutable('2025-01-01');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('validFrom must be before validTo');
 
         PriceList::create(
@@ -557,7 +555,7 @@ final class PriceListTest extends TestCase
     {
         $priceList = $this->createPriceList();
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Priority must be between 0 and 1000');
 
         $priceList->update(
@@ -572,14 +570,14 @@ final class PriceListTest extends TestCase
     {
         $priceList = $this->createPriceList();
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('validFrom must be before validTo');
 
         $priceList->update(
             PriceListName::fromString('Updated'),
             100,
-            new DateTimeImmutable('2025-12-31'),
-            new DateTimeImmutable('2025-01-01')
+            new \DateTimeImmutable('2025-12-31'),
+            new \DateTimeImmutable('2025-01-01')
         );
     }
 
@@ -597,8 +595,8 @@ final class PriceListTest extends TestCase
     }
 
     private function createPriceListWithDates(
-        ?DateTimeImmutable $validFrom,
-        ?DateTimeImmutable $validTo
+        ?\DateTimeImmutable $validFrom,
+        ?\DateTimeImmutable $validTo
     ): PriceList {
         return PriceList::create(
             PriceListId::generate(),

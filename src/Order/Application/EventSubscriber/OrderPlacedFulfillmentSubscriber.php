@@ -14,7 +14,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Order Placed Fulfillment Subscriber
+ * Order Placed Fulfillment Subscriber.
  *
  * Automatically initiates fulfillment when an order is placed.
  *
@@ -47,18 +47,19 @@ final readonly class OrderPlacedFulfillmentSubscriber implements EventSubscriber
 
         // Fetch the order
         $order = $this->orderRepository->findById($orderId);
-        if ($order === null) {
+        if (null === $order) {
             $this->logger->error('Order not found for fulfillment', [
                 'order_id' => $orderId->toString(),
                 'tenant_id' => $tenantId->toString(),
             ]);
+
             return;
         }
 
         // Find best warehouse
         $warehouseId = $this->routingService->findBestWarehouse($order);
 
-        if ($warehouseId === null) {
+        if (null === $warehouseId) {
             $this->logger->error('No warehouse available for order fulfillment', [
                 'order_id' => $orderId->toString(),
                 'tenant_id' => $tenantId->toString(),

@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Console command to release expired stock reservations
+ * Console command to release expired stock reservations.
  *
  * This command should be scheduled to run periodically (e.g., every minute):
  *

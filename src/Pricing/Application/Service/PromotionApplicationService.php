@@ -9,7 +9,6 @@ use App\Pricing\Domain\Repository\PromotionRepositoryInterface;
 use App\Pricing\Domain\ValueObject\CouponCode;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -35,10 +34,11 @@ final readonly class PromotionApplicationService
     /**
      * Apply promotions to cart/order.
      *
-     * @param TenantId $tenantId Tenant context
-     * @param Money $subtotal Cart/order subtotal before discounts
+     * @param TenantId    $tenantId   Tenant context
+     * @param Money       $subtotal   Cart/order subtotal before discounts
      * @param string|null $couponCode Optional coupon code provided by customer
-     * @param array $context Additional context for condition evaluation (customer segment, product categories, etc.)
+     * @param array       $context    Additional context for condition evaluation (customer segment, product categories, etc.)
+     *
      * @return array{finalPrice: Money, appliedPromotions: array, totalDiscount: Money, couponCode: string|null}
      */
     public function applyPromotions(
@@ -48,7 +48,7 @@ final readonly class PromotionApplicationService
         array $context = []
     ): array {
         $applicablePromotions = [];
-        $now = new DateTimeImmutable();
+        $now = new \DateTimeImmutable();
 
         // 1. Find all active promotions for tenant
         $activePromotions = $this->promotionRepository->findActivePromotions($tenantId);
@@ -71,9 +71,9 @@ final readonly class PromotionApplicationService
         }
 
         // 3. Validate and add coupon if provided
-        if ($couponCode !== null) {
+        if (null !== $couponCode) {
             $validatedCoupon = $this->validateCoupon($tenantId, $couponCode, $subtotal, $context, $now);
-            if ($validatedCoupon !== null) {
+            if (null !== $validatedCoupon) {
                 $applicablePromotions[] = $validatedCoupon;
             }
         }
@@ -98,7 +98,7 @@ final readonly class PromotionApplicationService
         string $couponCode,
         Money $subtotal,
         array $context,
-        DateTimeImmutable $now
+        \DateTimeImmutable $now
     ): ?Promotion {
         try {
             $code = CouponCode::fromString($couponCode);
@@ -109,7 +109,7 @@ final readonly class PromotionApplicationService
 
         $promotion = $this->promotionRepository->findByCouponCode($code, $tenantId);
 
-        if ($promotion === null) {
+        if (null === $promotion) {
             // Coupon not found
             return null;
         }
@@ -155,7 +155,7 @@ final readonly class PromotionApplicationService
 
         // Check minimum purchase amount
         if (isset($conditions['min_purchase'])) {
-            $minPurchase = Money::fromScalars((int)($conditions['min_purchase'] * 100), $subtotal->getCurrency()->getCurrencyCode());
+            $minPurchase = Money::fromScalars((int) ($conditions['min_purchase'] * 100), $subtotal->getCurrency()->getCurrencyCode());
             if ($subtotal->isLessThan($minPurchase)) {
                 return false;
             }
@@ -163,7 +163,7 @@ final readonly class PromotionApplicationService
 
         // Check minimum cart value (alias for min_purchase)
         if (isset($conditions['min_cart_value'])) {
-            $minCartValue = Money::fromScalars((int)($conditions['min_cart_value'] * 100), $subtotal->getCurrency()->getCurrencyCode());
+            $minCartValue = Money::fromScalars((int) ($conditions['min_cart_value'] * 100), $subtotal->getCurrency()->getCurrencyCode());
             if ($subtotal->isLessThan($minCartValue)) {
                 return false;
             }
@@ -172,7 +172,7 @@ final readonly class PromotionApplicationService
         // Check customer segments
         if (isset($conditions['customer_segments']) && !empty($conditions['customer_segments'])) {
             $customerSegment = $context['customer_segment'] ?? null;
-            if ($customerSegment === null || !in_array($customerSegment, $conditions['customer_segments'], true)) {
+            if (null === $customerSegment || !in_array($customerSegment, $conditions['customer_segments'], true)) {
                 return false;
             }
         }
@@ -194,7 +194,7 @@ final readonly class PromotionApplicationService
         }
 
         // Check exclude sale items
-        if (isset($conditions['exclude_sale_items']) && $conditions['exclude_sale_items'] === true) {
+        if (isset($conditions['exclude_sale_items']) && true === $conditions['exclude_sale_items']) {
             $hasSaleItems = $context['has_sale_items'] ?? false;
             if ($hasSaleItems) {
                 return false;

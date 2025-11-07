@@ -30,7 +30,7 @@ final readonly class GetReturnRequestsByOrderIdHandler
         );
 
         return array_map(
-            fn($returnRequest) => ReturnRequestDTO::fromDomain($returnRequest),
+            fn ($returnRequest) => ReturnRequestDTO::fromDomain($returnRequest),
             $returnRequests
         );
     }

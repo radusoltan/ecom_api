@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
- * Export Translations Provider
+ * Export Translations Provider.
  *
  * Handles GET /api/translations/export
  *
@@ -29,7 +29,8 @@ final readonly class ExportTranslationsProvider implements ProviderInterface
         private MessageBusInterface $queryBus,
         private TenantContextProvider $tenantContext,
         private RequestStack $requestStack,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $uriVariables
@@ -38,21 +39,18 @@ final readonly class ExportTranslationsProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): Response
     {
         $request = $this->requestStack->getCurrentRequest();
-        if ($request === null) {
+        if (null === $request) {
             throw new BadRequestHttpException('No request found');
         }
 
         // Get format from query parameter
         $format = $request->query->get('format');
-        if ($format === null) {
+        if (null === $format) {
             throw new BadRequestHttpException('Missing "format" query parameter. Allowed values: csv, json');
         }
 
         if (!in_array($format, ['csv', 'json'], true)) {
-            throw new BadRequestHttpException(sprintf(
-                'Invalid format "%s". Allowed values: csv, json',
-                $format
-            ));
+            throw new BadRequestHttpException(sprintf('Invalid format "%s". Allowed values: csv, json', $format));
         }
 
         // Build filters from query parameters
@@ -89,7 +87,7 @@ final readonly class ExportTranslationsProvider implements ProviderInterface
         $envelope = $this->queryBus->dispatch($query);
         $handledStamp = $envelope->last(HandledStamp::class);
 
-        if ($handledStamp === null) {
+        if (null === $handledStamp) {
             throw new \RuntimeException('Query was not handled');
         }
 

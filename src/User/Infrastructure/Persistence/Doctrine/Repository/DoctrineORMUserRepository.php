@@ -9,8 +9,8 @@ use App\User\Domain\Model\User;
 use App\User\Domain\Repository\UserRepositoryInterface;
 use App\User\Domain\ValueObject\HashedPassword;
 use App\User\Domain\ValueObject\UserId;
-use App\User\Domain\ValueObject\UserRole;
 use App\User\Domain\ValueObject\Username;
+use App\User\Domain\ValueObject\UserRole;
 use App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -29,7 +29,7 @@ final class DoctrineORMUserRepository extends ServiceEntityRepository implements
     {
         $entity = $this->find($user->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             $entity = new UserEntity();
             $entity->setId($user->id()->toString());
             $entity->setCreatedAt($user->createdAt());
@@ -48,7 +48,7 @@ final class DoctrineORMUserRepository extends ServiceEntityRepository implements
     {
         $entity = $this->find($user->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             throw new \DomainException(sprintf('User with ID "%s" not found', $user->id()->toString()));
         }
 
@@ -81,14 +81,14 @@ final class DoctrineORMUserRepository extends ServiceEntityRepository implements
     {
         $entities = $this->findBy([]);
 
-        return array_map(fn(UserEntity $entity) => $this->toDomain($entity), $entities);
+        return array_map(fn (UserEntity $entity) => $this->toDomain($entity), $entities);
     }
 
     private function toDomain(UserEntity $entity): User
     {
         $roles = array_map(
-            fn(string $role) => UserRole::fromString($role),
-            array_filter($entity->getRoles(), fn(string $role) => $role !== 'ROLE_USER')
+            fn (string $role) => UserRole::fromString($role),
+            array_filter($entity->getRoles(), fn (string $role) => 'ROLE_USER' !== $role)
         );
 
         return User::reconstitute(

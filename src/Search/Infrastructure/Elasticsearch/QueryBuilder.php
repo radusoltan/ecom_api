@@ -7,7 +7,7 @@ namespace App\Search\Infrastructure\Elasticsearch;
 use App\Search\Domain\Model\SearchQuery;
 
 /**
- * QueryBuilder
+ * QueryBuilder.
  *
  * Builds Elasticsearch query DSL from SearchQuery domain model.
  */

@@ -12,7 +12,8 @@ final readonly class RemoveItemFromWishlistHandler
 {
     public function __construct(
         private WishlistRepositoryInterface $wishlistRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(RemoveItemFromWishlist $command): void
     {
@@ -21,7 +22,7 @@ final readonly class RemoveItemFromWishlistHandler
             $command->tenantId
         );
 
-        if ($wishlist === null) {
+        if (null === $wishlist) {
             throw new \DomainException('Wishlist not found');
         }
 

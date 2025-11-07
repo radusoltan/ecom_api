@@ -9,10 +9,9 @@ use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use RuntimeException;
 
 /**
- * CartPriceCalculator Service
+ * CartPriceCalculator Service.
  *
  * Responsibilities:
  * - Fetch current product price from Catalog/Pricing context
@@ -40,14 +39,16 @@ final readonly class CartPriceCalculator
     }
 
     /**
-     * Calculate the current price for a product/variant
+     * Calculate the current price for a product/variant.
      *
-     * @param ProductId $productId The product to price
-     * @param string|null $variantId Optional variant ID
-     * @param TenantId $tenantId Tenant context
+     * @param ProductId       $productId  The product to price
+     * @param string|null     $variantId  Optional variant ID
+     * @param TenantId        $tenantId   Tenant context
      * @param CustomerId|null $customerId Optional customer for segment pricing
+     *
      * @return Money The calculated price
-     * @throws RuntimeException If product not found or price unavailable
+     *
+     * @throws \RuntimeException If product not found or price unavailable
      */
     public function calculateItemPrice(
         ProductId $productId,
@@ -58,10 +59,8 @@ final readonly class CartPriceCalculator
         // Fetch product from catalog
         $product = $this->productRepository->findById($productId, $tenantId);
 
-        if ($product === null) {
-            throw new RuntimeException(
-                sprintf('Product with ID "%s" not found', $productId->toString())
-            );
+        if (null === $product) {
+            throw new \RuntimeException(sprintf('Product with ID "%s" not found', $productId->toString()));
         }
 
         // For now, return base price
@@ -71,22 +70,21 @@ final readonly class CartPriceCalculator
 
         $price = $product->price();
 
-        if ($price === null) {
-            throw new RuntimeException(
-                sprintf('Product with ID "%s" has no price configured', $productId->toString())
-            );
+        if (null === $price) {
+            throw new \RuntimeException(sprintf('Product with ID "%s" has no price configured', $productId->toString()));
         }
 
         return $price;
     }
 
     /**
-     * Validate that a price is still current (hasn't changed since added to cart)
+     * Validate that a price is still current (hasn't changed since added to cart).
      *
-     * @param ProductId $productId The product to check
-     * @param string|null $variantId Optional variant ID
-     * @param TenantId $tenantId Tenant context
-     * @param Money $cartItemPrice The price currently in the cart
+     * @param ProductId   $productId     The product to check
+     * @param string|null $variantId     Optional variant ID
+     * @param TenantId    $tenantId      Tenant context
+     * @param Money       $cartItemPrice The price currently in the cart
+     *
      * @return bool True if price is still current, false if changed
      */
     public function isPriceStillCurrent(
@@ -101,19 +99,20 @@ final readonly class CartPriceCalculator
             // Compare amounts and currencies
             return $currentPrice->getAmount() === $cartItemPrice->getAmount()
                 && $currentPrice->getCurrency()->getCurrencyCode() === $cartItemPrice->getCurrency()->getCurrencyCode();
-        } catch (RuntimeException $e) {
+        } catch (\RuntimeException $e) {
             // Product not found or no price - consider price as changed
             return false;
         }
     }
 
     /**
-     * Get price change details for notification purposes
+     * Get price change details for notification purposes.
      *
-     * @param ProductId $productId The product to check
+     * @param ProductId   $productId The product to check
      * @param string|null $variantId Optional variant ID
-     * @param TenantId $tenantId Tenant context
-     * @param Money $oldPrice The old price from cart
+     * @param TenantId    $tenantId  Tenant context
+     * @param Money       $oldPrice  The old price from cart
+     *
      * @return array{changed: bool, oldPrice: Money, newPrice: ?Money, difference: ?Money}
      */
     public function getPriceChangeDetails(
@@ -145,7 +144,7 @@ final readonly class CartPriceCalculator
                 'newPrice' => $newPrice,
                 'difference' => null,
             ];
-        } catch (RuntimeException $e) {
+        } catch (\RuntimeException $e) {
             return [
                 'changed' => true,
                 'oldPrice' => $oldPrice,

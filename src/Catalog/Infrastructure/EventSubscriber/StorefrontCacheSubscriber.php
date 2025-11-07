@@ -14,7 +14,7 @@ final class StorefrontCacheSubscriber implements EventSubscriberInterface
     {
         return [
             // Priority -256 to run after API Platform's cache listener
-            KernelEvents::RESPONSE => ['onKernelResponse', -256]
+            KernelEvents::RESPONSE => ['onKernelResponse', -256],
         ];
     }
 
@@ -57,17 +57,17 @@ final class StorefrontCacheSubscriber implements EventSubscriberInterface
         $content = $response->getContent();
         if ($content) {
             $etag = md5($content);
-            $response->headers->set('ETag', '"' . $etag . '"');
+            $response->headers->set('ETag', '"'.$etag.'"');
 
             // Check if client has the same version
             $clientEtag = $request->headers->get('If-None-Match');
-            if ($clientEtag === '"' . $etag . '"') {
+            if ($clientEtag === '"'.$etag.'"') {
                 $response->setNotModified();
             }
         }
 
         // Add Last-Modified header
-        $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT');
+        $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s').' GMT');
 
         // Add X-Content-Language header to indicate resolved locale
         $locale = $request->headers->get('Accept-Language', 'en');
@@ -83,6 +83,7 @@ final class StorefrontCacheSubscriber implements EventSubscriberInterface
         }
 
         $locale = explode(';', $locales[0])[0];
+
         return strtolower(trim($locale));
     }
 }

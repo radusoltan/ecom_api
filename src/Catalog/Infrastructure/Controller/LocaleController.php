@@ -9,13 +9,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Controller for locale-related endpoints
+ * Controller for locale-related endpoints.
  */
 final class LocaleController extends AbstractController
 {
     /**
      * GET /api/locales
-     * Returns available locales for the system
+     * Returns available locales for the system.
      */
     public function getAvailableLocales(Request $request): JsonResponse
     {

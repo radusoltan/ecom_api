@@ -7,7 +7,7 @@ namespace App\Internationalization\Infrastructure\Parser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * JSON Translation Parser
+ * JSON Translation Parser.
  *
  * Parses JSON files to translation array format.
  * Expected JSON format: [{locale, domain, key, value}, ...]
@@ -21,10 +21,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 final class JSONTranslationParser
 {
     /**
-     * Parse JSON file to array format
+     * Parse JSON file to array format.
      *
-     * @param UploadedFile $file
      * @return array<array{locale: string, domain: string, key: string, value: string}>
+     *
      * @throws \RuntimeException If file cannot be read or parsed
      */
     public function parse(UploadedFile $file): array
@@ -34,12 +34,12 @@ final class JSONTranslationParser
         }
 
         $filePath = $file->getRealPath();
-        if ($filePath === false) {
+        if (false === $filePath) {
             throw new \RuntimeException('Could not read uploaded file');
         }
 
         $content = file_get_contents($filePath);
-        if ($content === false) {
+        if (false === $content) {
             throw new \RuntimeException('Could not read file contents');
         }
 
@@ -47,10 +47,12 @@ final class JSONTranslationParser
     }
 
     /**
-     * Parse JSON content from string
+     * Parse JSON content from string.
      *
      * @param string $content JSON content
+     *
      * @return array<array{locale: string, domain: string, key: string, value: string}>
+     *
      * @throws \RuntimeException If JSON is invalid
      */
     public function parseString(string $content): array
@@ -58,10 +60,7 @@ final class JSONTranslationParser
         try {
             $data = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
-            throw new \RuntimeException(sprintf(
-                'Invalid JSON: %s',
-                $e->getMessage()
-            ));
+            throw new \RuntimeException(sprintf('Invalid JSON: %s', $e->getMessage()));
         }
 
         if (!is_array($data)) {
@@ -72,29 +71,18 @@ final class JSONTranslationParser
 
         foreach ($data as $index => $item) {
             if (!is_array($item)) {
-                throw new \RuntimeException(sprintf(
-                    'Item at index %d is not an object',
-                    $index
-                ));
+                throw new \RuntimeException(sprintf('Item at index %d is not an object', $index));
             }
 
             // Validate required fields
             $requiredFields = ['locale', 'domain', 'key', 'value'];
             foreach ($requiredFields as $field) {
                 if (!isset($item[$field])) {
-                    throw new \RuntimeException(sprintf(
-                        'Item at index %d is missing required field "%s"',
-                        $index,
-                        $field
-                    ));
+                    throw new \RuntimeException(sprintf('Item at index %d is missing required field "%s"', $index, $field));
                 }
 
                 if (!is_string($item[$field])) {
-                    throw new \RuntimeException(sprintf(
-                        'Item at index %d: field "%s" must be a string',
-                        $index,
-                        $field
-                    ));
+                    throw new \RuntimeException(sprintf('Item at index %d: field "%s" must be a string', $index, $field));
                 }
             }
 
@@ -114,10 +102,10 @@ final class JSONTranslationParser
     }
 
     /**
-     * Generate JSON content from translations array
+     * Generate JSON content from translations array.
      *
      * @param array<array{locale: string, domain: string, key: string, value: string}> $translations
-     * @param bool $prettyPrint Whether to format JSON with indentation
+     * @param bool                                                                     $prettyPrint  Whether to format JSON with indentation
      */
     public function generateJSON(array $translations, bool $prettyPrint = true): string
     {
@@ -129,10 +117,7 @@ final class JSONTranslationParser
         try {
             return json_encode($translations, $flags | JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
-            throw new \RuntimeException(sprintf(
-                'Failed to generate JSON: %s',
-                $e->getMessage()
-            ));
+            throw new \RuntimeException(sprintf('Failed to generate JSON: %s', $e->getMessage()));
         }
     }
 }

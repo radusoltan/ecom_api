@@ -12,7 +12,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
 /**
- * Event Subscriber: ReturnRequestCreatedSubscriber
+ * Event Subscriber: ReturnRequestCreatedSubscriber.
  *
  * Listens to ReturnRequestCreated domain event and performs side effects:
  * - Send RMA confirmation email to customer
@@ -69,7 +69,7 @@ final readonly class ReturnRequestCreatedSubscriber implements EventSubscriberIn
         $email = (new Email())
             ->from($this->senderEmail)
             ->to($customerEmail)
-            ->subject('Return Request Confirmed - RMA #' . substr($event->returnRequestId->toString(), 0, 8))
+            ->subject('Return Request Confirmed - RMA #'.substr($event->returnRequestId->toString(), 0, 8))
             ->html($this->buildEmailHtml($event))
             ->text($this->buildEmailText($event));
 

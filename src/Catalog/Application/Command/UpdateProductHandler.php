@@ -13,13 +13,14 @@ final readonly class UpdateProductHandler
 {
     public function __construct(
         private ProductRepositoryInterface $productRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(UpdateProduct $command): void
     {
         $product = $this->productRepository->findById($command->id);
 
-        if ($product === null) {
+        if (null === $product) {
             throw ProductNotFoundException::withId($command->id);
         }
 

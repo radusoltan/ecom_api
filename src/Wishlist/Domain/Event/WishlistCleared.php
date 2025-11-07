@@ -7,7 +7,7 @@ namespace App\Wishlist\Domain\Event;
 use App\Wishlist\Domain\ValueObject\WishlistId;
 
 /**
- * Domain event: Wishlist was cleared
+ * Domain event: Wishlist was cleared.
  */
 final readonly class WishlistCleared
 {
@@ -16,5 +16,6 @@ final readonly class WishlistCleared
         public string $customerId,
         public int $itemCount,
         public \DateTimeImmutable $occurredAt
-    ) {}
+    ) {
+    }
 }

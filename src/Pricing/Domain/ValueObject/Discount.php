@@ -18,15 +18,11 @@ final readonly class Discount
     ) {
         if ($this->type->isPercentage()) {
             if ($this->value < 0.01 || $this->value > 100) {
-                throw new \InvalidArgumentException(
-                    sprintf('Percentage discount must be between 0.01 and 100, got: %.2f', $this->value)
-                );
+                throw new \InvalidArgumentException(sprintf('Percentage discount must be between 0.01 and 100, got: %.2f', $this->value));
             }
         } else {
             if ($this->value < 0.01) {
-                throw new \InvalidArgumentException(
-                    sprintf('Fixed amount discount must be greater than 0.01, got: %.2f', $this->value)
-                );
+                throw new \InvalidArgumentException(sprintf('Fixed amount discount must be greater than 0.01, got: %.2f', $this->value));
             }
         }
     }
@@ -63,6 +59,7 @@ final readonly class Discount
     {
         if ($this->type->isPercentage()) {
             $discountAmountInMinorUnits = (int) ($price->getAmount() * ($this->value / 100));
+
             return Money::fromScalars($discountAmountInMinorUnits, $price->getCurrency()->getCurrencyCode());
         }
 

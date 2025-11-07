@@ -13,7 +13,8 @@ final readonly class GetWishlistHandler
 {
     public function __construct(
         private WishlistRepositoryInterface $wishlistRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(GetWishlist $query): ?Wishlist
     {

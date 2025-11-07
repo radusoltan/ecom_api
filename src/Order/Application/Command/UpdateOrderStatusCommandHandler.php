@@ -8,7 +8,6 @@ use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderStatus;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
 use App\Shared\Domain\ValueObject\TenantId;
-use RuntimeException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -26,8 +25,8 @@ final readonly class UpdateOrderStatusCommandHandler
             TenantId::fromString($command->tenantId)
         );
 
-        if ($order === null) {
-            throw new RuntimeException(sprintf('Order with ID "%s" not found', $command->orderId));
+        if (null === $order) {
+            throw new \RuntimeException(sprintf('Order with ID "%s" not found', $command->orderId));
         }
 
         match ($command->newStatus) {
@@ -35,7 +34,7 @@ final readonly class UpdateOrderStatusCommandHandler
             OrderStatus::PROCESSING => $order->startProcessing(),
             OrderStatus::SHIPPED => $order->markAsShipped(),
             OrderStatus::DELIVERED => $order->markAsDelivered(),
-            default => throw new RuntimeException(sprintf('Invalid order status: "%s"', $command->newStatus))
+            default => throw new \RuntimeException(sprintf('Invalid order status: "%s"', $command->newStatus))
         };
 
         $this->orderRepository->save($order);

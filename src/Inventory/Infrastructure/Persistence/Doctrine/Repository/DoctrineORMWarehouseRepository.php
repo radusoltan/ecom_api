@@ -18,7 +18,8 @@ final readonly class DoctrineORMWarehouseRepository implements WarehouseReposito
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MessageBusInterface $eventBus,
-    ) {}
+    ) {
+    }
 
     public function save(Warehouse $warehouse): void
     {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Returns\Application\Command;
 
 /**
- * Command: CreateReturnRequest
+ * Command: CreateReturnRequest.
  *
  * Customer creates a return request (RMA) for a delivered order.
  */

@@ -8,18 +8,17 @@ use App\Catalog\Domain\Model\CategoryId;
 use App\Catalog\Domain\ValueObject\Locale;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 
 final class CategoryTranslationsUpdated implements DomainEvent
 {
-    private DateTimeImmutable $occurredOn;
+    private \DateTimeImmutable $occurredOn;
 
     public function __construct(
         private readonly CategoryId $categoryId,
         private readonly TenantId $tenantId,
         private readonly Locale $locale
     ) {
-        $this->occurredOn = new DateTimeImmutable();
+        $this->occurredOn = new \DateTimeImmutable();
     }
 
     public function categoryId(): CategoryId
@@ -47,11 +46,14 @@ final class CategoryTranslationsUpdated implements DomainEvent
         return 'catalog.category.translations_updated';
     }
 
-    public function occurredOn(): DateTimeImmutable
+    public function occurredOn(): \DateTimeImmutable
     {
         return $this->occurredOn;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function toArray(): array
     {
         return [

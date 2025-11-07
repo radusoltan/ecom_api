@@ -45,13 +45,13 @@ final class OrderStatusChangedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_implements_event_subscriber_interface(): void
+    public function itImplementsEventSubscriberInterface(): void
     {
         self::assertInstanceOf(EventSubscriberInterface::class, $this->subscriber);
     }
 
     #[Test]
-    public function it_subscribes_to_order_status_changed_event(): void
+    public function itSubscribesToOrderStatusChangedEvent(): void
     {
         $subscribedEvents = OrderStatusChangedSubscriber::getSubscribedEvents();
 
@@ -61,7 +61,7 @@ final class OrderStatusChangedSubscriberTest extends TestCase
 
     #[Test]
     #[DataProvider('statusesThatShouldTriggerNotification')]
-    public function it_logs_notification_attempt_for_valid_status_changes(OrderStatus $newStatus): void
+    public function itLogsNotificationAttemptForValidStatusChanges(OrderStatus $newStatus): void
     {
         // Arrange
         $event = new OrderStatusChanged(
@@ -90,7 +90,7 @@ final class OrderStatusChangedSubscriberTest extends TestCase
 
     #[Test]
     #[DataProvider('statusesThatShouldNotTriggerNotification')]
-    public function it_does_not_send_notification_for_certain_statuses(OrderStatus $oldStatus, OrderStatus $newStatus): void
+    public function itDoesNotSendNotificationForCertainStatuses(OrderStatus $oldStatus, OrderStatus $newStatus): void
     {
         // Arrange
         $event = new OrderStatusChanged(
@@ -125,7 +125,7 @@ final class OrderStatusChangedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_logs_error_when_notification_fails_but_does_not_throw(): void
+    public function itLogsErrorWhenNotificationFailsButDoesNotThrow(): void
     {
         // Arrange
         $event = new OrderStatusChanged(
@@ -159,7 +159,7 @@ final class OrderStatusChangedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_logs_status_change_information(): void
+    public function itLogsStatusChangeInformation(): void
     {
         // Arrange
         $orderId = OrderId::generate();
@@ -184,7 +184,7 @@ final class OrderStatusChangedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_processing_status(): void
+    public function itHandlesProcessingStatus(): void
     {
         // Arrange
         $event = new OrderStatusChanged(
@@ -202,7 +202,7 @@ final class OrderStatusChangedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_shipped_status(): void
+    public function itHandlesShippedStatus(): void
     {
         // Arrange
         $event = new OrderStatusChanged(
@@ -220,7 +220,7 @@ final class OrderStatusChangedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_delivered_status(): void
+    public function itHandlesDeliveredStatus(): void
     {
         // Arrange
         $event = new OrderStatusChanged(

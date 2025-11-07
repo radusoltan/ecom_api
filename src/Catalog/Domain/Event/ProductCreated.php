@@ -15,5 +15,6 @@ final readonly class ProductCreated
         public TenantId $tenantId,
         public SKU $sku,
         public string $name
-    ) {}
+    ) {
+    }
 }

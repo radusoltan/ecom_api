@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Tenant\Application\Command;
 
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Application\Command\DeactivateTenantCommand;
 use App\Tenant\Application\Command\DeactivateTenantCommandHandler;
 use App\Tenant\Domain\Exception\TenantNotFoundException;
 use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
-use App\Tenant\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\ValueObject\TenantName;
 use App\Tests\Support\TenantTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

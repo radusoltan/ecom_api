@@ -11,5 +11,6 @@ final readonly class ClearWishlist
     public function __construct(
         public string $customerId,
         public TenantId $tenantId
-    ) {}
+    ) {
+    }
 }

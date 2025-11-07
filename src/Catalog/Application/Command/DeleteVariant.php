@@ -9,7 +9,7 @@ use App\Catalog\Domain\Model\VariantId;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Command to delete a variant
+ * Command to delete a variant.
  */
 final readonly class DeleteVariant
 {
@@ -17,5 +17,6 @@ final readonly class DeleteVariant
         public VariantId $variantId,
         public ProductId $productId,
         public TenantId $tenantId
-    ) {}
+    ) {
+    }
 }

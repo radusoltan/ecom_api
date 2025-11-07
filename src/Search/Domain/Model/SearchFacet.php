@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Search\Domain\Model;
 
 /**
- * SearchFacet Value Object
+ * SearchFacet Value Object.
  *
  * Represents a faceted filter with buckets (e.g., categories, price ranges, brands).
  */
@@ -18,7 +18,8 @@ final readonly class SearchFacet
         public string $field,
         public string $label,
         public array $buckets,
-    ) {}
+    ) {
+    }
 
     public function hasBuckets(): bool
     {
@@ -31,7 +32,8 @@ final readonly class SearchFacet
     }
 
     /**
-     * Convert to array for API serialization
+     * Convert to array for API serialization.
+     *
      * @return array<string, mixed>
      */
     public function toArray(): array

@@ -10,6 +10,10 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Payment\Domain\Model\Payment;
+use App\Payment\Domain\ValueObject\PaymentGateway;
+use App\Payment\Domain\ValueObject\PaymentId;
+use App\Payment\Domain\ValueObject\PaymentMethod;
+use App\Payment\Domain\ValueObject\PaymentStatus;
 use App\Payment\Presentation\Api\Processor\AuthorizePaymentProcessor;
 use App\Payment\Presentation\Api\Processor\CancelPaymentProcessor;
 use App\Payment\Presentation\Api\Processor\CapturePaymentProcessor;
@@ -17,12 +21,7 @@ use App\Payment\Presentation\Api\Processor\CreatePaymentProcessor;
 use App\Payment\Presentation\Api\Processor\RefundPaymentProcessor;
 use App\Payment\Presentation\Api\Provider\PaymentCollectionProvider;
 use App\Payment\Presentation\Api\Provider\PaymentItemProvider;
-use App\Payment\Domain\ValueObject\PaymentGateway;
-use App\Payment\Domain\ValueObject\PaymentId;
-use App\Payment\Domain\ValueObject\PaymentMethod;
-use App\Payment\Domain\ValueObject\PaymentStatus;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -101,10 +100,10 @@ class PaymentEntity
     private int $refundedAmountInCents = 0;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'created_at')]
-    private DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'updated_at')]
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $updatedAt;
 
     public static function fromDomainModel(Payment $payment): self
     {
@@ -235,12 +234,12 @@ class PaymentEntity
         return $this->refundedAmountInCents;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }
@@ -301,12 +300,12 @@ class PaymentEntity
         $this->refundedAmountInCents = $refundedAmountInCents;
     }
 
-    public function setCreatedAt(DateTimeImmutable $createdAt): void
+    public function setCreatedAt(\DateTimeImmutable $createdAt): void
     {
         $this->createdAt = $createdAt;
     }
 
-    public function setUpdatedAt(DateTimeImmutable $updatedAt): void
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
     }

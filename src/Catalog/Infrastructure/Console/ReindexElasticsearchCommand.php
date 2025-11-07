@@ -39,7 +39,8 @@ final class ReindexElasticsearchCommand extends Command
             ->addArgument('tenant-id', InputArgument::REQUIRED, 'Tenant ID to reindex')
             ->addOption('entity', 't', InputOption::VALUE_OPTIONAL, 'Entity type: products|categories|all', 'all')
             ->addOption('locale', 'l', InputOption::VALUE_OPTIONAL, 'Locale (default: all enabled locales)')
-            ->setHelp(<<<'HELP'
+            ->setHelp(
+                <<<'HELP'
 The <info>%command.name%</info> command reindexes products and categories in Elasticsearch.
 
 <info>php %command.full_name% TENANT_ID</info>
@@ -66,24 +67,25 @@ HELP
             $tenantId = TenantId::fromString($tenantIdString);
         } catch (\InvalidArgumentException $e) {
             $io->error(sprintf('Invalid tenant ID: %s', $e->getMessage()));
+
             return Command::FAILURE;
         }
 
-        $locales = $localeString !== null
+        $locales = null !== $localeString
             ? [Locale::fromString($localeString)]
             : $this->getEnabledLocales($tenantId);
 
         $io->title('Elasticsearch Reindexing');
         $io->text(sprintf('Tenant: <info>%s</info>', $tenantId->toString()));
         $io->text(sprintf('Entity: <info>%s</info>', $entityType));
-        $io->text(sprintf('Locales: <info>%s</info>', implode(', ', array_map(fn($l) => $l->toString(), $locales))));
+        $io->text(sprintf('Locales: <info>%s</info>', implode(', ', array_map(fn ($l) => $l->toString(), $locales))));
         $io->newLine();
 
-        if ($entityType === 'all' || $entityType === 'products') {
+        if ('all' === $entityType || 'products' === $entityType) {
             $this->reindexProducts($tenantId, $locales, $io);
         }
 
-        if ($entityType === 'all' || $entityType === 'categories') {
+        if ('all' === $entityType || 'categories' === $entityType) {
             $this->reindexCategories($tenantId, $locales, $io);
         }
 
@@ -99,8 +101,9 @@ HELP
         $products = $this->productRepository->findByTenant($tenantId);
         $total = count($products);
 
-        if ($total === 0) {
+        if (0 === $total) {
             $io->warning('No products found for this tenant');
+
             return;
         }
 
@@ -132,8 +135,9 @@ HELP
         $categories = $this->categoryRepository->findByTenant($tenantId);
         $total = count($categories);
 
-        if ($total === 0) {
+        if (0 === $total) {
             $io->warning('No categories found for this tenant');
+
             return;
         }
 

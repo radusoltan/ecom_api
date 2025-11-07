@@ -11,7 +11,7 @@ use App\Shared\Domain\ValueObject\Money;
 
 /**
  * Variant entity (child entity of ConfigurableProduct)
- * Represents a specific combination of option values
+ * Represents a specific combination of option values.
  *
  * Business Rules:
  * - Each variant must have exactly one value per option
@@ -26,7 +26,7 @@ final class Variant
 {
     /**
      * @param array<string, string> $optionValueMap
-     * @param ProductImage[] $images
+     * @param ProductImage[]        $images
      */
     private function __construct(
         private VariantId $id,
@@ -43,7 +43,7 @@ final class Variant
     }
 
     /**
-     * Create a new variant
+     * Create a new variant.
      *
      * @param array<string, string> $optionValueMap
      */
@@ -69,10 +69,10 @@ final class Variant
     }
 
     /**
-     * Reconstitute from persistence
+     * Reconstitute from persistence.
      *
      * @param array<string, string> $optionValueMap
-     * @param ProductImage[] $images
+     * @param ProductImage[]        $images
      */
     public static function reconstituteFromPersistence(
         VariantId $id,
@@ -99,7 +99,7 @@ final class Variant
     }
 
     /**
-     * Update variant details
+     * Update variant details.
      */
     public function update(
         Money $price,
@@ -113,7 +113,7 @@ final class Variant
     }
 
     /**
-     * Update price
+     * Update price.
      */
     public function updatePrice(Money $price): void
     {
@@ -122,7 +122,7 @@ final class Variant
     }
 
     /**
-     * Update stock
+     * Update stock.
      */
     public function updateStock(Stock $stock): void
     {
@@ -131,7 +131,7 @@ final class Variant
     }
 
     /**
-     * Activate variant
+     * Activate variant.
      */
     public function activate(): void
     {
@@ -140,7 +140,7 @@ final class Variant
     }
 
     /**
-     * Deactivate variant
+     * Deactivate variant.
      */
     public function deactivate(): void
     {
@@ -149,7 +149,7 @@ final class Variant
     }
 
     /**
-     * Add an image to the variant
+     * Add an image to the variant.
      */
     public function addImage(ProductImage $image): void
     {
@@ -158,29 +158,30 @@ final class Variant
     }
 
     /**
-     * Remove an image from the variant
+     * Remove an image from the variant.
      */
     public function removeImage(int $position): void
     {
         $this->images = array_filter(
             $this->images,
-            fn(ProductImage $img) => $img->position() !== $position
+            fn (ProductImage $img) => $img->position() !== $position
         );
         $this->updatedAt = new \DateTimeImmutable();
     }
 
     /**
-     * Check if variant has a specific option value
+     * Check if variant has a specific option value.
      */
     public function hasOptionValue(OptionCode $optionCode, OptionValueCode $valueCode): bool
     {
         $optionCodeStr = $optionCode->value();
+
         return isset($this->optionValueMap[$optionCodeStr])
             && $this->optionValueMap[$optionCodeStr] === $valueCode->value();
     }
 
     /**
-     * Get the value code for a specific option
+     * Get the value code for a specific option.
      */
     public function getOptionValue(OptionCode $optionCode): ?string
     {
@@ -188,7 +189,7 @@ final class Variant
     }
 
     /**
-     * Check if variant matches a specific combination of option values
+     * Check if variant matches a specific combination of option values.
      *
      * @param array<string, string> $optionValueMap
      */
@@ -212,8 +213,8 @@ final class Variant
 
         // All values must match
         foreach ($optionValueMap as $optionCode => $valueCode) {
-            if (!isset($this->optionValueMap[$optionCode]) ||
-                $this->optionValueMap[$optionCode] !== $valueCode) {
+            if (!isset($this->optionValueMap[$optionCode])
+                || $this->optionValueMap[$optionCode] !== $valueCode) {
                 return false;
             }
         }
@@ -222,7 +223,7 @@ final class Variant
     }
 
     /**
-     * Check if variant is available for purchase
+     * Check if variant is available for purchase.
      */
     public function isAvailable(int $quantity = 1): bool
     {
@@ -287,7 +288,7 @@ final class Variant
     }
 
     /**
-     * Validate option value map
+     * Validate option value map.
      *
      * @param array<string, string> $optionValueMap
      */
@@ -310,7 +311,7 @@ final class Variant
 }
 
 /**
- * Value object for Variant ID
+ * Value object for Variant ID.
  */
 final readonly class VariantId
 {

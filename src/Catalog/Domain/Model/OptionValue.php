@@ -9,7 +9,7 @@ use App\Catalog\Domain\ValueObject\OptionValueCode;
 
 /**
  * OptionValue entity (child entity of Option)
- * Represents a specific value for an option (e.g., "Red" for Color option)
+ * Represents a specific value for an option (e.g., "Red" for Color option).
  *
  * Business Rules:
  * - Value code must be unique within an option
@@ -37,7 +37,7 @@ final class OptionValue
     }
 
     /**
-     * Reconstitute from persistence
+     * Reconstitute from persistence.
      */
     public static function reconstituteFromPersistence(
         OptionValueId $id,
@@ -49,7 +49,7 @@ final class OptionValue
     }
 
     /**
-     * Update position
+     * Update position.
      */
     public function updatePosition(int $position): void
     {
@@ -58,7 +58,7 @@ final class OptionValue
     }
 
     /**
-     * Update name translations
+     * Update name translations.
      */
     public function updateNameTranslations(LocalizedString $nameTranslations): void
     {
@@ -100,7 +100,7 @@ final class OptionValue
 }
 
 /**
- * Value object for OptionValue ID
+ * Value object for OptionValue ID.
  */
 final readonly class OptionValueId
 {

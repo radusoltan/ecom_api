@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace App\Order\Domain\Model;
 
-use InvalidArgumentException;
-use Stringable;
-
-final readonly class OrderId implements Stringable
+final readonly class OrderId implements \Stringable
 {
     private function __construct(private string $value)
     {
-        if ($value === '' || $value === '0') {
-            throw new InvalidArgumentException('OrderId cannot be empty');
+        if ('' === $value || '0' === $value) {
+            throw new \InvalidArgumentException('OrderId cannot be empty');
         }
 
         // Validate UUID v4 format
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $value)) {
-            throw new InvalidArgumentException(sprintf('Invalid OrderId format: "%s". Must be a valid UUID v4', $value));
+            throw new \InvalidArgumentException(sprintf('Invalid OrderId format: "%s". Must be a valid UUID v4', $value));
         }
     }
 

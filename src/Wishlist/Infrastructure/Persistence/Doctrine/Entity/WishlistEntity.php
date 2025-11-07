@@ -12,7 +12,7 @@ use App\Wishlist\Domain\ValueObject\WishlistItem;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Doctrine entity for Wishlist
+ * Doctrine entity for Wishlist.
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'wishlists')]
@@ -33,7 +33,7 @@ class WishlistEntity
 
     /**
      * JSON array of wishlist items
-     * Format: [{"productId": "uuid", "addedAt": "2024-01-01 10:00:00"}, ...]
+     * Format: [{"productId": "uuid", "addedAt": "2024-01-01 10:00:00"}, ...].
      */
     #[ORM\Column(type: 'json')]
     private array $items = [];
@@ -51,7 +51,7 @@ class WishlistEntity
     }
 
     /**
-     * Create entity from domain model
+     * Create entity from domain model.
      */
     public static function fromDomainModel(Wishlist $wishlist): self
     {
@@ -60,7 +60,7 @@ class WishlistEntity
         $entity->customerId = $wishlist->customerId();
         $entity->tenantId = $wishlist->tenantId()->toString();
         $entity->items = array_map(
-            fn(WishlistItem $item) => $item->toArray(),
+            fn (WishlistItem $item) => $item->toArray(),
             $wishlist->items()
         );
         $entity->createdAt = $wishlist->createdAt();
@@ -70,7 +70,7 @@ class WishlistEntity
     }
 
     /**
-     * Convert to domain model
+     * Convert to domain model.
      */
     public function toDomainModel(): Wishlist
     {
@@ -92,12 +92,12 @@ class WishlistEntity
     }
 
     /**
-     * Update entity from domain model
+     * Update entity from domain model.
      */
     public function updateFromDomainModel(Wishlist $wishlist): void
     {
         $this->items = array_map(
-            fn(WishlistItem $item) => $item->toArray(),
+            fn (WishlistItem $item) => $item->toArray(),
             $wishlist->items()
         );
         $this->updatedAt = $wishlist->updatedAt();

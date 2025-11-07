@@ -8,14 +8,15 @@ use App\Catalog\Domain\Model\ProductId;
 
 /**
  * Value object for Wishlist Item
- * Represents a product in a wishlist with metadata
+ * Represents a product in a wishlist with metadata.
  */
 final readonly class WishlistItem
 {
     private function __construct(
         private ProductId $productId,
         private \DateTimeImmutable $addedAt
-    ) {}
+    ) {
+    }
 
     public static function create(ProductId $productId): self
     {

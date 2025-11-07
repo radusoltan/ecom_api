@@ -45,7 +45,7 @@ final class CacheServiceTest extends TestCase
         // When: Getting cached value
         $result = $this->cacheService->get(
             'test_key',
-            fn() => 'computed_value'
+            fn () => 'computed_value'
         );
 
         // Then: Cached value should be returned
@@ -67,6 +67,7 @@ final class CacheServiceTest extends TestCase
                 $item->expects(self::once())->method('expiresAfter')->with(3600);
 
                 $callbackInvoked = true;
+
                 return $callback($item);
             });
 
@@ -78,7 +79,7 @@ final class CacheServiceTest extends TestCase
         // When: Getting value with cache miss
         $result = $this->cacheService->get(
             'test_key',
-            fn() => 'computed_value'
+            fn () => 'computed_value'
         );
 
         // Then: Callback should be invoked and value returned
@@ -103,7 +104,7 @@ final class CacheServiceTest extends TestCase
         // When: Getting value with custom TTL
         $this->cacheService->get(
             'test_key',
-            fn() => 'value',
+            fn () => 'value',
             ttl: 1800
         );
     }
@@ -128,7 +129,7 @@ final class CacheServiceTest extends TestCase
         // When: Getting value with tags
         $this->cacheService->get(
             'test_key',
-            fn() => 'value',
+            fn () => 'value',
             tags: $tags
         );
     }
@@ -151,7 +152,7 @@ final class CacheServiceTest extends TestCase
         // When: Getting value without tags
         $this->cacheService->get(
             'test_key',
-            fn() => 'value',
+            fn () => 'value',
             tags: []
         );
     }
@@ -175,7 +176,7 @@ final class CacheServiceTest extends TestCase
         // When: Getting value with cache failure
         $result = $this->cacheService->get(
             'test_key',
-            fn() => 'fallback_value'
+            fn () => 'fallback_value'
         );
 
         // Then: Fallback value should be returned
@@ -309,6 +310,7 @@ final class CacheServiceTest extends TestCase
             ->willReturnCallback(function (string $key, callable $callback) {
                 $item = $this->createMock(ItemInterface::class);
                 $item->expects(self::once())->method('expiresAfter')->with(3600);
+
                 return $callback($item);
             });
 
@@ -316,8 +318,8 @@ final class CacheServiceTest extends TestCase
             ->expects(self::once())
             ->method('info')
             ->with('Cache warmed', self::callback(function (array $context) {
-                return $context['count'] === 3
-                    && $context['total'] === 3
+                return 3 === $context['count']
+                    && 3 === $context['total']
                     && isset($context['duration_ms']);
             }));
 
@@ -336,6 +338,7 @@ final class CacheServiceTest extends TestCase
             ->willReturnCallback(function (string $key, callable $callback) {
                 $item = $this->createMock(ItemInterface::class);
                 $item->expects(self::once())->method('expiresAfter')->with(7200); // 2 hours
+
                 return $callback($item);
             });
 
@@ -374,8 +377,8 @@ final class CacheServiceTest extends TestCase
             ->method('info')
             ->with('Cache warmed', self::callback(function (array $context) {
                 // Only 2 successful, 3 total
-                return $context['count'] === 2
-                    && $context['total'] === 3;
+                return 2 === $context['count']
+                    && 3 === $context['total'];
             }));
 
         // When: Warming cache with partial failure
@@ -393,8 +396,8 @@ final class CacheServiceTest extends TestCase
             ->expects(self::once())
             ->method('info')
             ->with('Cache warmed', self::callback(function (array $context) {
-                return $context['count'] === 0
-                    && $context['total'] === 0
+                return 0 === $context['count']
+                    && 0 === $context['total']
                     && isset($context['duration_ms'])
                     && is_numeric($context['duration_ms']);
             }));
@@ -421,7 +424,7 @@ final class CacheServiceTest extends TestCase
             }));
 
         // When: Getting value
-        $this->cacheService->get('test_key', fn() => 'value');
+        $this->cacheService->get('test_key', fn () => 'value');
     }
 
     public function testInvalidateMultipleHandlesEmptyArray(): void

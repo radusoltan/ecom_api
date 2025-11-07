@@ -17,9 +17,10 @@ final readonly class Slug
     public static function fromString(string $value): self
     {
         $trimmed = trim($value);
-        if ($trimmed === '') {
+        if ('' === $trimmed) {
             throw new \InvalidArgumentException('Slug cannot be empty');
         }
+
         return new self(strtolower($trimmed));
     }
 

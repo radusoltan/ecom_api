@@ -8,7 +8,7 @@ use App\Shared\Domain\ValueObject\LanguageCode;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * TranslationEntry Value Object
+ * TranslationEntry Value Object.
  *
  * Represents a single translation entry in the system.
  * This is a domain model, separate from Gedmo's Translation entity.
@@ -26,7 +26,8 @@ final readonly class TranslationEntry
         public TranslationValue $value,
         public ?\DateTimeImmutable $createdAt = null,
         public ?\DateTimeImmutable $updatedAt = null,
-    ) {}
+    ) {
+    }
 
     public static function create(
         TenantId $tenantId,

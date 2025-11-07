@@ -10,7 +10,7 @@ use App\Tax\Domain\ValueObject\TaxRate;
 use App\Tax\Domain\ValueObject\TaxRuleId;
 
 /**
- * Tax Rule Created Domain Event
+ * Tax Rule Created Domain Event.
  *
  * Dispatched when a new tax rule is created.
  */

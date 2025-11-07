@@ -10,7 +10,6 @@ use App\Cart\Domain\Model\CartStatus;
 use App\Cart\Domain\Model\SessionId;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -54,10 +53,10 @@ class CartEntity
     private Collection $items;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
-    private DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $updatedAt;
 
     public function __construct()
     {
@@ -88,15 +87,15 @@ class CartEntity
     {
         // Convert entity items to domain items
         $domainItems = array_map(
-            fn(CartItemEntity $itemEntity) => $itemEntity->toDomainModel(),
+            fn (CartItemEntity $itemEntity) => $itemEntity->toDomainModel(),
             $this->items->toArray()
         );
 
         return Cart::reconstituteFromPersistence(
             CartId::fromString($this->id),
             TenantId::fromString($this->tenantId),
-            $this->customerId !== null ? CustomerId::fromString($this->customerId) : null,
-            $this->sessionId !== null ? SessionId::fromString($this->sessionId) : null,
+            null !== $this->customerId ? CustomerId::fromString($this->customerId) : null,
+            null !== $this->sessionId ? SessionId::fromString($this->sessionId) : null,
             CartStatus::from($this->status),
             $domainItems,
             $this->createdAt,
@@ -158,12 +157,12 @@ class CartEntity
         return $this->items;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

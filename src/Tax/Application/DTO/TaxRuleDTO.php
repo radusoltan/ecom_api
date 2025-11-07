@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tax\Application\DTO;
 
 /**
- * Tax Rule Data Transfer Object
+ * Tax Rule Data Transfer Object.
  *
  * Read-only DTO for tax rule data.
  */

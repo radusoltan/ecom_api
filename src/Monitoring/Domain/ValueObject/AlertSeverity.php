@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Monitoring\Domain\ValueObject;
 
-use InvalidArgumentException;
-
 /**
- * Alert Severity Value Object
+ * Alert Severity Value Object.
  *
  * Defines severity levels for performance alerts
  */
@@ -28,13 +26,7 @@ final readonly class AlertSeverity
     private function __construct(private string $value)
     {
         if (!in_array($value, self::VALID_SEVERITIES, true)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Invalid alert severity: "%s". Valid severities: %s',
-                    $value,
-                    implode(', ', self::VALID_SEVERITIES)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid alert severity: "%s". Valid severities: %s', $value, implode(', ', self::VALID_SEVERITIES)));
         }
     }
 

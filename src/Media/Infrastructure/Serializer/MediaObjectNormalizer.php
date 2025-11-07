@@ -17,7 +17,8 @@ class MediaObjectNormalizer implements NormalizerInterface
         private readonly NormalizerInterface $normalizer,
         #[Autowire('%media.storage.local.public_prefix%')]
         private readonly string $publicPrefix
-    ) {}
+    ) {
+    }
 
     public function normalize($object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
@@ -25,18 +26,18 @@ class MediaObjectNormalizer implements NormalizerInterface
 
         // Build the content URL based on the image ID and original path
         if ($object->id && !$object->contentUrl) {
-            $object->contentUrl = $this->publicPrefix . '/' . $object->tenantId . '/' .
-                                  $object->ownerType . '/' . $object->ownerId . '/' .
-                                  $object->id . '/original.jpg';
+            $object->contentUrl = $this->publicPrefix.'/'.$object->tenantId.'/'.
+                                  $object->ownerType.'/'.$object->ownerId.'/'.
+                                  $object->id.'/original.jpg';
         }
 
         // Build thumbnail URLs if thumbnails exist
         if ($object->thumbnails && is_array($object->thumbnails)) {
             foreach ($object->thumbnails as &$thumbnail) {
                 if (isset($thumbnail['sizeLabel']) && !isset($thumbnail['url'])) {
-                    $thumbnail['url'] = $this->publicPrefix . '/' . $object->tenantId . '/' .
-                                       $object->ownerType . '/' . $object->ownerId . '/' .
-                                       $object->id . '/thumb_' . $thumbnail['sizeLabel'] . '.jpg';
+                    $thumbnail['url'] = $this->publicPrefix.'/'.$object->tenantId.'/'.
+                                       $object->ownerType.'/'.$object->ownerId.'/'.
+                                       $object->id.'/thumb_'.$thumbnail['sizeLabel'].'.jpg';
                 }
             }
         }

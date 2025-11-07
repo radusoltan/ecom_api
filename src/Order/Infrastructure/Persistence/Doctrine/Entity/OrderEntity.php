@@ -12,7 +12,6 @@ use App\Order\Domain\Model\OrderStatus;
 use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -40,6 +39,7 @@ class OrderEntity
     private string $status;
 
     #[ORM\Column(type: 'json')]
+    /** @var array<string, mixed> */
     private array $lines = [];
 
     #[ORM\Column(type: 'json', name: 'shipping_address')]
@@ -76,10 +76,10 @@ class OrderEntity
     private ?float $taxRate = null;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
-    private DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $updatedAt;
 
     public static function fromDomainModel(Order $order): self
     {
@@ -90,7 +90,7 @@ class OrderEntity
         $entity->status = $order->status()->value();
 
         $entity->lines = array_map(
-            fn(OrderLine $line) => [
+            fn (OrderLine $line) => [
                 'productId' => $line->productId()->toString(),
                 'productName' => $line->productName(),
                 'quantity' => $line->quantity(),
@@ -119,12 +119,12 @@ class OrderEntity
         $entity->appliedPromotions = $order->appliedPromotions();
         $entity->couponCode = $order->couponCode();
 
-        if ($order->discountAmount() !== null) {
+        if (null !== $order->discountAmount()) {
             $entity->discountAmount = $order->discountAmount()->getAmount();
             $entity->discountCurrency = $order->discountAmount()->getCurrency()->getCurrencyCode();
         }
 
-        if ($order->taxAmount() !== null) {
+        if (null !== $order->taxAmount()) {
             $entity->taxAmount = $order->taxAmount()->getAmount();
             $entity->taxCurrency = $order->taxAmount()->getCurrency()->getCurrencyCode();
         }
@@ -140,7 +140,7 @@ class OrderEntity
 
     /**
      * Update this entity's properties from a domain model
-     * Used for updating existing entities without creating new instances
+     * Used for updating existing entities without creating new instances.
      */
     public function updateFromDomainModel(Order $order): void
     {
@@ -149,7 +149,7 @@ class OrderEntity
         $this->status = $order->status()->value();
 
         $this->lines = array_map(
-            fn(OrderLine $line) => [
+            fn (OrderLine $line) => [
                 'productId' => $line->productId()->toString(),
                 'productName' => $line->productName(),
                 'quantity' => $line->quantity(),
@@ -178,7 +178,7 @@ class OrderEntity
         $this->appliedPromotions = $order->appliedPromotions();
         $this->couponCode = $order->couponCode();
 
-        if ($order->discountAmount() !== null) {
+        if (null !== $order->discountAmount()) {
             $this->discountAmount = $order->discountAmount()->getAmount();
             $this->discountCurrency = $order->discountAmount()->getCurrency()->getCurrencyCode();
         } else {
@@ -186,7 +186,7 @@ class OrderEntity
             $this->discountCurrency = null;
         }
 
-        if ($order->taxAmount() !== null) {
+        if (null !== $order->taxAmount()) {
             $this->taxAmount = $order->taxAmount()->getAmount();
             $this->taxCurrency = $order->taxAmount()->getCurrency()->getCurrencyCode();
         } else {
@@ -203,7 +203,7 @@ class OrderEntity
     public function toDomainModel(): Order
     {
         $lines = array_map(
-            fn(array $lineData) => OrderLine::create(
+            fn (array $lineData) => OrderLine::create(
                 ProductId::fromString($lineData['productId']),
                 $lineData['productName'],
                 $lineData['quantity'],
@@ -229,12 +229,12 @@ class OrderEntity
         );
 
         $discountAmount = null;
-        if ($this->discountAmount !== null && $this->discountCurrency !== null) {
+        if (null !== $this->discountAmount && null !== $this->discountCurrency) {
             $discountAmount = Money::fromScalars($this->discountAmount, $this->discountCurrency);
         }
 
         $taxAmount = null;
-        if ($this->taxAmount !== null && $this->taxCurrency !== null) {
+        if (null !== $this->taxAmount && null !== $this->taxCurrency) {
             $taxAmount = Money::fromScalars($this->taxAmount, $this->taxCurrency);
         }
 
@@ -293,12 +293,12 @@ class OrderEntity
         return $this->billingAddress;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

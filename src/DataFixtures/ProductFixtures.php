@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity;
-use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * Product fixtures - creates products with translations and images
+ * Product fixtures - creates products with translations and images.
  */
 class ProductFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -39,7 +38,7 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
         foreach ($categories as $category) {
             $productCount = 12; // 12 products per category
 
-            for ($i = 1; $i <= $productCount; $i++) {
+            for ($i = 1; $i <= $productCount; ++$i) {
                 $this->createProduct(
                     $manager,
                     $tenantId,
@@ -47,7 +46,7 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
                     $category['name'],
                     $i
                 );
-                $productsCreated++;
+                ++$productsCreated;
             }
         }
 
@@ -79,15 +78,15 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
         // Generate random number of images (1-5)
         $numImages = rand(1, 5);
         $images = [];
-        for ($i = 0; $i < $numImages; $i++) {
+        for ($i = 0; $i < $numImages; ++$i) {
             $images[] = [
-                'url' => "https://picsum.photos/800/600?random=" . $this->imageCounter++,
+                'url' => 'https://picsum.photos/800/600?random='.$this->imageCounter++,
                 'position' => $i + 1,
-                'isPrimary' => $i === 0
+                'isPrimary' => 0 === $i,
             ];
         }
 
-        $baseName = ucfirst($categoryName) . " Product {$index}";
+        $baseName = ucfirst($categoryName)." Product {$index}";
 
         $product = new ProductEntity();
         $product->setTenantId($tenantId);
@@ -109,10 +108,10 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
         $idProperty->setValue($product, $productId);
 
         $createdAtProperty = $reflection->getProperty('createdAt');
-        $createdAtProperty->setValue($product, new DateTimeImmutable());
+        $createdAtProperty->setValue($product, new \DateTimeImmutable());
 
         $updatedAtProperty = $reflection->getProperty('updatedAt');
-        $updatedAtProperty->setValue($product, new DateTimeImmutable());
+        $updatedAtProperty->setValue($product, new \DateTimeImmutable());
 
         // Set English content only (translations can be added via admin panel later)
         $product->setTranslatableLocale('en');

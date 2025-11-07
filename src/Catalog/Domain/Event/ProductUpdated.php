@@ -12,5 +12,6 @@ final readonly class ProductUpdated
     public function __construct(
         public ProductId $productId,
         public TenantId $tenantId
-    ) {}
+    ) {
+    }
 }

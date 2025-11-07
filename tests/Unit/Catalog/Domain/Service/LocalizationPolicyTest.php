@@ -67,7 +67,7 @@ final class LocalizationPolicyTest extends TestCase
         $localizedString = LocalizedString::fromArray([
             'ro_RO' => 'Text în română',
             'en_US' => 'Text in English',
-            'fr_FR' => 'Texte en français'
+            'fr_FR' => 'Texte en français',
         ]);
 
         $requestedLocale = Locale::fromString('ro_RO');
@@ -80,7 +80,7 @@ final class LocalizationPolicyTest extends TestCase
     {
         $localizedString = LocalizedString::fromArray([
             'ro' => 'Text în română',
-            'en_US' => 'Text in English'
+            'en_US' => 'Text in English',
         ]);
 
         $requestedLocale = Locale::fromString('ro_RO'); // Request ro_RO
@@ -94,7 +94,7 @@ final class LocalizationPolicyTest extends TestCase
     {
         $localizedString = LocalizedString::fromArray([
             'fr_FR' => 'Texte en français',
-            'en_US' => 'Text in English'
+            'en_US' => 'Text in English',
         ]);
 
         $requestedLocale = Locale::fromString('ro_RO');
@@ -109,7 +109,7 @@ final class LocalizationPolicyTest extends TestCase
     public function testResolveStringWithFallbackToSystemDefault(): void
     {
         $localizedString = LocalizedString::fromArray([
-            'en_US' => 'Text in English'
+            'en_US' => 'Text in English',
         ]);
 
         $requestedLocale = Locale::fromString('ro_RO');
@@ -133,7 +133,7 @@ final class LocalizationPolicyTest extends TestCase
     {
         $localizedString = LocalizedString::fromArray([
             'fr_FR' => 'Texte en français',
-            'en_US' => 'Text in English'
+            'en_US' => 'Text in English',
         ]);
 
         $requestedLocale = Locale::fromString('ro_RO');
@@ -149,7 +149,7 @@ final class LocalizationPolicyTest extends TestCase
     {
         $localizedString = LocalizedString::fromArray([
             'fr' => 'Texte en français',
-            'en_US' => 'Text in English'
+            'en_US' => 'Text in English',
         ]);
 
         $requestedLocale = Locale::fromString('fr_FR');
@@ -199,7 +199,7 @@ final class LocalizationPolicyTest extends TestCase
         $supportedLocales = [
             Locale::fromString('en_US'),
             Locale::fromString('fr_FR'),
-            Locale::fromString('de_DE')
+            Locale::fromString('de_DE'),
         ];
         $policy = new LocalizationPolicy($supportedLocales);
 
@@ -214,7 +214,7 @@ final class LocalizationPolicyTest extends TestCase
     {
         $supportedLocales = [
             Locale::fromString('ja_JP'),
-            Locale::fromString('zh_CN')
+            Locale::fromString('zh_CN'),
         ];
         $policy = new LocalizationPolicy($supportedLocales);
 
@@ -231,12 +231,12 @@ final class LocalizationPolicyTest extends TestCase
         $strings = [
             'name' => LocalizedString::fromArray([
                 'ro_RO' => 'Nume',
-                'en_US' => 'Name'
+                'en_US' => 'Name',
             ]),
             'description' => LocalizedString::fromArray([
                 'ro_RO' => 'Descriere',
-                'en_US' => 'Description'
-            ])
+                'en_US' => 'Description',
+            ]),
         ];
 
         $requestedLocale = Locale::fromString('ro_RO');

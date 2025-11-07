@@ -12,12 +12,10 @@ use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Service\FraudCheckService;
 use App\Order\Presentation\Api\Resource\OrderResource;
 use InvalidArgumentException;
-use RuntimeException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
-use Psr\Log\LoggerInterface;
 
 final readonly class PlaceOrderProcessor implements ProcessorInterface
 {
@@ -33,15 +31,15 @@ final readonly class PlaceOrderProcessor implements ProcessorInterface
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): OrderResource
     {
         if (!$data instanceof OrderResource) {
-            throw new InvalidArgumentException('Expected OrderResource');
+            throw new \InvalidArgumentException('Expected OrderResource');
         }
 
         if (!$data->customerEmail || !$data->lines || !$data->shippingAddress || !$data->billingAddress) {
-            throw new InvalidArgumentException('Customer email, lines, shipping address, and billing address are required');
+            throw new \InvalidArgumentException('Customer email, lines, shipping address, and billing address are required');
         }
 
         $orderId = OrderId::generate()->toString();
-        $tenantId = $data->tenantId ?? throw new InvalidArgumentException('Tenant ID is required');
+        $tenantId = $data->tenantId ?? throw new \InvalidArgumentException('Tenant ID is required');
 
         // Perform fraud check
         $request = $this->requestStack->getCurrentRequest();
@@ -63,7 +61,7 @@ final readonly class PlaceOrderProcessor implements ProcessorInterface
         ]);
 
         // For high-risk orders, we log but still allow (can be changed to block)
-        if ($fraudCheck['risk_level'] === 'high') {
+        if ('high' === $fraudCheck['risk_level']) {
             $this->logger->warning('High-risk order detected', [
                 'order_id' => $orderId,
                 'fraud_score' => $fraudCheck['score'],
@@ -96,13 +94,13 @@ final readonly class PlaceOrderProcessor implements ProcessorInterface
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {
-            throw new RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for query');
         }
 
         $orderDTO = $handledStamp->getResult();
 
-        if ($orderDTO === null) {
-            throw new RuntimeException('Order not found after creation');
+        if (null === $orderDTO) {
+            throw new \RuntimeException('Order not found after creation');
         }
 
         $resource = new OrderResource();

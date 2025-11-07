@@ -8,7 +8,7 @@ final readonly class SearchProductsResult
 {
     /**
      * @param array<ProductSearchDTO> $products
-     * @param array<string, mixed> $facets
+     * @param array<string, mixed>    $facets
      */
     public function __construct(
         public array $products,
@@ -16,7 +16,8 @@ final readonly class SearchProductsResult
         public array $facets,
         public int $page,
         public int $limit,
-    ) {}
+    ) {
+    }
 
     public function getTotalPages(): int
     {

@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
 
-use Stringable;
-use InvalidArgumentException;
-
-final readonly class TenantId implements Stringable
+final readonly class TenantId implements \Stringable
 {
     private function __construct(private string $value)
     {
-        if ($value === '' || $value === '0') {
-            throw new InvalidArgumentException('TenantId cannot be empty');
+        if ('' === $value || '0' === $value) {
+            throw new \InvalidArgumentException('TenantId cannot be empty');
         }
 
         // Validate UUID v4 format
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $value)) {
-            throw new InvalidArgumentException(sprintf('Invalid TenantId format: "%s". Must be a valid UUID v4', $value));
+            throw new \InvalidArgumentException(sprintf('Invalid TenantId format: "%s". Must be a valid UUID v4', $value));
         }
     }
 

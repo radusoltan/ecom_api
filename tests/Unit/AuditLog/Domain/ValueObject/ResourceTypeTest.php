@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\AuditLog\Domain\ValueObject;
 
 use App\AuditLog\Domain\ValueObject\ResourceType;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class ResourceTypeTest extends TestCase
@@ -19,7 +18,7 @@ final class ResourceTypeTest extends TestCase
 
     public function testFromStringThrowsExceptionForInvalidResource(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid resource type: invalid_resource');
 
         ResourceType::fromString('invalid_resource');
@@ -159,7 +158,7 @@ final class ResourceTypeTest extends TestCase
         $validResources = [
             'user', 'product', 'category', 'order', 'customer', 'payment',
             'tenant', 'warehouse', 'inventory', 'price_list', 'promotion',
-            'cart', 'review', 'media', 'tax', 'return', 'settings'
+            'cart', 'review', 'media', 'tax', 'return', 'settings',
         ];
 
         foreach ($validResources as $resource) {

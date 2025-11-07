@@ -7,7 +7,7 @@ namespace App\Order\Domain\ValueObject;
 use Symfony\Component\Uid\Ulid;
 
 /**
- * Fulfillment ID Value Object
+ * Fulfillment ID Value Object.
  *
  * Unique identifier for a fulfillment process.
  * Uses ULID for time-based sortable identifiers.
@@ -16,7 +16,8 @@ final readonly class FulfillmentId implements \Stringable
 {
     private function __construct(
         private string $value,
-    ) {}
+    ) {
+    }
 
     public static function generate(): self
     {

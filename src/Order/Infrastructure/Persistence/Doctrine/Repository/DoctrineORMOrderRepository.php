@@ -24,7 +24,7 @@ final readonly class DoctrineORMOrderRepository implements OrderRepositoryInterf
     {
         $entity = $this->entityManager->find(OrderEntity::class, $order->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             // Create new entity
             $entity = OrderEntity::fromDomainModel($order);
             $this->entityManager->persist($entity);
@@ -66,7 +66,7 @@ final readonly class DoctrineORMOrderRepository implements OrderRepositoryInterf
         ], ['createdAt' => 'DESC']);
 
         return array_map(
-            fn(OrderEntity $entity) => $entity->toDomainModel(),
+            fn (OrderEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -78,7 +78,7 @@ final readonly class DoctrineORMOrderRepository implements OrderRepositoryInterf
         ], ['createdAt' => 'DESC']);
 
         return array_map(
-            fn(OrderEntity $entity) => $entity->toDomainModel(),
+            fn (OrderEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }

@@ -15,17 +15,15 @@ use App\User\Domain\Event\UserRoleRemoved;
 use App\User\Domain\Model\User;
 use App\User\Domain\ValueObject\HashedPassword;
 use App\User\Domain\ValueObject\UserId;
-use App\User\Domain\ValueObject\UserRole;
 use App\User\Domain\ValueObject\Username;
-use DateTimeImmutable;
-use DomainException;
+use App\User\Domain\ValueObject\UserRole;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class UserTest extends TestCase
 {
     #[Test]
-    public function it_creates_user_with_minimum_required_fields(): void
+    public function itCreatesUserWithMinimumRequiredFields(): void
     {
         $email = Email::fromString('john.doe@example.com');
         $username = Username::fromString('johndoe');
@@ -47,7 +45,7 @@ final class UserTest extends TestCase
     }
 
     #[Test]
-    public function it_creates_user_with_multiple_roles(): void
+    public function itCreatesUserWithMultipleRoles(): void
     {
         $email = Email::fromString('admin@example.com');
         $username = Username::fromString('admin');
@@ -62,7 +60,7 @@ final class UserTest extends TestCase
     }
 
     #[Test]
-    public function it_records_user_created_event_on_creation(): void
+    public function itRecordsUserCreatedEventOnCreation(): void
     {
         $email = Email::fromString('test@example.com');
         $username = Username::fromString('testuser');
@@ -79,7 +77,7 @@ final class UserTest extends TestCase
     }
 
     #[Test]
-    public function it_changes_password_successfully(): void
+    public function itChangesPasswordSuccessfully(): void
     {
         $user = User::create(
             Email::fromString('user@example.com'),
@@ -100,7 +98,7 @@ final class UserTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_when_changing_password_for_locked_account(): void
+    public function itThrowsExceptionWhenChangingPasswordForLockedAccount(): void
     {
         $user = User::create(
             Email::fromString('locked@example.com'),
@@ -110,14 +108,14 @@ final class UserTest extends TestCase
 
         $user->lock('Suspicious activity');
 
-        $this->expectException(DomainException::class);
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Cannot change password for locked account');
 
         $user->changePassword(HashedPassword::fromPlainPassword('NewPass456!'));
     }
 
     #[Test]
-    public function it_adds_role_successfully(): void
+    public function itAddsRoleSuccessfully(): void
     {
         $user = User::create(
             Email::fromString('user@example.com'),
@@ -140,7 +138,7 @@ final class UserTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_when_adding_duplicate_role(): void
+    public function itThrowsExceptionWhenAddingDuplicateRole(): void
     {
         $user = User::create(
             Email::fromString('user@example.com'),
@@ -150,14 +148,14 @@ final class UserTest extends TestCase
 
         $user->addRole(UserRole::manager());
 
-        $this->expectException(DomainException::class);
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('User already has this role');
 
         $user->addRole(UserRole::manager());
     }
 
     #[Test]
-    public function it_removes_role_successfully(): void
+    public function itRemovesRoleSuccessfully(): void
     {
         $user = User::create(
             Email::fromString('admin@example.com'),
@@ -181,7 +179,7 @@ final class UserTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_when_removing_non_existent_role(): void
+    public function itThrowsExceptionWhenRemovingNonExistentRole(): void
     {
         $user = User::create(
             Email::fromString('user@example.com'),
@@ -189,14 +187,14 @@ final class UserTest extends TestCase
             HashedPassword::fromPlainPassword('Pass123!')
         );
 
-        $this->expectException(DomainException::class);
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('User does not have this role');
 
         $user->removeRole(UserRole::admin());
     }
 
     #[Test]
-    public function it_throws_exception_when_removing_last_role_user(): void
+    public function itThrowsExceptionWhenRemovingLastRoleUser(): void
     {
         $user = User::create(
             Email::fromString('user@example.com'),
@@ -204,14 +202,14 @@ final class UserTest extends TestCase
             HashedPassword::fromPlainPassword('Pass123!')
         );
 
-        $this->expectException(DomainException::class);
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Cannot remove ROLE_USER when it is the only role');
 
         $user->removeRole(UserRole::user());
     }
 
     #[Test]
-    public function it_verifies_email_successfully(): void
+    public function itVerifiesEmailSuccessfully(): void
     {
         $user = User::create(
             Email::fromString('user@example.com'),
@@ -226,7 +224,7 @@ final class UserTest extends TestCase
         $user->verifyEmail();
 
         $this->assertTrue($user->emailVerified());
-        $this->assertInstanceOf(DateTimeImmutable::class, $user->emailVerifiedAt());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $user->emailVerifiedAt());
 
         $events = $user->popEvents();
         $this->assertCount(1, $events);
@@ -235,7 +233,7 @@ final class UserTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_when_verifying_already_verified_email(): void
+    public function itThrowsExceptionWhenVerifyingAlreadyVerifiedEmail(): void
     {
         $user = User::create(
             Email::fromString('user@example.com'),
@@ -245,14 +243,14 @@ final class UserTest extends TestCase
 
         $user->verifyEmail();
 
-        $this->expectException(DomainException::class);
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Email is already verified');
 
         $user->verifyEmail();
     }
 
     #[Test]
-    public function it_locks_account_successfully(): void
+    public function itLocksAccountSuccessfully(): void
     {
         $user = User::create(
             Email::fromString('user@example.com'),
@@ -270,7 +268,7 @@ final class UserTest extends TestCase
 
         $this->assertTrue($user->isLocked());
         $this->assertEquals($reason, $user->lockReason());
-        $this->assertInstanceOf(DateTimeImmutable::class, $user->lockedAt());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $user->lockedAt());
 
         $events = $user->popEvents();
         $this->assertCount(1, $events);
@@ -280,7 +278,7 @@ final class UserTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_when_locking_already_locked_account(): void
+    public function itThrowsExceptionWhenLockingAlreadyLockedAccount(): void
     {
         $user = User::create(
             Email::fromString('user@example.com'),
@@ -290,14 +288,14 @@ final class UserTest extends TestCase
 
         $user->lock('First lock');
 
-        $this->expectException(DomainException::class);
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Account is already locked');
 
         $user->lock('Second lock');
     }
 
     #[Test]
-    public function it_throws_exception_when_locking_with_empty_reason(): void
+    public function itThrowsExceptionWhenLockingWithEmptyReason(): void
     {
         $user = User::create(
             Email::fromString('user@example.com'),
@@ -305,14 +303,14 @@ final class UserTest extends TestCase
             HashedPassword::fromPlainPassword('Pass123!')
         );
 
-        $this->expectException(DomainException::class);
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Lock reason cannot be empty');
 
         $user->lock('');
     }
 
     #[Test]
-    public function it_unlocks_account_successfully(): void
+    public function itUnlocksAccountSuccessfully(): void
     {
         $user = User::create(
             Email::fromString('user@example.com'),
@@ -338,7 +336,7 @@ final class UserTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_when_unlocking_non_locked_account(): void
+    public function itThrowsExceptionWhenUnlockingNonLockedAccount(): void
     {
         $user = User::create(
             Email::fromString('user@example.com'),
@@ -346,14 +344,14 @@ final class UserTest extends TestCase
             HashedPassword::fromPlainPassword('Pass123!')
         );
 
-        $this->expectException(DomainException::class);
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Account is not locked');
 
         $user->unlock();
     }
 
     #[Test]
-    public function it_checks_if_user_is_super_admin(): void
+    public function itChecksIfUserIsSuperAdmin(): void
     {
         $regularUser = User::create(
             Email::fromString('user@example.com'),
@@ -374,16 +372,16 @@ final class UserTest extends TestCase
     }
 
     #[Test]
-    public function it_reconstitutes_user_from_persistence_with_all_fields(): void
+    public function itReconstitutesUserFromPersistenceWithAllFields(): void
     {
         $userId = UserId::generate();
         $email = Email::fromString('restored@example.com');
         $username = Username::fromString('restoreduser');
         $password = HashedPassword::fromPlainPassword('Pass123!');
         $roles = [UserRole::admin(), UserRole::manager()];
-        $createdAt = new DateTimeImmutable('2024-01-01 10:00:00');
-        $emailVerifiedAt = new DateTimeImmutable('2024-01-02 11:00:00');
-        $lockedAt = new DateTimeImmutable('2024-01-03 12:00:00');
+        $createdAt = new \DateTimeImmutable('2024-01-01 10:00:00');
+        $emailVerifiedAt = new \DateTimeImmutable('2024-01-02 11:00:00');
+        $lockedAt = new \DateTimeImmutable('2024-01-03 12:00:00');
 
         $user = User::reconstitute(
             $userId,
@@ -412,7 +410,7 @@ final class UserTest extends TestCase
     }
 
     #[Test]
-    public function it_returns_roles_as_strings(): void
+    public function itReturnsRolesAsStrings(): void
     {
         $user = User::create(
             Email::fromString('admin@example.com'),
@@ -430,7 +428,7 @@ final class UserTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_complex_role_management_scenario(): void
+    public function itHandlesComplexRoleManagementScenario(): void
     {
         // Create user with base role
         $user = User::create(

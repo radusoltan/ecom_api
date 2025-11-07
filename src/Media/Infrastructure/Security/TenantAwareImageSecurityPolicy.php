@@ -18,7 +18,7 @@ final class TenantAwareImageSecurityPolicy implements ImageSecurityPolicy
     {
         $currentTenant = $this->tenantContext->getTenantId();
 
-        if ($currentTenant === null) {
+        if (null === $currentTenant) {
             return false;
         }
 
@@ -29,7 +29,7 @@ final class TenantAwareImageSecurityPolicy implements ImageSecurityPolicy
     {
         $currentTenant = $this->tenantContext->getTenantId();
 
-        if ($currentTenant === null) {
+        if (null === $currentTenant) {
             return false;
         }
 

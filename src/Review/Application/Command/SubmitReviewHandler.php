@@ -13,7 +13,8 @@ final readonly class SubmitReviewHandler
 {
     public function __construct(
         private ProductReviewRepositoryInterface $reviewRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(SubmitReview $command): void
     {

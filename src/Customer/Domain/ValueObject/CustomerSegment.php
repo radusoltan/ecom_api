@@ -32,9 +32,7 @@ final readonly class CustomerSegment
         private string $value
     ) {
         if (!in_array($value, self::VALID_SEGMENTS, true)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid customer segment: "%s". Allowed: %s', $value, implode(', ', self::VALID_SEGMENTS))
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid customer segment: "%s". Allowed: %s', $value, implode(', ', self::VALID_SEGMENTS)));
         }
     }
 
@@ -75,22 +73,22 @@ final readonly class CustomerSegment
 
     public function isRegular(): bool
     {
-        return $this->value === self::REGULAR;
+        return self::REGULAR === $this->value;
     }
 
     public function isVip(): bool
     {
-        return $this->value === self::VIP;
+        return self::VIP === $this->value;
     }
 
     public function isWholesale(): bool
     {
-        return $this->value === self::WHOLESALE;
+        return self::WHOLESALE === $this->value;
     }
 
     public function isPremium(): bool
     {
-        return $this->value === self::PREMIUM;
+        return self::PREMIUM === $this->value;
     }
 
     public function equals(self $other): bool

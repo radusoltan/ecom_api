@@ -11,7 +11,6 @@ use App\Returns\Domain\ValueObject\ReturnRequestId;
 use App\Returns\Domain\ValueObject\ReturnStatus;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -66,10 +65,10 @@ class ReturnRequestEntity
     private ?string $rejectionReason = null;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
-    private DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $updatedAt;
 
     /**
      * Convert domain model to Doctrine entity.
@@ -89,7 +88,7 @@ class ReturnRequestEntity
         $entity->createdAt = $returnRequest->createdAt();
         $entity->updatedAt = $returnRequest->updatedAt();
 
-        if ($returnRequest->refundAmount() !== null) {
+        if (null !== $returnRequest->refundAmount()) {
             $entity->refundAmount = $returnRequest->refundAmount()->getAmount();
             $entity->refundCurrency = $returnRequest->refundAmount()->getCurrency()->getCurrencyCode();
         }
@@ -113,7 +112,7 @@ class ReturnRequestEntity
         $this->rejectionReason = $returnRequest->rejectionReason();
         $this->updatedAt = $returnRequest->updatedAt();
 
-        if ($returnRequest->refundAmount() !== null) {
+        if (null !== $returnRequest->refundAmount()) {
             $this->refundAmount = $returnRequest->refundAmount()->getAmount();
             $this->refundCurrency = $returnRequest->refundAmount()->getCurrency()->getCurrencyCode();
         } else {
@@ -128,7 +127,7 @@ class ReturnRequestEntity
     public function toDomainModel(): ReturnRequest
     {
         $refundAmount = null;
-        if ($this->refundAmount !== null && $this->refundCurrency !== null) {
+        if (null !== $this->refundAmount && null !== $this->refundCurrency) {
             $refundAmount = Money::fromScalars($this->refundAmount, $this->refundCurrency);
         }
 
@@ -205,12 +204,12 @@ class ReturnRequestEntity
         return $this->rejectionReason;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

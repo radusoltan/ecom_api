@@ -8,7 +8,7 @@ use App\Catalog\Domain\Model\ProductId;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Query to get all variants for a product
+ * Query to get all variants for a product.
  */
 final readonly class GetVariantsByProduct
 {
@@ -22,5 +22,6 @@ final readonly class GetVariantsByProduct
         public ?bool $activeOnly = null,
         public int $page = 1,
         public int $limit = 50
-    ) {}
+    ) {
+    }
 }

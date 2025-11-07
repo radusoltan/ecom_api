@@ -24,10 +24,8 @@ final readonly class ActivateCustomerCommandHandler
 
         $customer = $this->customerRepository->findById($customerId, $tenantId);
 
-        if ($customer === null) {
-            throw new \InvalidArgumentException(
-                sprintf('Customer with ID "%s" not found', $command->customerId)
-            );
+        if (null === $customer) {
+            throw new \InvalidArgumentException(sprintf('Customer with ID "%s" not found', $command->customerId));
         }
 
         $customer->activate();

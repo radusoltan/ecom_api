@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Tenant\Infrastructure\Repository;
 
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
-use App\Tenant\Domain\ValueObject\TenantId;
 use App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;

@@ -9,7 +9,6 @@ use App\Order\Domain\Event\OrderPlaced;
 use App\Order\Domain\Model\OrderId;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use Brick\Money\Currency;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -43,13 +42,13 @@ final class OrderPlacedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_implements_event_subscriber_interface(): void
+    public function itImplementsEventSubscriberInterface(): void
     {
         self::assertInstanceOf(EventSubscriberInterface::class, $this->subscriber);
     }
 
     #[Test]
-    public function it_subscribes_to_order_placed_event(): void
+    public function itSubscribesToOrderPlacedEvent(): void
     {
         $subscribedEvents = OrderPlacedSubscriber::getSubscribedEvents();
 
@@ -58,7 +57,7 @@ final class OrderPlacedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_sends_confirmation_email_when_order_is_placed(): void
+    public function itSendsConfirmationEmailWhenOrderIsPlaced(): void
     {
         // Arrange
         $event = new OrderPlaced(
@@ -93,7 +92,7 @@ final class OrderPlacedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_logs_error_when_email_fails_but_does_not_throw(): void
+    public function itLogsErrorWhenEmailFailsButDoesNotThrow(): void
     {
         // Arrange
         $event = new OrderPlaced(
@@ -126,7 +125,7 @@ final class OrderPlacedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_includes_order_total_in_email(): void
+    public function itIncludesOrderTotalInEmail(): void
     {
         // Arrange
         $event = new OrderPlaced(
@@ -156,7 +155,7 @@ final class OrderPlacedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_sends_both_html_and_text_versions(): void
+    public function itSendsBothHtmlAndTextVersions(): void
     {
         // Arrange
         $event = new OrderPlaced(
@@ -183,7 +182,7 @@ final class OrderPlacedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_uses_configured_sender_email_and_name(): void
+    public function itUsesConfiguredSenderEmailAndName(): void
     {
         // Arrange
         $event = new OrderPlaced(
@@ -210,7 +209,7 @@ final class OrderPlacedSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_logs_order_id_and_tenant_id(): void
+    public function itLogsOrderIdAndTenantId(): void
     {
         // Arrange
         $orderId = OrderId::generate();

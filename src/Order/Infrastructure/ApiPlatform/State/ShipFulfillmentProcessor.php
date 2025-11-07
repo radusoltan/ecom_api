@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Processor to ship fulfillment with tracking info (PATCH /api/fulfillments/{id}/ship)
+ * Processor to ship fulfillment with tracking info (PATCH /api/fulfillments/{id}/ship).
  *
  * Expected JSON body:
  * {
@@ -35,7 +35,7 @@ final readonly class ShipFulfillmentProcessor implements ProcessorInterface
     {
         $id = $uriVariables['id'] ?? null;
 
-        if ($id === null) {
+        if (null === $id) {
             throw new BadRequestHttpException('Fulfillment ID is required');
         }
 
@@ -45,16 +45,16 @@ final readonly class ShipFulfillmentProcessor implements ProcessorInterface
         $carrier = $payload['carrier'] ?? null;
         $trackingNumber = $payload['trackingNumber'] ?? null;
 
-        if ($carrier === null || trim($carrier) === '') {
+        if (null === $carrier || '' === trim($carrier)) {
             throw new BadRequestHttpException('Carrier is required');
         }
 
-        if ($trackingNumber === null || trim($trackingNumber) === '') {
+        if (null === $trackingNumber || '' === trim($trackingNumber)) {
             throw new BadRequestHttpException('Tracking number is required');
         }
 
         $tenantIdString = $context['tenant_id'] ?? null;
-        if ($tenantIdString === null) {
+        if (null === $tenantIdString) {
             throw new \RuntimeException('Tenant ID not found in context');
         }
         $tenantId = TenantId::fromString($tenantIdString);

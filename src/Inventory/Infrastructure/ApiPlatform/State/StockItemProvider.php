@@ -66,7 +66,7 @@ final class StockItemProvider implements ProviderInterface
 
         $stockItem = $this->stockItemRepository->findById($stockItemId);
 
-        if ($stockItem === null) {
+        if (null === $stockItem) {
             return null;
         }
 

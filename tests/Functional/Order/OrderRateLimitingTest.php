@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * OrderRateLimitingTest
+ * OrderRateLimitingTest.
  *
  * Tests rate limiting functionality for order placement endpoint.
  * Verifies that the system prevents abuse by limiting requests per IP/tenant.
@@ -58,7 +58,7 @@ final class OrderRateLimitingTest extends WebTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
                 'HTTP_X_TENANT_ID' => '123e4567-e89b-12d3-a456-426614174000',
-                'HTTP_IDEMPOTENCY_KEY' => 'test-key-' . uniqid(),
+                'HTTP_IDEMPOTENCY_KEY' => 'test-key-'.uniqid(),
             ],
             json_encode($orderPayload)
         );
@@ -103,7 +103,7 @@ final class OrderRateLimitingTest extends WebTestCase
         ];
 
         // Make requests up to the limit + 1
-        for ($i = 0; $i <= self::RATE_LIMIT; $i++) {
+        for ($i = 0; $i <= self::RATE_LIMIT; ++$i) {
             $client->request(
                 'POST',
                 '/api/orders',
@@ -112,7 +112,7 @@ final class OrderRateLimitingTest extends WebTestCase
                 [
                     'CONTENT_TYPE' => 'application/json',
                     'HTTP_X_TENANT_ID' => $tenantId,
-                    'HTTP_IDEMPOTENCY_KEY' => 'rate-limit-key-' . $i,
+                    'HTTP_IDEMPOTENCY_KEY' => 'rate-limit-key-'.$i,
                     'REMOTE_ADDR' => '192.168.1.100', // Simulate same IP
                 ],
                 json_encode($orderPayload)
@@ -180,14 +180,14 @@ final class OrderRateLimitingTest extends WebTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
                 'HTTP_X_TENANT_ID' => '123e4567-e89b-12d3-a456-426614174000',
-                'HTTP_IDEMPOTENCY_KEY' => 'headers-test-' . uniqid(),
+                'HTTP_IDEMPOTENCY_KEY' => 'headers-test-'.uniqid(),
                 'REMOTE_ADDR' => '192.168.1.200',
             ],
             json_encode($orderPayload)
         );
 
         // If rate limited, verify headers are present
-        if ($client->getResponse()->getStatusCode() === Response::HTTP_TOO_MANY_REQUESTS) {
+        if (Response::HTTP_TOO_MANY_REQUESTS === $client->getResponse()->getStatusCode()) {
             $this->assertTrue($client->getResponse()->headers->has('X-RateLimit-Limit'));
             $this->assertTrue($client->getResponse()->headers->has('X-RateLimit-Remaining'));
             $this->assertTrue($client->getResponse()->headers->has('X-RateLimit-Reset'));
@@ -237,7 +237,7 @@ final class OrderRateLimitingTest extends WebTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
                 'HTTP_X_TENANT_ID' => $tenantId,
-                'HTTP_IDEMPOTENCY_KEY' => 'ip1-' . uniqid(),
+                'HTTP_IDEMPOTENCY_KEY' => 'ip1-'.uniqid(),
                 'REMOTE_ADDR' => '192.168.1.1',
             ],
             json_encode($orderPayload)
@@ -254,7 +254,7 @@ final class OrderRateLimitingTest extends WebTestCase
             [
                 'CONTENT_TYPE' => 'application/json',
                 'HTTP_X_TENANT_ID' => $tenantId,
-                'HTTP_IDEMPOTENCY_KEY' => 'ip2-' . uniqid(),
+                'HTTP_IDEMPOTENCY_KEY' => 'ip2-'.uniqid(),
                 'REMOTE_ADDR' => '192.168.1.2',
             ],
             json_encode($orderPayload)

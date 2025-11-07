@@ -8,7 +8,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * Import Translations Command
+ * Import Translations Command.
  *
  * Triggers bulk import of translations from uploaded file.
  *
@@ -24,5 +24,6 @@ final readonly class ImportTranslations
         public UploadedFile $file,
         public string $format, // 'csv' or 'json'
         public bool $dryRun = false,
-    ) {}
+    ) {
+    }
 }

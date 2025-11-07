@@ -6,13 +6,12 @@ namespace App\User\Domain\Event;
 
 use App\Shared\Domain\Event\DomainEvent;
 use App\User\Domain\ValueObject\UserId;
-use DateTimeImmutable;
 
 final readonly class UserPasswordChanged implements DomainEvent
 {
     public function __construct(
         private UserId $userId,
-        private DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn
     ) {
     }
 
@@ -21,7 +20,7 @@ final readonly class UserPasswordChanged implements DomainEvent
         return $this->userId;
     }
 
-    public function occurredOn(): DateTimeImmutable
+    public function occurredOn(): \DateTimeImmutable
     {
         return $this->occurredOn;
     }

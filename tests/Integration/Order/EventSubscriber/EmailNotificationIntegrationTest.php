@@ -32,7 +32,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Integration tests for email notification subscribers
+ * Integration tests for email notification subscribers.
  *
  * Verifies that:
  * - Event subscribers properly handle domain events

@@ -126,6 +126,7 @@ final class SynonymManagerTest extends TestCase
             foreach ($synonyms as $synonym) {
                 if (str_contains(strtolower($synonym), 'laptop')) {
                     $hasLaptopSynonym = true;
+
                     break;
                 }
             }

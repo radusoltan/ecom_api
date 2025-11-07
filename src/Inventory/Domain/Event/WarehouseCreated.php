@@ -18,7 +18,8 @@ final readonly class WarehouseCreated implements DomainEvent
         public WarehouseCode $code,
         public WarehouseName $name,
         public \DateTimeImmutable $occurredOn,
-    ) {}
+    ) {
+    }
 
     public function occurredOn(): \DateTimeImmutable
     {

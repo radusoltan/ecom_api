@@ -8,7 +8,7 @@ use App\Shared\Infrastructure\Metrics\MetricsCollector;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Metrics Collector Unit Tests
+ * Metrics Collector Unit Tests.
  *
  * Tests metric collection and Prometheus format export
  *
@@ -74,7 +74,7 @@ final class MetricsCollectorTest extends TestCase
     public function testMetricStatsCalculation(): void
     {
         // Add observations
-        for ($i = 1; $i <= 100; $i++) {
+        for ($i = 1; $i <= 100; ++$i) {
             $this->collector->observeHistogram('test_latency', $i / 100, ['endpoint' => 'test']);
         }
 
@@ -119,7 +119,7 @@ final class MetricsCollectorTest extends TestCase
     public function testHistogramQuantileCalculation(): void
     {
         // Add 100 observations from 0.001 to 1.0
-        for ($i = 1; $i <= 1000; $i++) {
+        for ($i = 1; $i <= 1000; ++$i) {
             $this->collector->observeHistogram('api_latency', $i / 1000, ['path' => '/api/test']);
         }
 

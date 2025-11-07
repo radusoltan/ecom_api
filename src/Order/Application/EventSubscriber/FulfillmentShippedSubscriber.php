@@ -15,7 +15,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Handles FulfillmentStatusChanged events when order is shipped
+ * Handles FulfillmentStatusChanged events when order is shipped.
  *
  * Business Rules:
  * - Send shipping notification when fulfillment status becomes "shipping"
@@ -77,20 +77,22 @@ final readonly class FulfillmentShippedSubscriber implements EventSubscriberInte
         // Fetch fulfillment to get tracking details
         $fulfillment = $this->fulfillmentRepository->findById($event->fulfillmentId);
 
-        if ($fulfillment === null) {
+        if (null === $fulfillment) {
             $this->logger->warning('Cannot send shipping notification - fulfillment not found', [
                 'fulfillmentId' => $event->fulfillmentId->toString(),
             ]);
+
             return;
         }
 
         // Fetch order to get customer email
         $order = $this->orderRepository->findById($fulfillment->orderId());
 
-        if ($order === null) {
+        if (null === $order) {
             $this->logger->warning('Cannot send shipping notification - order not found', [
                 'orderId' => $fulfillment->orderId()->toString(),
             ]);
+
             return;
         }
 
@@ -128,7 +130,7 @@ final readonly class FulfillmentShippedSubscriber implements EventSubscriberInte
 
     private function buildTrackingUrl(?string $carrier, ?string $trackingNumber): string
     {
-        if ($carrier === null || $trackingNumber === null) {
+        if (null === $carrier || null === $trackingNumber) {
             return '#';
         }
 

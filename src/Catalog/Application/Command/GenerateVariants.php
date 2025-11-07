@@ -9,7 +9,7 @@ use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Command to generate all variant combinations for a configurable product
+ * Command to generate all variant combinations for a configurable product.
  */
 final readonly class GenerateVariants
 {
@@ -20,5 +20,6 @@ final readonly class GenerateVariants
         public int $defaultStock = 0,
         public bool $activateByDefault = true,
         public ?string $skuBase = null
-    ) {}
+    ) {
+    }
 }

@@ -11,7 +11,7 @@ use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Command to create a single variant
+ * Command to create a single variant.
  */
 final readonly class CreateVariant
 {
@@ -29,5 +29,6 @@ final readonly class CreateVariant
         public bool $trackInventory = true,
         public bool $allowBackorder = false,
         public bool $isActive = true
-    ) {}
+    ) {
+    }
 }

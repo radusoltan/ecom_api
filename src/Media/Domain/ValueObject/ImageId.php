@@ -10,7 +10,8 @@ final readonly class ImageId
 {
     private function __construct(
         private string $value
-    ) {}
+    ) {
+    }
 
     public static function generate(): self
     {

@@ -9,8 +9,6 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Order\Application\Command\CancelOrderCommand;
 use App\Order\Application\Query\GetOrderByIdQuery;
 use App\Order\Presentation\Api\Resource\OrderResource;
-use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -25,11 +23,11 @@ final readonly class CancelOrderProcessor implements ProcessorInterface
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): OrderResource
     {
         if (!$data instanceof OrderResource) {
-            throw new InvalidArgumentException('Expected OrderResource');
+            throw new \InvalidArgumentException('Expected OrderResource');
         }
 
-        $orderId = $uriVariables['id'] ?? throw new InvalidArgumentException('Order ID is required');
-        $tenantId = $data->tenantId ?? throw new InvalidArgumentException('Tenant ID is required');
+        $orderId = $uriVariables['id'] ?? throw new \InvalidArgumentException('Order ID is required');
+        $tenantId = $data->tenantId ?? throw new \InvalidArgumentException('Tenant ID is required');
 
         $command = new CancelOrderCommand(
             orderId: $orderId,
@@ -43,13 +41,13 @@ final readonly class CancelOrderProcessor implements ProcessorInterface
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {
-            throw new RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for query');
         }
 
         $orderDTO = $handledStamp->getResult();
 
-        if ($orderDTO === null) {
-            throw new RuntimeException('Order not found after cancellation');
+        if (null === $orderDTO) {
+            throw new \RuntimeException('Order not found after cancellation');
         }
 
         $resource = new OrderResource();

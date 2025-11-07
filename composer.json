@@ -13,6 +13,7 @@
         "gedmo/doctrine-extensions": "^3.21",
         "gesdinet/jwt-refresh-token-bundle": "^1.5",
         "nelmio/cors-bundle": "^2.5",
+        "nelmio/security-bundle": "^3.6",
         "stof/doctrine-extensions-bundle": "^1.14",
         "stripe/stripe-php": "^18.0",
         "symfony/amqp-messenger": "7.3.*",
@@ -30,7 +31,8 @@
         "symfony/scheduler": "7.3.*",
         "symfony/translation": "7.3.*",
         "symfony/twig-bundle": "7.3.*",
-        "symfony/yaml": "7.3.*"
+        "symfony/yaml": "7.3.*",
+        "webmozart/assert": "^1.12"
     },
     "require-dev": {
         "api-platform/core": "*",

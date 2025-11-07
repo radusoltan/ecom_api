@@ -13,7 +13,7 @@ use Stripe\Refund;
 use Stripe\StripeClient;
 
 /**
- * Stripe Payment Gateway Adapter
+ * Stripe Payment Gateway Adapter.
  *
  * Implements payment operations using Stripe API.
  * Supports card payments with authorize + capture flow.
@@ -72,10 +72,7 @@ final readonly class StripePaymentGateway implements PaymentGatewayInterface
                 'code' => $e->getStripeCode(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('Stripe authorization failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('Stripe authorization failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -88,7 +85,7 @@ final readonly class StripePaymentGateway implements PaymentGatewayInterface
             ]);
 
             $params = [];
-            if ($amountInCents !== null) {
+            if (null !== $amountInCents) {
                 $params['amount_to_capture'] = $amountInCents;
             }
 
@@ -110,10 +107,7 @@ final readonly class StripePaymentGateway implements PaymentGatewayInterface
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('Stripe capture failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('Stripe capture failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -152,10 +146,7 @@ final readonly class StripePaymentGateway implements PaymentGatewayInterface
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('Stripe refund failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('Stripe refund failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -185,10 +176,7 @@ final readonly class StripePaymentGateway implements PaymentGatewayInterface
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('Stripe cancellation failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('Stripe cancellation failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -213,10 +201,7 @@ final readonly class StripePaymentGateway implements PaymentGatewayInterface
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('Stripe status retrieval failed: %s', $e->getMessage()),
-                previous: $e
-            );
+            throw new \RuntimeException(sprintf('Stripe status retrieval failed: %s', $e->getMessage()), previous: $e);
         }
     }
 
@@ -226,20 +211,18 @@ final readonly class StripePaymentGateway implements PaymentGatewayInterface
     }
 
     /**
-     * Map PaymentMethod to Stripe payment method type
+     * Map PaymentMethod to Stripe payment method type.
      */
     private function mapPaymentMethod(PaymentMethod $method): string
     {
         return match (true) {
             $method->isCard() => 'card',
-            default => throw new \InvalidArgumentException(
-                sprintf('Payment method "%s" is not supported by Stripe gateway', $method->value())
-            ),
+            default => throw new \InvalidArgumentException(sprintf('Payment method "%s" is not supported by Stripe gateway', $method->value())),
         };
     }
 
     /**
-     * Map refund reason to Stripe refund reason
+     * Map refund reason to Stripe refund reason.
      */
     private function mapRefundReason(string $reason): string
     {
@@ -250,11 +233,12 @@ final readonly class StripePaymentGateway implements PaymentGatewayInterface
         if (str_contains(strtolower($reason), 'duplicate')) {
             return 'duplicate';
         }
+
         return 'requested_by_customer';
     }
 
     /**
-     * Map cancellation reason to Stripe cancellation reason
+     * Map cancellation reason to Stripe cancellation reason.
      */
     private function mapCancellationReason(string $reason): string
     {
@@ -268,6 +252,7 @@ final readonly class StripePaymentGateway implements PaymentGatewayInterface
         if (str_contains(strtolower($reason), 'abandon')) {
             return 'abandoned';
         }
+
         return 'requested_by_customer';
     }
 }

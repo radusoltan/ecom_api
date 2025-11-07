@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\Exception;
 
-use DomainException;
-
 /**
- * Exception thrown when an invalid or unsupported language code is provided
+ * Exception thrown when an invalid or unsupported language code is provided.
  */
-final class InvalidLanguageCodeException extends DomainException
+final class InvalidLanguageCodeException extends \DomainException
 {
     public static function unsupported(string $code): self
     {

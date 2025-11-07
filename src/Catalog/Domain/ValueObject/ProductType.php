@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Catalog\Domain\ValueObject;
 
 /**
- * ProductType Value Object
+ * ProductType Value Object.
  *
  * Represents the type/structure of a product in the catalog.
  *
@@ -38,13 +38,7 @@ final readonly class ProductType
         private string $value
     ) {
         if (!in_array($value, self::VALID_TYPES, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid product type "%s". Valid types are: %s',
-                    $value,
-                    implode(', ', self::VALID_TYPES)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid product type "%s". Valid types are: %s', $value, implode(', ', self::VALID_TYPES)));
         }
     }
 
@@ -85,31 +79,31 @@ final readonly class ProductType
 
     public function isSimple(): bool
     {
-        return $this->value === self::SIMPLE;
+        return self::SIMPLE === $this->value;
     }
 
     public function isConfigurable(): bool
     {
-        return $this->value === self::CONFIGURABLE;
+        return self::CONFIGURABLE === $this->value;
     }
 
     public function isBundle(): bool
     {
-        return $this->value === self::BUNDLE;
+        return self::BUNDLE === $this->value;
     }
 
     public function isVirtual(): bool
     {
-        return $this->value === self::VIRTUAL;
+        return self::VIRTUAL === $this->value;
     }
 
     public function isSubscription(): bool
     {
-        return $this->value === self::SUBSCRIPTION;
+        return self::SUBSCRIPTION === $this->value;
     }
 
     /**
-     * Check if the product type requires physical shipping
+     * Check if the product type requires physical shipping.
      */
     public function requiresShipping(): bool
     {
@@ -117,7 +111,7 @@ final readonly class ProductType
     }
 
     /**
-     * Check if the product type supports variants/options
+     * Check if the product type supports variants/options.
      */
     public function supportsVariants(): bool
     {
@@ -125,7 +119,7 @@ final readonly class ProductType
     }
 
     /**
-     * Check if the product type can contain other products
+     * Check if the product type can contain other products.
      */
     public function isComposite(): bool
     {

@@ -23,7 +23,7 @@ final readonly class RemoveItemFromCartHandler
         $cartId = CartId::fromString($command->cartId);
         $cart = $this->cartRepository->findById($cartId);
 
-        if ($cart === null) {
+        if (null === $cart) {
             throw CartNotFoundException::withId($command->cartId);
         }
 

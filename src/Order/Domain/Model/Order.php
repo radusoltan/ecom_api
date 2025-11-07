@@ -12,11 +12,9 @@ use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
-use InvalidArgumentException;
 
 /**
- * Order Aggregate Root
+ * Order Aggregate Root.
  *
  * Business Rules:
  * - Order must have at least one order line
@@ -37,6 +35,7 @@ final class Order extends AggregateRoot
     private array $lines = [];
     private Address $shippingAddress;
     private Address $billingAddress;
+    /** @var array<string, mixed> */
     private array $appliedPromotions = [];
     private ?Money $discountAmount = null;
     private ?string $couponCode = null;
@@ -44,8 +43,8 @@ final class Order extends AggregateRoot
     private ?string $taxJurisdiction = null;
     private ?string $taxRuleId = null;
     private float $taxRate = 0.0;
-    private DateTimeImmutable $createdAt;
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $updatedAt;
 
     private function __construct()
     {
@@ -67,21 +66,21 @@ final class Order extends AggregateRoot
         float $taxRate = 0.0
     ): self {
         if (empty($lines)) {
-            throw new InvalidArgumentException('Order must have at least one line item');
+            throw new \InvalidArgumentException('Order must have at least one line item');
         }
 
         foreach ($lines as $line) {
             if (!$line instanceof OrderLine) {
-                throw new InvalidArgumentException('All order lines must be instances of OrderLine');
+                throw new \InvalidArgumentException('All order lines must be instances of OrderLine');
             }
         }
 
-        if (filter_var($customerEmail, FILTER_VALIDATE_EMAIL) === false) {
-            throw new InvalidArgumentException(sprintf('Invalid customer email: "%s"', $customerEmail));
+        if (false === filter_var($customerEmail, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException(sprintf('Invalid customer email: "%s"', $customerEmail));
         }
 
         if (count($appliedPromotions) > 3) {
-            throw new InvalidArgumentException('Cannot apply more than 3 promotions to an order');
+            throw new \InvalidArgumentException('Cannot apply more than 3 promotions to an order');
         }
 
         $order = new self();
@@ -99,8 +98,8 @@ final class Order extends AggregateRoot
         $order->taxJurisdiction = $taxJurisdiction;
         $order->taxRuleId = $taxRuleId;
         $order->taxRate = $taxRate;
-        $order->createdAt = new DateTimeImmutable();
-        $order->updatedAt = new DateTimeImmutable();
+        $order->createdAt = new \DateTimeImmutable();
+        $order->updatedAt = new \DateTimeImmutable();
 
         $order->recordEvent(new OrderPlaced(
             $order->id,
@@ -120,8 +119,8 @@ final class Order extends AggregateRoot
         array $lines,
         Address $shippingAddress,
         Address $billingAddress,
-        DateTimeImmutable $createdAt,
-        DateTimeImmutable $updatedAt,
+        \DateTimeImmutable $createdAt,
+        \DateTimeImmutable $updatedAt,
         array $appliedPromotions = [],
         ?Money $discountAmount = null,
         ?string $couponCode = null,
@@ -174,47 +173,43 @@ final class Order extends AggregateRoot
         $this->recordEvent(new OrderDelivered(
             $this->id,
             $this->tenantId,
-            new DateTimeImmutable(),
+            new \DateTimeImmutable(),
             $deliveryMethod,
             $this->customerEmail,
-            new DateTimeImmutable()
+            new \DateTimeImmutable()
         ));
     }
 
     public function cancel(): void
     {
         if ($this->status->isFinal()) {
-            throw new InvalidArgumentException(sprintf('Cannot cancel order with status: %s', $this->status->value()));
+            throw new \InvalidArgumentException(sprintf('Cannot cancel order with status: %s', $this->status->value()));
         }
 
         if (!$this->status->canTransitionTo(OrderStatus::cancelled())) {
-            throw new InvalidArgumentException(
-                sprintf('Cannot cancel order with status: %s. Can only cancel pending or processing orders', $this->status->value())
-            );
+            throw new \InvalidArgumentException(sprintf('Cannot cancel order with status: %s. Can only cancel pending or processing orders', $this->status->value()));
         }
 
         $oldStatus = $this->status;
         $this->status = OrderStatus::cancelled();
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
-        $this->recordEvent(new OrderCancelled($this->id, $oldStatus));
+        $this->recordEvent(new OrderCancelled($this->id, $this->tenantId, $oldStatus));
     }
 
     private function changeStatus(OrderStatus $newStatus): void
     {
         if ($this->status->isFinal()) {
-            throw new InvalidArgumentException(sprintf('Cannot change status of finalized order (current status: %s)', $this->status->value()));
+            throw new \InvalidArgumentException(sprintf('Cannot change status of finalized order (current status: %s)', $this->status->value()));
         }
 
         if (!$this->status->canTransitionTo($newStatus)) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid status transition from "%s" to "%s"', $this->status->value(), $newStatus->value())
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid status transition from "%s" to "%s"', $this->status->value(), $newStatus->value()));
         }
 
         $oldStatus = $this->status;
         $this->status = $newStatus;
-        $this->updatedAt = new DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new OrderStatusChanged($this->id, $this->tenantId, $oldStatus, $newStatus));
     }
@@ -235,12 +230,12 @@ final class Order extends AggregateRoot
         $subtotal = $this->subtotal();
 
         // Subtract discount from subtotal
-        if ($this->discountAmount !== null) {
+        if (null !== $this->discountAmount) {
             $subtotal = $subtotal->subtract($this->discountAmount);
         }
 
         // Add tax to the discounted subtotal
-        if ($this->taxAmount !== null) {
+        if (null !== $this->taxAmount) {
             return $subtotal->add($this->taxAmount);
         }
 
@@ -317,12 +312,12 @@ final class Order extends AggregateRoot
         return $this->billingAddress;
     }
 
-    public function createdAt(): DateTimeImmutable
+    public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function updatedAt(): DateTimeImmutable
+    public function updatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

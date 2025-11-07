@@ -12,7 +12,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Provider for single fulfillment (GET /api/fulfillments/{id})
+ * Provider for single fulfillment (GET /api/fulfillments/{id}).
  */
 final readonly class FulfillmentItemProvider implements ProviderInterface
 {
@@ -25,13 +25,13 @@ final readonly class FulfillmentItemProvider implements ProviderInterface
     {
         $id = $uriVariables['id'] ?? null;
 
-        if ($id === null) {
+        if (null === $id) {
             throw new NotFoundHttpException('Fulfillment ID is required');
         }
 
         // Get tenant ID from context (set by TenantContextProvider)
         $tenantIdString = $context['tenant_id'] ?? null;
-        if ($tenantIdString === null) {
+        if (null === $tenantIdString) {
             throw new \RuntimeException('Tenant ID not found in context');
         }
         $tenantId = TenantId::fromString($tenantIdString);
@@ -39,7 +39,7 @@ final readonly class FulfillmentItemProvider implements ProviderInterface
 
         $fulfillment = $this->fulfillmentRepository->findById($fulfillmentId);
 
-        if ($fulfillment === null) {
+        if (null === $fulfillment) {
             throw new NotFoundHttpException(sprintf('Fulfillment with ID "%s" not found', $id));
         }
 

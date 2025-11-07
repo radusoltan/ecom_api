@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Cart\Domain\Model;
 
-use InvalidArgumentException;
-
 /**
- * Quantity Value Object
+ * Quantity Value Object.
  *
  * Business Rules:
  * - min: 1
@@ -22,15 +20,11 @@ final readonly class Quantity
     private function __construct(private int $value)
     {
         if ($value < self::MIN_QUANTITY) {
-            throw new InvalidArgumentException(
-                sprintf('Quantity must be at least %d, %d given', self::MIN_QUANTITY, $value)
-            );
+            throw new \InvalidArgumentException(sprintf('Quantity must be at least %d, %d given', self::MIN_QUANTITY, $value));
         }
 
         if ($value > self::MAX_QUANTITY) {
-            throw new InvalidArgumentException(
-                sprintf('Quantity cannot exceed %d, %d given', self::MAX_QUANTITY, $value)
-            );
+            throw new \InvalidArgumentException(sprintf('Quantity cannot exceed %d, %d given', self::MAX_QUANTITY, $value));
         }
     }
 

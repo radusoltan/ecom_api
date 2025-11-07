@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 final class ProductNameTest extends TestCase
 {
     #[Test]
-    public function it_creates_product_name_from_valid_string(): void
+    public function itCreatesProductNameFromValidString(): void
     {
         $name = ProductName::fromString('Test Product');
 
@@ -24,7 +24,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_trims_whitespace(): void
+    public function itTrimsWhitespace(): void
     {
         $name = ProductName::fromString('  Test Product  ');
 
@@ -32,7 +32,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_normalizes_multiple_spaces_to_single_space(): void
+    public function itNormalizesMultipleSpacesToSingleSpace(): void
     {
         $name = ProductName::fromString('Test    Product   Name');
 
@@ -40,7 +40,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_tabs_and_newlines(): void
+    public function itHandlesTabsAndNewlines(): void
     {
         $name = ProductName::fromString("Test\t\tProduct\n\nName");
 
@@ -48,7 +48,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_accepts_minimum_length_name(): void
+    public function itAcceptsMinimumLengthName(): void
     {
         $name = ProductName::fromString('ABC'); // 3 characters
 
@@ -56,7 +56,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_accepts_maximum_length_name(): void
+    public function itAcceptsMaximumLengthName(): void
     {
         $longName = str_repeat('A', 255);
         $name = ProductName::fromString($longName);
@@ -66,7 +66,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_for_empty_string(): void
+    public function itThrowsExceptionForEmptyString(): void
     {
         $this->expectException(InvalidProductNameException::class);
         $this->expectExceptionMessage('Product name cannot be empty');
@@ -75,7 +75,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_for_whitespace_only(): void
+    public function itThrowsExceptionForWhitespaceOnly(): void
     {
         $this->expectException(InvalidProductNameException::class);
         $this->expectExceptionMessage('Product name cannot be empty');
@@ -84,7 +84,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_for_tabs_only(): void
+    public function itThrowsExceptionForTabsOnly(): void
     {
         $this->expectException(InvalidProductNameException::class);
         $this->expectExceptionMessage('Product name cannot be empty');
@@ -93,7 +93,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_for_too_short_name(): void
+    public function itThrowsExceptionForTooShortName(): void
     {
         $this->expectException(InvalidProductNameException::class);
         $this->expectExceptionMessage('Product name "AB" is too short. Minimum length is 3 characters');
@@ -102,7 +102,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_for_too_long_name(): void
+    public function itThrowsExceptionForTooLongName(): void
     {
         $this->expectException(InvalidProductNameException::class);
         $this->expectExceptionMessage('is too long (256 characters). Maximum length is 255 characters');
@@ -112,7 +112,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_unicode_characters(): void
+    public function itHandlesUnicodeCharacters(): void
     {
         $name = ProductName::fromString('Produit Français');
 
@@ -120,7 +120,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_special_characters(): void
+    public function itHandlesSpecialCharacters(): void
     {
         $name = ProductName::fromString('Product & Service (2025)');
 
@@ -128,7 +128,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_numbers_in_name(): void
+    public function itHandlesNumbersInName(): void
     {
         $name = ProductName::fromString('iPhone 15 Pro Max');
 
@@ -136,7 +136,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_compares_equal_names(): void
+    public function itComparesEqualNames(): void
     {
         $name1 = ProductName::fromString('Test Product');
         $name2 = ProductName::fromString('Test Product');
@@ -145,7 +145,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_compares_different_names(): void
+    public function itComparesDifferentNames(): void
     {
         $name1 = ProductName::fromString('Test Product');
         $name2 = ProductName::fromString('Other Product');
@@ -154,7 +154,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_compares_normalized_names_as_equal(): void
+    public function itComparesNormalizedNamesAsEqual(): void
     {
         $name1 = ProductName::fromString('  Test    Product  ');
         $name2 = ProductName::fromString('Test Product');
@@ -163,7 +163,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_is_case_sensitive_in_comparison(): void
+    public function itIsCaseSensitiveInComparison(): void
     {
         $name1 = ProductName::fromString('Test Product');
         $name2 = ProductName::fromString('test product');
@@ -172,7 +172,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_implements_stringable(): void
+    public function itImplementsStringable(): void
     {
         $name = ProductName::fromString('Test Product');
 
@@ -181,7 +181,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_is_immutable(): void
+    public function itIsImmutable(): void
     {
         $name = ProductName::fromString('Test Product');
         $value = $name->value();
@@ -194,7 +194,7 @@ final class ProductNameTest extends TestCase
 
     #[Test]
     #[DataProvider('validProductNamesProvider')]
-    public function it_accepts_various_valid_names(string $input, string $expected): void
+    public function itAcceptsVariousValidNames(string $input, string $expected): void
     {
         $name = ProductName::fromString($input);
 
@@ -218,7 +218,7 @@ final class ProductNameTest extends TestCase
 
     #[Test]
     #[DataProvider('invalidProductNamesProvider')]
-    public function it_rejects_invalid_names(string $invalidName, string $expectedMessage): void
+    public function itRejectsInvalidNames(string $invalidName, string $expectedMessage): void
     {
         $this->expectException(InvalidProductNameException::class);
         $this->expectExceptionMessage($expectedMessage);
@@ -237,7 +237,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_is_readonly(): void
+    public function itIsReadonly(): void
     {
         $name = ProductName::fromString('Test Product');
         $reflection = new \ReflectionClass($name);
@@ -246,7 +246,7 @@ final class ProductNameTest extends TestCase
     }
 
     #[Test]
-    public function it_is_final(): void
+    public function itIsFinal(): void
     {
         $reflection = new \ReflectionClass(ProductName::class);
 

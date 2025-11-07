@@ -16,7 +16,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
- * User fixtures - creates admin and staff users
+ * User fixtures - creates admin and staff users.
  */
 class UserFixtures extends Fixture
 {

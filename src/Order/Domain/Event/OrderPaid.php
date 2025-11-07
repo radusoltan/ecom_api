@@ -7,7 +7,7 @@ namespace App\Order\Domain\Event;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * OrderPaid Domain Event
+ * OrderPaid Domain Event.
  *
  * Emitted when payment for an order has been successfully captured.
  * This event triggers:

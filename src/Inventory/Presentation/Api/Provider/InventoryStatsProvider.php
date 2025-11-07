@@ -15,7 +15,8 @@ final class InventoryStatsProvider implements ProviderInterface
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly TenantContext $tenantContext
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
@@ -47,7 +48,7 @@ final class InventoryStatsProvider implements ProviderInterface
             topProducts: $topProducts,
             stockMovement: [
                 'turnoverRate' => 0, // TODO: Calculate actual turnover rate
-                'itemsCount' => $summary['totalProducts']
+                'itemsCount' => $summary['totalProducts'],
             ],
             generatedAt: (new \DateTimeImmutable())->format('Y-m-d H:i:s')
         );
@@ -63,7 +64,7 @@ final class InventoryStatsProvider implements ProviderInterface
                 'totalAvailable' => 0,
                 'lowStockCount' => 0,
                 'totalProducts' => 0,
-                'totalWarehouses' => 0
+                'totalWarehouses' => 0,
             ],
             warehouses: [],
             stockLevels: [],
@@ -71,7 +72,7 @@ final class InventoryStatsProvider implements ProviderInterface
             topProducts: [],
             stockMovement: [
                 'turnoverRate' => 0,
-                'itemsCount' => 0
+                'itemsCount' => 0,
             ],
             generatedAt: (new \DateTimeImmutable())->format('Y-m-d H:i:s')
         );
@@ -112,7 +113,7 @@ final class InventoryStatsProvider implements ProviderInterface
             'totalAvailable' => (int) $totals['total_on_hand'] - (int) $totals['total_reserved'] - (int) $totals['total_allocated'],
             'lowStockCount' => $lowStockCount,
             'totalProducts' => (int) $totals['total_products'],
-            'totalWarehouses' => $totalWarehouses
+            'totalWarehouses' => $totalWarehouses,
         ];
     }
 
@@ -143,7 +144,7 @@ final class InventoryStatsProvider implements ProviderInterface
                 'product_count' => (int) $row['product_count'],
                 'total_on_hand' => (int) $row['total_on_hand'],
                 'total_reserved' => (int) $row['total_reserved'],
-                'total_available' => (int) $row['total_available']
+                'total_available' => (int) $row['total_available'],
             ];
         }, $results);
     }
@@ -184,7 +185,7 @@ final class InventoryStatsProvider implements ProviderInterface
                 'reserved' => (int) $row['reserved'],
                 'allocated' => (int) $row['allocated'],
                 'available' => (int) $row['available'],
-                'low_stock_threshold' => (int) $row['low_stock_threshold']
+                'low_stock_threshold' => (int) $row['low_stock_threshold'],
             ];
         }, $results);
     }
@@ -221,7 +222,7 @@ final class InventoryStatsProvider implements ProviderInterface
                 'total_on_hand' => (int) $row['total_on_hand'],
                 'total_reserved' => (int) $row['total_reserved'],
                 'total_available' => (int) $row['total_available'],
-                'warehouse_count' => (int) $row['warehouse_count']
+                'warehouse_count' => (int) $row['warehouse_count'],
             ];
         }, $results);
     }
@@ -262,7 +263,7 @@ final class InventoryStatsProvider implements ProviderInterface
         return array_map(function ($row) {
             return [
                 'stock_level' => $row['stock_level'],
-                'count' => (int) $row['count']
+                'count' => (int) $row['count'],
             ];
         }, $result);
     }

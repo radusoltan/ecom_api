@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Processor to mark fulfillment as failed (PATCH /api/fulfillments/{id}/mark-failed)
+ * Processor to mark fulfillment as failed (PATCH /api/fulfillments/{id}/mark-failed).
  *
  * Expected JSON body:
  * {
@@ -34,7 +34,7 @@ final readonly class MarkFailedProcessor implements ProcessorInterface
     {
         $id = $uriVariables['id'] ?? null;
 
-        if ($id === null) {
+        if (null === $id) {
             throw new BadRequestHttpException('Fulfillment ID is required');
         }
 
@@ -43,12 +43,12 @@ final readonly class MarkFailedProcessor implements ProcessorInterface
 
         $reason = $payload['reason'] ?? null;
 
-        if ($reason === null || trim($reason) === '') {
+        if (null === $reason || '' === trim($reason)) {
             throw new BadRequestHttpException('Failure reason is required');
         }
 
         $tenantIdString = $context['tenant_id'] ?? null;
-        if ($tenantIdString === null) {
+        if (null === $tenantIdString) {
             throw new \RuntimeException('Tenant ID not found in context');
         }
         $tenantId = TenantId::fromString($tenantIdString);

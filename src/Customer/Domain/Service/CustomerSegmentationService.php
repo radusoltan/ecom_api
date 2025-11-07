@@ -9,7 +9,7 @@ use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Shared\Domain\ValueObject\Money;
 
 /**
- * Customer Segmentation Service
+ * Customer Segmentation Service.
  *
  * Determines the appropriate customer segment based on business rules:
  * - VIP: total_spent > 1000 EUR OR loyalty_points > 500
@@ -25,16 +25,17 @@ final class CustomerSegmentationService
     private const VIP_LOYALTY_POINTS_THRESHOLD = 500;
 
     /**
-     * Evaluate the appropriate segment for a customer based on their activity
+     * Evaluate the appropriate segment for a customer based on their activity.
      *
-     * @param Customer $customer The customer to evaluate
+     * @param Customer   $customer   The customer to evaluate
      * @param Money|null $totalSpent Total amount spent by customer (optional, calculated from orders)
+     *
      * @return CustomerSegment The recommended segment
      */
     public function evaluateSegment(Customer $customer, ?Money $totalSpent = null): CustomerSegment
     {
         // Rule 1: If total spent > 1000 EUR, assign VIP
-        if ($totalSpent !== null && $totalSpent->getAmount() > self::VIP_TOTAL_SPENT_THRESHOLD) {
+        if (null !== $totalSpent && $totalSpent->getAmount() > self::VIP_TOTAL_SPENT_THRESHOLD) {
             return CustomerSegment::vip();
         }
 
@@ -54,10 +55,11 @@ final class CustomerSegmentationService
     }
 
     /**
-     * Check if a customer should be upgraded to a different segment
+     * Check if a customer should be upgraded to a different segment.
      *
-     * @param Customer $customer The customer to check
+     * @param Customer   $customer   The customer to check
      * @param Money|null $totalSpent Total amount spent (optional)
+     *
      * @return bool True if segment should change
      */
     public function shouldChangeSegment(Customer $customer, ?Money $totalSpent = null): bool
@@ -69,10 +71,11 @@ final class CustomerSegmentationService
     }
 
     /**
-     * Get the recommended segment for a customer
+     * Get the recommended segment for a customer.
      *
-     * @param Customer $customer The customer
+     * @param Customer   $customer   The customer
      * @param Money|null $totalSpent Total amount spent (optional)
+     *
      * @return CustomerSegment The recommended segment (may be same as current)
      */
     public function getRecommendedSegment(Customer $customer, ?Money $totalSpent = null): CustomerSegment
@@ -81,7 +84,7 @@ final class CustomerSegmentationService
     }
 
     /**
-     * Get VIP total spent threshold in cents
+     * Get VIP total spent threshold in cents.
      */
     public function getVipTotalSpentThreshold(): int
     {
@@ -89,7 +92,7 @@ final class CustomerSegmentationService
     }
 
     /**
-     * Get VIP loyalty points threshold
+     * Get VIP loyalty points threshold.
      */
     public function getVipLoyaltyPointsThreshold(): int
     {

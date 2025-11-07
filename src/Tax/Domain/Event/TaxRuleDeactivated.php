@@ -8,7 +8,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Domain\ValueObject\TaxRuleId;
 
 /**
- * Tax Rule Deactivated Domain Event
+ * Tax Rule Deactivated Domain Event.
  *
  * Dispatched when a tax rule is deactivated.
  */

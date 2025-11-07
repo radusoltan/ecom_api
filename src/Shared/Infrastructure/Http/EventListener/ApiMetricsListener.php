@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * API Metrics Listener
+ * API Metrics Listener.
  *
  * Collects API request metrics:
  * - api_requests_total (counter)
@@ -68,7 +68,7 @@ final class ApiMetricsListener implements EventSubscriberInterface
         }
 
         $startTime = $request->attributes->get(self::REQUEST_START_TIME_ATTRIBUTE);
-        if ($startTime === null) {
+        if (null === $startTime) {
             return;
         }
 
@@ -102,7 +102,7 @@ final class ApiMetricsListener implements EventSubscriberInterface
     }
 
     /**
-     * Normalize path to avoid high cardinality
+     * Normalize path to avoid high cardinality.
      *
      * Replaces UUIDs/ULIDs with placeholders
      */

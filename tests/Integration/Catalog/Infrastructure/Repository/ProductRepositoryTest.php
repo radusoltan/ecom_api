@@ -5,17 +5,16 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Catalog\Infrastructure\Repository;
 
 use App\Catalog\Domain\Model\CategoryId;
-use App\Catalog\Domain\Model\ProductName;
 use App\Catalog\Domain\Model\Product;
 use App\Catalog\Domain\Model\ProductId;
 use App\Catalog\Domain\Model\ProductImage;
+use App\Catalog\Domain\Model\ProductName;
 use App\Catalog\Domain\Model\SKU;
 use App\Catalog\Domain\Model\Slug;
 use App\Catalog\Domain\Model\Stock;
 use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use DAMA\DoctrineTestBundle\Doctrine\DBAL\StaticDriver;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class ProductRepositoryTest extends KernelTestCase
@@ -171,7 +170,7 @@ final class ProductRepositoryTest extends KernelTestCase
     {
         $tenantId = TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab');
 
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 5; ++$i) {
             $product = Product::create(
                 id: ProductId::generate(),
                 tenantId: $tenantId,
@@ -355,8 +354,8 @@ final class ProductRepositoryTest extends KernelTestCase
         $tenant1Products = $this->repository->findByTenant($tenant1Id);
         $tenant2Products = $this->repository->findByTenant($tenant2Id);
 
-        $tenant1SKUs = array_map(fn($p) => $p->sku()->value(), $tenant1Products);
-        $tenant2SKUs = array_map(fn($p) => $p->sku()->value(), $tenant2Products);
+        $tenant1SKUs = array_map(fn ($p) => $p->sku()->value(), $tenant1Products);
+        $tenant2SKUs = array_map(fn ($p) => $p->sku()->value(), $tenant2Products);
 
         $this->assertContains('TNA-TST-100001', $tenant1SKUs);
         $this->assertNotContains('TNB-TST-100001', $tenant1SKUs);

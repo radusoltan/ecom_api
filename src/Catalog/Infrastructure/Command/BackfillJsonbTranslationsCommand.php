@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Command;
 
-use App\Catalog\Domain\ValueObject\LocalizedString;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -96,6 +95,7 @@ final class BackfillJsonbTranslationsCommand extends Command
 
         if (empty($entities)) {
             $io->error('Invalid entity type specified');
+
             return Command::FAILURE;
         }
 
@@ -133,12 +133,14 @@ final class BackfillJsonbTranslationsCommand extends Command
 
             if (!$result) {
                 $io->error('ext_translations table does not exist. Gedmo translations not found.');
+
                 return false;
             }
 
             return true;
         } catch (\Exception $e) {
-            $io->error('Failed to check ext_translations table: ' . $e->getMessage());
+            $io->error('Failed to check ext_translations table: '.$e->getMessage());
+
             return false;
         }
     }
@@ -159,7 +161,8 @@ final class BackfillJsonbTranslationsCommand extends Command
         };
 
         if (!$className) {
-            $io->error('Unknown entity type: ' . $entityType);
+            $io->error('Unknown entity type: '.$entityType);
+
             return 0;
         }
 
@@ -174,8 +177,9 @@ final class BackfillJsonbTranslationsCommand extends Command
 
         // Count total entities to process
         $totalCount = $this->getTotalCount($tableName, $tenantId, $lastProcessedId);
-        if ($totalCount === 0) {
+        if (0 === $totalCount) {
             $io->info('No entities to process');
+
             return 0;
         }
 
@@ -221,7 +225,7 @@ final class BackfillJsonbTranslationsCommand extends Command
                     }
                 }
 
-                $processed++;
+                ++$processed;
                 $progressBar->advance();
             }
 
@@ -280,12 +284,12 @@ final class BackfillJsonbTranslationsCommand extends Command
         array $jsonbData
     ): void {
         $sql = sprintf(
-            "UPDATE %s SET
+            'UPDATE %s SET
                 name_translations = :name,
                 description_translations = :description%s
-            WHERE id = :id",
+            WHERE id = :id',
             $tableName,
-            $tableName === 'catalog_products' ? ', short_description_translations = :short_description' : ''
+            'catalog_products' === $tableName ? ', short_description_translations = :short_description' : ''
         );
 
         $params = [
@@ -294,7 +298,7 @@ final class BackfillJsonbTranslationsCommand extends Command
             'description' => json_encode($jsonbData['description']),
         ];
 
-        if ($tableName === 'catalog_products') {
+        if ('catalog_products' === $tableName) {
             $params['short_description'] = json_encode($jsonbData['short_description']);
         }
 
@@ -303,16 +307,16 @@ final class BackfillJsonbTranslationsCommand extends Command
 
     private function getTotalCount(string $tableName, string $tenantId, ?string $lastProcessedId): int
     {
-        $sql = sprintf("SELECT COUNT(*) FROM %s WHERE 1=1", $tableName);
+        $sql = sprintf('SELECT COUNT(*) FROM %s WHERE 1=1', $tableName);
         $params = [];
 
-        if ($tenantId !== '*') {
-            $sql .= " AND tenant_id = :tenant_id";
+        if ('*' !== $tenantId) {
+            $sql .= ' AND tenant_id = :tenant_id';
             $params['tenant_id'] = $tenantId;
         }
 
         if ($lastProcessedId) {
-            $sql .= " AND id > :last_id";
+            $sql .= ' AND id > :last_id';
             $params['last_id'] = $lastProcessedId;
         }
 
@@ -326,20 +330,20 @@ final class BackfillJsonbTranslationsCommand extends Command
         int $offset,
         ?string $lastProcessedId
     ): array {
-        $sql = sprintf("SELECT id, tenant_id FROM %s WHERE 1=1", $tableName);
+        $sql = sprintf('SELECT id, tenant_id FROM %s WHERE 1=1', $tableName);
         $params = [];
 
-        if ($tenantId !== '*') {
-            $sql .= " AND tenant_id = :tenant_id";
+        if ('*' !== $tenantId) {
+            $sql .= ' AND tenant_id = :tenant_id';
             $params['tenant_id'] = $tenantId;
         }
 
         if ($lastProcessedId) {
-            $sql .= " AND id > :last_id";
+            $sql .= ' AND id > :last_id';
             $params['last_id'] = $lastProcessedId;
         }
 
-        $sql .= " ORDER BY id ASC LIMIT :limit OFFSET :offset";
+        $sql .= ' ORDER BY id ASC LIMIT :limit OFFSET :offset';
         $params['limit'] = $batchSize;
         $params['offset'] = $offset;
 
@@ -348,12 +352,12 @@ final class BackfillJsonbTranslationsCommand extends Command
 
     private function getLastProcessedId(string $entityType, string $tenantId): ?string
     {
-        $sql = "SELECT last_processed_id FROM i18n_backfill_tracking
-                WHERE entity_type = :entity_type AND tenant_id = :tenant_id";
+        $sql = 'SELECT last_processed_id FROM i18n_backfill_tracking
+                WHERE entity_type = :entity_type AND tenant_id = :tenant_id';
 
         $result = $this->connection->fetchOne($sql, [
             'entity_type' => $entityType,
-            'tenant_id' => $tenantId === '*' ? 'all' : $tenantId,
+            'tenant_id' => '*' === $tenantId ? 'all' : $tenantId,
         ]);
 
         return $result ?: null;
@@ -372,7 +376,7 @@ final class BackfillJsonbTranslationsCommand extends Command
 
         $this->connection->executeStatement($sql, [
             'entity_type' => $entityType,
-            'tenant_id' => $tenantId === '*' ? 'all' : $tenantId,
+            'tenant_id' => '*' === $tenantId ? 'all' : $tenantId,
             'last_id' => $lastId,
         ]);
     }

@@ -18,7 +18,8 @@ final readonly class TenantStamp implements StampInterface
 {
     public function __construct(
         private string $tenantId
-    ) {}
+    ) {
+    }
 
     public function getTenantId(): string
     {

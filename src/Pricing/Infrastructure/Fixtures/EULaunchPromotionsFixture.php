@@ -15,7 +15,7 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * EU Launch Promotions Fixture
+ * EU Launch Promotions Fixture.
  *
  * Seeds common promotion scenarios for EU e-commerce launch:
  * - Welcome discount for new customers
@@ -249,7 +249,7 @@ final class EULaunchPromotionsFixture extends Fixture implements FixtureGroupInt
         );
         echo "  ✓ Fashion Week - 20% off fashion items (September)\n\n";
 
-        echo "✅ Created " . 18 . " EU Launch promotions\n\n";
+        echo '✅ Created '. 18 ." EU Launch promotions\n\n";
     }
 
     private function createPromotion(

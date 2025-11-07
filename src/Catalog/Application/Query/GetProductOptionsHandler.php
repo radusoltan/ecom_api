@@ -10,14 +10,15 @@ use App\Catalog\Domain\Repository\ConfigurableProductRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Handler for GetProductOptions query
+ * Handler for GetProductOptions query.
  */
 #[AsMessageHandler]
 final readonly class GetProductOptionsHandler
 {
     public function __construct(
         private ConfigurableProductRepositoryInterface $configurableProductRepository
-    ) {}
+    ) {
+    }
 
     /**
      * @return OptionDTO[]

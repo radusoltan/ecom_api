@@ -10,7 +10,8 @@ final readonly class ProductImage
         private string $url,
         private int $position,
         private bool $isPrimary
-    ) {}
+    ) {
+    }
 
     public static function create(string $url, int $position = 0, bool $isPrimary = false): self
     {
@@ -44,7 +45,7 @@ final readonly class ProductImage
         return [
             'url' => $this->url,
             'position' => $this->position,
-            'isPrimary' => $this->isPrimary
+            'isPrimary' => $this->isPrimary,
         ];
     }
 

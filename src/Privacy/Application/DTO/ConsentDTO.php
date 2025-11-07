@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Privacy\Application\DTO;
 
 use App\Privacy\Domain\Model\Consent;
-use DateTimeImmutable;
 
 final readonly class ConsentDTO
 {
@@ -19,10 +18,10 @@ final readonly class ConsentDTO
         public string $userAgent,
         public string $consentText,
         public string $consentVersion,
-        public ?DateTimeImmutable $grantedAt,
-        public ?DateTimeImmutable $withdrawnAt,
-        public DateTimeImmutable $createdAt,
-        public DateTimeImmutable $updatedAt
+        public ?\DateTimeImmutable $grantedAt,
+        public ?\DateTimeImmutable $withdrawnAt,
+        public \DateTimeImmutable $createdAt,
+        public \DateTimeImmutable $updatedAt
     ) {
     }
 

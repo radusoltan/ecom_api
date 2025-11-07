@@ -12,7 +12,8 @@ final readonly class ReviewApproved implements DomainEvent
     public function __construct(
         public ReviewId $reviewId,
         public \DateTimeImmutable $occurredAt
-    ) {}
+    ) {
+    }
 
     public function occurredOn(): \DateTimeImmutable
     {

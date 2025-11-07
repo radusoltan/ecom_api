@@ -9,7 +9,7 @@ use App\Search\Domain\Service\SearchServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * AutocompleteProductsHandler
+ * AutocompleteProductsHandler.
  *
  * Handles autocomplete/suggestion requests for products.
  */
@@ -18,7 +18,8 @@ final readonly class AutocompleteProductsHandler
 {
     public function __construct(
         private SearchServiceInterface $searchService,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<ProductSearchHit>

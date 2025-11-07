@@ -6,22 +6,23 @@ namespace App\Catalog\Infrastructure\ApiPlatform\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 use App\Catalog\Domain\Model\ProductId;
+use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * API Platform provider for getting product translations
- * Endpoint: GET /api/products/{id}/translations
+ * Endpoint: GET /api/products/{id}/translations.
  */
 final class GetProductTranslationsProvider implements ProviderInterface
 {
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
         private readonly RequestStack $requestStack
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {

@@ -20,7 +20,7 @@ use Elastic\Elasticsearch\Exception\ServerResponseException;
 use Psr\Log\LoggerInterface;
 
 /**
- * ElasticsearchSearchService
+ * ElasticsearchSearchService.
  *
  * Elasticsearch adapter implementing SearchServiceInterface.
  */
@@ -31,7 +31,8 @@ final readonly class ElasticsearchSearchService implements SearchServiceInterfac
         private IndexManager $indexManager,
         private QueryBuilder $queryBuilder,
         private LoggerInterface $logger,
-    ) {}
+    ) {
+    }
 
     public function search(SearchQuery $query): SearchResult
     {
@@ -66,7 +67,7 @@ final readonly class ElasticsearchSearchService implements SearchServiceInterfac
             $took = (microtime(true) - $startTime) * 1000; // Convert to milliseconds
 
             return $this->mapResponse($response->asArray(), $query, $took);
-        } catch (ClientResponseException | ServerResponseException $e) {
+        } catch (ClientResponseException|ServerResponseException $e) {
             $this->logger->error('Elasticsearch search error', [
                 'exception' => $e->getMessage(),
                 'query' => $query->query,
@@ -128,7 +129,7 @@ final readonly class ElasticsearchSearchService implements SearchServiceInterfac
             $hits = $response->asArray()['hits']['hits'] ?? [];
 
             return array_map(fn (array $hit) => $this->mapHit($hit), $hits);
-        } catch (ClientResponseException | ServerResponseException $e) {
+        } catch (ClientResponseException|ServerResponseException $e) {
             $this->logger->error('Elasticsearch autocomplete error', [
                 'exception' => $e->getMessage(),
                 'query' => $query,
@@ -191,6 +192,7 @@ final readonly class ElasticsearchSearchService implements SearchServiceInterfac
 
     /**
      * @param array<string, mixed> $aggregations
+     *
      * @return array<SearchFacet>
      */
     private function mapFacets(array $aggregations, SearchQuery $query): array

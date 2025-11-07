@@ -17,5 +17,6 @@ final readonly class AllocateStockCommand
         public Quantity $quantity,
         public string $orderId,
         public TenantId $tenantId,
-    ) {}
+    ) {
+    }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\AuditLog\Domain\ValueObject;
 
 use App\AuditLog\Domain\ValueObject\ActionType;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class ActionTypeTest extends TestCase
@@ -19,7 +18,7 @@ final class ActionTypeTest extends TestCase
 
     public function testFromStringThrowsExceptionForInvalidAction(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid action type: invalid_action');
 
         ActionType::fromString('invalid_action');

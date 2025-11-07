@@ -23,10 +23,8 @@ final readonly class AuthorizePaymentHandler
     {
         $payment = $this->paymentRepository->findById($command->id, $command->tenantId);
 
-        if ($payment === null) {
-            throw new \RuntimeException(
-                sprintf('Payment with ID "%s" not found', $command->id->toString())
-            );
+        if (null === $payment) {
+            throw new \RuntimeException(sprintf('Payment with ID "%s" not found', $command->id->toString()));
         }
 
         $this->logger->info('Authorizing payment via gateway', [

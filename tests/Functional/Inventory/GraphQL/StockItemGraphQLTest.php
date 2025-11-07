@@ -15,7 +15,7 @@ use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * Functional tests for Stock Item GraphQL API
+ * Functional tests for Stock Item GraphQL API.
  *
  * Tests GraphQL queries and mutations for stock items
  */
@@ -82,10 +82,10 @@ final class StockItemGraphQLTest extends ApiTestCase
 
         return static::createClient([], [
             'headers' => [
-                'authorization' => 'Bearer ' . $token,
+                'authorization' => 'Bearer '.$token,
                 'content-type' => 'application/json',
                 'X-Tenant-ID' => $this->tenantId->toString(),
-            ]
+            ],
         ]);
     }
 
@@ -213,7 +213,7 @@ query GetStockItem($id: ID!) {
 GRAPHQL;
 
         $variables = [
-            'id' => '/api/stock-items/' . $createdId,
+            'id' => '/api/stock-items/'.$createdId,
         ];
 
         $client->request('POST', '/api/v1/graphql', [
@@ -293,7 +293,7 @@ GRAPHQL;
 
         // First create a stock item and reserve some quantity
         $this->createStockItem($client);
-        $reservationId = 'RESERVATION-' . uniqid();
+        $reservationId = 'RESERVATION-'.uniqid();
         $this->reserveStock($client, 30, $reservationId);
 
         $mutation = <<<'GRAPHQL'
@@ -343,7 +343,7 @@ GRAPHQL;
 
         // First create a stock item and reserve some quantity
         $this->createStockItem($client);
-        $reservationId = 'RESERVATION-' . uniqid();
+        $reservationId = 'RESERVATION-'.uniqid();
         $this->reserveStock($client, 25, $reservationId);
 
         $mutation = <<<'GRAPHQL'
@@ -435,7 +435,7 @@ GRAPHQL;
                         'quantity' => 75,
                     ],
                 ],
-                'referenceId' => 'BULK-ORDER-' . uniqid(),
+                'referenceId' => 'BULK-ORDER-'.uniqid(),
             ],
         ];
 
@@ -476,6 +476,7 @@ GRAPHQL;
 
         $this->assertResponseIsSuccessful();
         $response = $client->getResponse()->toArray();
+
         return $response['id'];
     }
 

@@ -11,13 +11,10 @@ final class StorefrontProductDto
     public function __construct(
         #[Groups(['storefront:read'])]
         public readonly string $id,
-
         #[Groups(['storefront:read'])]
         public readonly string $slug,
-
         #[Groups(['storefront:read'])]
         public readonly string $name,
-
         #[Groups(['storefront:read'])]
         public readonly array $price, // ['amount' => int, 'currency' => string]
 
@@ -26,20 +23,19 @@ final class StorefrontProductDto
 
         #[Groups(['storefront:read'])]
         public readonly bool $isFeatured = false,
-
         #[Groups(['storefront:read'])]
         public readonly ?float $rating = null,
-
         #[Groups(['storefront:read'])]
         public readonly ?string $availability = null,
-
         #[Groups(['storefront:read'])]
         public readonly ?array $breadcrumbs = null, // [['name' => string, 'slug' => string], ...]
 
         #[Groups(['storefront:read'])]
         public readonly ?string $description = null
-    ) {}
+    ) {
+    }
 
+    /** @param array<string, mixed> $data */
     public static function fromArray(array $data): self
     {
         return new self(

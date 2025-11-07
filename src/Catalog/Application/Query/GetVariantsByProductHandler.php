@@ -9,14 +9,15 @@ use App\Catalog\Domain\Repository\ConfigurableProductRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Handler for GetVariantsByProduct query
+ * Handler for GetVariantsByProduct query.
  */
 #[AsMessageHandler]
 final readonly class GetVariantsByProductHandler
 {
     public function __construct(
         private ConfigurableProductRepositoryInterface $configurableProductRepository
-    ) {}
+    ) {
+    }
 
     /**
      * @return array{variants: VariantDTO[], total: int, page: int, pages: int}
@@ -33,7 +34,7 @@ final readonly class GetVariantsByProductHandler
                 'variants' => [],
                 'total' => 0,
                 'page' => $query->page,
-                'pages' => 0
+                'pages' => 0,
             ];
         }
 
@@ -41,7 +42,7 @@ final readonly class GetVariantsByProductHandler
 
         foreach ($configurableProduct->getVariants() as $variant) {
             // Filter by active status if specified
-            if ($query->activeOnly !== null && $variant->isActive() !== $query->activeOnly) {
+            if (null !== $query->activeOnly && $variant->isActive() !== $query->activeOnly) {
                 continue;
             }
 
@@ -52,6 +53,7 @@ final readonly class GetVariantsByProductHandler
                     $variantValueMap = $variant->getOptionValueMap();
                     if (!isset($variantValueMap[$optionCode]) || $variantValueMap[$optionCode] !== $valueCode) {
                         $matches = false;
+
                         break;
                     }
                 }
@@ -71,7 +73,7 @@ final readonly class GetVariantsByProductHandler
                 allowBackorder: $variant->getStock()->allowBackorder(),
                 isActive: $variant->isActive(),
                 isAvailable: $variant->isAvailable(),
-                images: array_map(fn($img) => $img->toArray(), $variant->getImages())
+                images: array_map(fn ($img) => $img->toArray(), $variant->getImages())
             );
         }
 
@@ -85,7 +87,7 @@ final readonly class GetVariantsByProductHandler
             'variants' => $paginatedVariants,
             'total' => $total,
             'page' => $query->page,
-            'pages' => $pages
+            'pages' => $pages,
         ];
     }
 }

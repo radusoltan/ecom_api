@@ -361,6 +361,7 @@ final class PaymentTest extends TestCase
             gateway: PaymentGateway::stripe()
         );
         $payment->popEvents(); // Clear creation event
+
         return $payment;
     }
 
@@ -369,6 +370,7 @@ final class PaymentTest extends TestCase
         $payment = $this->createPendingPayment();
         $payment->authorize('pi_abc123xyz');
         $payment->popEvents(); // Clear authorization event
+
         return $payment;
     }
 
@@ -377,6 +379,7 @@ final class PaymentTest extends TestCase
         $payment = $this->createAuthorizedPayment();
         $payment->capture();
         $payment->popEvents(); // Clear capture event
+
         return $payment;
     }
 }

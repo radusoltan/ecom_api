@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Cart\Domain\Model;
 
 /**
- * CartStatus Enum
+ * CartStatus Enum.
  *
  * Status values:
  * - Active: Cart is being used
@@ -35,17 +35,17 @@ enum CartStatus: string
 
     public function isActive(): bool
     {
-        return $this === self::ACTIVE;
+        return self::ACTIVE === $this;
     }
 
     public function isExpired(): bool
     {
-        return $this === self::EXPIRED;
+        return self::EXPIRED === $this;
     }
 
     public function isConverted(): bool
     {
-        return $this === self::CONVERTED;
+        return self::CONVERTED === $this;
     }
 
     public function value(): string

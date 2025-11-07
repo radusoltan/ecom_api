@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tenant\Presentation\Api\Processor;
 
-use InvalidArgumentException;
-use RuntimeException;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Tenant\Application\Command\UpdateTenantCommand;
@@ -33,15 +31,15 @@ final readonly class UpdateTenantProcessor implements ProcessorInterface
         array $context = []
     ): TenantResource {
         if (!$data instanceof TenantResource) {
-            throw new InvalidArgumentException('Expected TenantResource');
+            throw new \InvalidArgumentException('Expected TenantResource');
         }
 
         if (!isset($uriVariables['id'])) {
-            throw new InvalidArgumentException('Tenant ID is required in URI');
+            throw new \InvalidArgumentException('Tenant ID is required in URI');
         }
 
         if (null === $data->name || null === $data->ownerEmail) {
-            throw new InvalidArgumentException('Name and ownerEmail are required');
+            throw new \InvalidArgumentException('Name and ownerEmail are required');
         }
 
         $tenantId = (string) $uriVariables['id'];
@@ -61,13 +59,13 @@ final readonly class UpdateTenantProcessor implements ProcessorInterface
         $stamp = $envelope->last(HandledStamp::class);
 
         if (!$stamp instanceof HandledStamp) {
-            throw new RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for query');
         }
 
         $tenantDTO = $stamp->getResult();
 
         if (null === $tenantDTO) {
-            throw new RuntimeException('Tenant not found after update');
+            throw new \RuntimeException('Tenant not found after update');
         }
 
         return TenantResourceTransformer::fromDTO($tenantDTO);

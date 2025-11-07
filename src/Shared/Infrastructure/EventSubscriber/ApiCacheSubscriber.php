@@ -49,19 +49,21 @@ final class ApiCacheSubscriber implements EventSubscriberInterface
         }
 
         // Only for successful GET requests
-        if ($request->getMethod() !== 'GET' || !$response->isSuccessful()) {
+        if ('GET' !== $request->getMethod() || !$response->isSuccessful()) {
             return;
         }
 
         // Skip if cache explicitly disabled
-        if ($request->headers->get('X-No-Cache') === 'true') {
+        if ('true' === $request->headers->get('X-No-Cache')) {
             $response->headers->set('Cache-Control', 'no-cache, private');
+
             return;
         }
 
         // Skip caching for sensitive routes
         if ($this->isSensitiveRoute($request->getPathInfo())) {
             $response->headers->set('Cache-Control', 'no-cache, private');
+
             return;
         }
 
@@ -81,7 +83,7 @@ final class ApiCacheSubscriber implements EventSubscriberInterface
 
         // Generate ETag for conditional requests
         $content = $response->getContent();
-        if ($content !== false && $content !== '') {
+        if (false !== $content && '' !== $content) {
             $etag = md5($content);
             $response->setEtag($etag);
 

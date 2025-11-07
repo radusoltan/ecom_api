@@ -29,7 +29,8 @@ final class PromotionStackingService
      * Calculate final price after applying stackable promotions.
      *
      * @param Promotion[] $applicablePromotions All applicable promotions (active, valid date, conditions met)
-     * @param Money $originalPrice Original product/cart price
+     * @param Money       $originalPrice        Original product/cart price
+     *
      * @return array{finalPrice: Money, appliedPromotions: array, totalDiscount: Money}
      */
     public function calculatePriceWithPromotions(array $applicablePromotions, Money $originalPrice): array
@@ -80,6 +81,7 @@ final class PromotionStackingService
      * Within same type, sort by priority number (higher first).
      *
      * @param Promotion[] $promotions
+     *
      * @return Promotion[]
      */
     private function sortByStackingPriority(array $promotions): array

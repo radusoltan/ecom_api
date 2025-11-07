@@ -7,7 +7,6 @@ namespace App\Customer\Domain\Event;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Domain\ValueObject\CustomerSegment;
 
-
 final readonly class CustomerSegmentChanged
 {
     public function __construct(

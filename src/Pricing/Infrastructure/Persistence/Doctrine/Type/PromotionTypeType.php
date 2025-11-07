@@ -19,7 +19,7 @@ final class PromotionTypeType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?PromotionType
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
@@ -28,7 +28,7 @@ final class PromotionTypeType extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 

@@ -8,7 +8,6 @@ use App\Privacy\Domain\Model\DataSubjectRequest;
 use App\Privacy\Domain\Repository\DataSubjectRequestRepositoryInterface;
 use App\Privacy\Domain\ValueObject\DataSubjectRequestId;
 use App\Privacy\Domain\ValueObject\RequestType;
-use InvalidArgumentException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -24,9 +23,7 @@ final readonly class SubmitDataSubjectRequestCommandHandler
         // Check if there's already a pending erasure request
         if ($command->requestType->equals(RequestType::erasure())) {
             if ($this->requestRepository->hasPendingErasureRequest($command->customerId)) {
-                throw new InvalidArgumentException(
-                    'A pending erasure request already exists for this customer'
-                );
+                throw new \InvalidArgumentException('A pending erasure request already exists for this customer');
             }
         }
 

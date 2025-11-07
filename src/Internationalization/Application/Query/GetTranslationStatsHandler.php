@@ -8,7 +8,7 @@ use App\Internationalization\Domain\Service\TranslationCoverageService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Get Translation Statistics Query Handler
+ * Get Translation Statistics Query Handler.
  *
  * Returns comprehensive coverage statistics grouped by domain and locale.
  *
@@ -38,7 +38,8 @@ final readonly class GetTranslationStatsHandler
 {
     public function __construct(
         private TranslationCoverageService $coverageService,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<string, mixed>

@@ -29,10 +29,10 @@ final readonly class CreatePromotionCommandHandler
                 type: PromotionType::fromString($command->type),
                 discount: Discount::fromTypeAndValue($command->discountType, $command->discountValue),
                 priority: $command->priority,
-                couponCode: $command->couponCode !== null ? CouponCode::fromString($command->couponCode) : null,
+                couponCode: null !== $command->couponCode ? CouponCode::fromString($command->couponCode) : null,
                 conditions: $command->conditions,
-                validFrom: $command->validFrom !== null ? new \DateTimeImmutable($command->validFrom) : null,
-                validTo: $command->validTo !== null ? new \DateTimeImmutable($command->validTo) : null
+                validFrom: null !== $command->validFrom ? new \DateTimeImmutable($command->validFrom) : null,
+                validTo: null !== $command->validTo ? new \DateTimeImmutable($command->validTo) : null
             );
         } catch (\InvalidArgumentException|\DomainException $exception) {
             throw new \Symfony\Component\HttpKernel\Exception\BadRequestHttpException($exception->getMessage(), $exception);

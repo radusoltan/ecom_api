@@ -16,7 +16,6 @@ use App\Media\Presentation\Api\State\ImageDeleteProcessor;
 use App\Media\Presentation\Api\State\ImageItemProvider;
 use App\Media\Presentation\Api\State\ImageUploadProcessor;
 use App\Media\Presentation\Api\State\RegenerateThumbnailsProcessor;
-use App\Media\Presentation\Api\Resource\ThumbnailRegenerationRequest;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -96,25 +95,25 @@ use Symfony\Component\Validator\Constraints as Assert;
                                             'x' => ['type' => 'number'],
                                             'y' => ['type' => 'number'],
                                             'width' => ['type' => 'number'],
-                                            'height' => ['type' => 'number']
+                                            'height' => ['type' => 'number'],
                                         ],
-                                        'example' => ['x' => 10, 'y' => 20, 'width' => 200, 'height' => 300]
+                                        'example' => ['x' => 10, 'y' => 20, 'width' => 200, 'height' => 300],
                                     ],
                                     'sizes' => [
                                         'type' => 'array',
                                         'items' => ['type' => 'string', 'enum' => ['sm', 'md', 'lg', 'xl']],
-                                        'example' => ['md', 'lg']
-                                    ]
-                                ]
-                            ]
-                        ]
+                                        'example' => ['md', 'lg'],
+                                    ],
+                                ],
+                            ],
+                        ],
                     ])
                 )
             )
         ),
         new Delete(
             processor: ImageDeleteProcessor::class
-        )
+        ),
     ]
 )]
 class ImageResource

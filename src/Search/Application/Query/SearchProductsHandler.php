@@ -12,7 +12,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * SearchProductsHandler
+ * SearchProductsHandler.
  *
  * Handles full-text product search requests.
  */
@@ -21,7 +21,8 @@ final readonly class SearchProductsHandler
 {
     public function __construct(
         private SearchServiceInterface $searchService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(SearchProducts $query): SearchResult
     {

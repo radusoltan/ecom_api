@@ -27,12 +27,12 @@ final readonly class GetAllReturnRequestsHandler
     {
         $tenantId = TenantId::fromString($query->tenantId);
 
-        $returnRequests = $query->status !== null
+        $returnRequests = null !== $query->status
             ? $this->returnRequestRepository->findByStatus($query->status, $tenantId)
             : $this->returnRequestRepository->findByTenantId($tenantId);
 
         return array_map(
-            fn($returnRequest) => ReturnRequestDTO::fromDomain($returnRequest),
+            fn ($returnRequest) => ReturnRequestDTO::fromDomain($returnRequest),
             $returnRequests
         );
     }

@@ -25,7 +25,7 @@ final readonly class GetCustomerByEmailQueryHandler
 
         $customer = $this->customerRepository->findByEmail($email, $tenantId);
 
-        if ($customer === null) {
+        if (null === $customer) {
             return null;
         }
 

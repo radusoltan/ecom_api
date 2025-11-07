@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Metrics;
 
-use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
 use Prometheus\CollectorRegistry;
 use Prometheus\Counter;
 use Prometheus\Gauge;
@@ -33,10 +32,11 @@ final class PrometheusMetricsCollector
 
     public function __construct(
         private readonly CollectorRegistry $collectorRegistry
-    ) {}
+    ) {
+    }
 
     /**
-     * Increment image upload counter
+     * Increment image upload counter.
      */
     public function incrementImageUpload(string $tenantId): void
     {
@@ -44,7 +44,7 @@ final class PrometheusMetricsCollector
     }
 
     /**
-     * Increment product created counter
+     * Increment product created counter.
      */
     public function incrementProductCreated(string $tenantId): void
     {
@@ -52,7 +52,7 @@ final class PrometheusMetricsCollector
     }
 
     /**
-     * Increment category created counter
+     * Increment category created counter.
      */
     public function incrementCategoryCreated(string $tenantId): void
     {
@@ -60,11 +60,11 @@ final class PrometheusMetricsCollector
     }
 
     /**
-     * Record API request latency
+     * Record API request latency.
      *
-     * @param string $tenantId Tenant identifier
-     * @param string $route API route name
-     * @param float $latencySeconds Latency in seconds
+     * @param string $tenantId       Tenant identifier
+     * @param string $route          API route name
+     * @param float  $latencySeconds Latency in seconds
      */
     public function recordApiLatency(string $tenantId, string $route, float $latencySeconds): void
     {
@@ -72,10 +72,10 @@ final class PrometheusMetricsCollector
     }
 
     /**
-     * Record thumbnail generation time
+     * Record thumbnail generation time.
      *
-     * @param string $tenantId Tenant identifier
-     * @param float $durationSeconds Duration in seconds
+     * @param string $tenantId        Tenant identifier
+     * @param float  $durationSeconds Duration in seconds
      */
     public function recordThumbnailGeneration(string $tenantId, float $durationSeconds): void
     {
@@ -83,10 +83,10 @@ final class PrometheusMetricsCollector
     }
 
     /**
-     * Set cache hit ratio gauge
+     * Set cache hit ratio gauge.
      *
      * @param string $tenantId Tenant identifier
-     * @param float $ratio Cache hit ratio (0.0 to 1.0)
+     * @param float  $ratio    Cache hit ratio (0.0 to 1.0)
      */
     public function setCacheHitRatio(string $tenantId, float $ratio): void
     {

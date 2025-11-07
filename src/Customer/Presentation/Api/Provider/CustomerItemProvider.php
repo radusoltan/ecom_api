@@ -9,7 +9,6 @@ use ApiPlatform\State\ProviderInterface;
 use App\Customer\Application\DTO\CustomerDTO;
 use App\Customer\Application\Query\GetCustomerByIdQuery;
 use App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity;
-use InvalidArgumentException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -25,10 +24,10 @@ final readonly class CustomerItemProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?CustomerEntity
     {
-        $customerId = $uriVariables['id'] ?? throw new InvalidArgumentException('Customer ID is required');
+        $customerId = $uriVariables['id'] ?? throw new \InvalidArgumentException('Customer ID is required');
 
         // Get tenant ID from context (set by TenantContextProvider or similar)
-        $tenantId = $context['tenant_id'] ?? throw new InvalidArgumentException('Tenant ID is required');
+        $tenantId = $context['tenant_id'] ?? throw new \InvalidArgumentException('Tenant ID is required');
 
         $envelope = $this->queryBus->dispatch(new GetCustomerByIdQuery($customerId, $tenantId));
         $handledStamp = $envelope->last(HandledStamp::class);
@@ -39,7 +38,7 @@ final readonly class CustomerItemProvider implements ProviderInterface
 
         $customerDTO = $handledStamp->getResult();
 
-        if ($customerDTO === null) {
+        if (null === $customerDTO) {
             return null;
         }
 

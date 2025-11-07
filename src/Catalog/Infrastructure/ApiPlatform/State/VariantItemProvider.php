@@ -13,14 +13,15 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Provider for single variant item
+ * Provider for single variant item.
  */
 final readonly class VariantItemProvider implements ProviderInterface
 {
     public function __construct(
         private ConfigurableProductRepositoryInterface $configurableProductRepository,
         private RequestStack $requestStack
-    ) {}
+    ) {
+    }
 
     public function provide(
         Operation $operation,
@@ -62,6 +63,7 @@ final readonly class VariantItemProvider implements ProviderInterface
         foreach ($configurableProduct->getVariants() as $v) {
             if ($v->getId()->toString() === $variantIdString) {
                 $variant = $v;
+
                 break;
             }
         }
@@ -112,7 +114,7 @@ final readonly class VariantItemProvider implements ProviderInterface
 
         $imagesProperty = $reflection->getProperty('images');
         $imagesProperty->setAccessible(true);
-        $imagesProperty->setValue($entity, array_map(fn($img) => $img->toArray(), $variant->getImages()));
+        $imagesProperty->setValue($entity, array_map(fn ($img) => $img->toArray(), $variant->getImages()));
 
         return $entity;
     }

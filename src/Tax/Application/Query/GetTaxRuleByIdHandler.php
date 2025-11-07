@@ -9,7 +9,7 @@ use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Get Tax Rule By ID Query Handler
+ * Get Tax Rule By ID Query Handler.
  */
 #[AsMessageHandler]
 final readonly class GetTaxRuleByIdHandler
@@ -23,7 +23,7 @@ final readonly class GetTaxRuleByIdHandler
     {
         $taxRule = $this->taxRuleRepository->findById($query->id, $query->tenantId);
 
-        if ($taxRule === null) {
+        if (null === $taxRule) {
             return null;
         }
 

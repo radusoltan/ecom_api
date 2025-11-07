@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Command;
+namespace App\Tenant\Infrastructure\Command;
 
 use App\Shared\Infrastructure\Doctrine\Service\TranslatableHelper;
 use App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity;
@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Demo Command for Translatable and Sluggable Tenant
+ * Demo Command for Translatable and Sluggable Tenant.
  *
  * This command demonstrates:
  * 1. Creating a tenant with English content
@@ -48,9 +48,9 @@ final class DemoTranslatableTenantCommand extends Command
         $io->section('Step 1: Creating Tenant with English Content');
 
         $tenant = new TenantEntity(
-            id: 'demo-' . uniqid(),
+            id: 'demo-'.uniqid(),
             name: 'Acme Corporation',
-            ownerEmail: 'demo-' . uniqid() . '@acme.com',
+            ownerEmail: 'demo-'.uniqid().'@acme.com',
             status: 'active',
             createdAt: new \DateTimeImmutable()
         );
@@ -118,7 +118,7 @@ final class DemoTranslatableTenantCommand extends Command
         $rows = [];
         foreach ($allTranslations as $locale => $fields) {
             foreach ($fields as $field => $value) {
-                $rows[] = [$locale, $field, substr($value, 0, 60) . (strlen($value) > 60 ? '...' : '')];
+                $rows[] = [$locale, $field, substr($value, 0, 60).(strlen($value) > 60 ? '...' : '')];
             }
         }
 

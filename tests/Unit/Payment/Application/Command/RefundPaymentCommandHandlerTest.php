@@ -56,7 +56,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
         $payment = Payment::create(
             id: $paymentId,
             tenantId: $tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 9999,
             currency: 'USD',
             method: PaymentMethod::card(),
@@ -79,7 +79,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
             ->willReturn([
                 'refund_id' => 're_abc123xyz',
                 'refunded_amount' => 5000,
-                'status' => 'refunded'
+                'status' => 'refunded',
             ]);
 
         $this->repository->expects($this->once())
@@ -91,7 +91,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
             ->method('save')
             ->with($this->callback(function (Payment $p) {
                 return $p->status()->isRefunded()
-                    && $p->refundedAmountInCents() === 5000;
+                    && 5000 === $p->refundedAmountInCents();
             }));
 
         // Act
@@ -109,7 +109,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
         $payment = Payment::create(
             id: $paymentId,
             tenantId: $tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 10000,
             currency: 'USD',
             method: PaymentMethod::card(),
@@ -131,14 +131,14 @@ final class RefundPaymentCommandHandlerTest extends TestCase
             ->willReturn([
                 'refund_id' => 're_test123',
                 'refunded_amount' => 10000,
-                'status' => 'refunded'
+                'status' => 'refunded',
             ]);
 
         $this->repository->method('findById')->willReturn($payment);
         $this->repository->expects($this->once())
             ->method('save')
-            ->with($this->callback(fn(Payment $p) =>
-                $p->refundedAmountInCents() === 10000
+            ->with($this->callback(
+                fn (Payment $p) => 10000 === $p->refundedAmountInCents()
             ));
 
         // Act

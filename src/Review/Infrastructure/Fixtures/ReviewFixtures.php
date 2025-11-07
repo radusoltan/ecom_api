@@ -33,7 +33,8 @@ final class ReviewFixtures extends Fixture
 
     public function __construct(
         private readonly MessageBusInterface $commandBus,
-    ) {}
+    ) {
+    }
 
     public function load(ObjectManager $manager): void
     {
@@ -57,10 +58,10 @@ final class ReviewFixtures extends Fixture
 
             $numReviews = mt_rand(1, 5); // 1-5 reviews per product
 
-            for ($i = 0; $i < $numReviews; $i++) {
+            for ($i = 0; $i < $numReviews; ++$i) {
                 $template = self::REVIEW_TEMPLATES[array_rand(self::REVIEW_TEMPLATES)];
                 $customerName = self::CUSTOMER_NAMES[array_rand(self::CUSTOMER_NAMES)];
-                $customerId = 'customer_' . md5($customerName . $productId . $i);
+                $customerId = 'customer_'.md5($customerName.$productId.$i);
 
                 // Some reviews are verified purchases (70% chance)
                 $isVerifiedPurchase = mt_rand(1, 100) <= 70;
@@ -78,7 +79,7 @@ final class ReviewFixtures extends Fixture
                 );
 
                 $this->commandBus->dispatch($command);
-                $reviewCount++;
+                ++$reviewCount;
             }
         }
 

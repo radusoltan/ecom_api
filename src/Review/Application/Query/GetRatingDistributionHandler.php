@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Review\Application\Query;
 
-use App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity;
 use App\Review\Domain\ValueObject\ReviewStatus;
+use App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -14,7 +14,8 @@ final readonly class GetRatingDistributionHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     public function __invoke(GetRatingDistribution $query): array
     {

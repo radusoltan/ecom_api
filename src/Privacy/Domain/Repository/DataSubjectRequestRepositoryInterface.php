@@ -18,42 +18,42 @@ interface DataSubjectRequestRepositoryInterface
     public function findById(DataSubjectRequestId $id): ?DataSubjectRequest;
 
     /**
-     * Find all requests for a customer
+     * Find all requests for a customer.
      *
      * @return DataSubjectRequest[]
      */
     public function findByCustomerId(CustomerId $customerId): array;
 
     /**
-     * Find all requests for a tenant
+     * Find all requests for a tenant.
      *
      * @return DataSubjectRequest[]
      */
     public function findByTenantId(TenantId $tenantId): array;
 
     /**
-     * Find requests by status
+     * Find requests by status.
      *
      * @return DataSubjectRequest[]
      */
     public function findByStatus(RequestStatus $status, ?TenantId $tenantId = null): array;
 
     /**
-     * Find requests by type
+     * Find requests by type.
      *
      * @return DataSubjectRequest[]
      */
     public function findByType(RequestType $type, ?TenantId $tenantId = null): array;
 
     /**
-     * Find overdue requests (past deadline and not completed/rejected)
+     * Find overdue requests (past deadline and not completed/rejected).
      *
      * @return DataSubjectRequest[]
      */
     public function findOverdueRequests(?TenantId $tenantId = null): array;
 
     /**
-     * Check if customer has pending erasure request
+     * Check if customer has pending erasure request.
      */
     public function hasPendingErasureRequest(CustomerId $customerId): bool;
 }

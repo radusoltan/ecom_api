@@ -7,7 +7,7 @@ namespace App\Inventory\Infrastructure\ApiPlatform\Resource;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Single item in a bulk stock operation request
+ * Single item in a bulk stock operation request.
  */
 final class BulkStockOperationItem
 {
@@ -15,11 +15,9 @@ final class BulkStockOperationItem
         #[Assert\NotBlank]
         #[Assert\Uuid]
         public ?string $productId = null,
-
         #[Assert\NotBlank]
         #[Assert\Ulid]
         public ?string $warehouseId = null,
-
         #[Assert\NotBlank]
         #[Assert\Positive]
         public ?int $quantity = null,

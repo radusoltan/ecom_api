@@ -37,6 +37,7 @@ final class CacheIntegrationTest extends KernelTestCase
         $callbackInvoked = false;
         $this->cacheService->get('test_key', function () use (&$callbackInvoked) {
             $callbackInvoked = true;
+
             return 'initial_value';
         });
 
@@ -44,6 +45,7 @@ final class CacheIntegrationTest extends KernelTestCase
         $callbackInvoked = false;
         $result = $this->cacheService->get('test_key', function () use (&$callbackInvoked) {
             $callbackInvoked = true;
+
             return 'new_value';
         });
 
@@ -60,6 +62,7 @@ final class CacheIntegrationTest extends KernelTestCase
         // When: Getting uncached key
         $result = $this->cacheService->get('new_key', function () use (&$callbackInvoked) {
             $callbackInvoked = true;
+
             return 'computed_value';
         });
 
@@ -71,7 +74,7 @@ final class CacheIntegrationTest extends KernelTestCase
     public function testInvalidationRemovesCachedValue(): void
     {
         // Given: Cached value
-        $this->cacheService->get('test_key', fn() => 'cached_value');
+        $this->cacheService->get('test_key', fn () => 'cached_value');
 
         // When: Invalidating the cache
         $result = $this->cacheService->invalidate('test_key');
@@ -83,6 +86,7 @@ final class CacheIntegrationTest extends KernelTestCase
         $callbackInvoked = false;
         $this->cacheService->get('test_key', function () use (&$callbackInvoked) {
             $callbackInvoked = true;
+
             return 'new_value';
         });
 
@@ -92,9 +96,9 @@ final class CacheIntegrationTest extends KernelTestCase
     public function testInvalidateMultipleRemovesAllKeys(): void
     {
         // Given: Multiple cached values
-        $this->cacheService->get('key1', fn() => 'value1');
-        $this->cacheService->get('key2', fn() => 'value2');
-        $this->cacheService->get('key3', fn() => 'value3');
+        $this->cacheService->get('key1', fn () => 'value1');
+        $this->cacheService->get('key2', fn () => 'value2');
+        $this->cacheService->get('key3', fn () => 'value3');
 
         // When: Invalidating all keys
         $this->cacheService->invalidateMultiple(['key1', 'key2', 'key3']);
@@ -102,15 +106,18 @@ final class CacheIntegrationTest extends KernelTestCase
         // Then: All should be cache misses
         $invokedCount = 0;
         $this->cacheService->get('key1', function () use (&$invokedCount) {
-            $invokedCount++;
+            ++$invokedCount;
+
             return 'value1';
         });
         $this->cacheService->get('key2', function () use (&$invokedCount) {
-            $invokedCount++;
+            ++$invokedCount;
+
             return 'value2';
         });
         $this->cacheService->get('key3', function () use (&$invokedCount) {
-            $invokedCount++;
+            ++$invokedCount;
+
             return 'value3';
         });
 
@@ -124,12 +131,12 @@ final class CacheIntegrationTest extends KernelTestCase
         $tenant2Key = $this->cacheService->tenantKey('tenant-2', 'products');
 
         // When: Caching values for both tenants
-        $this->cacheService->get($tenant1Key, fn() => 'tenant1_products');
-        $this->cacheService->get($tenant2Key, fn() => 'tenant2_products');
+        $this->cacheService->get($tenant1Key, fn () => 'tenant1_products');
+        $this->cacheService->get($tenant2Key, fn () => 'tenant2_products');
 
         // Then: Values should be isolated
-        $result1 = $this->cacheService->get($tenant1Key, fn() => 'should_not_be_called');
-        $result2 = $this->cacheService->get($tenant2Key, fn() => 'should_not_be_called');
+        $result1 = $this->cacheService->get($tenant1Key, fn () => 'should_not_be_called');
+        $result2 = $this->cacheService->get($tenant2Key, fn () => 'should_not_be_called');
 
         self::assertSame('tenant1_products', $result1);
         self::assertSame('tenant2_products', $result2);
@@ -142,12 +149,12 @@ final class CacheIntegrationTest extends KernelTestCase
         $frKey = $this->cacheService->localeKey('fr', 'translations');
 
         // When: Caching values for both locales
-        $this->cacheService->get($enKey, fn() => 'English translations');
-        $this->cacheService->get($frKey, fn() => 'Traductions françaises');
+        $this->cacheService->get($enKey, fn () => 'English translations');
+        $this->cacheService->get($frKey, fn () => 'Traductions françaises');
 
         // Then: Values should be isolated
-        $resultEn = $this->cacheService->get($enKey, fn() => 'should_not_be_called');
-        $resultFr = $this->cacheService->get($frKey, fn() => 'should_not_be_called');
+        $resultEn = $this->cacheService->get($enKey, fn () => 'should_not_be_called');
+        $resultFr = $this->cacheService->get($frKey, fn () => 'should_not_be_called');
 
         self::assertSame('English translations', $resultEn);
         self::assertSame('Traductions françaises', $resultFr);
@@ -168,15 +175,18 @@ final class CacheIntegrationTest extends KernelTestCase
         // Then: All values should be cached (no callback invocations)
         $invokedCount = 0;
         $result1 = $this->cacheService->get('key1', function () use (&$invokedCount) {
-            $invokedCount++;
+            ++$invokedCount;
+
             return 'new_value';
         });
         $result2 = $this->cacheService->get('key2', function () use (&$invokedCount) {
-            $invokedCount++;
+            ++$invokedCount;
+
             return 'new_value';
         });
         $result3 = $this->cacheService->get('key3', function () use (&$invokedCount) {
-            $invokedCount++;
+            ++$invokedCount;
+
             return 'new_value';
         });
 
@@ -200,8 +210,8 @@ final class CacheIntegrationTest extends KernelTestCase
         ];
 
         // When: Caching and retrieving
-        $this->cacheService->get('complex_key', fn() => $complexData);
-        $result = $this->cacheService->get('complex_key', fn() => null);
+        $this->cacheService->get('complex_key', fn () => $complexData);
+        $result = $this->cacheService->get('complex_key', fn () => null);
 
         // Then: Data structure should be preserved
         self::assertEquals($complexData, $result);
@@ -223,10 +233,10 @@ final class CacheIntegrationTest extends KernelTestCase
         $key = $this->cacheService->tenantLocaleKey('tenant-123', 'en_US', 'product:1');
 
         // When: Caching value
-        $this->cacheService->get($key, fn() => 'tenant-locale-value');
+        $this->cacheService->get($key, fn () => 'tenant-locale-value');
 
         // Then: Value should be retrievable with same key
-        $result = $this->cacheService->get($key, fn() => 'should_not_be_called');
+        $result = $this->cacheService->get($key, fn () => 'should_not_be_called');
         self::assertSame('tenant-locale-value', $result);
 
         // And: Key format should be correct

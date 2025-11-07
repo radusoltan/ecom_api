@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Inventory\Domain\Model;
 
 /**
- * Reservation Value Object
+ * Reservation Value Object.
  *
  * Represents a stock reservation with expiry time
  *
@@ -60,6 +60,7 @@ final readonly class Reservation
     public function isExpired(?\DateTimeImmutable $now = null): bool
     {
         $now = $now ?? new \DateTimeImmutable();
+
         return $now >= $this->expiresAt;
     }
 
@@ -69,7 +70,7 @@ final readonly class Reservation
     }
 
     /**
-     * Extend reservation expiry time (e.g., when user is still active)
+     * Extend reservation expiry time (e.g., when user is still active).
      */
     public function extend(?\DateTimeImmutable $now = null): self
     {

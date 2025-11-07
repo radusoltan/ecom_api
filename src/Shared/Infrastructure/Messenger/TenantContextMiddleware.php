@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Messenger;
 
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Shared\Infrastructure\Tenant\TenantContext;
-use App\Tenant\Domain\ValueObject\TenantId;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
@@ -29,7 +29,8 @@ final class TenantContextMiddleware implements MiddlewareInterface
     public function __construct(
         private readonly TenantContext $tenantContext,
         private readonly LoggerInterface $logger
-    ) {}
+    ) {
+    }
 
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {

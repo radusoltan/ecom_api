@@ -12,5 +12,6 @@ final readonly class GetProductById
     public function __construct(
         public TenantId $tenantId,
         public ProductId $id
-    ) {}
+    ) {
+    }
 }

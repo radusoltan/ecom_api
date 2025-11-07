@@ -7,7 +7,7 @@ namespace App\Cart\Application\DTO;
 use App\Cart\Domain\Model\Cart;
 
 /**
- * CartSummaryDTO - Lightweight DTO for Cart Summary
+ * CartSummaryDTO - Lightweight DTO for Cart Summary.
  *
  * Contains only essential information (no detailed items)
  */

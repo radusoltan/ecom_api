@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Processor for calculating tax
+ * Processor for calculating tax.
  *
  * Note: We use a Processor (not Provider) because this is a POST operation
  * that transforms input data into a response, similar to a write operation.
@@ -36,7 +36,7 @@ final class CalculateTaxProcessor implements ProcessorInterface
         }
 
         // Validate required fields
-        if ($data->amountInCents === null) {
+        if (null === $data->amountInCents) {
             throw new BadRequestHttpException('amountInCents is required');
         }
 

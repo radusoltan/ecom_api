@@ -35,7 +35,7 @@ class ImageUploadApiTest extends ApiTestCase
         $client->request('POST', '/api/media_images', [
             'headers' => [
                 'Content-Type' => 'multipart/form-data',
-                'X-Tenant-ID' => self::TEST_TENANT_ID
+                'X-Tenant-ID' => self::TEST_TENANT_ID,
             ],
             'extra' => [
                 'parameters' => [
@@ -43,12 +43,12 @@ class ImageUploadApiTest extends ApiTestCase
                     'ownerType' => 'product',
                     'ownerId' => self::TEST_PRODUCT_ID,
                     'title' => 'Product Main Image',
-                    'altText' => 'A beautiful product image'
+                    'altText' => 'A beautiful product image',
                 ],
                 'files' => [
-                    'file' => $uploadedFile
-                ]
-            ]
+                    'file' => $uploadedFile,
+                ],
+            ],
         ]);
 
         $this->assertResponseStatusCodeSame(201);
@@ -77,15 +77,15 @@ class ImageUploadApiTest extends ApiTestCase
         $client->request('POST', '/api/media_images', [
             'headers' => [
                 'Content-Type' => 'multipart/form-data',
-                'X-Tenant-ID' => self::TEST_TENANT_ID
+                'X-Tenant-ID' => self::TEST_TENANT_ID,
             ],
             'extra' => [
                 'parameters' => [
                     'tenantId' => self::TEST_TENANT_ID,
                     'ownerType' => 'product',
-                    'ownerId' => self::TEST_PRODUCT_ID
-                ]
-            ]
+                    'ownerId' => self::TEST_PRODUCT_ID,
+                ],
+            ],
         ]);
 
         $this->assertResponseStatusCodeSame(400);
@@ -107,18 +107,18 @@ class ImageUploadApiTest extends ApiTestCase
         $client->request('POST', '/api/media_images', [
             'headers' => [
                 'Content-Type' => 'multipart/form-data',
-                'X-Tenant-ID' => self::TEST_TENANT_ID
+                'X-Tenant-ID' => self::TEST_TENANT_ID,
             ],
             'extra' => [
                 'parameters' => [
                     'tenantId' => self::TEST_TENANT_ID,
                     'ownerType' => 'product',
-                    'ownerId' => self::TEST_PRODUCT_ID
+                    'ownerId' => self::TEST_PRODUCT_ID,
                 ],
                 'files' => [
-                    'file' => $uploadedFile
-                ]
-            ]
+                    'file' => $uploadedFile,
+                ],
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -126,10 +126,10 @@ class ImageUploadApiTest extends ApiTestCase
         $imageId = $response['id'];
 
         // Now delete the image
-        $client->request('DELETE', '/api/media_images/' . $imageId, [
+        $client->request('DELETE', '/api/media_images/'.$imageId, [
             'headers' => [
-                'X-Tenant-ID' => self::TEST_TENANT_ID
-            ]
+                'X-Tenant-ID' => self::TEST_TENANT_ID,
+            ],
         ]);
 
         $this->assertResponseStatusCodeSame(204);
@@ -154,18 +154,18 @@ class ImageUploadApiTest extends ApiTestCase
         $client->request('POST', '/api/media_images', [
             'headers' => [
                 'Content-Type' => 'multipart/form-data',
-                'X-Tenant-ID' => self::TEST_TENANT_ID
+                'X-Tenant-ID' => self::TEST_TENANT_ID,
             ],
             'extra' => [
                 'parameters' => [
                     'tenantId' => self::TEST_TENANT_ID,
                     'ownerType' => 'category',
-                    'ownerId' => '770e8400-e29b-41d4-a716-446655440000'
+                    'ownerId' => '770e8400-e29b-41d4-a716-446655440000',
                 ],
                 'files' => [
-                    'file' => $uploadedFile
-                ]
-            ]
+                    'file' => $uploadedFile,
+                ],
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -173,20 +173,20 @@ class ImageUploadApiTest extends ApiTestCase
         $imageId = $response['id'];
 
         // Now regenerate thumbnails with crop
-        $client->request('PATCH', '/api/media_images/' . $imageId . '/regenerate-thumbnails', [
+        $client->request('PATCH', '/api/media_images/'.$imageId.'/regenerate-thumbnails', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => self::TEST_TENANT_ID
+                'X-Tenant-ID' => self::TEST_TENANT_ID,
             ],
             'json' => [
                 'cropJson' => [
                     'x' => 10,
                     'y' => 10,
                     'width' => 100,
-                    'height' => 100
+                    'height' => 100,
                 ],
-                'sizes' => ['md', 'lg']
-            ]
+                'sizes' => ['md', 'lg'],
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -209,9 +209,9 @@ class ImageUploadApiTest extends ApiTestCase
         $textColor = imagecolorallocate($image, 255, 255, 255);
 
         imagefilledrectangle($image, 0, 0, $width, $height, $backgroundColor);
-        imagestring($image, 5, $width/2 - 50, $height/2 - 10, 'TEST IMAGE', $textColor);
+        imagestring($image, 5, $width / 2 - 50, $height / 2 - 10, 'TEST IMAGE', $textColor);
 
-        $tempPath = sys_get_temp_dir() . '/' . uniqid('test_image_') . '.jpg';
+        $tempPath = sys_get_temp_dir().'/'.uniqid('test_image_').'.jpg';
         imagejpeg($image, $tempPath, 90);
         imagedestroy($image);
 

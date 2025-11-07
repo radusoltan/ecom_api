@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tenant\Infrastructure\Persistence\Doctrine\Entity;
 
-use DateTimeImmutable;
 use App\Internationalization\Infrastructure\Persistence\Doctrine\Entity\Translation;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\LanguageCode;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\Model\Tenant;
-use App\Tenant\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\ValueObject\TenantName;
 use App\Tenant\Domain\ValueObject\TenantStatus;
 use Doctrine\ORM\Mapping as ORM;
@@ -34,7 +33,7 @@ class TenantEntity
         #[ORM\Column(type: 'string', length: 20)]
         private string $status,
         #[ORM\Column(type: 'datetime_immutable')]
-        private DateTimeImmutable $createdAt,
+        private \DateTimeImmutable $createdAt,
         #[ORM\Column(type: 'string', length: 2)]
         private string $defaultLocale = 'en',
         #[ORM\Column(type: 'json')]
@@ -43,8 +42,7 @@ class TenantEntity
         private int $translationQuota = 10000,
         #[ORM\Column(type: 'integer', options: ['default' => 0])]
         private int $translationUsage = 0
-    )
-    {
+    ) {
     }
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -98,7 +96,7 @@ class TenantEntity
         $this->status = $status;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -164,7 +162,7 @@ class TenantEntity
     public function toDomain(): Tenant
     {
         $enabledLocales = array_map(
-            fn(string $code) => LanguageCode::fromString($code),
+            fn (string $code) => LanguageCode::fromString($code),
             $this->enabledLocales
         );
 
@@ -187,7 +185,7 @@ class TenantEntity
     public static function fromDomain(Tenant $tenant): self
     {
         $enabledLocales = array_map(
-            fn(LanguageCode $locale) => $locale->value(),
+            fn (LanguageCode $locale) => $locale->value(),
             $tenant->enabledLocales()
         );
 
@@ -214,7 +212,7 @@ class TenantEntity
         $this->status = $tenant->status()->value();
         $this->defaultLocale = $tenant->defaultLocale()->value();
         $this->enabledLocales = array_map(
-            fn(LanguageCode $locale) => $locale->value(),
+            fn (LanguageCode $locale) => $locale->value(),
             $tenant->enabledLocales()
         );
         $this->translationQuota = $tenant->translationQuota();

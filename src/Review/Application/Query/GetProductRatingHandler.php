@@ -12,7 +12,8 @@ final readonly class GetProductRatingHandler
 {
     public function __construct(
         private ProductReviewRepositoryInterface $reviewRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(GetProductRating $query): RatingDTO
     {
@@ -28,7 +29,7 @@ final readonly class GetProductRatingHandler
 }
 
 /**
- * DTO for Product Rating
+ * DTO for Product Rating.
  */
 final readonly class RatingDTO
 {
@@ -36,5 +37,6 @@ final readonly class RatingDTO
         public string $productId,
         public float $averageRating,
         public int $reviewCount
-    ) {}
+    ) {
+    }
 }

@@ -9,7 +9,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 
 /**
- * Doctrine Type for TaxRuleId
+ * Doctrine Type for TaxRuleId.
  */
 final class TaxRuleIdType extends Type
 {
@@ -22,7 +22,7 @@ final class TaxRuleIdType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?TaxRuleId
     {
-        if ($value === null || $value instanceof TaxRuleId) {
+        if (null === $value || $value instanceof TaxRuleId) {
             return $value;
         }
 
@@ -31,7 +31,7 @@ final class TaxRuleIdType extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 

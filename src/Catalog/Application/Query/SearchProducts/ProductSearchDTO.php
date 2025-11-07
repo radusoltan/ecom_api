@@ -26,7 +26,8 @@ final readonly class ProductSearchDTO
         public float $averageRating = 0.0,
         public int $reviewCount = 0,
         public bool $isFeatured = false,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $hit

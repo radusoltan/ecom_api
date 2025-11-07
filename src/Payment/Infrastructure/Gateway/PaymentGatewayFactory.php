@@ -8,7 +8,7 @@ use App\Payment\Domain\Service\PaymentGatewayInterface;
 use App\Payment\Domain\ValueObject\PaymentGateway;
 
 /**
- * Payment Gateway Factory
+ * Payment Gateway Factory.
  *
  * Factory for creating payment gateway instances based on gateway type.
  * Uses Symfony's service locator pattern for dependency injection.
@@ -24,7 +24,7 @@ final readonly class PaymentGatewayFactory
     }
 
     /**
-     * Get payment gateway instance by gateway type
+     * Get payment gateway instance by gateway type.
      *
      * @throws \InvalidArgumentException If gateway is not supported
      */
@@ -33,20 +33,14 @@ final readonly class PaymentGatewayFactory
         $gatewayName = $gateway->value();
 
         if (!isset($this->gateways[$gatewayName])) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Payment gateway "%s" is not supported. Available gateways: %s',
-                    $gatewayName,
-                    implode(', ', array_keys($this->gateways))
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Payment gateway "%s" is not supported. Available gateways: %s', $gatewayName, implode(', ', array_keys($this->gateways))));
         }
 
         return $this->gateways[$gatewayName];
     }
 
     /**
-     * Check if gateway is supported
+     * Check if gateway is supported.
      */
     public function supports(PaymentGateway $gateway): bool
     {
@@ -54,7 +48,7 @@ final readonly class PaymentGatewayFactory
     }
 
     /**
-     * Get all supported gateway names
+     * Get all supported gateway names.
      *
      * @return string[]
      */

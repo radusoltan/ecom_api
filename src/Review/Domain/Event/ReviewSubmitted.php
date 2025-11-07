@@ -19,7 +19,8 @@ final readonly class ReviewSubmitted implements DomainEvent
         public ?string $title,
         public ?string $content,
         public \DateTimeImmutable $occurredAt
-    ) {}
+    ) {
+    }
 
     public function occurredOn(): \DateTimeImmutable
     {

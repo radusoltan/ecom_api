@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Doctrine ORM Tax Rule Repository
+ * Doctrine ORM Tax Rule Repository.
  */
 final readonly class DoctrineORMTaxRuleRepository implements TaxRuleRepositoryInterface
 {
@@ -29,7 +29,7 @@ final readonly class DoctrineORMTaxRuleRepository implements TaxRuleRepositoryIn
         $repository = $this->entityManager->getRepository(TaxRuleEntity::class);
         $entity = $repository->find($taxRule->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             // Create new
             $entity = TaxRuleEntity::fromDomainModel($taxRule);
             $this->entityManager->persist($entity);

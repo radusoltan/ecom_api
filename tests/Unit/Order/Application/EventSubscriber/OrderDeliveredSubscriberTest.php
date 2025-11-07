@@ -51,13 +51,13 @@ final class OrderDeliveredSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_implements_event_subscriber_interface(): void
+    public function itImplementsEventSubscriberInterface(): void
     {
         self::assertInstanceOf(EventSubscriberInterface::class, $this->subscriber);
     }
 
     #[Test]
-    public function it_subscribes_to_order_delivered_event(): void
+    public function itSubscribesToOrderDeliveredEvent(): void
     {
         $subscribedEvents = OrderDeliveredSubscriber::getSubscribedEvents();
 
@@ -66,7 +66,7 @@ final class OrderDeliveredSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_sends_delivery_confirmation_email_when_order_is_delivered(): void
+    public function itSendsDeliveryConfirmationEmailWhenOrderIsDelivered(): void
     {
         // Arrange
         $event = new OrderDelivered(
@@ -100,7 +100,7 @@ final class OrderDeliveredSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_logs_error_when_email_fails_but_does_not_throw(): void
+    public function itLogsErrorWhenEmailFailsButDoesNotThrow(): void
     {
         // Arrange
         $event = new OrderDelivered(
@@ -135,7 +135,7 @@ final class OrderDeliveredSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_sends_email_to_customer(): void
+    public function itSendsEmailToCustomer(): void
     {
         // Arrange
         $event = new OrderDelivered(
@@ -163,7 +163,7 @@ final class OrderDeliveredSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_uses_configured_sender_email_and_name(): void
+    public function itUsesConfiguredSenderEmailAndName(): void
     {
         // Arrange
         $event = new OrderDelivered(
@@ -192,7 +192,7 @@ final class OrderDeliveredSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_logs_order_id_tenant_id_and_delivery_details(): void
+    public function itLogsOrderIdTenantIdAndDeliveryDetails(): void
     {
         // Arrange
         $orderId = OrderId::generate();
@@ -224,5 +224,4 @@ final class OrderDeliveredSubscriberTest extends TestCase
         // Act
         $this->subscriber->onOrderDelivered($event);
     }
-
 }

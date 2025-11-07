@@ -15,7 +15,8 @@ final readonly class StockReleased implements DomainEvent
         public Quantity $quantity,
         public string $reason,
         public \DateTimeImmutable $occurredOn,
-    ) {}
+    ) {
+    }
 
     public function occurredOn(): \DateTimeImmutable
     {

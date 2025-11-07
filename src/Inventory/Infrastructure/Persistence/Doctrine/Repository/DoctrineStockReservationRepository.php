@@ -62,7 +62,7 @@ final class DoctrineStockReservationRepository extends ServiceEntityRepository i
 
         $entities = $qb->getQuery()->getResult();
 
-        return array_map(fn($entity) => $entity->toDomainModel(), $entities);
+        return array_map(fn ($entity) => $entity->toDomainModel(), $entities);
     }
 
     public function findActiveByTenant(TenantId $tenantId): array
@@ -79,7 +79,7 @@ final class DoctrineStockReservationRepository extends ServiceEntityRepository i
 
         $entities = $qb->getQuery()->getResult();
 
-        return array_map(fn($entity) => $entity->toDomainModel(), $entities);
+        return array_map(fn ($entity) => $entity->toDomainModel(), $entities);
     }
 
     public function delete(StockReservation $reservation): void
@@ -90,7 +90,7 @@ final class DoctrineStockReservationRepository extends ServiceEntityRepository i
 
         $entity = $qb->getQuery()->getOneOrNullResult();
 
-        if ($entity !== null) {
+        if (null !== $entity) {
             $this->getEntityManager()->remove($entity);
             $this->getEntityManager()->flush();
         }

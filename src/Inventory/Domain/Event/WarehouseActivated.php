@@ -12,7 +12,8 @@ final readonly class WarehouseActivated implements DomainEvent
     public function __construct(
         public WarehouseId $warehouseId,
         public \DateTimeImmutable $occurredOn,
-    ) {}
+    ) {
+    }
 
     public function occurredOn(): \DateTimeImmutable
     {

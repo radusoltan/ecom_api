@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\Email;
 
 /**
- * Event Subscriber: ReturnRequestCompletedSubscriber
+ * Event Subscriber: ReturnRequestCompletedSubscriber.
  *
  * Listens to ReturnRequestCompleted domain event and performs side effects:
  * - Trigger refund process via Payment bounded context
@@ -85,7 +85,7 @@ final readonly class ReturnRequestCompletedSubscriber implements EventSubscriber
                     paymentId: $event->orderId->toString(), // In production: lookup actual paymentId
                     refundAmount: $event->refundAmount,
                     refundCurrency: $event->refundCurrency,
-                    reason: 'Return completed - RMA: ' . $event->returnRequestId->toString()
+                    reason: 'Return completed - RMA: '.$event->returnRequestId->toString()
                 )
             );
 

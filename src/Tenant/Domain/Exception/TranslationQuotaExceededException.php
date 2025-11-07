@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tenant\Domain\Exception;
 
-use DomainException;
-
-final class TranslationQuotaExceededException extends DomainException
+final class TranslationQuotaExceededException extends \DomainException
 {
     public static function forTenant(string $tenantId, int $quota, int $currentUsage): self
     {

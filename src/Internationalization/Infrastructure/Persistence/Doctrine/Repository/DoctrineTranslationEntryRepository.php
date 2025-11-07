@@ -14,7 +14,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\DBAL\Connection;
 
 /**
- * Doctrine Translation Entry Repository
+ * Doctrine Translation Entry Repository.
  *
  * Adapter implementing TranslationEntryRepositoryInterface.
  * Works with Gedmo's ext_translations table.
@@ -23,7 +23,8 @@ final readonly class DoctrineTranslationEntryRepository implements TranslationEn
 {
     public function __construct(
         private Connection $connection,
-    ) {}
+    ) {
+    }
 
     public function save(TranslationEntry $entry): void
     {
@@ -40,7 +41,7 @@ final readonly class DoctrineTranslationEntryRepository implements TranslationEn
             'locale' => $entry->locale->value(),
             'object_class' => 'App\\Translation\\CustomTranslation', // Marker class
             'field' => $entry->domain->value(),
-            'foreign_key' => $entry->tenantId->toString() . ':' . $entry->key->value(),
+            'foreign_key' => $entry->tenantId->toString().':'.$entry->key->value(),
             'content' => $entry->value->value(),
         ]);
     }
@@ -75,7 +76,7 @@ final readonly class DoctrineTranslationEntryRepository implements TranslationEn
         TranslationDomain $domain,
         TranslationKey $key,
     ): ?TranslationEntry {
-        $foreignKey = $tenantId->toString() . ':' . $key->value();
+        $foreignKey = $tenantId->toString().':'.$key->value();
 
         $data = $this->connection->fetchAssociative(
             'SELECT * FROM ext_translations WHERE locale = ? AND field = ? AND foreign_key = ?',
@@ -96,7 +97,7 @@ final readonly class DoctrineTranslationEntryRepository implements TranslationEn
             ->from('ext_translations')
             ->where("object_class = 'App\\\\Translation\\\\CustomTranslation'")
             ->andWhere('foreign_key LIKE :tenant_prefix')
-            ->setParameter('tenant_prefix', $tenantId->toString() . ':%');
+            ->setParameter('tenant_prefix', $tenantId->toString().':%');
 
         $this->applyFilters($qb, $filters);
 
@@ -116,7 +117,7 @@ final readonly class DoctrineTranslationEntryRepository implements TranslationEn
             ->from('ext_translations')
             ->where("object_class = 'App\\\\Translation\\\\CustomTranslation'")
             ->andWhere('foreign_key LIKE :tenant_prefix')
-            ->setParameter('tenant_prefix', $tenantId->toString() . ':%');
+            ->setParameter('tenant_prefix', $tenantId->toString().':%');
 
         $this->applyFilters($qb, $filters);
 
@@ -145,22 +146,22 @@ final readonly class DoctrineTranslationEntryRepository implements TranslationEn
         ";
 
         $params = [
-            'tenant_prefix' => $tenantId->toString() . ':%',
+            'tenant_prefix' => $tenantId->toString().':%',
             'source_locale' => $sourceLocale->value(),
             'target_locale' => $targetLocale->value(),
         ];
 
-        if ($domain !== null) {
-            $sql .= " AND source.field = :domain";
+        if (null !== $domain) {
+            $sql .= ' AND source.field = :domain';
             $params['domain'] = $domain->value();
         }
 
-        $sql .= " ORDER BY source.field, translation_key";
+        $sql .= ' ORDER BY source.field, translation_key';
 
         $results = $this->connection->fetchAllAssociative($sql, $params);
 
         return array_map(
-            fn($row) => [
+            fn ($row) => [
                 'key' => $row['translation_key'],
                 'domain' => $row['domain'],
             ],
@@ -184,7 +185,7 @@ final readonly class DoctrineTranslationEntryRepository implements TranslationEn
         ";
 
         $results = $this->connection->fetchAllAssociative($sql, [
-            'tenant_prefix' => $tenantId->toString() . ':%',
+            'tenant_prefix' => $tenantId->toString().':%',
         ]);
 
         // Get total unique keys per domain (considering all locales)
@@ -199,7 +200,7 @@ final readonly class DoctrineTranslationEntryRepository implements TranslationEn
         ";
 
         $totals = $this->connection->fetchAllAssociative($totalSql, [
-            'tenant_prefix' => $tenantId->toString() . ':%',
+            'tenant_prefix' => $tenantId->toString().':%',
         ]);
 
         $totalsByDomain = [];
@@ -273,7 +274,7 @@ final readonly class DoctrineTranslationEntryRepository implements TranslationEn
 
     /**
      * @param \Doctrine\DBAL\Query\QueryBuilder $qb
-     * @param array<string, mixed> $filters
+     * @param array<string, mixed>              $filters
      */
     private function applyFilters($qb, array $filters): void
     {
@@ -289,7 +290,7 @@ final readonly class DoctrineTranslationEntryRepository implements TranslationEn
 
         if (isset($filters['key'])) {
             $qb->andWhere('foreign_key LIKE :key')
-                ->setParameter('key', '%:' . $filters['key'] . '%');
+                ->setParameter('key', '%:'.$filters['key'].'%');
         }
     }
 

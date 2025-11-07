@@ -12,7 +12,8 @@ final readonly class AdjustStockHandler
 {
     public function __construct(
         private StockItemRepositoryInterface $stockItemRepository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(AdjustStockCommand $command): void
     {
@@ -22,14 +23,8 @@ final readonly class AdjustStockHandler
             $command->tenantId
         );
 
-        if ($stockItem === null) {
-            throw new \DomainException(
-                sprintf(
-                    'Stock item not found for product %s in warehouse %s',
-                    $command->productId->toString(),
-                    $command->warehouseId->toString()
-                )
-            );
+        if (null === $stockItem) {
+            throw new \DomainException(sprintf('Stock item not found for product %s in warehouse %s', $command->productId->toString(), $command->warehouseId->toString()));
         }
 
         $stockItem->adjust($command->newQuantity, $command->reason);

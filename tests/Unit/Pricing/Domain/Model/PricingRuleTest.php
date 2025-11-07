@@ -8,7 +8,6 @@ use App\Catalog\Domain\Model\ProductId;
 use App\Pricing\Domain\Model\Discount;
 use App\Pricing\Domain\Model\PricingRule;
 use App\Shared\Domain\ValueObject\Money;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class PricingRuleTest extends TestCase
@@ -112,7 +111,7 @@ final class PricingRuleTest extends TestCase
         $productId = ProductId::generate();
         $discount = Discount::percentage(10.0);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Minimum quantity must be at least 1');
 
         PricingRule::forProduct($productId, $discount, 0, null);
@@ -123,7 +122,7 @@ final class PricingRuleTest extends TestCase
         $productId = ProductId::generate();
         $discount = Discount::percentage(10.0);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Minimum quantity must be at least 1');
 
         PricingRule::forProduct($productId, $discount, -5, null);
@@ -133,7 +132,7 @@ final class PricingRuleTest extends TestCase
     {
         $discount = Discount::percentage(10.0);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Minimum quantity must be at least 1');
 
         PricingRule::forCategory('electronics', $discount, 0, null);
@@ -143,7 +142,7 @@ final class PricingRuleTest extends TestCase
     {
         $discount = Discount::percentage(10.0);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Minimum quantity must be at least 1');
 
         PricingRule::forAll($discount, -1, null);
@@ -336,7 +335,7 @@ final class PricingRuleTest extends TestCase
         $this->assertSame('percentage', $array['discount']['type']);
         $this->assertSame(15.0, $array['discount']['percentage']);
         $this->assertIsArray($array['min_purchase_amount']);
-        $this->assertSame(10000, (int)$array['min_purchase_amount']['amount']);
+        $this->assertSame(10000, (int) $array['min_purchase_amount']['amount']);
     }
 
     public function testToArrayForCategoryScope(): void

@@ -11,7 +11,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
 /**
- * Payment Refunded Subscriber
+ * Payment Refunded Subscriber.
  *
  * Handles actions when a payment is refunded.
  * - Sends refund notification email to customer
@@ -59,7 +59,6 @@ final readonly class PaymentRefundedSubscriber implements EventSubscriberInterfa
             $this->logger->info('Payment refunded subscriber completed successfully', [
                 'payment_id' => $event->paymentId->toString(),
             ]);
-
         } catch (\Throwable $e) {
             // Log error but don't throw - subscriber failures shouldn't block refund flow
             $this->logger->error('PaymentRefundedSubscriber failed', [
@@ -93,7 +92,6 @@ final readonly class PaymentRefundedSubscriber implements EventSubscriberInterfa
             $this->logger->info('Refund notification email sent', [
                 'payment_id' => $event->paymentId->toString(),
             ]);
-
         } catch (\Throwable $e) {
             // Log email failure but don't throw
             $this->logger->error('Failed to send refund notification email', [
@@ -106,6 +104,7 @@ final readonly class PaymentRefundedSubscriber implements EventSubscriberInterfa
     private function buildHtmlEmailBody(PaymentRefunded $event, string $amountFormatted): string
     {
         $currentDate = date('F j, Y \a\t g:i A');
+
         return <<<HTML
         <!DOCTYPE html>
         <html>
@@ -161,6 +160,7 @@ final readonly class PaymentRefundedSubscriber implements EventSubscriberInterfa
     private function buildTextEmailBody(PaymentRefunded $event, string $amountFormatted): string
     {
         $currentDate = date('F j, Y \a\t g:i A');
+
         return <<<TEXT
         REFUND PROCESSED
 

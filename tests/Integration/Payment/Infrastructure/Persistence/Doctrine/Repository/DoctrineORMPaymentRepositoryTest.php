@@ -5,16 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Payment\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Payment\Domain\Event\PaymentAuthorized;
-use App\Payment\Domain\Event\PaymentCancelled;
 use App\Payment\Domain\Event\PaymentCaptured;
 use App\Payment\Domain\Event\PaymentCreated;
-use App\Payment\Domain\Event\PaymentFailed;
-use App\Payment\Domain\Event\PaymentRefunded;
 use App\Payment\Domain\Model\Payment;
 use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
-use App\Payment\Domain\ValueObject\PaymentStatus;
 use App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository;
 use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\ORM\EntityManagerInterface;
@@ -88,7 +84,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
     public function testFindByOrderId(): void
     {
         // Arrange
-        $orderId = '01JCEX' . bin2hex(random_bytes(10)); // 26 chars ULID format
+        $orderId = '01JCEX'.bin2hex(random_bytes(10)); // 26 chars ULID format
         $payment = $this->createPayment(orderId: $orderId);
         $this->repository->save($payment);
 
@@ -167,7 +163,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
         $payment = Payment::create(
             id: $paymentId,
             tenantId: $this->tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)), // 26 chars ULID format
+            orderId: '01JCEX'.bin2hex(random_bytes(10)), // 26 chars ULID format
             amountInCents: 9999,
             currency: 'USD',
             method: PaymentMethod::card(),
@@ -214,6 +210,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
             ->method('dispatch')
             ->willReturnCallback(function ($event) use (&$dispatchedEvents) {
                 $dispatchedEvents[] = $event;
+
                 return $event;
             });
 
@@ -241,6 +238,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
             ->method('dispatch')
             ->willReturnCallback(function ($event) use (&$dispatchedEvents) {
                 $dispatchedEvents[] = $event;
+
                 return $event;
             });
 
@@ -317,7 +315,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
         $payment = Payment::create(
             id: $paymentId,
             tenantId: $this->tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)), // 26 chars ULID format
+            orderId: '01JCEX'.bin2hex(random_bytes(10)), // 26 chars ULID format
             amountInCents: 9999,
             currency: 'USD',
             method: PaymentMethod::card(),
@@ -345,7 +343,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
         $payment = Payment::create(
             id: $paymentId,
             tenantId: $this->tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)), // 26 chars ULID format
+            orderId: '01JCEX'.bin2hex(random_bytes(10)), // 26 chars ULID format
             amountInCents: 9999,
             currency: 'USD',
             method: PaymentMethod::card(),
@@ -376,7 +374,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
         return Payment::create(
             id: PaymentId::generate(),
             tenantId: $tenantId ?? $this->tenantId,
-            orderId: $orderId ?? '01JCEX' . bin2hex(random_bytes(10)), // 6 + 20 = 26 chars (ULID format)
+            orderId: $orderId ?? '01JCEX'.bin2hex(random_bytes(10)), // 6 + 20 = 26 chars (ULID format)
             amountInCents: 9999,
             currency: 'USD',
             method: PaymentMethod::card(),

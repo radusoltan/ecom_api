@@ -17,5 +17,6 @@ final readonly class ReleaseStockCommand
         public Quantity $quantity,
         public string $reason,
         public TenantId $tenantId,
-    ) {}
+    ) {
+    }
 }

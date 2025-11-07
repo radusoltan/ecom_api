@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Handles StockAllocated domain events for audit logging
+ * Handles StockAllocated domain events for audit logging.
  *
  * Business Rules:
  * - Log all stock allocations for audit trail

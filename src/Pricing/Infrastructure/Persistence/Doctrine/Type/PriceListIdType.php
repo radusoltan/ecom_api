@@ -10,7 +10,7 @@ use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 
 /**
- * Custom Doctrine type for PriceListId value object
+ * Custom Doctrine type for PriceListId value object.
  */
 final class PriceListIdType extends Type
 {
@@ -23,16 +23,12 @@ final class PriceListIdType extends Type
 
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?PriceListId
     {
-        if ($value === null || $value instanceof PriceListId) {
+        if (null === $value || $value instanceof PriceListId) {
             return $value;
         }
 
         if (!is_string($value)) {
-            throw ConversionException::conversionFailedInvalidType(
-                $value,
-                $this->getName(),
-                ['null', 'string', PriceListId::class]
-            );
+            throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', 'string', PriceListId::class]);
         }
 
         try {
@@ -44,7 +40,7 @@ final class PriceListIdType extends Type
 
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
@@ -52,11 +48,7 @@ final class PriceListIdType extends Type
             return $value->toString();
         }
 
-        throw ConversionException::conversionFailedInvalidType(
-            $value,
-            $this->getName(),
-            ['null', PriceListId::class]
-        );
+        throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', PriceListId::class]);
     }
 
     public function getName(): string

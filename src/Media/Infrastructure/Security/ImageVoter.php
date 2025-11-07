@@ -30,7 +30,7 @@ final class ImageVoter extends Voter
         }
 
         $user = $this->security->getUser();
-        if ($user === null) {
+        if (null === $user) {
             return false;
         }
 

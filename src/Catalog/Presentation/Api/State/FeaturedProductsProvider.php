@@ -23,7 +23,8 @@ final class FeaturedProductsProvider implements ProviderInterface
         private readonly TenantContext $tenantContext,
         private readonly RequestStack $requestStack,
         private readonly ?CacheItemPoolInterface $cache = null
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
@@ -41,7 +42,7 @@ final class FeaturedProductsProvider implements ProviderInterface
         $locale = $request->headers->get('Accept-Language', 'en');
         $locale = $this->parseLocale($locale);
 
-        $limit = (int)($request->query->get('limit', self::DEFAULT_LIMIT));
+        $limit = (int) $request->query->get('limit', self::DEFAULT_LIMIT);
         $limit = min($limit, 20); // Max 20 items
 
         // Try to get from cache
@@ -102,7 +103,7 @@ final class FeaturedProductsProvider implements ProviderInterface
             $primaryImage = [
                 'urlSm' => $firstImage->url() ?? '',
                 'urlMd' => $firstImage->url() ?? '',
-                'urlLg' => $firstImage->url() ?? ''
+                'urlLg' => $firstImage->url() ?? '',
             ];
         }
 
@@ -112,7 +113,7 @@ final class FeaturedProductsProvider implements ProviderInterface
             name: $product->name()->value(),
             price: [
                 'amount' => $product->price()->getAmount(),
-                'currency' => $product->price()->getCurrency()->getCurrencyCode()
+                'currency' => $product->price()->getCurrency()->getCurrencyCode(),
             ],
             primaryImage: $primaryImage,
             isFeatured: $product->isFeatured(),
@@ -132,6 +133,7 @@ final class FeaturedProductsProvider implements ProviderInterface
         }
 
         $locale = explode(';', $locales[0])[0];
+
         return strtolower(trim($locale));
     }
 }

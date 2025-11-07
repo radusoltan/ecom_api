@@ -28,11 +28,11 @@ final class ReturnStatusType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
-        if (! $value instanceof ReturnStatus) {
+        if (!$value instanceof ReturnStatus) {
             throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', ReturnStatus::class]);
         }
 
@@ -41,7 +41,7 @@ final class ReturnStatusType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?ReturnStatus
     {
-        if ($value === null || $value === '') {
+        if (null === $value || '' === $value) {
             return null;
         }
 

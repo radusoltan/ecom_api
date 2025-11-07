@@ -33,7 +33,7 @@ final class DoctrineORMReturnRequestRepository implements ReturnRequestRepositor
     {
         $entity = $this->entityManager->find(ReturnRequestEntity::class, $returnRequest->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             // New return request - create entity
             $entity = ReturnRequestEntity::fromDomainModel($returnRequest);
             $this->entityManager->persist($entity);
@@ -56,7 +56,7 @@ final class DoctrineORMReturnRequestRepository implements ReturnRequestRepositor
     {
         $entity = $this->entityManager->find(ReturnRequestEntity::class, $id->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             return null;
         }
 
@@ -76,7 +76,7 @@ final class DoctrineORMReturnRequestRepository implements ReturnRequestRepositor
         $entities = $qb->getQuery()->getResult();
 
         return array_map(
-            fn(ReturnRequestEntity $entity) => $entity->toDomainModel(),
+            fn (ReturnRequestEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -94,7 +94,7 @@ final class DoctrineORMReturnRequestRepository implements ReturnRequestRepositor
         $entities = $qb->getQuery()->getResult();
 
         return array_map(
-            fn(ReturnRequestEntity $entity) => $entity->toDomainModel(),
+            fn (ReturnRequestEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -114,7 +114,7 @@ final class DoctrineORMReturnRequestRepository implements ReturnRequestRepositor
         $entities = $qb->getQuery()->getResult();
 
         return array_map(
-            fn(ReturnRequestEntity $entity) => $entity->toDomainModel(),
+            fn (ReturnRequestEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }

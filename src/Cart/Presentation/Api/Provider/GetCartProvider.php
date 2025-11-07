@@ -8,7 +8,6 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Cart\Application\Query\GetCart;
 use App\Cart\Presentation\Api\Resource\CartResource;
-use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
@@ -28,9 +27,9 @@ final readonly class GetCartProvider implements ProviderInterface
     {
         // Get cart ID from context or from X-Cart-ID header
         $cartId = $context['cart_id'] ?? null;
-        if ($cartId === null) {
+        if (null === $cartId) {
             $request = $this->requestStack->getCurrentRequest();
-            $cartId = $request?->headers->get('X-Cart-ID') ?? throw new InvalidArgumentException('Cart ID is required (provide via X-Cart-ID header or context)');
+            $cartId = $request?->headers->get('X-Cart-ID') ?? throw new \InvalidArgumentException('Cart ID is required (provide via X-Cart-ID header or context)');
         }
 
         $envelope = $this->queryBus->dispatch(new GetCart($cartId));
@@ -42,7 +41,7 @@ final readonly class GetCartProvider implements ProviderInterface
 
         $cartDTO = $handledStamp->getResult();
 
-        if ($cartDTO === null) {
+        if (null === $cartDTO) {
             return null;
         }
 

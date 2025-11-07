@@ -73,7 +73,7 @@ final readonly class DoctrineORMPaymentRepository implements PaymentRepositoryIn
         );
 
         return array_map(
-            fn(PaymentEntity $entity) => $entity->toDomainModel(),
+            fn (PaymentEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -105,7 +105,7 @@ final readonly class DoctrineORMPaymentRepository implements PaymentRepositoryIn
         );
 
         return array_map(
-            fn(PaymentEntity $entity) => $entity->toDomainModel(),
+            fn (PaymentEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }

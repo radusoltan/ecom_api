@@ -7,7 +7,7 @@ namespace App\Tests\Functional\Cart\Api;
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 
 /**
- * Comprehensive Functional Tests for Cart API Endpoints
+ * Comprehensive Functional Tests for Cart API Endpoints.
  *
  * Tests all 5 Cart API endpoints:
  * - GET /api/cart (Retrieve Cart)
@@ -25,7 +25,7 @@ final class CartApiTest extends ApiTestCase
     private ?string $currentCartId = null;
 
     /**
-     * Create an authenticated client with JWT token and optional X-Tenant-ID header
+     * Create an authenticated client with JWT token and optional X-Tenant-ID header.
      */
     protected function createAuthenticatedClient(
         string $email = 'admin@admin.com',
@@ -44,7 +44,7 @@ final class CartApiTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash');
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -62,11 +62,11 @@ final class CartApiTest extends ApiTestCase
             'exp' => time() + 3600,
         ]);
 
-        $headers = ['authorization' => 'Bearer ' . $token];
+        $headers = ['authorization' => 'Bearer '.$token];
 
         // Add X-Tenant-ID if provided or if we have a current tenant
         $tenantIdToUse = $tenantId ?? $this->currentTenantId;
-        if ($tenantIdToUse !== null) {
+        if (null !== $tenantIdToUse) {
             $headers['X-Tenant-ID'] = $tenantIdToUse;
         }
 
@@ -74,7 +74,7 @@ final class CartApiTest extends ApiTestCase
     }
 
     /**
-     * Generate a unique email address for testing
+     * Generate a unique email address for testing.
      */
     private function generateUniqueEmail(string $prefix = 'customer'): string
     {
@@ -82,14 +82,14 @@ final class CartApiTest extends ApiTestCase
     }
 
     /**
-     * Create a valid tenant for testing
+     * Create a valid tenant for testing.
      */
     private function createTenant(): string
     {
         $client = $this->createAuthenticatedClient();
         $response = $client->request('POST', '/api/v1/tenants', [
             'json' => [
-                'name' => 'Test Tenant ' . uniqid(),
+                'name' => 'Test Tenant '.uniqid(),
                 'ownerEmail' => $this->generateUniqueEmail('tenant'),
             ],
         ]);
@@ -101,7 +101,7 @@ final class CartApiTest extends ApiTestCase
     }
 
     /**
-     * Create a product for testing
+     * Create a product for testing.
      */
     private function createProduct(string $tenantId): string
     {
@@ -124,13 +124,13 @@ final class CartApiTest extends ApiTestCase
         $tenantIdProp->setValue($productEntity, $tenantId);
 
         $skuProp = $reflection->getProperty('sku');
-        $skuProp->setValue($productEntity, 'TEST-' . uniqid());
+        $skuProp->setValue($productEntity, 'TEST-'.uniqid());
 
         $nameProp = $reflection->getProperty('name');
         $nameProp->setValue($productEntity, 'Test Product');
 
         $slugProp = $reflection->getProperty('slug');
-        $slugProp->setValue($productEntity, 'test-product-' . uniqid());
+        $slugProp->setValue($productEntity, 'test-product-'.uniqid());
 
         $priceProp = $reflection->getProperty('priceAmount');
         $priceProp->setValue($productEntity, 1999);

@@ -10,7 +10,6 @@ use App\AuditLog\Domain\ValueObject\AuditLogId;
 use App\AuditLog\Domain\ValueObject\ResourceType;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\User\Domain\ValueObject\UserId;
-use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 final class AuditLogEntryTest extends TestCase
@@ -47,7 +46,7 @@ final class AuditLogEntryTest extends TestCase
         $this->assertEquals($metadata, $entry->metadata());
         $this->assertEquals($ipAddress, $entry->ipAddress());
         $this->assertEquals($userAgent, $entry->userAgent());
-        $this->assertInstanceOf(DateTimeImmutable::class, $entry->occurredAt());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $entry->occurredAt());
     }
 
     public function testLogCreatesEntryWithoutUserId(): void
@@ -101,7 +100,7 @@ final class AuditLogEntryTest extends TestCase
         $metadata = ['reason' => 'GDPR request'];
         $ipAddress = '10.0.0.1';
         $userAgent = 'Admin Panel';
-        $occurredAt = new DateTimeImmutable('2025-01-01 12:00:00');
+        $occurredAt = new \DateTimeImmutable('2025-01-01 12:00:00');
 
         $entry = AuditLogEntry::reconstitute(
             $id,

@@ -18,7 +18,7 @@ use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Processor for deactivating tax rules
+ * Processor for deactivating tax rules.
  */
 final class DeactivateTaxRuleProcessor implements ProcessorInterface
 {
@@ -65,7 +65,7 @@ final class DeactivateTaxRuleProcessor implements ProcessorInterface
 
         $dto = $this->handle($query);
 
-        if ($dto === null) {
+        if (null === $dto) {
             throw new NotFoundHttpException('Tax rule not found');
         }
 

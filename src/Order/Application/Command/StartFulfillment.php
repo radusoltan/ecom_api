@@ -10,7 +10,7 @@ use App\Order\Domain\ValueObject\FulfillmentId;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Start Fulfillment Command
+ * Start Fulfillment Command.
  *
  * Initiates the fulfillment process for an order at a specific warehouse.
  */

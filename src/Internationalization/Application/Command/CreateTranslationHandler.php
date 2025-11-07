@@ -15,7 +15,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * CreateTranslation Command Handler
+ * CreateTranslation Command Handler.
  *
  * Creates a new translation entry in the system.
  */
@@ -25,7 +25,8 @@ final readonly class CreateTranslationHandler
     public function __construct(
         private TranslationEntryRepositoryInterface $repository,
         private TranslationCacheService $cacheService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(CreateTranslation $command): TranslationEntry
     {
@@ -38,14 +39,7 @@ final readonly class CreateTranslationHandler
         // Check if translation already exists
         $existing = $this->repository->findByKey($tenantId, $locale, $domain, $key);
         if (null !== $existing) {
-            throw new \DomainException(
-                sprintf(
-                    'Translation already exists for key "%s" in locale "%s" and domain "%s"',
-                    $key->value(),
-                    $locale->value(),
-                    $domain->value()
-                )
-            );
+            throw new \DomainException(sprintf('Translation already exists for key "%s" in locale "%s" and domain "%s"', $key->value(), $locale->value(), $domain->value()));
         }
 
         $entry = TranslationEntry::create(

@@ -9,7 +9,7 @@ use App\Order\Domain\ValueObject\FulfillmentStatus;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Update Fulfillment Status Command
+ * Update Fulfillment Status Command.
  *
  * Transitions a fulfillment to a new status in the workflow.
  */

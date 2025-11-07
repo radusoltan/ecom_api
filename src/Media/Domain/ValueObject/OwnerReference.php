@@ -12,7 +12,8 @@ final readonly class OwnerReference
         private TenantId $tenantId,
         private OwnerType $type,
         private string $ownerId
-    ) {}
+    ) {
+    }
 
     public static function from(TenantId $tenantId, OwnerType $type, string $ownerId): self
     {

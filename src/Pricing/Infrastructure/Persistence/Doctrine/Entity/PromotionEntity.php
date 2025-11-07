@@ -152,7 +152,7 @@ class PromotionEntity
             discount: Discount::fromTypeAndValue($this->discountType, $this->discountValue),
             priority: $this->priority,
             isActive: $this->isActive,
-            couponCode: $this->couponCode !== null ? CouponCode::fromString($this->couponCode) : null,
+            couponCode: null !== $this->couponCode ? CouponCode::fromString($this->couponCode) : null,
             conditions: $this->conditions,
             validFrom: $this->validFrom,
             validTo: $this->validTo,
@@ -175,34 +175,144 @@ class PromotionEntity
     }
 
     // Getters
-    public function getId(): string { return $this->id; }
-    public function getTenantId(): string { return $this->tenantId; }
-    public function getName(): string { return $this->name; }
-    public function getType(): string { return $this->type; }
-    public function getDiscountType(): string { return $this->discountType; }
-    public function getDiscountValue(): float { return $this->discountValue; }
-    public function getPriority(): int { return $this->priority; }
-    public function isActive(): bool { return $this->isActive; }
-    public function getCouponCode(): ?string { return $this->couponCode; }
-    public function getConditions(): array { return $this->conditions; }
-    public function getValidFrom(): ?\DateTimeImmutable { return $this->validFrom; }
-    public function getValidTo(): ?\DateTimeImmutable { return $this->validTo; }
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
-    public function getUpdatedAt(): \DateTimeImmutable { return $this->updatedAt; }
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getTenantId(): string
+    {
+        return $this->tenantId;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function getDiscountType(): string
+    {
+        return $this->discountType;
+    }
+
+    public function getDiscountValue(): float
+    {
+        return $this->discountValue;
+    }
+
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function getCouponCode(): ?string
+    {
+        return $this->couponCode;
+    }
+
+    public function getConditions(): array
+    {
+        return $this->conditions;
+    }
+
+    public function getValidFrom(): ?\DateTimeImmutable
+    {
+        return $this->validFrom;
+    }
+
+    public function getValidTo(): ?\DateTimeImmutable
+    {
+        return $this->validTo;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): \DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
 
     // Setters (for API Platform deserialization)
-    public function setId(string $id): void { $this->id = $id; }
-    public function setTenantId(string $tenantId): void { $this->tenantId = $tenantId; }
-    public function setName(string $name): void { $this->name = $name; }
-    public function setType(string $type): void { $this->type = $type; }
-    public function setDiscountType(string $discountType): void { $this->discountType = $discountType; }
-    public function setDiscountValue(float $discountValue): void { $this->discountValue = $discountValue; }
-    public function setPriority(int $priority): void { $this->priority = $priority; }
-    public function setIsActive(bool $isActive): void { $this->isActive = $isActive; }
-    public function setCouponCode(?string $couponCode): void { $this->couponCode = $couponCode; }
-    public function setConditions(array $conditions): void { $this->conditions = $conditions; }
-    public function setValidFrom(?\DateTimeImmutable $validFrom): void { $this->validFrom = $validFrom; }
-    public function setValidTo(?\DateTimeImmutable $validTo): void { $this->validTo = $validTo; }
-    public function setCreatedAt(\DateTimeImmutable $createdAt): void { $this->createdAt = $createdAt; }
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): void { $this->updatedAt = $updatedAt; }
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function setTenantId(string $tenantId): void
+    {
+        $this->tenantId = $tenantId;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function setType(string $type): void
+    {
+        $this->type = $type;
+    }
+
+    public function setDiscountType(string $discountType): void
+    {
+        $this->discountType = $discountType;
+    }
+
+    public function setDiscountValue(float $discountValue): void
+    {
+        $this->discountValue = $discountValue;
+    }
+
+    public function setPriority(int $priority): void
+    {
+        $this->priority = $priority;
+    }
+
+    public function setIsActive(bool $isActive): void
+    {
+        $this->isActive = $isActive;
+    }
+
+    public function setCouponCode(?string $couponCode): void
+    {
+        $this->couponCode = $couponCode;
+    }
+
+    public function setConditions(array $conditions): void
+    {
+        $this->conditions = $conditions;
+    }
+
+    public function setValidFrom(?\DateTimeImmutable $validFrom): void
+    {
+        $this->validFrom = $validFrom;
+    }
+
+    public function setValidTo(?\DateTimeImmutable $validTo): void
+    {
+        $this->validTo = $validTo;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
+    }
 }

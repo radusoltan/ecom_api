@@ -27,7 +27,7 @@ final class PromotionItemProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?PromotionEntity
     {
         $tenantIdValue = $context['tenant_id'] ?? null;
-        if ($tenantIdValue === null) {
+        if (null === $tenantIdValue) {
             throw new BadRequestHttpException('Tenant ID not found in context');
         }
 
@@ -48,7 +48,7 @@ final class PromotionItemProvider implements ProviderInterface
             tenantId: $tenantId
         ));
 
-        if ($dto === null) {
+        if (null === $dto) {
             return null;
         }
 

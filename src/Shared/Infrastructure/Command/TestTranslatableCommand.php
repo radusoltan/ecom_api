@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Test Translatable Command
+ * Test Translatable Command.
  *
  * This command tests the Doctrine Translatable service by:
  * 1. Creating a test entity with English content
@@ -87,25 +87,25 @@ final class TestTranslatableCommand extends Command
         $io->section('Step 5: Testing entity refresh in different locales');
 
         $io->writeln('Current values (default locale - en):');
-        $io->writeln('  Name: ' . $entity->getName());
-        $io->writeln('  Description: ' . $entity->getDescription());
+        $io->writeln('  Name: '.$entity->getName());
+        $io->writeln('  Description: '.$entity->getDescription());
 
         $io->writeln('');
         $io->writeln('Refreshing entity in French (fr)...');
         $this->translatableHelper->refreshEntityInLocale($entity, 'fr');
-        $io->writeln('  Name: ' . $entity->getName());
-        $io->writeln('  Description: ' . $entity->getDescription());
+        $io->writeln('  Name: '.$entity->getName());
+        $io->writeln('  Description: '.$entity->getDescription());
 
         $io->writeln('');
         $io->writeln('Refreshing entity in German (de)...');
         $this->translatableHelper->refreshEntityInLocale($entity, 'de');
-        $io->writeln('  Name: ' . $entity->getName());
-        $io->writeln('  Description: ' . $entity->getDescription());
+        $io->writeln('  Name: '.$entity->getName());
+        $io->writeln('  Description: '.$entity->getDescription());
 
         // Step 6: Test locale detection
         $io->section('Step 6: Testing locale detection');
-        $io->writeln('Current locale: ' . $this->translatableHelper->getCurrentLocale());
-        $io->writeln('Supported locales: ' . implode(', ', $this->translatableHelper->getSupportedLocales()));
+        $io->writeln('Current locale: '.$this->translatableHelper->getCurrentLocale());
+        $io->writeln('Supported locales: '.implode(', ', $this->translatableHelper->getSupportedLocales()));
 
         // Clean up
         $io->section('Cleanup');
@@ -119,9 +119,10 @@ final class TestTranslatableCommand extends Command
     }
 
     /**
-     * Flatten translations array for table display
+     * Flatten translations array for table display.
      *
      * @param array<string, array<string, string>> $translations
+     *
      * @return array<int, array{0: string, 1: string, 2: string}>
      */
     private function flattenTranslations(array $translations): array

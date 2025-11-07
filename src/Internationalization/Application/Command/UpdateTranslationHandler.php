@@ -12,7 +12,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * UpdateTranslation Command Handler
+ * UpdateTranslation Command Handler.
  *
  * Updates an existing translation entry's value.
  */
@@ -22,7 +22,8 @@ final readonly class UpdateTranslationHandler
     public function __construct(
         private TranslationEntryRepositoryInterface $repository,
         private TranslationCacheService $cacheService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(UpdateTranslation $command): TranslationEntry
     {
@@ -30,9 +31,7 @@ final readonly class UpdateTranslationHandler
 
         $entry = $this->repository->findById($command->id, $tenantId);
         if (null === $entry) {
-            throw new \DomainException(
-                sprintf('Translation with ID %d not found', $command->id)
-            );
+            throw new \DomainException(sprintf('Translation with ID %d not found', $command->id));
         }
 
         $newValue = TranslationValue::fromString($command->value);

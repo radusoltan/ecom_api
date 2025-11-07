@@ -6,7 +6,7 @@ namespace App\Pricing\Application\Query\GetActivePriceLists;
 
 use App\Pricing\Application\DTO\PriceListDTO;
 use App\Pricing\Domain\Repository\PriceListRepositoryInterface;
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
+use App\Shared\Application\Service\PerformanceProfiler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -31,7 +31,7 @@ final readonly class GetActivePriceListsQueryHandler
             $priceLists = $this->priceListRepository->findValidForTenant($query->tenantId);
 
             $result = array_map(
-                fn($priceList) => PriceListDTO::fromDomainModel($priceList),
+                fn ($priceList) => PriceListDTO::fromDomainModel($priceList),
                 $priceLists
             );
 
@@ -49,6 +49,7 @@ final readonly class GetActivePriceListsQueryHandler
             return $result;
         } catch (\Throwable $e) {
             $this->profiler->stop('price_list.get_active');
+
             throw $e;
         }
     }

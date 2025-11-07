@@ -27,7 +27,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Automatically logs all domain events to the audit log
+ * Automatically logs all domain events to the audit log.
  *
  * This subscriber listens to domain events and creates audit log entries
  * to maintain a comprehensive audit trail of all actions in the system.
@@ -48,6 +48,9 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
     ) {
     }
 
+    /**
+     * @return array<string, string>
+     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -289,7 +292,9 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
     }
 
     /**
-     * Log an audit entry
+     * Log an audit entry.
+     *
+     * @param array<string, mixed> $metadata
      */
     private function logEvent(
         ?string $tenantId,
@@ -318,7 +323,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
             }
 
             // Use a default tenant ID for cross-tenant events (like UserCreated)
-            if ($tenantId === null) {
+            if (null === $tenantId) {
                 $tenantId = '00000000-0000-0000-0000-000000000000'; // System tenant
             }
 

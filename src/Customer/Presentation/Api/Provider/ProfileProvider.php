@@ -48,11 +48,11 @@ final readonly class ProfileProvider implements ProviderInterface
         // Get tenant ID from context or from header
         $tenantId = $context['tenant_id'] ?? null;
 
-        if ($tenantId === null) {
+        if (null === $tenantId) {
             $request = $this->requestStack->getCurrentRequest();
             $tenantId = $request?->headers->get('X-Tenant-ID');
 
-            if ($tenantId === null) {
+            if (null === $tenantId) {
                 throw new \InvalidArgumentException('Tenant ID is required');
             }
         }
@@ -67,7 +67,7 @@ final readonly class ProfileProvider implements ProviderInterface
 
         $customerDTO = $handledStamp->getResult();
 
-        if ($customerDTO === null) {
+        if (null === $customerDTO) {
             throw new NotFoundHttpException('Customer profile not found');
         }
 

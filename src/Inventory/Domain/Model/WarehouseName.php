@@ -25,15 +25,11 @@ final readonly class WarehouseName implements \Stringable
         $length = mb_strlen($this->value);
 
         if ($length < self::MIN_LENGTH) {
-            throw new \InvalidArgumentException(
-                sprintf('Warehouse name must be at least %d characters long', self::MIN_LENGTH)
-            );
+            throw new \InvalidArgumentException(sprintf('Warehouse name must be at least %d characters long', self::MIN_LENGTH));
         }
 
         if ($length > self::MAX_LENGTH) {
-            throw new \InvalidArgumentException(
-                sprintf('Warehouse name cannot exceed %d characters', self::MAX_LENGTH)
-            );
+            throw new \InvalidArgumentException(sprintf('Warehouse name cannot exceed %d characters', self::MAX_LENGTH));
         }
 
         if (empty(trim($this->value))) {

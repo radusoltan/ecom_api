@@ -45,12 +45,8 @@ final readonly class ReleaseStockProcessor implements ProcessorInterface
             $tenantId
         );
 
-        if ($stockItem === null) {
-            throw new NotFoundHttpException(sprintf(
-                'Stock item not found for product %s in warehouse %s',
-                $data->productId,
-                $data->warehouseId
-            ));
+        if (null === $stockItem) {
+            throw new NotFoundHttpException(sprintf('Stock item not found for product %s in warehouse %s', $data->productId, $data->warehouseId));
         }
 
         // Release stock
@@ -75,7 +71,7 @@ final readonly class ReleaseStockProcessor implements ProcessorInterface
 
         // If there was a reservation, mark it as released
         $reservation = $this->reservationRepository->findByReservationId($data->referenceId);
-        if ($reservation !== null && !$reservation->isReleased()) {
+        if (null !== $reservation && !$reservation->isReleased()) {
             $reservation->release();
             $this->reservationRepository->save($reservation);
         }

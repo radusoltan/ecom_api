@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * CORS Preflight Listener
+ * CORS Preflight Listener.
  *
  * Intercepts OPTIONS requests and returns 200 OK immediately
  * to satisfy browser CORS preflight requirements.
@@ -37,14 +37,16 @@ final class CorsPreflightListener implements EventSubscriberInterface
         error_log(sprintf('[CorsPreflightListener] Method: %s, Path: %s', $request->getMethod(), $request->getPathInfo()));
 
         // Only handle OPTIONS requests
-        if ($request->getMethod() !== 'OPTIONS') {
+        if ('OPTIONS' !== $request->getMethod()) {
             error_log('[CorsPreflightListener] Not OPTIONS, skipping');
+
             return;
         }
 
         // Only handle API routes (avoid interfering with other routes)
         if (!str_starts_with($request->getPathInfo(), '/api')) {
             error_log('[CorsPreflightListener] Not API route, skipping');
+
             return;
         }
 
@@ -72,7 +74,7 @@ final class CorsPreflightListener implements EventSubscriberInterface
             'http://192.168.88.159:3001',
             'http://192.168.88.159:3004',
             'http://192.168.88.159:3005',
-            'http://ecom.local'
+            'http://ecom.local',
         ];
 
         if (in_array($origin, $allowedOrigins, true)) {

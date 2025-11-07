@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Returns\Application\Command;
 
 /**
- * Command: InspectReturnRequest
+ * Command: InspectReturnRequest.
  *
  * Warehouse inspects a returned item and determines resellability.
  */

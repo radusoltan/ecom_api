@@ -13,5 +13,6 @@ final readonly class CategoryCreated
         public CategoryId $categoryId,
         public TenantId $tenantId,
         public string $name
-    ) {}
+    ) {
+    }
 }

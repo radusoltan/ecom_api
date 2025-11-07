@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Performance Monitoring Middleware
+ * Performance Monitoring Middleware.
  *
  * Automatically tracks performance metrics for all HTTP requests:
  * - Request/response timing
@@ -44,7 +44,7 @@ final class PerformanceMonitoringMiddleware implements EventSubscriberInterface
     }
 
     /**
-     * Mark request start time
+     * Mark request start time.
      */
     public function onKernelRequest(RequestEvent $event): void
     {
@@ -60,7 +60,7 @@ final class PerformanceMonitoringMiddleware implements EventSubscriberInterface
     }
 
     /**
-     * Track request completion and performance
+     * Track request completion and performance.
      */
     public function onKernelResponse(ResponseEvent $event): void
     {
@@ -73,7 +73,7 @@ final class PerformanceMonitoringMiddleware implements EventSubscriberInterface
 
         $startTime = $request->attributes->get(self::REQUEST_START_TIME_ATTR);
 
-        if ($startTime === null) {
+        if (null === $startTime) {
             return; // No start time recorded
         }
 
@@ -105,11 +105,11 @@ final class PerformanceMonitoringMiddleware implements EventSubscriberInterface
     }
 
     /**
-     * Determine if performance headers should be added
+     * Determine if performance headers should be added.
      */
     private function shouldAddPerformanceHeaders($request): bool
     {
         // Add headers in dev environment or if specifically requested
-        return $_ENV['APP_ENV'] === 'dev' || $request->headers->has('X-Debug-Performance');
+        return 'dev' === $_ENV['APP_ENV'] || $request->headers->has('X-Debug-Performance');
     }
 }

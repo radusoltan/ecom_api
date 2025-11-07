@@ -12,7 +12,8 @@ final readonly class GetWishlistItemCountHandler
 {
     public function __construct(
         private WishlistRepositoryInterface $wishlistRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(GetWishlistItemCount $query): int
     {

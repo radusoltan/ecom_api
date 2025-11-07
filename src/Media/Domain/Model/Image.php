@@ -28,7 +28,8 @@ final class Image
         private ?string $title,
         private ?string $altText,
         private \DateTimeImmutable $uploadedAt
-    ) {}
+    ) {
+    }
 
     public static function upload(
         TenantId $tenantId,

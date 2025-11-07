@@ -24,20 +24,11 @@ final readonly class CouponCode
         $uppercase = strtoupper($trimmed);
 
         if (strlen($uppercase) < self::MIN_LENGTH || strlen($uppercase) > self::MAX_LENGTH) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'CouponCode must be between %d and %d characters, got: %d',
-                    self::MIN_LENGTH,
-                    self::MAX_LENGTH,
-                    strlen($uppercase)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('CouponCode must be between %d and %d characters, got: %d', self::MIN_LENGTH, self::MAX_LENGTH, strlen($uppercase)));
         }
 
         if (!preg_match(self::PATTERN, $uppercase)) {
-            throw new \InvalidArgumentException(
-                sprintf('CouponCode must contain only uppercase alphanumeric characters, got: "%s"', $uppercase)
-            );
+            throw new \InvalidArgumentException(sprintf('CouponCode must contain only uppercase alphanumeric characters, got: "%s"', $uppercase));
         }
 
         return new self($uppercase);

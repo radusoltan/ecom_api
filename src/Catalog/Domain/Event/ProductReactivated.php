@@ -13,5 +13,6 @@ final readonly class ProductReactivated
         public ProductId $productId,
         public TenantId $tenantId,
         public \DateTimeImmutable $occurredAt
-    ) {}
+    ) {
+    }
 }

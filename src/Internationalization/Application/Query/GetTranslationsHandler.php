@@ -9,7 +9,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * GetTranslations Query Handler
+ * GetTranslations Query Handler.
  *
  * Retrieves translations with optional filters and pagination.
  */
@@ -18,7 +18,8 @@ final readonly class GetTranslationsHandler
 {
     public function __construct(
         private TranslationEntryRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array{

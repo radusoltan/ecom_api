@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Cart\Application\Command;
 
 /**
- * RemoveItemFromCart Command
+ * RemoveItemFromCart Command.
  *
  * Removes a specific item from the cart
  */

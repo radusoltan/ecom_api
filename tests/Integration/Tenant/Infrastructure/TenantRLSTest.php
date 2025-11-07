@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Tenant\Infrastructure;
 
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Shared\Infrastructure\Tenant\TenantContext;
 use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
-use App\Tenant\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\ValueObject\TenantName;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -88,7 +88,7 @@ final class TenantRLSTest extends KernelTestCase
 
         // Execute RLS function to set app.tenant_id
         $this->connection->executeStatement(
-            "SELECT set_tenant_context(?)",
+            'SELECT set_tenant_context(?)',
             [$tenant1->id()->toString()]
         );
 
@@ -147,7 +147,7 @@ final class TenantRLSTest extends KernelTestCase
         $this->tenantContext->setCurrentTenant($tenant1->id());
 
         $this->connection->executeStatement(
-            "SELECT set_tenant_context(?)",
+            'SELECT set_tenant_context(?)',
             [$tenant1->id()->toString()]
         );
 
@@ -157,8 +157,8 @@ final class TenantRLSTest extends KernelTestCase
         $this->expectException(\Doctrine\DBAL\Exception::class);
 
         $this->connection->executeStatement(
-            "INSERT INTO tenants (id, name, owner_email, status, created_at)
-             VALUES (?, ?, ?, ?, ?)",
+            'INSERT INTO tenants (id, name, owner_email, status, created_at)
+             VALUES (?, ?, ?, ?, ?)',
             [
                 $differentTenantId,
                 'Malicious Tenant',
@@ -189,13 +189,13 @@ final class TenantRLSTest extends KernelTestCase
         $this->tenantContext->setCurrentTenant($tenant1->id());
 
         $this->connection->executeStatement(
-            "SELECT set_tenant_context(?)",
+            'SELECT set_tenant_context(?)',
             [$tenant1->id()->toString()]
         );
 
         // Try to update tenant2's data (should affect 0 rows due to RLS)
         $affectedRows = $this->connection->executeStatement(
-            "UPDATE tenants SET name = ? WHERE id = ?",
+            'UPDATE tenants SET name = ? WHERE id = ?',
             ['Hacked Name', $tenant2->id()->toString()]
         );
 
@@ -216,13 +216,13 @@ final class TenantRLSTest extends KernelTestCase
         $this->tenantContext->setCurrentTenant($tenant1->id());
 
         $this->connection->executeStatement(
-            "SELECT set_tenant_context(?)",
+            'SELECT set_tenant_context(?)',
             [$tenant1->id()->toString()]
         );
 
         // Update own data (should work)
         $affectedRows = $this->connection->executeStatement(
-            "UPDATE tenants SET name = ? WHERE id = ?",
+            'UPDATE tenants SET name = ? WHERE id = ?',
             ['Updated Name', $tenant1->id()->toString()]
         );
 
@@ -230,7 +230,7 @@ final class TenantRLSTest extends KernelTestCase
 
         // Verify the update
         $updatedName = $this->connection->fetchOne(
-            "SELECT name FROM tenants WHERE id = ?",
+            'SELECT name FROM tenants WHERE id = ?',
             [$tenant1->id()->toString()]
         );
 
@@ -240,10 +240,10 @@ final class TenantRLSTest extends KernelTestCase
     protected function tearDown(): void
     {
         // Clean up only if RLS was set up
-        if ($this->tenantContext !== null) {
+        if (null !== $this->tenantContext) {
             $this->tenantContext->clearCurrentTenant();
         }
-        if ($this->connection !== null) {
+        if (null !== $this->connection) {
             try {
                 $this->connection->executeStatement("SELECT set_config('app.tenant_id', NULL, false)");
             } catch (\Exception $e) {

@@ -30,7 +30,7 @@ final readonly class TenantConnectionSubscriber
 
         $tenantId = $this->tenantContext->getCurrentTenantId();
 
-        if ($tenantId === null) {
+        if (null === $tenantId) {
             return;
         }
 
@@ -48,7 +48,7 @@ final readonly class TenantConnectionSubscriber
             ]);
         } catch (\Throwable $e) {
             // Log warning but don't fail - tenant isolation is handled at application level
-            $this->logger->warning('Could not set tenant context in database: ' . $e->getMessage(), [
+            $this->logger->warning('Could not set tenant context in database: '.$e->getMessage(), [
                 'tenant_id' => $tenantId->toString(),
                 'exception' => get_class($e),
                 'error' => $e->getMessage(),

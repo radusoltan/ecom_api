@@ -94,9 +94,9 @@ final class PaymentRefundedSubscriberTest extends TestCase
 
                     // If it has refunded_amount_in_cents, verify all fields
                     if (isset($context['refunded_amount_in_cents'])) {
-                        return $context['refunded_amount_in_cents'] === 3000
+                        return 3000 === $context['refunded_amount_in_cents']
                             && isset($context['reason'])
-                            && $context['reason'] === 'Damaged item'
+                            && 'Damaged item' === $context['reason']
                             && isset($context['occurred_on']);
                     }
 
@@ -143,6 +143,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
             ->method('send')
             ->with($this->callback(function (Email $email) {
                 $htmlBody = $email->getHtmlBody();
+
                 return str_contains($htmlBody, '5-10 business days')
                     || str_contains($htmlBody, 'processing time');
             }));
@@ -170,8 +171,8 @@ final class PaymentRefundedSubscriberTest extends TestCase
             ->method('error')
             ->with(
                 $this->stringContains('Failed to send refund notification'),
-                $this->callback(fn(array $context) =>
-                    isset($context['payment_id']) && isset($context['error'])
+                $this->callback(
+                    fn (array $context) => isset($context['payment_id']) && isset($context['error'])
                 )
             );
 

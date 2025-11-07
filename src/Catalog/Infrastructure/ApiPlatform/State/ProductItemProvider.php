@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Provider for ProductEntity item operations (single product by ID)
- * Ensures tenant isolation by checking tenant_id from X-Tenant-ID header
+ * Ensures tenant isolation by checking tenant_id from X-Tenant-ID header.
  *
  * @implements ProviderInterface<ProductEntity>
  */
@@ -27,13 +27,13 @@ final readonly class ProductItemProvider implements ProviderInterface
         // Get tenant ID from context (injected by TenantContextProvider decorator)
         $tenantId = $context['tenant_id'] ?? null;
 
-        if ($tenantId === null) {
+        if (null === $tenantId) {
             throw new \RuntimeException('Tenant ID is required but not provided in X-Tenant-ID header');
         }
 
         $productId = $uriVariables['id'] ?? null;
 
-        if ($productId === null) {
+        if (null === $productId) {
             throw new \RuntimeException('Product ID is required');
         }
 

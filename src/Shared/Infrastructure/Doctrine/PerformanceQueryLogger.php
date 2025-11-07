@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Doctrine;
 
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
+use App\Shared\Application\Service\PerformanceProfiler;
 use Doctrine\DBAL\Logging\SQLLogger;
 
 /**
@@ -33,21 +33,15 @@ final class PerformanceQueryLogger implements SQLLogger
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function startQuery($sql, ?array $params = null, ?array $types = null): void
     {
         $this->startTime = microtime(true);
         $this->currentQuery = $this->formatQuery($sql, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function stopQuery(): void
     {
-        if ($this->startTime === null) {
+        if (null === $this->startTime) {
             return;
         }
 

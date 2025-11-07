@@ -22,7 +22,8 @@ final readonly class CatalogMetricsSubscriber implements EventSubscriberInterfac
 {
     public function __construct(
         private PrometheusMetricsCollector $metricsCollector
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {

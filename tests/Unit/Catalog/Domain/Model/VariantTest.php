@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Catalog\Domain\Model;
 
 // Load Variant file which contains multiple classes
-require_once __DIR__ . '/../../../../../src/Catalog/Domain/Model/Variant.php';
+require_once __DIR__.'/../../../../../src/Catalog/Domain/Model/Variant.php';
 
 use App\Catalog\Domain\Model\Stock;
 use App\Catalog\Domain\Model\Variant;
@@ -15,12 +15,12 @@ use App\Shared\Domain\ValueObject\Money;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Unit tests for Variant entity
+ * Unit tests for Variant entity.
  */
 final class VariantTest extends TestCase
 {
     /**
-     * Test that create() validates option value map is not empty
+     * Test that create() validates option value map is not empty.
      */
     public function testCreateValidatesOptionValueMapNotEmpty(): void
     {
@@ -39,7 +39,7 @@ final class VariantTest extends TestCase
     }
 
     /**
-     * Test that matchesCombination() correctly matches option combinations
+     * Test that matchesCombination() correctly matches option combinations.
      */
     public function testMatchesCombinationCorrectlyMatches(): void
     {
@@ -72,12 +72,12 @@ final class VariantTest extends TestCase
         $this->assertFalse($variant->matchesCombination([
             'color' => 'red',
             'size' => 'large',
-            'material' => 'cotton'
+            'material' => 'cotton',
         ]));
     }
 
     /**
-     * Test that variant can be created successfully
+     * Test that variant can be created successfully.
      */
     public function testVariantCanBeCreated(): void
     {
@@ -108,7 +108,7 @@ final class VariantTest extends TestCase
     }
 
     /**
-     * Test that variant price can be updated
+     * Test that variant price can be updated.
      */
     public function testVariantPriceCanBeUpdated(): void
     {
@@ -132,7 +132,7 @@ final class VariantTest extends TestCase
     }
 
     /**
-     * Test that variant can be activated and deactivated
+     * Test that variant can be activated and deactivated.
      */
     public function testVariantCanBeActivatedAndDeactivated(): void
     {
@@ -160,7 +160,7 @@ final class VariantTest extends TestCase
     }
 
     /**
-     * Test that stock can be updated
+     * Test that stock can be updated.
      */
     public function testStockCanBeUpdated(): void
     {

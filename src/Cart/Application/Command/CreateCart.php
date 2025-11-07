@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Cart\Application\Command;
 
 /**
- * CreateCart Command
+ * CreateCart Command.
  *
  * Creates a new cart for a customer or guest session
  */

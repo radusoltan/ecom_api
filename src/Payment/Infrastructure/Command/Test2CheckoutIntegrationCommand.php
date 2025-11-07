@@ -72,7 +72,7 @@ final class Test2CheckoutIntegrationCommand extends Command
             $createCommand = new CreatePayment(
                 id: $paymentId,
                 tenantId: $tenantId,
-                orderId: '01J9XAMPLE' . bin2hex(random_bytes(8)),
+                orderId: '01J9XAMPLE'.bin2hex(random_bytes(8)),
                 amountInCents: 10000, // $100.00
                 currency: 'USD',
                 method: PaymentMethod::card(),
@@ -88,6 +88,7 @@ final class Test2CheckoutIntegrationCommand extends Command
             $io->newLine();
         } catch (\Exception $e) {
             $io->error("Eroare la creare payment: {$e->getMessage()}");
+
             return Command::FAILURE;
         }
 
@@ -111,7 +112,7 @@ final class Test2CheckoutIntegrationCommand extends Command
             $envelope = $this->queryBus->dispatch($query);
             $paymentDTO = $envelope->last(HandledStamp::class)?->getResult();
 
-            if ($paymentDTO && $paymentDTO->status === 'authorized') {
+            if ($paymentDTO && 'authorized' === $paymentDTO->status) {
                 $io->success('✅ Payment autorizat cu succes prin 2Checkout!');
                 $io->text("2Checkout RefNo: {$paymentDTO->gatewayTransactionId}");
                 $io->text("Status: {$paymentDTO->status}");
@@ -120,15 +121,15 @@ final class Test2CheckoutIntegrationCommand extends Command
                 $io->warning("Autorizare parțială sau status neașteptat: {$paymentDTO->status}");
             }
         } catch (\Exception $e) {
-            $io->error("❌ Eroare la autorizare prin 2Checkout!");
+            $io->error('❌ Eroare la autorizare prin 2Checkout!');
             $io->text("Mesaj eroare: {$e->getMessage()}");
             $io->newLine();
-            $io->text("Acest lucru este NORMAL dacă:");
-            $io->text("  • 2Checkout Sandbox credentials nu sunt configurate corect");
-            $io->text("  • Payload-ul necesită ajustări suplimentare");
-            $io->text("  • API-ul 2Checkout cere confirmări suplimentare");
+            $io->text('Acest lucru este NORMAL dacă:');
+            $io->text('  • 2Checkout Sandbox credentials nu sunt configurate corect');
+            $io->text('  • Payload-ul necesită ajustări suplimentare');
+            $io->text('  • API-ul 2Checkout cere confirmări suplimentare');
             $io->newLine();
-            $io->text("✅ IMPORTANT: Codul nostru FUNCȚIONEAZĂ - verifică configurația!");
+            $io->text('✅ IMPORTANT: Codul nostru FUNCȚIONEAZĂ - verifică configurația!');
             $io->newLine();
 
             // Continuăm testarea
@@ -149,7 +150,7 @@ final class Test2CheckoutIntegrationCommand extends Command
                 $io->success('✅ Status payment preluat cu succes!');
                 $io->text("Payment ID: {$paymentDTO->id}");
                 $io->text("Status: {$paymentDTO->status}");
-                $io->text("Amount: $" . ($paymentDTO->amountInCents / 100));
+                $io->text('Amount: $'.($paymentDTO->amountInCents / 100));
                 $io->text("Gateway Transaction ID: {$paymentDTO->gatewayTransactionId}");
                 $io->newLine();
             }
@@ -177,19 +178,19 @@ final class Test2CheckoutIntegrationCommand extends Command
             $envelope = $this->queryBus->dispatch($query);
             $paymentDTO = $envelope->last(HandledStamp::class)?->getResult();
 
-            if ($paymentDTO && $paymentDTO->status === 'captured') {
+            if ($paymentDTO && 'captured' === $paymentDTO->status) {
                 $io->success('✅ Payment capturat cu succes prin 2Checkout!');
                 $io->text("Status: {$paymentDTO->status}");
-                $io->text("Captured Amount: $" . ($paymentDTO->capturedAmountInCents / 100));
+                $io->text('Captured Amount: $'.($paymentDTO->capturedAmountInCents / 100));
                 $io->newLine();
             } else {
                 $io->warning("Status după capture: {$paymentDTO->status}");
-                $io->text("Motivul: 2Checkout poate auto-captura sau necesita confirmare manuală");
+                $io->text('Motivul: 2Checkout poate auto-captura sau necesita confirmare manuală');
                 $io->newLine();
             }
         } catch (\Exception $e) {
             $io->error("❌ Eroare la capturare: {$e->getMessage()}");
-            $io->text("Motivul: Payment nu a fost autorizat cu succes în pasul anterior.");
+            $io->text('Motivul: Payment nu a fost autorizat cu succes în pasul anterior.');
             $io->newLine();
         }
 
@@ -213,9 +214,9 @@ final class Test2CheckoutIntegrationCommand extends Command
             $envelope = $this->queryBus->dispatch($query);
             $paymentDTO = $envelope->last(HandledStamp::class)?->getResult();
 
-            if ($paymentDTO && $paymentDTO->status === 'refunded') {
+            if ($paymentDTO && 'refunded' === $paymentDTO->status) {
                 $io->success('✅ Payment refundat cu succes prin 2Checkout!');
-                $io->text("Refunded Amount: $" . ($paymentDTO->refundedAmountInCents / 100));
+                $io->text('Refunded Amount: $'.($paymentDTO->refundedAmountInCents / 100));
                 $io->newLine();
             } else {
                 $io->warning("Status după refund: {$paymentDTO->status}");
@@ -223,7 +224,7 @@ final class Test2CheckoutIntegrationCommand extends Command
             }
         } catch (\Exception $e) {
             $io->error("❌ Eroare la refund: {$e->getMessage()}");
-            $io->text("Motivul: Payment nu a fost capturat cu succes, sau 2Checkout API nu permite refund în acest moment.");
+            $io->text('Motivul: Payment nu a fost capturat cu succes, sau 2Checkout API nu permite refund în acest moment.');
             $io->newLine();
         }
 
@@ -240,7 +241,7 @@ final class Test2CheckoutIntegrationCommand extends Command
             $createCommand2 = new CreatePayment(
                 id: $paymentId2,
                 tenantId: $tenantId,
-                orderId: '01J9XAMPLE' . bin2hex(random_bytes(8)),
+                orderId: '01J9XAMPLE'.bin2hex(random_bytes(8)),
                 amountInCents: 2500, // $25.00
                 currency: 'USD',
                 method: PaymentMethod::card(),
@@ -277,7 +278,7 @@ final class Test2CheckoutIntegrationCommand extends Command
             $envelope = $this->queryBus->dispatch($query);
             $paymentDTO = $envelope->last(HandledStamp::class)?->getResult();
 
-            if ($paymentDTO && $paymentDTO->status === 'cancelled') {
+            if ($paymentDTO && 'cancelled' === $paymentDTO->status) {
                 $io->success('✅ Payment anulat cu succes prin 2Checkout!');
                 $io->newLine();
             } else {
@@ -309,7 +310,7 @@ final class Test2CheckoutIntegrationCommand extends Command
                 $createCmd = new CreatePayment(
                     id: $testPaymentId,
                     tenantId: $tenantId,
-                    orderId: '01J9TEST' . bin2hex(random_bytes(4)),
+                    orderId: '01J9TEST'.bin2hex(random_bytes(4)),
                     amountInCents: 1500, // $15.00
                     currency: 'USD',
                     method: PaymentMethod::card(),
@@ -345,8 +346,8 @@ final class Test2CheckoutIntegrationCommand extends Command
         $io->newLine();
 
         $io->note('SAU verifică în baza de date:');
-        $io->text("SELECT id, status, gateway_transaction_id, amount_in_cents, refunded_amount_in_cents");
-        $io->text("FROM payments");
+        $io->text('SELECT id, status, gateway_transaction_id, amount_in_cents, refunded_amount_in_cents');
+        $io->text('FROM payments');
         $io->text("WHERE id IN ('{$paymentId->toString()}', '{$paymentId2->toString()}');");
         $io->newLine();
 

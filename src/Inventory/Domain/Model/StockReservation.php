@@ -8,7 +8,7 @@ use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * StockReservation Aggregate Root
+ * StockReservation Aggregate Root.
  *
  * Tracks individual stock reservations with expiry times.
  * Separate from StockItem to allow independent tracking of reservation timeouts.
@@ -77,6 +77,7 @@ final class StockReservation extends AggregateRoot
     public function isExpired(?\DateTimeImmutable $now = null): bool
     {
         $now = $now ?? new \DateTimeImmutable();
+
         return !$this->isReleased && $now >= $this->expiresAt;
     }
 

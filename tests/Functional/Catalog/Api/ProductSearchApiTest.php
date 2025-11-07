@@ -179,7 +179,7 @@ final class ProductSearchApiTest extends ApiTestCase
     public function testSearchProductsWithPagination(): void
     {
         // Create and index 5 test products
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 5; ++$i) {
             $this->createAndIndexProduct("Product $i", 100.00 * $i);
         }
 

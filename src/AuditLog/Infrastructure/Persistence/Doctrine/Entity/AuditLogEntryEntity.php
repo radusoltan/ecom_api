@@ -47,7 +47,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     'userId' => 'exact',
     'actionType' => 'exact',
     'resourceType' => 'exact',
-    'resourceId' => 'exact'
+    'resourceId' => 'exact',
 ])]
 #[ApiFilter(DateFilter::class, properties: ['occurredAt'])]
 class AuditLogEntryEntity
@@ -101,6 +101,7 @@ class AuditLogEntryEntity
     public function setId(string $id): self
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -112,6 +113,7 @@ class AuditLogEntryEntity
     public function setTenantId(string $tenantId): self
     {
         $this->tenantId = $tenantId;
+
         return $this;
     }
 
@@ -123,6 +125,7 @@ class AuditLogEntryEntity
     public function setUserId(?string $userId): self
     {
         $this->userId = $userId;
+
         return $this;
     }
 
@@ -134,6 +137,7 @@ class AuditLogEntryEntity
     public function setActionType(string $actionType): self
     {
         $this->actionType = $actionType;
+
         return $this;
     }
 
@@ -145,6 +149,7 @@ class AuditLogEntryEntity
     public function setResourceType(string $resourceType): self
     {
         $this->resourceType = $resourceType;
+
         return $this;
     }
 
@@ -156,6 +161,7 @@ class AuditLogEntryEntity
     public function setResourceId(string $resourceId): self
     {
         $this->resourceId = $resourceId;
+
         return $this;
     }
 
@@ -167,6 +173,7 @@ class AuditLogEntryEntity
     public function setMetadata(array $metadata): self
     {
         $this->metadata = $metadata;
+
         return $this;
     }
 
@@ -178,6 +185,7 @@ class AuditLogEntryEntity
     public function setIpAddress(?string $ipAddress): self
     {
         $this->ipAddress = $ipAddress;
+
         return $this;
     }
 
@@ -189,6 +197,7 @@ class AuditLogEntryEntity
     public function setUserAgent(?string $userAgent): self
     {
         $this->userAgent = $userAgent;
+
         return $this;
     }
 
@@ -200,11 +209,12 @@ class AuditLogEntryEntity
     public function setOccurredAt(\DateTimeImmutable $occurredAt): self
     {
         $this->occurredAt = $occurredAt;
+
         return $this;
     }
 
     /**
-     * Convert domain model to entity
+     * Convert domain model to entity.
      */
     public static function fromDomainModel(AuditLogEntry $entry): self
     {
@@ -224,7 +234,7 @@ class AuditLogEntryEntity
     }
 
     /**
-     * Convert entity to domain model
+     * Convert entity to domain model.
      */
     public function toDomainModel(): AuditLogEntry
     {

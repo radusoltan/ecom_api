@@ -66,8 +66,8 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $this->mailer->expects($this->once())
             ->method('send')
             ->with($this->callback(function (Email $email) use ($paymentId) {
-                return $email->getFrom()[0]->getAddress() === 'payments@test.com'
-                    && $email->getTo()[0]->getAddress() === 'customer@example.com'
+                return 'payments@test.com' === $email->getFrom()[0]->getAddress()
+                    && 'customer@example.com' === $email->getTo()[0]->getAddress()
                     && str_contains($email->getSubject(), 'Payment Confirmation')
                     && str_contains($email->getHtmlBody(), $paymentId->toString())
                     && str_contains($email->getHtmlBody(), '$99.99');
@@ -112,7 +112,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
 
                     // If it has captured_amount_in_cents, verify it
                     if (isset($context['captured_amount_in_cents'])) {
-                        return $context['captured_amount_in_cents'] === 5000;
+                        return 5000 === $context['captured_amount_in_cents'];
                     }
 
                     // Otherwise it's the completion log, which is also fine
@@ -213,7 +213,8 @@ final class PaymentCapturedSubscriberTest extends TestCase
             ->method('send')
             ->with($this->callback(function (Email $email) {
                 $textBody = $email->getTextBody();
-                return $textBody !== null
+
+                return null !== $textBody
                     && str_contains($textBody, 'Payment ID:')
                     && str_contains($textBody, '$99.99')
                     && str_contains($textBody, 'PAYMENT CONFIRMED');

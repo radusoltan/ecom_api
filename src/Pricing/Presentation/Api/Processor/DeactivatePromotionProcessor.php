@@ -28,7 +28,7 @@ final readonly class DeactivatePromotionProcessor implements ProcessorInterface
 
         // Get tenant ID from context (set by TenantContextProvider)
         $tenantId = $context['tenant_id'] ?? null;
-        if ($tenantId === null) {
+        if (null === $tenantId) {
             throw new \RuntimeException('Tenant ID not found in context');
         }
 
@@ -55,7 +55,7 @@ final readonly class DeactivatePromotionProcessor implements ProcessorInterface
 
         $promotionDTO = $handledStamp->getResult();
 
-        if ($promotionDTO === null) {
+        if (null === $promotionDTO) {
             throw new \RuntimeException('Promotion not found after deactivation');
         }
 

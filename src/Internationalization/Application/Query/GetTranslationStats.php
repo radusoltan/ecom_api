@@ -7,7 +7,7 @@ namespace App\Internationalization\Application\Query;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Get Translation Statistics Query
+ * Get Translation Statistics Query.
  *
  * Retrieves comprehensive translation coverage statistics:
  * - Coverage per domain per locale
@@ -18,5 +18,6 @@ final readonly class GetTranslationStats
 {
     public function __construct(
         public TenantId $tenantId,
-    ) {}
+    ) {
+    }
 }

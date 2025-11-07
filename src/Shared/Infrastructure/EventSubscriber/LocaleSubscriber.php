@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Locale Subscriber
+ * Locale Subscriber.
  *
  * Automatically sets the locale for Gedmo Translatable behavior based on HTTP request.
  *
@@ -43,7 +43,7 @@ final readonly class LocaleSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Set Gedmo Translatable locale on every request
+     * Set Gedmo Translatable locale on every request.
      */
     public function onKernelRequest(RequestEvent $event): void
     {

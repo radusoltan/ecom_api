@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Returns\Application\Query;
 
 /**
- * Query: GetReturnRequestById
+ * Query: GetReturnRequestById.
  *
  * Retrieve a return request by its ID.
  */

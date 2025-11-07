@@ -9,7 +9,7 @@ use App\Catalog\Domain\Model\ProductId;
 use App\Shared\Domain\Event\DomainEvent;
 
 /**
- * Domain event: Variants were automatically generated for a configurable product
+ * Domain event: Variants were automatically generated for a configurable product.
  */
 final readonly class VariantsGenerated implements DomainEvent
 {
@@ -18,7 +18,8 @@ final readonly class VariantsGenerated implements DomainEvent
         private ProductId $productId,
         private int $variantsCount,
         private \DateTimeImmutable $occurredOn = new \DateTimeImmutable()
-    ) {}
+    ) {
+    }
 
     public function getConfigurableProductId(): ConfigurableProductId
     {

@@ -26,7 +26,8 @@ abstract class AggregateRoot
     }
 
     /**
-     * Alias for popEvents() for backward compatibility
+     * Alias for popEvents() for backward compatibility.
+     *
      * @return array<object>
      */
     public function pullDomainEvents(): array

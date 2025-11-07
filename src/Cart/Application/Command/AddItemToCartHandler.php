@@ -29,7 +29,7 @@ final readonly class AddItemToCartHandler
         $cartId = CartId::fromString($command->cartId);
         $cart = $this->cartRepository->findById($cartId);
 
-        if ($cart === null) {
+        if (null === $cart) {
             throw CartNotFoundException::withId($command->cartId);
         }
 
@@ -44,7 +44,7 @@ final readonly class AddItemToCartHandler
         );
 
         // Step 2: Determine price: use provided price or fetch current price
-        if ($command->unitPriceAmount !== null && $command->unitPriceCurrency !== null) {
+        if (null !== $command->unitPriceAmount && null !== $command->unitPriceCurrency) {
             // Price provided explicitly (backwards compatibility)
             $unitPrice = Money::fromScalars($command->unitPriceAmount, $command->unitPriceCurrency);
         } else {

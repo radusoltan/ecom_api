@@ -12,5 +12,6 @@ final readonly class GetProducts
         public TenantId $tenantId,
         public int $limit = 100,
         public int $offset = 0
-    ) {}
+    ) {
+    }
 }

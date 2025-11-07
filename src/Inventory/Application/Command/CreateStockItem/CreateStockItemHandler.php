@@ -13,7 +13,8 @@ final readonly class CreateStockItemHandler
 {
     public function __construct(
         private StockItemRepositoryInterface $stockItemRepository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(CreateStockItemCommand $command): void
     {
@@ -24,14 +25,8 @@ final readonly class CreateStockItemHandler
             $command->tenantId
         );
 
-        if ($existingStockItem !== null) {
-            throw new \DomainException(
-                sprintf(
-                    'Stock item already exists for product %s in warehouse %s',
-                    $command->productId->toString(),
-                    $command->warehouseId->toString()
-                )
-            );
+        if (null !== $existingStockItem) {
+            throw new \DomainException(sprintf('Stock item already exists for product %s in warehouse %s', $command->productId->toString(), $command->warehouseId->toString()));
         }
 
         $stockItem = StockItem::create(

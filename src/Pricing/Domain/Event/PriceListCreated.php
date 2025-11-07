@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Pricing\Domain\Event;
 
 use App\Shared\Domain\Event\DomainEvent;
-use DateTimeImmutable;
 
 /**
- * Domain Event: PriceList was created
+ * Domain Event: PriceList was created.
  */
 final readonly class PriceListCreated implements DomainEvent
 {
@@ -17,7 +16,7 @@ final readonly class PriceListCreated implements DomainEvent
         private string $tenantId,
         private string $name,
         private int $priority,
-        private DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn
     ) {
     }
 
@@ -41,7 +40,7 @@ final readonly class PriceListCreated implements DomainEvent
         return $this->priority;
     }
 
-    public function occurredOn(): DateTimeImmutable
+    public function occurredOn(): \DateTimeImmutable
     {
         return $this->occurredOn;
     }
@@ -53,7 +52,7 @@ final readonly class PriceListCreated implements DomainEvent
             'tenant_id' => $this->tenantId,
             'name' => $this->name,
             'priority' => $this->priority,
-            'occurred_on' => $this->occurredOn->format(DateTimeImmutable::ATOM),
+            'occurred_on' => $this->occurredOn->format(\DateTimeImmutable::ATOM),
         ];
     }
 }

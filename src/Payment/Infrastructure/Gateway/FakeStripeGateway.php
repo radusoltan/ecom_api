@@ -9,7 +9,7 @@ use App\Payment\Domain\ValueObject\PaymentMethod;
 use Psr\Log\LoggerInterface;
 
 /**
- * Fake Stripe Payment Gateway for Testing
+ * Fake Stripe Payment Gateway for Testing.
  *
  * Simulates Stripe API responses without making real HTTP calls.
  * Used in test environment to avoid dependency on external services.
@@ -53,7 +53,7 @@ final readonly class FakeStripeGateway implements PaymentGatewayInterface
         ]);
 
         // Generate fake transaction ID
-        $transactionId = 'pi_fake_' . bin2hex(random_bytes(12));
+        $transactionId = 'pi_fake_'.bin2hex(random_bytes(12));
 
         // Simulate 3D Secure requirement (SCA - Strong Customer Authentication)
         if ($this->require3DS || ($metadata['force_3ds'] ?? false)) {
@@ -67,12 +67,12 @@ final readonly class FakeStripeGateway implements PaymentGatewayInterface
                 'next_action' => [
                     'type' => 'redirect_to_url',
                     'redirect_to_url' => [
-                        'url' => 'https://hooks.stripe.com/3d_secure/' . $transactionId,
+                        'url' => 'https://hooks.stripe.com/3d_secure/'.$transactionId,
                         'return_url' => $metadata['return_url'] ?? 'https://example.com/payment/confirm',
                     ],
                 ],
                 'metadata' => [
-                    'client_secret' => $transactionId . '_secret_fake',
+                    'client_secret' => $transactionId.'_secret_fake',
                     'amount' => $amountInCents,
                     'currency' => strtolower($currency),
                     'requires_3ds' => true,
@@ -85,7 +85,7 @@ final readonly class FakeStripeGateway implements PaymentGatewayInterface
             'transaction_id' => $transactionId,
             'status' => 'requires_capture',
             'metadata' => [
-                'client_secret' => $transactionId . '_secret_fake',
+                'client_secret' => $transactionId.'_secret_fake',
                 'amount' => $amountInCents,
                 'currency' => strtolower($currency),
                 'payment_method_types' => ['card'],
@@ -117,7 +117,7 @@ final readonly class FakeStripeGateway implements PaymentGatewayInterface
         ]);
 
         // Generate fake refund ID
-        $refundId = 're_fake_' . bin2hex(random_bytes(12));
+        $refundId = 're_fake_'.bin2hex(random_bytes(12));
 
         return [
             'refund_id' => $refundId,

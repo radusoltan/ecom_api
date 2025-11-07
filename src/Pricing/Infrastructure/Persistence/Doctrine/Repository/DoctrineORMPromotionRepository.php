@@ -25,7 +25,7 @@ final readonly class DoctrineORMPromotionRepository implements PromotionReposito
     {
         $entity = $this->entityManager->find(PromotionEntity::class, $promotion->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             $entity = PromotionEntity::fromDomainModel($promotion);
             $this->entityManager->persist($entity);
         } else {
@@ -109,7 +109,7 @@ final readonly class DoctrineORMPromotionRepository implements PromotionReposito
     {
         $entity = $this->entityManager->find(PromotionEntity::class, $promotion->id()->toString());
 
-        if ($entity !== null) {
+        if (null !== $entity) {
             $this->entityManager->remove($entity);
             $this->entityManager->flush();
         }

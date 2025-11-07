@@ -14,7 +14,7 @@ use Symfony\Component\Yaml\Yaml;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * API Platform State Provider for Translations
+ * API Platform State Provider for Translations.
  *
  * Fetches translations from Symfony Translation component and exposes them via API.
  *
@@ -75,7 +75,7 @@ final readonly class TranslationsProvider implements ProviderInterface
         $locale = $this->validateLocale($requestedLocale);
 
         // Load translations directly from YAML file to avoid fallback behavior
-        $translationsPath = $this->kernel->getProjectDir() . '/translations';
+        $translationsPath = $this->kernel->getProjectDir().'/translations';
         $filename = sprintf('%s/%s.%s.yaml', $translationsPath, $domain, $locale);
 
         $messages = [];
@@ -104,13 +104,7 @@ final readonly class TranslationsProvider implements ProviderInterface
     private function validateDomain(string $domain): string
     {
         if (!in_array($domain, self::SUPPORTED_DOMAINS, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid domain "%s". Supported domains: %s',
-                    $domain,
-                    implode(', ', self::SUPPORTED_DOMAINS)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid domain "%s". Supported domains: %s', $domain, implode(', ', self::SUPPORTED_DOMAINS)));
         }
 
         return $domain;
@@ -123,15 +117,16 @@ final readonly class TranslationsProvider implements ProviderInterface
 
         // LanguageCode::fromString() will throw InvalidArgumentException for unsupported locales
         $languageCode = LanguageCode::fromString($baseLocale);
+
         return $languageCode->value();
     }
 
     /**
      * Flatten nested array with dot notation
-     * Example: ['common' => ['save' => 'Save']] becomes ['common.save' => 'Save']
+     * Example: ['common' => ['save' => 'Save']] becomes ['common.save' => 'Save'].
      *
      * @param array<string, mixed> $array
-     * @param string $prefix
+     *
      * @return array<string, string>
      */
     private function flattenArray(array $array, string $prefix = ''): array
@@ -139,7 +134,7 @@ final readonly class TranslationsProvider implements ProviderInterface
         $result = [];
 
         foreach ($array as $key => $value) {
-            $newKey = $prefix === '' ? $key : $prefix . '.' . $key;
+            $newKey = '' === $prefix ? $key : $prefix.'.'.$key;
 
             if (is_array($value)) {
                 $result = array_merge($result, $this->flattenArray($value, $newKey));

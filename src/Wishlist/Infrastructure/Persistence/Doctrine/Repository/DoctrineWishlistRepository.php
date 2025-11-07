@@ -17,13 +17,14 @@ final readonly class DoctrineWishlistRepository implements WishlistRepositoryInt
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MessageBusInterface $eventBus
-    ) {}
+    ) {
+    }
 
     public function save(Wishlist $wishlist): void
     {
         $entity = $this->entityManager->find(WishlistEntity::class, $wishlist->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             $entity = WishlistEntity::fromDomainModel($wishlist);
             $this->entityManager->persist($entity);
         } else {
@@ -60,7 +61,7 @@ final readonly class DoctrineWishlistRepository implements WishlistRepositoryInt
     {
         $entity = $this->entityManager->find(WishlistEntity::class, $wishlist->id()->toString());
 
-        if ($entity !== null) {
+        if (null !== $entity) {
             $this->entityManager->remove($entity);
             $this->entityManager->flush();
         }

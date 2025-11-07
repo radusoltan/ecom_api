@@ -12,7 +12,8 @@ final readonly class ReleaseStockHandler
 {
     public function __construct(
         private StockItemRepositoryInterface $stockItemRepository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(ReleaseStockCommand $command): void
     {
@@ -22,14 +23,8 @@ final readonly class ReleaseStockHandler
             $command->tenantId
         );
 
-        if ($stockItem === null) {
-            throw new \DomainException(
-                sprintf(
-                    'Stock item not found for product %s in warehouse %s',
-                    $command->productId->toString(),
-                    $command->warehouseId->toString()
-                )
-            );
+        if (null === $stockItem) {
+            throw new \DomainException(sprintf('Stock item not found for product %s in warehouse %s', $command->productId->toString(), $command->warehouseId->toString()));
         }
 
         $stockItem->release($command->quantity, $command->reason);

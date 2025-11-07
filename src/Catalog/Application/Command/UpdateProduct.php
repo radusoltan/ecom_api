@@ -21,5 +21,6 @@ final readonly class UpdateProduct
         public Money $price,
         public ?CategoryId $categoryId,
         public bool $isFeatured
-    ) {}
+    ) {
+    }
 }

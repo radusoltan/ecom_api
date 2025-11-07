@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Payment\Domain\ValueObject;
 
 /**
- * Payment Status Value Object
+ * Payment Status Value Object.
  *
  * Payment lifecycle states:
  * - pending: Payment initiated, awaiting authorization
@@ -47,13 +47,7 @@ final readonly class PaymentStatus
         private string $value
     ) {
         if (!in_array($value, self::VALID_STATUSES, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid payment status: "%s". Allowed: %s',
-                    $value,
-                    implode(', ', self::VALID_STATUSES)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid payment status: "%s". Allowed: %s', $value, implode(', ', self::VALID_STATUSES)));
         }
     }
 
@@ -99,37 +93,38 @@ final readonly class PaymentStatus
 
     public function isPending(): bool
     {
-        return $this->value === self::PENDING;
+        return self::PENDING === $this->value;
     }
 
     public function isAuthorized(): bool
     {
-        return $this->value === self::AUTHORIZED;
+        return self::AUTHORIZED === $this->value;
     }
 
     public function isCaptured(): bool
     {
-        return $this->value === self::CAPTURED;
+        return self::CAPTURED === $this->value;
     }
 
     public function isRefunded(): bool
     {
-        return $this->value === self::REFUNDED;
+        return self::REFUNDED === $this->value;
     }
 
     public function isFailed(): bool
     {
-        return $this->value === self::FAILED;
+        return self::FAILED === $this->value;
     }
 
     public function isCancelled(): bool
     {
-        return $this->value === self::CANCELLED;
+        return self::CANCELLED === $this->value;
     }
 
     public function canTransitionTo(self $newStatus): bool
     {
         $allowedTransitions = self::VALID_TRANSITIONS[$this->value] ?? [];
+
         return in_array($newStatus->value, $allowedTransitions, true);
     }
 

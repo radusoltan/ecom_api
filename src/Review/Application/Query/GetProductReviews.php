@@ -13,5 +13,6 @@ final readonly class GetProductReviews
         public ProductId $productId,
         public TenantId $tenantId,
         public bool $onlyApproved = true
-    ) {}
+    ) {
+    }
 }

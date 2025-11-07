@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Cart\Application\Command;
 
 /**
- * UpdateCartQuantity Command
+ * UpdateCartQuantity Command.
  *
  * Updates the quantity of a specific cart item
  */

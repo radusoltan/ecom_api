@@ -9,7 +9,7 @@ use App\Catalog\Domain\ValueObject\Locale;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Command to update product translations for a specific locale
+ * Command to update product translations for a specific locale.
  */
 final readonly class UpdateProductTranslations
 {
@@ -20,5 +20,6 @@ final readonly class UpdateProductTranslations
         public ?string $name = null,
         public ?string $description = null,
         public ?string $shortDescription = null
-    ) {}
+    ) {
+    }
 }

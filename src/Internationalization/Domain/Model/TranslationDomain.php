@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Internationalization\Domain\Model;
 
 /**
- * TranslationDomain Value Object
+ * TranslationDomain Value Object.
  *
  * Represents a translation domain (messages, validators, emails, etc.)
  */
@@ -26,18 +26,13 @@ final readonly class TranslationDomain
 
     private function __construct(
         private string $value,
-    ) {}
+    ) {
+    }
 
     public static function fromString(string $value): self
     {
         if (!in_array($value, self::SUPPORTED_DOMAINS, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid translation domain "%s". Supported domains: %s',
-                    $value,
-                    implode(', ', self::SUPPORTED_DOMAINS)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid translation domain "%s". Supported domains: %s', $value, implode(', ', self::SUPPORTED_DOMAINS)));
         }
 
         return new self($value);

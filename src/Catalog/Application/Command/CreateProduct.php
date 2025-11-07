@@ -26,5 +26,6 @@ final readonly class CreateProduct
         public bool $trackInventory = true,
         public bool $allowBackorder = false,
         public bool $isFeatured = false
-    ) {}
+    ) {
+    }
 }

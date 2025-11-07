@@ -14,7 +14,7 @@ use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Category aggregate with JSONB-based translations support
+ * Category aggregate with JSONB-based translations support.
  */
 final class CategoryWithTranslations extends AggregateRoot
 {
@@ -54,13 +54,13 @@ final class CategoryWithTranslations extends AggregateRoot
         $descriptionTranslations = LocalizedString::empty();
 
         // If locale provided, set initial translations
-        if ($initialLocale !== null) {
+        if (null !== $initialLocale) {
             $nameTranslations = LocalizedString::fromSingleTranslation(
                 $initialLocale->toString(),
                 $name->value()
             );
 
-            if ($description !== null) {
+            if (null !== $description) {
                 $descriptionTranslations = LocalizedString::fromSingleTranslation(
                     $initialLocale->toString(),
                     $description
@@ -122,7 +122,7 @@ final class CategoryWithTranslations extends AggregateRoot
     }
 
     /**
-     * Update translations for a specific locale
+     * Update translations for a specific locale.
      */
     public function updateTranslations(
         Locale $locale,
@@ -131,12 +131,12 @@ final class CategoryWithTranslations extends AggregateRoot
     ): void {
         $changed = false;
 
-        if ($name !== null) {
+        if (null !== $name) {
             $this->nameTranslations = $this->nameTranslations->withTranslation($locale, $name);
             $changed = true;
         }
 
-        if ($description !== null) {
+        if (null !== $description) {
             $this->descriptionTranslations = $this->descriptionTranslations->withTranslation($locale, $description);
             $changed = true;
         }
@@ -148,7 +148,7 @@ final class CategoryWithTranslations extends AggregateRoot
     }
 
     /**
-     * Remove translations for a specific locale
+     * Remove translations for a specific locale.
      */
     public function removeTranslations(Locale $locale): void
     {
@@ -163,17 +163,19 @@ final class CategoryWithTranslations extends AggregateRoot
     public function getName(Locale $locale, LocalizationPolicy $policy, ?Locale $tenantDefault = null): string
     {
         $resolved = $policy->resolveString($this->nameTranslations, $locale, $tenantDefault);
+
         return $resolved ?? $this->defaultName->value();
     }
 
     public function getDescription(Locale $locale, LocalizationPolicy $policy, ?Locale $tenantDefault = null): ?string
     {
         $resolved = $policy->resolveString($this->descriptionTranslations, $locale, $tenantDefault);
+
         return $resolved ?? $this->defaultDescription;
     }
 
     /**
-     * Get slug for a specific locale
+     * Get slug for a specific locale.
      */
     public function getSlug(Locale $locale, LocalizationPolicy $policy, ?Locale $tenantDefault = null): Slug
     {
@@ -199,7 +201,7 @@ final class CategoryWithTranslations extends AggregateRoot
     }
 
     /**
-     * Get all translations as array for persistence
+     * Get all translations as array for persistence.
      */
     public function getTranslationsArray(): array
     {
@@ -300,6 +302,7 @@ final class CategoryWithTranslations extends AggregateRoot
         $slug = strtolower($name);
         $slug = (string) preg_replace('/[^a-z0-9]+/', '-', $slug);
         $slug = trim($slug, '-');
+
         return $slug;
     }
 }

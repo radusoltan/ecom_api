@@ -22,7 +22,6 @@ use App\Privacy\Presentation\Api\Processor\SubmitDataSubjectRequestProcessor;
 use App\Privacy\Presentation\Api\Provider\DataSubjectRequestCollectionProvider;
 use App\Privacy\Presentation\Api\Provider\DataSubjectRequestItemProvider;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -95,22 +94,22 @@ class DataSubjectRequestEntity
     private ?array $exportData;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private DateTimeImmutable $submittedAt;
+    private \DateTimeImmutable $submittedAt;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private ?DateTimeImmutable $completedAt;
+    private ?\DateTimeImmutable $completedAt;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private DateTimeImmutable $deadline;
+    private \DateTimeImmutable $deadline;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isExtended;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $updatedAt;
 
     public static function fromDomainModel(DataSubjectRequest $request): self
     {
@@ -213,17 +212,17 @@ class DataSubjectRequestEntity
         return $this->exportData;
     }
 
-    public function getSubmittedAt(): DateTimeImmutable
+    public function getSubmittedAt(): \DateTimeImmutable
     {
         return $this->submittedAt;
     }
 
-    public function getCompletedAt(): ?DateTimeImmutable
+    public function getCompletedAt(): ?\DateTimeImmutable
     {
         return $this->completedAt;
     }
 
-    public function getDeadline(): DateTimeImmutable
+    public function getDeadline(): \DateTimeImmutable
     {
         return $this->deadline;
     }
@@ -233,12 +232,12 @@ class DataSubjectRequestEntity
         return $this->isExtended;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

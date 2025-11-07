@@ -12,7 +12,8 @@ final readonly class GetProductsHandler
 {
     public function __construct(
         private ProductRepositoryInterface $productRepository
-    ) {}
+    ) {
+    }
 
     /**
      * @return \App\Catalog\Domain\Model\Product[]

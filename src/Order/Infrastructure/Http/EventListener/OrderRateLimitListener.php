@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Order\Infrastructure\Http\EventListener;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
-use Psr\Log\LoggerInterface;
 
 /**
- * OrderRateLimitListener
+ * OrderRateLimitListener.
  *
  * Applies rate limiting to order placement endpoints to prevent abuse.
  *
@@ -43,7 +43,7 @@ final readonly class OrderRateLimitListener
         $request = $event->getRequest();
 
         // Only apply to POST /api/orders
-        if ($request->getMethod() !== 'POST' || !str_starts_with($request->getPathInfo(), '/api/orders')) {
+        if ('POST' !== $request->getMethod() || !str_starts_with($request->getPathInfo(), '/api/orders')) {
             return;
         }
 
@@ -91,6 +91,7 @@ final readonly class OrderRateLimitListener
             );
 
             $event->setResponse($response);
+
             return;
         }
 

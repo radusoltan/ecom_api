@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
- * Translation Management Processor
+ * Translation Management Processor.
  *
  * State processor for write operations (CREATE, UPDATE, DELETE).
  */
@@ -23,7 +23,8 @@ final readonly class TranslationManagementProcessor implements ProcessorInterfac
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-    ) {}
+    ) {
+    }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ?TranslationManagementResource
     {
@@ -36,6 +37,7 @@ final readonly class TranslationManagementProcessor implements ProcessorInterfac
             );
 
             $this->commandBus->dispatch($command);
+
             return null;
         }
 

@@ -10,7 +10,7 @@ use App\Catalog\Domain\ValueObject\OptionValueCode;
 
 /**
  * Option entity for configurable products (e.g., Size, Color)
- * Part of the ConfigurableProduct aggregate
+ * Part of the ConfigurableProduct aggregate.
  */
 final class Option
 {
@@ -28,7 +28,8 @@ final class Option
     }
 
     /**
-     * Factory method to create a new option
+     * Factory method to create a new option.
+     *
      * @param OptionValue[] $values
      */
     public static function create(
@@ -42,19 +43,14 @@ final class Option
     }
 
     /**
-     * Add a value to this option
+     * Add a value to this option.
      */
     public function addValue(OptionValue $value): void
     {
         // Check for duplicate value codes
         foreach ($this->values as $existingValue) {
             if ($existingValue->getCode()->equals($value->getCode())) {
-                throw new \DomainException(
-                    sprintf('Value with code "%s" already exists for option "%s"',
-                        $value->getCode()->toString(),
-                        $this->code->toString()
-                    )
-                );
+                throw new \DomainException(sprintf('Value with code "%s" already exists for option "%s"', $value->getCode()->toString(), $this->code->toString()));
             }
         }
 
@@ -62,18 +58,18 @@ final class Option
     }
 
     /**
-     * Remove a value from this option
+     * Remove a value from this option.
      */
     public function removeValue(OptionValueCode $valueCode): void
     {
         $this->values = array_filter(
             $this->values,
-            fn(OptionValue $value) => !$value->getCode()->equals($valueCode)
+            fn (OptionValue $value) => !$value->getCode()->equals($valueCode)
         );
     }
 
     /**
-     * Update the position of this option
+     * Update the position of this option.
      */
     public function updatePosition(int $position): void
     {
@@ -84,7 +80,7 @@ final class Option
     }
 
     /**
-     * Update translations for this option
+     * Update translations for this option.
      */
     public function updateNameTranslations(LocalizedString $nameTranslations): void
     {
@@ -92,7 +88,7 @@ final class Option
     }
 
     /**
-     * Get value by code
+     * Get value by code.
      */
     public function getValueByCode(OptionValueCode $code): ?OptionValue
     {
@@ -101,25 +97,28 @@ final class Option
                 return $value;
             }
         }
+
         return null;
     }
 
     /**
-     * Check if this option has a specific value
+     * Check if this option has a specific value.
      */
     public function hasValue(OptionValueCode $code): bool
     {
-        return $this->getValueByCode($code) !== null;
+        return null !== $this->getValueByCode($code);
     }
 
     /**
-     * Get sorted values by position
+     * Get sorted values by position.
+     *
      * @return OptionValue[]
      */
     public function getSortedValues(): array
     {
         $values = $this->values;
-        usort($values, fn(OptionValue $a, OptionValue $b) => $a->getPosition() <=> $b->getPosition());
+        usort($values, fn (OptionValue $a, OptionValue $b) => $a->getPosition() <=> $b->getPosition());
+
         return $values;
     }
 
@@ -153,7 +152,8 @@ final class Option
     }
 
     /**
-     * Validate values array
+     * Validate values array.
+     *
      * @param OptionValue[] $values
      */
     private function validateValues(array $values): void
@@ -166,9 +166,7 @@ final class Option
 
             $code = $value->getCode()->toString();
             if (isset($codes[$code])) {
-                throw new \DomainException(
-                    sprintf('Duplicate value code "%s" in option "%s"', $code, $this->code->toString())
-                );
+                throw new \DomainException(sprintf('Duplicate value code "%s" in option "%s"', $code, $this->code->toString()));
             }
             $codes[$code] = true;
         }
@@ -181,7 +179,7 @@ final class Option
 }
 
 /**
- * Value object for Option ID
+ * Value object for Option ID.
  */
 final class OptionId
 {

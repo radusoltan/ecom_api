@@ -15,7 +15,8 @@ final readonly class StockReserved implements DomainEvent
         public Quantity $quantity,
         public string $reservationId,
         public \DateTimeImmutable $occurredOn,
-    ) {}
+    ) {
+    }
 
     public function occurredOn(): \DateTimeImmutable
     {

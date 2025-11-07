@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Review\Domain\ValueObject;
 
 /**
- * Value object for review status
+ * Value object for review status.
  */
 enum ReviewStatus: string
 {
@@ -15,16 +15,16 @@ enum ReviewStatus: string
 
     public function isPending(): bool
     {
-        return $this === self::PENDING;
+        return self::PENDING === $this;
     }
 
     public function isApproved(): bool
     {
-        return $this === self::APPROVED;
+        return self::APPROVED === $this;
     }
 
     public function isRejected(): bool
     {
-        return $this === self::REJECTED;
+        return self::REJECTED === $this;
     }
 }

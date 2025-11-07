@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
-use App\Order\Presentation\Api\OrderResource;
 
 /**
- * Comprehensive Functional Tests for Order API Endpoints
+ * Comprehensive Functional Tests for Order API Endpoints.
  *
  * Tests all 5 Order API endpoints:
  * - GET /api/orders (Collection with filters)
@@ -25,7 +24,7 @@ final class OrderApiTest extends ApiTestCase
     private ?string $currentTenantId = null;
 
     /**
-     * Create an authenticated client with JWT token and optional X-Tenant-ID header
+     * Create an authenticated client with JWT token and optional X-Tenant-ID header.
      */
     protected function createAuthenticatedClient(string $email = 'admin@admin.com', array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'], ?string $tenantId = null)
     {
@@ -41,7 +40,7 @@ final class OrderApiTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash');
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -59,11 +58,11 @@ final class OrderApiTest extends ApiTestCase
             'exp' => time() + 3600,
         ]);
 
-        $headers = ['authorization' => 'Bearer ' . $token];
+        $headers = ['authorization' => 'Bearer '.$token];
 
         // Add X-Tenant-ID if provided or if we have a current tenant
         $tenantIdToUse = $tenantId ?? $this->currentTenantId;
-        if ($tenantIdToUse !== null) {
+        if (null !== $tenantIdToUse) {
             $headers['X-Tenant-ID'] = $tenantIdToUse;
         }
 
@@ -71,7 +70,7 @@ final class OrderApiTest extends ApiTestCase
     }
 
     /**
-     * Generate a unique email address for testing
+     * Generate a unique email address for testing.
      */
     private function generateUniqueEmail(string $prefix = 'customer'): string
     {
@@ -79,14 +78,14 @@ final class OrderApiTest extends ApiTestCase
     }
 
     /**
-     * Create a valid tenant for testing
+     * Create a valid tenant for testing.
      */
     private function createTenant(): string
     {
         $client = $this->createAuthenticatedClient();
         $response = $client->request('POST', '/api/tenants', [
             'json' => [
-                'name' => 'Test Tenant ' . uniqid(),
+                'name' => 'Test Tenant '.uniqid(),
                 'ownerEmail' => $this->generateUniqueEmail('tenant'),
             ],
         ]);
@@ -98,7 +97,7 @@ final class OrderApiTest extends ApiTestCase
     }
 
     /**
-     * Helper method to create an order via the API
+     * Helper method to create an order via the API.
      *
      * @return array<string, mixed> The created order data
      */
@@ -152,7 +151,7 @@ final class OrderApiTest extends ApiTestCase
     }
 
     /**
-     * Extract order ID from API response
+     * Extract order ID from API response.
      */
     private function extractOrderId(array $orderData): string
     {

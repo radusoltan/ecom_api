@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Doctrine entity for OptionValue
+ * Doctrine entity for OptionValue.
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'catalog_product_option_values')]
@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Get(
             uriTemplate: '/product-option-values/{id}'
-        )
+        ),
     ]
 )]
 class OptionValueEntity
@@ -65,7 +65,7 @@ class OptionValueEntity
     }
 
     /**
-     * Create entity from domain model
+     * Create entity from domain model.
      */
     public static function fromDomainModel(OptionValue $value): self
     {
@@ -79,7 +79,7 @@ class OptionValueEntity
     }
 
     /**
-     * Convert to domain model
+     * Convert to domain model.
      */
     public function toDomainModel(): OptionValue
     {

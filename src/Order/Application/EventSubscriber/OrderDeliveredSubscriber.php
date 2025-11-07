@@ -12,7 +12,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Handles OrderDelivered domain events by sending delivery confirmation emails to customers
+ * Handles OrderDelivered domain events by sending delivery confirmation emails to customers.
  *
  * Business Rules:
  * - Send delivery confirmation email when order is delivered

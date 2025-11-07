@@ -31,7 +31,7 @@ final class CreatePaymentCommandHandlerTest extends TestCase
         $command = new CreatePayment(
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 9999,
             currency: 'USD',
             method: PaymentMethod::card(),
@@ -61,7 +61,7 @@ final class CreatePaymentCommandHandlerTest extends TestCase
         $command = new CreatePayment(
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 5000,
             currency: 'EUR',
             method: PaymentMethod::paypal(),
@@ -91,7 +91,7 @@ final class CreatePaymentCommandHandlerTest extends TestCase
         $command = new CreatePayment(
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 12500,
             currency: 'GBP',
             method: PaymentMethod::card(),
@@ -100,7 +100,7 @@ final class CreatePaymentCommandHandlerTest extends TestCase
 
         $this->repository->expects($this->once())
             ->method('save')
-            ->with($this->callback(fn(Payment $p) => $p->currency() === 'GBP'));
+            ->with($this->callback(fn (Payment $p) => 'GBP' === $p->currency()));
 
         // Act
         ($this->handler)($command);
@@ -114,7 +114,7 @@ final class CreatePaymentCommandHandlerTest extends TestCase
         $command = new CreatePayment(
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 7500,
             currency: 'USD',
             method: PaymentMethod::paypal(),
@@ -123,7 +123,7 @@ final class CreatePaymentCommandHandlerTest extends TestCase
 
         $this->repository->expects($this->once())
             ->method('save')
-            ->with($this->callback(fn(Payment $p) => $p->method()->isPaypal()));
+            ->with($this->callback(fn (Payment $p) => $p->method()->isPaypal()));
 
         // Act
         ($this->handler)($command);

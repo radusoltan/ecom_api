@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Review\Domain\ValueObject;
 
 /**
- * Value object for product rating (1-5 stars)
+ * Value object for product rating (1-5 stars).
  */
 final readonly class Rating
 {
@@ -36,9 +36,7 @@ final readonly class Rating
     private function validate(int $value): void
     {
         if ($value < self::MIN_RATING || $value > self::MAX_RATING) {
-            throw new \InvalidArgumentException(
-                sprintf('Rating must be between %d and %d', self::MIN_RATING, self::MAX_RATING)
-            );
+            throw new \InvalidArgumentException(sprintf('Rating must be between %d and %d', self::MIN_RATING, self::MAX_RATING));
         }
     }
 

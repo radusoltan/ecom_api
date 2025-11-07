@@ -9,8 +9,8 @@ use App\User\Domain\Model\User;
 use App\User\Domain\Repository\UserRepositoryInterface;
 use App\User\Domain\ValueObject\HashedPassword;
 use App\User\Domain\ValueObject\UserId;
-use App\User\Domain\ValueObject\UserRole;
 use App\User\Domain\ValueObject\Username;
+use App\User\Domain\ValueObject\UserRole;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class UserRepositoryTest extends KernelTestCase

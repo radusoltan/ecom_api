@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Http\Controller;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Psr\Log\LoggerInterface;
 
 /**
- * API Redirect Controller
+ * API Redirect Controller.
  *
  * Provides backward compatibility by redirecting /api/* to /api/v1/*
  *
@@ -33,11 +32,11 @@ final class ApiRedirectController extends AbstractController
     public function __invoke(Request $request, string $path): RedirectResponse
     {
         // Redirect /api/* to /api/v1/*
-        $newUrl = '/api/v1/' . $path;
+        $newUrl = '/api/v1/'.$path;
 
         // Preserve query parameters
         if ($request->getQueryString()) {
-            $newUrl .= '?' . $request->getQueryString();
+            $newUrl .= '?'.$request->getQueryString();
         }
 
         $this->logger->info('API redirect from /api to /api/v1', [

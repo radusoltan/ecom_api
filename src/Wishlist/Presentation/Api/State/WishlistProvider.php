@@ -37,11 +37,12 @@ final class WishlistProvider implements ProviderInterface
         $query = new GetWishlist($customerId, TenantId::fromString($tenantId));
         $wishlist = $this->handle($query);
 
-        if ($wishlist === null) {
+        if (null === $wishlist) {
             // Return empty wishlist
             $resource = new WishlistResource();
             $resource->items = [];
             $resource->itemCount = 0;
+
             return $resource;
         }
 
@@ -50,7 +51,7 @@ final class WishlistProvider implements ProviderInterface
         $resource->id = $wishlist->id()->toString();
         $resource->customerId = $wishlist->customerId();
         $resource->items = array_map(
-            fn($item) => [
+            fn ($item) => [
                 'productId' => $item->productId()->toString(),
                 'addedAt' => $item->addedAt()->format('c'),
             ],

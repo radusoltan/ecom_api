@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
- * Missing Translations Provider
+ * Missing Translations Provider.
  *
  * Handles GET /api/translations/missing
  *
@@ -26,23 +26,25 @@ final readonly class MissingTranslationsProvider implements ProviderInterface
         private MessageBusInterface $queryBus,
         private TenantContextProvider $tenantContext,
         private RequestStack $requestStack,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $uriVariables
      * @param array<string, mixed> $context
+     *
      * @return array<array{key: string, domain: string}>
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
         $request = $this->requestStack->getCurrentRequest();
-        if ($request === null) {
+        if (null === $request) {
             throw new BadRequestHttpException('No request found');
         }
 
         // Get required targetLocale parameter
         $targetLocale = $request->query->get('targetLocale');
-        if ($targetLocale === null) {
+        if (null === $targetLocale) {
             throw new BadRequestHttpException('Missing required parameter "targetLocale"');
         }
 
@@ -62,7 +64,7 @@ final readonly class MissingTranslationsProvider implements ProviderInterface
         $envelope = $this->queryBus->dispatch($query);
         $handledStamp = $envelope->last(HandledStamp::class);
 
-        if ($handledStamp === null) {
+        if (null === $handledStamp) {
             throw new \RuntimeException('Query was not handled');
         }
 

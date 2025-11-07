@@ -23,7 +23,7 @@ use App\Catalog\Presentation\Api\State\ProductListingProvider;
             provider: ProductListingProvider::class,
             normalizationContext: ['groups' => ['storefront:read']],
             description: 'Get product listing with filters, facets, and pagination'
-        )
+        ),
     ],
     normalizationContext: ['groups' => ['storefront:read']]
 )]
@@ -32,6 +32,7 @@ class StorefrontProductResource
     public string $id;
     public string $slug;
     public string $name;
+    /** @var array<string, mixed> */
     public array $price;
     public ?array $primaryImage = null;
     public bool $isFeatured = false;

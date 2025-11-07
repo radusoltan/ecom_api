@@ -52,7 +52,7 @@ final class WarehouseRoutingServiceTest extends TestCase
         return Warehouse::create(
             WarehouseId::generate(),
             $this->tenantId,
-            WarehouseCode::fromString('WH' . str_pad((string) $priority, 3, '0', STR_PAD_LEFT)),
+            WarehouseCode::fromString('WH'.str_pad((string) $priority, 3, '0', STR_PAD_LEFT)),
             WarehouseName::fromString("Warehouse Priority {$priority}"),
             $this->shippingAddress,
             $priority

@@ -17,7 +17,8 @@ final readonly class ProductCreatedSubscriber implements EventSubscriberInterfac
         private ProductRepositoryInterface $productRepository,
         private ProductIndexer $productIndexer,
         private LoggerInterface $logger,
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -31,10 +32,11 @@ final readonly class ProductCreatedSubscriber implements EventSubscriberInterfac
         try {
             $product = $this->productRepository->findById($event->productId);
 
-            if ($product === null) {
+            if (null === $product) {
                 $this->logger->warning('Product not found for indexing', [
                     'product_id' => $event->productId->toString(),
                 ]);
+
                 return;
             }
 
@@ -47,7 +49,7 @@ final readonly class ProductCreatedSubscriber implements EventSubscriberInterfac
 
             $this->logger->info('Product indexed in Elasticsearch', [
                 'product_id' => $event->productId->toString(),
-                'locales' => array_map(fn($l) => $l->toString(), $enabledLocales),
+                'locales' => array_map(fn ($l) => $l->toString(), $enabledLocales),
             ]);
         } catch (\Exception $e) {
             $this->logger->error('Failed to index product', [

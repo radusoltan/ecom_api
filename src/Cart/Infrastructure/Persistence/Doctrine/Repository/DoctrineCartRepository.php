@@ -11,7 +11,6 @@ use App\Cart\Domain\Repository\CartRepositoryInterface;
 use App\Cart\Infrastructure\Persistence\Doctrine\Entity\CartEntity;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -27,7 +26,7 @@ final readonly class DoctrineCartRepository implements CartRepositoryInterface
     {
         $entity = $this->entityManager->find(CartEntity::class, $cart->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             // Create new entity
             $entity = CartEntity::fromDomainModel($cart);
             $this->entityManager->persist($entity);
@@ -77,18 +76,18 @@ final readonly class DoctrineCartRepository implements CartRepositoryInterface
     {
         $entity = $this->entityManager->find(CartEntity::class, $cart->id()->toString());
 
-        if ($entity !== null) {
+        if (null !== $entity) {
             $this->entityManager->remove($entity);
             $this->entityManager->flush();
         }
     }
 
     /**
-     * Find carts that haven't been updated since the given date
+     * Find carts that haven't been updated since the given date.
      *
      * @return Cart[]
      */
-    public function findExpired(DateTimeImmutable $before): array
+    public function findExpired(\DateTimeImmutable $before): array
     {
         $qb = $this->entityManager->createQueryBuilder();
 
@@ -105,13 +104,13 @@ final readonly class DoctrineCartRepository implements CartRepositoryInterface
         $entities = $qb->getQuery()->getResult();
 
         return array_map(
-            fn(CartEntity $entity) => $entity->toDomainModel(),
+            fn (CartEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
 
     /**
-     * Find active carts by tenant and customer email
+     * Find active carts by tenant and customer email.
      *
      * Note: Since we don't store email in cart, this method is a placeholder
      * In practice, cart clearing should be done via session ID or customer ID

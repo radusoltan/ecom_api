@@ -81,7 +81,7 @@ final class PaymentFailedSubscriberTest extends TestCase
                     return isset($context['payment_id'])
                         && $context['payment_id'] === $paymentId->toString()
                         && isset($context['error_message'])
-                        && $context['error_message'] === 'insufficient_funds'
+                        && 'insufficient_funds' === $context['error_message']
                         && isset($context['occurred_on']);
                 })
             );
@@ -102,6 +102,7 @@ final class PaymentFailedSubscriberTest extends TestCase
             ->method('send')
             ->with($this->callback(function (Email $email) {
                 $htmlBody = $email->getHtmlBody();
+
                 // Should redact sensitive keywords like "API Key"
                 return str_contains($htmlBody, '[REDACTED]')
                     && !str_contains($htmlBody, 'API Key');
@@ -157,6 +158,7 @@ final class PaymentFailedSubscriberTest extends TestCase
             ->method('send')
             ->with($this->callback(function (Email $email) {
                 $htmlBody = $email->getHtmlBody();
+
                 // Should include helpful steps
                 return str_contains($htmlBody, 'payment information')
                     || str_contains($htmlBody, 'Try Again')
@@ -185,8 +187,8 @@ final class PaymentFailedSubscriberTest extends TestCase
             ->method('error')
             ->with(
                 $this->stringContains('Failed to send payment failure notification'),
-                $this->callback(fn(array $context) =>
-                    isset($context['payment_id']) && isset($context['error'])
+                $this->callback(
+                    fn (array $context) => isset($context['payment_id']) && isset($context['error'])
                 )
             );
 

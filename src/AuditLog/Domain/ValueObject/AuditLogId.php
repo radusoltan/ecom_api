@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace App\AuditLog\Domain\ValueObject;
 
-use InvalidArgumentException;
-use Stringable;
 use Symfony\Component\Uid\Uuid;
 
-final readonly class AuditLogId implements Stringable
+final readonly class AuditLogId implements \Stringable
 {
     private function __construct(
         private string $value
     ) {
         if (!Uuid::isValid($value)) {
-            throw new InvalidArgumentException(sprintf('Invalid UUID: "%s"', $value));
+            throw new \InvalidArgumentException(sprintf('Invalid UUID: "%s"', $value));
         }
 
         // Ensure it's a v4 UUID
         $uuid = Uuid::fromString($value);
         if ($uuid->toRfc4122() !== $value) {
-            throw new InvalidArgumentException('Audit Log ID must be a valid UUID v4');
+            throw new \InvalidArgumentException('Audit Log ID must be a valid UUID v4');
         }
     }
 

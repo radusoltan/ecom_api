@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\Email;
 
 /**
- * Payment Captured Subscriber
+ * Payment Captured Subscriber.
  *
  * Handles actions when a payment is successfully captured (funds transferred).
  * - Updates order status to "processing" (ready for fulfillment)
@@ -82,7 +82,6 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
                     );
 
                     $this->eventDispatcher->dispatch($orderPaidEvent);
-
                 } catch (\Throwable $e) {
                     $this->logger->error('Failed to update order status after payment capture', [
                         'payment_id' => $event->paymentId->toString(),
@@ -99,7 +98,6 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
             $this->logger->info('Payment captured subscriber completed successfully', [
                 'payment_id' => $event->paymentId->toString(),
             ]);
-
         } catch (\Throwable $e) {
             // Log error but don't throw - subscriber failures shouldn't block payment flow
             $this->logger->error('PaymentCapturedSubscriber failed', [
@@ -133,7 +131,6 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
             $this->logger->info('Payment confirmation email sent', [
                 'payment_id' => $event->paymentId->toString(),
             ]);
-
         } catch (\Throwable $e) {
             // Log email failure but don't throw - email failures shouldn't block payment
             $this->logger->error('Failed to send payment confirmation email', [
@@ -146,6 +143,7 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
     private function buildHtmlEmailBody(PaymentCaptured $event, string $amountFormatted): string
     {
         $currentDate = date('F j, Y \a\t g:i A');
+
         return <<<HTML
         <!DOCTYPE html>
         <html>
@@ -194,6 +192,7 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
     private function buildTextEmailBody(PaymentCaptured $event, string $amountFormatted): string
     {
         $currentDate = date('F j, Y \a\t g:i A');
+
         return <<<TEXT
         PAYMENT CONFIRMED
 

@@ -22,19 +22,20 @@ final readonly class ProductAutocompleteStateProvider implements ProviderInterfa
     public function __construct(
         private MessageBusInterface $queryBus,
         private RequestStack $requestStack,
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        if ($request === null) {
+        if (null === $request) {
             return [];
         }
 
         // Get tenant ID from header
         $tenantIdString = $request->headers->get('X-Tenant-ID');
-        if ($tenantIdString === null) {
+        if (null === $tenantIdString) {
             throw new \InvalidArgumentException('X-Tenant-ID header is required');
         }
 
@@ -42,7 +43,7 @@ final readonly class ProductAutocompleteStateProvider implements ProviderInterfa
 
         // Query parameter is required
         $queryString = $request->query->get('q');
-        if ($queryString === null || $queryString === '') {
+        if (null === $queryString || '' === $queryString) {
             throw new \InvalidArgumentException('Query parameter "q" is required');
         }
 
@@ -52,7 +53,7 @@ final readonly class ProductAutocompleteStateProvider implements ProviderInterfa
 
         // Get locale from query parameter or Accept-Language header
         $localeString = $request->query->get('locale');
-        if ($localeString === null) {
+        if (null === $localeString) {
             $localeString = $this->getLocaleFromAcceptLanguage($request->headers->get('Accept-Language'));
         }
         $locale = Locale::fromString($localeString ?? 'en_US');
@@ -94,7 +95,7 @@ final readonly class ProductAutocompleteStateProvider implements ProviderInterfa
 
     private function getLocaleFromAcceptLanguage(?string $acceptLanguage): ?string
     {
-        if ($acceptLanguage === null) {
+        if (null === $acceptLanguage) {
             return null;
         }
 
@@ -111,18 +112,22 @@ final readonly class ProductAutocompleteStateProvider implements ProviderInterfa
             // Validate against supported locales
             try {
                 Locale::fromString($locale);
+
                 return $locale;
             } catch (\InvalidArgumentException) {
                 // Try base language (en_US -> en_US is already base, but en -> en_US)
-                if (strlen($locale) === 2) {
-                    $baseLocale = strtolower($locale) . '_' . strtoupper($locale);
+                if (2 === strlen($locale)) {
+                    $baseLocale = strtolower($locale).'_'.strtoupper($locale);
+
                     try {
                         Locale::fromString($baseLocale);
+
                         return $baseLocale;
                     } catch (\InvalidArgumentException) {
                         continue;
                     }
                 }
+
                 continue;
             }
         }

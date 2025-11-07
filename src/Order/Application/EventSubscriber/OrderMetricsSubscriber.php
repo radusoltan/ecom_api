@@ -11,7 +11,7 @@ use App\Shared\Infrastructure\Metrics\MetricsCollector;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Order Metrics Subscriber
+ * Order Metrics Subscriber.
  *
  * Collects metrics for order lifecycle events:
  * - order_placed_total (counter)

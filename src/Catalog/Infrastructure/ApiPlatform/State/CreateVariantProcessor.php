@@ -18,14 +18,15 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * Processor for creating variants
+ * Processor for creating variants.
  */
 final readonly class CreateVariantProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
         private RequestStack $requestStack
-    ) {}
+    ) {
+    }
 
     public function process(
         mixed $data,

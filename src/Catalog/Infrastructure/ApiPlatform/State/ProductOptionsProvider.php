@@ -7,8 +7,8 @@ namespace App\Catalog\Infrastructure\ApiPlatform\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Catalog\Application\Query\GetAllProductOptions;
-use App\Catalog\Infrastructure\ApiPlatform\Resource\ProductOptionValueResource;
 use App\Catalog\Infrastructure\ApiPlatform\Resource\ProductOptionsResource;
+use App\Catalog\Infrastructure\ApiPlatform\Resource\ProductOptionValueResource;
 use App\Shared\Domain\ValueObject\LanguageCode;
 use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -17,7 +17,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
- * API Platform State Provider for Product Options
+ * API Platform State Provider for Product Options.
  *
  * Fetches all unique product configuration options (color, size, etc.)
  * across the catalog using DDD/CQRS query pattern.
@@ -34,7 +34,8 @@ final readonly class ProductOptionsProvider implements ProviderInterface
     public function __construct(
         private MessageBusInterface $queryBus,
         private RequestStack $requestStack,
-    ) {}
+    ) {
+    }
 
     /**
      * @return ProductOptionsResource[]
@@ -52,7 +53,7 @@ final readonly class ProductOptionsProvider implements ProviderInterface
         try {
             $tenantId = TenantId::fromString($tenantIdHeader);
         } catch (\InvalidArgumentException $e) {
-            throw new BadRequestHttpException('Invalid X-Tenant-ID header: ' . $e->getMessage());
+            throw new BadRequestHttpException('Invalid X-Tenant-ID header: '.$e->getMessage());
         }
 
         // Get locale from query parameter or Accept-Language header
@@ -75,13 +76,13 @@ final readonly class ProductOptionsProvider implements ProviderInterface
 
         // Convert DTOs to API Resources
         return array_map(
-            fn($optionDTO) => $this->convertToResource($optionDTO, $locale),
+            fn ($optionDTO) => $this->convertToResource($optionDTO, $locale),
             $optionDTOs
         );
     }
 
     /**
-     * Convert OptionDTO to ProductOptionsResource
+     * Convert OptionDTO to ProductOptionsResource.
      */
     private function convertToResource(
         \App\Catalog\Application\DTO\OptionDTO $optionDTO,
@@ -92,7 +93,7 @@ final readonly class ProductOptionsProvider implements ProviderInterface
 
         // Convert option values
         $valueResources = array_map(
-            fn($valueDTO) => new ProductOptionValueResource(
+            fn ($valueDTO) => new ProductOptionValueResource(
                 code: $valueDTO->code,
                 name: $this->getLocalizedValue($valueDTO->nameTranslations, $locale),
                 nameTranslations: $valueDTO->nameTranslations,
@@ -109,7 +110,7 @@ final readonly class ProductOptionsProvider implements ProviderInterface
     }
 
     /**
-     * Get localized value from translations array with fallback chain
+     * Get localized value from translations array with fallback chain.
      *
      * @param array<string, string> $translations
      */
@@ -136,7 +137,7 @@ final readonly class ProductOptionsProvider implements ProviderInterface
     }
 
     /**
-     * Validate and normalize locale code
+     * Validate and normalize locale code.
      */
     private function validateLocale(string $locale): string
     {
@@ -146,6 +147,7 @@ final readonly class ProductOptionsProvider implements ProviderInterface
         // Validate using LanguageCode value object (throws exception for unsupported locales)
         try {
             $languageCode = LanguageCode::fromString($baseLocale);
+
             return $languageCode->value();
         } catch (\InvalidArgumentException) {
             // If invalid locale, fall back to default

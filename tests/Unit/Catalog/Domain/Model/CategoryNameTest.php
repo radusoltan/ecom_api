@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 final class CategoryNameTest extends TestCase
 {
     #[Test]
-    public function it_creates_category_name_from_valid_string(): void
+    public function itCreatesCategoryNameFromValidString(): void
     {
         $name = CategoryName::fromString('Electronics');
 
@@ -24,7 +24,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_trims_whitespace(): void
+    public function itTrimsWhitespace(): void
     {
         $name = CategoryName::fromString('  Books  ');
 
@@ -32,7 +32,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_normalizes_multiple_spaces_to_single_space(): void
+    public function itNormalizesMultipleSpacesToSingleSpace(): void
     {
         $name = CategoryName::fromString('Home    &   Garden');
 
@@ -40,7 +40,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_tabs_and_newlines(): void
+    public function itHandlesTabsAndNewlines(): void
     {
         $name = CategoryName::fromString("Sports\t&\nOutdoors");
 
@@ -48,7 +48,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_accepts_minimum_length_name(): void
+    public function itAcceptsMinimumLengthName(): void
     {
         $name = CategoryName::fromString('TV'); // 2 characters
 
@@ -56,7 +56,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_accepts_maximum_length_name(): void
+    public function itAcceptsMaximumLengthName(): void
     {
         $longName = str_repeat('A', 100);
         $name = CategoryName::fromString($longName);
@@ -66,7 +66,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_for_empty_string(): void
+    public function itThrowsExceptionForEmptyString(): void
     {
         $this->expectException(InvalidCategoryNameException::class);
         $this->expectExceptionMessage('Category name cannot be empty');
@@ -75,7 +75,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_for_whitespace_only(): void
+    public function itThrowsExceptionForWhitespaceOnly(): void
     {
         $this->expectException(InvalidCategoryNameException::class);
         $this->expectExceptionMessage('Category name cannot be empty');
@@ -84,7 +84,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_for_tabs_only(): void
+    public function itThrowsExceptionForTabsOnly(): void
     {
         $this->expectException(InvalidCategoryNameException::class);
         $this->expectExceptionMessage('Category name cannot be empty');
@@ -93,7 +93,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_for_too_short_name(): void
+    public function itThrowsExceptionForTooShortName(): void
     {
         $this->expectException(InvalidCategoryNameException::class);
         $this->expectExceptionMessage('Category name "A" is too short. Minimum length is 2 characters');
@@ -102,7 +102,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_throws_exception_for_too_long_name(): void
+    public function itThrowsExceptionForTooLongName(): void
     {
         $this->expectException(InvalidCategoryNameException::class);
         $this->expectExceptionMessage('is too long (101 characters). Maximum length is 100 characters');
@@ -112,7 +112,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_unicode_characters(): void
+    public function itHandlesUnicodeCharacters(): void
     {
         $name = CategoryName::fromString('Livres Français');
 
@@ -120,7 +120,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_special_characters(): void
+    public function itHandlesSpecialCharacters(): void
     {
         $name = CategoryName::fromString('Kids & Toys');
 
@@ -128,7 +128,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_numbers_in_name(): void
+    public function itHandlesNumbersInName(): void
     {
         $name = CategoryName::fromString('Top 10 Products');
 
@@ -136,7 +136,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_compares_equal_names(): void
+    public function itComparesEqualNames(): void
     {
         $name1 = CategoryName::fromString('Electronics');
         $name2 = CategoryName::fromString('Electronics');
@@ -145,7 +145,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_compares_different_names(): void
+    public function itComparesDifferentNames(): void
     {
         $name1 = CategoryName::fromString('Electronics');
         $name2 = CategoryName::fromString('Books');
@@ -154,7 +154,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_compares_normalized_names_as_equal(): void
+    public function itComparesNormalizedNamesAsEqual(): void
     {
         $name1 = CategoryName::fromString('  Home    Decor  ');
         $name2 = CategoryName::fromString('Home Decor');
@@ -163,7 +163,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_is_case_sensitive_in_comparison(): void
+    public function itIsCaseSensitiveInComparison(): void
     {
         $name1 = CategoryName::fromString('Electronics');
         $name2 = CategoryName::fromString('electronics');
@@ -172,7 +172,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_implements_stringable(): void
+    public function itImplementsStringable(): void
     {
         $name = CategoryName::fromString('Fashion');
 
@@ -181,7 +181,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_is_immutable(): void
+    public function itIsImmutable(): void
     {
         $name = CategoryName::fromString('Sports');
         $value = $name->value();
@@ -194,7 +194,7 @@ final class CategoryNameTest extends TestCase
 
     #[Test]
     #[DataProvider('validCategoryNamesProvider')]
-    public function it_accepts_various_valid_names(string $input, string $expected): void
+    public function itAcceptsVariousValidNames(string $input, string $expected): void
     {
         $name = CategoryName::fromString($input);
 
@@ -218,7 +218,7 @@ final class CategoryNameTest extends TestCase
 
     #[Test]
     #[DataProvider('invalidCategoryNamesProvider')]
-    public function it_rejects_invalid_names(string $invalidName, string $expectedMessage): void
+    public function itRejectsInvalidNames(string $invalidName, string $expectedMessage): void
     {
         $this->expectException(InvalidCategoryNameException::class);
         $this->expectExceptionMessage($expectedMessage);
@@ -237,7 +237,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_is_readonly(): void
+    public function itIsReadonly(): void
     {
         $name = CategoryName::fromString('Electronics');
         $reflection = new \ReflectionClass($name);
@@ -246,7 +246,7 @@ final class CategoryNameTest extends TestCase
     }
 
     #[Test]
-    public function it_is_final(): void
+    public function itIsFinal(): void
     {
         $reflection = new \ReflectionClass(CategoryName::class);
 

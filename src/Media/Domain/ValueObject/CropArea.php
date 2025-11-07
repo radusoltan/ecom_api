@@ -11,7 +11,8 @@ final readonly class CropArea
         private int $y,
         private int $width,
         private int $height
-    ) {}
+    ) {
+    }
 
     public static function fromDimensions(int $x, int $y, int $width, int $height): self
     {

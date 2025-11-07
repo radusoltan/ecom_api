@@ -32,7 +32,7 @@ final class ProductReviewProvider implements ProviderInterface
         $query = new GetReviewById(ReviewId::fromString($reviewId));
         $review = $this->handle($query);
 
-        if ($review === null) {
+        if (null === $review) {
             return null;
         }
 

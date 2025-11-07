@@ -13,7 +13,8 @@ final readonly class GetReviewByIdHandler
 {
     public function __construct(
         private ProductReviewRepositoryInterface $reviewRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(GetReviewById $query): ?ProductReview
     {

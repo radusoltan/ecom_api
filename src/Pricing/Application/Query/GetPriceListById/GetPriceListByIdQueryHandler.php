@@ -6,7 +6,7 @@ namespace App\Pricing\Application\Query\GetPriceListById;
 
 use App\Pricing\Application\DTO\PriceListDTO;
 use App\Pricing\Domain\Repository\PriceListRepositoryInterface;
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
+use App\Shared\Application\Service\PerformanceProfiler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -27,8 +27,9 @@ final readonly class GetPriceListByIdQueryHandler
         try {
             $priceList = $this->priceListRepository->findById($query->priceListId);
 
-            if ($priceList === null) {
+            if (null === $priceList) {
                 $this->profiler->stop('price_list.get_by_id');
+
                 return null;
             }
 
@@ -47,6 +48,7 @@ final readonly class GetPriceListByIdQueryHandler
             return $result;
         } catch (\Throwable $e) {
             $this->profiler->stop('price_list.get_by_id');
+
             throw $e;
         }
     }

@@ -8,7 +8,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Domain\ValueObject\TaxRuleId;
 
 /**
- * Get Tax Rule By ID Query
+ * Get Tax Rule By ID Query.
  */
 final readonly class GetTaxRuleById
 {

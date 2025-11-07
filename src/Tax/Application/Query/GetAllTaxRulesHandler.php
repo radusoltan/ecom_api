@@ -9,7 +9,7 @@ use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Get All Tax Rules Query Handler
+ * Get All Tax Rules Query Handler.
  */
 #[AsMessageHandler]
 final readonly class GetAllTaxRulesHandler

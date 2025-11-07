@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Tenant;
 
-use App\Tenant\Domain\ValueObject\TenantId;
+use App\Shared\Domain\ValueObject\TenantId;
 
 final class TenantContext
 {
@@ -22,7 +22,7 @@ final class TenantContext
 
     public function hasCurrentTenant(): bool
     {
-        return $this->currentTenantId !== null;
+        return null !== $this->currentTenantId;
     }
 
     public function clearCurrentTenant(): void

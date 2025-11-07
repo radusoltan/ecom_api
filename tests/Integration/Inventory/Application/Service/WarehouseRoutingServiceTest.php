@@ -22,7 +22,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  * Integration tests for WarehouseRoutingService
- * Tests real database interactions with proper RLS context
+ * Tests real database interactions with proper RLS context.
  */
 final class WarehouseRoutingServiceTest extends KernelTestCase
 {
@@ -69,7 +69,7 @@ final class WarehouseRoutingServiceTest extends KernelTestCase
     private function createWarehouse(int $priority, string $codePrefix = 'WH'): Warehouse
     {
         // Generate truly unique code using random suffix to avoid collisions across tests
-        $uniqueCode = $codePrefix . substr(md5(uniqid((string)mt_rand(), true)), 0, 7 - strlen($codePrefix));
+        $uniqueCode = $codePrefix.substr(md5(uniqid((string) mt_rand(), true)), 0, 7 - strlen($codePrefix));
 
         $warehouse = Warehouse::create(
             WarehouseId::generate(),

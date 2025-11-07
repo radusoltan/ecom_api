@@ -10,7 +10,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * DeleteTranslation Command Handler
+ * DeleteTranslation Command Handler.
  *
  * Deletes a translation entry from the system.
  */
@@ -20,7 +20,8 @@ final readonly class DeleteTranslationHandler
     public function __construct(
         private TranslationEntryRepositoryInterface $repository,
         private TranslationCacheService $cacheService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(DeleteTranslation $command): void
     {
@@ -29,9 +30,7 @@ final readonly class DeleteTranslationHandler
         // Verify translation exists before deleting
         $entry = $this->repository->findById($command->id, $tenantId);
         if (null === $entry) {
-            throw new \DomainException(
-                sprintf('Translation with ID %d not found', $command->id)
-            );
+            throw new \DomainException(sprintf('Translation with ID %d not found', $command->id));
         }
 
         $this->repository->delete($command->id, $tenantId);

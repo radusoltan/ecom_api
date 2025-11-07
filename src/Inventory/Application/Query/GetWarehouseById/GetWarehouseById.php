@@ -10,5 +10,6 @@ final readonly class GetWarehouseById
 {
     public function __construct(
         public WarehouseId $id,
-    ) {}
+    ) {
+    }
 }

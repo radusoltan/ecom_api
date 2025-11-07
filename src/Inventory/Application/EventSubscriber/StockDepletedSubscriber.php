@@ -11,7 +11,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
 /**
- * Handles StockDepleted domain events by sending low stock alerts
+ * Handles StockDepleted domain events by sending low stock alerts.
  *
  * Business Rules:
  * - Send alert email immediately when stock becomes depleted (available <= threshold)

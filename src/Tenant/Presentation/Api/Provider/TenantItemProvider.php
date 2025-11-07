@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tenant\Presentation\Api\Provider;
 
-use InvalidArgumentException;
-use Symfony\Component\Messenger\Stamp\StampInterface;
-use RuntimeException;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Tenant\Application\Query\GetTenantByIdQuery;
@@ -14,6 +11,7 @@ use App\Tenant\Presentation\Api\TenantResource;
 use App\Tenant\Presentation\Api\Transformer\TenantResourceTransformer;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Symfony\Component\Messenger\Stamp\StampInterface;
 
 /**
  * @implements ProviderInterface<TenantResource>
@@ -33,7 +31,7 @@ final readonly class TenantItemProvider implements ProviderInterface
         $tenantId = $uriVariables['id'] ?? null;
 
         if (null === $tenantId) {
-            throw new InvalidArgumentException('Tenant ID is required');
+            throw new \InvalidArgumentException('Tenant ID is required');
         }
 
         // Dispatch query to get tenant by ID
@@ -42,7 +40,7 @@ final readonly class TenantItemProvider implements ProviderInterface
         $stamp = $envelope->last(HandledStamp::class);
 
         if (!$stamp instanceof StampInterface) {
-            throw new RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for query');
         }
 
         $tenantDTO = $stamp->getResult();

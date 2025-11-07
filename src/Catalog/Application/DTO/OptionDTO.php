@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Catalog\Application\DTO;
 
 /**
- * Data Transfer Object for Option
+ * Data Transfer Object for Option.
  */
 final readonly class OptionDTO
 {
     /**
      * @param array<string, string> $nameTranslations
-     * @param OptionValueDTO[] $values
+     * @param OptionValueDTO[]      $values
      */
     public function __construct(
         public string $id,
@@ -19,5 +19,6 @@ final readonly class OptionDTO
         public array $nameTranslations,
         public int $position,
         public array $values = []
-    ) {}
+    ) {
+    }
 }

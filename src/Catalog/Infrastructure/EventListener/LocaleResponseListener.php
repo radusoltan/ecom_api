@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Event listener for handling locale resolution and response headers
- * Adds proper caching headers and content language indication
+ * Adds proper caching headers and content language indication.
  */
 #[AsEventListener(event: KernelEvents::REQUEST, priority: 100)]
 #[AsEventListener(event: KernelEvents::RESPONSE, method: 'onKernelResponse')]
@@ -23,10 +23,11 @@ final class LocaleResponseListener
 
     public function __construct(
         private readonly LocalizationPolicy $localizationPolicy
-    ) {}
+    ) {
+    }
 
     /**
-     * Handle request event to resolve locale early
+     * Handle request event to resolve locale early.
      */
     public function __invoke(RequestEvent $event): void
     {
@@ -50,7 +51,7 @@ final class LocaleResponseListener
     }
 
     /**
-     * Handle response event to add proper headers
+     * Handle response event to add proper headers.
      */
     public function onKernelResponse(ResponseEvent $event): void
     {
@@ -81,7 +82,7 @@ final class LocaleResponseListener
         $response->headers->set('Vary', implode(', ', array_filter($varyArray)));
 
         // Add Content-Language header
-        if ($this->resolvedLocale !== null) {
+        if (null !== $this->resolvedLocale) {
             $response->headers->set('X-Content-Language', $this->resolvedLocale->toString());
 
             // Also set standard Content-Language with language code only
@@ -89,10 +90,9 @@ final class LocaleResponseListener
         }
 
         // Add cache control headers for translation responses
-        if (str_contains($request->getPathInfo(), '/translations') ||
-            str_contains($request->getPathInfo(), '/products') ||
-            str_contains($request->getPathInfo(), '/categories')) {
-
+        if (str_contains($request->getPathInfo(), '/translations')
+            || str_contains($request->getPathInfo(), '/products')
+            || str_contains($request->getPathInfo(), '/categories')) {
             // Public cache for 1 hour, must revalidate
             $response->headers->set('Cache-Control', 'public, max-age=3600, must-revalidate');
 
@@ -124,7 +124,7 @@ final class LocaleResponseListener
     }
 
     /**
-     * Resolve locale from request
+     * Resolve locale from request.
      */
     private function resolveLocale($request): Locale
     {

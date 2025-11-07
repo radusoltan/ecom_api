@@ -18,15 +18,11 @@ final readonly class Quantity implements \Stringable
         private int $value,
     ) {
         if ($value < self::MIN_QUANTITY) {
-            throw new \InvalidArgumentException(
-                sprintf('Quantity cannot be negative: %d', $value)
-            );
+            throw new \InvalidArgumentException(sprintf('Quantity cannot be negative: %d', $value));
         }
 
         if ($value > self::MAX_QUANTITY) {
-            throw new \InvalidArgumentException(
-                sprintf('Quantity cannot exceed %d: %d', self::MAX_QUANTITY, $value)
-            );
+            throw new \InvalidArgumentException(sprintf('Quantity cannot exceed %d: %d', self::MAX_QUANTITY, $value));
         }
     }
 
@@ -57,7 +53,7 @@ final readonly class Quantity implements \Stringable
 
     public function isZero(): bool
     {
-        return $this->value === 0;
+        return 0 === $this->value;
     }
 
     public function isPositive(): bool

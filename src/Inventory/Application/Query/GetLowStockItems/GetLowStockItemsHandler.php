@@ -13,7 +13,8 @@ final readonly class GetLowStockItemsHandler
 {
     public function __construct(
         private StockItemRepositoryInterface $stockItemRepository,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<StockItemDTO>
@@ -23,7 +24,7 @@ final readonly class GetLowStockItemsHandler
         $stockItems = $this->stockItemRepository->findLowStockItems($query->tenantId);
 
         return array_map(
-            fn($stockItem) => StockItemDTO::fromStockItem($stockItem),
+            fn ($stockItem) => StockItemDTO::fromStockItem($stockItem),
             $stockItems
         );
     }

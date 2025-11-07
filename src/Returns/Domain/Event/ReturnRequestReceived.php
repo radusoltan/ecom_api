@@ -8,7 +8,7 @@ use App\Returns\Domain\ValueObject\ReturnRequestId;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Domain Event: ReturnRequestReceived
+ * Domain Event: ReturnRequestReceived.
  *
  * Triggered when the returned item is received at the warehouse.
  *

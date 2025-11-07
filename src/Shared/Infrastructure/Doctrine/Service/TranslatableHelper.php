@@ -9,7 +9,7 @@ use Gedmo\Translatable\Entity\Repository\TranslationRepository;
 use Gedmo\Translatable\TranslatableListener;
 
 /**
- * Translatable Helper Service
+ * Translatable Helper Service.
  *
  * Provides utility methods for managing entity translations using Gedmo Translatable.
  *
@@ -41,19 +41,19 @@ final readonly class TranslatableHelper
     }
 
     /**
-     * Set a translation for a specific entity field
+     * Set a translation for a specific entity field.
      *
      * @param object $entity The translatable entity
-     * @param string $field The field name to translate
+     * @param string $field  The field name to translate
      * @param string $locale The locale code (en, fr, de)
-     * @param string $value The translated value
+     * @param string $value  The translated value
      */
     public function setTranslation(object $entity, string $field, string $locale, string $value): void
     {
         $repository = $this->getTranslationRepository();
 
         // Don't save empty translations - they are considered as "no translation"
-        if ($value === '') {
+        if ('' === $value) {
             // If there's an existing translation, remove it
             $entityClass = get_class($entity);
             $entityId = $this->entityManager->getClassMetadata($entityClass)->getIdentifierValues($entity);
@@ -71,6 +71,7 @@ final readonly class TranslatableHelper
                 ->setParameter('field', $field)
                 ->getQuery()
                 ->execute();
+
             return;
         }
 
@@ -78,11 +79,12 @@ final readonly class TranslatableHelper
     }
 
     /**
-     * Get a translation for a specific entity field and locale
+     * Get a translation for a specific entity field and locale.
      *
      * @param object $entity The translatable entity
-     * @param string $field The field name
+     * @param string $field  The field name
      * @param string $locale The locale code (en, fr, de)
+     *
      * @return string|null The translated value or null if not found
      */
     public function getTranslation(object $entity, string $field, string $locale): ?string
@@ -93,7 +95,7 @@ final readonly class TranslatableHelper
     }
 
     /**
-     * Get all translations for an entity
+     * Get all translations for an entity.
      *
      * Returns array structure:
      * [
@@ -102,6 +104,7 @@ final readonly class TranslatableHelper
      * ]
      *
      * @param object $entity The translatable entity
+     *
      * @return array<string, array<string, string>>
      */
     public function findTranslations(object $entity): array
@@ -112,7 +115,7 @@ final readonly class TranslatableHelper
     }
 
     /**
-     * Refresh entity with translations for a specific locale
+     * Refresh entity with translations for a specific locale.
      *
      * This temporarily changes the entity's translatable fields to the requested locale.
      * Useful when you need to fetch an entity in a different language.
@@ -141,7 +144,7 @@ final readonly class TranslatableHelper
     }
 
     /**
-     * Get the current active locale
+     * Get the current active locale.
      */
     public function getCurrentLocale(): string
     {
@@ -149,7 +152,7 @@ final readonly class TranslatableHelper
     }
 
     /**
-     * Get all supported locales
+     * Get all supported locales.
      *
      * @return string[]
      */
@@ -159,7 +162,7 @@ final readonly class TranslatableHelper
     }
 
     /**
-     * Check if an entity has translations for a specific locale
+     * Check if an entity has translations for a specific locale.
      *
      * @param object $entity The translatable entity
      * @param string $locale The locale code
@@ -172,7 +175,7 @@ final readonly class TranslatableHelper
     }
 
     /**
-     * Remove all translations for a specific locale
+     * Remove all translations for a specific locale.
      *
      * @param object $entity The translatable entity
      * @param string $locale The locale code
@@ -203,7 +206,7 @@ final readonly class TranslatableHelper
     }
 
     /**
-     * Get the translation repository
+     * Get the translation repository.
      */
     private function getTranslationRepository(): TranslationRepository
     {

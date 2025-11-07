@@ -119,7 +119,7 @@ final class ReturnRequestIdTest extends TestCase
     public function testMultipleGenerationsAreUnique(): void
     {
         $ids = [];
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             $ids[] = ReturnRequestId::generate()->toString();
         }
 

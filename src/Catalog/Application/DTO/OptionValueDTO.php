@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Catalog\Application\DTO;
 
 /**
- * Data Transfer Object for Option Value
+ * Data Transfer Object for Option Value.
  */
 final readonly class OptionValueDTO
 {
@@ -17,5 +17,6 @@ final readonly class OptionValueDTO
         public string $code,
         public array $nameTranslations,
         public int $position
-    ) {}
+    ) {
+    }
 }

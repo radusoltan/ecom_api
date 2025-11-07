@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Cart\Application\Query;
 
 /**
- * GetCartSummary Query
+ * GetCartSummary Query.
  *
  * Retrieves lightweight cart summary (for UI badges, headers, etc.)
  */

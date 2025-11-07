@@ -14,7 +14,6 @@ use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\ValueObject\FulfillmentId;
 use App\Order\Domain\ValueObject\FulfillmentStatus;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource(
@@ -89,34 +88,34 @@ class FulfillmentEntity
     private ?string $carrier = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'assigned_at')]
-    private ?DateTimeImmutable $assignedAt = null;
+    private ?\DateTimeImmutable $assignedAt = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'picking_started_at')]
-    private ?DateTimeImmutable $pickingStartedAt = null;
+    private ?\DateTimeImmutable $pickingStartedAt = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'packing_started_at')]
-    private ?DateTimeImmutable $packingStartedAt = null;
+    private ?\DateTimeImmutable $packingStartedAt = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'shipped_at')]
-    private ?DateTimeImmutable $shippedAt = null;
+    private ?\DateTimeImmutable $shippedAt = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'delivered_at')]
-    private ?DateTimeImmutable $deliveredAt = null;
+    private ?\DateTimeImmutable $deliveredAt = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'cancelled_at')]
-    private ?DateTimeImmutable $cancelledAt = null;
+    private ?\DateTimeImmutable $cancelledAt = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'failed_at')]
-    private ?DateTimeImmutable $failedAt = null;
+    private ?\DateTimeImmutable $failedAt = null;
 
     #[ORM\Column(type: 'text', nullable: true, name: 'failure_reason')]
     private ?string $failureReason = null;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
-    private DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $updatedAt;
 
     public static function fromDomainModel(Fulfillment $fulfillment): self
     {
@@ -144,7 +143,7 @@ class FulfillmentEntity
 
     /**
      * Update this entity's properties from a domain model
-     * Used for updating existing entities without creating new instances
+     * Used for updating existing entities without creating new instances.
      */
     public function updateFromDomainModel(Fulfillment $fulfillment): void
     {
@@ -222,37 +221,37 @@ class FulfillmentEntity
         return $this->carrier;
     }
 
-    public function getAssignedAt(): ?DateTimeImmutable
+    public function getAssignedAt(): ?\DateTimeImmutable
     {
         return $this->assignedAt;
     }
 
-    public function getPickingStartedAt(): ?DateTimeImmutable
+    public function getPickingStartedAt(): ?\DateTimeImmutable
     {
         return $this->pickingStartedAt;
     }
 
-    public function getPackingStartedAt(): ?DateTimeImmutable
+    public function getPackingStartedAt(): ?\DateTimeImmutable
     {
         return $this->packingStartedAt;
     }
 
-    public function getShippedAt(): ?DateTimeImmutable
+    public function getShippedAt(): ?\DateTimeImmutable
     {
         return $this->shippedAt;
     }
 
-    public function getDeliveredAt(): ?DateTimeImmutable
+    public function getDeliveredAt(): ?\DateTimeImmutable
     {
         return $this->deliveredAt;
     }
 
-    public function getCancelledAt(): ?DateTimeImmutable
+    public function getCancelledAt(): ?\DateTimeImmutable
     {
         return $this->cancelledAt;
     }
 
-    public function getFailedAt(): ?DateTimeImmutable
+    public function getFailedAt(): ?\DateTimeImmutable
     {
         return $this->failedAt;
     }
@@ -262,12 +261,12 @@ class FulfillmentEntity
         return $this->failureReason;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Customer\Domain\ValueObject;
 
 use App\Customer\Domain\ValueObject\CustomerSegment;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class CustomerSegmentTest extends TestCase
@@ -53,7 +52,7 @@ final class CustomerSegmentTest extends TestCase
 
     public function testFromStringRejectsInvalidSegment(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid customer segment');
 
         CustomerSegment::fromString('platinum');
@@ -61,7 +60,7 @@ final class CustomerSegmentTest extends TestCase
 
     public function testFromStringRejectsEmptyString(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid customer segment');
 
         CustomerSegment::fromString('');

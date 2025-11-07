@@ -7,7 +7,7 @@ namespace App\Tax\Application\Query;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Get All Tax Rules Query
+ * Get All Tax Rules Query.
  */
 final readonly class GetAllTaxRules
 {

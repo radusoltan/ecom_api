@@ -9,7 +9,7 @@ use App\Tax\Domain\ValueObject\TaxRate;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Update Tax Rule Command Handler
+ * Update Tax Rule Command Handler.
  */
 #[AsMessageHandler]
 final readonly class UpdateTaxRuleHandler
@@ -23,10 +23,8 @@ final readonly class UpdateTaxRuleHandler
     {
         $taxRule = $this->taxRuleRepository->findById($command->id, $command->tenantId);
 
-        if ($taxRule === null) {
-            throw new \DomainException(
-                sprintf('Tax rule "%s" not found', $command->id->toString())
-            );
+        if (null === $taxRule) {
+            throw new \DomainException(sprintf('Tax rule "%s" not found', $command->id->toString()));
         }
 
         $rate = TaxRate::fromPercentage($command->ratePercentage);

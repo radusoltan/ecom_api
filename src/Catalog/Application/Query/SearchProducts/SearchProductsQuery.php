@@ -10,8 +10,8 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class SearchProductsQuery
 {
     /**
-     * @param array<string>|null $categoryIds
-     * @param array<string, array<string>>|null $options Product variant options (e.g., ['color' => ['red', 'blue'], 'size' => ['m', 'l']])
+     * @param array<string>|null                $categoryIds
+     * @param array<string, array<string>>|null $options     Product variant options (e.g., ['color' => ['red', 'blue'], 'size' => ['m', 'l']])
      */
     public function __construct(
         public TenantId $tenantId,
@@ -27,5 +27,6 @@ final readonly class SearchProductsQuery
         public ?array $options = null,
         public ?int $minRating = null,
         public ?bool $featured = null,
-    ) {}
+    ) {
+    }
 }

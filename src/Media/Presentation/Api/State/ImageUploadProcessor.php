@@ -11,8 +11,10 @@ use App\Catalog\Domain\Model\ProductId;
 use App\Catalog\Domain\Model\ProductImage;
 use App\Catalog\Domain\Repository\CategoryRepositoryInterface;
 use App\Catalog\Domain\Repository\ProductRepositoryInterface;
+use App\Media\Application\Message\GenerateThumbnailsMessage;
 use App\Media\Domain\Model\Image;
 use App\Media\Domain\Repository\ImageRepositoryInterface;
+use App\Media\Domain\Service\ImageSecurityPolicy;
 use App\Media\Domain\Service\ImageStorage;
 use App\Media\Domain\Service\ThumbnailGenerator;
 use App\Media\Domain\Service\ThumbnailPolicy;
@@ -23,8 +25,6 @@ use App\Media\Domain\ValueObject\OwnerReference;
 use App\Media\Domain\ValueObject\OwnerType;
 use App\Media\Presentation\Api\Resource\ImageResource;
 use App\Media\Presentation\Api\Transformer\ImageResourceTransformer;
-use App\Media\Domain\Service\ImageSecurityPolicy;
-use App\Media\Application\Message\GenerateThumbnailsMessage;
 use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -43,7 +43,8 @@ final class ImageUploadProcessor implements ProcessorInterface
         private readonly CategoryRepositoryInterface $categoryRepository,
         private readonly MessageBusInterface $messageBus,
         private readonly bool $asyncThumbnails = true
-    ) {}
+    ) {
+    }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ImageResource
     {
@@ -51,11 +52,11 @@ final class ImageUploadProcessor implements ProcessorInterface
             throw new BadRequestHttpException('Invalid media payload.');
         }
 
-        if ($data->file === null) {
+        if (null === $data->file) {
             throw new BadRequestHttpException('Uploaded file is required.');
         }
 
-        if ($data->tenantId === null || $data->ownerId === null || $data->ownerType === null) {
+        if (null === $data->tenantId || null === $data->ownerId || null === $data->ownerType) {
             throw new BadRequestHttpException('Tenant, owner type, and owner id are required.');
         }
 
@@ -92,11 +93,11 @@ final class ImageUploadProcessor implements ProcessorInterface
             $imageId
         );
 
-        if ($ownerType === OwnerType::PRODUCT) {
+        if (OwnerType::PRODUCT === $ownerType) {
             $this->attachImageToProduct($tenantId, $ownerReference->ownerId(), $image);
         }
 
-        if ($ownerType === OwnerType::CATEGORY) {
+        if (OwnerType::CATEGORY === $ownerType) {
             $this->attachImageToCategory($tenantId, $ownerReference->ownerId(), $image);
         }
 
@@ -143,7 +144,7 @@ final class ImageUploadProcessor implements ProcessorInterface
 
         $product = $this->productRepository->findById($productId);
 
-        if ($product === null || !$product->tenantId()->equals($tenantId)) {
+        if (null === $product || !$product->tenantId()->equals($tenantId)) {
             return;
         }
 
@@ -151,7 +152,7 @@ final class ImageUploadProcessor implements ProcessorInterface
         $productImage = ProductImage::create(
             $image->originalPath()->toString(),
             $position,
-            $position === 0
+            0 === $position
         );
 
         $product->addImage($productImage);
@@ -168,7 +169,7 @@ final class ImageUploadProcessor implements ProcessorInterface
 
         $category = $this->categoryRepository->findById($categoryId);
 
-        if ($category === null || !$category->tenantId()->equals($tenantId)) {
+        if (null === $category || !$category->tenantId()->equals($tenantId)) {
             return;
         }
 

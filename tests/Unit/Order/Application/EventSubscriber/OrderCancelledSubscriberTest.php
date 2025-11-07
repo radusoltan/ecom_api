@@ -36,13 +36,13 @@ final class OrderCancelledSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_implements_event_subscriber_interface(): void
+    public function itImplementsEventSubscriberInterface(): void
     {
         self::assertInstanceOf(EventSubscriberInterface::class, $this->subscriber);
     }
 
     #[Test]
-    public function it_subscribes_to_order_cancelled_event(): void
+    public function itSubscribesToOrderCancelledEvent(): void
     {
         $subscribedEvents = OrderCancelledSubscriber::getSubscribedEvents();
 
@@ -51,7 +51,7 @@ final class OrderCancelledSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_logs_cancellation_information(): void
+    public function itLogsCancellationInformation(): void
     {
         // Arrange
         $orderId = OrderId::generate();
@@ -64,13 +64,13 @@ final class OrderCancelledSubscriberTest extends TestCase
             ->expects(self::exactly(3))
             ->method('info')
             ->willReturnCallback(function (string $message, array $context) use ($orderId): void {
-                if ($message === 'Order cancelled') {
+                if ('Order cancelled' === $message) {
                     self::assertEquals($orderId->toString(), $context['orderId']);
                     self::assertEquals('pending', $context['previousStatus']);
-                } elseif ($message === 'Refund process initiated') {
+                } elseif ('Refund process initiated' === $message) {
                     self::assertEquals($orderId->toString(), $context['orderId']);
                     self::assertEquals('pending', $context['previousStatus']);
-                } elseif ($message === 'Order cancellation processed successfully') {
+                } elseif ('Order cancellation processed successfully' === $message) {
                     self::assertEquals($orderId->toString(), $context['orderId']);
                 }
             });
@@ -80,7 +80,7 @@ final class OrderCancelledSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_triggers_refund_process(): void
+    public function itTriggersRefundProcess(): void
     {
         // Arrange
         $orderId = OrderId::generate();
@@ -105,7 +105,7 @@ final class OrderCancelledSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_logs_warning_about_missing_customer_email(): void
+    public function itLogsWarningAboutMissingCustomerEmail(): void
     {
         // Arrange
         $event = new OrderCancelled(
@@ -123,7 +123,7 @@ final class OrderCancelledSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_errors_gracefully_without_throwing(): void
+    public function itHandlesErrorsGracefullyWithoutThrowing(): void
     {
         // Arrange
         $event = new OrderCancelled(
@@ -154,7 +154,7 @@ final class OrderCancelledSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_processes_cancellation_from_pending_status(): void
+    public function itProcessesCancellationFromPendingStatus(): void
     {
         // Arrange
         $event = new OrderCancelled(
@@ -179,7 +179,7 @@ final class OrderCancelledSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_processes_cancellation_from_processing_status(): void
+    public function itProcessesCancellationFromProcessingStatus(): void
     {
         // Arrange
         $event = new OrderCancelled(
@@ -204,7 +204,7 @@ final class OrderCancelledSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_logs_successful_cancellation_processing(): void
+    public function itLogsSuccessfulCancellationProcessing(): void
     {
         // Arrange
         $orderId = OrderId::generate();
@@ -217,7 +217,7 @@ final class OrderCancelledSubscriberTest extends TestCase
         $this->logger
             ->method('info')
             ->willReturnCallback(function (string $message, array $context) use ($orderId, &$successLogged): void {
-                if ($message === 'Order cancellation processed successfully') {
+                if ('Order cancellation processed successfully' === $message) {
                     self::assertEquals($orderId->toString(), $context['orderId']);
                     $successLogged = true;
                 }
@@ -231,7 +231,7 @@ final class OrderCancelledSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function it_does_not_send_email_when_customer_email_unavailable(): void
+    public function itDoesNotSendEmailWhenCustomerEmailUnavailable(): void
     {
         // Arrange
         $event = new OrderCancelled(

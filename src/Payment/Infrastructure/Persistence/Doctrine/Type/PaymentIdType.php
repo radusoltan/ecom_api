@@ -19,7 +19,7 @@ final class PaymentIdType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?PaymentId
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
@@ -28,7 +28,7 @@ final class PaymentIdType extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
@@ -36,9 +36,7 @@ final class PaymentIdType extends Type
             return $value->toString();
         }
 
-        throw new \InvalidArgumentException(
-            sprintf('Expected %s, got %s', PaymentId::class, get_debug_type($value))
-        );
+        throw new \InvalidArgumentException(sprintf('Expected %s, got %s', PaymentId::class, get_debug_type($value)));
     }
 
     public function getName(): string

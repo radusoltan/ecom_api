@@ -12,7 +12,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
 /**
- * Event Subscriber: ReturnRequestApprovedSubscriber
+ * Event Subscriber: ReturnRequestApprovedSubscriber.
  *
  * Listens to ReturnRequestApproved domain event and performs side effects:
  * - Send return shipping label to customer

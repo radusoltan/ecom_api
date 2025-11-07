@@ -24,7 +24,7 @@ final readonly class GetCustomerDataSubjectRequestsQueryHandler
         $requests = $this->requestRepository->findByCustomerId($query->customerId);
 
         return array_map(
-            fn($request) => DataSubjectRequestDTO::fromDomainModel($request),
+            fn ($request) => DataSubjectRequestDTO::fromDomainModel($request),
             $requests
         );
     }

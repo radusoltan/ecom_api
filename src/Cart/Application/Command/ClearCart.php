@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Cart\Application\Command;
 
 /**
- * ClearCart Command
+ * ClearCart Command.
  *
  * Removes all items from the cart
  */

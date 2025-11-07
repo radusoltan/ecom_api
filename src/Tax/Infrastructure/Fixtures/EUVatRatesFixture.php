@@ -13,7 +13,7 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * EU VAT Rates Fixture
+ * EU VAT Rates Fixture.
  *
  * Seeds standard VAT rates for all EU member states as of 2025.
  * These are standard rates; reduced rates would need separate rules.
@@ -29,7 +29,7 @@ final class EUVatRatesFixture extends Fixture implements FixtureGroupInterface
     }
 
     /**
-     * EU VAT Standard Rates (2025)
+     * EU VAT Standard Rates (2025).
      *
      * @var array<string, array{name: string, rate: float}>
      */
@@ -95,7 +95,7 @@ final class EUVatRatesFixture extends Fixture implements FixtureGroupInterface
             echo "  ✓ {$countryCode}: {$data['name']} ({$data['rate']}%)\n";
         }
 
-        echo "✅ Created " . count(self::EU_VAT_RATES) . " EU VAT tax rules\n\n";
+        echo '✅ Created '.count(self::EU_VAT_RATES)." EU VAT tax rules\n\n";
     }
 
     private function createTaxRule(

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Order\Domain\ValueObject;
 
 /**
- * Fulfillment Status Value Object
+ * Fulfillment Status Value Object.
  *
  * Represents the current status of an order's fulfillment process.
  *
@@ -42,7 +42,7 @@ final readonly class FulfillmentStatus
     ];
 
     /**
-     * Valid state transitions
+     * Valid state transitions.
      */
     private const ALLOWED_TRANSITIONS = [
         self::PENDING => [self::ASSIGNED, self::CANCELLED, self::FAILED],
@@ -121,16 +121,17 @@ final readonly class FulfillmentStatus
     }
 
     /**
-     * Check if transition to another status is allowed
+     * Check if transition to another status is allowed.
      */
     public function canTransitionTo(self $newStatus): bool
     {
         $allowedStatuses = self::ALLOWED_TRANSITIONS[$this->value] ?? [];
+
         return in_array($newStatus->value, $allowedStatuses, true);
     }
 
     /**
-     * Get all statuses that can be transitioned to from current status
+     * Get all statuses that can be transitioned to from current status.
      *
      * @return string[]
      */
@@ -140,7 +141,7 @@ final readonly class FulfillmentStatus
     }
 
     /**
-     * Check if status is a final state (cannot transition further)
+     * Check if status is a final state (cannot transition further).
      */
     public function isFinalState(): bool
     {
@@ -148,31 +149,31 @@ final readonly class FulfillmentStatus
     }
 
     /**
-     * Check if status is completed (delivered)
+     * Check if status is completed (delivered).
      */
     public function isCompleted(): bool
     {
-        return $this->value === self::DELIVERED;
+        return self::DELIVERED === $this->value;
     }
 
     /**
-     * Check if status is cancelled
+     * Check if status is cancelled.
      */
     public function isCancelled(): bool
     {
-        return $this->value === self::CANCELLED;
+        return self::CANCELLED === $this->value;
     }
 
     /**
-     * Check if status is failed
+     * Check if status is failed.
      */
     public function isFailed(): bool
     {
-        return $this->value === self::FAILED;
+        return self::FAILED === $this->value;
     }
 
     /**
-     * Check if fulfillment is in progress (not final state)
+     * Check if fulfillment is in progress (not final state).
      */
     public function isInProgress(): bool
     {
@@ -180,11 +181,11 @@ final readonly class FulfillmentStatus
     }
 
     /**
-     * Check if status is pending assignment
+     * Check if status is pending assignment.
      */
     public function isPending(): bool
     {
-        return $this->value === self::PENDING;
+        return self::PENDING === $this->value;
     }
 
     public function equals(self $other): bool
@@ -193,7 +194,7 @@ final readonly class FulfillmentStatus
     }
 
     /**
-     * Get all valid status values
+     * Get all valid status values.
      *
      * @return string[]
      */

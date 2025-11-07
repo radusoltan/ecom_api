@@ -12,7 +12,8 @@ final readonly class GetCategoriesHandler
 {
     public function __construct(
         private CategoryRepositoryInterface $categoryRepository
-    ) {}
+    ) {
+    }
 
     /**
      * @return \App\Catalog\Domain\Model\Category[]

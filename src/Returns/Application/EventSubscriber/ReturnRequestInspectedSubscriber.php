@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\Email;
 
 /**
- * Event Subscriber: ReturnRequestInspectedSubscriber
+ * Event Subscriber: ReturnRequestInspectedSubscriber.
  *
  * Listens to ReturnRequestInspected domain event and performs side effects:
  * - If item is resellable: trigger inventory adjustment (return to stock)
@@ -84,17 +84,19 @@ final readonly class ReturnRequestInspectedSubscriber implements EventSubscriber
         try {
             $returnRequest = $this->returnRequestRepository->findById($event->returnRequestId);
 
-            if ($returnRequest === null) {
+            if (null === $returnRequest) {
                 $this->logger->error('Cannot adjust stock: Return request not found', [
                     'returnRequestId' => $event->returnRequestId->toString(),
                 ]);
+
                 return;
             }
 
-            if ($returnRequest->warehouseId() === null) {
+            if (null === $returnRequest->warehouseId()) {
                 $this->logger->warning('Cannot adjust stock: No warehouse assigned to return', [
                     'returnRequestId' => $event->returnRequestId->toString(),
                 ]);
+
                 return;
             }
 
@@ -103,7 +105,7 @@ final readonly class ReturnRequestInspectedSubscriber implements EventSubscriber
                     productId: $returnRequest->productId(),
                     warehouseId: $returnRequest->warehouseId(),
                     quantity: $returnRequest->quantity(),
-                    reason: 'Returned item - resellable (RMA: ' . $event->returnRequestId->toString() . ')',
+                    reason: 'Returned item - resellable (RMA: '.$event->returnRequestId->toString().')',
                     tenantId: $event->tenantId->toString()
                 )
             );

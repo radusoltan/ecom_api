@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Handles the release of expired stock reservations
+ * Handles the release of expired stock reservations.
  *
  * Business Logic:
  * 1. Find all expired reservations that haven't been released
@@ -41,11 +41,12 @@ final readonly class ReleaseExpiredReservationsHandler
                 // Find the stock item
                 $stockItem = $this->stockItemRepository->findById($reservation->stockItemId());
 
-                if ($stockItem === null) {
+                if (null === $stockItem) {
                     $this->logger->warning('Stock item not found for expired reservation', [
                         'reservationId' => $reservation->reservationId(),
                         'stockItemId' => $reservation->stockItemId()->toString(),
                     ]);
+
                     continue;
                 }
 
@@ -62,7 +63,7 @@ final readonly class ReleaseExpiredReservationsHandler
                 $reservation->release();
                 $this->reservationRepository->save($reservation);
 
-                $releasedCount++;
+                ++$releasedCount;
 
                 $this->logger->info('Expired reservation released', [
                     'reservationId' => $reservation->reservationId(),

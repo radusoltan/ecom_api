@@ -6,7 +6,6 @@ namespace App\Shared\Infrastructure\Logging;
 
 use App\Shared\Infrastructure\Tenant\TenantContext;
 use Monolog\LogRecord;
-use Monolog\Processor\ProcessorInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -25,12 +24,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * - Request tracing across services
  * - Compliance and audit trails
  */
-final readonly class TenantContextProcessor implements ProcessorInterface
+final readonly class TenantContextProcessor
 {
     public function __construct(
         private TenantContext $tenantContext,
         private RequestStack $requestStack
-    ) {}
+    ) {
+    }
 
     public function __invoke(LogRecord $record): LogRecord
     {

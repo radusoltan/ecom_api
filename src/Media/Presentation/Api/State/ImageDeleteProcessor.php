@@ -10,8 +10,6 @@ use App\Media\Application\Message\DeleteImageAssetsMessage;
 use App\Media\Domain\Repository\ImageRepositoryInterface;
 use App\Media\Domain\Service\ImageSecurityPolicy;
 use App\Media\Domain\ValueObject\ImageId;
-use App\Media\Presentation\Api\Resource\ImageResource;
-use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -22,7 +20,8 @@ final class ImageDeleteProcessor implements ProcessorInterface
         private readonly ImageRepositoryInterface $imageRepository,
         private readonly ImageSecurityPolicy $securityPolicy,
         private readonly MessageBusInterface $messageBus
-    ) {}
+    ) {
+    }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
@@ -49,7 +48,7 @@ final class ImageDeleteProcessor implements ProcessorInterface
         $this->messageBus->dispatch(new DeleteImageAssetsMessage(
             $imageId->toString(),
             $image->originalPath()->toString(),
-            array_map(fn($thumbnail) => $thumbnail->path()->toString(), $image->thumbnails())
+            array_map(fn ($thumbnail) => $thumbnail->path()->toString(), $image->thumbnails())
         ));
     }
 }

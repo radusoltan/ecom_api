@@ -14,7 +14,7 @@ use App\Tests\Support\TenantTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
- * Integration tests for Tax Calculation Service
+ * Integration tests for Tax Calculation Service.
  *
  * Tests with real database to verify tax rule persistence and calculation.
  * Ensures multi-tenancy isolation via PostgreSQL RLS.

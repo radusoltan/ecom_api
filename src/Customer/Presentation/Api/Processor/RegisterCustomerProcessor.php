@@ -12,10 +12,7 @@ use App\Customer\Application\Query\GetCustomerByIdQuery;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity;
 use App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
-use App\User\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMUserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -37,18 +34,18 @@ final readonly class RegisterCustomerProcessor implements ProcessorInterface
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): CustomerEntity
     {
         if (!$data instanceof CustomerEntity) {
-            throw new InvalidArgumentException('Expected CustomerEntity');
+            throw new \InvalidArgumentException('Expected CustomerEntity');
         }
 
         // Get tenant ID from context (injected by TenantContextProcessor decorator)
         if (!isset($context['tenant_id'])) {
-            throw new RuntimeException('Tenant ID is required');
+            throw new \RuntimeException('Tenant ID is required');
         }
 
         $tenantId = $context['tenant_id'];
 
         if (!$data->getEmail() || !$data->getFirstName() || !$data->getLastName()) {
-            throw new InvalidArgumentException('Email, first name, and last name are required');
+            throw new \InvalidArgumentException('Email, first name, and last name are required');
         }
 
         $customerId = CustomerId::generate()->toString();
@@ -57,7 +54,7 @@ final readonly class RegisterCustomerProcessor implements ProcessorInterface
         $this->createUserForCustomer(
             $data->getEmail(),
             $data->getPlainPassword(),
-            $data->getFirstName() . ' ' . $data->getLastName()
+            $data->getFirstName().' '.$data->getLastName()
         );
 
         $command = new RegisterCustomerCommand(
@@ -76,13 +73,13 @@ final readonly class RegisterCustomerProcessor implements ProcessorInterface
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {
-            throw new RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for query');
         }
 
         $customerDTO = $handledStamp->getResult();
 
-        if ($customerDTO === null) {
-            throw new RuntimeException('Customer not found after registration');
+        if (null === $customerDTO) {
+            throw new \RuntimeException('Customer not found after registration');
         }
 
         // Convert DTO back to entity for API Platform
@@ -111,7 +108,7 @@ final readonly class RegisterCustomerProcessor implements ProcessorInterface
     }
 
     /**
-     * Create a User entity for authentication when a customer registers
+     * Create a User entity for authentication when a customer registers.
      */
     private function createUserForCustomer(string $email, ?string $plainPassword, string $username): void
     {
@@ -130,7 +127,7 @@ final readonly class RegisterCustomerProcessor implements ProcessorInterface
 
         $sanitized = strtolower(trim($username));
         $sanitized = preg_replace('/[^a-z0-9]+/', '-', $sanitized);
-        $generatedUsername = sprintf('%s-%s', $sanitized !== '' ? trim($sanitized, '-') : 'customer', bin2hex(random_bytes(4)));
+        $generatedUsername = sprintf('%s-%s', '' !== $sanitized ? trim($sanitized, '-') : 'customer', bin2hex(random_bytes(4)));
         $user->setUsername($generatedUsername);
         $user->setRoles(['ROLE_CUSTOMER']); // Assign customer role
         $user->setCreatedAt(new \DateTimeImmutable());

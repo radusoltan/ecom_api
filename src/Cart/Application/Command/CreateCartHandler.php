@@ -10,7 +10,6 @@ use App\Cart\Domain\Model\SessionId;
 use App\Cart\Domain\Repository\CartRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Shared\Domain\ValueObject\TenantId;
-use InvalidArgumentException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -24,24 +23,24 @@ final readonly class CreateCartHandler
     public function __invoke(CreateCart $command): void
     {
         // Validate: either customerId or sessionId must be provided
-        if ($command->customerId === null && $command->sessionId === null) {
-            throw new InvalidArgumentException('Either customerId or sessionId must be provided');
+        if (null === $command->customerId && null === $command->sessionId) {
+            throw new \InvalidArgumentException('Either customerId or sessionId must be provided');
         }
 
         $tenantId = TenantId::fromString($command->tenantId);
-        $customerId = $command->customerId !== null ? CustomerId::fromString($command->customerId) : null;
-        $sessionId = $command->sessionId !== null ? SessionId::fromString($command->sessionId) : null;
+        $customerId = null !== $command->customerId ? CustomerId::fromString($command->customerId) : null;
+        $sessionId = null !== $command->sessionId ? SessionId::fromString($command->sessionId) : null;
 
         // Check if cart already exists for this customer/session
-        if ($customerId !== null) {
+        if (null !== $customerId) {
             $existingCart = $this->cartRepository->findByCustomerId($customerId, $tenantId);
-            if ($existingCart !== null) {
+            if (null !== $existingCart) {
                 // Cart already exists, no need to create a new one
                 return;
             }
-        } elseif ($sessionId !== null) {
+        } elseif (null !== $sessionId) {
             $existingCart = $this->cartRepository->findBySessionId($sessionId, $tenantId);
-            if ($existingCart !== null) {
+            if (null !== $existingCart) {
                 // Cart already exists, no need to create a new one
                 return;
             }

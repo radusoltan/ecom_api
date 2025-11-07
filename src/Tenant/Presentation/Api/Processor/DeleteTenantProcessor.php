@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tenant\Presentation\Api\Processor;
 
-use InvalidArgumentException;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Tenant\Application\Command\DeleteTenantCommand;
@@ -28,7 +27,7 @@ final readonly class DeleteTenantProcessor implements ProcessorInterface
         array $context = []
     ): void {
         if (!isset($uriVariables['id'])) {
-            throw new InvalidArgumentException('Tenant ID is required in URI');
+            throw new \InvalidArgumentException('Tenant ID is required in URI');
         }
 
         $tenantId = (string) $uriVariables['id'];

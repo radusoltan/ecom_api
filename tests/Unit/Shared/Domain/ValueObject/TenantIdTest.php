@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Shared\Domain\ValueObject;
 
 use App\Shared\Domain\ValueObject\TenantId;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class TenantIdTest extends TestCase
@@ -31,7 +30,7 @@ final class TenantIdTest extends TestCase
     public function testGenerateMultipleIdsAreAllUnique(): void
     {
         $ids = [];
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             $ids[] = TenantId::generate()->toString();
         }
 
@@ -113,7 +112,7 @@ final class TenantIdTest extends TestCase
 
     public function testFromStringThrowsExceptionForEmptyString(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('TenantId cannot be empty');
 
         TenantId::fromString('');
@@ -121,7 +120,7 @@ final class TenantIdTest extends TestCase
 
     public function testFromStringThrowsExceptionForZeroString(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('TenantId cannot be empty');
 
         TenantId::fromString('0');
@@ -129,7 +128,7 @@ final class TenantIdTest extends TestCase
 
     public function testFromStringThrowsExceptionForInvalidFormat(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid TenantId format');
 
         TenantId::fromString('not-a-uuid');
@@ -139,7 +138,7 @@ final class TenantIdTest extends TestCase
     {
         $uuidV1 = '550e8400-e29b-11d4-a716-446655440000';
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid TenantId format');
 
         TenantId::fromString($uuidV1);
@@ -149,7 +148,7 @@ final class TenantIdTest extends TestCase
     {
         $uuidV3 = '550e8400-e29b-31d4-a716-446655440000';
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid TenantId format');
 
         TenantId::fromString($uuidV3);
@@ -159,7 +158,7 @@ final class TenantIdTest extends TestCase
     {
         $uuidV5 = '550e8400-e29b-51d4-a716-446655440000';
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid TenantId format');
 
         TenantId::fromString($uuidV5);
@@ -169,7 +168,7 @@ final class TenantIdTest extends TestCase
     {
         $invalidVariant = '550e8400-e29b-41d4-c716-446655440000';
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid TenantId format');
 
         TenantId::fromString($invalidVariant);
@@ -179,7 +178,7 @@ final class TenantIdTest extends TestCase
     {
         $withoutHyphens = '550e8400e29b41d4a716446655440000';
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid TenantId format');
 
         TenantId::fromString($withoutHyphens);
@@ -189,7 +188,7 @@ final class TenantIdTest extends TestCase
     {
         $tooShort = '550e8400-e29b-41d4-a716';
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid TenantId format');
 
         TenantId::fromString($tooShort);
@@ -199,7 +198,7 @@ final class TenantIdTest extends TestCase
     {
         $tooLong = '550e8400-e29b-41d4-a716-446655440000-extra';
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid TenantId format');
 
         TenantId::fromString($tooLong);
@@ -209,7 +208,7 @@ final class TenantIdTest extends TestCase
     {
         $invalidChars = '550e8400-e29b-41d4-a716-44665544000g';
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid TenantId format');
 
         TenantId::fromString($invalidChars);
@@ -301,7 +300,7 @@ final class TenantIdTest extends TestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('invalidUuidProvider')]
     public function testFromStringRejectsInvalidUuids(string $invalidUuid, string $expectedMessage): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage($expectedMessage);
 
         TenantId::fromString($invalidUuid);

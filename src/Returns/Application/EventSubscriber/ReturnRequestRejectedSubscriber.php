@@ -12,7 +12,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
 /**
- * Event Subscriber: ReturnRequestRejectedSubscriber
+ * Event Subscriber: ReturnRequestRejectedSubscriber.
  *
  * Listens to ReturnRequestRejected domain event and performs side effects:
  * - Send rejection email to customer with clear explanation

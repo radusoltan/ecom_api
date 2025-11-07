@@ -4,25 +4,23 @@ declare(strict_types=1);
 
 namespace App\Cart\Domain\Model;
 
-use Stringable;
-use InvalidArgumentException;
 use Symfony\Component\Uid\Ulid;
 
 /**
- * CartItemId Value Object
+ * CartItemId Value Object.
  *
  * Uses ULID for sortable, time-based unique identifiers
  */
-final readonly class CartItemId implements Stringable
+final readonly class CartItemId implements \Stringable
 {
     private function __construct(private string $value)
     {
-        if ($value === '' || $value === '0') {
-            throw new InvalidArgumentException('CartItemId cannot be empty');
+        if ('' === $value || '0' === $value) {
+            throw new \InvalidArgumentException('CartItemId cannot be empty');
         }
 
         if (!Ulid::isValid($value)) {
-            throw new InvalidArgumentException(sprintf('Invalid CartItemId format: "%s". Must be a valid ULID', $value));
+            throw new \InvalidArgumentException(sprintf('Invalid CartItemId format: "%s". Must be a valid ULID', $value));
         }
     }
 

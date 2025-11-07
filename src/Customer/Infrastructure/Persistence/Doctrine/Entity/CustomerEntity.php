@@ -26,7 +26,6 @@ use App\Customer\Presentation\Api\Provider\CustomerOrdersProvider;
 use App\Customer\Presentation\Api\Provider\ProfileProvider;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -102,14 +101,14 @@ class CustomerEntity
     private bool $isActive = true;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: false)]
-    private DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: false)]
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $updatedAt;
 
     /**
      * Temporary field to accept password during registration (not persisted in DB)
-     * Used only for User creation
+     * Used only for User creation.
      */
     private ?string $plainPassword = null;
 
@@ -206,19 +205,19 @@ class CustomerEntity
         return $this->isActive;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
     public function getFullName(): string
     {
-        return $this->firstName . ' ' . $this->lastName;
+        return $this->firstName.' '.$this->lastName;
     }
 
     // Setters (for API Platform deserialization)
@@ -267,12 +266,12 @@ class CustomerEntity
         $this->isActive = $isActive;
     }
 
-    public function setCreatedAt(DateTimeImmutable $createdAt): void
+    public function setCreatedAt(\DateTimeImmutable $createdAt): void
     {
         $this->createdAt = $createdAt;
     }
 
-    public function setUpdatedAt(DateTimeImmutable $updatedAt): void
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
     }

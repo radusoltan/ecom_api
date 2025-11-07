@@ -10,7 +10,7 @@ use Doctrine\DBAL\Connection;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Handler for GetAllProductOptions query
+ * Handler for GetAllProductOptions query.
  *
  * Returns all unique options and their values across all configurable products
  * for the given tenant. Used for product filtering in shop/catalog pages.
@@ -20,7 +20,8 @@ final readonly class GetAllProductOptionsHandler
 {
     public function __construct(
         private Connection $connection
-    ) {}
+    ) {
+    }
 
     /**
      * @return OptionDTO[]
@@ -29,7 +30,7 @@ final readonly class GetAllProductOptionsHandler
     {
         // Get all unique options with their values
         // Group by option code and collect all unique values
-        $sql = "
+        $sql = '
             SELECT
                 o.code as option_code,
                 o.name_translations::text as option_name_translations,
@@ -42,7 +43,7 @@ final readonly class GetAllProductOptionsHandler
             WHERE cp.tenant_id = :tenant_id
             GROUP BY o.code, o.name_translations::text, ov.code, ov.name_translations::text, ov.position
             ORDER BY o.code, ov.position
-        ";
+        ';
 
         $results = $this->connection->fetchAllAssociative($sql, [
             'tenant_id' => $query->tenantId->toString(),
@@ -67,6 +68,7 @@ final readonly class GetAllProductOptionsHandler
             foreach ($optionsByCode[$optionCode]['values'] as $existingValue) {
                 if ($existingValue['code'] === $valueCode) {
                     $valueExists = true;
+
                     break;
                 }
             }
@@ -100,7 +102,7 @@ final readonly class GetAllProductOptionsHandler
             }
 
             // Sort values by position
-            usort($valueDTOs, fn($a, $b) => $a->position <=> $b->position);
+            usort($valueDTOs, fn ($a, $b) => $a->position <=> $b->position);
 
             $optionDTOs[] = new OptionDTO(
                 id: '', // Not needed for filtering
@@ -115,7 +117,7 @@ final readonly class GetAllProductOptionsHandler
     }
 
     /**
-     * Get localized value from translations array
+     * Get localized value from translations array.
      *
      * @param array<string, string> $translations
      */

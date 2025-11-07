@@ -12,7 +12,8 @@ final readonly class GetProductReviewsHandler
 {
     public function __construct(
         private ProductReviewRepositoryInterface $reviewRepository
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<ReviewDTO>
@@ -24,7 +25,7 @@ final readonly class GetProductReviewsHandler
             : $this->reviewRepository->findByProductId($query->productId, $query->tenantId);
 
         return array_map(
-            fn($review) => new ReviewDTO(
+            fn ($review) => new ReviewDTO(
                 id: $review->id()->toString(),
                 productId: $review->productId()->toString(),
                 customerId: $review->customerId(),
@@ -42,7 +43,7 @@ final readonly class GetProductReviewsHandler
 }
 
 /**
- * DTO for Review
+ * DTO for Review.
  */
 final readonly class ReviewDTO
 {
@@ -57,5 +58,6 @@ final readonly class ReviewDTO
         public string $status,
         public bool $isVerifiedPurchase,
         public \DateTimeImmutable $createdAt
-    ) {}
+    ) {
+    }
 }

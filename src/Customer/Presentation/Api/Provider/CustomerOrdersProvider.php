@@ -9,7 +9,6 @@ use ApiPlatform\State\ProviderInterface;
 use App\Customer\Application\Query\GetCustomerOrdersQuery;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Shared\Domain\ValueObject\TenantId;
-use InvalidArgumentException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -31,7 +30,7 @@ final readonly class CustomerOrdersProvider implements ProviderInterface
         $customerId = CustomerId::fromString($uriVariables['id']);
 
         // Extract tenant ID from context (set by TenantContextMiddleware)
-        $tenantId = $context['tenant_id'] ?? throw new InvalidArgumentException('Tenant ID is required');
+        $tenantId = $context['tenant_id'] ?? throw new \InvalidArgumentException('Tenant ID is required');
         $tenantId = TenantId::fromString($tenantId);
 
         $query = new GetCustomerOrdersQuery($customerId, $tenantId);

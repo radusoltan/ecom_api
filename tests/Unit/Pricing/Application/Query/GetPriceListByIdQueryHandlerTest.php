@@ -11,8 +11,8 @@ use App\Pricing\Domain\Model\PriceList;
 use App\Pricing\Domain\Model\PriceListId;
 use App\Pricing\Domain\Model\PriceListName;
 use App\Pricing\Domain\Repository\PriceListRepositoryInterface;
+use App\Shared\Application\Service\PerformanceProfiler;
 use App\Shared\Domain\ValueObject\TenantId;
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 

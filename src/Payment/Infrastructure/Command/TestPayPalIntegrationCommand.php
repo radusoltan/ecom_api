@@ -8,7 +8,6 @@ use App\Payment\Application\Command\AuthorizePayment;
 use App\Payment\Application\Command\CancelPayment;
 use App\Payment\Application\Command\CapturePayment;
 use App\Payment\Application\Command\CreatePayment;
-use App\Payment\Application\Command\RefundPayment;
 use App\Payment\Application\Query\GetPaymentById;
 use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
@@ -23,7 +22,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
- * Test PayPal Payment Gateway Integration
+ * Test PayPal Payment Gateway Integration.
  *
  * Testează integrarea PayPal cu API real în modul sandbox.
  * Rulează toate operațiile payment cu API-ul PayPal.
@@ -69,7 +68,7 @@ final class TestPayPalIntegrationCommand extends Command
             $createCommand = new CreatePayment(
                 id: $paymentId,
                 tenantId: $tenantId,
-                orderId: '01J9XAMPLE' . bin2hex(random_bytes(8)),
+                orderId: '01J9XAMPLE'.bin2hex(random_bytes(8)),
                 amountInCents: self::TEST_AMOUNT_CENTS,
                 currency: self::TEST_CURRENCY,
                 method: PaymentMethod::paypal(),
@@ -83,7 +82,7 @@ final class TestPayPalIntegrationCommand extends Command
             // Get payment details
             $payment = $this->getPayment($paymentId, $tenantId);
             $io->writeln("Status: {$payment->status}");
-            $io->writeln("Amount: $" . ($payment->amountInCents / 100) . " {$payment->currency}");
+            $io->writeln('Amount: $'.($payment->amountInCents / 100)." {$payment->currency}");
             $io->newLine();
 
             // ==============================================
@@ -105,7 +104,7 @@ final class TestPayPalIntegrationCommand extends Command
                 $io->success('AUTHORIZE Payment - SUCCESS');
                 $io->writeln("Transaction ID: {$payment->gatewayTransactionId}");
                 $io->writeln("Status: {$payment->status}");
-                $io->writeln("PayPal Metadata: " . json_encode($payment->gatewayMetadata ?? []));
+                $io->writeln('PayPal Metadata: '.json_encode($payment->gatewayMetadata ?? []));
 
                 if (isset($payment->gatewayMetadata['approval_url'])) {
                     $io->note([
@@ -141,7 +140,7 @@ final class TestPayPalIntegrationCommand extends Command
             $payment = $this->getPayment($paymentId, $tenantId);
             $io->writeln("Payment ID: {$payment->id}");
             $io->writeln("Status: {$payment->status}");
-            $io->writeln("Amount: $" . ($payment->amountInCents / 100) . " {$payment->currency}");
+            $io->writeln('Amount: $'.($payment->amountInCents / 100)." {$payment->currency}");
             if ($payment->gatewayTransactionId) {
                 $io->writeln("PayPal Order ID: {$payment->gatewayTransactionId}");
             }
@@ -164,7 +163,7 @@ final class TestPayPalIntegrationCommand extends Command
                 $payment = $this->getPayment($paymentId, $tenantId);
                 $io->success('CAPTURE Payment - SUCCESS');
                 $io->writeln("Status: {$payment->status}");
-                $io->writeln("Captured Amount: $" . ($payment->capturedAmountInCents / 100));
+                $io->writeln('Captured Amount: $'.($payment->capturedAmountInCents / 100));
             } catch (\Throwable $e) {
                 $io->warning('CAPTURE Payment - EXPECTED ERROR');
                 $io->writeln("Error: {$e->getMessage()}");
@@ -187,7 +186,7 @@ final class TestPayPalIntegrationCommand extends Command
             $createCommand2 = new CreatePayment(
                 id: $paymentId2,
                 tenantId: $tenantId,
-                orderId: '01J9XAMPLE' . bin2hex(random_bytes(8)),
+                orderId: '01J9XAMPLE'.bin2hex(random_bytes(8)),
                 amountInCents: 3000, // $30.00
                 currency: self::TEST_CURRENCY,
                 method: PaymentMethod::paypal(),

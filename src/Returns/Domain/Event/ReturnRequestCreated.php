@@ -8,7 +8,7 @@ use App\Returns\Domain\ValueObject\ReturnRequestId;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Domain Event: ReturnRequestCreated
+ * Domain Event: ReturnRequestCreated.
  *
  * Triggered when a customer creates a return request (RMA).
  *

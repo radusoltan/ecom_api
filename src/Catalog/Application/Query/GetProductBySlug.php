@@ -12,5 +12,6 @@ final readonly class GetProductBySlug
     public function __construct(
         public TenantId $tenantId,
         public Slug $slug
-    ) {}
+    ) {
+    }
 }

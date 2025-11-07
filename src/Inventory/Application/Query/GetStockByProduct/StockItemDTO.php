@@ -21,7 +21,8 @@ final readonly class StockItemDTO
         public bool $isLowStock,
         public \DateTimeImmutable $createdAt,
         public \DateTimeImmutable $updatedAt,
-    ) {}
+    ) {
+    }
 
     public static function fromStockItem(StockItem $stockItem): self
     {

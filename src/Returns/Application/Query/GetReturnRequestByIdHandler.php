@@ -26,7 +26,7 @@ final readonly class GetReturnRequestByIdHandler
             ReturnRequestId::fromString($query->returnRequestId)
         );
 
-        if ($returnRequest === null) {
+        if (null === $returnRequest) {
             return null;
         }
 

@@ -19,7 +19,7 @@ final class CSVTranslationParserTest extends TestCase
         $this->parser = new CSVTranslationParser();
     }
 
-    public function testParseString_ValidCSV_ReturnsArray(): void
+    public function testParseStringValidCSVReturnsArray(): void
     {
         $csv = <<<CSV
 locale,domain,key,value
@@ -38,7 +38,7 @@ CSV;
         ], $result);
     }
 
-    public function testParseString_WithoutHeader_ReturnsArray(): void
+    public function testParseStringWithoutHeaderReturnsArray(): void
     {
         $csv = <<<CSV
 en,messages,hello,Hello
@@ -52,7 +52,7 @@ CSV;
         $this->assertEquals('fr', $result[1]['locale']);
     }
 
-    public function testParseString_WithQuotedValues_HandlesCorrectly(): void
+    public function testParseStringWithQuotedValuesHandlesCorrectly(): void
     {
         $csv = <<<CSV
 en,messages,message,"Hello, World!"
@@ -66,7 +66,7 @@ CSV;
         $this->assertEquals('He said "Hi"', $result[1]['value']);
     }
 
-    public function testParseString_EmptyLines_SkipsEmpty(): void
+    public function testParseStringEmptyLinesSkipsEmpty(): void
     {
         $csv = <<<CSV
 locale,domain,key,value
@@ -80,7 +80,7 @@ CSV;
         $this->assertCount(2, $result);
     }
 
-    public function testParseString_InvalidColumnCount_ThrowsException(): void
+    public function testParseStringInvalidColumnCountThrowsException(): void
     {
         $csv = <<<CSV
 en,messages,hello
@@ -92,7 +92,7 @@ CSV;
         $this->parser->parseString($csv);
     }
 
-    public function testParseString_EmptyContent_ThrowsException(): void
+    public function testParseStringEmptyContentThrowsException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('No translations found in CSV content');
@@ -100,7 +100,7 @@ CSV;
         $this->parser->parseString('');
     }
 
-    public function testGenerateCSV_ValidData_ReturnsCSVString(): void
+    public function testGenerateCSVValidDataReturnsCSVString(): void
     {
         $data = [
             ['locale' => 'en', 'domain' => 'messages', 'key' => 'hello', 'value' => 'Hello'],
@@ -114,7 +114,7 @@ CSV;
         $this->assertStringContainsString('fr,messages,hello,Bonjour', $result);
     }
 
-    public function testGenerateCSV_WithoutHeader_NoHeaderLine(): void
+    public function testGenerateCSVWithoutHeaderNoHeaderLine(): void
     {
         $data = [
             ['locale' => 'en', 'domain' => 'messages', 'key' => 'hello', 'value' => 'Hello'],
@@ -126,7 +126,7 @@ CSV;
         $this->assertStringContainsString('en,messages,hello,Hello', $result);
     }
 
-    public function testGenerateCSV_ValueWithComma_QuotesValue(): void
+    public function testGenerateCSVValueWithCommaQuotesValue(): void
     {
         $data = [
             ['locale' => 'en', 'domain' => 'messages', 'key' => 'message', 'value' => 'Hello, World!'],
@@ -137,7 +137,7 @@ CSV;
         $this->assertStringContainsString('"Hello, World!"', $result);
     }
 
-    public function testGenerateCSV_ValueWithQuotes_EscapesQuotes(): void
+    public function testGenerateCSVValueWithQuotesEscapesQuotes(): void
     {
         $data = [
             ['locale' => 'en', 'domain' => 'messages', 'key' => 'quote', 'value' => 'He said "Hi"'],
@@ -148,7 +148,7 @@ CSV;
         $this->assertStringContainsString('"He said ""Hi"""', $result);
     }
 
-    public function testRoundTrip_ParseAndGenerate_PreservesData(): void
+    public function testRoundTripParseAndGeneratePreservesData(): void
     {
         $original = [
             ['locale' => 'en', 'domain' => 'messages', 'key' => 'hello', 'value' => 'Hello'],

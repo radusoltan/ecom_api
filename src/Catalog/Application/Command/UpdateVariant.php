@@ -10,7 +10,7 @@ use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Command to update a specific variant
+ * Command to update a specific variant.
  */
 final readonly class UpdateVariant
 {
@@ -27,5 +27,6 @@ final readonly class UpdateVariant
         public ?bool $trackInventory = null,
         public ?bool $allowBackorder = null,
         public ?array $images = null
-    ) {}
+    ) {
+    }
 }

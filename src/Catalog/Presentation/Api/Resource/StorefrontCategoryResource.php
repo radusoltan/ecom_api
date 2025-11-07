@@ -16,7 +16,7 @@ use App\Catalog\Presentation\Api\State\FrontCategoriesProvider;
             provider: FrontCategoriesProvider::class,
             normalizationContext: ['groups' => ['storefront:read']],
             description: 'Get categories marked as showOnFront for storefront homepage'
-        )
+        ),
     ],
     normalizationContext: ['groups' => ['storefront:read']]
 )]

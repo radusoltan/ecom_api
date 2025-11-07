@@ -7,7 +7,6 @@ namespace App\Catalog\Presentation\Api\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\CategoryEntity;
-use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -49,11 +48,11 @@ final class CategoryCollectionProvider implements ProviderInterface
             ->orderBy('c.position', 'ASC');
 
         // Filter by parent if specified
-        if ($parentFilter === 'root') {
+        if ('root' === $parentFilter) {
             $queryBuilder->andWhere('c.parentId IS NULL');
-        } elseif ($parentFilter === 'sub') {
+        } elseif ('sub' === $parentFilter) {
             $queryBuilder->andWhere('c.parentId IS NOT NULL');
-        } elseif ($parentId !== null) {
+        } elseif (null !== $parentId) {
             // Filter by specific parent ID
             $queryBuilder->andWhere('c.parentId = :parentId')
                 ->setParameter('parentId', $parentId);

@@ -9,12 +9,11 @@ use App\Pricing\Domain\Model\PriceListId;
 use App\Pricing\Domain\Repository\PriceListRepositoryInterface;
 use App\Pricing\Infrastructure\Persistence\Doctrine\Entity\PriceListEntity;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Doctrine ORM implementation of PriceListRepositoryInterface
+ * Doctrine ORM implementation of PriceListRepositoryInterface.
  */
 final readonly class DoctrineORMPriceListRepository implements PriceListRepositoryInterface
 {
@@ -28,7 +27,7 @@ final readonly class DoctrineORMPriceListRepository implements PriceListReposito
     {
         $entity = $this->entityManager->find(PriceListEntity::class, $priceList->id()->toString());
 
-        if ($entity === null) {
+        if (null === $entity) {
             // Create new entity
             $entity = PriceListEntity::fromDomainModel($priceList);
             $this->entityManager->persist($entity);
@@ -72,14 +71,14 @@ final readonly class DoctrineORMPriceListRepository implements PriceListReposito
         $entities = $qb->getQuery()->getResult();
 
         return array_map(
-            fn(PriceListEntity $entity) => $entity->toDomainModel(),
+            fn (PriceListEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
 
     public function findValidForTenant(TenantId $tenantId): array
     {
-        $now = new DateTimeImmutable();
+        $now = new \DateTimeImmutable();
 
         $qb = $this->entityManager->createQueryBuilder();
 
@@ -108,7 +107,7 @@ final readonly class DoctrineORMPriceListRepository implements PriceListReposito
         $entities = $qb->getQuery()->getResult();
 
         return array_map(
-            fn(PriceListEntity $entity) => $entity->toDomainModel(),
+            fn (PriceListEntity $entity) => $entity->toDomainModel(),
             $entities
         );
     }
@@ -117,7 +116,7 @@ final readonly class DoctrineORMPriceListRepository implements PriceListReposito
     {
         $entity = $this->entityManager->find(PriceListEntity::class, $priceList->id()->toString());
 
-        if ($entity !== null) {
+        if (null !== $entity) {
             $this->entityManager->remove($entity);
             $this->entityManager->flush();
         }

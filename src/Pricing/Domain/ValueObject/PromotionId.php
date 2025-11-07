@@ -11,9 +11,7 @@ final readonly class PromotionId
     private function __construct(private string $value)
     {
         if (!Ulid::isValid($this->value)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid PromotionId: "%s". Must be a valid ULID.', $this->value)
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid PromotionId: "%s". Must be a valid ULID.', $this->value));
         }
     }
 

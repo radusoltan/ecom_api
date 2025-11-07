@@ -158,9 +158,7 @@ final class Promotion extends AggregateRoot
     public function activate(): void
     {
         if ($this->isActive) {
-            throw new \DomainException(
-                sprintf('Promotion "%s" is already active', $this->id->toString())
-            );
+            throw new \DomainException(sprintf('Promotion "%s" is already active', $this->id->toString()));
         }
 
         $this->isActive = true;
@@ -176,9 +174,7 @@ final class Promotion extends AggregateRoot
     public function deactivate(): void
     {
         if (!$this->isActive) {
-            throw new \DomainException(
-                sprintf('Promotion "%s" is already inactive', $this->id->toString())
-            );
+            throw new \DomainException(sprintf('Promotion "%s" is already inactive', $this->id->toString()));
         }
 
         $this->isActive = false;
@@ -193,11 +189,11 @@ final class Promotion extends AggregateRoot
 
     public function isValidAt(\DateTimeImmutable $date): bool
     {
-        if ($this->validFrom !== null && $date < $this->validFrom) {
+        if (null !== $this->validFrom && $date < $this->validFrom) {
             return false;
         }
 
-        if ($this->validTo !== null && $date > $this->validTo) {
+        if (null !== $this->validTo && $date > $this->validTo) {
             return false;
         }
 
@@ -219,45 +215,31 @@ final class Promotion extends AggregateRoot
         $length = mb_strlen($name);
 
         if ($length < self::MIN_NAME_LENGTH || $length > self::MAX_NAME_LENGTH) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Promotion name must be between %d and %d characters, got: %d',
-                    self::MIN_NAME_LENGTH,
-                    self::MAX_NAME_LENGTH,
-                    $length
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Promotion name must be between %d and %d characters, got: %d', self::MIN_NAME_LENGTH, self::MAX_NAME_LENGTH, $length));
         }
     }
 
     private function validatePriority(int $priority): void
     {
         if ($priority < self::MIN_PRIORITY || $priority > self::MAX_PRIORITY) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Promotion priority must be between %d and %d, got: %d',
-                    self::MIN_PRIORITY,
-                    self::MAX_PRIORITY,
-                    $priority
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Promotion priority must be between %d and %d, got: %d', self::MIN_PRIORITY, self::MAX_PRIORITY, $priority));
         }
     }
 
     private function validateCouponCode(PromotionType $type, ?CouponCode $couponCode): void
     {
-        if ($type->isCoupon() && $couponCode === null) {
+        if ($type->isCoupon() && null === $couponCode) {
             throw new \InvalidArgumentException('Coupon code is required for coupon type promotions');
         }
 
-        if (!$type->isCoupon() && $couponCode !== null) {
+        if (!$type->isCoupon() && null !== $couponCode) {
             throw new \InvalidArgumentException('Coupon code should not be provided for non-coupon promotions');
         }
     }
 
     private function validateDateRange(?\DateTimeImmutable $validFrom, ?\DateTimeImmutable $validTo): void
     {
-        if ($validFrom !== null && $validTo !== null && $validFrom >= $validTo) {
+        if (null !== $validFrom && null !== $validTo && $validFrom >= $validTo) {
             throw new \InvalidArgumentException('validFrom must be before validTo');
         }
     }

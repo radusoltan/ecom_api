@@ -8,7 +8,7 @@ use App\Catalog\Domain\Model\ProductId;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Command to add a value to an existing option
+ * Command to add a value to an existing option.
  */
 final readonly class DefineOptionValue
 {
@@ -22,5 +22,6 @@ final readonly class DefineOptionValue
         public string $valueCode,
         public array $nameTranslations,
         public int $position = 0
-    ) {}
+    ) {
+    }
 }

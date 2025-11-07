@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Tenant\Domain\Model;
 
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\LanguageCode;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\Event\TenantActivated;
 use App\Tenant\Domain\Event\TenantCreated;
 use App\Tenant\Domain\Event\TenantDeactivated;
@@ -13,7 +14,6 @@ use App\Tenant\Domain\Event\TenantReactivated;
 use App\Tenant\Domain\Event\TenantSuspended;
 use App\Tenant\Domain\Exception\TranslationQuotaExceededException;
 use App\Tenant\Domain\Model\Tenant;
-use App\Tenant\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\ValueObject\TenantName;
 use App\Tenant\Domain\ValueObject\TenantStatus;
 use PHPUnit\Framework\TestCase;

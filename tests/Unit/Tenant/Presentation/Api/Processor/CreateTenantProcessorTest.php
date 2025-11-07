@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Tenant\Presentation\Api\Processor;
 
+use ApiPlatform\Metadata\Post;
 use App\Tenant\Application\Command\CreateTenantCommand;
 use App\Tenant\Application\DTO\TenantDTO;
 use App\Tenant\Application\Query\GetTenantByOwnerEmailQuery;
 use App\Tenant\Presentation\Api\Processor\CreateTenantProcessor;
 use App\Tenant\Presentation\Api\TenantResource;
-use ApiPlatform\Metadata\Post;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
@@ -51,8 +49,8 @@ final class CreateTenantProcessorTest extends TestCase
             ->method('dispatch')
             ->with($this->callback(function ($command) {
                 return $command instanceof CreateTenantCommand
-                    && $command->name === 'Test Tenant'
-                    && $command->ownerEmail === 'owner@example.com';
+                    && 'Test Tenant' === $command->name
+                    && 'owner@example.com' === $command->ownerEmail;
             }))
             ->willReturn(new Envelope(new \stdClass()));
 
@@ -66,7 +64,7 @@ final class CreateTenantProcessorTest extends TestCase
             ->method('dispatch')
             ->with($this->callback(function ($query) {
                 return $query instanceof GetTenantByOwnerEmailQuery
-                    && $query->ownerEmail === 'owner@example.com';
+                    && 'owner@example.com' === $query->ownerEmail;
             }))
             ->willReturn($envelope);
 
@@ -81,7 +79,7 @@ final class CreateTenantProcessorTest extends TestCase
 
     public function testProcessThrowsExceptionWhenDataIsNotTenantResource(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected TenantResource');
 
         $this->processor->process(new \stdClass(), new Post());
@@ -93,7 +91,7 @@ final class CreateTenantProcessorTest extends TestCase
         $resource->name = null;
         $resource->ownerEmail = 'owner@example.com';
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Name and ownerEmail are required');
 
         $this->processor->process($resource, new Post());
@@ -105,7 +103,7 @@ final class CreateTenantProcessorTest extends TestCase
         $resource->name = 'Test Tenant';
         $resource->ownerEmail = null;
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Name and ownerEmail are required');
 
         $this->processor->process($resource, new Post());
@@ -117,7 +115,7 @@ final class CreateTenantProcessorTest extends TestCase
         $resource->name = null;
         $resource->ownerEmail = null;
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Name and ownerEmail are required');
 
         $this->processor->process($resource, new Post());
@@ -142,7 +140,7 @@ final class CreateTenantProcessorTest extends TestCase
             ->method('dispatch')
             ->willReturn($envelope);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('No handler found for query');
 
         $this->processor->process($resource, new Post());
@@ -170,7 +168,7 @@ final class CreateTenantProcessorTest extends TestCase
             ->method('dispatch')
             ->willReturn($envelope);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Tenant not found after creation');
 
         $this->processor->process($resource, new Post());

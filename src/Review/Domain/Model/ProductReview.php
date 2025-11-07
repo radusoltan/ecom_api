@@ -15,7 +15,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 
 /**
  * ProductReview Aggregate Root
- * Represents a customer review for a product
+ * Represents a customer review for a product.
  *
  * Business Rules:
  * - Rating is required (1-5 stars)
@@ -49,7 +49,7 @@ final class ProductReview extends AggregateRoot
     }
 
     /**
-     * Submit a new review
+     * Submit a new review.
      */
     public static function submit(
         ReviewId $id,
@@ -91,7 +91,7 @@ final class ProductReview extends AggregateRoot
     }
 
     /**
-     * Reconstitute from persistence
+     * Reconstitute from persistence.
      */
     public static function reconstituteFromPersistence(
         ReviewId $id,
@@ -124,7 +124,7 @@ final class ProductReview extends AggregateRoot
     }
 
     /**
-     * Approve the review
+     * Approve the review.
      */
     public function approve(): void
     {
@@ -139,7 +139,7 @@ final class ProductReview extends AggregateRoot
     }
 
     /**
-     * Reject the review
+     * Reject the review.
      */
     public function reject(string $reason): void
     {
@@ -154,7 +154,7 @@ final class ProductReview extends AggregateRoot
     }
 
     /**
-     * Update review content (only if pending)
+     * Update review content (only if pending).
      */
     public function updateContent(string $title, string $content): void
     {
@@ -233,28 +233,24 @@ final class ProductReview extends AggregateRoot
     private function validateReview(): void
     {
         // Text reviews require customer
-        if (($this->title !== null || $this->content !== null) && $this->customerId === null) {
+        if ((null !== $this->title || null !== $this->content) && null === $this->customerId) {
             throw new \DomainException('Only logged-in customers can submit text reviews');
         }
 
         // Validate title length
-        if ($this->title !== null && mb_strlen($this->title) > self::MAX_TITLE_LENGTH) {
-            throw new \DomainException(
-                sprintf('Review title cannot exceed %d characters', self::MAX_TITLE_LENGTH)
-            );
+        if (null !== $this->title && mb_strlen($this->title) > self::MAX_TITLE_LENGTH) {
+            throw new \DomainException(sprintf('Review title cannot exceed %d characters', self::MAX_TITLE_LENGTH));
         }
 
         // Validate content length
-        if ($this->content !== null && mb_strlen($this->content) > self::MAX_CONTENT_LENGTH) {
-            throw new \DomainException(
-                sprintf('Review content cannot exceed %d characters', self::MAX_CONTENT_LENGTH)
-            );
+        if (null !== $this->content && mb_strlen($this->content) > self::MAX_CONTENT_LENGTH) {
+            throw new \DomainException(sprintf('Review content cannot exceed %d characters', self::MAX_CONTENT_LENGTH));
         }
     }
 }
 
 /**
- * Value object for Review ID
+ * Value object for Review ID.
  */
 final readonly class ReviewId
 {

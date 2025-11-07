@@ -13,7 +13,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Handles OrderCancelled domain events by triggering refund process and notifying customer
+ * Handles OrderCancelled domain events by triggering refund process and notifying customer.
  *
  * Business Rules:
  * - Notify customer immediately when order is cancelled
@@ -97,10 +97,11 @@ final readonly class OrderCancelledSubscriber implements EventSubscriberInterfac
         // Fetch order to get customer email and details
         $order = $this->orderRepository->findById($event->orderId);
 
-        if ($order === null) {
+        if (null === $order) {
             $this->logger->warning('Cannot send cancellation email - order not found', [
                 'orderId' => $event->orderId->toString(),
             ]);
+
             return;
         }
 

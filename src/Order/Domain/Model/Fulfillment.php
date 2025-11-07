@@ -15,7 +15,7 @@ use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Fulfillment Aggregate Root
+ * Fulfillment Aggregate Root.
  *
  * Represents the physical process of fulfilling an order from warehouse to customer.
  *
@@ -68,7 +68,7 @@ final class Fulfillment extends AggregateRoot
     }
 
     /**
-     * Factory method to start a new fulfillment
+     * Factory method to start a new fulfillment.
      */
     public static function start(
         FulfillmentId $id,
@@ -98,7 +98,7 @@ final class Fulfillment extends AggregateRoot
     }
 
     /**
-     * Transition fulfillment to picking status
+     * Transition fulfillment to picking status.
      */
     public function startPicking(): void
     {
@@ -120,7 +120,7 @@ final class Fulfillment extends AggregateRoot
     }
 
     /**
-     * Transition fulfillment to packing status
+     * Transition fulfillment to packing status.
      */
     public function startPacking(): void
     {
@@ -142,18 +142,18 @@ final class Fulfillment extends AggregateRoot
     }
 
     /**
-     * Mark fulfillment as shipped with tracking information
+     * Mark fulfillment as shipped with tracking information.
      */
     public function ship(string $carrier, string $trackingNumber): void
     {
         $this->assertNotFinalState();
         $this->assertCanTransition(FulfillmentStatus::shipping());
 
-        if (trim($carrier) === '') {
+        if ('' === trim($carrier)) {
             throw new \DomainException('Carrier name is required for shipping');
         }
 
-        if (trim($trackingNumber) === '') {
+        if ('' === trim($trackingNumber)) {
             throw new \DomainException('Tracking number is required for shipping');
         }
 
@@ -174,7 +174,7 @@ final class Fulfillment extends AggregateRoot
     }
 
     /**
-     * Mark fulfillment as delivered (final state)
+     * Mark fulfillment as delivered (final state).
      */
     public function markAsDelivered(): void
     {
@@ -203,7 +203,7 @@ final class Fulfillment extends AggregateRoot
     }
 
     /**
-     * Cancel fulfillment
+     * Cancel fulfillment.
      */
     public function cancel(): void
     {
@@ -225,14 +225,14 @@ final class Fulfillment extends AggregateRoot
     }
 
     /**
-     * Mark fulfillment as failed
+     * Mark fulfillment as failed.
      */
     public function markAsFailed(string $reason): void
     {
         $this->assertNotFinalState();
         $this->assertCanTransition(FulfillmentStatus::failed());
 
-        if (trim($reason) === '') {
+        if ('' === trim($reason)) {
             throw new \DomainException('Failure reason is required');
         }
 
@@ -260,11 +260,11 @@ final class Fulfillment extends AggregateRoot
     }
 
     /**
-     * Calculate fulfillment duration (from assigned to delivered)
+     * Calculate fulfillment duration (from assigned to delivered).
      */
     public function calculateDuration(): ?\DateInterval
     {
-        if ($this->assignedAt === null || $this->deliveredAt === null) {
+        if (null === $this->assignedAt || null === $this->deliveredAt) {
             return null;
         }
 
@@ -272,30 +272,22 @@ final class Fulfillment extends AggregateRoot
     }
 
     /**
-     * Assert fulfillment is not in final state
+     * Assert fulfillment is not in final state.
      */
     private function assertNotFinalState(): void
     {
         if ($this->status->isFinalState()) {
-            throw new \DomainException(
-                sprintf('Cannot modify fulfillment in final state: %s', $this->status->value())
-            );
+            throw new \DomainException(sprintf('Cannot modify fulfillment in final state: %s', $this->status->value()));
         }
     }
 
     /**
-     * Assert status transition is valid
+     * Assert status transition is valid.
      */
     private function assertCanTransition(FulfillmentStatus $newStatus): void
     {
         if (!$this->status->canTransitionTo($newStatus)) {
-            throw new \DomainException(
-                sprintf(
-                    'Invalid status transition from %s to %s',
-                    $this->status->value(),
-                    $newStatus->value()
-                )
-            );
+            throw new \DomainException(sprintf('Invalid status transition from %s to %s', $this->status->value(), $newStatus->value()));
         }
     }
 
@@ -386,7 +378,7 @@ final class Fulfillment extends AggregateRoot
     }
 
     /**
-     * Reconstitute aggregate from persistence
+     * Reconstitute aggregate from persistence.
      */
     public static function reconstituteFromPersistence(
         FulfillmentId $id,

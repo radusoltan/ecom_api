@@ -181,6 +181,7 @@ final class IdempotencyMiddlewareTest extends TestCase
                 $item->expects($this->once())
                     ->method('expiresAfter')
                     ->with(86400);
+
                 return $callback($item);
             });
 
@@ -231,12 +232,14 @@ final class IdempotencyMiddlewareTest extends TestCase
     private function createRequestEvent(Request $request): RequestEvent
     {
         $kernel = $this->createMock(KernelInterface::class);
+
         return new RequestEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST);
     }
 
     private function createResponseEvent(Request $request, Response $response): ResponseEvent
     {
         $kernel = $this->createMock(KernelInterface::class);
+
         return new ResponseEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST, $response);
     }
 }

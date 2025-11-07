@@ -13,13 +13,12 @@ use App\Catalog\Domain\Repository\ConfigurableProductRepositoryInterface;
 use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 use App\Catalog\Domain\Service\VariantCombinator;
 use App\Catalog\Domain\ValueObject\VariantSKU;
-use App\Shared\Domain\ValueObject\Money;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Handler for GenerateVariants command
- * Generates all possible variant combinations based on defined options
+ * Generates all possible variant combinations based on defined options.
  */
 #[AsMessageHandler]
 final readonly class GenerateVariantsHandler
@@ -29,7 +28,8 @@ final readonly class GenerateVariantsHandler
         private ProductRepositoryInterface $productRepository,
         private VariantCombinator $variantCombinator,
         private MessageBusInterface $eventBus
-    ) {}
+    ) {
+    }
 
     public function __invoke(GenerateVariants $command): void
     {
@@ -40,10 +40,7 @@ final readonly class GenerateVariantsHandler
         );
 
         if (!$configurableProduct) {
-            throw new \DomainException(sprintf(
-                'Configurable product not found for product %s',
-                $command->productId->toString()
-            ));
+            throw new \DomainException(sprintf('Configurable product not found for product %s', $command->productId->toString()));
         }
 
         // Get the base product for SKU generation
@@ -53,10 +50,7 @@ final readonly class GenerateVariantsHandler
         );
 
         if (!$baseProduct) {
-            throw new \DomainException(sprintf(
-                'Base product %s not found',
-                $command->productId->toString()
-            ));
+            throw new \DomainException(sprintf('Base product %s not found', $command->productId->toString()));
         }
 
         // Get base SKU
@@ -78,7 +72,8 @@ final readonly class GenerateVariantsHandler
             $existingVariant = $configurableProduct->findVariantByCombination($combination);
 
             if ($existingVariant) {
-                $skippedCount++;
+                ++$skippedCount;
+
                 continue; // Skip existing variants
             }
 
@@ -106,7 +101,7 @@ final readonly class GenerateVariantsHandler
 
             // Add variant to configurable product
             $configurableProduct->addVariant($variant);
-            $generatedCount++;
+            ++$generatedCount;
         }
 
         // Save the configurable product with new variants

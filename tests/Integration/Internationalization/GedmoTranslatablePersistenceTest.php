@@ -50,7 +50,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
     public function testTenantNameIsTranslatable(): void
     {
         $tenant = new TenantEntity(
-            id: 'test-' . uniqid(),
+            id: 'test-'.uniqid(),
             name: 'Test Tenant Corporation',
             ownerEmail: 'owner@test.com',
             status: 'active',
@@ -73,7 +73,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
     public function testTenantDescriptionIsTranslatable(): void
     {
         $tenant = new TenantEntity(
-            id: 'test-desc-' . uniqid(),
+            id: 'test-desc-'.uniqid(),
             name: 'Test Tenant Description',
             ownerEmail: 'owner@testdesc.com',
             status: 'active',
@@ -97,7 +97,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
     public function testTenantSlugIsGenerated(): void
     {
         $tenant = new TenantEntity(
-            id: 'test-slug-' . uniqid(),
+            id: 'test-slug-'.uniqid(),
             name: 'Test Tenant Sluggable',
             ownerEmail: 'owner@testslug.com',
             status: 'active',
@@ -117,7 +117,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
     public function testMultipleTranslationsForSameTenant(): void
     {
         $tenant = new TenantEntity(
-            id: 'test-multi-' . uniqid(),
+            id: 'test-multi-'.uniqid(),
             name: 'Test Tenant Multi Lang',
             ownerEmail: 'owner@multi.com',
             status: 'active',
@@ -149,7 +149,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
 
     public function testTranslationsPersistInDatabase(): void
     {
-        $tenantId = 'test-persist-' . uniqid();
+        $tenantId = 'test-persist-'.uniqid();
 
         $tenant = new TenantEntity(
             id: $tenantId,
@@ -185,7 +185,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
 
     public function testTranslationsAreStoredInExtTranslationsTable(): void
     {
-        $tenantId = 'test-table-' . uniqid();
+        $tenantId = 'test-table-'.uniqid();
 
         $tenant = new TenantEntity(
             id: $tenantId,
@@ -226,7 +226,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
     public function testUpdateTranslationOverwritesExisting(): void
     {
         $tenant = new TenantEntity(
-            id: 'test-update-' . uniqid(),
+            id: 'test-update-'.uniqid(),
             name: 'Test Tenant Update',
             ownerEmail: 'owner@update.com',
             status: 'active',
@@ -253,7 +253,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
     public function testRefreshEntityLoadsTranslatedValues(): void
     {
         $tenant = new TenantEntity(
-            id: 'test-refresh-' . uniqid(),
+            id: 'test-refresh-'.uniqid(),
             name: 'Test Tenant Refresh',
             ownerEmail: 'owner@refresh.com',
             status: 'active',
@@ -281,7 +281,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
     {
         // This test verifies that the #[Gedmo\TranslationEntity] attribute is properly configured
         $tenant = new TenantEntity(
-            id: 'test-attr-' . uniqid(),
+            id: 'test-attr-'.uniqid(),
             name: 'Test Tenant Attribute',
             ownerEmail: 'owner@attr.com',
             status: 'active',
@@ -304,7 +304,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
     public function testTranslationWithNullDescription(): void
     {
         $tenant = new TenantEntity(
-            id: 'test-null-' . uniqid(),
+            id: 'test-null-'.uniqid(),
             name: 'Test Tenant Null Desc',
             ownerEmail: 'owner@null.com',
             status: 'active',
@@ -328,7 +328,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
     public function testSlugIsUniquePerTenant(): void
     {
         $tenant1 = new TenantEntity(
-            id: 'test-slug1-' . uniqid(),
+            id: 'test-slug1-'.uniqid(),
             name: 'Test Tenant Unique Slug',
             ownerEmail: 'owner1@slug.com',
             status: 'active',
@@ -336,7 +336,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
         );
 
         $tenant2 = new TenantEntity(
-            id: 'test-slug2-' . uniqid(),
+            id: 'test-slug2-'.uniqid(),
             name: 'Test Tenant Unique Slug',
             ownerEmail: 'owner2@slug.com',
             status: 'active',

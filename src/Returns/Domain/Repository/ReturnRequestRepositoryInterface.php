@@ -45,6 +45,7 @@ interface ReturnRequestRepositoryInterface
      * Find all return requests with a specific status.
      *
      * @param string $status One of ReturnStatus constants
+     *
      * @return array<ReturnRequest>
      */
     public function findByStatus(string $status, TenantId $tenantId): array;

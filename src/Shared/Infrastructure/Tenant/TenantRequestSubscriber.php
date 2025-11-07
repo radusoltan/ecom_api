@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Tenant;
 
-use App\Tenant\Domain\ValueObject\TenantId;
+use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -17,7 +17,8 @@ final class TenantRequestSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly RequestStack $requestStack,
         private readonly TenantContext $tenantContext
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -36,7 +37,7 @@ final class TenantRequestSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
         $tenantId = $this->extractTenantId($request);
 
-        if ($tenantId === null) {
+        if (null === $tenantId) {
             return;
         }
 

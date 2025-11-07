@@ -12,7 +12,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Fulfillment Completed Subscriber
+ * Fulfillment Completed Subscriber.
  *
  * Updates order status to "delivered" when fulfillment is completed.
  */

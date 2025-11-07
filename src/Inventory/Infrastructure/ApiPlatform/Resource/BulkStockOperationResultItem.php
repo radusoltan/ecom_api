@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Inventory\Infrastructure\ApiPlatform\Resource;
 
 /**
- * Result for a single item in bulk stock operation
+ * Result for a single item in bulk stock operation.
  */
 final readonly class BulkStockOperationResultItem
 {

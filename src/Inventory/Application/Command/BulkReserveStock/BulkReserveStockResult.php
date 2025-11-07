@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Inventory\Application\Command\BulkReserveStock;
 
 /**
- * Result of bulk stock reservation operation
+ * Result of bulk stock reservation operation.
  */
 final readonly class BulkReserveStockResult
 {
@@ -25,7 +25,7 @@ final readonly class BulkReserveStockResult
 
     public function isFullySuccessful(): bool
     {
-        return $this->failureCount === 0;
+        return 0 === $this->failureCount;
     }
 
     public function isPartiallySuccessful(): bool
@@ -35,6 +35,6 @@ final readonly class BulkReserveStockResult
 
     public function isFullyFailed(): bool
     {
-        return $this->successCount === 0;
+        return 0 === $this->successCount;
     }
 }

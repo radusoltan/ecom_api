@@ -14,7 +14,7 @@ final class PaymentApiTest extends ApiTestCase
     private ?string $currentTenantId = null;
 
     /**
-     * Create an authenticated client with JWT token and optional X-Tenant-ID header
+     * Create an authenticated client with JWT token and optional X-Tenant-ID header.
      */
     protected function createAuthenticatedClient(string $email = 'admin@admin.com', array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'], ?string $tenantId = null)
     {
@@ -30,7 +30,7 @@ final class PaymentApiTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash');
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -48,11 +48,11 @@ final class PaymentApiTest extends ApiTestCase
             'exp' => time() + 3600,
         ]);
 
-        $headers = ['authorization' => 'Bearer ' . $token];
+        $headers = ['authorization' => 'Bearer '.$token];
 
         // Add X-Tenant-ID if provided or if we have a current tenant
         $tenantIdToUse = $tenantId ?? $this->currentTenantId;
-        if ($tenantIdToUse !== null) {
+        if (null !== $tenantIdToUse) {
             $headers['X-Tenant-ID'] = $tenantIdToUse;
         }
 
@@ -67,7 +67,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testCreatePayment(): void
     {
         // Arrange
-        $orderId = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId = '01JCEX'.bin2hex(random_bytes(10));
 
         // Act
         $response = $this->createAuthenticatedClient()->request('POST', '/api/payments', [
@@ -103,7 +103,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testCreatePaymentWithInvalidAmountFails(): void
     {
         // Arrange
-        $orderId = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId = '01JCEX'.bin2hex(random_bytes(10));
 
         // Act
         $this->createAuthenticatedClient()->request('POST', '/api/payments', [
@@ -127,7 +127,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testCreatePaymentWithInvalidCurrencyFails(): void
     {
         // Arrange
-        $orderId = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId = '01JCEX'.bin2hex(random_bytes(10));
 
         // Act
         $this->createAuthenticatedClient()->request('POST', '/api/payments', [
@@ -151,7 +151,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testGetPaymentById(): void
     {
         // Arrange - Create a payment first
-        $orderId = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId = '01JCEX'.bin2hex(random_bytes(10));
 
         $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/payments', [
             'headers' => [
@@ -191,7 +191,7 @@ final class PaymentApiTest extends ApiTestCase
         $nonExistentId = PaymentId::generate()->toString();
 
         // Act
-        
+
         $this->createAuthenticatedClient()->request('GET', "/api/payments/{$nonExistentId}", [
             'headers' => [
                 'X-Tenant-ID' => $this->currentTenantId,
@@ -205,8 +205,8 @@ final class PaymentApiTest extends ApiTestCase
     public function testGetAllPayments(): void
     {
         // Arrange - Create two payments
-        $orderId1 = '01JCEX' . bin2hex(random_bytes(10));
-        $orderId2 = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId1 = '01JCEX'.bin2hex(random_bytes(10));
+        $orderId2 = '01JCEX'.bin2hex(random_bytes(10));
 
         $this->createAuthenticatedClient()->request('POST', '/api/payments', [
             'headers' => [
@@ -255,7 +255,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testAuthorizePayment(): void
     {
         // Arrange - Create a payment
-        $orderId = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId = '01JCEX'.bin2hex(random_bytes(10));
 
         $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/payments', [
             'headers' => [
@@ -295,7 +295,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testCapturePayment(): void
     {
         // Arrange - Create and authorize a payment
-        $orderId = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId = '01JCEX'.bin2hex(random_bytes(10));
 
         $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/payments', [
             'headers' => [
@@ -340,7 +340,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testRefundPayment(): void
     {
         // Arrange - Create, authorize, and capture a payment
-        $orderId = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId = '01JCEX'.bin2hex(random_bytes(10));
 
         $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/payments', [
             'headers' => [
@@ -397,7 +397,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testCancelPayment(): void
     {
         // Arrange - Create a payment
-        $orderId = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId = '01JCEX'.bin2hex(random_bytes(10));
 
         $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/payments', [
             'headers' => [
@@ -446,7 +446,7 @@ final class PaymentApiTest extends ApiTestCase
                 'X-Tenant-ID' => $tenant1Id,
             ],
             'json' => [
-                'orderId' => '01JCEX' . bin2hex(random_bytes(10)),
+                'orderId' => '01JCEX'.bin2hex(random_bytes(10)),
                 'amountInCents' => 5000,
                 'currency' => 'USD',
                 'method' => 'card',
@@ -463,7 +463,7 @@ final class PaymentApiTest extends ApiTestCase
                 'X-Tenant-ID' => $tenant2Id,
             ],
             'json' => [
-                'orderId' => '01JCEX' . bin2hex(random_bytes(10)),
+                'orderId' => '01JCEX'.bin2hex(random_bytes(10)),
                 'amountInCents' => 10000,
                 'currency' => 'EUR',
                 'method' => 'paypal',
@@ -495,7 +495,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testCompletePaymentLifecycle(): void
     {
         // This test validates the complete payment flow
-        $orderId = '01JCEX' . bin2hex(random_bytes(10));
+        $orderId = '01JCEX'.bin2hex(random_bytes(10));
 
         // Step 1: Create payment
         $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/payments', [

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Payment\Application\DTO;
 
 use App\Payment\Domain\Model\Payment;
-use DateTimeImmutable;
 
 final readonly class PaymentDTO
 {
@@ -21,8 +20,8 @@ final readonly class PaymentDTO
         public ?string $gatewayTransactionId,
         public ?string $errorMessage,
         public int $refundedAmountInCents,
-        public DateTimeImmutable $createdAt,
-        public DateTimeImmutable $updatedAt
+        public \DateTimeImmutable $createdAt,
+        public \DateTimeImmutable $updatedAt
     ) {
     }
 

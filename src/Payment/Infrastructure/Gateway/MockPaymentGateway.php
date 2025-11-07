@@ -8,7 +8,7 @@ use App\Payment\Domain\Service\PaymentGatewayInterface;
 use App\Payment\Domain\ValueObject\PaymentMethod;
 
 /**
- * Mock Payment Gateway for Testing
+ * Mock Payment Gateway for Testing.
  *
  * Returns successful responses without making actual API calls.
  * Used in test environment to avoid external dependencies.
@@ -23,7 +23,7 @@ final class MockPaymentGateway implements PaymentGatewayInterface
     ): array {
         // Simulate successful authorization
         return [
-            'transaction_id' => 'mock_pi_' . bin2hex(random_bytes(12)),
+            'transaction_id' => 'mock_pi_'.bin2hex(random_bytes(12)),
             'status' => 'requires_capture',
             'metadata' => $metadata,
         ];
@@ -48,7 +48,7 @@ final class MockPaymentGateway implements PaymentGatewayInterface
     ): array {
         // Simulate successful refund
         return [
-            'refund_id' => 'mock_re_' . bin2hex(random_bytes(12)),
+            'refund_id' => 'mock_re_'.bin2hex(random_bytes(12)),
             'status' => 'succeeded',
             'refunded_amount' => $amountInCents,
         ];

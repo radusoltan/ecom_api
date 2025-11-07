@@ -13,7 +13,7 @@ use App\Tax\Domain\ValueObject\TaxRate;
 use App\Tax\Domain\ValueObject\TaxRuleId;
 
 /**
- * Tax Rule Aggregate Root
+ * Tax Rule Aggregate Root.
  *
  * Represents a tax rule for a specific jurisdiction.
  * Supports multi-jurisdiction tax calculation with destination-based logic.
@@ -27,6 +27,7 @@ use App\Tax\Domain\ValueObject\TaxRuleId;
  */
 final class TaxRule
 {
+    /** @var array<string, mixed> */
     private array $domainEvents = [];
 
     private function __construct(
@@ -42,7 +43,7 @@ final class TaxRule
     }
 
     /**
-     * Create new tax rule
+     * Create new tax rule.
      */
     public static function create(
         TaxRuleId $id,
@@ -81,7 +82,7 @@ final class TaxRule
     }
 
     /**
-     * Update tax rule details
+     * Update tax rule details.
      */
     public function update(
         string $name,
@@ -105,14 +106,12 @@ final class TaxRule
     }
 
     /**
-     * Deactivate tax rule
+     * Deactivate tax rule.
      */
     public function deactivate(): void
     {
         if (!$this->isActive) {
-            throw new \DomainException(
-                sprintf('Tax rule "%s" is already inactive', $this->id->toString())
-            );
+            throw new \DomainException(sprintf('Tax rule "%s" is already inactive', $this->id->toString()));
         }
 
         $this->isActive = false;
@@ -125,14 +124,12 @@ final class TaxRule
     }
 
     /**
-     * Activate tax rule
+     * Activate tax rule.
      */
     public function activate(): void
     {
         if ($this->isActive) {
-            throw new \DomainException(
-                sprintf('Tax rule "%s" is already active', $this->id->toString())
-            );
+            throw new \DomainException(sprintf('Tax rule "%s" is already active', $this->id->toString()));
         }
 
         $this->isActive = true;
@@ -140,7 +137,7 @@ final class TaxRule
     }
 
     /**
-     * Check if this rule applies to given jurisdiction
+     * Check if this rule applies to given jurisdiction.
      */
     public function appliesTo(TaxJurisdiction $jurisdiction): bool
     {
@@ -152,7 +149,7 @@ final class TaxRule
     }
 
     /**
-     * Calculate tax amount for given price
+     * Calculate tax amount for given price.
      */
     public function calculateTax(int $priceInCents): int
     {
@@ -160,7 +157,7 @@ final class TaxRule
     }
 
     /**
-     * Reconstitute from persistence
+     * Reconstitute from persistence.
      */
     public static function reconstituteFromPersistence(
         TaxRuleId $id,

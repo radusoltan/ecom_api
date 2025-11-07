@@ -24,8 +24,9 @@ final readonly class SearchBoostingService
     /**
      * Build function score query for advanced relevance tuning.
      *
-     * @param array<string, mixed> $baseQuery Base bool query
-     * @param string|null $searchTerm Original search term for exact matching
+     * @param array<string, mixed> $baseQuery  Base bool query
+     * @param string|null          $searchTerm Original search term for exact matching
+     *
      * @return array<string, mixed> Enhanced query with function scores
      */
     public function applyFunctionScores(array $baseQuery, ?string $searchTerm = null): array
@@ -46,7 +47,7 @@ final readonly class SearchBoostingService
         ];
 
         // 2. Exact match boost - exact matches on name get highest relevance
-        if ($searchTerm !== null && trim($searchTerm) !== '') {
+        if (null !== $searchTerm && '' !== trim($searchTerm)) {
             $functions[] = [
                 'filter' => [
                     'term' => [

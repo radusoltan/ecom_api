@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\User\Domain\ValueObject;
 
 use App\User\Domain\ValueObject\UserRole;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class UserRoleTest extends TestCase
@@ -136,7 +135,7 @@ final class UserRoleTest extends TestCase
 
     public function testFromStringThrowsExceptionForInvalidRole(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid user role: "ROLE_INVALID"');
 
         UserRole::fromString('ROLE_INVALID');
@@ -144,7 +143,7 @@ final class UserRoleTest extends TestCase
 
     public function testFromStringThrowsExceptionForEmptyString(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid user role');
 
         UserRole::fromString('');

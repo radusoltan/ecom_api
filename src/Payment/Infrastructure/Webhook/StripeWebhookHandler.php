@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
- * Stripe Webhook Handler
+ * Stripe Webhook Handler.
  *
  * Procesează evenimente asincrone de la Stripe:
  * - payment_intent.succeeded
@@ -38,7 +38,7 @@ final readonly class StripeWebhookHandler
     }
 
     /**
-     * Procesează webhook event de la Stripe
+     * Procesează webhook event de la Stripe.
      *
      * @throws \RuntimeException dacă signature verification eșuează
      */
@@ -49,6 +49,7 @@ final readonly class StripeWebhookHandler
 
         if (!$signature) {
             $this->logger->error('Stripe webhook: Missing signature header');
+
             return new Response('Missing signature', Response::HTTP_BAD_REQUEST);
         }
 
@@ -92,7 +93,7 @@ final readonly class StripeWebhookHandler
     }
 
     /**
-     * PaymentIntent succeeded - payment captured successfully
+     * PaymentIntent succeeded - payment captured successfully.
      */
     private function handlePaymentIntentSucceeded(Event $event): string
     {
@@ -137,7 +138,7 @@ final readonly class StripeWebhookHandler
             }
 
             // Dacă payment-ul nu este deja captured, îl capturam
-            if ($paymentDTO->status !== 'captured') {
+            if ('captured' !== $paymentDTO->status) {
                 $this->logger->info('Stripe webhook: Capturing payment', [
                     'payment_id' => $paymentId,
                     'current_status' => $paymentDTO->status,
@@ -171,7 +172,7 @@ final readonly class StripeWebhookHandler
     }
 
     /**
-     * PaymentIntent failed - payment could not be completed
+     * PaymentIntent failed - payment could not be completed.
      */
     private function handlePaymentIntentFailed(Event $event): string
     {
@@ -200,7 +201,7 @@ final readonly class StripeWebhookHandler
     }
 
     /**
-     * PaymentIntent canceled - payment was canceled
+     * PaymentIntent canceled - payment was canceled.
      */
     private function handlePaymentIntentCanceled(Event $event): string
     {
@@ -228,7 +229,7 @@ final readonly class StripeWebhookHandler
     }
 
     /**
-     * Charge refunded - refund was processed
+     * Charge refunded - refund was processed.
      */
     private function handleChargeRefunded(Event $event): string
     {
@@ -247,7 +248,7 @@ final readonly class StripeWebhookHandler
     }
 
     /**
-     * Unknown event type - just log it
+     * Unknown event type - just log it.
      */
     private function handleUnknownEvent(Event $event): string
     {

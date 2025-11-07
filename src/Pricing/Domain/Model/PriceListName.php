@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Pricing\Domain\Model;
 
-use InvalidArgumentException;
-
 /**
- * Value Object representing a PriceList name
+ * Value Object representing a PriceList name.
  *
  * Business Rules:
  * - min_length: 3
@@ -26,29 +24,17 @@ final readonly class PriceListName
         $trimmed = trim($this->value);
 
         if (empty($trimmed)) {
-            throw new InvalidArgumentException('PriceList name cannot be empty');
+            throw new \InvalidArgumentException('PriceList name cannot be empty');
         }
 
         $length = mb_strlen($trimmed);
 
         if ($length < self::MIN_LENGTH) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'PriceList name must be at least %d characters long, got %d',
-                    self::MIN_LENGTH,
-                    $length
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('PriceList name must be at least %d characters long, got %d', self::MIN_LENGTH, $length));
         }
 
         if ($length > self::MAX_LENGTH) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'PriceList name cannot exceed %d characters, got %d',
-                    self::MAX_LENGTH,
-                    $length
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('PriceList name cannot exceed %d characters, got %d', self::MAX_LENGTH, $length));
         }
     }
 

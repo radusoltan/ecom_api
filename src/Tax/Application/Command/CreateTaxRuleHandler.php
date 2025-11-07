@@ -11,7 +11,7 @@ use App\Tax\Domain\ValueObject\TaxRate;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Create Tax Rule Command Handler
+ * Create Tax Rule Command Handler.
  */
 #[AsMessageHandler]
 final readonly class CreateTaxRuleHandler
@@ -24,7 +24,7 @@ final readonly class CreateTaxRuleHandler
     public function __invoke(CreateTaxRule $command): void
     {
         // Create jurisdiction
-        $jurisdiction = $command->regionCode !== null
+        $jurisdiction = null !== $command->regionCode
             ? TaxJurisdiction::fromCountryAndRegion($command->countryCode, $command->regionCode)
             : TaxJurisdiction::fromCountry($command->countryCode);
 

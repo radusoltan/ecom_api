@@ -6,7 +6,6 @@ namespace App\Customer\Domain\Event;
 
 use App\Customer\Domain\ValueObject\CustomerId;
 
-
 final readonly class LoyaltyPointsAwarded
 {
     public function __construct(

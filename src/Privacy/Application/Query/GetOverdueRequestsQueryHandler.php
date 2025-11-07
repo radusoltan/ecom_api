@@ -24,7 +24,7 @@ final readonly class GetOverdueRequestsQueryHandler
         $requests = $this->requestRepository->findOverdueRequests($query->tenantId);
 
         return array_map(
-            fn($request) => DataSubjectRequestDTO::fromDomainModel($request),
+            fn ($request) => DataSubjectRequestDTO::fromDomainModel($request),
             $requests
         );
     }

@@ -6,10 +6,9 @@ namespace App\Cart\Domain\Model;
 
 use App\Catalog\Domain\Model\ProductId;
 use App\Shared\Domain\ValueObject\Money;
-use InvalidArgumentException;
 
 /**
- * CartItem Entity (part of Cart Aggregate)
+ * CartItem Entity (part of Cart Aggregate).
  *
  * Business Rules:
  * - CartItem belongs to a Cart (aggregate root)
@@ -63,7 +62,7 @@ final class CartItem
     }
 
     /**
-     * Check if this item represents the same product+variant combination
+     * Check if this item represents the same product+variant combination.
      */
     public function isSameAs(ProductId $productId, ?string $variantId): bool
     {

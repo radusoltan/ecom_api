@@ -10,5 +10,6 @@ final readonly class GetCategories
 {
     public function __construct(
         public TenantId $tenantId
-    ) {}
+    ) {
+    }
 }

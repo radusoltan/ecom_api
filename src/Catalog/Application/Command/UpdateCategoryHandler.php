@@ -13,13 +13,14 @@ final readonly class UpdateCategoryHandler
 {
     public function __construct(
         private CategoryRepositoryInterface $categoryRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(UpdateCategory $command): void
     {
         $category = $this->categoryRepository->findById($command->id);
 
-        if ($category === null) {
+        if (null === $category) {
             throw CategoryNotFoundException::withId($command->id);
         }
 
@@ -29,14 +30,14 @@ final readonly class UpdateCategoryHandler
         }
 
         // Business rule: Validate parent category if specified
-        if ($command->parentId !== null) {
+        if (null !== $command->parentId) {
             // Prevent circular reference
             if ($command->parentId->equals($command->id)) {
                 throw new \DomainException('Category cannot be its own parent');
             }
 
             $parent = $this->categoryRepository->findById($command->parentId);
-            if ($parent === null) {
+            if (null === $parent) {
                 throw new \DomainException('Parent category not found');
             }
 

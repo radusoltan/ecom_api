@@ -28,7 +28,7 @@ class TenantIsolationRLSTest extends KernelTestCase
     }
 
     /**
-     * Test that RLS is enabled on catalog_products table
+     * Test that RLS is enabled on catalog_products table.
      */
     public function testRLSIsEnabledOnCatalogProducts(): void
     {
@@ -38,11 +38,11 @@ class TenantIsolationRLSTest extends KernelTestCase
 
         $result = $this->connection->fetchAssociative($sql);
 
-        $this->assertTrue((bool)$result['rowsecurity'], 'RLS should be enabled on catalog_products');
+        $this->assertTrue((bool) $result['rowsecurity'], 'RLS should be enabled on catalog_products');
     }
 
     /**
-     * Test that RLS is enabled on catalog_categories table
+     * Test that RLS is enabled on catalog_categories table.
      */
     public function testRLSIsEnabledOnCatalogCategories(): void
     {
@@ -52,11 +52,11 @@ class TenantIsolationRLSTest extends KernelTestCase
 
         $result = $this->connection->fetchAssociative($sql);
 
-        $this->assertTrue((bool)$result['rowsecurity'], 'RLS should be enabled on catalog_categories');
+        $this->assertTrue((bool) $result['rowsecurity'], 'RLS should be enabled on catalog_categories');
     }
 
     /**
-     * Test that RLS is enabled on media_images table
+     * Test that RLS is enabled on media_images table.
      */
     public function testRLSIsEnabledOnMediaImages(): void
     {
@@ -66,11 +66,11 @@ class TenantIsolationRLSTest extends KernelTestCase
 
         $result = $this->connection->fetchAssociative($sql);
 
-        $this->assertTrue((bool)$result['rowsecurity'], 'RLS should be enabled on media_images');
+        $this->assertTrue((bool) $result['rowsecurity'], 'RLS should be enabled on media_images');
     }
 
     /**
-     * Test that setting tenant context allows reading only tenant's data
+     * Test that setting tenant context allows reading only tenant's data.
      */
     public function testCanOnlyReadOwnTenantData(): void
     {
@@ -79,7 +79,7 @@ class TenantIsolationRLSTest extends KernelTestCase
         $this->connection->executeStatement("SET LOCAL app.tenant_id = '$tenantA'");
 
         // Query should only return Tenant A's products
-        $sql = "SELECT COUNT(*) as count FROM catalog_products";
+        $sql = 'SELECT COUNT(*) as count FROM catalog_products';
         $result = $this->connection->fetchAssociative($sql);
         $countA = $result['count'];
 
@@ -95,21 +95,21 @@ class TenantIsolationRLSTest extends KernelTestCase
         $this->assertIsNumeric($countB);
 
         // Reset
-        $this->connection->executeStatement("RESET app.tenant_id");
+        $this->connection->executeStatement('RESET app.tenant_id');
     }
 
     /**
-     * Test that attempting to read without tenant context fails or returns empty
+     * Test that attempting to read without tenant context fails or returns empty.
      */
     public function testCannotReadWithoutTenantContext(): void
     {
         // Reset any tenant context
-        $this->connection->executeStatement("RESET app.tenant_id");
+        $this->connection->executeStatement('RESET app.tenant_id');
 
         try {
             // Attempt to query without tenant context
             // This should either fail or return 0 rows depending on policy
-            $sql = "SELECT COUNT(*) as count FROM catalog_products";
+            $sql = 'SELECT COUNT(*) as count FROM catalog_products';
             $result = $this->connection->fetchAssociative($sql);
 
             // If it doesn't fail, count should be 0 (no access without tenant)
@@ -121,7 +121,7 @@ class TenantIsolationRLSTest extends KernelTestCase
     }
 
     /**
-     * Test that INSERT with wrong tenant_id is blocked by RLS WITH CHECK policy
+     * Test that INSERT with wrong tenant_id is blocked by RLS WITH CHECK policy.
      */
     public function testCannotInsertRowForDifferentTenant(): void
     {
@@ -142,7 +142,7 @@ class TenantIsolationRLSTest extends KernelTestCase
     }
 
     /**
-     * Test that UPDATE cannot modify rows of another tenant
+     * Test that UPDATE cannot modify rows of another tenant.
      */
     public function testCannotUpdateRowsOfAnotherTenant(): void
     {
@@ -150,7 +150,7 @@ class TenantIsolationRLSTest extends KernelTestCase
         $tenantA = self::TENANT_A;
         $this->connection->executeStatement("SET LOCAL app.tenant_id = '$tenantA'");
 
-        $productId = $this->connection->fetchOne("SELECT id FROM catalog_products LIMIT 1");
+        $productId = $this->connection->fetchOne('SELECT id FROM catalog_products LIMIT 1');
 
         if (!$productId) {
             $this->markTestSkipped('No products available for Tenant A');
@@ -168,11 +168,11 @@ class TenantIsolationRLSTest extends KernelTestCase
         $this->assertEquals(0, $affectedRows, 'Should not be able to update another tenant\'s product');
 
         // Reset
-        $this->connection->executeStatement("RESET app.tenant_id");
+        $this->connection->executeStatement('RESET app.tenant_id');
     }
 
     /**
-     * Test that DELETE cannot remove rows of another tenant
+     * Test that DELETE cannot remove rows of another tenant.
      */
     public function testCannotDeleteRowsOfAnotherTenant(): void
     {
@@ -180,7 +180,7 @@ class TenantIsolationRLSTest extends KernelTestCase
         $tenantA = self::TENANT_A;
         $this->connection->executeStatement("SET LOCAL app.tenant_id = '$tenantA'");
 
-        $productId = $this->connection->fetchOne("SELECT id FROM catalog_products LIMIT 1");
+        $productId = $this->connection->fetchOne('SELECT id FROM catalog_products LIMIT 1');
 
         if (!$productId) {
             $this->markTestSkipped('No products available for Tenant A');
@@ -191,21 +191,21 @@ class TenantIsolationRLSTest extends KernelTestCase
         $this->connection->executeStatement("SET LOCAL app.tenant_id = '$tenantB'");
 
         // Attempt to delete Tenant A's product while context is Tenant B
-        $sql = "DELETE FROM catalog_products WHERE id = ?";
+        $sql = 'DELETE FROM catalog_products WHERE id = ?';
         $affectedRows = $this->connection->executeStatement($sql, [$productId]);
 
         // Should affect 0 rows (policy blocks access)
         $this->assertEquals(0, $affectedRows, 'Should not be able to delete another tenant\'s product');
 
         // Reset
-        $this->connection->executeStatement("RESET app.tenant_id");
+        $this->connection->executeStatement('RESET app.tenant_id');
     }
 
     protected function tearDown(): void
     {
         // Always reset tenant context after tests
         try {
-            $this->connection->executeStatement("RESET app.tenant_id");
+            $this->connection->executeStatement('RESET app.tenant_id');
         } catch (\Exception $e) {
             // Ignore cleanup errors
         }

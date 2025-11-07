@@ -8,7 +8,7 @@ use App\Returns\Domain\ValueObject\ReturnRequestId;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Domain Event: ReturnRequestCompleted
+ * Domain Event: ReturnRequestCompleted.
  *
  * Triggered when the return process is completed (refund issued).
  *

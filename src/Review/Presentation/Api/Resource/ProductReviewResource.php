@@ -10,13 +10,13 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Review\Presentation\Api\State\DeleteReviewProcessor;
 use App\Review\Presentation\Api\State\ProductReviewProvider;
 use App\Review\Presentation\Api\State\ProductReviewsProvider;
-use App\Review\Presentation\Api\State\SubmitReviewProcessor;
-use App\Review\Presentation\Api\State\UpdateReviewProcessor;
-use App\Review\Presentation\Api\State\DeleteReviewProcessor;
 use App\Review\Presentation\Api\State\ProductReviewStatsProvider;
 use App\Review\Presentation\Api\State\RatingDistributionProvider;
+use App\Review\Presentation\Api\State\SubmitReviewProcessor;
+use App\Review\Presentation\Api\State\UpdateReviewProcessor;
 
 #[ApiResource(
     shortName: 'ProductReview',

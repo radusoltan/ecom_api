@@ -7,7 +7,7 @@ namespace App\Shared\Infrastructure\Metrics;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Metrics Collector Service
+ * Metrics Collector Service.
  *
  * Collects application metrics for Prometheus exposition.
  *
@@ -25,12 +25,15 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  */
 final class MetricsCollector
 {
+    /** @var array<string, mixed> */
     private array $counters = [];
+    /** @var array<string, mixed> */
     private array $histograms = [];
     private array $gauges = [];
 
     public function __construct(
-        #[Autowire('%env(APP_ENV)%')] private readonly string $environment
+        #[Autowire('%env(APP_ENV)%')]
+        private readonly string $environment
     ) {
         $this->initializeMetrics();
     }
@@ -63,7 +66,7 @@ final class MetricsCollector
     }
 
     /**
-     * Increment a counter metric
+     * Increment a counter metric.
      */
     public function incrementCounter(string $name, array $labels = [], float $value = 1.0): void
     {
@@ -84,7 +87,7 @@ final class MetricsCollector
     }
 
     /**
-     * Observe a value in a histogram
+     * Observe a value in a histogram.
      */
     public function observeHistogram(string $name, float $value, array $labels = []): void
     {
@@ -105,7 +108,7 @@ final class MetricsCollector
     }
 
     /**
-     * Set a gauge value
+     * Set a gauge value.
      */
     public function setGauge(string $name, float $value, array $labels = []): void
     {
@@ -122,7 +125,7 @@ final class MetricsCollector
     }
 
     /**
-     * Get all metrics in Prometheus text format
+     * Get all metrics in Prometheus text format.
      */
     public function exportPrometheusFormat(): string
     {
@@ -185,11 +188,11 @@ final class MetricsCollector
             }
         }
 
-        return implode("\n", $output) . "\n";
+        return implode("\n", $output)."\n";
     }
 
     /**
-     * Get metric statistics (for debugging/monitoring)
+     * Get metric statistics (for debugging/monitoring).
      */
     public function getMetricStats(): array
     {
@@ -225,7 +228,8 @@ final class MetricsCollector
     private function buildMetricKey(string $name, array $labels): string
     {
         ksort($labels);
-        return $name . '_' . md5(json_encode($labels));
+
+        return $name.'_'.md5(json_encode($labels));
     }
 
     private function formatLabels(array $labels): string
@@ -239,7 +243,7 @@ final class MetricsCollector
             $pairs[] = sprintf('%s="%s"', $key, addslashes($value));
         }
 
-        return '{' . implode(',', $pairs) . '}';
+        return '{'.implode(',', $pairs).'}';
     }
 
     private function getMetricHelp(string $metricName): string

@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * Validate Coupon API Controller
+ * Validate Coupon API Controller.
  *
  * Provides endpoint for validating coupon codes and calculating discounts
  * before order placement (used in shopping cart).
@@ -34,7 +34,7 @@ final readonly class ValidateCouponController
         try {
             // Get tenant ID from header
             $tenantIdString = $request->headers->get('X-Tenant-ID');
-            if ($tenantIdString === null) {
+            if (null === $tenantIdString) {
                 return new JsonResponse([
                     'valid' => false,
                     'message' => 'Tenant ID is required',
@@ -45,7 +45,7 @@ final readonly class ValidateCouponController
 
             // Parse request body
             $data = json_decode($request->getContent(), true);
-            if ($data === null) {
+            if (null === $data) {
                 return new JsonResponse([
                     'valid' => false,
                     'message' => 'Invalid JSON',
@@ -56,7 +56,7 @@ final readonly class ValidateCouponController
             $cartTotal = $data['cartTotal'] ?? null;
             $currency = $data['currency'] ?? 'USD';
 
-            if ($couponCode === null || $cartTotal === null) {
+            if (null === $couponCode || null === $cartTotal) {
                 return new JsonResponse([
                     'valid' => false,
                     'message' => 'Coupon code and cart total are required',
@@ -76,7 +76,7 @@ final readonly class ValidateCouponController
 
             // Check if coupon was applied
             $discount = $result['totalDiscount'];
-            $wasApplied = $discount !== null && $discount->getAmount() > 0;
+            $wasApplied = null !== $discount && $discount->getAmount() > 0;
 
             if (!$wasApplied) {
                 return new JsonResponse([

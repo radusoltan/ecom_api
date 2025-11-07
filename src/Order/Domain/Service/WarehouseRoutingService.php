@@ -12,7 +12,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Psr\Log\LoggerInterface;
 
 /**
- * Warehouse Routing Service
+ * Warehouse Routing Service.
  *
  * Domain service responsible for selecting the optimal warehouse for order fulfillment.
  *
@@ -38,7 +38,7 @@ final readonly class WarehouseRoutingService
     }
 
     /**
-     * Find the best warehouse to fulfill the given order
+     * Find the best warehouse to fulfill the given order.
      *
      * @return WarehouseId|null Returns warehouse ID or null if no warehouse can fulfill
      */
@@ -54,11 +54,12 @@ final readonly class WarehouseRoutingService
                 'tenant_id' => $tenantId->toString(),
                 'order_id' => $order->id()->toString(),
             ]);
+
             return null;
         }
 
         // Sort by priority (lower number = higher priority)
-        usort($warehouses, fn($a, $b) => $a->priority() <=> $b->priority());
+        usort($warehouses, fn ($a, $b) => $a->priority() <=> $b->priority());
 
         // Try each warehouse in priority order
         foreach ($warehouses as $warehouse) {
@@ -85,7 +86,7 @@ final readonly class WarehouseRoutingService
     }
 
     /**
-     * Check if a specific warehouse can fulfill all items in the order
+     * Check if a specific warehouse can fulfill all items in the order.
      */
     public function canWarehouseFulfillOrder(
         WarehouseId $warehouseId,
@@ -106,12 +107,13 @@ final readonly class WarehouseRoutingService
             );
 
             // If no stock item exists, warehouse doesn't have this product
-            if ($stockItem === null) {
+            if (null === $stockItem) {
                 $this->logger->debug('Product not available at warehouse', [
                     'product_id' => $productId->toString(),
                     'warehouse_id' => $warehouseId->toString(),
                     'order_id' => $order->id()->toString(),
                 ]);
+
                 return false;
             }
 
@@ -126,6 +128,7 @@ final readonly class WarehouseRoutingService
                     'available' => $availableQuantity->value(),
                     'order_id' => $order->id()->toString(),
                 ]);
+
                 return false;
             }
         }
@@ -135,7 +138,7 @@ final readonly class WarehouseRoutingService
     }
 
     /**
-     * Get stock availability summary for an order across all warehouses
+     * Get stock availability summary for an order across all warehouses.
      *
      * Returns array of warehouse IDs with their fulfillment capability
      *
@@ -158,13 +161,14 @@ final readonly class WarehouseRoutingService
                     $tenantId
                 );
 
-                if ($stockItem === null) {
+                if (null === $stockItem) {
                     $missingProducts[] = [
                         'product_id' => $line->productId()->toString(),
                         'required' => $line->quantity(),
                         'available' => 0,
                         'reason' => 'not_stocked',
                     ];
+
                     continue;
                 }
 

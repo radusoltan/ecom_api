@@ -35,6 +35,7 @@ class WarehouseEntity
     private string $name;
 
     #[ORM\Column(type: 'json')]
+    /** @var array<string, mixed> */
     private array $address;
 
     #[ORM\Column(type: 'integer')]
@@ -144,7 +145,7 @@ class WarehouseEntity
     }
 
     /**
-     * Convert Doctrine entity to Domain aggregate
+     * Convert Doctrine entity to Domain aggregate.
      */
     public function toDomainModel(): Warehouse
     {
@@ -162,7 +163,7 @@ class WarehouseEntity
     }
 
     /**
-     * Create Doctrine entity from Domain aggregate
+     * Create Doctrine entity from Domain aggregate.
      */
     public static function fromDomainModel(Warehouse $warehouse): self
     {
@@ -186,7 +187,7 @@ class WarehouseEntity
     }
 
     /**
-     * Update entity from Domain aggregate (Doctrine 3.x compatible - no merge())
+     * Update entity from Domain aggregate (Doctrine 3.x compatible - no merge()).
      */
     public function updateFromDomainModel(Warehouse $warehouse): void
     {

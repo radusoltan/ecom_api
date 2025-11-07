@@ -71,7 +71,7 @@ final class GetAllTenantsQueryHandlerTest extends KernelTestCase
         }
 
         // Verify specific tenants are in the results
-        $emails = array_map(fn(TenantDTO $dto) => $dto->ownerEmail, $results);
+        $emails = array_map(fn (TenantDTO $dto) => $dto->ownerEmail, $results);
         $this->assertContains($email1, $emails);
         $this->assertContains($email2, $emails);
         $this->assertContains($email3, $emails);
@@ -96,7 +96,7 @@ final class GetAllTenantsQueryHandlerTest extends KernelTestCase
         $this->assertGreaterThanOrEqual(1, count($results));
 
         // Verify our tenant is in the results
-        $emails = array_map(fn(TenantDTO $dto) => $dto->ownerEmail, $results);
+        $emails = array_map(fn (TenantDTO $dto) => $dto->ownerEmail, $results);
         $this->assertContains($email, $emails);
     }
 
@@ -129,6 +129,7 @@ final class GetAllTenantsQueryHandlerTest extends KernelTestCase
         foreach ($dtos as $dto) {
             if ($dto->ownerEmail === $email1) {
                 $acmeDto = $dto;
+
                 break;
             }
         }
@@ -145,6 +146,7 @@ final class GetAllTenantsQueryHandlerTest extends KernelTestCase
         foreach ($dtos as $dto) {
             if ($dto->ownerEmail === $email2) {
                 $betaDto = $dto;
+
                 break;
             }
         }

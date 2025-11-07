@@ -26,7 +26,8 @@ final class ApiLatencyMiddleware implements EventSubscriberInterface
     public function __construct(
         private readonly PrometheusMetricsCollector $metricsCollector,
         private readonly TenantContext $tenantContext
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -61,7 +62,7 @@ final class ApiLatencyMiddleware implements EventSubscriberInterface
         $path = $request->getPathInfo();
 
         // Skip metrics endpoint itself to avoid recursion
-        if ($path === '/metrics') {
+        if ('/metrics' === $path) {
             return;
         }
 

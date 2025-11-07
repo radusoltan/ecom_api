@@ -14,7 +14,6 @@ use App\Pricing\Domain\Repository\PriceListRepositoryInterface;
 use App\Pricing\Infrastructure\Persistence\Doctrine\Entity\PriceListEntity;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
@@ -210,7 +209,7 @@ final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
         $this->assertGreaterThanOrEqual(2, count($priceLists));
 
         // Should be ordered by priority DESC
-        $priorities = array_map(fn($pl) => $pl->priority(), $priceLists);
+        $priorities = array_map(fn ($pl) => $pl->priority(), $priceLists);
         $this->assertGreaterThanOrEqual($priorities[1], $priorities[0]);
     }
 
@@ -236,7 +235,7 @@ final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
 
         $priceLists = $this->repository->findByTenant($tenantId, activeOnly: true);
 
-        $names = array_map(fn($pl) => $pl->name()->value(), $priceLists);
+        $names = array_map(fn ($pl) => $pl->name()->value(), $priceLists);
 
         $this->assertContains('Active Price List', $names);
         $this->assertNotContains('Inactive Price List', $names);
@@ -268,7 +267,7 @@ final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
 
         $validPriceLists = $this->repository->findValidForTenant($tenantId);
 
-        $names = array_map(fn($pl) => $pl->name()->value(), $validPriceLists);
+        $names = array_map(fn ($pl) => $pl->name()->value(), $validPriceLists);
 
         $this->assertContains('Active Price List', $names);
         $this->assertNotContains('Inactive Price List', $names);
@@ -284,8 +283,8 @@ final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
             $tenantId,
             PriceListName::fromString('Valid Price List Future'),
             100,
-            new DateTimeImmutable('+1 day'),
-            new DateTimeImmutable('+7 days')
+            new \DateTimeImmutable('+1 day'),
+            new \DateTimeImmutable('+7 days')
         );
         $futurePriceList->activate();
 
@@ -295,8 +294,8 @@ final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
             $tenantId,
             PriceListName::fromString('Valid Price List Current'),
             100,
-            new DateTimeImmutable('-1 day'),
-            new DateTimeImmutable('+7 days')
+            new \DateTimeImmutable('-1 day'),
+            new \DateTimeImmutable('+7 days')
         );
         $currentPriceList->activate();
 
@@ -305,7 +304,7 @@ final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
 
         $validPriceLists = $this->repository->findValidForTenant($tenantId);
 
-        $names = array_map(fn($pl) => $pl->name()->value(), $validPriceLists);
+        $names = array_map(fn ($pl) => $pl->name()->value(), $validPriceLists);
 
         $this->assertContains('Valid Price List Current', $names);
         $this->assertNotContains('Valid Price List Future', $names);
@@ -321,8 +320,8 @@ final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
             $tenantId,
             PriceListName::fromString('Valid Price List Expired'),
             100,
-            new DateTimeImmutable('-7 days'),
-            new DateTimeImmutable('-1 day')
+            new \DateTimeImmutable('-7 days'),
+            new \DateTimeImmutable('-1 day')
         );
         $expiredPriceList->activate();
 
@@ -332,8 +331,8 @@ final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
             $tenantId,
             PriceListName::fromString('Valid Price List Current'),
             100,
-            new DateTimeImmutable('-1 day'),
-            new DateTimeImmutable('+7 days')
+            new \DateTimeImmutable('-1 day'),
+            new \DateTimeImmutable('+7 days')
         );
         $currentPriceList->activate();
 
@@ -342,7 +341,7 @@ final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
 
         $validPriceLists = $this->repository->findValidForTenant($tenantId);
 
-        $names = array_map(fn($pl) => $pl->name()->value(), $validPriceLists);
+        $names = array_map(fn ($pl) => $pl->name()->value(), $validPriceLists);
 
         $this->assertContains('Valid Price List Current', $names);
         $this->assertNotContains('Valid Price List Expired', $names);
@@ -367,7 +366,7 @@ final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
 
         $validPriceLists = $this->repository->findValidForTenant($tenantId);
 
-        $names = array_map(fn($pl) => $pl->name()->value(), $validPriceLists);
+        $names = array_map(fn ($pl) => $pl->name()->value(), $validPriceLists);
 
         $this->assertContains('Valid Price List No Dates', $names);
     }
@@ -437,8 +436,8 @@ final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
         $tenant1PriceLists = $this->repository->findByTenant($tenant1Id);
         $tenant2PriceLists = $this->repository->findByTenant($tenant2Id);
 
-        $tenant1Names = array_map(fn($pl) => $pl->name()->value(), $tenant1PriceLists);
-        $tenant2Names = array_map(fn($pl) => $pl->name()->value(), $tenant2PriceLists);
+        $tenant1Names = array_map(fn ($pl) => $pl->name()->value(), $tenant1PriceLists);
+        $tenant2Names = array_map(fn ($pl) => $pl->name()->value(), $tenant2PriceLists);
 
         $this->assertContains('Tenant 1 Price List', $tenant1Names);
         $this->assertNotContains('Tenant 2 Price List', $tenant1Names);
@@ -452,8 +451,8 @@ final class DoctrineORMPriceListRepositoryTest extends KernelTestCase
 
     public function testRoundTripWithComplexPriceList(): void
     {
-        $validFrom = new DateTimeImmutable('2025-06-01');
-        $validTo = new DateTimeImmutable('2025-08-31');
+        $validFrom = new \DateTimeImmutable('2025-06-01');
+        $validTo = new \DateTimeImmutable('2025-08-31');
 
         $priceList = PriceList::create(
             PriceListId::generate(),

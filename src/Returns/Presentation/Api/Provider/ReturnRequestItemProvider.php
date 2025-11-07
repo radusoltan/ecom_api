@@ -28,7 +28,7 @@ final class ReturnRequestItemProvider implements ProviderInterface
     {
         $dto = $this->handle(new GetReturnRequestById($uriVariables['id']));
 
-        if ($dto === null) {
+        if (null === $dto) {
             return null;
         }
 

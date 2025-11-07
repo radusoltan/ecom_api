@@ -58,7 +58,7 @@ final class SettingsVoter extends AbstractResourceVoter
 
         // ADMIN, VIEWER: can view settings
         if ($this->hasAnyRole($token, ['ROLE_ADMIN', 'ROLE_VIEWER'])) {
-            return $attribute === self::VIEW;
+            return self::VIEW === $attribute;
         }
 
         // TENANT_ADMIN: can view and edit tenant-specific settings

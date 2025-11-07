@@ -6,10 +6,9 @@ namespace App\Order\Domain\Model;
 
 use App\Catalog\Domain\Model\ProductId;
 use App\Shared\Domain\ValueObject\Money;
-use InvalidArgumentException;
 
 /**
- * Order Line Value Object
+ * Order Line Value Object.
  *
  * Represents a single line item in an order.
  *
@@ -27,11 +26,11 @@ final readonly class OrderLine
         private Money $unitPrice
     ) {
         if ($quantity <= 0) {
-            throw new InvalidArgumentException('Order line quantity must be greater than 0');
+            throw new \InvalidArgumentException('Order line quantity must be greater than 0');
         }
 
         if ($unitPrice->getAmount() <= 0) {
-            throw new InvalidArgumentException('Order line unit price must be greater than 0');
+            throw new \InvalidArgumentException('Order line unit price must be greater than 0');
         }
     }
 

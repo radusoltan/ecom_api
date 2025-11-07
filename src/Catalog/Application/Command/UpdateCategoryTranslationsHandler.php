@@ -15,17 +15,16 @@ final readonly class UpdateCategoryTranslationsHandler
     public function __construct(
         private CategoryRepositoryInterface $categoryRepository,
         private I18nCacheService $cacheService
-    ) {}
+    ) {
+    }
 
     public function __invoke(UpdateCategoryTranslations $command): void
     {
         // Find the category
         $category = $this->categoryRepository->findById($command->categoryId);
 
-        if ($category === null) {
-            throw new \DomainException(
-                sprintf('Category with ID %s not found', $command->categoryId->toString())
-            );
+        if (null === $category) {
+            throw new \DomainException(sprintf('Category with ID %s not found', $command->categoryId->toString()));
         }
 
         // Verify tenant

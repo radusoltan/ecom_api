@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 /**
- * Unit tests for FakeStripeGateway with 3D Secure support
+ * Unit tests for FakeStripeGateway with 3D Secure support.
  *
  * Tests coverage:
  * - Standard payment flow (without 3DS)
@@ -32,7 +32,7 @@ final class FakeStripeGatewayTest extends TestCase
     }
 
     #[Test]
-    public function it_implements_payment_gateway_interface(): void
+    public function itImplementsPaymentGatewayInterface(): void
     {
         $gateway = new FakeStripeGateway($this->logger);
 
@@ -40,7 +40,7 @@ final class FakeStripeGatewayTest extends TestCase
     }
 
     #[Test]
-    public function it_returns_stripe_as_gateway_name(): void
+    public function itReturnsStripeAsGatewayName(): void
     {
         $gateway = new FakeStripeGateway($this->logger);
 
@@ -48,7 +48,7 @@ final class FakeStripeGatewayTest extends TestCase
     }
 
     #[Test]
-    public function it_authorizes_payment_without_3ds_by_default(): void
+    public function itAuthorizesPaymentWithout3dsByDefault(): void
     {
         $gateway = new FakeStripeGateway($this->logger, require3DS: false);
 
@@ -71,7 +71,7 @@ final class FakeStripeGatewayTest extends TestCase
     }
 
     #[Test]
-    public function it_requires_3ds_authentication_when_enabled(): void
+    public function itRequires3dsAuthenticationWhenEnabled(): void
     {
         $gateway = new FakeStripeGateway($this->logger, require3DS: true);
 
@@ -89,7 +89,7 @@ final class FakeStripeGatewayTest extends TestCase
     }
 
     #[Test]
-    public function it_includes_3ds_challenge_url_when_authentication_required(): void
+    public function itIncludes3dsChallengeUrlWhenAuthenticationRequired(): void
     {
         $gateway = new FakeStripeGateway($this->logger, require3DS: true);
 
@@ -109,7 +109,7 @@ final class FakeStripeGatewayTest extends TestCase
     }
 
     #[Test]
-    public function it_marks_3ds_required_in_metadata(): void
+    public function itMarks3dsRequiredInMetadata(): void
     {
         $gateway = new FakeStripeGateway($this->logger, require3DS: true);
 
@@ -125,7 +125,7 @@ final class FakeStripeGatewayTest extends TestCase
     }
 
     #[Test]
-    public function it_allows_forcing_3ds_via_metadata(): void
+    public function itAllowsForcing3dsViaMetadata(): void
     {
         $gateway = new FakeStripeGateway($this->logger, require3DS: false);
 
@@ -141,7 +141,7 @@ final class FakeStripeGatewayTest extends TestCase
     }
 
     #[Test]
-    public function it_captures_authorized_payment(): void
+    public function itCapturesAuthorizedPayment(): void
     {
         $gateway = new FakeStripeGateway($this->logger);
 
@@ -159,7 +159,7 @@ final class FakeStripeGatewayTest extends TestCase
     }
 
     #[Test]
-    public function it_gets_payment_status_after_3ds_authentication(): void
+    public function itGetsPaymentStatusAfter3dsAuthentication(): void
     {
         $gateway = new FakeStripeGateway($this->logger, require3DS: true);
 
@@ -175,7 +175,7 @@ final class FakeStripeGatewayTest extends TestCase
     }
 
     #[Test]
-    public function it_refunds_captured_payment(): void
+    public function itRefundsCapturedPayment(): void
     {
         $gateway = new FakeStripeGateway($this->logger);
 
@@ -195,7 +195,7 @@ final class FakeStripeGatewayTest extends TestCase
     }
 
     #[Test]
-    public function it_cancels_authorized_payment(): void
+    public function itCancelsAuthorizedPayment(): void
     {
         $gateway = new FakeStripeGateway($this->logger);
 
@@ -209,7 +209,7 @@ final class FakeStripeGatewayTest extends TestCase
     }
 
     #[Test]
-    public function it_logs_payment_operations(): void
+    public function itLogsPaymentOperations(): void
     {
         $this->logger
             ->expects($this->once())
@@ -222,6 +222,7 @@ final class FakeStripeGatewayTest extends TestCase
                     $this->assertArrayHasKey('payment_method_types', $context);
                     $this->assertSame(5000, $context['amount']);
                     $this->assertSame('USD', $context['currency']);
+
                     return true;
                 })
             );

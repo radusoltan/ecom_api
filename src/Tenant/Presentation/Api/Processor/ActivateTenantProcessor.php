@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tenant\Presentation\Api\Processor;
 
-use InvalidArgumentException;
-use Symfony\Component\Messenger\Stamp\StampInterface;
-use RuntimeException;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Tenant\Application\Command\ActivateTenantCommand;
@@ -15,6 +12,7 @@ use App\Tenant\Presentation\Api\TenantResource;
 use App\Tenant\Presentation\Api\Transformer\TenantResourceTransformer;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Symfony\Component\Messenger\Stamp\StampInterface;
 
 /**
  * @implements ProcessorInterface<TenantResource, TenantResource>
@@ -39,7 +37,7 @@ final readonly class ActivateTenantProcessor implements ProcessorInterface
         $tenantId = $uriVariables['id'] ?? null;
 
         if (null === $tenantId) {
-            throw new InvalidArgumentException('Tenant ID is required');
+            throw new \InvalidArgumentException('Tenant ID is required');
         }
 
         // Dispatch command to activate tenant
@@ -52,13 +50,13 @@ final readonly class ActivateTenantProcessor implements ProcessorInterface
         $stamp = $envelope->last(HandledStamp::class);
 
         if (!$stamp instanceof StampInterface) {
-            throw new RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for query');
         }
 
         $tenantDTO = $stamp->getResult();
 
         if (null === $tenantDTO) {
-            throw new RuntimeException('Tenant not found after activation');
+            throw new \RuntimeException('Tenant not found after activation');
         }
 
         return TenantResourceTransformer::fromDTO($tenantDTO);

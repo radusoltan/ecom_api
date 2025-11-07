@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace App\Pricing\Infrastructure\Persistence\Doctrine\Entity;
 
+use App\Catalog\Domain\Model\ProductId;
+use App\Pricing\Domain\Model\Discount;
 use App\Pricing\Domain\Model\PriceList;
 use App\Pricing\Domain\Model\PriceListId;
 use App\Pricing\Domain\Model\PriceListName;
 use App\Pricing\Domain\Model\PricingRule;
-use App\Pricing\Domain\Model\Discount;
-use App\Catalog\Domain\Model\ProductId;
-use App\Shared\Domain\ValueObject\TenantId;
 use App\Shared\Domain\ValueObject\Money;
-use DateTimeImmutable;
+use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Doctrine Entity for PriceList (Infrastructure Adapter)
+ * Doctrine Entity for PriceList (Infrastructure Adapter).
  *
  * Converts between domain model and database representation
  */
@@ -45,22 +44,22 @@ class PriceListEntity
     private array $rules = [];
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?DateTimeImmutable $validFrom = null;
+    private ?\DateTimeImmutable $validFrom = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?DateTimeImmutable $validTo = null;
+    private ?\DateTimeImmutable $validTo = null;
 
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $isActive = false;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $updatedAt;
 
     /**
-     * Convert from domain model to entity
+     * Convert from domain model to entity.
      */
     public static function fromDomainModel(PriceList $priceList): self
     {
@@ -69,7 +68,7 @@ class PriceListEntity
         $entity->tenantId = $priceList->tenantId()->toString();
         $entity->name = $priceList->name()->value();
         $entity->priority = $priceList->priority();
-        $entity->rules = array_map(fn($rule) => $rule->toArray(), $priceList->rules());
+        $entity->rules = array_map(fn ($rule) => $rule->toArray(), $priceList->rules());
         $entity->validFrom = $priceList->validFrom();
         $entity->validTo = $priceList->validTo();
         $entity->isActive = $priceList->isActive();
@@ -80,13 +79,13 @@ class PriceListEntity
     }
 
     /**
-     * Update entity from domain model (for Doctrine 3.x compatibility)
+     * Update entity from domain model (for Doctrine 3.x compatibility).
      */
     public function updateFromDomainModel(PriceList $priceList): void
     {
         $this->name = $priceList->name()->value();
         $this->priority = $priceList->priority();
-        $this->rules = array_map(fn($rule) => $rule->toArray(), $priceList->rules());
+        $this->rules = array_map(fn ($rule) => $rule->toArray(), $priceList->rules());
         $this->validFrom = $priceList->validFrom();
         $this->validTo = $priceList->validTo();
         $this->isActive = $priceList->isActive();
@@ -94,12 +93,12 @@ class PriceListEntity
     }
 
     /**
-     * Convert from entity to domain model
+     * Convert from entity to domain model.
      */
     public function toDomainModel(): PriceList
     {
         $rules = array_map(
-            fn(array $ruleData) => $this->hydrateRule($ruleData),
+            fn (array $ruleData) => $this->hydrateRule($ruleData),
             $this->rules
         );
 
@@ -118,7 +117,7 @@ class PriceListEntity
     }
 
     /**
-     * Hydrate PricingRule from array data
+     * Hydrate PricingRule from array data.
      */
     private function hydrateRule(array $data): PricingRule
     {
@@ -128,7 +127,7 @@ class PriceListEntity
         // Hydrate based on scope
         $scope = $data['scope'];
 
-        if ($scope === PricingRule::SCOPE_PRODUCT) {
+        if (PricingRule::SCOPE_PRODUCT === $scope) {
             return PricingRule::forProduct(
                 ProductId::fromString($data['product_id']),
                 $discount,
@@ -137,7 +136,7 @@ class PriceListEntity
             );
         }
 
-        if ($scope === PricingRule::SCOPE_CATEGORY) {
+        if (PricingRule::SCOPE_CATEGORY === $scope) {
             return PricingRule::forCategory(
                 $data['category_id'],
                 $discount,
@@ -155,11 +154,11 @@ class PriceListEntity
     }
 
     /**
-     * Hydrate Discount from array data
+     * Hydrate Discount from array data.
      */
     private function hydrateDiscount(array $data): Discount
     {
-        if ($data['type'] === Discount::TYPE_PERCENTAGE) {
+        if (Discount::TYPE_PERCENTAGE === $data['type']) {
             return Discount::percentage($data['percentage']);
         }
 
@@ -167,11 +166,11 @@ class PriceListEntity
     }
 
     /**
-     * Hydrate Money from array data
+     * Hydrate Money from array data.
      */
     private function hydrateMoney(array $data): Money
     {
-        return Money::fromScalars((int)$data['amount'], $data['currency']);
+        return Money::fromScalars((int) $data['amount'], $data['currency']);
     }
 
     // Getters for Doctrine
@@ -200,12 +199,12 @@ class PriceListEntity
         return $this->rules;
     }
 
-    public function getValidFrom(): ?DateTimeImmutable
+    public function getValidFrom(): ?\DateTimeImmutable
     {
         return $this->validFrom;
     }
 
-    public function getValidTo(): ?DateTimeImmutable
+    public function getValidTo(): ?\DateTimeImmutable
     {
         return $this->validTo;
     }
@@ -215,12 +214,12 @@ class PriceListEntity
         return $this->isActive;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }

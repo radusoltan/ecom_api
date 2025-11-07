@@ -10,9 +10,8 @@ use App\Pricing\Domain\Model\PriceList;
 use App\Pricing\Domain\Model\PriceListId;
 use App\Pricing\Domain\Model\PriceListName;
 use App\Pricing\Domain\Repository\PriceListRepositoryInterface;
+use App\Shared\Application\Service\PerformanceProfiler;
 use App\Shared\Domain\ValueObject\TenantId;
-use App\Shared\Infrastructure\Performance\PerformanceProfiler;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -75,7 +74,7 @@ final class DeactivatePriceListCommandHandlerTest extends TestCase
         $this->repository->expects($this->never())
             ->method('save');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(sprintf('PriceList with ID %s not found', $priceListId->toString()));
 
         ($this->handler)($command);
@@ -101,7 +100,7 @@ final class DeactivatePriceListCommandHandlerTest extends TestCase
         $this->repository->expects($this->never())
             ->method('save');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('PriceList is already inactive');
 
         ($this->handler)($command);

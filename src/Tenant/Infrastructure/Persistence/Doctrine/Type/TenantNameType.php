@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tenant\Infrastructure\Persistence\Doctrine\Type;
 
-use InvalidArgumentException;
 use App\Tenant\Domain\ValueObject\TenantName;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
@@ -31,7 +30,7 @@ final class TenantNameType extends Type
 
         try {
             return TenantName::fromString((string) $value);
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             throw ConversionException::conversionFailedFormat($value, $this->getName(), 'valid tenant name string', $e);
         }
     }

@@ -13,7 +13,6 @@ use App\Pricing\Domain\Model\PricingRule;
 use App\Pricing\Infrastructure\Persistence\Doctrine\Entity\PriceListEntity;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 final class PriceListEntityTest extends TestCase
@@ -27,8 +26,8 @@ final class PriceListEntityTest extends TestCase
         $id = PriceListId::generate();
         $tenantId = TenantId::generate();
         $name = PriceListName::fromString('Test Price List');
-        $validFrom = new DateTimeImmutable('2025-01-01');
-        $validTo = new DateTimeImmutable('2025-12-31');
+        $validFrom = new \DateTimeImmutable('2025-01-01');
+        $validTo = new \DateTimeImmutable('2025-12-31');
 
         $priceList = PriceList::create($id, $tenantId, $name, 200, $validFrom, $validTo);
 
@@ -117,8 +116,8 @@ final class PriceListEntityTest extends TestCase
 
         $entity = PriceListEntity::fromDomainModel($priceList);
 
-        $this->assertInstanceOf(DateTimeImmutable::class, $entity->getCreatedAt());
-        $this->assertInstanceOf(DateTimeImmutable::class, $entity->getUpdatedAt());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $entity->getCreatedAt());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $entity->getUpdatedAt());
     }
 
     // ============================================
@@ -290,8 +289,8 @@ final class PriceListEntityTest extends TestCase
 
     public function testRoundTripPreservesComplexScenario(): void
     {
-        $validFrom = new DateTimeImmutable('2025-06-01');
-        $validTo = new DateTimeImmutable('2025-08-31');
+        $validFrom = new \DateTimeImmutable('2025-06-01');
+        $validTo = new \DateTimeImmutable('2025-08-31');
 
         $original = PriceList::create(
             PriceListId::generate(),
@@ -333,8 +332,8 @@ final class PriceListEntityTest extends TestCase
         $original->update(
             PriceListName::fromString('Updated Name'),
             400,
-            new DateTimeImmutable('2025-03-01'),
-            new DateTimeImmutable('2025-05-31')
+            new \DateTimeImmutable('2025-03-01'),
+            new \DateTimeImmutable('2025-05-31')
         );
         $original->activate();
         $original->addRule(PricingRule::forAll(Discount::percentage(10.0)));

@@ -13,7 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
- * Active Promotions Collection Provider
+ * Active Promotions Collection Provider.
  *
  * Provides only currently active promotions for the storefront or admin UI
  * to display applicable discounts.
@@ -39,6 +39,6 @@ final readonly class ActivePromotionsProvider implements ProviderInterface
         $handledStamp = $envelope->last(HandledStamp::class);
         $dtos = $handledStamp?->getResult() ?? [];
 
-        return array_map(fn($dto) => PromotionEntity::fromDTO($dto), $dtos);
+        return array_map(fn ($dto) => PromotionEntity::fromDTO($dto), $dtos);
     }
 }

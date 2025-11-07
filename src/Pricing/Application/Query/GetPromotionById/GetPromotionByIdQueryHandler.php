@@ -20,7 +20,7 @@ final readonly class GetPromotionByIdQueryHandler
     {
         $promotion = $this->promotionRepository->findById($query->promotionId, $query->tenantId);
 
-        if ($promotion === null) {
+        if (null === $promotion) {
             return null;
         }
 

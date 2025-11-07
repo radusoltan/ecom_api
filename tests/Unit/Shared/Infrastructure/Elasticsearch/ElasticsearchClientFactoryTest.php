@@ -36,7 +36,7 @@ final class ElasticsearchClientFactoryTest extends TestCase
 
         try {
             $response = $client->info();
-        } catch (NoNodeAvailableException | ClientResponseException | ServerResponseException $exception) {
+        } catch (NoNodeAvailableException|ClientResponseException|ServerResponseException $exception) {
             self::markTestSkipped(sprintf(
                 'Elasticsearch not reachable at %s: %s',
                 $this->getElasticsearchHost(),
@@ -55,27 +55,27 @@ final class ElasticsearchClientFactoryTest extends TestCase
     {
         $host = getenv('ELASTICSEARCH_HOST');
 
-        return $host !== false ? $host : 'https://localhost:9200';
+        return false !== $host ? $host : 'https://localhost:9200';
     }
 
     private function getElasticsearchUser(): string
     {
         $user = getenv('ELASTICSEARCH_USER');
 
-        return $user !== false ? $user : 'elastic';
+        return false !== $user ? $user : 'elastic';
     }
 
     private function getElasticsearchPassword(): string
     {
         $password = getenv('ELASTICSEARCH_PASSWORD');
 
-        return $password !== false ? $password : 'WsAEcDWAbQjb5XGUnpvk';
+        return false !== $password ? $password : 'WsAEcDWAbQjb5XGUnpvk';
     }
 
     private function shouldVerifySsl(): bool
     {
         $value = getenv('ELASTICSEARCH_VERIFY_SSL');
-        if ($value === false) {
+        if (false === $value) {
             return true;
         }
 

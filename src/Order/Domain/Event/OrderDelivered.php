@@ -8,7 +8,7 @@ use App\Order\Domain\Model\OrderId;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * OrderDelivered Domain Event
+ * OrderDelivered Domain Event.
  *
  * Emitted when an order has been successfully delivered to the customer.
  * This event triggers:

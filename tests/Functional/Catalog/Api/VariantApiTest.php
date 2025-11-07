@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Catalog\Api;
 
 // Load files that contain multiple classes
-require_once __DIR__ . '/../../../../src/Catalog/Domain/Model/ConfigurableProduct.php';
-require_once __DIR__ . '/../../../../src/Catalog/Domain/Model/Option.php';
-require_once __DIR__ . '/../../../../src/Catalog/Domain/Model/Variant.php';
+require_once __DIR__.'/../../../../src/Catalog/Domain/Model/ConfigurableProduct.php';
+require_once __DIR__.'/../../../../src/Catalog/Domain/Model/Option.php';
+require_once __DIR__.'/../../../../src/Catalog/Domain/Model/Variant.php';
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Catalog\Domain\Model\ConfigurableProduct;
@@ -22,7 +22,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use App\Tests\Support\TenantTestTrait;
 
 /**
- * Functional tests for Variant API endpoints
+ * Functional tests for Variant API endpoints.
  */
 final class VariantApiTest extends ApiTestCase
 {
@@ -58,7 +58,7 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Create a test configurable product with options
+     * Create a test configurable product with options.
      */
     private function createTestConfigurableProduct(): void
     {
@@ -92,7 +92,7 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Create an authenticated client with JWT token
+     * Create an authenticated client with JWT token.
      */
     protected function createAuthenticatedClient(string $email = 'admin@admin.com', array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'])
     {
@@ -108,7 +108,7 @@ final class VariantApiTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash');
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -128,14 +128,14 @@ final class VariantApiTest extends ApiTestCase
 
         return static::createClient([], [
             'headers' => [
-                'authorization' => 'Bearer ' . $token,
+                'authorization' => 'Bearer '.$token,
                 'X-Tenant-ID' => $this->tenantId->toString(),
-            ]
+            ],
         ]);
     }
 
     /**
-     * Test 1: Create a variant via POST /api/v1/variant_entities
+     * Test 1: Create a variant via POST /api/v1/variant_entities.
      */
     public function testCreateVariant(): void
     {
@@ -173,7 +173,7 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Test 2: Prevent duplicate variant combinations
+     * Test 2: Prevent duplicate variant combinations.
      */
     public function testPreventDuplicateVariantCombinations(): void
     {
@@ -208,7 +208,7 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Test 3: Get variant collection via GET /api/v1/variant_entities
+     * Test 3: Get variant collection via GET /api/v1/variant_entities.
      */
     public function testGetVariantCollection(): void
     {
@@ -227,7 +227,7 @@ final class VariantApiTest extends ApiTestCase
         // Get collection with productId filter
         $response = $this->createAuthenticatedClient()->request(
             'GET',
-            '/api/v1/variant_entities?productId=' . $this->productId->toString()
+            '/api/v1/variant_entities?productId='.$this->productId->toString()
         );
 
         $this->assertResponseIsSuccessful();
@@ -241,7 +241,7 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Test 4: Get single variant via GET /api/v1/variant_entities/{id}
+     * Test 4: Get single variant via GET /api/v1/variant_entities/{id}.
      */
     public function testGetSingleVariant(): void
     {
@@ -261,7 +261,7 @@ final class VariantApiTest extends ApiTestCase
         $variantId = $createData['id'];
 
         // Get single variant
-        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/variant_entities/' . $variantId);
+        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/variant_entities/'.$variantId);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
@@ -274,7 +274,7 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Test 5: Update variant via PATCH /api/v1/variant_entities/{id}
+     * Test 5: Update variant via PATCH /api/v1/variant_entities/{id}.
      */
     public function testUpdateVariant(): void
     {
@@ -294,7 +294,7 @@ final class VariantApiTest extends ApiTestCase
         $variantId = $createData['id'];
 
         // Update the variant
-        $response = $this->createAuthenticatedClient()->request('PATCH', '/api/v1/variant_entities/' . $variantId, [
+        $response = $this->createAuthenticatedClient()->request('PATCH', '/api/v1/variant_entities/'.$variantId, [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
             ],
@@ -316,7 +316,7 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Test 6: Delete variant via DELETE /api/v1/variant_entities/{id}
+     * Test 6: Delete variant via DELETE /api/v1/variant_entities/{id}.
      */
     public function testDeleteVariant(): void
     {
@@ -336,19 +336,19 @@ final class VariantApiTest extends ApiTestCase
         $variantId = $createData['id'];
 
         // Delete the variant
-        $this->createAuthenticatedClient()->request('DELETE', '/api/v1/variant_entities/' . $variantId);
+        $this->createAuthenticatedClient()->request('DELETE', '/api/v1/variant_entities/'.$variantId);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(204); // No content
 
         // Try to get the deleted variant - should fail
-        $this->createAuthenticatedClient()->request('GET', '/api/v1/variant_entities/' . $variantId);
+        $this->createAuthenticatedClient()->request('GET', '/api/v1/variant_entities/'.$variantId);
 
         $this->assertResponseStatusCodeSame(404); // Not found
     }
 
     /**
-     * Test 7: Validate required fields
+     * Test 7: Validate required fields.
      */
     public function testValidateRequiredFields(): void
     {
@@ -369,7 +369,7 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Test 8: Test tenant isolation
+     * Test 8: Test tenant isolation.
      */
     public function testTenantIsolation(): void
     {
@@ -394,9 +394,9 @@ final class VariantApiTest extends ApiTestCase
         // Create variant for tenant 1
         $client1 = static::createClient([], [
             'headers' => [
-                'authorization' => 'Bearer ' . $this->getAuthToken(),
+                'authorization' => 'Bearer '.$this->getAuthToken(),
                 'X-Tenant-ID' => $tenant1Id->toString(),
-            ]
+            ],
         ]);
 
         $response1 = $client1->request('POST', '/api/v1/variant_entities', [
@@ -416,12 +416,12 @@ final class VariantApiTest extends ApiTestCase
         // Try to access tenant1's variant with tenant2's credentials
         $client2 = static::createClient([], [
             'headers' => [
-                'authorization' => 'Bearer ' . $this->getAuthToken(),
+                'authorization' => 'Bearer '.$this->getAuthToken(),
                 'X-Tenant-ID' => $tenant2Id->toString(),
-            ]
+            ],
         ]);
 
-        $client2->request('GET', '/api/v1/variant_entities/' . $tenant1VariantId);
+        $client2->request('GET', '/api/v1/variant_entities/'.$tenant1VariantId);
 
         // Should fail with 404 (not found for this tenant)
         $this->assertResponseStatusCodeSame(404);

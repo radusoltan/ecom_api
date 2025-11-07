@@ -7,7 +7,7 @@ namespace App\Catalog\Domain\Model;
 use App\Catalog\Domain\Exception\InvalidCategoryNameException;
 
 /**
- * Category Name Value Object
+ * Category Name Value Object.
  *
  * Business Rules:
  * - min_length: 2 characters
@@ -23,13 +23,14 @@ final readonly class CategoryName implements \Stringable
 
     private function __construct(
         private string $value
-    ) {}
+    ) {
+    }
 
     public static function fromString(string $value): self
     {
         $trimmed = trim($value);
 
-        if ($trimmed === '') {
+        if ('' === $trimmed) {
             throw InvalidCategoryNameException::empty();
         }
 

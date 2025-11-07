@@ -12,7 +12,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Handles OrderPlaced domain events by sending confirmation emails to customers
+ * Handles OrderPlaced domain events by sending confirmation emails to customers.
  *
  * Business Rules:
  * - Send confirmation email immediately after order placement

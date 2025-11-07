@@ -8,7 +8,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
 /**
- * Main AppFixtures - orchestrates all fixture loading
+ * Main AppFixtures - orchestrates all fixture loading.
  *
  * This is the entry point for loading all fixtures in the correct order:
  * 1. TenantFixtures - Creates tenants

@@ -9,7 +9,6 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Catalog\Domain\Model\ProductId;
 use App\Inventory\Application\Command\ReserveStock\ReserveStockCommand;
 use App\Inventory\Domain\Model\Quantity;
-use App\Inventory\Domain\Model\StockItemId;
 use App\Inventory\Domain\Model\StockReservation;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
@@ -48,12 +47,8 @@ final readonly class ReserveStockProcessor implements ProcessorInterface
             $tenantId
         );
 
-        if ($stockItem === null) {
-            throw new NotFoundHttpException(sprintf(
-                'Stock item not found for product %s in warehouse %s',
-                $data->productId,
-                $data->warehouseId
-            ));
+        if (null === $stockItem) {
+            throw new NotFoundHttpException(sprintf('Stock item not found for product %s in warehouse %s', $data->productId, $data->warehouseId));
         }
 
         // Reserve stock

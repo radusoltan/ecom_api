@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace App\Privacy\Domain\ValueObject;
 
-use InvalidArgumentException;
-use Stringable;
 use Symfony\Component\Uid\Ulid;
 
-final readonly class DataSubjectRequestId implements Stringable
+final readonly class DataSubjectRequestId implements \Stringable
 {
     private function __construct(private string $value)
     {
         if (!Ulid::isValid($value)) {
-            throw new InvalidArgumentException(sprintf('Invalid DataSubjectRequestId format: "%s"', $value));
+            throw new \InvalidArgumentException(sprintf('Invalid DataSubjectRequestId format: "%s"', $value));
         }
     }
 

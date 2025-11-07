@@ -12,8 +12,6 @@ use App\Pricing\Domain\Model\PriceListId;
 use App\Pricing\Domain\Model\PriceListName;
 use App\Pricing\Presentation\Api\Resource\PriceListResource;
 use App\Shared\Domain\ValueObject\TenantId;
-use DateTimeImmutable;
-use RuntimeException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
@@ -43,8 +41,8 @@ final readonly class CreatePriceListProcessor implements ProcessorInterface
         $name = PriceListName::fromString($data->name);
         $priority = $data->priority ?? 100;
 
-        $validFrom = $data->validFrom ? new DateTimeImmutable($data->validFrom) : null;
-        $validTo = $data->validTo ? new DateTimeImmutable($data->validTo) : null;
+        $validFrom = $data->validFrom ? new \DateTimeImmutable($data->validFrom) : null;
+        $validTo = $data->validTo ? new \DateTimeImmutable($data->validTo) : null;
 
         $command = new CreatePriceListCommand(
             priceListId: $priceListId,
@@ -74,13 +72,13 @@ final readonly class CreatePriceListProcessor implements ProcessorInterface
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {
-            throw new RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for query');
         }
 
         $priceListDTO = $handledStamp->getResult();
 
-        if ($priceListDTO === null) {
-            throw new RuntimeException('PriceList not found after creation');
+        if (null === $priceListDTO) {
+            throw new \RuntimeException('PriceList not found after creation');
         }
 
         $resource = new PriceListResource();

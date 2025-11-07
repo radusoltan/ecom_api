@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Pricing\Domain\Model;
 
 use App\Pricing\Domain\Model\PriceListName;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class PriceListNameTest extends TestCase
@@ -27,7 +26,7 @@ final class PriceListNameTest extends TestCase
 
     public function testFromStringThrowsExceptionForEmptyString(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('PriceList name cannot be empty');
 
         PriceListName::fromString('');
@@ -35,7 +34,7 @@ final class PriceListNameTest extends TestCase
 
     public function testFromStringThrowsExceptionForWhitespaceOnly(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('PriceList name cannot be empty');
 
         PriceListName::fromString('   ');
@@ -43,7 +42,7 @@ final class PriceListNameTest extends TestCase
 
     public function testFromStringThrowsExceptionForTooShortName(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('PriceList name must be at least 3 characters long');
 
         PriceListName::fromString('AB');
@@ -51,7 +50,7 @@ final class PriceListNameTest extends TestCase
 
     public function testFromStringThrowsExceptionForTooLongName(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('PriceList name cannot exceed 100 characters');
 
         PriceListName::fromString(str_repeat('A', 101));

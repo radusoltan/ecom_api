@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Search\Application\Query;
 
 /**
- * SearchProducts Query DTO
+ * SearchProducts Query DTO.
  *
  * Represents a request to search for products.
  */
@@ -23,5 +23,6 @@ final readonly class SearchProducts
         public ?string $sortBy = 'relevance',
         public ?string $sortOrder = 'desc',
         public array $filters = [],
-    ) {}
+    ) {
+    }
 }

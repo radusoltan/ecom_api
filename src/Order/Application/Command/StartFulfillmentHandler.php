@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Start Fulfillment Command Handler
+ * Start Fulfillment Command Handler.
  *
  * Creates a new fulfillment record and initiates the warehouse fulfillment process.
  */
@@ -29,13 +29,13 @@ final readonly class StartFulfillmentHandler
     {
         // Verify order exists
         $order = $this->orderRepository->findById($command->orderId);
-        if ($order === null) {
+        if (null === $order) {
             throw new \DomainException(sprintf('Order not found: %s', $command->orderId->toString()));
         }
 
         // Check if fulfillment already exists for this order
         $existingFulfillment = $this->fulfillmentRepository->findByOrderId($command->orderId);
-        if ($existingFulfillment !== null) {
+        if (null !== $existingFulfillment) {
             throw new \DomainException(sprintf('Fulfillment already exists for order: %s', $command->orderId->toString()));
         }
 

@@ -4,26 +4,24 @@ declare(strict_types=1);
 
 namespace App\Cart\Domain\Model;
 
-use Stringable;
-use InvalidArgumentException;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * SessionId Value Object
+ * SessionId Value Object.
  *
  * Represents a guest session for cart tracking
  * Uses UUID v4 for anonymous session identification
  */
-final readonly class SessionId implements Stringable
+final readonly class SessionId implements \Stringable
 {
     private function __construct(private string $value)
     {
-        if ($value === '' || $value === '0') {
-            throw new InvalidArgumentException('SessionId cannot be empty');
+        if ('' === $value || '0' === $value) {
+            throw new \InvalidArgumentException('SessionId cannot be empty');
         }
 
         if (!Uuid::isValid($value)) {
-            throw new InvalidArgumentException(sprintf('Invalid SessionId format: "%s". Must be a valid UUID', $value));
+            throw new \InvalidArgumentException(sprintf('Invalid SessionId format: "%s". Must be a valid UUID', $value));
         }
     }
 

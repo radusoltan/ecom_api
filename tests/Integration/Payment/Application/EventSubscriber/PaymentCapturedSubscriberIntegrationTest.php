@@ -18,7 +18,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Integration tests for PaymentCapturedSubscriber
+ * Integration tests for PaymentCapturedSubscriber.
  *
  * Tests the integration between Payment and Order modules:
  * - Command bus integration (UpdateOrderStatusCommand)
@@ -72,7 +72,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
                 return $command instanceof UpdateOrderStatusCommand
                     && $command->orderId === $orderId
                     && $command->tenantId === $tenantId->toString()
-                    && $command->newStatus === 'processing';
+                    && 'processing' === $command->newStatus;
             }))
             ->willReturn(new Envelope(new \stdClass()));
 
@@ -150,7 +150,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
                 $htmlBody = $email->getHtmlBody();
                 $textBody = $email->getTextBody();
 
-                return $email->getSubject() === 'Payment Confirmation - Order Paid Successfully'
+                return 'Payment Confirmation - Order Paid Successfully' === $email->getSubject()
                     && str_contains($htmlBody, $paymentId->toString())
                     && str_contains($htmlBody, '$99.99')
                     && str_contains($textBody, $paymentId->toString())
@@ -387,6 +387,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
             ->method('dispatch')
             ->willReturnCallback(function () use (&$executionOrder) {
                 $executionOrder[] = 'command_dispatched';
+
                 return new Envelope(new \stdClass());
             });
 
@@ -395,6 +396,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
             ->method('dispatch')
             ->willReturnCallback(function () use (&$executionOrder) {
                 $executionOrder[] = 'event_dispatched';
+
                 return new \stdClass();
             });
 

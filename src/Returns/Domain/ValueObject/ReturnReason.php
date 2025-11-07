@@ -22,22 +22,18 @@ final readonly class ReturnReason
     ) {
         $trimmed = trim($this->value);
 
-        if ($trimmed === '') {
+        if ('' === $trimmed) {
             throw new \InvalidArgumentException('Return reason cannot be empty.');
         }
 
         $length = mb_strlen($trimmed);
 
         if ($length < self::MIN_LENGTH) {
-            throw new \InvalidArgumentException(
-                sprintf('Return reason must be at least %d characters. Got %d.', self::MIN_LENGTH, $length)
-            );
+            throw new \InvalidArgumentException(sprintf('Return reason must be at least %d characters. Got %d.', self::MIN_LENGTH, $length));
         }
 
         if ($length > self::MAX_LENGTH) {
-            throw new \InvalidArgumentException(
-                sprintf('Return reason must not exceed %d characters. Got %d.', self::MAX_LENGTH, $length)
-            );
+            throw new \InvalidArgumentException(sprintf('Return reason must not exceed %d characters. Got %d.', self::MAX_LENGTH, $length));
         }
     }
 

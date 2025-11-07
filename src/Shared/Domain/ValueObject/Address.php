@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
 
-use InvalidArgumentException;
-
 final readonly class Address
 {
     private function __construct(
@@ -15,20 +13,20 @@ final readonly class Address
         public string $postalCode,
         public string $country
     ) {
-        if (trim($street) === '') {
-            throw new InvalidArgumentException('Address street cannot be empty');
+        if ('' === trim($street)) {
+            throw new \InvalidArgumentException('Address street cannot be empty');
         }
 
-        if (trim($city) === '') {
-            throw new InvalidArgumentException('Address city cannot be empty');
+        if ('' === trim($city)) {
+            throw new \InvalidArgumentException('Address city cannot be empty');
         }
 
-        if (trim($postalCode) === '') {
-            throw new InvalidArgumentException('Address postal code cannot be empty');
+        if ('' === trim($postalCode)) {
+            throw new \InvalidArgumentException('Address postal code cannot be empty');
         }
 
-        if (trim($country) === '') {
-            throw new InvalidArgumentException('Address country cannot be empty');
+        if ('' === trim($country)) {
+            throw new \InvalidArgumentException('Address country cannot be empty');
         }
     }
 

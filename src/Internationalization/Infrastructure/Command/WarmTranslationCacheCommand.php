@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Warm Translation Cache Command
+ * Warm Translation Cache Command.
  *
  * Pre-loads all translations into Redis cache.
  * Should be executed on deployment or after cache clear.
@@ -76,11 +76,13 @@ HELP
         // Validate arguments
         if (!$tenantIdStr && !$warmAll) {
             $io->error('You must provide either a tenantId or use --all option');
+
             return Command::FAILURE;
         }
 
         if ($tenantIdStr && $warmAll) {
             $io->error('You cannot use both tenantId and --all option');
+
             return Command::FAILURE;
         }
 
@@ -94,6 +96,7 @@ HELP
                 $tenantIds[] = $envTenantId;
             } else {
                 $io->warning('No tenants found. Please implement tenant lookup logic.');
+
                 return Command::FAILURE;
             }
         } else {

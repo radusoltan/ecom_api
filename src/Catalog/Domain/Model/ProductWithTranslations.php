@@ -16,7 +16,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 
 /**
  * Product aggregate with JSONB-based translations support
- * This extends the base Product with locale-aware functionality
+ * This extends the base Product with locale-aware functionality.
  */
 final class ProductWithTranslations extends AggregateRoot
 {
@@ -70,20 +70,20 @@ final class ProductWithTranslations extends AggregateRoot
         $shortDescriptionTranslations = LocalizedString::empty();
 
         // If locale provided, set initial translations
-        if ($initialLocale !== null) {
+        if (null !== $initialLocale) {
             $nameTranslations = LocalizedString::fromSingleTranslation(
                 $initialLocale->toString(),
                 $name->value()
             );
 
-            if ($description !== null) {
+            if (null !== $description) {
                 $descriptionTranslations = LocalizedString::fromSingleTranslation(
                     $initialLocale->toString(),
                     $description
                 );
             }
 
-            if ($shortDescription !== null) {
+            if (null !== $shortDescription) {
                 $shortDescriptionTranslations = LocalizedString::fromSingleTranslation(
                     $initialLocale->toString(),
                     $shortDescription
@@ -163,7 +163,7 @@ final class ProductWithTranslations extends AggregateRoot
     }
 
     /**
-     * Update translations for a specific locale
+     * Update translations for a specific locale.
      */
     public function updateTranslations(
         Locale $locale,
@@ -173,17 +173,17 @@ final class ProductWithTranslations extends AggregateRoot
     ): void {
         $changed = false;
 
-        if ($name !== null) {
+        if (null !== $name) {
             $this->nameTranslations = $this->nameTranslations->withTranslation($locale, $name);
             $changed = true;
         }
 
-        if ($description !== null) {
+        if (null !== $description) {
             $this->descriptionTranslations = $this->descriptionTranslations->withTranslation($locale, $description);
             $changed = true;
         }
 
-        if ($shortDescription !== null) {
+        if (null !== $shortDescription) {
             $this->shortDescriptionTranslations = $this->shortDescriptionTranslations->withTranslation($locale, $shortDescription);
             $changed = true;
         }
@@ -195,7 +195,7 @@ final class ProductWithTranslations extends AggregateRoot
     }
 
     /**
-     * Remove translations for a specific locale
+     * Remove translations for a specific locale.
      */
     public function removeTranslations(Locale $locale): void
     {
@@ -211,24 +211,27 @@ final class ProductWithTranslations extends AggregateRoot
     public function getName(Locale $locale, LocalizationPolicy $policy, ?Locale $tenantDefault = null): string
     {
         $resolved = $policy->resolveString($this->nameTranslations, $locale, $tenantDefault);
+
         return $resolved ?? $this->defaultName->value();
     }
 
     public function getDescription(Locale $locale, LocalizationPolicy $policy, ?Locale $tenantDefault = null): ?string
     {
         $resolved = $policy->resolveString($this->descriptionTranslations, $locale, $tenantDefault);
+
         return $resolved ?? $this->defaultDescription;
     }
 
     public function getShortDescription(Locale $locale, LocalizationPolicy $policy, ?Locale $tenantDefault = null): ?string
     {
         $resolved = $policy->resolveString($this->shortDescriptionTranslations, $locale, $tenantDefault);
+
         return $resolved ?? $this->defaultShortDescription;
     }
 
     /**
      * Get slug for a specific locale
-     * Generated from localized name if available
+     * Generated from localized name if available.
      */
     public function getSlug(Locale $locale, LocalizationPolicy $policy, ?Locale $tenantDefault = null): Slug
     {
@@ -259,7 +262,7 @@ final class ProductWithTranslations extends AggregateRoot
     }
 
     /**
-     * Get all translations as array for persistence
+     * Get all translations as array for persistence.
      */
     public function getTranslationsArray(): array
     {
@@ -306,7 +309,7 @@ final class ProductWithTranslations extends AggregateRoot
     {
         $this->images = array_filter(
             $this->images,
-            fn($img) => $img->position() !== $position
+            fn ($img) => $img->position() !== $position
         );
         $this->updatedAt = new \DateTimeImmutable();
     }
@@ -412,6 +415,7 @@ final class ProductWithTranslations extends AggregateRoot
         $slug = strtolower($name);
         $slug = (string) preg_replace('/[^a-z0-9]+/', '-', $slug);
         $slug = trim($slug, '-');
+
         return $slug;
     }
 }

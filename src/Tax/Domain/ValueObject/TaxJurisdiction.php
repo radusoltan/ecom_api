@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tax\Domain\ValueObject;
 
 /**
- * Tax Jurisdiction Value Object
+ * Tax Jurisdiction Value Object.
  *
  * Represents a tax jurisdiction (country/region/state).
  * Used for destination-based tax calculation.
@@ -16,16 +16,12 @@ final readonly class TaxJurisdiction
         private string $countryCode,
         private ?string $regionCode = null
     ) {
-        if (strlen($countryCode) !== 2) {
-            throw new \InvalidArgumentException(
-                sprintf('Country code must be 2 characters (ISO 3166-1 alpha-2), got "%s"', $countryCode)
-            );
+        if (2 !== strlen($countryCode)) {
+            throw new \InvalidArgumentException(sprintf('Country code must be 2 characters (ISO 3166-1 alpha-2), got "%s"', $countryCode));
         }
 
-        if ($regionCode !== null && (strlen($regionCode) < 2 || strlen($regionCode) > 3)) {
-            throw new \InvalidArgumentException(
-                sprintf('Region code must be 2-3 characters, got "%s"', $regionCode)
-            );
+        if (null !== $regionCode && (strlen($regionCode) < 2 || strlen($regionCode) > 3)) {
+            throw new \InvalidArgumentException(sprintf('Region code must be 2-3 characters, got "%s"', $regionCode));
         }
     }
 
@@ -51,11 +47,11 @@ final readonly class TaxJurisdiction
 
     public function hasRegion(): bool
     {
-        return $this->regionCode !== null;
+        return null !== $this->regionCode;
     }
 
     /**
-     * Check if this jurisdiction matches another (country level or exact match)
+     * Check if this jurisdiction matches another (country level or exact match).
      */
     public function matches(self $other): bool
     {
@@ -81,7 +77,7 @@ final readonly class TaxJurisdiction
 
     public function toString(): string
     {
-        if ($this->regionCode !== null) {
+        if (null !== $this->regionCode) {
             return "{$this->countryCode}-{$this->regionCode}";
         }
 

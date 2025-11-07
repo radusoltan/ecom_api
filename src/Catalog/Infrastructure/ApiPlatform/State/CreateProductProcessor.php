@@ -59,7 +59,7 @@ final readonly class CreateProductProcessor implements ProcessorInterface
         $categoryIdValue = $data->getCategoryId();
         $categoryIdVo = null;
 
-        if ($categoryIdValue !== null) {
+        if (null !== $categoryIdValue) {
             try {
                 $categoryIdVo = CategoryId::fromString($categoryIdValue);
             } catch (\InvalidArgumentException) {

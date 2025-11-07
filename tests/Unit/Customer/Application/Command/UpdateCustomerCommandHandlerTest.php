@@ -11,7 +11,6 @@ use App\Customer\Domain\Repository\CustomerRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class UpdateCustomerCommandHandlerTest extends TestCase
@@ -56,9 +55,9 @@ final class UpdateCustomerCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('save')
             ->with(self::callback(function (Customer $savedCustomer) {
-                return $savedCustomer->firstName() === 'Jane'
-                    && $savedCustomer->lastName() === 'Smith'
-                    && $savedCustomer->phoneNumber() === '+19876543210';
+                return 'Jane' === $savedCustomer->firstName()
+                    && 'Smith' === $savedCustomer->lastName()
+                    && '+19876543210' === $savedCustomer->phoneNumber();
             }));
 
         $this->handler->__invoke($command);
@@ -82,7 +81,7 @@ final class UpdateCustomerCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('save');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/Customer with ID ".*" not found/');
 
         $this->handler->__invoke($command);

@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
- * SearchProvider
+ * SearchProvider.
  *
  * API Platform state provider for search operations.
  */
@@ -24,7 +24,8 @@ final class SearchProvider implements ProviderInterface
     public function __construct(
         private readonly MessageBusInterface $queryBus,
         private readonly RequestStack $requestStack,
-    ) {}
+    ) {
+    }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array
     {

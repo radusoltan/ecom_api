@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Catalog\Application\DTO;
 
 /**
- * Data Transfer Object for Variant
+ * Data Transfer Object for Variant.
  */
 final readonly class VariantDTO
 {
     /**
-     * @param array<string, string> $optionValueMap - Map of option code to value code
+     * @param array<string, string>                                     $optionValueMap - Map of option code to value code
      * @param array<array{url: string, position: int, isPrimary: bool}> $images
      */
     public function __construct(
@@ -25,5 +25,6 @@ final readonly class VariantDTO
         public bool $isActive,
         public bool $isAvailable,
         public array $images = []
-    ) {}
+    ) {
+    }
 }

@@ -11,7 +11,7 @@ use App\Inventory\Infrastructure\ApiPlatform\State\BulkReserveStockProcessor;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * API Resource for Bulk Stock Operations
+ * API Resource for Bulk Stock Operations.
  *
  * Handles bulk operations on multiple stock items in a single request.
  *
@@ -41,14 +41,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class BulkStockOperationResource
 {
     /**
-     * @param array<BulkStockOperationItem> $items
+     * @param array<BulkStockOperationItem>            $items
      * @param array<BulkStockOperationResultItem>|null $results
      */
     public function __construct(
         #[Assert\NotBlank]
         #[Assert\Count(min: 1, max: 50)]
         public ?array $items = null,
-
         #[Assert\NotBlank]
         public ?string $referenceId = null,
 

@@ -6,14 +6,10 @@ namespace App\Tests\Integration\Catalog\Application\Query;
 
 use App\Catalog\Application\Query\SearchProducts\SearchProductsQuery;
 use App\Catalog\Application\Query\SearchProducts\SearchProductsQueryHandler;
-use App\Catalog\Domain\Model\Category;
-use App\Catalog\Domain\Model\CategoryId;
-use App\Catalog\Domain\Model\CategoryName;
 use App\Catalog\Domain\Model\Product;
 use App\Catalog\Domain\Model\ProductId;
 use App\Catalog\Domain\Model\ProductName;
 use App\Catalog\Domain\Model\SKU;
-use App\Catalog\Domain\Model\Slug;
 use App\Catalog\Domain\Model\Stock;
 use App\Catalog\Infrastructure\Analytics\SearchQueryLogger;
 use App\Catalog\Infrastructure\Elasticsearch\ProductIndexer;
@@ -23,7 +19,6 @@ use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Shared\Infrastructure\Elasticsearch\IndexManager;
 use App\Shared\Infrastructure\Elasticsearch\SynonymManager;
-use Brick\Money\Currency;
 use Elastic\Elasticsearch\Client;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -317,7 +312,7 @@ final class SearchProductsTest extends KernelTestCase
     {
         $products = [];
 
-        for ($i = 1; $i <= $count; $i++) {
+        for ($i = 1; $i <= $count; ++$i) {
             $products[] = $this->createProduct("Product {$i}", 100.00 * $i);
         }
 

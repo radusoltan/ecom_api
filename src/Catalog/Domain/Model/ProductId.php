@@ -10,7 +10,8 @@ final readonly class ProductId
 {
     private function __construct(
         private string $value
-    ) {}
+    ) {
+    }
 
     public static function generate(): self
     {

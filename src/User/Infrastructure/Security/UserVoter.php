@@ -58,7 +58,7 @@ final class UserVoter extends AbstractResourceVoter
 
         // VIEWER: only view permission
         if ($this->isViewer($token)) {
-            return $attribute === self::VIEW;
+            return self::VIEW === $attribute;
         }
 
         // ADMIN: CRUD but not manage_roles
@@ -69,7 +69,7 @@ final class UserVoter extends AbstractResourceVoter
         // TENANT_ADMIN: CRUD for tenant users only
         if ($this->hasRole($token, 'ROLE_TENANT_ADMIN')) {
             // Can view all users
-            if ($attribute === self::VIEW) {
+            if (self::VIEW === $attribute) {
                 return true;
             }
 

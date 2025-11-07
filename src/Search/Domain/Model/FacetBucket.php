@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Search\Domain\Model;
 
 /**
- * FacetBucket Value Object
+ * FacetBucket Value Object.
  *
  * Represents a single bucket in a faceted filter (e.g., "Electronics" category with count 42).
  */
@@ -28,7 +28,8 @@ final readonly class FacetBucket
     }
 
     /**
-     * Convert to array for API serialization
+     * Convert to array for API serialization.
+     *
      * @return array<string, mixed>
      */
     public function toArray(): array

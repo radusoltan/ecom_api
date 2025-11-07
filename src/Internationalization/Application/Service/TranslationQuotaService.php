@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Internationalization\Application\Service;
 
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
-use App\Tenant\Domain\ValueObject\TenantId;
 
 /**
- * Service for managing translation quotas across tenants
+ * Service for managing translation quotas across tenants.
  *
  * Business Rules:
  * - Each tenant has a translation quota (default: 10,000 translations/month)
@@ -25,7 +25,7 @@ final readonly class TranslationQuotaService
     }
 
     /**
-     * Check if a tenant has quota available for a given number of translations
+     * Check if a tenant has quota available for a given number of translations.
      */
     public function checkQuota(TenantId $tenantId, int $count = 1): bool
     {
@@ -40,7 +40,7 @@ final readonly class TranslationQuotaService
 
     /**
      * Increment usage for a tenant
-     * Throws TranslationQuotaExceededException if quota would be exceeded
+     * Throws TranslationQuotaExceededException if quota would be exceeded.
      */
     public function incrementUsage(TenantId $tenantId, int $count = 1): void
     {
@@ -55,7 +55,7 @@ final readonly class TranslationQuotaService
     }
 
     /**
-     * Get current usage for a tenant
+     * Get current usage for a tenant.
      */
     public function getUsage(TenantId $tenantId): int
     {
@@ -69,7 +69,7 @@ final readonly class TranslationQuotaService
     }
 
     /**
-     * Get remaining quota for a tenant
+     * Get remaining quota for a tenant.
      */
     public function getRemainingQuota(TenantId $tenantId): int
     {
@@ -83,7 +83,7 @@ final readonly class TranslationQuotaService
     }
 
     /**
-     * Get quota limit for a tenant
+     * Get quota limit for a tenant.
      */
     public function getQuota(TenantId $tenantId): int
     {
@@ -97,7 +97,7 @@ final readonly class TranslationQuotaService
     }
 
     /**
-     * Reset usage for a tenant (typically called monthly)
+     * Reset usage for a tenant (typically called monthly).
      */
     public function resetUsage(TenantId $tenantId): void
     {
@@ -112,7 +112,7 @@ final readonly class TranslationQuotaService
     }
 
     /**
-     * Set quota for a tenant
+     * Set quota for a tenant.
      */
     public function setQuota(TenantId $tenantId, int $quota): void
     {

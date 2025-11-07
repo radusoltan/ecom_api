@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Order\Domain\Service;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Psr\Log\LoggerInterface;
 
 /**
- * FraudCheckService
+ * FraudCheckService.
  *
  * Implements velocity-based fraud detection for order placement.
  * Uses IP and email tracking to identify suspicious ordering patterns.
@@ -44,11 +44,12 @@ final class FraudCheckService
     }
 
     /**
-     * Calculate fraud score for an order placement attempt
+     * Calculate fraud score for an order placement attempt.
      *
      * @param string $ipAddress Client IP address
-     * @param string $email Customer email
-     * @param string $tenantId Tenant identifier
+     * @param string $email     Customer email
+     * @param string $tenantId  Tenant identifier
+     *
      * @return array{score: int, risk_level: string, reasons: array<string>}
      */
     public function calculateFraudScore(string $ipAddress, string $email, string $tenantId): array
@@ -105,7 +106,7 @@ final class FraudCheckService
     }
 
     /**
-     * Record a successful order placement
+     * Record a successful order placement.
      */
     public function recordOrderPlaced(string $ipAddress, string $email, string $tenantId): void
     {
@@ -120,7 +121,7 @@ final class FraudCheckService
     }
 
     /**
-     * Record a failed order attempt (e.g., payment failure)
+     * Record a failed order attempt (e.g., payment failure).
      */
     public function recordFailedAttempt(string $ipAddress, string $tenantId, string $reason): void
     {
@@ -129,14 +130,16 @@ final class FraudCheckService
         try {
             $this->cache->get($cacheKey, function (ItemInterface $item) {
                 $item->expiresAfter(self::TRACKING_WINDOW);
+
                 return 1;
             });
 
             // Increment counter
-            $count = (int) $this->cache->get($cacheKey, fn() => 0);
+            $count = (int) $this->cache->get($cacheKey, fn () => 0);
             $this->cache->delete($cacheKey);
             $this->cache->get($cacheKey, function (ItemInterface $item) use ($count) {
                 $item->expiresAfter(self::TRACKING_WINDOW);
+
                 return $count + 1;
             });
 
@@ -155,25 +158,26 @@ final class FraudCheckService
     }
 
     /**
-     * Get velocity count for a specific identifier
+     * Get velocity count for a specific identifier.
      */
     private function getVelocity(string $type, string $identifier, string $tenantId): int
     {
         $cacheKey = $this->buildCacheKey($type, $identifier, $tenantId);
 
         try {
-            return (int) $this->cache->get($cacheKey, fn() => 0);
+            return (int) $this->cache->get($cacheKey, fn () => 0);
         } catch (\Exception $e) {
             $this->logger->error('Failed to get velocity', [
                 'error' => $e->getMessage(),
                 'type' => $type,
             ]);
+
             return 0;
         }
     }
 
     /**
-     * Increment velocity counter
+     * Increment velocity counter.
      */
     private function incrementVelocity(string $type, string $identifier, string $tenantId): void
     {
@@ -184,6 +188,7 @@ final class FraudCheckService
             $this->cache->delete($cacheKey);
             $this->cache->get($cacheKey, function (ItemInterface $item) use ($count) {
                 $item->expiresAfter(self::TRACKING_WINDOW);
+
                 return $count + 1;
             });
         } catch (\Exception $e) {
@@ -195,25 +200,26 @@ final class FraudCheckService
     }
 
     /**
-     * Get failed attempts count for an IP
+     * Get failed attempts count for an IP.
      */
     private function getFailedAttempts(string $ipAddress, string $tenantId): int
     {
         $cacheKey = $this->buildCacheKey('failed', $ipAddress, $tenantId);
 
         try {
-            return (int) $this->cache->get($cacheKey, fn() => 0);
+            return (int) $this->cache->get($cacheKey, fn () => 0);
         } catch (\Exception $e) {
             $this->logger->error('Failed to get failed attempts', [
                 'error' => $e->getMessage(),
                 'ip' => $ipAddress,
             ]);
+
             return 0;
         }
     }
 
     /**
-     * Determine risk level based on score
+     * Determine risk level based on score.
      */
     private function determineRiskLevel(int $score): string
     {
@@ -225,7 +231,7 @@ final class FraudCheckService
     }
 
     /**
-     * Build cache key for tracking
+     * Build cache key for tracking.
      */
     private function buildCacheKey(string $type, string $identifier, string $tenantId): string
     {

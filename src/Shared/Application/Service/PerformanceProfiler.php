@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Performance;
+namespace App\Shared\Application\Service;
 
 use Psr\Log\LoggerInterface;
 
@@ -35,7 +35,8 @@ final class PerformanceProfiler
 
     public function __construct(
         private readonly LoggerInterface $logger
-    ) {}
+    ) {
+    }
 
     /**
      * Start profiling a section of code.
@@ -60,6 +61,7 @@ final class PerformanceProfiler
             $this->logger->warning('Attempting to stop non-existent profile section', [
                 'section' => $section,
             ]);
+
             return [
                 'duration_ms' => 0,
                 'memory_mb' => 0,
@@ -117,7 +119,7 @@ final class PerformanceProfiler
 
         // Increment query count for active profiles
         foreach ($this->profiles as &$profile) {
-            $profile['queries']++;
+            ++$profile['queries'];
         }
     }
 
@@ -136,7 +138,7 @@ final class PerformanceProfiler
     {
         $slowQueries = array_filter(
             $this->queries,
-            fn($q) => $q['duration_ms'] > self::SLOW_QUERY_THRESHOLD_MS
+            fn ($q) => $q['duration_ms'] > self::SLOW_QUERY_THRESHOLD_MS
         );
 
         return [
@@ -167,7 +169,7 @@ final class PerformanceProfiler
     {
         return array_filter(
             $this->queries,
-            fn($q) => $q['duration_ms'] > self::SLOW_QUERY_THRESHOLD_MS
+            fn ($q) => $q['duration_ms'] > self::SLOW_QUERY_THRESHOLD_MS
         );
     }
 
@@ -199,8 +201,9 @@ final class PerformanceProfiler
      * Profile a callable and return its result with metrics.
      *
      * @template T
-     * @param string $section
+     *
      * @param callable(): T $callback
+     *
      * @return array{result: T, metrics: array}
      */
     public function profile(string $section, callable $callback): array
@@ -217,6 +220,7 @@ final class PerformanceProfiler
             ];
         } catch (\Throwable $e) {
             $this->stop($section);
+
             throw $e;
         }
     }

@@ -6,7 +6,7 @@ namespace App\Catalog\Domain\ValueObject;
 
 /**
  * Value object for option code (e.g., "color", "size", "material")
- * Used as identifier for product configuration options
+ * Used as identifier for product configuration options.
  *
  * Business Rules:
  * - Code must be lowercase alphanumeric with underscores
@@ -57,18 +57,11 @@ final readonly class OptionCode
         }
 
         if (strlen($value) > self::MAX_LENGTH) {
-            throw new \InvalidArgumentException(
-                sprintf('Option code cannot exceed %d characters', self::MAX_LENGTH)
-            );
+            throw new \InvalidArgumentException(sprintf('Option code cannot exceed %d characters', self::MAX_LENGTH));
         }
 
         if (!preg_match(self::PATTERN, $value)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid option code: %s. Must be lowercase alphanumeric with underscores, starting with a letter (e.g., "color", "size_cm")',
-                    $value
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid option code: %s. Must be lowercase alphanumeric with underscores, starting with a letter (e.g., "color", "size_cm")', $value));
         }
     }
 }

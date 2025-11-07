@@ -14,7 +14,7 @@ use App\Shared\Domain\ValueObject\LanguageCode;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * Translation Import Service
+ * Translation Import Service.
  *
  * Domain service responsible for bulk import logic:
  * - Validation of import data
@@ -31,25 +31,25 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class TranslationImportService
 {
     /**
-     * Valid translation domains
+     * Valid translation domains.
      */
     private const VALID_DOMAINS = ['messages', 'validators', 'emails', 'admin', 'shop'];
 
     /**
-     * Valid locales
+     * Valid locales.
      */
     private const VALID_LOCALES = ['en', 'fr', 'de', 'ro'];
 
     public function __construct(
         private TranslationEntryRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     /**
-     * Import translations from array data
+     * Import translations from array data.
      *
      * @param array<array{locale: string, domain: string, key: string, value: string}> $data
-     * @param bool $dryRun If true, validate only without persisting
-     * @return ImportResult
+     * @param bool                                                                     $dryRun If true, validate only without persisting
      */
     public function import(
         TenantId $tenantId,
@@ -67,6 +67,7 @@ final readonly class TranslationImportService
                     $lineNumber,
                     'Missing required fields (locale, domain, key, value)'
                 );
+
                 continue;
             }
 
@@ -80,6 +81,7 @@ final readonly class TranslationImportService
                         implode(', ', self::VALID_LOCALES)
                     )
                 );
+
                 continue;
             }
 
@@ -93,15 +95,17 @@ final readonly class TranslationImportService
                         implode(', ', self::VALID_DOMAINS)
                     )
                 );
+
                 continue;
             }
 
             // Validate non-empty value
-            if (trim($item['value']) === '') {
+            if ('' === trim($item['value'])) {
                 $result->addWarning(
                     $lineNumber,
                     'Empty translation value, skipping'
                 );
+
                 continue;
             }
 
@@ -114,7 +118,7 @@ final readonly class TranslationImportService
                 // Check if translation already exists
                 $existing = $this->repository->findByKey($tenantId, $locale, $domain, $key);
 
-                if ($existing !== null) {
+                if (null !== $existing) {
                     // Update existing
                     if (!$dryRun) {
                         $updated = $existing->updateValue($value);
@@ -140,7 +144,7 @@ final readonly class TranslationImportService
     }
 
     /**
-     * Validate import data without persisting (dry-run)
+     * Validate import data without persisting (dry-run).
      *
      * @param array<array{locale: string, domain: string, key: string, value: string}> $data
      */
@@ -150,7 +154,7 @@ final readonly class TranslationImportService
     }
 
     /**
-     * Get list of valid domains
+     * Get list of valid domains.
      *
      * @return string[]
      */
@@ -160,7 +164,7 @@ final readonly class TranslationImportService
     }
 
     /**
-     * Get list of valid locales
+     * Get list of valid locales.
      *
      * @return string[]
      */
@@ -171,7 +175,7 @@ final readonly class TranslationImportService
 }
 
 /**
- * Import Result Value Object
+ * Import Result Value Object.
  *
  * Encapsulates the result of an import operation
  */
@@ -187,17 +191,17 @@ final class ImportResult
 
     public function incrementProcessed(): void
     {
-        $this->processed++;
+        ++$this->processed;
     }
 
     public function incrementCreated(): void
     {
-        $this->created++;
+        ++$this->created;
     }
 
     public function incrementUpdated(): void
     {
-        $this->updated++;
+        ++$this->updated;
     }
 
     public function addError(int $line, string $message): void

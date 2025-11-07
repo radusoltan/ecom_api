@@ -14,7 +14,8 @@ final readonly class DeleteReviewProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus
-    ) {}
+    ) {
+    }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {

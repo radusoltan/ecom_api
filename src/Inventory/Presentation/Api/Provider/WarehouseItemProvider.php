@@ -20,7 +20,8 @@ final readonly class WarehouseItemProvider implements ProviderInterface
 {
     public function __construct(
         private MessageBusInterface $queryBus,
-    ) {}
+    ) {
+    }
 
     public function provide(
         Operation $operation,

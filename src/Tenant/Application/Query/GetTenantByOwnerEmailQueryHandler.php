@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tenant\Application\Query;
 
-use App\Tenant\Domain\Model\Tenant;
 use App\Shared\Domain\ValueObject\Email;
 use App\Tenant\Application\DTO\TenantDTO;
 use App\Tenant\Domain\Exception\TenantNotFoundException;
+use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 

@@ -13,7 +13,7 @@ use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
- * WarehouseRoutingService
+ * WarehouseRoutingService.
  *
  * Selects the optimal warehouse for order fulfillment based on:
  * - Stock availability
@@ -35,7 +35,7 @@ final readonly class WarehouseRoutingService
     }
 
     /**
-     * Select the best warehouse to fulfill an order line item
+     * Select the best warehouse to fulfill an order line item.
      *
      * Algorithm:
      * 1. Get all active warehouses for the tenant
@@ -43,10 +43,10 @@ final readonly class WarehouseRoutingService
      * 3. Sort by priority (descending - higher priority first)
      * 4. Return the first warehouse (highest priority with stock)
      *
-     * @param ProductId $productId The product to fulfill
-     * @param Quantity $quantity The quantity needed
-     * @param Address $shippingAddress The delivery address (for future distance calculation)
-     * @param TenantId $tenantId The tenant context
+     * @param ProductId $productId       The product to fulfill
+     * @param Quantity  $quantity        The quantity needed
+     * @param Address   $shippingAddress The delivery address (for future distance calculation)
+     * @param TenantId  $tenantId        The tenant context
      *
      * @return WarehouseId|null The selected warehouse ID, or null if no warehouse can fulfill
      *
@@ -80,7 +80,7 @@ final readonly class WarehouseRoutingService
                 $tenantId
             );
 
-            if ($stockItem === null) {
+            if (null === $stockItem) {
                 continue;
             }
 
@@ -114,11 +114,11 @@ final readonly class WarehouseRoutingService
     }
 
     /**
-     * Get all warehouses that can fulfill a product order
+     * Get all warehouses that can fulfill a product order.
      *
      * @param ProductId $productId The product to fulfill
-     * @param Quantity $quantity The quantity needed
-     * @param TenantId $tenantId The tenant context
+     * @param Quantity  $quantity  The quantity needed
+     * @param TenantId  $tenantId  The tenant context
      *
      * @return array<array{warehouseId: WarehouseId, priority: int, availableStock: int}>
      */
@@ -137,7 +137,7 @@ final readonly class WarehouseRoutingService
                 $tenantId
             );
 
-            if ($stockItem === null) {
+            if (null === $stockItem) {
                 continue;
             }
 
@@ -155,6 +155,7 @@ final readonly class WarehouseRoutingService
             if ($a['priority'] !== $b['priority']) {
                 return $b['priority'] <=> $a['priority'];
             }
+
             return $b['availableStock'] <=> $a['availableStock'];
         });
 
@@ -162,11 +163,11 @@ final readonly class WarehouseRoutingService
     }
 
     /**
-     * Check if any warehouse can fulfill the order
+     * Check if any warehouse can fulfill the order.
      *
      * @param ProductId $productId The product to check
-     * @param Quantity $quantity The quantity needed
-     * @param TenantId $tenantId The tenant context
+     * @param Quantity  $quantity  The quantity needed
+     * @param TenantId  $tenantId  The tenant context
      *
      * @return bool True if at least one warehouse can fulfill
      */
@@ -184,7 +185,7 @@ final readonly class WarehouseRoutingService
                 $tenantId
             );
 
-            if ($stockItem !== null && $stockItem->calculateAvailable()->value() >= $quantity->value()) {
+            if (null !== $stockItem && $stockItem->calculateAvailable()->value() >= $quantity->value()) {
                 return true;
             }
         }

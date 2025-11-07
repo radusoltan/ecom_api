@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\ApiPlatform\Serializer;
 
 use App\Shared\Infrastructure\Locale\LocaleNegotiator;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
- * Locale Context Builder
+ * Locale Context Builder.
  *
  * Adds locale metadata to API Platform serialization context.
  * This metadata can be used by normalizers to include locale information in responses.
@@ -25,9 +24,10 @@ final readonly class LocaleContextBuilder
     }
 
     /**
-     * Add locale information to serialization context
+     * Add locale information to serialization context.
      *
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function createFromRequest(array $context = []): array

@@ -13,14 +13,15 @@ final readonly class CreateCategoryHandler
 {
     public function __construct(
         private CategoryRepositoryInterface $categoryRepository
-    ) {}
+    ) {
+    }
 
     public function __invoke(CreateCategory $command): void
     {
         // Business rule: Validate parent category exists if specified
-        if ($command->parentId !== null) {
+        if (null !== $command->parentId) {
             $parent = $this->categoryRepository->findById($command->parentId);
-            if ($parent === null) {
+            if (null === $parent) {
                 throw new \DomainException('Parent category not found');
             }
 

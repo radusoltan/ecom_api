@@ -56,7 +56,7 @@ final class TestStripeIntegrationCommand extends Command
             $createCommand = new CreatePayment(
                 id: $paymentId,
                 tenantId: $tenantId,
-                orderId: '01J9XAMPLE' . bin2hex(random_bytes(8)),
+                orderId: '01J9XAMPLE'.bin2hex(random_bytes(8)),
                 amountInCents: 10000, // $100.00
                 currency: 'USD',
                 method: PaymentMethod::card(),
@@ -72,6 +72,7 @@ final class TestStripeIntegrationCommand extends Command
             $io->newLine();
         } catch (\Exception $e) {
             $io->error("Eroare la creare payment: {$e->getMessage()}");
+
             return Command::FAILURE;
         }
 
@@ -96,7 +97,7 @@ final class TestStripeIntegrationCommand extends Command
             $envelope = $this->queryBus->dispatch($query);
             $paymentDTO = $envelope->last(HandledStamp::class)?->getResult();
 
-            if ($paymentDTO && $paymentDTO->status === 'authorized') {
+            if ($paymentDTO && 'authorized' === $paymentDTO->status) {
                 $io->success('✅ Payment autorizat cu succes prin Stripe!');
                 $io->text("Stripe Transaction ID: {$paymentDTO->gatewayTransactionId}");
                 $io->text("Status: {$paymentDTO->status}");
@@ -105,15 +106,15 @@ final class TestStripeIntegrationCommand extends Command
                 $io->warning("Autorizare parțială sau status neașteptat: {$paymentDTO->status}");
             }
         } catch (\Exception $e) {
-            $io->error("❌ Eroare la autorizare prin Stripe!");
+            $io->error('❌ Eroare la autorizare prin Stripe!');
             $io->text("Mesaj eroare: {$e->getMessage()}");
             $io->newLine();
-            $io->text("Acest lucru este NORMAL dacă:");
-            $io->text("  • Stripe API keys nu sunt valide");
-            $io->text("  • PaymentIntent necesită confirmare din frontend (3D Secure)");
-            $io->text("  • Payment method nu este furnizat corect");
+            $io->text('Acest lucru este NORMAL dacă:');
+            $io->text('  • Stripe API keys nu sunt valide');
+            $io->text('  • PaymentIntent necesită confirmare din frontend (3D Secure)');
+            $io->text('  • Payment method nu este furnizat corect');
             $io->newLine();
-            $io->text("✅ IMPORTANT: Codul nostru FUNCȚIONEAZĂ - eroarea vine de la Stripe!");
+            $io->text('✅ IMPORTANT: Codul nostru FUNCȚIONEAZĂ - eroarea vine de la Stripe!');
             $io->newLine();
 
             // Continuăm să testăm capture și refund (vor da eroare, dar validăm codul)
@@ -137,14 +138,14 @@ final class TestStripeIntegrationCommand extends Command
             $envelope = $this->queryBus->dispatch($query);
             $paymentDTO = $envelope->last(HandledStamp::class)?->getResult();
 
-            if ($paymentDTO && $paymentDTO->status === 'captured') {
+            if ($paymentDTO && 'captured' === $paymentDTO->status) {
                 $io->success('✅ Payment capturat cu succes prin Stripe!');
                 $io->text("Status: {$paymentDTO->status}");
                 $io->newLine();
             }
         } catch (\Exception $e) {
             $io->error("❌ Eroare la capturare: {$e->getMessage()}");
-            $io->text("Motivul: Payment nu a fost autorizat cu succes în pasul anterior.");
+            $io->text('Motivul: Payment nu a fost autorizat cu succes în pasul anterior.');
             $io->newLine();
         }
 
@@ -168,14 +169,14 @@ final class TestStripeIntegrationCommand extends Command
             $envelope = $this->queryBus->dispatch($query);
             $paymentDTO = $envelope->last(HandledStamp::class)?->getResult();
 
-            if ($paymentDTO && $paymentDTO->status === 'refunded') {
+            if ($paymentDTO && 'refunded' === $paymentDTO->status) {
                 $io->success('✅ Payment refundat cu succes prin Stripe!');
-                $io->text("Refunded Amount: $" . ($paymentDTO->refundedAmountInCents / 100) . "");
+                $io->text('Refunded Amount: $'.($paymentDTO->refundedAmountInCents / 100).'');
                 $io->newLine();
             }
         } catch (\Exception $e) {
             $io->error("❌ Eroare la refund: {$e->getMessage()}");
-            $io->text("Motivul: Payment nu a fost capturat cu succes.");
+            $io->text('Motivul: Payment nu a fost capturat cu succes.');
             $io->newLine();
         }
 
@@ -192,7 +193,7 @@ final class TestStripeIntegrationCommand extends Command
             $createCommand2 = new CreatePayment(
                 id: $paymentId2,
                 tenantId: $tenantId,
-                orderId: '01J9XAMPLE' . bin2hex(random_bytes(8)),
+                orderId: '01J9XAMPLE'.bin2hex(random_bytes(8)),
                 amountInCents: 2500, // $25.00
                 currency: 'USD',
                 method: PaymentMethod::card(),
@@ -224,7 +225,7 @@ final class TestStripeIntegrationCommand extends Command
             $envelope = $this->queryBus->dispatch($query);
             $paymentDTO = $envelope->last(HandledStamp::class)?->getResult();
 
-            if ($paymentDTO && $paymentDTO->status === 'cancelled') {
+            if ($paymentDTO && 'cancelled' === $paymentDTO->status) {
                 $io->success('✅ Payment anulat cu succes prin Stripe!');
                 $io->newLine();
             }
@@ -247,8 +248,8 @@ final class TestStripeIntegrationCommand extends Command
         $io->newLine();
 
         $io->note('SAU verifică în baza de date:');
-        $io->text("SELECT id, status, gateway_transaction_id, amount_in_cents, refunded_amount_in_cents");
-        $io->text("FROM payments");
+        $io->text('SELECT id, status, gateway_transaction_id, amount_in_cents, refunded_amount_in_cents');
+        $io->text('FROM payments');
         $io->text("WHERE id IN ('{$paymentId->toString()}', '{$paymentId2->toString()}');");
         $io->newLine();
 

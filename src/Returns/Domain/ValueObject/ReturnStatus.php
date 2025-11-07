@@ -51,10 +51,8 @@ final readonly class ReturnStatus
     private function __construct(
         private string $value
     ) {
-        if (! in_array($this->value, self::VALID_STATUSES, true)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid return status: "%s". Must be one of: %s', $value, implode(', ', self::VALID_STATUSES))
-            );
+        if (!in_array($this->value, self::VALID_STATUSES, true)) {
+            throw new \InvalidArgumentException(sprintf('Invalid return status: "%s". Must be one of: %s', $value, implode(', ', self::VALID_STATUSES)));
         }
     }
 
@@ -100,32 +98,32 @@ final readonly class ReturnStatus
 
     public function isRequested(): bool
     {
-        return $this->value === self::REQUESTED;
+        return self::REQUESTED === $this->value;
     }
 
     public function isApproved(): bool
     {
-        return $this->value === self::APPROVED;
+        return self::APPROVED === $this->value;
     }
 
     public function isReceived(): bool
     {
-        return $this->value === self::RECEIVED;
+        return self::RECEIVED === $this->value;
     }
 
     public function isInspected(): bool
     {
-        return $this->value === self::INSPECTED;
+        return self::INSPECTED === $this->value;
     }
 
     public function isCompleted(): bool
     {
-        return $this->value === self::COMPLETED;
+        return self::COMPLETED === $this->value;
     }
 
     public function isRejected(): bool
     {
-        return $this->value === self::REJECTED;
+        return self::REJECTED === $this->value;
     }
 
     public function isTerminal(): bool

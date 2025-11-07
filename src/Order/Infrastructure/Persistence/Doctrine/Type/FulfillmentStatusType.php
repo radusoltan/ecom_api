@@ -19,7 +19,7 @@ final class FulfillmentStatusType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?FulfillmentStatus
     {
-        if ($value === null || $value === '') {
+        if (null === $value || '' === $value) {
             return null;
         }
 
@@ -28,7 +28,7 @@ final class FulfillmentStatusType extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 

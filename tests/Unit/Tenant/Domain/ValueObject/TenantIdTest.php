@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Tenant\Domain\ValueObject;
 
-use App\Tenant\Domain\ValueObject\TenantId;
+use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 
 final class TenantIdTest extends TestCase

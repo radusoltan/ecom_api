@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Payment\Presentation\Api\Controller;
 
 use App\Order\Application\Command\UpdateOrderStatusCommand;
-use App\Payment\Application\Command\CapturePayment;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
@@ -40,9 +39,9 @@ class StripePaymentController extends AbstractController
             $orderId = $data['orderId'] ?? null;
             $tenantId = $request->headers->get('X-Tenant-ID');
 
-            if ($amount === null || $amount <= 0) {
+            if (null === $amount || $amount <= 0) {
                 return new JsonResponse([
-                    'error' => 'Invalid amount'
+                    'error' => 'Invalid amount',
                 ], Response::HTTP_BAD_REQUEST);
             }
 
@@ -84,7 +83,7 @@ class StripePaymentController extends AbstractController
                     }
                 } catch (\Exception $e) {
                     // Log error but don't fail the request
-                    error_log('Failed to authorize payment with gateway_transaction_id: ' . $e->getMessage());
+                    error_log('Failed to authorize payment with gateway_transaction_id: '.$e->getMessage());
                 }
             }
 
@@ -94,7 +93,7 @@ class StripePaymentController extends AbstractController
             ]);
         } catch (\Exception $e) {
             return new JsonResponse([
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -109,11 +108,11 @@ class StripePaymentController extends AbstractController
                 'status' => $paymentIntent->status,
                 'amount' => $paymentIntent->amount,
                 'currency' => $paymentIntent->currency,
-                'verified' => $paymentIntent->status === 'succeeded',
+                'verified' => 'succeeded' === $paymentIntent->status,
             ]);
         } catch (\Exception $e) {
             return new JsonResponse([
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -129,7 +128,7 @@ class StripePaymentController extends AbstractController
             $tenantId = $request->headers->get('X-Tenant-ID');
             if (!$tenantId) {
                 return new JsonResponse([
-                    'error' => 'X-Tenant-ID header is required'
+                    'error' => 'X-Tenant-ID header is required',
                 ], Response::HTTP_BAD_REQUEST);
             }
 
@@ -137,22 +136,22 @@ class StripePaymentController extends AbstractController
 
             if (!$payment) {
                 return new JsonResponse([
-                    'error' => 'Payment not found for this transaction'
+                    'error' => 'Payment not found for this transaction',
                 ], Response::HTTP_NOT_FOUND);
             }
 
-            if ($paymentIntent->status === 'succeeded') {
+            if ('succeeded' === $paymentIntent->status) {
                 // Payment already succeeded in Stripe
                 // For test mode with automatic_payment_methods, Stripe captures automatically
 
                 // Step 1: Authorize payment if not already authorized
-                if ($payment->status()->value() === 'pending') {
+                if ('pending' === $payment->status()->value()) {
                     $payment->authorize($paymentIntent->id);
                     $this->paymentRepository->save($payment);
                 }
 
                 // Step 2: Capture payment if not already captured
-                if ($payment->status()->value() === 'authorized') {
+                if ('authorized' === $payment->status()->value()) {
                     $payment->capture();
                     $this->paymentRepository->save($payment);
                 }
@@ -172,17 +171,17 @@ class StripePaymentController extends AbstractController
             }
 
             // If payment requires capture, capture it
-            if ($paymentIntent->status === 'requires_capture') {
+            if ('requires_capture' === $paymentIntent->status) {
                 $paymentIntent = $paymentIntent->capture();
             }
 
             return new JsonResponse([
-                'success' => $paymentIntent->status === 'succeeded',
+                'success' => 'succeeded' === $paymentIntent->status,
                 'status' => $paymentIntent->status,
             ]);
         } catch (\Exception $e) {
             return new JsonResponse([
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -215,7 +214,7 @@ class StripePaymentController extends AbstractController
             return new JsonResponse(['received' => true]);
         } catch (\Exception $e) {
             return new JsonResponse([
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], Response::HTTP_BAD_REQUEST);
         }
     }

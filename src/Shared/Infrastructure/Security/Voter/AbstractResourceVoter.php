@@ -31,7 +31,7 @@ abstract class AbstractResourceVoter extends Voter
 
     /**
      * Get supported attributes (permissions) for this resource.
-     * Example: ['product.view', 'product.create', 'product.edit', 'product.delete']
+     * Example: ['product.view', 'product.create', 'product.edit', 'product.delete'].
      *
      * @return list<string>
      */
@@ -105,7 +105,7 @@ abstract class AbstractResourceVoter extends Voter
      */
     protected function isAuthenticated(TokenInterface $token): bool
     {
-        return $this->getUser($token) !== null;
+        return null !== $this->getUser($token);
     }
 
     /**

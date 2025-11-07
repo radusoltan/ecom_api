@@ -7,7 +7,7 @@ namespace App\Tax\Domain\ValueObject;
 use Symfony\Component\Uid\Ulid;
 
 /**
- * Tax Rule ID Value Object
+ * Tax Rule ID Value Object.
  *
  * Unique identifier for tax rules using ULID format.
  */
@@ -17,9 +17,7 @@ final readonly class TaxRuleId
         private string $value
     ) {
         if (!Ulid::isValid($value)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid TaxRuleId format: "%s". Must be a valid ULID', $value)
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid TaxRuleId format: "%s". Must be a valid ULID', $value));
         }
     }
 

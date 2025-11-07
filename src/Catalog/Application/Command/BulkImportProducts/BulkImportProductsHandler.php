@@ -10,7 +10,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Handler for bulk importing products
+ * Handler for bulk importing products.
  */
 #[AsMessageHandler]
 final readonly class BulkImportProductsHandler
@@ -33,9 +33,10 @@ final readonly class BulkImportProductsHandler
                     $errors[] = [
                         'row' => $index + 1,
                         'sku' => $productData['sku'] ?? null,
-                        'message' => 'Product name is required'
+                        'message' => 'Product name is required',
                     ];
-                    $failed++;
+                    ++$failed;
+
                     continue;
                 }
 
@@ -43,9 +44,10 @@ final readonly class BulkImportProductsHandler
                     $errors[] = [
                         'row' => $index + 1,
                         'sku' => $productData['sku'] ?? null,
-                        'message' => 'Valid price amount is required'
+                        'message' => 'Valid price amount is required',
                     ];
-                    $failed++;
+                    ++$failed;
+
                     continue;
                 }
 
@@ -73,21 +75,21 @@ final readonly class BulkImportProductsHandler
                 // Save product
                 $this->productRepository->save($product);
 
-                $imported++;
+                ++$imported;
             } catch (\Exception $e) {
                 $errors[] = [
                     'row' => $index + 1,
                     'sku' => $productData['sku'] ?? null,
-                    'message' => $e->getMessage()
+                    'message' => $e->getMessage(),
                 ];
-                $failed++;
+                ++$failed;
             }
         }
 
         return [
             'imported' => $imported,
             'failed' => $failed,
-            'errors' => $errors
+            'errors' => $errors,
         ];
     }
 }

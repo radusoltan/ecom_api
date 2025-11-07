@@ -7,11 +7,10 @@ namespace App\Catalog\Domain\Service;
 use App\Catalog\Domain\Model\Option;
 use App\Catalog\Domain\Model\OptionValue;
 use App\Catalog\Domain\ValueObject\OptionCode;
-use App\Catalog\Domain\ValueObject\OptionValueCode;
 
 /**
  * Domain service for generating variant combinations
- * Generates cartesian product of all option values
+ * Generates cartesian product of all option values.
  *
  * Business Rules:
  * - Generates all possible combinations of option values
@@ -22,9 +21,10 @@ use App\Catalog\Domain\ValueObject\OptionValueCode;
 final class VariantCombinator
 {
     /**
-     * Generate all possible variant combinations from options
+     * Generate all possible variant combinations from options.
      *
      * @param Option[] $options
+     *
      * @return array<int, array<string, string>> Array of combinations, where each combination is option_code => value_code
      */
     public function generateCombinations(array $options): array
@@ -49,7 +49,7 @@ final class VariantCombinator
 
             $optionCodes[] = $option->getCode()->value();
             $optionValueArrays[] = array_map(
-                fn(OptionValue $val) => $val->getCode()->value(),
+                fn (OptionValue $val) => $val->getCode()->value(),
                 $values
             );
         }
@@ -64,6 +64,7 @@ final class VariantCombinator
                 foreach ($combination as $index => $valueCode) {
                     $result[$optionCodes[$index]] = $valueCode;
                 }
+
                 return $result;
             },
             $combinations
@@ -71,7 +72,7 @@ final class VariantCombinator
     }
 
     /**
-     * Calculate the number of possible combinations
+     * Calculate the number of possible combinations.
      *
      * @param Option[] $options
      */
@@ -84,7 +85,7 @@ final class VariantCombinator
         $count = 1;
         foreach ($options as $option) {
             $valueCount = count($option->getValues());
-            if ($valueCount === 0) {
+            if (0 === $valueCount) {
                 return 0;
             }
             $count *= $valueCount;
@@ -94,9 +95,9 @@ final class VariantCombinator
     }
 
     /**
-     * Check if a specific combination is valid for given options
+     * Check if a specific combination is valid for given options.
      *
-     * @param Option[] $options
+     * @param Option[]              $options
      * @param array<string, string> $combination
      */
     public function isValidCombination(array $options, array $combination): bool
@@ -120,6 +121,7 @@ final class VariantCombinator
             foreach ($option->getValues() as $optionValue) {
                 if ($optionValue->getCode()->value() === $valueCode) {
                     $hasValue = true;
+
                     break;
                 }
             }
@@ -133,9 +135,10 @@ final class VariantCombinator
     }
 
     /**
-     * Get all value codes for a specific option code
+     * Get all value codes for a specific option code.
      *
      * @param Option[] $options
+     *
      * @return string[]
      */
     public function getValueCodesForOption(array $options, OptionCode $optionCode): array
@@ -143,7 +146,7 @@ final class VariantCombinator
         foreach ($options as $option) {
             if ($option->getCode()->equals($optionCode)) {
                 return array_map(
-                    fn(OptionValue $val) => $val->getCode()->value(),
+                    fn (OptionValue $val) => $val->getCode()->value(),
                     $option->getValues()
                 );
             }
@@ -153,22 +156,25 @@ final class VariantCombinator
     }
 
     /**
-     * Sort options by position
+     * Sort options by position.
      *
      * @param Option[] $options
+     *
      * @return Option[]
      */
     private function sortOptionsByPosition(array $options): array
     {
         $sorted = $options;
-        usort($sorted, fn(Option $a, Option $b) => $a->getPosition() <=> $b->getPosition());
+        usort($sorted, fn (Option $a, Option $b) => $a->getPosition() <=> $b->getPosition());
+
         return $sorted;
     }
 
     /**
-     * Generate cartesian product of arrays
+     * Generate cartesian product of arrays.
      *
      * @param array<int, array<int, string>> $arrays
+     *
      * @return array<int, array<int, string>>
      */
     private function cartesianProduct(array $arrays): array

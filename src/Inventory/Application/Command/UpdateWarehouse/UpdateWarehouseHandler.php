@@ -12,13 +12,14 @@ final readonly class UpdateWarehouseHandler
 {
     public function __construct(
         private WarehouseRepositoryInterface $warehouseRepository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(UpdateWarehouse $command): void
     {
         $warehouse = $this->warehouseRepository->findById($command->id);
 
-        if ($warehouse === null) {
+        if (null === $warehouse) {
             throw new \DomainException('Warehouse not found');
         }
 
