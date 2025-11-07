@@ -19,12 +19,15 @@ use App\Catalog\Domain\Repository\ConfigurableProductRepositoryInterface;
 use App\Catalog\Domain\ValueObject\LocalizedString;
 use App\Catalog\Domain\ValueObject\OptionCode;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Tests\Support\TenantTestTrait;
 
 /**
  * Functional tests for Variant API endpoints
  */
 final class VariantApiTest extends ApiTestCase
 {
+    use TenantTestTrait;
+
     private TenantId $tenantId;
     private ConfigurableProductId $configurableProductId;
     private ProductId $productId;
@@ -34,7 +37,10 @@ final class VariantApiTest extends ApiTestCase
     {
         parent::setUp();
 
-        $this->tenantId = TenantId::generate();
+        // Use default test tenant instead of random
+        $this->tenantId = $this->getDefaultTenantId();
+        $this->setTenantContext($this->tenantId->toString());
+
         $this->productId = ProductId::generate();
         $this->configurableProductId = ConfigurableProductId::fromString(\Symfony\Component\Uid\Uuid::v7()->toString());
 
@@ -43,6 +49,12 @@ final class VariantApiTest extends ApiTestCase
 
         // Create a configurable product with options for testing
         $this->createTestConfigurableProduct();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->cleanupTestData();
+        parent::tearDown();
     }
 
     /**

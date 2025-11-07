@@ -42,9 +42,6 @@ final class SkuGeneratorServiceTest extends KernelTestCase
         $this->createdTenantIds = [];
         $this->createdCategoryIds = [];
 
-        // Set tenant context for RLS
-        $this->setTenantContext($this->getDefaultTenantId()->toString());
-
         $this->cleanupExistingFixtures();
 
         $this->connection->executeStatement(<<<'SQL'
@@ -129,11 +126,25 @@ final class SkuGeneratorServiceTest extends KernelTestCase
         }
     }
 
-    public function testGeneratesSkuWithCategoryAndTenantCodes(): void
+    private function createTenantWithRlsContext(TenantName $name, Email $email): Tenant
     {
-        $tenant = Tenant::create(TenantName::fromString('Test Store'), Email::fromString('owner@example.com'));
-        $this->createdTenantIds[] = $tenant->id()->toString();
+        $tenant = Tenant::create($name, $email);
+
+        // Set RLS context to the tenant we're about to create
+        $this->setTenantContext($tenant->id()->toString());
+
         $this->tenantRepository->save($tenant);
+        $this->createdTenantIds[] = $tenant->id()->toString();
+
+        return $tenant;
+    }
+
+    public function testGeneratesSkuWithCategoryPrefix(): void
+    {
+        $tenant = $this->createTenantWithRlsContext(
+            TenantName::fromString('Test Store'),
+            Email::fromString('owner@example.com')
+        );
 
         $sharedTenantId = SharedTenantId::fromString($tenant->id()->toString());
 
@@ -152,20 +163,133 @@ final class SkuGeneratorServiceTest extends KernelTestCase
         $sku1 = $this->service->generate($sharedTenantId, $category->id());
         $sku2 = $this->service->generate($sharedTenantId, $category->id());
 
-        self::assertSame('ELE-TES-000001', $sku1->value());
-        self::assertSame('ELE-TES-000002', $sku2->value());
+        self::assertSame('ELE-000001', $sku1->value());
+        self::assertSame('ELE-000002', $sku2->value());
     }
 
-    public function testGeneratesSkuWithGenericCategoryWhenMissing(): void
+    public function testGeneratesSkuWithDefaultPrefixWhenCategoryMissing(): void
     {
-        $tenant = Tenant::create(TenantName::fromString('Sample Shop'), Email::fromString('shop@example.com'));
-        $this->createdTenantIds[] = $tenant->id()->toString();
-        $this->tenantRepository->save($tenant);
+        $tenant = $this->createTenantWithRlsContext(
+            TenantName::fromString('Sample Shop'),
+            Email::fromString('shop@example.com')
+        );
 
         $sharedTenantId = SharedTenantId::fromString($tenant->id()->toString());
 
         $sku = $this->service->generate($sharedTenantId, null);
 
-        self::assertSame('GEN-SAM-000001', $sku->value());
+        self::assertSame('PRD-000001', $sku->value());
+    }
+
+    public function testGeneratesSkuWithDifferentCategoryPrefixes(): void
+    {
+        $tenant = $this->createTenantWithRlsContext(
+            TenantName::fromString('Multi Category Store'),
+            Email::fromString('owner@example.com')
+        );
+
+        $sharedTenantId = SharedTenantId::fromString($tenant->id()->toString());
+
+        $category1 = Category::create(
+            id: CategoryId::generate(),
+            tenantId: $sharedTenantId,
+            name: CategoryName::fromString('Clothing'),
+            description: null,
+            parentId: null,
+            position: 0,
+            showOnFront: true
+        );
+        $this->createdCategoryIds[] = $category1->id()->toString();
+        $this->categoryRepository->save($category1);
+
+        $category2 = Category::create(
+            id: CategoryId::generate(),
+            tenantId: $sharedTenantId,
+            name: CategoryName::fromString('Books'),
+            description: null,
+            parentId: null,
+            position: 1,
+            showOnFront: true
+        );
+        $this->createdCategoryIds[] = $category2->id()->toString();
+        $this->categoryRepository->save($category2);
+
+        $sku1 = $this->service->generate($sharedTenantId, $category1->id());
+        $sku2 = $this->service->generate($sharedTenantId, $category2->id());
+
+        self::assertSame('CLO-000001', $sku1->value());
+        self::assertSame('BOO-000002', $sku2->value());
+    }
+
+    public function testSkuSequenceIsPerTenant(): void
+    {
+        $tenant1 = $this->createTenantWithRlsContext(
+            TenantName::fromString('Tenant One'),
+            Email::fromString('owner@example.com')
+        );
+
+        $sharedTenantId1 = SharedTenantId::fromString($tenant1->id()->toString());
+
+        $sku1 = $this->service->generate($sharedTenantId1, null);
+        self::assertSame('PRD-000001', $sku1->value());
+    }
+
+    public function testGeneratesSkuWithPaddedSequence(): void
+    {
+        $tenant = $this->createTenantWithRlsContext(
+            TenantName::fromString('Test Padding'),
+            Email::fromString('shop@example.com')
+        );
+
+        $sharedTenantId = SharedTenantId::fromString($tenant->id()->toString());
+
+        $sku = $this->service->generate($sharedTenantId, null);
+
+        // Verify the sequence is padded to 6 digits
+        self::assertMatchesRegularExpression('/^PRD-\d{6}$/', $sku->value());
+        self::assertSame('PRD-000001', $sku->value());
+    }
+
+    public function testGeneratesSkuWithFallbackPrefixForNonExistentCategory(): void
+    {
+        $tenant = $this->createTenantWithRlsContext(
+            TenantName::fromString('Fallback Test'),
+            Email::fromString('owner@example.com')
+        );
+
+        $sharedTenantId = SharedTenantId::fromString($tenant->id()->toString());
+        $nonExistentCategoryId = CategoryId::generate();
+
+        $sku = $this->service->generate($sharedTenantId, $nonExistentCategoryId);
+
+        self::assertSame('PRD-000001', $sku->value());
+    }
+
+    public function testGeneratesSkuHandlesSpecialCharactersInCategoryName(): void
+    {
+        $tenant = $this->createTenantWithRlsContext(
+            TenantName::fromString('Special Chars'),
+            Email::fromString('shop@example.com')
+        );
+
+        $sharedTenantId = SharedTenantId::fromString($tenant->id()->toString());
+
+        $category = Category::create(
+            id: CategoryId::generate(),
+            tenantId: $sharedTenantId,
+            name: CategoryName::fromString('Home & Garden'),
+            description: null,
+            parentId: null,
+            position: 0,
+            showOnFront: true
+        );
+        $this->createdCategoryIds[] = $category->id()->toString();
+        $this->categoryRepository->save($category);
+
+        $sku = $this->service->generate($sharedTenantId, $category->id());
+
+        // Should only contain uppercase letters and numbers (no special chars)
+        self::assertMatchesRegularExpression('/^[A-Z]{3}-\d{6}$/', $sku->value());
+        self::assertSame('HOM-000001', $sku->value());
     }
 }

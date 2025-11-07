@@ -5,7 +5,14 @@ declare(strict_types=1);
 namespace App\Catalog\Domain\Model;
 
 use App\Catalog\Domain\Event\ProductCreated;
+use App\Catalog\Domain\Event\ProductDeactivated;
+use App\Catalog\Domain\Event\ProductDiscontinued;
+use App\Catalog\Domain\Event\ProductPublished;
+use App\Catalog\Domain\Event\ProductReactivated;
+use App\Catalog\Domain\Event\ProductTypeChanged;
 use App\Catalog\Domain\Event\ProductUpdated;
+use App\Catalog\Domain\ValueObject\ProductStatus;
+use App\Catalog\Domain\ValueObject\ProductType;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
@@ -27,7 +34,8 @@ final class Product extends AggregateRoot
         private ?CategoryId $categoryId,
         private Stock $stock,
         private array $images,
-        private bool $active,
+        private ProductStatus $status,
+        private ProductType $type,
         private bool $isFeatured,
         private \DateTimeImmutable $createdAt,
         private \DateTimeImmutable $updatedAt
@@ -43,6 +51,7 @@ final class Product extends AggregateRoot
         Money $price,
         ?CategoryId $categoryId,
         Stock $stock,
+        ProductType $type = null,
         bool $isFeatured = false
     ): self {
         $product = new self(
@@ -57,7 +66,8 @@ final class Product extends AggregateRoot
             categoryId: $categoryId,
             stock: $stock,
             images: [],
-            active: true,
+            status: ProductStatus::draft(), // New products start as DRAFT
+            type: $type ?? ProductType::simple(), // Default to SIMPLE type
             isFeatured: $isFeatured,
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable()
@@ -83,7 +93,8 @@ final class Product extends AggregateRoot
         ?CategoryId $categoryId,
         Stock $stock,
         array $images,
-        bool $active,
+        ProductStatus $status,
+        ProductType $type,
         bool $isFeatured,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt
@@ -100,7 +111,8 @@ final class Product extends AggregateRoot
             $categoryId,
             $stock,
             $images,
-            $active,
+            $status,
+            $type,
             $isFeatured,
             $createdAt,
             $updatedAt
@@ -147,21 +159,133 @@ final class Product extends AggregateRoot
         $this->updatedAt = new \DateTimeImmutable();
     }
 
-    public function activate(): void
+    /**
+     * Publish a product (DRAFT → ACTIVE)
+     *
+     * Business Rule: Only draft products can be published
+     *
+     * @throws \DomainException if product is not in draft status
+     */
+    public function publish(): void
     {
-        $this->active = true;
+        if (!$this->status->isDraft()) {
+            throw new \DomainException(
+                sprintf('Cannot publish product in status "%s". Only DRAFT products can be published.', $this->status->value())
+            );
+        }
+
+        $this->status = ProductStatus::active();
         $this->updatedAt = new \DateTimeImmutable();
+
+        $this->recordEvent(new ProductPublished($this->id, $this->tenantId, $this->updatedAt));
     }
 
+    /**
+     * Deactivate a product (ACTIVE → INACTIVE)
+     *
+     * Business Rule: Only active products can be deactivated
+     *
+     * @throws \DomainException if product is not active
+     */
     public function deactivate(): void
     {
-        $this->active = false;
+        if (!$this->status->isActive()) {
+            throw new \DomainException(
+                sprintf('Cannot deactivate product in status "%s". Only ACTIVE products can be deactivated.', $this->status->value())
+            );
+        }
+
+        $this->status = ProductStatus::inactive();
         $this->updatedAt = new \DateTimeImmutable();
+
+        $this->recordEvent(new ProductDeactivated($this->id, $this->tenantId, $this->updatedAt));
+    }
+
+    /**
+     * Reactivate a product (INACTIVE → ACTIVE)
+     *
+     * Business Rule: Only inactive products can be reactivated
+     *
+     * @throws \DomainException if product is not inactive
+     */
+    public function reactivate(): void
+    {
+        if (!$this->status->isInactive()) {
+            throw new \DomainException(
+                sprintf('Cannot reactivate product in status "%s". Only INACTIVE products can be reactivated.', $this->status->value())
+            );
+        }
+
+        $this->status = ProductStatus::active();
+        $this->updatedAt = new \DateTimeImmutable();
+
+        $this->recordEvent(new ProductReactivated($this->id, $this->tenantId, $this->updatedAt));
+    }
+
+    /**
+     * Discontinue a product (Any → DISCONTINUED)
+     *
+     * Business Rule: Any product can be discontinued, but it's permanent
+     *
+     * @throws \DomainException if product is already discontinued
+     */
+    public function discontinue(): void
+    {
+        if ($this->status->isDiscontinued()) {
+            throw new \DomainException('Product is already discontinued.');
+        }
+
+        $this->status = ProductStatus::discontinued();
+        $this->updatedAt = new \DateTimeImmutable();
+
+        $this->recordEvent(new ProductDiscontinued($this->id, $this->tenantId, $this->updatedAt));
+    }
+
+    /**
+     * @deprecated Use status()->isActive() instead
+     */
+    public function activate(): void
+    {
+        // Backward compatibility - delegate to reactivate if inactive, otherwise publish
+        if ($this->status->isInactive()) {
+            $this->reactivate();
+        } elseif ($this->status->isDraft()) {
+            $this->publish();
+        }
     }
 
     public function isAvailable(int $quantity = 1): bool
     {
-        return $this->active && $this->stock->isAvailable($quantity);
+        return $this->status->isActive() && $this->stock->isAvailable($quantity);
+    }
+
+    /**
+     * Change product type
+     *
+     * Business Rule: Type changes are restricted after first sale
+     * (For now, we allow changes but this can be enhanced with sales tracking)
+     *
+     * @throws \DomainException if changing from/to incompatible types
+     */
+    public function changeType(ProductType $newType): void
+    {
+        if ($this->type->equals($newType)) {
+            throw new \DomainException(
+                sprintf('Product is already of type "%s".', $newType->value())
+            );
+        }
+
+        $oldType = $this->type;
+        $this->type = $newType;
+        $this->updatedAt = new \DateTimeImmutable();
+
+        $this->recordEvent(new ProductTypeChanged(
+            $this->id,
+            $this->tenantId,
+            $oldType,
+            $newType,
+            $this->updatedAt
+        ));
     }
 
     // Getters
@@ -223,9 +347,22 @@ final class Product extends AggregateRoot
         return $this->images;
     }
 
+    public function status(): ProductStatus
+    {
+        return $this->status;
+    }
+
+    public function type(): ProductType
+    {
+        return $this->type;
+    }
+
+    /**
+     * @deprecated Use status()->isActive() instead
+     */
     public function isActive(): bool
     {
-        return $this->active;
+        return $this->status->isActive();
     }
 
     public function isFeatured(): bool

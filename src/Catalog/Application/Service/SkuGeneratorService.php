@@ -22,41 +22,27 @@ final class SkuGeneratorService
 
     public function generate(TenantId $tenantId, ?CategoryId $categoryId = null): SKU
     {
-        $categoryCode = $this->resolveCategoryCode($tenantId, $categoryId);
-        $vendorCode = $this->resolveVendorCode($tenantId);
+        $prefix = $this->resolvePrefix($tenantId, $categoryId);
         $sequence = $this->getNextSequence($tenantId);
 
-        $sku = sprintf('%s-%s-%06d', $categoryCode, $vendorCode, $sequence);
+        $sku = sprintf('%s-%06d', $prefix, $sequence);
 
         return SKU::fromString($sku);
     }
 
-    private function resolveCategoryCode(TenantId $tenantId, ?CategoryId $categoryId): string
+    private function resolvePrefix(TenantId $tenantId, ?CategoryId $categoryId): string
     {
         if ($categoryId === null) {
-            return 'GEN';
+            return 'PRD';
         }
 
         $category = $this->categoryRepository->findById($categoryId);
 
         if ($category === null || !$category->tenantId()->equals($tenantId)) {
-            return 'GEN';
+            return 'PRD';
         }
 
-        return $this->buildCode($category->name()->value(), 'GEN');
-    }
-
-    private function resolveVendorCode(TenantId $tenantId): string
-    {
-        $tenant = $this->tenantRepository->findById(
-            TenantDomainId::fromString($tenantId->toString())
-        );
-
-        if ($tenant === null) {
-            return 'TEN';
-        }
-
-        return $this->buildCode($tenant->name()->value(), 'TEN');
+        return $this->buildCode($category->name()->value(), 'PRD');
     }
 
     private function buildCode(string $value, string $default): string

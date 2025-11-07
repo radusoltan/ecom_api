@@ -16,9 +16,12 @@ use App\Internationalization\Domain\Model\Locale;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Shared\Infrastructure\Elasticsearch\IndexManager;
+use App\Tests\Support\TenantTestTrait;
 
 final class ProductSearchApiTest extends ApiTestCase
 {
+    use TenantTestTrait;
+
     private TenantId $tenantId;
     private Locale $locale;
     private ProductRepositoryInterface $productRepository;
@@ -29,7 +32,9 @@ final class ProductSearchApiTest extends ApiTestCase
     {
         parent::setUp();
 
-        $this->tenantId = TenantId::generate();
+        // Use default test tenant instead of random
+        $this->tenantId = $this->getDefaultTenantId();
+        $this->setTenantContext($this->tenantId->toString());
         $this->locale = Locale::fromString('en_US');
 
         $container = static::getContainer();
@@ -53,6 +58,7 @@ final class ProductSearchApiTest extends ApiTestCase
             $this->indexManager->deleteIndex($indexName);
         }
 
+        $this->cleanupTestData();
         parent::tearDown();
     }
 
@@ -284,7 +290,7 @@ final class ProductSearchApiTest extends ApiTestCase
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: $this->tenantId,
-            sku: SKU::fromString(sprintf('GEN-TEN-%06d', rand(1, 999999))),
+            sku: SKU::fromString(sprintf('TST-%06d', rand(1, 999999))),
             name: ProductName::fromString($name),
             description: 'Test product description',
             shortDescription: 'Short desc',
@@ -292,6 +298,9 @@ final class ProductSearchApiTest extends ApiTestCase
             categoryId: null,
             stock: Stock::create(10),
         );
+
+        // Publish product so it's searchable (new products start as DRAFT)
+        $product->publish();
 
         $this->productRepository->save($product);
         $this->productIndexer->indexProduct($product, $this->locale);

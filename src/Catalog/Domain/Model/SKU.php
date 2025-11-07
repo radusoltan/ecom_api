@@ -6,14 +6,14 @@ namespace App\Catalog\Domain\Model;
 
 final readonly class SKU
 {
-    private const PATTERN = '/^[A-Z]{3}-[A-Z]{3}-[0-9]{6}$/';
+    private const PATTERN = '/^[A-Z]{3}-[0-9]{6}$/';
 
     private function __construct(
         private string $value
     ) {
         if (!preg_match(self::PATTERN, $value)) {
             throw new \InvalidArgumentException(
-                'SKU must match pattern: AAA-BBB-000000 (upper-case letters and 6 digits)'
+                'SKU must match pattern: PRD-123456 (3 uppercase letters, hyphen, 6 digits)'
             );
         }
     }
