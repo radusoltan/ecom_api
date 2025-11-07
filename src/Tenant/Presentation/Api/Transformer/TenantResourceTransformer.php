@@ -17,6 +17,8 @@ final class TenantResourceTransformer
         $resource->ownerEmail = $dto->ownerEmail;
         $resource->status = $dto->status;
         $resource->createdAt = $dto->createdAt;
+        $resource->defaultLocale = $dto->defaultLocale;
+        $resource->enabledLocales = $dto->enabledLocales;
 
         return $resource;
     }

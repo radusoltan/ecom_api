@@ -46,7 +46,7 @@ final class TenantStatusTest extends TestCase
     public function testFromStringThrowsExceptionForInvalidStatus(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid tenant status: "invalid". Must be "active" or "inactive"');
+        $this->expectExceptionMessage('Invalid tenant status: "invalid". Must be "active", "inactive", or "suspended"');
 
         TenantStatus::fromString('invalid');
     }
@@ -82,5 +82,49 @@ final class TenantStatusTest extends TestCase
 
         $this->assertSame('active', (string) $activeStatus);
         $this->assertSame('inactive', (string) $inactiveStatus);
+    }
+
+    public function testSuspendedCreatesSuspendedStatus(): void
+    {
+        $status = TenantStatus::suspended();
+
+        $this->assertInstanceOf(TenantStatus::class, $status);
+        $this->assertSame('suspended', $status->value());
+        $this->assertTrue($status->isSuspended());
+        $this->assertFalse($status->isActive());
+        $this->assertFalse($status->isInactive());
+    }
+
+    public function testFromStringCreatesSuspendedStatus(): void
+    {
+        $status = TenantStatus::fromString('suspended');
+
+        $this->assertTrue($status->isSuspended());
+        $this->assertFalse($status->isActive());
+        $this->assertFalse($status->isInactive());
+        $this->assertSame('suspended', $status->value());
+    }
+
+    public function testIsSuspendedReturnsFalseForActiveStatus(): void
+    {
+        $status = TenantStatus::active();
+
+        $this->assertFalse($status->isSuspended());
+        $this->assertTrue($status->isActive());
+    }
+
+    public function testIsSuspendedReturnsFalseForInactiveStatus(): void
+    {
+        $status = TenantStatus::inactive();
+
+        $this->assertFalse($status->isSuspended());
+        $this->assertTrue($status->isInactive());
+    }
+
+    public function testToStringReturnsSuspendedValue(): void
+    {
+        $status = TenantStatus::suspended();
+
+        $this->assertSame('suspended', (string) $status);
     }
 }

@@ -15,6 +15,11 @@ use App\Tenant\Presentation\Api\Processor\ActivateTenantProcessor;
 use App\Tenant\Presentation\Api\Processor\CreateTenantProcessor;
 use App\Tenant\Presentation\Api\Processor\DeactivateTenantProcessor;
 use App\Tenant\Presentation\Api\Processor\DeleteTenantProcessor;
+use App\Tenant\Presentation\Api\Processor\DisableLocaleProcessor;
+use App\Tenant\Presentation\Api\Processor\EnableLocaleProcessor;
+use App\Tenant\Presentation\Api\Processor\ReactivateTenantProcessor;
+use App\Tenant\Presentation\Api\Processor\SetDefaultLocaleProcessor;
+use App\Tenant\Presentation\Api\Processor\SuspendTenantProcessor;
 use App\Tenant\Presentation\Api\Processor\UpdateTenantProcessor;
 use App\Tenant\Presentation\Api\Provider\TenantCollectionProvider;
 use App\Tenant\Presentation\Api\Provider\TenantItemProvider;
@@ -66,6 +71,40 @@ use Symfony\Component\Validator\Constraints as Assert;
             provider: TenantItemProvider::class,
             processor: DeactivateTenantProcessor::class
         ),
+        new Patch(
+            uriTemplate: '/tenants/{id}/suspend',
+            normalizationContext: ['groups' => ['tenant:read']],
+            denormalizationContext: ['groups' => ['tenant:suspend']],
+            provider: TenantItemProvider::class,
+            processor: SuspendTenantProcessor::class
+        ),
+        new Patch(
+            uriTemplate: '/tenants/{id}/reactivate',
+            normalizationContext: ['groups' => ['tenant:read']],
+            denormalizationContext: ['groups' => ['tenant:reactivate']],
+            provider: TenantItemProvider::class,
+            processor: ReactivateTenantProcessor::class
+        ),
+        new Patch(
+            uriTemplate: '/tenants/{id}/locale/default',
+            normalizationContext: ['groups' => ['tenant:read']],
+            denormalizationContext: ['groups' => ['tenant:locale:set']],
+            provider: TenantItemProvider::class,
+            processor: SetDefaultLocaleProcessor::class
+        ),
+        new Post(
+            uriTemplate: '/tenants/{id}/locale/enable',
+            normalizationContext: ['groups' => ['tenant:read']],
+            denormalizationContext: ['groups' => ['tenant:locale:enable']],
+            provider: TenantItemProvider::class,
+            processor: EnableLocaleProcessor::class
+        ),
+        new Delete(
+            uriTemplate: '/tenants/{id}/locale/{localeCode}',
+            normalizationContext: ['groups' => ['tenant:read']],
+            provider: TenantItemProvider::class,
+            processor: DisableLocaleProcessor::class
+        ),
     ]
 )]
 final class TenantResource
@@ -88,4 +127,17 @@ final class TenantResource
 
     #[Groups(['tenant:read'])]
     public ?string $createdAt = null;
+
+    #[Groups(['tenant:read', 'tenant:locale:set'])]
+    #[Assert\NotBlank(groups: ['tenant:locale:set'])]
+    #[Assert\Length(min: 2, max: 2, groups: ['tenant:locale:set'])]
+    public ?string $defaultLocale = null;
+
+    #[Groups(['tenant:read'])]
+    public ?array $enabledLocales = null;
+
+    #[Groups(['tenant:locale:enable'])]
+    #[Assert\NotBlank(groups: ['tenant:locale:enable'])]
+    #[Assert\Length(min: 2, max: 2, groups: ['tenant:locale:enable'])]
+    public ?string $localeCode = null;
 }

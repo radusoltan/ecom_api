@@ -7,6 +7,7 @@ namespace App\Tenant\Infrastructure\Persistence\Doctrine\Entity;
 use DateTimeImmutable;
 use App\Internationalization\Infrastructure\Persistence\Doctrine\Entity\Translation;
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\LanguageCode;
 use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\ValueObject\TenantName;
@@ -33,7 +34,15 @@ class TenantEntity
         #[ORM\Column(type: 'string', length: 20)]
         private string $status,
         #[ORM\Column(type: 'datetime_immutable')]
-        private DateTimeImmutable $createdAt
+        private DateTimeImmutable $createdAt,
+        #[ORM\Column(type: 'string', length: 2)]
+        private string $defaultLocale = 'en',
+        #[ORM\Column(type: 'json')]
+        private array $enabledLocales = ['en'],
+        #[ORM\Column(type: 'integer', options: ['default' => 10000])]
+        private int $translationQuota = 10000,
+        #[ORM\Column(type: 'integer', options: ['default' => 0])]
+        private int $translationUsage = 0
     )
     {
     }
@@ -109,17 +118,66 @@ class TenantEntity
         return $this->slug;
     }
 
+    public function getDefaultLocale(): string
+    {
+        return $this->defaultLocale;
+    }
+
+    public function setDefaultLocale(string $defaultLocale): void
+    {
+        $this->defaultLocale = $defaultLocale;
+    }
+
+    public function getEnabledLocales(): array
+    {
+        return $this->enabledLocales;
+    }
+
+    public function setEnabledLocales(array $enabledLocales): void
+    {
+        $this->enabledLocales = $enabledLocales;
+    }
+
+    public function getTranslationQuota(): int
+    {
+        return $this->translationQuota;
+    }
+
+    public function setTranslationQuota(int $translationQuota): void
+    {
+        $this->translationQuota = $translationQuota;
+    }
+
+    public function getTranslationUsage(): int
+    {
+        return $this->translationUsage;
+    }
+
+    public function setTranslationUsage(int $translationUsage): void
+    {
+        $this->translationUsage = $translationUsage;
+    }
+
     /**
      * Convert Doctrine entity to Domain aggregate.
      */
     public function toDomain(): Tenant
     {
+        $enabledLocales = array_map(
+            fn(string $code) => LanguageCode::fromString($code),
+            $this->enabledLocales
+        );
+
         return Tenant::fromPersistence(
             TenantId::fromString($this->id),
             TenantName::fromString($this->name),
             Email::fromString($this->ownerEmail),
             TenantStatus::fromString($this->status),
-            $this->createdAt
+            $this->createdAt,
+            LanguageCode::fromString($this->defaultLocale),
+            $enabledLocales,
+            $this->translationQuota,
+            $this->translationUsage
         );
     }
 
@@ -128,12 +186,21 @@ class TenantEntity
      */
     public static function fromDomain(Tenant $tenant): self
     {
+        $enabledLocales = array_map(
+            fn(LanguageCode $locale) => $locale->value(),
+            $tenant->enabledLocales()
+        );
+
         return new self(
             $tenant->id()->toString(),
             $tenant->name()->value(),
             $tenant->ownerEmail()->value(),
             $tenant->status()->value(),
-            $tenant->createdAt()
+            $tenant->createdAt(),
+            $tenant->defaultLocale()->value(),
+            $enabledLocales,
+            $tenant->translationQuota(),
+            $tenant->translationUsage()
         );
     }
 
@@ -145,5 +212,12 @@ class TenantEntity
         $this->name = $tenant->name()->value();
         $this->ownerEmail = $tenant->ownerEmail()->value();
         $this->status = $tenant->status()->value();
+        $this->defaultLocale = $tenant->defaultLocale()->value();
+        $this->enabledLocales = array_map(
+            fn(LanguageCode $locale) => $locale->value(),
+            $tenant->enabledLocales()
+        );
+        $this->translationQuota = $tenant->translationQuota();
+        $this->translationUsage = $tenant->translationUsage();
     }
 }

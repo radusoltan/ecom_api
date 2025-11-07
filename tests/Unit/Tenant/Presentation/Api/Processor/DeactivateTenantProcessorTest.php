@@ -40,7 +40,9 @@ final class DeactivateTenantProcessorTest extends TestCase
             name: 'Test Tenant',
             ownerEmail: 'owner@example.com',
             status: 'inactive',
-            createdAt: (new \DateTimeImmutable())->format('Y-m-d H:i:s')
+            createdAt: (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+            defaultLocale: 'en',
+            enabledLocales: ['en']
         );
 
         $this->commandBus
@@ -160,7 +162,9 @@ final class DeactivateTenantProcessorTest extends TestCase
             name: 'Important Tenant',
             ownerEmail: 'important@example.com',
             status: 'inactive',
-            createdAt: $createdAt->format('Y-m-d H:i:s')
+            createdAt: $createdAt->format('Y-m-d H:i:s'),
+            defaultLocale: 'en',
+            enabledLocales: ['en']
         );
 
         $this->commandBus

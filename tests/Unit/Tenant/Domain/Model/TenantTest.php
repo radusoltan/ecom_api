@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Tenant\Domain\Model;
 
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\LanguageCode;
 use App\Tenant\Domain\Event\TenantActivated;
 use App\Tenant\Domain\Event\TenantCreated;
 use App\Tenant\Domain\Event\TenantDeactivated;
+use App\Tenant\Domain\Event\TenantReactivated;
+use App\Tenant\Domain\Event\TenantSuspended;
+use App\Tenant\Domain\Exception\TranslationQuotaExceededException;
 use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\ValueObject\TenantName;
@@ -486,5 +490,507 @@ final class TenantTest extends TestCase
         $this->assertSame($tenant->name(), $tenant->name());
         $this->assertSame($tenant->ownerEmail(), $tenant->ownerEmail());
         $this->assertSame($tenant->createdAt(), $tenant->createdAt());
+    }
+
+    // =============================================
+    // Test Suspend Method
+    // =============================================
+
+    public function testItSuspendsActiveTenant(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Active Tenant');
+        $email = Email::fromString('active@example.com');
+        $tenant = Tenant::create($name, $email);
+        $tenant->popEvents(); // Clear the creation event
+
+        // Act
+        $tenant->suspend();
+
+        // Assert
+        $this->assertTrue($tenant->status()->isSuspended());
+        $this->assertFalse($tenant->status()->isActive());
+    }
+
+    public function testItRecordsTenantSuspendedEvent(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Active Tenant');
+        $email = Email::fromString('active@example.com');
+        $tenant = Tenant::create($name, $email);
+        $tenant->popEvents(); // Clear the creation event
+
+        // Act
+        $tenant->suspend();
+        $events = $tenant->popEvents();
+
+        // Assert
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf(TenantSuspended::class, $events[0]);
+        $this->assertTrue($events[0]->tenantId->equals($tenant->id()));
+    }
+
+    public function testItThrowsExceptionWhenSuspendingAlreadySuspendedTenant(): void
+    {
+        // Arrange
+        $id = TenantId::generate();
+        $name = TenantName::fromString('Suspended Tenant');
+        $email = Email::fromString('suspended@example.com');
+        $status = TenantStatus::suspended();
+        $createdAt = new \DateTimeImmutable();
+        $tenant = Tenant::fromPersistence($id, $name, $email, $status, $createdAt);
+
+        // Assert
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Tenant is already suspended');
+
+        // Act
+        $tenant->suspend();
+    }
+
+    public function testItThrowsExceptionWhenSuspendingInactiveTenant(): void
+    {
+        // Arrange
+        $id = TenantId::generate();
+        $name = TenantName::fromString('Inactive Tenant');
+        $email = Email::fromString('inactive@example.com');
+        $status = TenantStatus::inactive();
+        $createdAt = new \DateTimeImmutable();
+        $tenant = Tenant::fromPersistence($id, $name, $email, $status, $createdAt);
+
+        // Assert
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Cannot suspend an inactive tenant');
+
+        // Act
+        $tenant->suspend();
+    }
+
+    // =============================================
+    // Test Reactivate Method
+    // =============================================
+
+    public function testItReactivatesSuspendedTenant(): void
+    {
+        // Arrange
+        $id = TenantId::generate();
+        $name = TenantName::fromString('Suspended Tenant');
+        $email = Email::fromString('suspended@example.com');
+        $status = TenantStatus::suspended();
+        $createdAt = new \DateTimeImmutable();
+        $tenant = Tenant::fromPersistence($id, $name, $email, $status, $createdAt);
+
+        // Act
+        $tenant->reactivate();
+
+        // Assert
+        $this->assertTrue($tenant->status()->isActive());
+        $this->assertFalse($tenant->status()->isSuspended());
+    }
+
+    public function testItRecordsTenantReactivatedEvent(): void
+    {
+        // Arrange
+        $id = TenantId::generate();
+        $name = TenantName::fromString('Suspended Tenant');
+        $email = Email::fromString('suspended@example.com');
+        $status = TenantStatus::suspended();
+        $createdAt = new \DateTimeImmutable();
+        $tenant = Tenant::fromPersistence($id, $name, $email, $status, $createdAt);
+
+        // Act
+        $tenant->reactivate();
+        $events = $tenant->popEvents();
+
+        // Assert
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf(TenantReactivated::class, $events[0]);
+        $this->assertTrue($events[0]->tenantId->equals($tenant->id()));
+    }
+
+    public function testItThrowsExceptionWhenReactivatingActiveTenant(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Active Tenant');
+        $email = Email::fromString('active@example.com');
+        $tenant = Tenant::create($name, $email);
+        $tenant->popEvents(); // Clear the creation event
+
+        // Assert
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Tenant is already active');
+
+        // Act
+        $tenant->reactivate();
+    }
+
+    public function testItThrowsExceptionWhenReactivatingInactiveTenant(): void
+    {
+        // Arrange
+        $id = TenantId::generate();
+        $name = TenantName::fromString('Inactive Tenant');
+        $email = Email::fromString('inactive@example.com');
+        $status = TenantStatus::inactive();
+        $createdAt = new \DateTimeImmutable();
+        $tenant = Tenant::fromPersistence($id, $name, $email, $status, $createdAt);
+
+        // Assert
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Only suspended tenants can be reactivated');
+
+        // Act
+        $tenant->reactivate();
+    }
+
+    // =============================================
+    // Test Locale Management
+    // =============================================
+
+    public function testItCreatesWithDefaultLocaleEn(): void
+    {
+        // Arrange & Act
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+
+        // Assert
+        $this->assertTrue($tenant->defaultLocale()->equals(LanguageCode::en()));
+    }
+
+    public function testItCreatesWithEnLocaleEnabled(): void
+    {
+        // Arrange & Act
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+
+        // Assert
+        $this->assertCount(1, $tenant->enabledLocales());
+        $this->assertTrue($tenant->enabledLocales()[0]->equals(LanguageCode::en()));
+    }
+
+    public function testItSetsDefaultLocale(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+        $tenant->popEvents();
+        $tenant->enableLocale(LanguageCode::fr());
+
+        // Act
+        $tenant->setDefaultLocale(LanguageCode::fr());
+
+        // Assert
+        $this->assertTrue($tenant->defaultLocale()->equals(LanguageCode::fr()));
+    }
+
+    public function testItThrowsExceptionWhenSettingDefaultLocaleToDisabledLocale(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+
+        // Assert
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Cannot set default locale to a disabled locale');
+
+        // Act
+        $tenant->setDefaultLocale(LanguageCode::fr());
+    }
+
+    public function testItEnablesLocale(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+        $tenant->popEvents();
+
+        // Act
+        $tenant->enableLocale(LanguageCode::fr());
+
+        // Assert
+        $this->assertCount(2, $tenant->enabledLocales());
+        $hasEnglish = false;
+        $hasFrench = false;
+        foreach ($tenant->enabledLocales() as $locale) {
+            if ($locale->equals(LanguageCode::en())) {
+                $hasEnglish = true;
+            }
+            if ($locale->equals(LanguageCode::fr())) {
+                $hasFrench = true;
+            }
+        }
+        $this->assertTrue($hasEnglish);
+        $this->assertTrue($hasFrench);
+    }
+
+    public function testItThrowsExceptionWhenEnablingAlreadyEnabledLocale(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+
+        // Assert
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Locale is already enabled');
+
+        // Act
+        $tenant->enableLocale(LanguageCode::en());
+    }
+
+    public function testItDisablesLocale(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+        $tenant->enableLocale(LanguageCode::fr());
+        $tenant->enableLocale(LanguageCode::de());
+        $this->assertCount(3, $tenant->enabledLocales());
+
+        // Act
+        $tenant->disableLocale(LanguageCode::fr());
+
+        // Assert
+        $this->assertCount(2, $tenant->enabledLocales());
+        foreach ($tenant->enabledLocales() as $locale) {
+            $this->assertFalse($locale->equals(LanguageCode::fr()));
+        }
+    }
+
+    public function testItThrowsExceptionWhenDisablingNotEnabledLocale(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+
+        // Assert
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Locale is not enabled');
+
+        // Act
+        $tenant->disableLocale(LanguageCode::fr());
+    }
+
+    public function testItThrowsExceptionWhenDisablingDefaultLocale(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+        $tenant->enableLocale(LanguageCode::fr());
+
+        // Assert
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Cannot disable the default locale');
+
+        // Act
+        $tenant->disableLocale(LanguageCode::en());
+    }
+
+    public function testItReconstitutesWithCustomLocales(): void
+    {
+        // Arrange
+        $id = TenantId::generate();
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $status = TenantStatus::active();
+        $createdAt = new \DateTimeImmutable();
+        $defaultLocale = LanguageCode::fr();
+        $enabledLocales = [LanguageCode::en(), LanguageCode::fr(), LanguageCode::de()];
+
+        // Act
+        $tenant = Tenant::fromPersistence($id, $name, $email, $status, $createdAt, $defaultLocale, $enabledLocales);
+
+        // Assert
+        $this->assertTrue($tenant->defaultLocale()->equals(LanguageCode::fr()));
+        $this->assertCount(3, $tenant->enabledLocales());
+    }
+
+    // =============================================
+    // Test Translation Quota
+    // =============================================
+
+    public function testItCreatesWithDefaultTranslationQuota(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+
+        // Act
+        $tenant = Tenant::create($name, $email);
+
+        // Assert
+        $this->assertEquals(10000, $tenant->translationQuota());
+        $this->assertEquals(0, $tenant->translationUsage());
+    }
+
+    public function testItIncrementsTranslationUsage(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+
+        // Act
+        $tenant->incrementTranslationUsage();
+
+        // Assert
+        $this->assertEquals(1, $tenant->translationUsage());
+    }
+
+    public function testItIncrementsTranslationUsageByCustomCount(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+
+        // Act
+        $tenant->incrementTranslationUsage(5);
+
+        // Assert
+        $this->assertEquals(5, $tenant->translationUsage());
+    }
+
+    public function testItThrowsExceptionWhenTranslationQuotaExceeded(): void
+    {
+        // Arrange
+        $id = TenantId::generate();
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $status = TenantStatus::active();
+        $createdAt = new \DateTimeImmutable();
+        $tenant = Tenant::fromPersistence(
+            $id,
+            $name,
+            $email,
+            $status,
+            $createdAt,
+            null,
+            null,
+            100, // quota
+            95   // current usage
+        );
+
+        // Assert
+        $this->expectException(TranslationQuotaExceededException::class);
+        $this->expectExceptionMessage('Translation quota exceeded');
+
+        // Act
+        $tenant->incrementTranslationUsage(10); // Would exceed quota
+    }
+
+    public function testItSetsTranslationQuota(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+
+        // Act
+        $tenant->setTranslationQuota(50000);
+
+        // Assert
+        $this->assertEquals(50000, $tenant->translationQuota());
+    }
+
+    public function testItThrowsExceptionWhenSettingNegativeQuota(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+
+        // Assert
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Translation quota cannot be negative');
+
+        // Act
+        $tenant->setTranslationQuota(-100);
+    }
+
+    public function testItThrowsExceptionWhenSettingQuotaAboveMaximum(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+
+        // Assert
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Translation quota cannot exceed 1,000,000');
+
+        // Act
+        $tenant->setTranslationQuota(2000000);
+    }
+
+    public function testItResetsTranslationUsage(): void
+    {
+        // Arrange
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $tenant = Tenant::create($name, $email);
+        $tenant->incrementTranslationUsage(100);
+
+        // Act
+        $tenant->resetTranslationUsage();
+
+        // Assert
+        $this->assertEquals(0, $tenant->translationUsage());
+    }
+
+    public function testItChecksIfTranslationQuotaIsAvailable(): void
+    {
+        // Arrange
+        $id = TenantId::generate();
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $status = TenantStatus::active();
+        $createdAt = new \DateTimeImmutable();
+        $tenant = Tenant::fromPersistence(
+            $id,
+            $name,
+            $email,
+            $status,
+            $createdAt,
+            null,
+            null,
+            100, // quota
+            95   // current usage
+        );
+
+        // Assert
+        $this->assertTrue($tenant->hasTranslationQuotaAvailable(5));
+        $this->assertFalse($tenant->hasTranslationQuotaAvailable(6));
+    }
+
+    public function testItReturnsRemainingTranslationQuota(): void
+    {
+        // Arrange
+        $id = TenantId::generate();
+        $name = TenantName::fromString('Test Tenant');
+        $email = Email::fromString('test@example.com');
+        $status = TenantStatus::active();
+        $createdAt = new \DateTimeImmutable();
+        $tenant = Tenant::fromPersistence(
+            $id,
+            $name,
+            $email,
+            $status,
+            $createdAt,
+            null,
+            null,
+            10000, // quota
+            3500   // current usage
+        );
+
+        // Assert
+        $this->assertEquals(6500, $tenant->remainingTranslationQuota());
     }
 }
