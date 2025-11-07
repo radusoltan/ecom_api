@@ -60,24 +60,32 @@ final class Version20251203090000 extends AbstractMigration
         $this->addSql('ALTER TABLE media_images ENABLE ROW LEVEL SECURITY');
         $this->addSql('ALTER TABLE media_images FORCE ROW LEVEL SECURITY');
 
-        // Create policy for media_images
+        // Create policy for media_images (only if not exists)
         $this->addSql("
-            CREATE POLICY p_media_images_rw ON media_images
-            FOR ALL
-            USING (tenant_id = current_setting('app.tenant_id', true))
-            WITH CHECK (tenant_id = current_setting('app.tenant_id', true))
+            DO $$ BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'media_images' AND policyname = 'p_media_images_rw') THEN
+                    CREATE POLICY p_media_images_rw ON media_images
+                    FOR ALL
+                    USING (tenant_id = current_setting('app.tenant_id', true))
+                    WITH CHECK (tenant_id = current_setting('app.tenant_id', true));
+                END IF;
+            END $$;
         ");
 
         // Enable RLS on media_thumbnails
         $this->addSql('ALTER TABLE media_thumbnails ENABLE ROW LEVEL SECURITY');
         $this->addSql('ALTER TABLE media_thumbnails FORCE ROW LEVEL SECURITY');
 
-        // Create policy for media_thumbnails
+        // Create policy for media_thumbnails (only if not exists)
         $this->addSql("
-            CREATE POLICY p_media_thumbnails_rw ON media_thumbnails
-            FOR ALL
-            USING (tenant_id = current_setting('app.tenant_id', true))
-            WITH CHECK (tenant_id = current_setting('app.tenant_id', true))
+            DO $$ BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'media_thumbnails' AND policyname = 'p_media_thumbnails_rw') THEN
+                    CREATE POLICY p_media_thumbnails_rw ON media_thumbnails
+                    FOR ALL
+                    USING (tenant_id = current_setting('app.tenant_id', true))
+                    WITH CHECK (tenant_id = current_setting('app.tenant_id', true));
+                END IF;
+            END $$;
         ");
 
         // Log RLS enablement

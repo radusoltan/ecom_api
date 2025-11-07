@@ -14,11 +14,13 @@ use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
 use App\Tenant\Domain\ValueObject\TenantName;
 use App\Shared\Domain\ValueObject\Email;
+use App\Tests\Support\TenantTestTrait;
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class SkuGeneratorServiceTest extends KernelTestCase
 {
+    use TenantTestTrait;
     private SkuGeneratorService $service;
     private TenantRepositoryInterface $tenantRepository;
     private CategoryRepositoryInterface $categoryRepository;
@@ -39,6 +41,9 @@ final class SkuGeneratorServiceTest extends KernelTestCase
         $this->connection = $container->get('doctrine.dbal.default_connection');
         $this->createdTenantIds = [];
         $this->createdCategoryIds = [];
+
+        // Set tenant context for RLS
+        $this->setTenantContext($this->getDefaultTenantId()->toString());
 
         $this->cleanupExistingFixtures();
 

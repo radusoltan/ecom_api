@@ -13,10 +13,12 @@ use App\Tenant\Domain\Repository\TenantRepositoryInterface;
 use App\Tenant\Domain\ValueObject\TenantId;
 use App\Tenant\Domain\ValueObject\TenantName;
 use App\Tenant\Domain\ValueObject\TenantStatus;
+use App\Tests\Support\TenantTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class ActivateTenantCommandHandlerTest extends KernelTestCase
 {
+    use TenantTestTrait;
     private TenantRepositoryInterface $tenantRepository;
     private ActivateTenantCommandHandler $handler;
     private static int $counter = 0;
@@ -28,6 +30,9 @@ final class ActivateTenantCommandHandlerTest extends KernelTestCase
         $container = self::getContainer();
         $this->tenantRepository = $container->get(TenantRepositoryInterface::class);
         $this->handler = $container->get(ActivateTenantCommandHandler::class);
+
+        // Set tenant context for RLS
+        $this->setTenantContext($this->getDefaultTenantId()->toString());
     }
 
     private function generateUniqueEmail(string $prefix = 'test'): string

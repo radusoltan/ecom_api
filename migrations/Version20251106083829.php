@@ -20,16 +20,37 @@ final class Version20251106083829 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP TABLE product_reviews');
-        $this->addSql('DROP TABLE audit_log');
-        $this->addSql('ALTER TABLE cart_items DROP CONSTRAINT fk_cart_items_cart');
+        $this->addSql('DROP TABLE IF EXISTS product_reviews');
+        $this->addSql('DROP TABLE IF EXISTS audit_log');
+        $this->addSql("
+            DO $$
+            BEGIN
+                IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_cart_items_cart') THEN
+                    ALTER TABLE cart_items DROP CONSTRAINT fk_cart_items_cart;
+                END IF;
+            END $$;
+        ");
         $this->addSql('ALTER TABLE orders ALTER discount_amount TYPE INT');
         $this->addSql('ALTER TABLE orders ALTER tax_amount TYPE INT');
-        $this->addSql('DROP INDEX idx_wishlists_customer_id');
+        $this->addSql('DROP INDEX IF EXISTS idx_wishlists_customer_id');
         $this->addSql('ALTER TABLE wishlists ALTER id TYPE VARCHAR(36)');
         $this->addSql('ALTER TABLE wishlists ALTER tenant_id TYPE VARCHAR(36)');
-        $this->addSql('ALTER INDEX idx_wishlists_tenant_id RENAME TO idx_wishlists_tenant');
-        $this->addSql('ALTER INDEX uniq_wishlists_customer_tenant RENAME TO uniq_customer_tenant');
+        $this->addSql("
+            DO $$
+            BEGIN
+                IF EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_wishlists_tenant_id') THEN
+                    ALTER INDEX idx_wishlists_tenant_id RENAME TO idx_wishlists_tenant;
+                END IF;
+            END $$;
+        ");
+        $this->addSql("
+            DO $$
+            BEGIN
+                IF EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'uniq_wishlists_customer_tenant') THEN
+                    ALTER INDEX uniq_wishlists_customer_tenant RENAME TO uniq_customer_tenant;
+                END IF;
+            END $$;
+        ");
     }
 
     public function down(Schema $schema): void

@@ -10,6 +10,7 @@ use App\Inventory\Domain\Model\Quantity;
 use App\Inventory\Domain\Model\StockItemId;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Tests\Support\TenantTestTrait;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Uid\Uuid;
 
@@ -20,6 +21,8 @@ use Symfony\Component\Uid\Uuid;
  */
 final class StockItemGraphQLTest extends ApiTestCase
 {
+    use TenantTestTrait;
+
     private TenantId $tenantId;
     private ProductId $productId;
     private WarehouseId $warehouseId;
@@ -28,10 +31,40 @@ final class StockItemGraphQLTest extends ApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->tenantId = TenantId::fromString(Uuid::v4()->toRfc4122());
+
+        // Use default test tenant ID for RLS compatibility
+        $this->tenantId = $this->getDefaultTenantId();
         $this->productId = ProductId::fromString(Uuid::v4()->toRfc4122());
         $this->warehouseId = WarehouseId::fromString((string) new Ulid());
         $this->stockItemId = StockItemId::fromString((string) new Ulid());
+
+        // Set tenant context for direct DB operations
+        $this->setTenantContext($this->tenantId->toString());
+
+        // Clean up existing test data
+        $this->cleanupTestData();
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up after each test
+        $this->cleanupTestData();
+
+        parent::tearDown();
+    }
+
+    private function cleanupTestData(): void
+    {
+        $em = $this->getEntityManager();
+        $connection = $em->getConnection();
+
+        // Delete all stock items for the test tenant
+        $connection->executeStatement(
+            sprintf(
+                "DELETE FROM stock_items WHERE tenant_id = '%s'",
+                $this->tenantId->toString()
+            )
+        );
     }
 
     protected function createAuthenticatedClient(
@@ -88,7 +121,7 @@ GRAPHQL;
             ],
         ];
 
-        $client->request('POST', '/api/graphql', [
+        $client->request('POST', '/api/v1/graphql', [
             'json' => [
                 'query' => $mutation,
                 'variables' => $variables,
@@ -141,7 +174,7 @@ query GetStockItems {
 }
 GRAPHQL;
 
-        $client->request('POST', '/api/graphql', [
+        $client->request('POST', '/api/v1/graphql', [
             'json' => [
                 'query' => $query,
             ],
@@ -183,7 +216,7 @@ GRAPHQL;
             'id' => '/api/stock-items/' . $createdId,
         ];
 
-        $client->request('POST', '/api/graphql', [
+        $client->request('POST', '/api/v1/graphql', [
             'json' => [
                 'query' => $query,
                 'variables' => $variables,
@@ -232,7 +265,7 @@ GRAPHQL;
             ],
         ];
 
-        $client->request('POST', '/api/graphql', [
+        $client->request('POST', '/api/v1/graphql', [
             'json' => [
                 'query' => $mutation,
                 'variables' => $variables,
@@ -286,7 +319,7 @@ GRAPHQL;
             ],
         ];
 
-        $client->request('POST', '/api/graphql', [
+        $client->request('POST', '/api/v1/graphql', [
             'json' => [
                 'query' => $mutation,
                 'variables' => $variables,
@@ -336,7 +369,7 @@ GRAPHQL;
             ],
         ];
 
-        $client->request('POST', '/api/graphql', [
+        $client->request('POST', '/api/v1/graphql', [
             'json' => [
                 'query' => $mutation,
                 'variables' => $variables,
@@ -406,7 +439,7 @@ GRAPHQL;
             ],
         ];
 
-        $client->request('POST', '/api/graphql', [
+        $client->request('POST', '/api/v1/graphql', [
             'json' => [
                 'query' => $mutation,
                 'variables' => $variables,
@@ -431,7 +464,7 @@ GRAPHQL;
 
     private function createStockItem($client): string
     {
-        $client->request('POST', '/api/stock-items', [
+        $client->request('POST', '/api/v1/stock-items', [
             'json' => [
                 'tenantId' => $this->tenantId->toString(),
                 'productId' => $this->productId->toString(),
@@ -448,7 +481,7 @@ GRAPHQL;
 
     private function createStockItemForProduct($client, ProductId $productId, int $quantity): void
     {
-        $client->request('POST', '/api/stock-items', [
+        $client->request('POST', '/api/v1/stock-items', [
             'json' => [
                 'tenantId' => $this->tenantId->toString(),
                 'productId' => $productId->toString(),

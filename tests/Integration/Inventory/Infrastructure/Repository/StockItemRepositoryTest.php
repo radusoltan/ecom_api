@@ -11,10 +11,13 @@ use App\Inventory\Domain\Model\StockItemId;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Tests\Support\TenantTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class StockItemRepositoryTest extends KernelTestCase
 {
+    use TenantTestTrait;
+
     private StockItemRepositoryInterface $repository;
     private TenantId $tenantId;
 
@@ -24,7 +27,37 @@ final class StockItemRepositoryTest extends KernelTestCase
 
         $container = static::getContainer();
         $this->repository = $container->get(StockItemRepositoryInterface::class);
-        $this->tenantId = TenantId::generate();
+
+        // Use default test tenant ID
+        $this->tenantId = $this->getDefaultTenantId();
+
+        // Set tenant context for RLS (Row-Level Security)
+        $this->setTenantContext($this->tenantId->toString());
+
+        // Clean up existing test data to avoid pollution between tests
+        $this->cleanupTestData();
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up after each test
+        $this->cleanupTestData();
+
+        parent::tearDown();
+    }
+
+    private function cleanupTestData(): void
+    {
+        $em = $this->getEntityManager();
+        $connection = $em->getConnection();
+
+        // Delete all stock items for the test tenant
+        $connection->executeStatement(
+            sprintf(
+                "DELETE FROM stock_items WHERE tenant_id = '%s'",
+                $this->tenantId->toString()
+            )
+        );
     }
 
     public function testSaveAndFindById(): void
@@ -231,8 +264,8 @@ final class StockItemRepositoryTest extends KernelTestCase
 
     public function testFindByTenant(): void
     {
-        $tenant1 = TenantId::generate();
-        $tenant2 = TenantId::generate();
+        // Use default tenant from RLS context
+        $tenant1 = $this->tenantId;
 
         // Create stock items for tenant 1
         $stockItem1 = StockItem::create(
@@ -251,18 +284,8 @@ final class StockItemRepositoryTest extends KernelTestCase
             Quantity::fromInt(50)
         );
 
-        // Create stock item for tenant 2
-        $stockItem3 = StockItem::create(
-            StockItemId::generate(),
-            $tenant2,
-            ProductId::generate(),
-            WarehouseId::generate(),
-            Quantity::fromInt(75)
-        );
-
         $this->repository->save($stockItem1);
         $this->repository->save($stockItem2);
-        $this->repository->save($stockItem3);
 
         $tenant1Items = $this->repository->findByTenant($tenant1);
 

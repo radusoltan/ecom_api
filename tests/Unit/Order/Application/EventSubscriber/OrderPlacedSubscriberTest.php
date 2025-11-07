@@ -17,21 +17,25 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[CoversClass(OrderPlacedSubscriber::class)]
 final class OrderPlacedSubscriberTest extends TestCase
 {
     private MailerInterface $mailer;
+    private TranslatorInterface $translator;
     private LoggerInterface $logger;
     private OrderPlacedSubscriber $subscriber;
 
     protected function setUp(): void
     {
         $this->mailer = $this->createMock(MailerInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->subscriber = new OrderPlacedSubscriber(
             mailer: $this->mailer,
+            translator: $this->translator,
             logger: $this->logger,
             senderEmail: 'test@example.com',
             senderName: 'Test Platform'

@@ -17,7 +17,7 @@ final class Version20251201090000 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql(<<<'SQL'
-CREATE TABLE media_images (
+CREATE TABLE IF NOT EXISTS media_images (
     id VARCHAR(36) NOT NULL,
     tenant_id VARCHAR(36) NOT NULL,
     owner_type VARCHAR(16) NOT NULL CHECK (owner_type IN ('product', 'category', 'user')),
@@ -32,11 +32,11 @@ CREATE TABLE media_images (
     PRIMARY KEY(id)
 )
 SQL);
-        $this->addSql('CREATE INDEX idx_media_images_owner ON media_images (tenant_id, owner_type, owner_id)');
-        $this->addSql('CREATE INDEX idx_media_images_tenant_uploaded ON media_images (tenant_id, uploaded_at)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS idx_media_images_owner ON media_images (tenant_id, owner_type, owner_id)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS idx_media_images_tenant_uploaded ON media_images (tenant_id, uploaded_at)');
 
         $this->addSql(<<<'SQL'
-CREATE TABLE media_thumbnails (
+CREATE TABLE IF NOT EXISTS media_thumbnails (
     id VARCHAR(36) NOT NULL,
     tenant_id VARCHAR(36) NOT NULL,
     image_id VARCHAR(36) NOT NULL,
@@ -50,9 +50,22 @@ CREATE TABLE media_thumbnails (
     CONSTRAINT fk_media_thumbnails_image FOREIGN KEY (image_id) REFERENCES media_images (id) ON DELETE CASCADE
 )
 SQL);
-        $this->addSql('CREATE INDEX idx_media_thumbnails_tenant ON media_thumbnails (tenant_id)');
-        $this->addSql('CREATE UNIQUE INDEX uniq_media_thumbnails_image_size ON media_thumbnails (image_id, size_label)');
-        $this->addSql('CREATE INDEX idx_media_thumbnails_crop ON media_thumbnails USING GIN (crop_json)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS idx_media_thumbnails_tenant ON media_thumbnails (tenant_id)');
+        $this->addSql('CREATE UNIQUE INDEX IF NOT EXISTS uniq_media_thumbnails_image_size ON media_thumbnails (image_id, size_label)');
+
+        // Skip GIN index creation if column type is JSON (not JSONB) from previous migration
+        $this->addSql('DO $$ BEGIN
+            IF EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = \'media_thumbnails\'
+                AND column_name = \'crop_json\'
+                AND data_type = \'jsonb\'
+            ) AND NOT EXISTS (
+                SELECT 1 FROM pg_indexes WHERE indexname = \'idx_media_thumbnails_crop\'
+            ) THEN
+                CREATE INDEX idx_media_thumbnails_crop ON media_thumbnails USING GIN (crop_json jsonb_path_ops);
+            END IF;
+        END $$');
     }
 
     public function down(Schema $schema): void

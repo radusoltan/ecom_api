@@ -11,10 +11,13 @@ use App\Tenant\Domain\Exception\TenantAlreadyExistsException;
 use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
 use App\Tenant\Domain\ValueObject\TenantName;
+use App\Tests\Support\TenantTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class CreateTenantCommandHandlerTest extends KernelTestCase
 {
+    use TenantTestTrait;
+
     private TenantRepositoryInterface $tenantRepository;
     private CreateTenantCommandHandler $handler;
     private static int $counter = 0;
@@ -26,6 +29,9 @@ final class CreateTenantCommandHandlerTest extends KernelTestCase
         $container = self::getContainer();
         $this->tenantRepository = $container->get(TenantRepositoryInterface::class);
         $this->handler = $container->get(CreateTenantCommandHandler::class);
+
+        // Set tenant context for RLS
+        $this->setTenantContext($this->getDefaultTenantId()->toString());
     }
 
     private function generateUniqueEmail(string $prefix = 'test'): string

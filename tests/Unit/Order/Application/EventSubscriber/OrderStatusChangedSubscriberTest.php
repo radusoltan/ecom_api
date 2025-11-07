@@ -8,6 +8,7 @@ use App\Order\Application\EventSubscriber\OrderStatusChangedSubscriber;
 use App\Order\Domain\Event\OrderStatusChanged;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderStatus;
+use App\Order\Domain\Repository\OrderRepositoryInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -15,21 +16,28 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[CoversClass(OrderStatusChangedSubscriber::class)]
 final class OrderStatusChangedSubscriberTest extends TestCase
 {
     private MailerInterface $mailer;
+    private OrderRepositoryInterface $orderRepository;
+    private TranslatorInterface $translator;
     private LoggerInterface $logger;
     private OrderStatusChangedSubscriber $subscriber;
 
     protected function setUp(): void
     {
         $this->mailer = $this->createMock(MailerInterface::class);
+        $this->orderRepository = $this->createMock(OrderRepositoryInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->subscriber = new OrderStatusChangedSubscriber(
             mailer: $this->mailer,
+            orderRepository: $this->orderRepository,
+            translator: $this->translator,
             logger: $this->logger,
             senderEmail: 'test@example.com',
             senderName: 'Test Platform'

@@ -6,11 +6,13 @@ namespace App\Tests\Integration\Internationalization;
 
 use App\Shared\Infrastructure\Doctrine\Service\TranslatableHelper;
 use App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity;
+use App\Tests\Support\TenantTestTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class GedmoTranslatablePersistenceTest extends KernelTestCase
 {
+    use TenantTestTrait;
     private EntityManagerInterface $entityManager;
     private TranslatableHelper $translatableHelper;
 
@@ -21,6 +23,9 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
         $container = self::getContainer();
         $this->entityManager = $container->get(EntityManagerInterface::class);
         $this->translatableHelper = $container->get(TranslatableHelper::class);
+
+        // Set tenant context for RLS
+        $this->setTenantContext($this->getDefaultTenantId()->toString());
 
         // Clean up test tenants
         $this->cleanupTestTenants();

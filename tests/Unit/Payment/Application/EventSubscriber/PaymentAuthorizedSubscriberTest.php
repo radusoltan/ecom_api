@@ -6,19 +6,28 @@ namespace App\Tests\Unit\Payment\Application\EventSubscriber;
 
 use App\Payment\Application\EventSubscriber\PaymentAuthorizedSubscriber;
 use App\Payment\Domain\Event\PaymentAuthorized;
+use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use App\Payment\Domain\ValueObject\PaymentId;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final class PaymentAuthorizedSubscriberTest extends TestCase
 {
+    private PaymentRepositoryInterface $paymentRepository;
+    private MessageBusInterface $commandBus;
     private LoggerInterface $logger;
     private PaymentAuthorizedSubscriber $subscriber;
 
     protected function setUp(): void
     {
+        $this->paymentRepository = $this->createMock(PaymentRepositoryInterface::class);
+        $this->commandBus = $this->createMock(MessageBusInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+
         $this->subscriber = new PaymentAuthorizedSubscriber(
+            paymentRepository: $this->paymentRepository,
+            commandBus: $this->commandBus,
             logger: $this->logger
         );
     }

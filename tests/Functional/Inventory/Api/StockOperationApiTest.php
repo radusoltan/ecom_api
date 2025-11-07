@@ -13,9 +13,12 @@ use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Inventory\Domain\Repository\StockReservationRepositoryInterface;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Tests\Support\TenantTestTrait;
 
 final class StockOperationApiTest extends ApiTestCase
 {
+    use TenantTestTrait;
+
     private TenantId $tenantId;
     private ProductId $productId;
     private WarehouseId $warehouseId;
@@ -26,13 +29,48 @@ final class StockOperationApiTest extends ApiTestCase
     {
         parent::setUp();
 
-        $this->tenantId = TenantId::generate();
+        // Use default test tenant ID for RLS compatibility
+        $this->tenantId = $this->getDefaultTenantId();
         $this->productId = ProductId::generate();
         $this->warehouseId = WarehouseId::generate();
 
         $container = static::getContainer();
         $this->stockItemRepository = $container->get(StockItemRepositoryInterface::class);
         $this->reservationRepository = $container->get(StockReservationRepositoryInterface::class);
+
+        // Set tenant context for direct DB operations
+        $this->setTenantContext($this->tenantId->toString());
+
+        // Clean up existing test data
+        $this->cleanupTestData();
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up after each test
+        $this->cleanupTestData();
+
+        parent::tearDown();
+    }
+
+    private function cleanupTestData(): void
+    {
+        $em = $this->getEntityManager();
+        $connection = $em->getConnection();
+
+        // Delete all test data
+        $connection->executeStatement(
+            sprintf(
+                "DELETE FROM stock_reservations WHERE tenant_id = '%s'",
+                $this->tenantId->toString()
+            )
+        );
+        $connection->executeStatement(
+            sprintf(
+                "DELETE FROM stock_items WHERE tenant_id = '%s'",
+                $this->tenantId->toString()
+            )
+        );
     }
 
     /**
@@ -83,7 +121,7 @@ final class StockOperationApiTest extends ApiTestCase
         $stockItem = $this->createStockItem(100);
         $reservationId = 'cart-123';
 
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/stock/reserve', [
+        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -97,7 +135,7 @@ final class StockOperationApiTest extends ApiTestCase
         ]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(201);
 
         $data = $response->toArray();
         $this->assertEquals($this->productId->toString(), $data['productId']);
@@ -118,7 +156,7 @@ final class StockOperationApiTest extends ApiTestCase
     {
         $this->createStockItem(10);
 
-        $this->createAuthenticatedClient()->request('POST', '/api/stock/reserve', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -138,7 +176,7 @@ final class StockOperationApiTest extends ApiTestCase
     {
         $nonExistentProduct = ProductId::generate();
 
-        $this->createAuthenticatedClient()->request('POST', '/api/stock/reserve', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -151,7 +189,7 @@ final class StockOperationApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500); // RuntimeException from processor
+        $this->assertResponseStatusCodeSame(404); // NotFoundHttpException from processor
     }
 
     public function testAllocateStock(): void
@@ -160,7 +198,7 @@ final class StockOperationApiTest extends ApiTestCase
         $orderId = 'order-123';
 
         // First reserve
-        $this->createAuthenticatedClient()->request('POST', '/api/stock/reserve', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -174,7 +212,7 @@ final class StockOperationApiTest extends ApiTestCase
         ]);
 
         // Then allocate
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/stock/allocate', [
+        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/allocate', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -206,7 +244,7 @@ final class StockOperationApiTest extends ApiTestCase
         $orderId = 'order-456';
 
         // Allocate directly without reservation
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/stock/allocate', [
+        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/allocate', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -229,7 +267,7 @@ final class StockOperationApiTest extends ApiTestCase
     {
         $this->createStockItem(10);
 
-        $this->createAuthenticatedClient()->request('POST', '/api/stock/allocate', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/allocate', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -251,7 +289,7 @@ final class StockOperationApiTest extends ApiTestCase
         $reservationId = 'cart-123';
 
         // First reserve
-        $this->createAuthenticatedClient()->request('POST', '/api/stock/reserve', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -265,7 +303,7 @@ final class StockOperationApiTest extends ApiTestCase
         ]);
 
         // Then release
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/stock/release', [
+        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/release', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -296,7 +334,7 @@ final class StockOperationApiTest extends ApiTestCase
         $orderId = 'order-123';
 
         // Allocate
-        $this->createAuthenticatedClient()->request('POST', '/api/stock/allocate', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/allocate', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -310,7 +348,7 @@ final class StockOperationApiTest extends ApiTestCase
         ]);
 
         // Release allocated stock (e.g., order cancelled)
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/stock/release', [
+        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/release', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -333,7 +371,7 @@ final class StockOperationApiTest extends ApiTestCase
         $this->createStockItem(100);
 
         // First reservation
-        $response1 = static::createClient()->request('POST', '/api/stock/reserve', [
+        $response1 = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -351,7 +389,7 @@ final class StockOperationApiTest extends ApiTestCase
         $this->assertEquals(90, $data1['availableQuantity']);
 
         // Second reservation
-        $response2 = static::createClient()->request('POST', '/api/stock/reserve', [
+        $response2 = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -369,7 +407,7 @@ final class StockOperationApiTest extends ApiTestCase
         $this->assertEquals(75, $data2['availableQuantity']); // 100 - 10 - 15
 
         // Third reservation
-        $response3 = static::createClient()->request('POST', '/api/stock/reserve', [
+        $response3 = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -389,7 +427,7 @@ final class StockOperationApiTest extends ApiTestCase
 
     public function testReservationValidatesRequiredFields(): void
     {
-        $this->createAuthenticatedClient()->request('POST', '/api/stock/reserve', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -407,7 +445,7 @@ final class StockOperationApiTest extends ApiTestCase
     {
         $this->createStockItem(100);
 
-        $this->createAuthenticatedClient()->request('POST', '/api/stock/reserve', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',

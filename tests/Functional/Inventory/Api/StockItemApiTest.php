@@ -12,9 +12,12 @@ use App\Inventory\Domain\Model\StockItemId;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Tests\Support\TenantTestTrait;
 
 final class StockItemApiTest extends ApiTestCase
 {
+    use TenantTestTrait;
+
     private TenantId $tenantId;
     private ProductId $productId;
     private WarehouseId $warehouseId;
@@ -24,12 +27,41 @@ final class StockItemApiTest extends ApiTestCase
     {
         parent::setUp();
 
-        $this->tenantId = TenantId::generate();
+        // Use default test tenant ID for RLS compatibility
+        $this->tenantId = $this->getDefaultTenantId();
         $this->productId = ProductId::generate();
         $this->warehouseId = WarehouseId::generate();
 
         $container = static::getContainer();
         $this->stockItemRepository = $container->get(StockItemRepositoryInterface::class);
+
+        // Set tenant context for direct DB operations
+        $this->setTenantContext($this->tenantId->toString());
+
+        // Clean up existing test data
+        $this->cleanupTestData();
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up after each test
+        $this->cleanupTestData();
+
+        parent::tearDown();
+    }
+
+    private function cleanupTestData(): void
+    {
+        $em = $this->getEntityManager();
+        $connection = $em->getConnection();
+
+        // Delete all stock items for the test tenant
+        $connection->executeStatement(
+            sprintf(
+                "DELETE FROM stock_items WHERE tenant_id = '%s'",
+                $this->tenantId->toString()
+            )
+        );
     }
 
     /**
@@ -77,7 +109,7 @@ final class StockItemApiTest extends ApiTestCase
 
     public function testCreateStockItem(): void
     {
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/stock-items', [
+        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock-items', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -111,7 +143,7 @@ final class StockItemApiTest extends ApiTestCase
 
     public function testCreateStockItemWithDefaultThreshold(): void
     {
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/stock-items', [
+        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock-items', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -134,7 +166,7 @@ final class StockItemApiTest extends ApiTestCase
     {
         $stockItem = $this->createStockItem(100, 20);
 
-        $response = $this->createAuthenticatedClient()->request('GET', '/api/stock-items/' . $stockItem->id()->toString(), [
+        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/stock-items/' . $stockItem->id()->toString(), [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -156,7 +188,7 @@ final class StockItemApiTest extends ApiTestCase
         $this->createStockItemInWarehouse($warehouse1, 100);
         $this->createStockItemInWarehouse($warehouse2, 50);
 
-        $response = $this->createAuthenticatedClient()->request('GET', '/api/stock-items', [
+        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/stock-items', [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -180,7 +212,7 @@ final class StockItemApiTest extends ApiTestCase
         $this->createStockItemForProduct($product1, 100);
         $this->createStockItemForProduct($product2, 50);
 
-        $response = $this->createAuthenticatedClient()->request('GET', '/api/stock-items', [
+        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/stock-items', [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -198,7 +230,7 @@ final class StockItemApiTest extends ApiTestCase
 
     public function testCreateStockItemValidatesRequiredFields(): void
     {
-        $this->createAuthenticatedClient()->request('POST', '/api/stock-items', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/stock-items', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -214,7 +246,7 @@ final class StockItemApiTest extends ApiTestCase
 
     public function testCreateStockItemValidatesPositiveQuantity(): void
     {
-        $this->createAuthenticatedClient()->request('POST', '/api/stock-items', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/stock-items', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -235,7 +267,7 @@ final class StockItemApiTest extends ApiTestCase
     {
         $nonExistentId = StockItemId::generate();
 
-        $this->createAuthenticatedClient()->request('GET', '/api/stock-items/' . $nonExistentId->toString(), [
+        $this->createAuthenticatedClient()->request('GET', '/api/v1/stock-items/' . $nonExistentId->toString(), [
             'headers' => [
                 'Accept' => 'application/json',
             ],
