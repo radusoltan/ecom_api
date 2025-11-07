@@ -18,19 +18,20 @@ use App\Catalog\Domain\Model\ProductName;
 use App\Catalog\Domain\Model\SKU;
 use App\Catalog\Domain\Model\Slug;
 use App\Catalog\Domain\Model\Stock;
+use App\Catalog\Domain\ValueObject\ProductStatus;
+use App\Catalog\Domain\ValueObject\ProductType;
 use App\Internationalization\Infrastructure\Persistence\Doctrine\Entity\Translation;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Gedmo\Translatable\Translatable;
 
 #[Gedmo\TranslationEntity(class: Translation::class)]
 #[ORM\Entity]
 #[ORM\Table(
     name: 'catalog_products',
     uniqueConstraints: [
-        new ORM\UniqueConstraint(name: 'uniq_catalog_products_tenant_sku', columns: ['tenant_id', 'sku'])
+        new ORM\UniqueConstraint(name: 'uniq_catalog_products_tenant_sku', columns: ['tenant_id', 'sku']),
     ]
 )]
 // Performance indexes for queries
@@ -54,7 +55,7 @@ use Gedmo\Translatable\Translatable;
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\ProductItemProvider::class
         ),
         new Patch(),
-        new Delete()
+        new Delete(),
     ]
 )]
 class ProductEntity
@@ -116,6 +117,41 @@ class ProductEntity
     #[ORM\Column(type: 'boolean', name: 'is_featured')]
     private bool $isFeatured = false;
 
+    #[ORM\Column(type: 'decimal', precision: 5, scale: 2, nullable: true, name: 'bundle_discount_percentage')]
+    private ?float $bundleDiscountPercentage = null;
+
+    // Subscription fields
+    #[ORM\Column(type: 'string', length: 20, nullable: true, name: 'subscription_interval')]
+    private ?string $subscriptionInterval = null;
+
+    #[ORM\Column(type: 'integer', nullable: true, name: 'subscription_billing_cycles')]
+    private ?int $subscriptionBillingCycles = null;
+
+    #[ORM\Column(type: 'integer', nullable: true, name: 'subscription_setup_fee_amount')]
+    private ?int $subscriptionSetupFeeAmount = null;
+
+    #[ORM\Column(type: 'string', length: 3, nullable: true, name: 'subscription_setup_fee_currency')]
+    private ?string $subscriptionSetupFeeCurrency = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'subscription_trial_end')]
+    private ?\DateTimeImmutable $subscriptionTrialEnd = null;
+
+    // Downloadable file fields (for virtual products)
+    #[ORM\Column(type: 'string', length: 255, nullable: true, name: 'downloadable_filename')]
+    private ?string $downloadableFilename = null;
+
+    #[ORM\Column(type: 'string', length: 500, nullable: true, name: 'downloadable_url')]
+    private ?string $downloadableUrl = null;
+
+    #[ORM\Column(type: 'bigint', nullable: true, name: 'downloadable_size_bytes')]
+    private ?int $downloadableSizeBytes = null;
+
+    #[ORM\Column(type: 'integer', nullable: true, name: 'downloadable_limit')]
+    private ?int $downloadableLimit = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'downloadable_expires_at')]
+    private ?\DateTimeImmutable $downloadableExpiresAt = null;
+
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
@@ -141,17 +177,78 @@ class ProductEntity
         $entity->stockQuantity = $product->stock()->quantity();
         $entity->trackInventory = $product->stock()->trackInventory();
         $entity->allowBackorder = $product->stock()->allowBackorder();
-        $entity->images = array_map(fn($img) => $img->toArray(), $product->images());
+        $entity->images = array_map(fn ($img) => $img->toArray(), $product->images());
         $entity->active = $product->isActive();
         $entity->isFeatured = $product->isFeatured();
         $entity->createdAt = $product->createdAt();
         $entity->updatedAt = $product->updatedAt();
+
+        // Map subscription if present
+        if ($product->hasSubscription()) {
+            $subscription = $product->subscription();
+            $entity->subscriptionInterval = $subscription->interval()->value;
+            $entity->subscriptionBillingCycles = $subscription->billingCycles();
+            $entity->subscriptionSetupFeeAmount = $subscription->setupFee()->getAmount();
+            $entity->subscriptionSetupFeeCurrency = $subscription->setupFee()->getCurrency()->getCurrencyCode();
+            $entity->subscriptionTrialEnd = $subscription->trialPeriodEnd();
+        }
+
+        // Map downloadable file if present
+        if ($product->hasDownloadableFile()) {
+            $file = $product->downloadableFile();
+            $entity->downloadableFilename = $file->filename();
+            $entity->downloadableUrl = $file->fileUrl();
+            $entity->downloadableSizeBytes = $file->fileSizeBytes();
+            $entity->downloadableLimit = $file->downloadLimit();
+            $entity->downloadableExpiresAt = $file->expiresAt();
+        }
 
         return $entity;
     }
 
     public function toDomainModel(): Product
     {
+        // Reconstitute subscription if data exists
+        $subscription = null;
+        if ($this->subscriptionInterval !== null && $this->subscriptionBillingCycles !== null) {
+            $setupFee = Money::fromScalars(
+                $this->subscriptionSetupFeeAmount ?? 0,
+                $this->subscriptionSetupFeeCurrency ?? 'USD'
+            );
+
+            $subscription = $this->subscriptionTrialEnd !== null
+                ? \App\Catalog\Domain\ValueObject\Subscription::createWithTrial(
+                    \App\Catalog\Domain\ValueObject\SubscriptionInterval::fromString($this->subscriptionInterval),
+                    $this->subscriptionBillingCycles,
+                    $setupFee,
+                    $this->subscriptionTrialEnd
+                )
+                : \App\Catalog\Domain\ValueObject\Subscription::create(
+                    \App\Catalog\Domain\ValueObject\SubscriptionInterval::fromString($this->subscriptionInterval),
+                    $this->subscriptionBillingCycles,
+                    $setupFee
+                );
+        }
+
+        // Reconstitute downloadable file if data exists
+        $downloadableFile = null;
+        if ($this->downloadableFilename !== null && $this->downloadableUrl !== null && $this->downloadableSizeBytes !== null) {
+            $downloadableFile = $this->downloadableExpiresAt !== null
+                ? \App\Catalog\Domain\ValueObject\DownloadableFile::createWithExpiration(
+                    $this->downloadableFilename,
+                    $this->downloadableUrl,
+                    $this->downloadableSizeBytes,
+                    $this->downloadableLimit ?? 5,
+                    $this->downloadableExpiresAt
+                )
+                : \App\Catalog\Domain\ValueObject\DownloadableFile::create(
+                    $this->downloadableFilename,
+                    $this->downloadableUrl,
+                    $this->downloadableSizeBytes,
+                    $this->downloadableLimit ?? 5
+                );
+        }
+
         return Product::reconstituteFromPersistence(
             id: ProductId::fromString($this->id),
             tenantId: TenantId::fromString($this->tenantId),
@@ -164,7 +261,7 @@ class ProductEntity
                 $this->priceAmount,
                 $this->priceCurrency
             ),
-            categoryId: $this->categoryId !== null
+            categoryId: null !== $this->categoryId
                 ? CategoryId::fromString($this->categoryId)
                 : null,
             stock: Stock::create(
@@ -173,13 +270,17 @@ class ProductEntity
                 $this->allowBackorder
             ),
             images: array_map(
-                fn($data) => ProductImage::fromArray($data),
+                fn ($data) => ProductImage::fromArray($data),
                 $this->images
             ),
-            active: $this->active,
+            status: $this->active ? ProductStatus::active() : ProductStatus::inactive(),
+            type: ProductType::simple(), // TODO: Add product_type column to persist type
             isFeatured: $this->isFeatured,
             createdAt: $this->createdAt,
-            updatedAt: $this->updatedAt
+            updatedAt: $this->updatedAt,
+            bundle: null, // TODO: Add bundle reconstitution when bundle_items table is populated
+            subscription: $subscription,
+            downloadableFile: $downloadableFile
         );
     }
 
