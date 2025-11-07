@@ -1,7 +1,9 @@
-# E-Commerce Platform Documentation
+# Backend Documentation
+
+Multi-tenant e-commerce platform built with **DDD/CQRS/Hexagonal Architecture**.
 
 **Version**: 1.0
-**Last Updated**: October 17, 2025
+**Last Updated**: November 6, 2025
 **Architecture**: DDD/CQRS/Hexagonal (Multi-tenant)
 
 ---
@@ -22,23 +24,50 @@ Technical API specifications and integration guides.
 
 | Document | Description | Audience |
 |----------|-------------|----------|
-| [**Media API Documentation**](api/MEDIA_API_DOCUMENTATION.md) | Image uploads, thumbnails, multi-tenant media | Backend, Frontend |
-| [**Storefront API Documentation**](api/STOREFRONT_API_DOCUMENTATION.md) | Public-facing catalog API | Frontend |
-| [**Order API Documentation**](api/order-api-documentation.md) | Order management, fulfillment | Backend, Frontend |
+| [**API Hub**](api/README.md) | API overview and general information | All |
+| [**Cart API**](api/cart.md) | Shopping cart management | Backend, Frontend |
+| [**Media API**](api/media.md) | Image uploads, thumbnails, multi-tenant media | Backend, Frontend |
+| [**Order API**](api/order.md) | Order management, fulfillment | Backend, Frontend |
+| [**Storefront API**](api/storefront.md) | Public-facing catalog API | Frontend |
 
 **When to use**: Integrating with REST APIs, understanding request/response formats
 
 ---
 
-### 🚀 Features Documentation (`features/`)
+### 🏗️ Architecture & Patterns (`architecture/`)
 
-Feature-specific implementation guides combining setup, API, and usage.
+DDD patterns, architecture decisions, and design principles.
 
 | Document | Description | Audience |
 |----------|-------------|----------|
-| [**Payment Integration**](features/PAYMENT_INTEGRATION.md) | Stripe, PayPal, 2Checkout setup & API reference | Full-stack, DevOps |
+| [**DDD Patterns Summary**](architecture/ddd-patterns-summary.md) | Comprehensive DDD pattern catalog | All developers |
 
-**When to use**: Implementing or configuring complete features end-to-end
+**When to use**: Understanding architecture, implementing new features
+
+---
+
+### 📋 Business Requirements (`business/`)
+
+Product requirements and business rules.
+
+| Document | Description | Audience |
+|----------|-------------|----------|
+| [**Product Requirements Document**](business/PRD.md) | Complete business rules and use cases | All developers |
+
+**When to use**: Understanding business logic, implementing features
+
+---
+
+### 🔌 Integration (`integration/`)
+
+Framework integrations and external service connections.
+
+| Document | Description | Audience |
+|----------|-------------|----------|
+| [**DDD & Symfony Integration**](integration/ddd-symfony-integration.md) | Dual-model pattern, Doctrine integration | Backend |
+| [**Payment Integration**](integration/payment-integration.md) | Stripe, PayPal, 2Checkout setup | Backend, DevOps |
+
+**When to use**: Integrating with frameworks or external services
 
 ---
 
@@ -48,9 +77,9 @@ Infrastructure setup, monitoring, and operational procedures.
 
 | Document | Description | Audience |
 |----------|-------------|----------|
-| [**Monitoring**](devops/MONITORING.md) | Prometheus, Grafana, RabbitMQ operational guide | DevOps, Backend |
-| [**Prometheus & Grafana Setup**](devops/PROMETHEUS_GRAFANA_SETUP.md) | Initial monitoring stack installation | DevOps |
-| [**RabbitMQ Worker Setup**](devops/RABBITMQ_WORKER_SETUP_GUIDE.md) | Async message processing setup | DevOps, Backend |
+| [**Monitoring**](devops/monitoring.md) | Prometheus, Grafana, RabbitMQ operational guide | DevOps, Backend |
+| [**Prometheus & Grafana Setup**](devops/prometheus-grafana.md) | Initial monitoring stack installation | DevOps |
+| [**RabbitMQ Worker Setup**](devops/rabbitmq-worker.md) | Async message processing setup | DevOps, Backend |
 
 **When to use**: Setting up infrastructure, troubleshooting production issues
 
@@ -62,8 +91,9 @@ Practical guides for common development tasks.
 
 | Document | Description | Audience |
 |----------|-------------|----------|
+| [**Creating a New Aggregate**](guides/new-aggregate.md) | Step-by-step guide for DDD aggregates | Backend |
+| [**Testing Guide**](guides/testing-guide.md) | PHPUnit, integration tests, test strategy | Backend |
 | [**Observability Quickstart**](guides/observability-quickstart.md) | Getting started with metrics and monitoring | All developers |
-| [**Testing Guide**](guides/sprint-1-testing-guide.md) | PHPUnit, integration tests, test strategy | Backend |
 
 **When to use**: Learning platform conventions, writing tests, debugging
 
@@ -75,7 +105,7 @@ Deployment checklists and procedures.
 
 | Document | Description | Audience |
 |----------|-------------|----------|
-| [**Deployment Checklist**](deployment/SPRINT_6_DEPLOYMENT_CHECKLIST.md) | Production deployment steps | DevOps, Tech Lead |
+| [**Production Checklist**](deployment/production-checklist.md) | Production deployment steps | DevOps, Tech Lead |
 
 **When to use**: Deploying to staging/production
 
@@ -120,32 +150,34 @@ See [`CLAUDE.md`](../CLAUDE.md) for detailed architecture patterns and implement
 
 1. **Architecture Overview**:
    - Read [`CLAUDE.md`](../CLAUDE.md) (project architecture, patterns, do's and don'ts)
-   - Review [Testing Guide](guides/sprint-1-testing-guide.md)
+   - Review [DDD Patterns Summary](architecture/ddd-patterns-summary.md)
+   - Review [Testing Guide](guides/testing-guide.md)
    - Understand multi-tenancy concepts
 
 2. **Setup Local Environment**:
-   - Follow [Monitoring Setup](devops/PROMETHEUS_GRAFANA_SETUP.md)
-   - Configure [RabbitMQ Workers](devops/RABBITMQ_WORKER_SETUP_GUIDE.md)
+   - Follow [Monitoring Setup](devops/prometheus-grafana.md)
+   - Configure [RabbitMQ Workers](devops/rabbitmq-worker.md)
    - Run `composer install && php bin/console doctrine:migrations:migrate`
 
 3. **Explore APIs**:
-   - Open http://localhost:8001/api/docs (OpenAPI)
-   - Try [Storefront API](api/STOREFRONT_API_DOCUMENTATION.md) examples
+   - Open http://localhost:8000/api/docs (OpenAPI)
+   - Try [Storefront API](api/storefront.md) examples
    - Test with Postman/Insomnia
 
 4. **Write Your First Feature**:
-   - Follow patterns in existing bounded contexts
-   - Write tests first (TDD)
+   - Follow [Creating a New Aggregate](guides/new-aggregate.md) guide
+   - Write tests first (TDD) - see [Testing Guide](guides/testing-guide.md)
    - Use `symfony console make:` commands for scaffolding
 
 ### For Frontend Developers
 
 **Start Here**:
-1. [Storefront API Documentation](api/STOREFRONT_API_DOCUMENTATION.md) - Public catalog API
-2. [Order API Documentation](api/order-api-documentation.md) - Order placement & tracking
-3. [Payment Integration](features/PAYMENT_INTEGRATION.md) - Payment gateway integration
+1. [API Hub](api/README.md) - API overview
+2. [Storefront API](api/storefront.md) - Public catalog API
+3. [Order API](api/order.md) - Order placement & tracking
+4. [Cart API](api/cart.md) - Shopping cart management
 
-**API Base URL**: `http://localhost:8001/api`
+**API Base URL**: `http://localhost:8000/api`
 
 **Required Headers**:
 ```http
@@ -157,12 +189,12 @@ Authorization: Bearer {jwt-token}
 ### For DevOps Engineers
 
 **Start Here**:
-1. [Monitoring](devops/MONITORING.md) - Complete observability stack
-2. [Deployment Checklist](deployment/SPRINT_6_DEPLOYMENT_CHECKLIST.md)
-3. [RabbitMQ Worker Setup](devops/RABBITMQ_WORKER_SETUP_GUIDE.md)
+1. [Monitoring](devops/monitoring.md) - Complete observability stack
+2. [Deployment Checklist](deployment/production-checklist.md)
+3. [RabbitMQ Worker Setup](devops/rabbitmq-worker.md)
 
 **Key Services**:
-- **Symfony API**: Port 8001
+- **Symfony API**: Port 8000
 - **PostgreSQL**: Port 5432
 - **Redis**: Port 6379
 - **RabbitMQ**: Ports 5672, 15672
@@ -182,11 +214,11 @@ Authorization: Bearer {jwt-token}
 4. Create state processor in `{Context}/Infrastructure/ApiPlatform/State/`
 5. Write tests in `tests/Functional/Api/`
 
-See [`CLAUDE.md`](../CLAUDE.md) - "Creating a New Aggregate" section
+See [Creating a New Aggregate](guides/new-aggregate.md) guide
 
 ### Configure New Payment Gateway
 
-1. Read [Payment Integration Guide](features/PAYMENT_INTEGRATION.md)
+1. Read [Payment Integration Guide](integration/payment-integration.md)
 2. Implement `PaymentGatewayInterface` in `src/Payment/Infrastructure/Gateway/`
 3. Add credentials to `.env`
 4. Update `PaymentGatewayFactory`
@@ -200,7 +232,7 @@ See [`CLAUDE.md`](../CLAUDE.md) - "Creating a New Aggregate" section
 4. Create Grafana dashboard
 5. Define alert rules in `config/prometheus/alerts.yml`
 
-See [Monitoring Guide](devops/MONITORING.md)
+See [Monitoring Guide](devops/monitoring.md)
 
 ### Debug Production Issue
 
@@ -306,16 +338,18 @@ Links to related docs...
 
 ## Document Statistics
 
-- **Total Documents**: 10
-- **API Docs**: 3
-- **Feature Guides**: 1
+- **Total Documents**: ~50+
+- **Architecture**: 1
+- **Business**: 1
+- **API Docs**: 5
+- **Integration**: 2
 - **DevOps Guides**: 3
-- **Developer Guides**: 2
+- **Developer Guides**: 3
 - **Deployment**: 1
-
-**Reduction from initial**: 22 → 10 docs (-55%)
+- **Privacy**: 1
+- **Reference**: ~30+ (Symfony, API Platform, Libraries)
 
 ---
 
 **Documentation maintained by**: Engineering Team
-**Last full audit**: October 17, 2025
+**Last full audit**: November 6, 2025
