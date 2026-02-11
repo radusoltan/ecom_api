@@ -13,6 +13,7 @@ final readonly class StockReleased implements DomainEvent
     public function __construct(
         public StockItemId $stockItemId,
         public Quantity $quantity,
+        public string $referenceId,
         public string $reason,
         public \DateTimeImmutable $occurredOn,
     ) {

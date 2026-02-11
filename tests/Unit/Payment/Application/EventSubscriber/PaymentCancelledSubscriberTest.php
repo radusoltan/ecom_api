@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Payment\Application\EventSubscriber;
 use App\Payment\Application\EventSubscriber\PaymentCancelledSubscriber;
 use App\Payment\Domain\Event\PaymentCancelled;
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -43,8 +44,10 @@ final class PaymentCancelledSubscriberTest extends TestCase
     public function testOnPaymentCancelledSendsEmail(): void
     {
         // Arrange
+        $tenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
         $event = new PaymentCancelled(
             paymentId: PaymentId::generate(),
+            tenantId: $tenantId,
             reason: 'Customer cancelled order'
         );
 
@@ -67,8 +70,10 @@ final class PaymentCancelledSubscriberTest extends TestCase
     {
         // Arrange
         $paymentId = PaymentId::generate();
+        $tenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
         $event = new PaymentCancelled(
             paymentId: $paymentId,
+            tenantId: $tenantId,
             reason: 'Timeout'
         );
 
@@ -92,8 +97,10 @@ final class PaymentCancelledSubscriberTest extends TestCase
     public function testOnPaymentCancelledIncludesNoChargesNotice(): void
     {
         // Arrange
+        $tenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
         $event = new PaymentCancelled(
             paymentId: PaymentId::generate(),
+            tenantId: $tenantId,
             reason: 'User requested cancellation'
         );
 
@@ -115,8 +122,10 @@ final class PaymentCancelledSubscriberTest extends TestCase
     public function testOnPaymentCancelledHandlesEmailFailureGracefully(): void
     {
         // Arrange
+        $tenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
         $event = new PaymentCancelled(
             paymentId: PaymentId::generate(),
+            tenantId: $tenantId,
             reason: 'Test cancellation'
         );
 

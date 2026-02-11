@@ -139,7 +139,7 @@ final class StockItem extends AggregateRoot
      * Release reserved or allocated stock
      * Used when cart expires, order is cancelled, or items are returned.
      */
-    public function release(Quantity $quantity, string $reason): void
+    public function release(Quantity $quantity, string $referenceId, string $reason): void
     {
         // Try to release from allocated first, then from reserved
         if ($this->allocated->isGreaterThanOrEqual($quantity)) {
@@ -173,6 +173,7 @@ final class StockItem extends AggregateRoot
         $this->recordEvent(new StockReleased(
             $this->id,
             $quantity,
+            $referenceId,
             $reason,
             new \DateTimeImmutable()
         ));

@@ -4,97 +4,170 @@ declare(strict_types=1);
 
 namespace App\Payment\Domain\Service;
 
-use App\Payment\Domain\ValueObject\PaymentMethod;
+use App\Payment\Domain\Exception\PaymentGatewayException;
+use App\Payment\Domain\Model\PaymentId;
+use App\Payment\Domain\Model\PaymentMethod;
+use App\Shared\Domain\ValueObject\Money;
 
 /**
- * Payment Gateway Interface (Domain Service Port).
+ * Payment Gateway Port - defines the contract for payment processing adapters.
  *
- * This interface defines the contract for payment gateway integrations.
- * Implementations are adapters in the infrastructure layer.
+ * This interface follows the Hexagonal Architecture pattern (Port/Adapter):
+ * - Port: This interface (in Domain layer)
+ * - Adapters: StripeGateway, PayPalGateway (in Infrastructure layer)
+ *
+ * Design Principles:
+ * - NO framework-specific types (no Stripe/PayPal classes in signature)
+ * - Immutable result DTOs (PaymentIntentResult, RefundResult)
+ * - Rich domain exceptions for error handling
+ * - Supports both authorize-then-capture and direct capture flows
+ *
+ * Payment Flow Patterns:
+ * 1. Authorize-then-Capture (recommended for physical goods):
+ *    - createPaymentIntent() -> authorize funds
+ *    - confirmPaymentIntent() -> complete authorization (if 3DS required)
+ *    - capturePaymentIntent() -> charge customer (on shipment)
+ *    - cancelPaymentIntent() -> release funds (if order cancelled before shipment)
+ *
+ * 2. Direct Capture (digital goods, services):
+ *    - createPaymentIntent() with auto-capture enabled
+ *    - confirmPaymentIntent() -> charge immediately
+ *
+ * Implementations: StripeGateway, PayPalGateway, MockGateway (for testing)
  */
 interface PaymentGatewayInterface
 {
     /**
-     * Authorize a payment (reserve funds without capturing).
+     * Create a payment intent for authorization.
+     * Does NOT charge the customer yet - only reserves funds.
      *
-     * @param int                  $amountInCents Amount to authorize in smallest currency unit (cents)
-     * @param string               $currency      ISO 4217 currency code (USD, EUR, GBP)
-     * @param PaymentMethod        $method        Payment method (card, paypal, etc.)
-     * @param array<string, mixed> $metadata      Additional payment metadata (customer ID, order ID, etc.)
+     * Use Case: Start checkout process, create order, reserve payment
      *
-     * @return array{transaction_id: string, status: string, metadata?: array<string, mixed>}
+     * @param PaymentId            $paymentId      Domain payment ID for idempotency
+     * @param Money                $amount         Amount to authorize
+     * @param string               $currency       ISO 4217 currency code (USD, EUR, GBP)
+     * @param string               $idempotencyKey Unique key to prevent duplicate charges
+     * @param string|null          $customerId     Gateway customer ID (for saved payment methods)
+     * @param array<string, mixed> $metadata       Additional data (order_id, tenant_id, etc.)
      *
-     * @throws \RuntimeException If authorization fails
+     * @return PaymentIntentResult Result with gateway payment intent ID and client secret
+     *
+     * @throws PaymentGatewayException If intent creation fails
      */
-    public function authorize(
-        int $amountInCents,
+    public function createPaymentIntent(
+        PaymentId $paymentId,
+        Money $amount,
         string $currency,
-        PaymentMethod $method,
+        string $idempotencyKey,
+        ?string $customerId = null,
         array $metadata = []
-    ): array;
+    ): PaymentIntentResult;
 
     /**
-     * Capture a previously authorized payment.
+     * Confirm a payment intent (complete authorization).
+     * Called after customer provides payment details (card, 3DS, etc.)
      *
-     * @param string   $transactionId Gateway transaction ID from authorization
-     * @param int|null $amountInCents Amount to capture (null = full amount)
+     * Use Case: Customer submitted payment form, complete authorization
      *
-     * @return array{transaction_id: string, status: string, captured_amount: int}
+     * @param string $gatewayPaymentIntentId Gateway's payment intent ID
+     * @param string $paymentMethodId        Gateway payment method ID (card token, PayPal token)
      *
-     * @throws \RuntimeException If capture fails
+     * @return PaymentIntentResult Result with status (may require additional action for 3DS)
+     *
+     * @throws PaymentGatewayException If confirmation fails
      */
-    public function capture(
-        string $transactionId,
-        ?int $amountInCents = null
-    ): array;
+    public function confirmPaymentIntent(
+        string $gatewayPaymentIntentId,
+        string $paymentMethodId
+    ): PaymentIntentResult;
 
     /**
-     * Refund a captured payment.
+     * Capture an authorized payment.
+     * Actually charges the customer - money is transferred.
      *
-     * @param string $transactionId Gateway transaction ID from capture
-     * @param int    $amountInCents Amount to refund (partial refunds supported)
-     * @param string $reason        Refund reason for audit trail
+     * Use Case: Order shipped, capture reserved funds
      *
-     * @return array{refund_id: string, status: string, refunded_amount: int}
+     * @param string     $gatewayPaymentIntentId Gateway's payment intent ID
+     * @param Money|null $amount                 Amount to capture (null = full authorized amount)
      *
-     * @throws \RuntimeException If refund fails
+     * @return PaymentIntentResult Result with captured amount and status
+     *
+     * @throws PaymentGatewayException If capture fails
      */
-    public function refund(
-        string $transactionId,
-        int $amountInCents,
-        string $reason
-    ): array;
+    public function capturePaymentIntent(
+        string $gatewayPaymentIntentId,
+        ?Money $amount = null
+    ): PaymentIntentResult;
 
     /**
-     * Cancel an authorized payment (void).
+     * Cancel/void an authorized but not captured payment.
+     * Releases reserved funds back to customer.
      *
-     * @param string $transactionId Gateway transaction ID from authorization
-     * @param string $reason        Cancellation reason for audit trail
+     * Use Case: Order cancelled before shipment, release authorization
      *
-     * @return array{status: string}
+     * @param string $gatewayPaymentIntentId Gateway's payment intent ID
      *
-     * @throws \RuntimeException If cancellation fails
+     * @return PaymentIntentResult Result with cancelled status
+     *
+     * @throws PaymentGatewayException If cancellation fails
      */
-    public function cancel(
-        string $transactionId,
-        string $reason
-    ): array;
+    public function cancelPaymentIntent(
+        string $gatewayPaymentIntentId
+    ): PaymentIntentResult;
 
     /**
-     * Get payment status from gateway.
+     * Create a refund for a captured payment.
+     * Returns money to customer's original payment method.
      *
-     * @param string $transactionId Gateway transaction ID
+     * Use Case: Order returned, refund customer
      *
-     * @return array{status: string, amount: int, currency: string, metadata?: array<string, mixed>}
+     * @param string $gatewayPaymentIntentId Gateway's payment intent ID (from capture)
+     * @param Money  $amount                 Amount to refund (supports partial refunds)
+     * @param string $reason                 Refund reason for audit trail
+     * @param string $idempotencyKey         Unique key to prevent duplicate refunds
      *
-     * @throws \RuntimeException If status retrieval fails
+     * @return RefundResult Result with refund ID and status
+     *
+     * @throws PaymentGatewayException If refund fails
      */
-    public function getStatus(string $transactionId): array;
+    public function createRefund(
+        string $gatewayPaymentIntentId,
+        Money $amount,
+        string $reason,
+        string $idempotencyKey
+    ): RefundResult;
 
     /**
-     * Get the gateway name.
+     * Verify webhook signature for security.
+     * Ensures webhook came from the actual payment gateway (prevents spoofing).
      *
-     * @return string Gateway identifier (stripe, paypal, etc.)
+     * Use Case: Webhook received, verify authenticity before processing
+     *
+     * @param string $payload   Raw webhook payload (JSON string)
+     * @param string $signature Signature from webhook header (Stripe-Signature, etc.)
+     * @param string $secret    Webhook secret configured in gateway
+     *
+     * @return bool True if signature is valid
+     *
+     * @throws PaymentGatewayException If verification fails
+     */
+    public function verifyWebhookSignature(
+        string $payload,
+        string $signature,
+        string $secret
+    ): bool;
+
+    /**
+     * Get the gateway identifier (stripe, paypal, etc.)
+     *
+     * @return PaymentMethod Gateway identifier as domain value object
+     */
+    public function getGatewayId(): PaymentMethod;
+
+    /**
+     * Get the gateway name for display/logging.
+     *
+     * @return string Human-readable gateway name (e.g., "Stripe", "PayPal")
      */
     public function getName(): string;
 }

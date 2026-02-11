@@ -1,0 +1,29 @@
+{{ 'emails.payment.refunded.header'|trans }}
+
+{{ 'emails.payment.refunded.greeting'|trans({'%customer_name%': customerName}) }}
+
+{{ 'emails.payment.refunded.confirmation'|trans }}
+
+{{ 'emails.payment.refund_details'|trans }}:
+- {{ 'emails.payment.payment_id'|trans }}: {{ paymentId }}
+- {{ 'emails.payment.order_id'|trans }}: {{ orderId }}
+- {{ 'emails.payment.refund_amount'|trans }}: {{ refundAmount }} {{ currency }}
+- {{ 'emails.payment.date'|trans }}: {{ refundDate|date('d/m/Y H:i') }}
+{% if reason is defined %}
+- {{ 'emails.payment.reason'|trans }}: {{ reason }}
+{% endif %}
+
+{{ 'emails.payment.refunded.processing_time'|trans }}:
+- {{ 'emails.payment.refunded.card_refund_time'|trans }}
+- {{ 'emails.payment.refunded.bank_refund_time'|trans }}
+
+{{ 'emails.payment.refunded.processing_notice'|trans }}
+{{ 'emails.payment.refunded.apology'|trans }}
+
+{{ 'emails.payment.view_order'|trans }}: {{ orderViewUrl }}
+
+{{ 'emails.payment.questions'|trans }}
+
+---
+{{ 'emails.footer.thanks'|trans }}
+{{ 'emails.footer.company'|trans }}

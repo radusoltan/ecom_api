@@ -1,0 +1,30 @@
+{{ 'emails.payment.failed.header'|trans }}
+
+{{ 'emails.payment.failed.greeting'|trans({'%customer_name%': customerName}) }}
+
+{{ 'emails.payment.failed.confirmation'|trans }}
+
+{{ 'emails.payment.error_details'|trans }}:
+- {{ 'emails.payment.payment_id'|trans }}: {{ paymentId }}
+- {{ 'emails.payment.order_id'|trans }}: {{ orderId }}
+- {{ 'emails.payment.amount'|trans }}: {{ amount }} {{ currency }}
+- {{ 'emails.payment.error_message'|trans }}: {{ errorMessage }}
+
+{{ 'emails.payment.failed.what_to_do'|trans }}:
+- {{ 'emails.payment.failed.action_check_info'|trans }}
+- {{ 'emails.payment.failed.action_check_funds'|trans }}
+- {{ 'emails.payment.failed.action_contact_bank'|trans }}
+- {{ 'emails.payment.failed.action_try_different'|trans }}
+
+{% if retryScheduled is defined and retryScheduled %}
+{{ 'emails.payment.failed.retry_notice'|trans }}
+{{ 'emails.payment.failed.retry_message'|trans({'%retry_delay%': retryDelay}) }}
+{% endif %}
+
+{{ 'emails.payment.failed.try_again'|trans }}: {{ retryUrl }}
+
+{{ 'emails.payment.questions'|trans }}
+
+---
+{{ 'emails.footer.thanks'|trans }}
+{{ 'emails.footer.company'|trans }}

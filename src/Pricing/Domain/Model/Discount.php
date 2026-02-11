@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pricing\Domain\Model;
 
+use App\Pricing\Domain\ValueObject\DiscountType;
 use App\Shared\Domain\ValueObject\Money;
 
 /**
@@ -66,6 +67,38 @@ final readonly class Discount
     public static function fixed(Money $amount): self
     {
         return new self(self::TYPE_FIXED, null, $amount);
+    }
+
+    public static function fromTypeAndValue(string $type, float $value): self
+    {
+        if (self::TYPE_PERCENTAGE === $type) {
+            return self::percentage($value);
+        }
+
+        if (self::TYPE_FIXED === $type) {
+            // For fixed discounts, value is stored in minor units (cents)
+            return self::fixed(Money::fromScalars((int) $value, 'USD')); // TODO: Make currency configurable
+        }
+
+        throw new \InvalidArgumentException(sprintf('Invalid discount type "%s"', $type));
+    }
+
+    public function value(): float
+    {
+        if ($this->isPercentage()) {
+            return $this->percentage;
+        }
+
+        return (float) $this->fixedAmount->getAmount();
+    }
+
+    public function type(): DiscountType
+    {
+        if ($this->isPercentage()) {
+            return DiscountType::percentage();
+        }
+
+        return DiscountType::fixedAmount();
     }
 
     public function isPercentage(): bool

@@ -44,6 +44,9 @@ final readonly class DownloadableFileRemoved implements DomainEvent
         return 'catalog.downloadable_file.removed';
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function toArray(): array
     {
         return [

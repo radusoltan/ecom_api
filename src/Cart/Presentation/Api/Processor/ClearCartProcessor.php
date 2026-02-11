@@ -11,6 +11,7 @@ use App\Cart\Application\Query\GetCart;
 use App\Cart\Domain\Exception\CartNotFoundException;
 use App\Cart\Presentation\Api\Resource\CartResource;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -32,7 +33,7 @@ final readonly class ClearCartProcessor implements ProcessorInterface
         $cartId = $context['cart_id'] ?? null;
         if (null === $cartId) {
             $request = $this->requestStack->getCurrentRequest();
-            $cartId = $request?->headers->get('X-Cart-ID') ?? throw new \InvalidArgumentException('Cart ID is required (provide via X-Cart-ID header or context)');
+            $cartId = $request?->headers->get('X-Cart-ID') ?? throw new BadRequestHttpException('Cart ID is required (provide via X-Cart-ID header or context)');
         }
 
         $command = new ClearCart(cartId: $cartId);

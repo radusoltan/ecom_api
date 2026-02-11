@@ -26,13 +26,13 @@ final readonly class VariantCollectionProvider implements ProviderInterface
     }
 
     /**
-     * @return VariantEntity[]
+     * @return VariantEntity[]|null
      */
     public function provide(
         Operation $operation,
         array $uriVariables = [],
         array $context = []
-    ): array {
+    ): array|null {
         // Get tenant ID from request header
         $request = $this->requestStack->getCurrentRequest();
         $tenantIdString = $request?->headers->get('X-Tenant-ID');
@@ -41,12 +41,30 @@ final readonly class VariantCollectionProvider implements ProviderInterface
             throw new \RuntimeException('X-Tenant-ID header is required');
         }
 
-        // Get product ID from URI variables
-        if (!isset($uriVariables['productId'])) {
-            throw new \InvalidArgumentException('Product ID is required in URI');
+        // Get product ID from URI variables or query parameters
+        $productIdString = null;
+
+        // Check URI variables first (for collection routes like /products/{productId}/variants)
+        if (isset($uriVariables['productId'])) {
+            $productIdString = (string) $uriVariables['productId'];
         }
 
-        $productIdString = (string) $uriVariables['productId'];
+        // Check query parameters (for routes like /variants?productId=xxx)
+        if (!$productIdString && $request) {
+            $queryProductId = $request->query->get('productId');
+            $productIdString = is_string($queryProductId) ? $queryProductId : null;
+        }
+
+        // For single-item operations (GET/PATCH/DELETE with 'id' in URI), productId is optional
+        // The specific processors will handle these operations
+        if (!$productIdString && isset($uriVariables['id'])) {
+            // This is a single-item operation, return null to let the default provider handle it
+            return null;
+        }
+
+        if (!$productIdString) {
+            throw new \InvalidArgumentException('Product ID is required in URI');
+        }
 
         // Get optional query parameters for filtering
         $filters = [];

@@ -38,11 +38,13 @@ use App\Tax\Presentation\Api\Provider\TaxRuleItemProvider;
         ),
         new Patch(
             uriTemplate: '/tax_rules/{id}',
+            provider: TaxRuleItemProvider::class,
             processor: UpdateTaxRuleProcessor::class
         ),
         new Patch(
             uriTemplate: '/tax_rules/{id}/deactivate',
-            processor: DeactivateTaxRuleProcessor::class
+            processor: DeactivateTaxRuleProcessor::class,
+            read: false
         ),
     ],
     paginationEnabled: true,

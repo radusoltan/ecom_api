@@ -23,6 +23,7 @@ use App\Catalog\Domain\ValueObject\OptionCode;
 use App\Catalog\Domain\ValueObject\VariantSKU;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Tests\Support\TenantTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
@@ -30,16 +31,22 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  */
 final class ConfigurableProductRepositoryTest extends KernelTestCase
 {
+    use TenantTestTrait;
+
     private ConfigurableProductRepositoryInterface $repository;
     private TenantId $tenantId;
 
     protected function setUp(): void
     {
+        parent::setUp();
         self::bootKernel();
+
+        // Set tenant context for RLS
+        $this->tenantId = $this->getDefaultTenantId();
+        $this->setTenantContext($this->tenantId->toString());
 
         $container = static::getContainer();
         $this->repository = $container->get(ConfigurableProductRepositoryInterface::class);
-        $this->tenantId = TenantId::fromString('9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab');
 
         // Clean up test data
         $this->cleanupTestData();
@@ -60,7 +67,7 @@ final class ConfigurableProductRepositoryTest extends KernelTestCase
         $qb = $em->createQueryBuilder();
         $qb->delete(\App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ConfigurableProductEntity::class, 'cp')
             ->where('cp.tenantId = :tenantId')
-            ->setParameter('tenantId', '9d5e8e9c-5b1a-4c7f-9c6e-1234567890ab')
+            ->setParameter('tenantId', $this->tenantId->toString())
             ->getQuery()
             ->execute();
     }

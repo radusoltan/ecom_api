@@ -2,8 +2,8 @@ services:
     # Override Payment Gateways with Fake implementations for testing
     # This prevents actual API calls to Stripe/PayPal during tests
 
-    # Completely replace StripePaymentGateway with FakeStripeGateway
-    App\Payment\Infrastructure\Gateway\StripePaymentGateway:
+    # Completely replace StripeGateway with FakeStripeGateway
+    App\Payment\Infrastructure\Gateway\StripeGateway:
         class: App\Payment\Infrastructure\Gateway\FakeStripeGateway
         public: false
         autowire: false
@@ -11,8 +11,8 @@ services:
         arguments:
             $logger: '@logger'
 
-    # Completely replace PayPalPaymentGateway with FakePayPalGateway
-    App\Payment\Infrastructure\Gateway\PayPalPaymentGateway:
+    # Completely replace PayPalGatewayAdapter with FakePayPalGateway
+    App\Payment\Infrastructure\Gateway\PayPalGatewayAdapter:
         class: App\Payment\Infrastructure\Gateway\FakePayPalGateway
         public: false
         autowire: false

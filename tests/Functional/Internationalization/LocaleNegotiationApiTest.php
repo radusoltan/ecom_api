@@ -13,7 +13,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['locale' => 'fr']);
+        $client->request('GET', '/api/v1/translations', ['locale' => 'fr']);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Language', 'fr');
@@ -23,7 +23,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['locale' => 'de']);
+        $client->request('GET', '/api/v1/translations', ['locale' => 'de']);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('X-Content-Language', 'de');
@@ -33,7 +33,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['locale' => 'en']);
+        $client->request('GET', '/api/v1/translations', ['locale' => 'en']);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('X-Supported-Languages', 'en, fr, de');
@@ -43,7 +43,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['locale' => 'fr']);
+        $client->request('GET', '/api/v1/translations', ['locale' => 'fr']);
 
         $this->assertResponseIsSuccessful();
 
@@ -55,7 +55,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'fr']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'fr']);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Language', 'fr');
@@ -70,7 +70,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
 
         $client->request(
             'GET',
-            '/api/translations',
+            '/api/v1/translations',
             ['domain' => 'messages'],
             [],
             ['HTTP_ACCEPT_LANGUAGE' => 'de-DE,de;q=0.9,en;q=0.8']
@@ -89,7 +89,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
 
         $client->request(
             'GET',
-            '/api/translations',
+            '/api/v1/translations',
             ['domain' => 'messages', 'locale' => 'fr'],
             [],
             ['HTTP_ACCEPT_LANGUAGE' => 'de-DE,de;q=0.9']
@@ -106,7 +106,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages']);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Language', 'en'); // Default
@@ -121,7 +121,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
 
         $client->request(
             'GET',
-            '/api/translations',
+            '/api/v1/translations',
             ['domain' => 'messages'],
             [],
             ['HTTP_ACCEPT_LANGUAGE' => 'es-ES,it-IT;q=0.9'] // Unsupported languages
@@ -140,7 +140,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
 
         $client->request(
             'GET',
-            '/api/translations',
+            '/api/v1/translations',
             ['domain' => 'messages'],
             [],
             ['HTTP_ACCEPT_LANGUAGE' => 'it-IT,es-ES;q=0.9,fr-FR;q=0.8,en;q=0.7'] // French is first supported
@@ -157,7 +157,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'fr_FR']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'fr_FR']);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Language', 'fr'); // Normalized to base language
@@ -170,7 +170,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'de-DE']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'de-DE']);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Language', 'de'); // Normalized to base language
@@ -180,7 +180,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'FR']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'FR']);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Language', 'fr'); // Normalized to lowercase
@@ -192,7 +192,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
 
         $client->request(
             'GET',
-            '/api/translations',
+            '/api/v1/translations',
             ['domain' => 'messages'],
             [],
             ['HTTP_ACCEPT_LANGUAGE' => 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7']
@@ -209,7 +209,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
         // Simulate Chrome's Accept-Language header
         $client->request(
             'GET',
-            '/api/translations',
+            '/api/v1/translations',
             ['domain' => 'messages'],
             [],
             ['HTTP_ACCEPT_LANGUAGE' => 'de-CH,de;q=0.9,fr-CH;q=0.8,fr;q=0.7,en;q=0.6']
@@ -224,7 +224,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
         $client = static::createClient();
 
         // Test with different endpoint (translations is publicly accessible)
-        $client->request('GET', '/api/translations', ['locale' => 'de']);
+        $client->request('GET', '/api/v1/translations', ['locale' => 'de']);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Language', 'de');
@@ -240,7 +240,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => $locale]);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => $locale]);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Language', $expectedContentLanguage);
@@ -263,7 +263,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'fr']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'fr']);
 
         $this->assertResponseIsSuccessful();
 
@@ -281,13 +281,13 @@ final class LocaleNegotiationApiTest extends WebTestCase
         $client = static::createClient();
 
         // Test multiple requests to ensure listener applies consistently
-        $client->request('GET', '/api/translations', ['locale' => 'fr']);
+        $client->request('GET', '/api/v1/translations', ['locale' => 'fr']);
         $this->assertResponseHeaderSame('Content-Language', 'fr');
 
-        $client->request('GET', '/api/translations', ['locale' => 'de']);
+        $client->request('GET', '/api/v1/translations', ['locale' => 'de']);
         $this->assertResponseHeaderSame('Content-Language', 'de');
 
-        $client->request('GET', '/api/translations', ['locale' => 'en']);
+        $client->request('GET', '/api/v1/translations', ['locale' => 'en']);
         $this->assertResponseHeaderSame('Content-Language', 'en');
     }
 
@@ -295,7 +295,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'invalid']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'invalid']);
 
         // Should return 500 error for invalid language code
         $this->assertResponseStatusCodeSame(500);
@@ -311,7 +311,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
 
         $client->request(
             'GET',
-            '/api/translations',
+            '/api/v1/translations',
             ['domain' => 'messages'],
             [],
             ['HTTP_ACCEPT_LANGUAGE' => 'de'] // Only German, no quality values
@@ -327,7 +327,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
 
         $client->request(
             'GET',
-            '/api/translations',
+            '/api/v1/translations',
             ['domain' => 'messages'],
             [],
             ['HTTP_ACCEPT_LANGUAGE' => 'de;q=0,fr;q=0.9,en;q=0.8']

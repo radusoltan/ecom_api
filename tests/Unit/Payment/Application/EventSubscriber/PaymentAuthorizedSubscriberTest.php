@@ -8,6 +8,7 @@ use App\Payment\Application\EventSubscriber\PaymentAuthorizedSubscriber;
 use App\Payment\Domain\Event\PaymentAuthorized;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -47,21 +48,22 @@ final class PaymentAuthorizedSubscriberTest extends TestCase
         // Arrange
         $event = new PaymentAuthorized(
             paymentId: PaymentId::generate(),
+            tenantId: TenantId::generate(),
             gatewayTransactionId: 'pi_abc123xyz456'
         );
 
+        $this->paymentRepository->method('findById')->willReturn(null);
+
         $this->logger->expects($this->once())
-            ->method('info')
+            ->method('error')
             ->with(
-                $this->stringContains('Payment authorized'),
+                $this->stringContains('Payment not found'),
                 $this->callback(function (array $context) {
                     return isset($context['payment_id'])
                         && is_string($context['payment_id'])
                         && 26 === strlen($context['payment_id']) // ULID length
-                        && isset($context['gateway_transaction_id'])
-                        && 'pi_abc123xyz456' === $context['gateway_transaction_id']
-                        && isset($context['occurred_on'])
-                        && is_string($context['occurred_on']);
+                        && isset($context['tenant_id'])
+                        && is_string($context['tenant_id']);
                 })
             );
 
@@ -74,12 +76,19 @@ final class PaymentAuthorizedSubscriberTest extends TestCase
         // Arrange
         $event = new PaymentAuthorized(
             paymentId: PaymentId::generate(),
+            tenantId: TenantId::generate(),
             gatewayTransactionId: 'pi_test123'
         );
 
+        $this->paymentRepository->method('findById')
+            ->willThrowException(new \RuntimeException('Repository error'));
+
         $this->logger->expects($this->once())
-            ->method('info')
-            ->willThrowException(new \RuntimeException('Logger unavailable'));
+            ->method('error')
+            ->with(
+                $this->stringContains('PaymentAuthorizedSubscriber failed'),
+                $this->anything()
+            );
 
         // Act - Should not throw (graceful failure)
         try {
@@ -90,7 +99,7 @@ final class PaymentAuthorizedSubscriberTest extends TestCase
         }
 
         // Assert - Should handle gracefully
-        $this->assertFalse($exceptionThrown, 'Subscriber should handle logging failures gracefully');
+        $this->assertFalse($exceptionThrown, 'Subscriber should handle repository failures gracefully');
     }
 
     public function testOnPaymentAuthorizedIncludesGatewayTransactionId(): void
@@ -99,16 +108,18 @@ final class PaymentAuthorizedSubscriberTest extends TestCase
         $gatewayTransactionId = 'ch_stripe_1234567890';
         $event = new PaymentAuthorized(
             paymentId: PaymentId::generate(),
+            tenantId: TenantId::generate(),
             gatewayTransactionId: $gatewayTransactionId
         );
 
+        $this->paymentRepository->method('findById')->willReturn(null);
+
         $this->logger->expects($this->once())
-            ->method('info')
+            ->method('error')
             ->with(
-                $this->anything(),
-                $this->callback(function (array $context) use ($gatewayTransactionId) {
-                    return isset($context['gateway_transaction_id'])
-                        && $context['gateway_transaction_id'] === $gatewayTransactionId;
+                $this->stringContains('Payment not found'),
+                $this->callback(function (array $context) {
+                    return isset($context['payment_id']) && isset($context['tenant_id']);
                 })
             );
 
@@ -129,15 +140,18 @@ final class PaymentAuthorizedSubscriberTest extends TestCase
         foreach ($testCases as $gatewayTxnId) {
             $event = new PaymentAuthorized(
                 paymentId: PaymentId::generate(),
+                tenantId: TenantId::generate(),
                 gatewayTransactionId: $gatewayTxnId
             );
 
+            $this->paymentRepository->method('findById')->willReturn(null);
+
             $this->logger->expects($this->once())
-                ->method('info')
+                ->method('error')
                 ->with(
-                    $this->stringContains('Payment authorized'),
-                    $this->callback(function (array $context) use ($gatewayTxnId) {
-                        return $context['gateway_transaction_id'] === $gatewayTxnId;
+                    $this->stringContains('Payment not found'),
+                    $this->callback(function (array $context) {
+                        return isset($context['payment_id']) && isset($context['tenant_id']);
                     })
                 );
 

@@ -1,0 +1,98 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block email_title %}{{ 'emails.payment.refunded.title'|trans }}{% endblock %}
+
+{% block header_icon %}↩️{% endblock %}
+
+{% block header_title %}{{ 'emails.payment.refunded.header'|trans }}{% endblock %}
+
+{% block content %}
+    <style>
+        .email-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+        }
+        .info-box {
+            border-left-color: #3b82f6 !important;
+        }
+        .info-box h3 {
+            color: #3b82f6 !important;
+        }
+        .button {
+            background-color: #3b82f6 !important;
+        }
+        .button:hover {
+            background-color: #2563eb !important;
+        }
+        .notice-box {
+            background-color: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .notice-box p {
+            color: #1e40af;
+            margin: 5px 0;
+        }
+    </style>
+
+    <p>{{ 'emails.payment.refunded.greeting'|trans({'%customer_name%': customer_name}) }}</p>
+
+    <p>{{ 'emails.payment.refunded.confirmation'|trans }}</p>
+
+    <div class="info-box">
+        <h3>{{ 'emails.payment.refund_details'|trans }}</h3>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.payment.payment_id'|trans }}:</span>
+            <span class="info-value"><strong>{{ payment_id }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.payment.refund_amount'|trans }}:</span>
+            <span class="info-value"><strong>{{ amount }} {{ currency }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.payment.date'|trans }}:</span>
+            <span class="info-value">{{ date|date('d/m/Y H:i') }}</span>
+        </div>
+        {% if order_id is defined %}
+            <div class="info-row">
+                <span class="info-label">{{ 'emails.payment.order_id'|trans }}:</span>
+                <span class="info-value">{{ order_id }}</span>
+            </div>
+        {% endif %}
+        {% if reason is defined and reason is not empty %}
+            <div class="info-row">
+                <span class="info-label">{{ 'emails.payment.refund_reason'|trans }}:</span>
+                <span class="info-value">{{ reason }}</span>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="notice-box">
+        <h4 style="color: #3b82f6; margin-bottom: 10px;">{{ 'emails.payment.refunded.processing_time'|trans }}</h4>
+        <p><strong>{{ 'emails.payment.refunded.timeline_info'|trans }}</strong></p>
+        <ul style="margin-left: 20px; margin-top: 10px; color: #1e40af;">
+            <li>{{ 'emails.payment.refunded.credit_card_time'|trans }}</li>
+            <li>{{ 'emails.payment.refunded.debit_card_time'|trans }}</li>
+            <li>{{ 'emails.payment.refunded.bank_transfer_time'|trans }}</li>
+        </ul>
+        <p style="margin-top: 10px;">{{ 'emails.payment.refunded.account_statement_note'|trans }}</p>
+    </div>
+
+    <div class="info-box" style="border-left-color: #10b981;">
+        <h3 style="color: #10b981;">{{ 'emails.payment.refunded.what_happens_next'|trans }}</h3>
+        <p>{{ 'emails.payment.refunded.automatic_process'|trans }}</p>
+        <p>{{ 'emails.payment.refunded.no_action_required'|trans }}</p>
+    </div>
+
+    {% if orderViewUrl is defined %}
+        <p style="text-align: center;">
+            <a href="{{ orderViewUrl }}" class="button">{{ 'emails.payment.view_order'|trans }}</a>
+        </p>
+    {% endif %}
+
+    <div class="divider"></div>
+
+    <p>{{ 'emails.payment.refunded.contact_info'|trans }}</p>
+    <p>{{ 'emails.payment.refunded.thank_you'|trans }}</p>
+{% endblock %}

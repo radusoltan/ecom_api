@@ -20,10 +20,10 @@ final readonly class TaxRuleResourceTransformer
         $resource->name = $dto->name;
         $resource->countryCode = $dto->countryCode;
         $resource->regionCode = $dto->regionCode;
-        $resource->ratePercentage = $dto->ratePercentage;
+        $resource->ratePercentage = (float) $dto->ratePercentage; // Explicit cast to ensure float serialization
         $resource->isActive = $dto->isActive;
-        $resource->createdAt = $dto->createdAt;
-        $resource->updatedAt = $dto->updatedAt;
+        $resource->createdAt = new \DateTimeImmutable($dto->createdAt);
+        $resource->updatedAt = new \DateTimeImmutable($dto->updatedAt);
 
         return $resource;
     }

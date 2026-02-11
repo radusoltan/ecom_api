@@ -42,6 +42,13 @@ interface PriceListRepositoryInterface
     public function findValidForTenant(TenantId $tenantId): array;
 
     /**
+     * Find active price lists by tenant ID and date, ordered by priority (highest first).
+     *
+     * @return array<PriceList>
+     */
+    public function findActiveByTenantId(TenantId $tenantId, \DateTimeImmutable $date): array;
+
+    /**
      * Delete a price list.
      */
     public function delete(PriceList $priceList): void;

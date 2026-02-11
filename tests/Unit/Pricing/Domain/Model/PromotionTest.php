@@ -299,6 +299,7 @@ final class PromotionTest extends TestCase
             isActive: true,
             couponCode: $couponCode,
             conditions: ['category' => 'electronics'],
+            targetSegments: [],
             validFrom: $validFrom,
             validTo: $validTo,
             createdAt: $createdAt,

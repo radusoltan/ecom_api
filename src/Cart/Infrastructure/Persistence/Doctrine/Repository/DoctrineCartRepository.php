@@ -127,4 +127,47 @@ final readonly class DoctrineCartRepository implements CartRepositoryInterface
 
         return [];
     }
+
+    /**
+     * Find abandoned carts ready for email notification.
+     *
+     * @return CartId[]
+     */
+    public function findAbandonedCartsForEmail(\DateTimeImmutable $abandonedBefore, int $limit = 100): array
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $qb->select('c.id')
+            ->from(CartEntity::class, 'c')
+            ->where('c.updatedAt < :abandonedBefore')
+            ->andWhere('c.status = :status')
+            ->andWhere('c.abandonmentEmailSent = :emailSent')
+            ->andWhere('SIZE(c.items) > 0') // Only carts with items
+            ->setParameter('abandonedBefore', $abandonedBefore)
+            ->setParameter('status', 'active')
+            ->setParameter('emailSent', false)
+            ->orderBy('c.updatedAt', 'ASC') // Process oldest first
+            ->setMaxResults($limit);
+
+        /** @var array<int, array{id: string}> $results */
+        $results = $qb->getQuery()->getResult();
+
+        return array_map(
+            fn (array $result) => CartId::fromString($result['id']),
+            $results
+        );
+    }
+
+    /**
+     * Mark cart as having received abandonment email.
+     */
+    public function markAbandonmentEmailSent(CartId $cartId): void
+    {
+        $entity = $this->entityManager->find(CartEntity::class, $cartId->toString());
+
+        if (null !== $entity) {
+            $entity->markAbandonmentEmailSent();
+            $this->entityManager->flush();
+        }
+    }
 }

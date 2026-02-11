@@ -11,6 +11,7 @@ use App\Cart\Application\Query\GetCart;
 use App\Cart\Domain\Exception\CartNotFoundException;
 use App\Cart\Presentation\Api\Resource\CartResource;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -29,22 +30,22 @@ final readonly class UpdateCartItemProcessor implements ProcessorInterface
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): CartResource
     {
         if (!$data instanceof CartResource) {
-            throw new \InvalidArgumentException('Expected CartResource');
+            throw new BadRequestHttpException('Expected CartResource');
         }
 
-        $itemId = $uriVariables['itemId'] ?? throw new \InvalidArgumentException('Cart item ID is required');
+        $itemId = $uriVariables['itemId'] ?? throw new BadRequestHttpException('Cart item ID is required');
 
         if (!$data->newQuantity) {
-            throw new \InvalidArgumentException('New quantity is required');
+            throw new BadRequestHttpException('New quantity is required');
         }
 
-        $tenantId = $data->tenantId ?? throw new \InvalidArgumentException('Tenant ID is required');
+        $tenantId = $data->tenantId ?? throw new BadRequestHttpException('Tenant ID is required');
 
         // Get cart ID from context or from X-Cart-ID header
         $cartId = $context['cart_id'] ?? null;
         if (null === $cartId) {
             $request = $this->requestStack->getCurrentRequest();
-            $cartId = $request?->headers->get('X-Cart-ID') ?? throw new \InvalidArgumentException('Cart ID is required (provide via X-Cart-ID header or context)');
+            $cartId = $request?->headers->get('X-Cart-ID') ?? throw new BadRequestHttpException('Cart ID is required (provide via X-Cart-ID header or context)');
         }
 
         $command = new UpdateCartQuantity(

@@ -116,4 +116,88 @@ final class CapturePaymentCommandHandlerTest extends TestCase
         // Act
         ($this->handler)($command);
     }
+
+    public function testHandleThrowsExceptionWhenGatewayCaptureFails(): void
+    {
+        // Arrange
+        $paymentId = PaymentId::generate();
+        $tenantId = TenantId::generate();
+
+        $payment = Payment::create(
+            id: $paymentId,
+            tenantId: $tenantId,
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe()
+        );
+        $payment->authorize('pi_abc123xyz');
+
+        $command = new CapturePayment(
+            id: $paymentId,
+            tenantId: $tenantId
+        );
+
+        // Gateway throws exception
+        $this->stripeGateway->expects($this->once())
+            ->method('capture')
+            ->willThrowException(new \RuntimeException('Gateway error: Capture failed'));
+
+        $this->repository->expects($this->once())
+            ->method('findById')
+            ->willReturn($payment);
+
+        // Payment should NOT be saved if gateway fails
+        $this->repository->expects($this->never())
+            ->method('save');
+
+        // Assert
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Gateway error: Capture failed');
+
+        // Act
+        ($this->handler)($command);
+    }
+
+    public function testHandleThrowsExceptionWhenCapturingPendingPayment(): void
+    {
+        // Arrange
+        $paymentId = PaymentId::generate();
+        $tenantId = TenantId::generate();
+
+        // Create a pending payment (not authorized)
+        $payment = Payment::create(
+            id: $paymentId,
+            tenantId: $tenantId,
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe()
+        );
+
+        $command = new CapturePayment(
+            id: $paymentId,
+            tenantId: $tenantId
+        );
+
+        $this->repository->expects($this->once())
+            ->method('findById')
+            ->willReturn($payment);
+
+        // Gateway should never be called if payment is not authorized
+        $this->stripeGateway->expects($this->never())
+            ->method('capture');
+
+        $this->repository->expects($this->never())
+            ->method('save');
+
+        // Assert - handler validates authorization before calling domain
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessageMatches('/has not been authorized yet/');
+
+        // Act
+        ($this->handler)($command);
+    }
 }

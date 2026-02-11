@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/new_ecom/backend/src/Review</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/billboard.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/var/www/new_ecom/backend/src</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Review</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classesCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Application/Command/ApproveReview.php.html#9">App\Review\Application\Command\ApproveReview</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/ApproveReviewHandler.php.html#10">App\Review\Application\Command\ApproveReviewHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeleteReview.php.html#9">App\Review\Application\Command\DeleteReview</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeleteReviewHandler.php.html#10">App\Review\Application\Command\DeleteReviewHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SubmitReview.php.html#12">App\Review\Application\Command\SubmitReview</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SubmitReviewHandler.php.html#11">App\Review\Application\Command\SubmitReviewHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/UpdateReview.php.html#9">App\Review\Application\Command\UpdateReview</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/UpdateReviewHandler.php.html#10">App\Review\Application\Command\UpdateReviewHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductRating.php.html#10">App\Review\Application\Query\GetProductRating</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductRatingHandler.php.html#10">App\Review\Application\Query\GetProductRatingHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductRatingHandler.php.html#34">App\Review\Application\Query\RatingDTO</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductReviews.php.html#10">App\Review\Application\Query\GetProductReviews</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductReviewsHandler.php.html#10">App\Review\Application\Query\GetProductReviewsHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductReviewsHandler.php.html#48">App\Review\Application\Query\ReviewDTO</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetRatingDistribution.php.html#10">App\Review\Application\Query\GetRatingDistribution</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetRatingDistributionHandler.php.html#12">App\Review\Application\Query\GetRatingDistributionHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReviewById.php.html#9">App\Review\Application\Query\GetReviewById</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReviewByIdHandler.php.html#11">App\Review\Application\Query\GetReviewByIdHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReviewStats.php.html#10">App\Review\Application\Query\GetReviewStats</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReviewStatsHandler.php.html#10">App\Review\Application\Query\GetReviewStatsHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/ReviewApproved.php.html#10">App\Review\Domain\Event\ReviewApproved</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/ReviewRejected.php.html#10">App\Review\Domain\Event\ReviewRejected</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/ReviewSubmitted.php.html#12">App\Review\Domain\Event\ReviewSubmitted</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#29">App\Review\Domain\Model\ProductReview</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#255">App\Review\Domain\Model\ReviewId</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Rating.php.html#10">App\Review\Domain\ValueObject\Rating</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ReviewStatus.php.html#10">App\Review\Domain\ValueObject\ReviewStatus</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Fixtures/ReviewFixtures.php.html#16">App\Review\Infrastructure\Fixtures\ReviewFixtures</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#21">App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#17">App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/DeleteReviewProcessor.php.html#13">App\Review\Presentation\Api\State\DeleteReviewProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewProvider.php.html#15">App\Review\Presentation\Api\State\ProductReviewProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewStatsProvider.php.html#16">App\Review\Presentation\Api\State\ProductReviewStatsProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewsProvider.php.html#17">App\Review\Presentation\Api\State\ProductReviewsProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/RatingDistributionProvider.php.html#16">App\Review\Presentation\Api\State\RatingDistributionProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/SubmitReviewProcessor.php.html#18">App\Review\Presentation\Api\State\SubmitReviewProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/UpdateReviewProcessor.php.html#14">App\Review\Presentation\Api\State\UpdateReviewProcessor</a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#29">App\Review\Domain\Model\ProductReview</a></td><td class="text-right">0.0%</td><td class="text-right">31</td><td class="text-right">992</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#17">App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository</a></td><td class="text-right">0.0%</td><td class="text-right">12</td><td class="text-right">156</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#255">App\Review\Domain\Model\ReviewId</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Domain/ValueObject/Rating.php.html#10">App\Review\Domain\ValueObject\Rating</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Application/Command/DeleteReviewHandler.php.html#10">App\Review\Application\Command\DeleteReviewHandler</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Infrastructure/Fixtures/ReviewFixtures.php.html#16">App\Review\Infrastructure\Fixtures\ReviewFixtures</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/State/SubmitReviewProcessor.php.html#18">App\Review\Presentation\Api\State\SubmitReviewProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/State/UpdateReviewProcessor.php.html#14">App\Review\Presentation\Api\State\UpdateReviewProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewProvider.php.html#15">App\Review\Presentation\Api\State\ProductReviewProvider</a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewStatsProvider.php.html#16">App\Review\Presentation\Api\State\ProductReviewStatsProvider</a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewsProvider.php.html#17">App\Review\Presentation\Api\State\ProductReviewsProvider</a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/State/RatingDistributionProvider.php.html#16">App\Review\Presentation\Api\State\RatingDistributionProvider</a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Command/ApproveReviewHandler.php.html#10">App\Review\Application\Command\ApproveReviewHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Command/UpdateReviewHandler.php.html#10">App\Review\Application\Command\UpdateReviewHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Query/GetProductReviewsHandler.php.html#10">App\Review\Application\Query\GetProductReviewsHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Query/GetRatingDistributionHandler.php.html#12">App\Review\Application\Query\GetRatingDistributionHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/State/DeleteReviewProcessor.php.html#13">App\Review\Presentation\Api\State\DeleteReviewProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2 style="margin-top: 3rem;">Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodsCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Application/Command/ApproveReview.php.html#11"><abbr title="App\Review\Application\Command\ApproveReview::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/ApproveReviewHandler.php.html#13"><abbr title="App\Review\Application\Command\ApproveReviewHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/ApproveReviewHandler.php.html#18"><abbr title="App\Review\Application\Command\ApproveReviewHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeleteReview.php.html#11"><abbr title="App\Review\Application\Command\DeleteReview::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeleteReviewHandler.php.html#13"><abbr title="App\Review\Application\Command\DeleteReviewHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeleteReviewHandler.php.html#18"><abbr title="App\Review\Application\Command\DeleteReviewHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SubmitReview.php.html#14"><abbr title="App\Review\Application\Command\SubmitReview::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SubmitReviewHandler.php.html#14"><abbr title="App\Review\Application\Command\SubmitReviewHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SubmitReviewHandler.php.html#19"><abbr title="App\Review\Application\Command\SubmitReviewHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/UpdateReview.php.html#11"><abbr title="App\Review\Application\Command\UpdateReview::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/UpdateReviewHandler.php.html#13"><abbr title="App\Review\Application\Command\UpdateReviewHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/UpdateReviewHandler.php.html#18"><abbr title="App\Review\Application\Command\UpdateReviewHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductRating.php.html#12"><abbr title="App\Review\Application\Query\GetProductRating::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductRatingHandler.php.html#13"><abbr title="App\Review\Application\Query\GetProductRatingHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductRatingHandler.php.html#18"><abbr title="App\Review\Application\Query\GetProductRatingHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductRatingHandler.php.html#36"><abbr title="App\Review\Application\Query\RatingDTO::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductReviews.php.html#12"><abbr title="App\Review\Application\Query\GetProductReviews::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductReviewsHandler.php.html#13"><abbr title="App\Review\Application\Query\GetProductReviewsHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductReviewsHandler.php.html#21"><abbr title="App\Review\Application\Query\GetProductReviewsHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetProductReviewsHandler.php.html#50"><abbr title="App\Review\Application\Query\ReviewDTO::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetRatingDistribution.php.html#12"><abbr title="App\Review\Application\Query\GetRatingDistribution::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetRatingDistributionHandler.php.html#15"><abbr title="App\Review\Application\Query\GetRatingDistributionHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetRatingDistributionHandler.php.html#20"><abbr title="App\Review\Application\Query\GetRatingDistributionHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReviewById.php.html#11"><abbr title="App\Review\Application\Query\GetReviewById::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReviewByIdHandler.php.html#14"><abbr title="App\Review\Application\Query\GetReviewByIdHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReviewByIdHandler.php.html#19"><abbr title="App\Review\Application\Query\GetReviewByIdHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReviewStats.php.html#12"><abbr title="App\Review\Application\Query\GetReviewStats::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReviewStatsHandler.php.html#13"><abbr title="App\Review\Application\Query\GetReviewStatsHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReviewStatsHandler.php.html#18"><abbr title="App\Review\Application\Query\GetReviewStatsHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/ReviewApproved.php.html#12"><abbr title="App\Review\Domain\Event\ReviewApproved::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/ReviewApproved.php.html#18"><abbr title="App\Review\Domain\Event\ReviewApproved::occurredOn">occurredOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/ReviewRejected.php.html#12"><abbr title="App\Review\Domain\Event\ReviewRejected::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/ReviewRejected.php.html#19"><abbr title="App\Review\Domain\Event\ReviewRejected::occurredOn">occurredOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/ReviewSubmitted.php.html#14"><abbr title="App\Review\Domain\Event\ReviewSubmitted::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/ReviewSubmitted.php.html#25"><abbr title="App\Review\Domain\Event\ReviewSubmitted::occurredOn">occurredOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#34"><abbr title="App\Review\Domain\Model\ProductReview::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#54"><abbr title="App\Review\Domain\Model\ProductReview::submit">submit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#96"><abbr title="App\Review\Domain\Model\ProductReview::reconstituteFromPersistence">reconstituteFromPersistence</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#129"><abbr title="App\Review\Domain\Model\ProductReview::approve">approve</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#144"><abbr title="App\Review\Domain\Model\ProductReview::reject">reject</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#159"><abbr title="App\Review\Domain\Model\ProductReview::updateContent">updateContent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#173"><abbr title="App\Review\Domain\Model\ProductReview::id">id</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#178"><abbr title="App\Review\Domain\Model\ProductReview::productId">productId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#183"><abbr title="App\Review\Domain\Model\ProductReview::tenantId">tenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#188"><abbr title="App\Review\Domain\Model\ProductReview::customerId">customerId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#193"><abbr title="App\Review\Domain\Model\ProductReview::customerName">customerName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#198"><abbr title="App\Review\Domain\Model\ProductReview::rating">rating</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#203"><abbr title="App\Review\Domain\Model\ProductReview::title">title</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#208"><abbr title="App\Review\Domain\Model\ProductReview::content">content</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#213"><abbr title="App\Review\Domain\Model\ProductReview::status">status</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#218"><abbr title="App\Review\Domain\Model\ProductReview::isVerifiedPurchase">isVerifiedPurchase</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#223"><abbr title="App\Review\Domain\Model\ProductReview::createdAt">createdAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#228"><abbr title="App\Review\Domain\Model\ProductReview::updatedAt">updatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#233"><abbr title="App\Review\Domain\Model\ProductReview::validateReview">validateReview</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#257"><abbr title="App\Review\Domain\Model\ReviewId::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#265"><abbr title="App\Review\Domain\Model\ReviewId::generate">generate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#270"><abbr title="App\Review\Domain\Model\ReviewId::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#275"><abbr title="App\Review\Domain\Model\ReviewId::toString">toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#280"><abbr title="App\Review\Domain\Model\ReviewId::value">value</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#285"><abbr title="App\Review\Domain\Model\ReviewId::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#290"><abbr title="App\Review\Domain\Model\ReviewId::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Rating.php.html#15"><abbr title="App\Review\Domain\ValueObject\Rating::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Rating.php.html#21"><abbr title="App\Review\Domain\ValueObject\Rating::fromInt">fromInt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Rating.php.html#26"><abbr title="App\Review\Domain\ValueObject\Rating::value">value</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Rating.php.html#31"><abbr title="App\Review\Domain\ValueObject\Rating::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Rating.php.html#36"><abbr title="App\Review\Domain\ValueObject\Rating::validate">validate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Rating.php.html#43"><abbr title="App\Review\Domain\ValueObject\Rating::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ReviewStatus.php.html#16"><abbr title="App\Review\Domain\ValueObject\ReviewStatus::isPending">isPending</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ReviewStatus.php.html#21"><abbr title="App\Review\Domain\ValueObject\ReviewStatus::isApproved">isApproved</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ReviewStatus.php.html#26"><abbr title="App\Review\Domain\ValueObject\ReviewStatus::isRejected">isRejected</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Fixtures/ReviewFixtures.php.html#34"><abbr title="App\Review\Infrastructure\Fixtures\ReviewFixtures::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Fixtures/ReviewFixtures.php.html#39"><abbr title="App\Review\Infrastructure\Fixtures\ReviewFixtures::load">load</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#72"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#81"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::fromDomainModel">fromDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#103"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::toDomainModel">toDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#124"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::updateFromDomainModel">updateFromDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#135"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::setTranslatableLocale">setTranslatableLocale</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#141"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#146"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::getProductId">getProductId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#151"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::getTenantId">getTenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#156"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::getCustomerId">getCustomerId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#161"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::getRating">getRating</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#166"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::getTitle">getTitle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#171"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::getContent">getContent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#176"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#181"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::isVerifiedPurchase">isVerifiedPurchase</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ProductReviewEntity.php.html#186"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Entity\ProductReviewEntity::getCreatedAt">getCreatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#19"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#25"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#44"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#51"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository::findByProductId">findByProductId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#62"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository::findApprovedByProductId">findApprovedByProductId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#77"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository::delete">delete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#87"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository::getAverageRating">getAverageRating</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#104"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository::getReviewCount">getReviewCount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/DeleteReviewProcessor.php.html#15"><abbr title="App\Review\Presentation\Api\State\DeleteReviewProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/DeleteReviewProcessor.php.html#20"><abbr title="App\Review\Presentation\Api\State\DeleteReviewProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewProvider.php.html#19"><abbr title="App\Review\Presentation\Api\State\ProductReviewProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewProvider.php.html#25"><abbr title="App\Review\Presentation\Api\State\ProductReviewProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewStatsProvider.php.html#20"><abbr title="App\Review\Presentation\Api\State\ProductReviewStatsProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewStatsProvider.php.html#27"><abbr title="App\Review\Presentation\Api\State\ProductReviewStatsProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewsProvider.php.html#21"><abbr title="App\Review\Presentation\Api\State\ProductReviewsProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewsProvider.php.html#28"><abbr title="App\Review\Presentation\Api\State\ProductReviewsProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/RatingDistributionProvider.php.html#20"><abbr title="App\Review\Presentation\Api\State\RatingDistributionProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/RatingDistributionProvider.php.html#27"><abbr title="App\Review\Presentation\Api\State\RatingDistributionProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/SubmitReviewProcessor.php.html#20"><abbr title="App\Review\Presentation\Api\State\SubmitReviewProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/SubmitReviewProcessor.php.html#26"><abbr title="App\Review\Presentation\Api\State\SubmitReviewProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/UpdateReviewProcessor.php.html#16"><abbr title="App\Review\Presentation\Api\State\UpdateReviewProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/UpdateReviewProcessor.php.html#21"><abbr title="App\Review\Presentation\Api\State\UpdateReviewProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#233"><abbr title="App\Review\Domain\Model\ProductReview::validateReview">validateReview</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Application/Command/DeleteReviewHandler.php.html#18"><abbr title="App\Review\Application\Command\DeleteReviewHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Infrastructure/Fixtures/ReviewFixtures.php.html#39"><abbr title="App\Review\Infrastructure\Fixtures\ReviewFixtures::load">load</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/State/SubmitReviewProcessor.php.html#26"><abbr title="App\Review\Presentation\Api\State\SubmitReviewProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/State/UpdateReviewProcessor.php.html#21"><abbr title="App\Review\Presentation\Api\State\UpdateReviewProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#54"><abbr title="App\Review\Domain\Model\ProductReview::submit">submit</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Domain/ValueObject/Rating.php.html#36"><abbr title="App\Review\Domain\ValueObject\Rating::validate">validate</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#25"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository::save">save</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewProvider.php.html#25"><abbr title="App\Review\Presentation\Api\State\ProductReviewProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewStatsProvider.php.html#27"><abbr title="App\Review\Presentation\Api\State\ProductReviewStatsProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/State/ProductReviewsProvider.php.html#28"><abbr title="App\Review\Presentation\Api\State\ProductReviewsProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/State/RatingDistributionProvider.php.html#27"><abbr title="App\Review\Presentation\Api\State\RatingDistributionProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Command/ApproveReviewHandler.php.html#18"><abbr title="App\Review\Application\Command\ApproveReviewHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Command/UpdateReviewHandler.php.html#18"><abbr title="App\Review\Application\Command\UpdateReviewHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Query/GetProductReviewsHandler.php.html#21"><abbr title="App\Review\Application\Query\GetProductReviewsHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Query/GetRatingDistributionHandler.php.html#20"><abbr title="App\Review\Application\Query\GetRatingDistributionHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#129"><abbr title="App\Review\Domain\Model\ProductReview::approve">approve</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#144"><abbr title="App\Review\Domain\Model\ProductReview::reject">reject</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#159"><abbr title="App\Review\Domain\Model\ProductReview::updateContent">updateContent</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/Model/ProductReview.php.html#257"><abbr title="App\Review\Domain\Model\ReviewId::__construct">__construct</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#77"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository::delete">delete</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineProductReviewRepository.php.html#87"><abbr title="App\Review\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductReviewRepository::getAverageRating">getAverageRating</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Presentation/Api/State/DeleteReviewProcessor.php.html#20"><abbr title="App\Review\Presentation\Api\State\DeleteReviewProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 12.4.0</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.14</a> and <a href="https://phpunit.de/">PHPUnit 12.4.1</a> at Thu Nov 27 8:00:35 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/billboard.pkgd.min.js?v=12.4.0" type="text/javascript"></script>
+  <script type="application/json" id="complexity_class">[[0,1,"Application\/Command\/ApproveReview.php.html#9","App\\Review\\Application\\Command\\ApproveReview","2"],[0,3,"Application\/Command\/ApproveReviewHandler.php.html#10","App\\Review\\Application\\Command\\ApproveReviewHandler","12"],[0,1,"Application\/Command\/DeleteReview.php.html#9","App\\Review\\Application\\Command\\DeleteReview","2"],[0,5,"Application\/Command\/DeleteReviewHandler.php.html#10","App\\Review\\Application\\Command\\DeleteReviewHandler","30"],[0,1,"Application\/Command\/SubmitReview.php.html#12","App\\Review\\Application\\Command\\SubmitReview","2"],[0,2,"Application\/Command\/SubmitReviewHandler.php.html#11","App\\Review\\Application\\Command\\SubmitReviewHandler","6"],[0,1,"Application\/Command\/UpdateReview.php.html#9","App\\Review\\Application\\Command\\UpdateReview","2"],[0,3,"Application\/Command\/UpdateReviewHandler.php.html#10","App\\Review\\Application\\Command\\UpdateReviewHandler","12"],[0,1,"Application\/Query\/GetProductRating.php.html#10","App\\Review\\Application\\Query\\GetProductRating","2"],[0,2,"Application\/Query\/GetProductRatingHandler.php.html#10","App\\Review\\Application\\Query\\GetProductRatingHandler","6"],[0,1,"Application\/Query\/GetProductRatingHandler.php.html#34","App\\Review\\Application\\Query\\RatingDTO","2"],[0,1,"Application\/Query\/GetProductReviews.php.html#10","App\\Review\\Application\\Query\\GetProductReviews","2"],[0,3,"Application\/Query\/GetProductReviewsHandler.php.html#10","App\\Review\\Application\\Query\\GetProductReviewsHandler","12"],[0,1,"Application\/Query\/GetProductReviewsHandler.php.html#48","App\\Review\\Application\\Query\\ReviewDTO","2"],[0,1,"Application\/Query\/GetRatingDistribution.php.html#10","App\\Review\\Application\\Query\\GetRatingDistribution","2"],[0,3,"Application\/Query\/GetRatingDistributionHandler.php.html#12","App\\Review\\Application\\Query\\GetRatingDistributionHandler","12"],[0,1,"Application\/Query\/GetReviewById.php.html#9","App\\Review\\Application\\Query\\GetReviewById","2"],[0,2,"Application\/Query\/GetReviewByIdHandler.php.html#11","App\\Review\\Application\\Query\\GetReviewByIdHandler","6"],[0,1,"Application\/Query\/GetReviewStats.php.html#10","App\\Review\\Application\\Query\\GetReviewStats","2"],[0,2,"Application\/Query\/GetReviewStatsHandler.php.html#10","App\\Review\\Application\\Query\\GetReviewStatsHandler","6"],[0,2,"Domain\/Event\/ReviewApproved.php.html#10","App\\Review\\Domain\\Event\\ReviewApproved","6"],[0,2,"Domain\/Event\/ReviewRejected.php.html#10","App\\Review\\Domain\\Event\\ReviewRejected","6"],[0,2,"Domain\/Event\/ReviewSubmitted.php.html#12","App\\Review\\Domain\\Event\\ReviewSubmitted","6"],[0,31,"Domain\/Model\/ProductReview.php.html#29","App\\Review\\Domain\\Model\\ProductReview","992"],[0,8,"Domain\/Model\/ProductReview.php.html#255","App\\Review\\Domain\\Model\\ReviewId","72"],[0,8,"Domain\/ValueObject\/Rating.php.html#10","App\\Review\\Domain\\ValueObject\\Rating","72"],[0,3,"Domain\/ValueObject\/ReviewStatus.php.html#10","App\\Review\\Domain\\ValueObject\\ReviewStatus","12"],[0,5,"Infrastructure\/Fixtures\/ReviewFixtures.php.html#16","App\\Review\\Infrastructure\\Fixtures\\ReviewFixtures","30"],[0,15,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#21","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity","240"],[0,12,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineProductReviewRepository.php.html#17","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineProductReviewRepository","156"],[0,3,"Presentation\/Api\/State\/DeleteReviewProcessor.php.html#13","App\\Review\\Presentation\\Api\\State\\DeleteReviewProcessor","12"],[0,4,"Presentation\/Api\/State\/ProductReviewProvider.php.html#15","App\\Review\\Presentation\\Api\\State\\ProductReviewProvider","20"],[0,4,"Presentation\/Api\/State\/ProductReviewStatsProvider.php.html#16","App\\Review\\Presentation\\Api\\State\\ProductReviewStatsProvider","20"],[0,4,"Presentation\/Api\/State\/ProductReviewsProvider.php.html#17","App\\Review\\Presentation\\Api\\State\\ProductReviewsProvider","20"],[0,4,"Presentation\/Api\/State\/RatingDistributionProvider.php.html#16","App\\Review\\Presentation\\Api\\State\\RatingDistributionProvider","20"],[0,5,"Presentation\/Api\/State\/SubmitReviewProcessor.php.html#18","App\\Review\\Presentation\\Api\\State\\SubmitReviewProcessor","30"],[0,5,"Presentation\/Api\/State\/UpdateReviewProcessor.php.html#14","App\\Review\\Presentation\\Api\\State\\UpdateReviewProcessor","30"],[100,0,"Presentation\/Api\/Resource\/ProductReviewResource.php.html#21","App\\Review\\Presentation\\Api\\Resource\\ProductReviewResource","0"]]</script>
+  <script type="application/json" id="complexity_method">[[0,1,"Application\/Command\/ApproveReview.php.html#11","App\\Review\\Application\\Command\\ApproveReview::__construct","2"],[0,1,"Application\/Command\/ApproveReviewHandler.php.html#13","App\\Review\\Application\\Command\\ApproveReviewHandler::__construct","2"],[0,2,"Application\/Command\/ApproveReviewHandler.php.html#18","App\\Review\\Application\\Command\\ApproveReviewHandler::__invoke","6"],[0,1,"Application\/Command\/DeleteReview.php.html#11","App\\Review\\Application\\Command\\DeleteReview::__construct","2"],[0,1,"Application\/Command\/DeleteReviewHandler.php.html#13","App\\Review\\Application\\Command\\DeleteReviewHandler::__construct","2"],[0,4,"Application\/Command\/DeleteReviewHandler.php.html#18","App\\Review\\Application\\Command\\DeleteReviewHandler::__invoke","20"],[0,1,"Application\/Command\/SubmitReview.php.html#14","App\\Review\\Application\\Command\\SubmitReview::__construct","2"],[0,1,"Application\/Command\/SubmitReviewHandler.php.html#14","App\\Review\\Application\\Command\\SubmitReviewHandler::__construct","2"],[0,1,"Application\/Command\/SubmitReviewHandler.php.html#19","App\\Review\\Application\\Command\\SubmitReviewHandler::__invoke","2"],[0,1,"Application\/Command\/UpdateReview.php.html#11","App\\Review\\Application\\Command\\UpdateReview::__construct","2"],[0,1,"Application\/Command\/UpdateReviewHandler.php.html#13","App\\Review\\Application\\Command\\UpdateReviewHandler::__construct","2"],[0,2,"Application\/Command\/UpdateReviewHandler.php.html#18","App\\Review\\Application\\Command\\UpdateReviewHandler::__invoke","6"],[0,1,"Application\/Query\/GetProductRating.php.html#12","App\\Review\\Application\\Query\\GetProductRating::__construct","2"],[0,1,"Application\/Query\/GetProductRatingHandler.php.html#13","App\\Review\\Application\\Query\\GetProductRatingHandler::__construct","2"],[0,1,"Application\/Query\/GetProductRatingHandler.php.html#18","App\\Review\\Application\\Query\\GetProductRatingHandler::__invoke","2"],[0,1,"Application\/Query\/GetProductRatingHandler.php.html#36","App\\Review\\Application\\Query\\RatingDTO::__construct","2"],[0,1,"Application\/Query\/GetProductReviews.php.html#12","App\\Review\\Application\\Query\\GetProductReviews::__construct","2"],[0,1,"Application\/Query\/GetProductReviewsHandler.php.html#13","App\\Review\\Application\\Query\\GetProductReviewsHandler::__construct","2"],[0,2,"Application\/Query\/GetProductReviewsHandler.php.html#21","App\\Review\\Application\\Query\\GetProductReviewsHandler::__invoke","6"],[0,1,"Application\/Query\/GetProductReviewsHandler.php.html#50","App\\Review\\Application\\Query\\ReviewDTO::__construct","2"],[0,1,"Application\/Query\/GetRatingDistribution.php.html#12","App\\Review\\Application\\Query\\GetRatingDistribution::__construct","2"],[0,1,"Application\/Query\/GetRatingDistributionHandler.php.html#15","App\\Review\\Application\\Query\\GetRatingDistributionHandler::__construct","2"],[0,2,"Application\/Query\/GetRatingDistributionHandler.php.html#20","App\\Review\\Application\\Query\\GetRatingDistributionHandler::__invoke","6"],[0,1,"Application\/Query\/GetReviewById.php.html#11","App\\Review\\Application\\Query\\GetReviewById::__construct","2"],[0,1,"Application\/Query\/GetReviewByIdHandler.php.html#14","App\\Review\\Application\\Query\\GetReviewByIdHandler::__construct","2"],[0,1,"Application\/Query\/GetReviewByIdHandler.php.html#19","App\\Review\\Application\\Query\\GetReviewByIdHandler::__invoke","2"],[0,1,"Application\/Query\/GetReviewStats.php.html#12","App\\Review\\Application\\Query\\GetReviewStats::__construct","2"],[0,1,"Application\/Query\/GetReviewStatsHandler.php.html#13","App\\Review\\Application\\Query\\GetReviewStatsHandler::__construct","2"],[0,1,"Application\/Query\/GetReviewStatsHandler.php.html#18","App\\Review\\Application\\Query\\GetReviewStatsHandler::__invoke","2"],[0,1,"Domain\/Event\/ReviewApproved.php.html#12","App\\Review\\Domain\\Event\\ReviewApproved::__construct","2"],[0,1,"Domain\/Event\/ReviewApproved.php.html#18","App\\Review\\Domain\\Event\\ReviewApproved::occurredOn","2"],[0,1,"Domain\/Event\/ReviewRejected.php.html#12","App\\Review\\Domain\\Event\\ReviewRejected::__construct","2"],[0,1,"Domain\/Event\/ReviewRejected.php.html#19","App\\Review\\Domain\\Event\\ReviewRejected::occurredOn","2"],[0,1,"Domain\/Event\/ReviewSubmitted.php.html#14","App\\Review\\Domain\\Event\\ReviewSubmitted::__construct","2"],[0,1,"Domain\/Event\/ReviewSubmitted.php.html#25","App\\Review\\Domain\\Event\\ReviewSubmitted::occurredOn","2"],[0,1,"Domain\/Model\/ProductReview.php.html#34","App\\Review\\Domain\\Model\\ProductReview::__construct","2"],[0,3,"Domain\/Model\/ProductReview.php.html#54","App\\Review\\Domain\\Model\\ProductReview::submit","12"],[0,1,"Domain\/Model\/ProductReview.php.html#96","App\\Review\\Domain\\Model\\ProductReview::reconstituteFromPersistence","2"],[0,2,"Domain\/Model\/ProductReview.php.html#129","App\\Review\\Domain\\Model\\ProductReview::approve","6"],[0,2,"Domain\/Model\/ProductReview.php.html#144","App\\Review\\Domain\\Model\\ProductReview::reject","6"],[0,2,"Domain\/Model\/ProductReview.php.html#159","App\\Review\\Domain\\Model\\ProductReview::updateContent","6"],[0,1,"Domain\/Model\/ProductReview.php.html#173","App\\Review\\Domain\\Model\\ProductReview::id","2"],[0,1,"Domain\/Model\/ProductReview.php.html#178","App\\Review\\Domain\\Model\\ProductReview::productId","2"],[0,1,"Domain\/Model\/ProductReview.php.html#183","App\\Review\\Domain\\Model\\ProductReview::tenantId","2"],[0,1,"Domain\/Model\/ProductReview.php.html#188","App\\Review\\Domain\\Model\\ProductReview::customerId","2"],[0,1,"Domain\/Model\/ProductReview.php.html#193","App\\Review\\Domain\\Model\\ProductReview::customerName","2"],[0,1,"Domain\/Model\/ProductReview.php.html#198","App\\Review\\Domain\\Model\\ProductReview::rating","2"],[0,1,"Domain\/Model\/ProductReview.php.html#203","App\\Review\\Domain\\Model\\ProductReview::title","2"],[0,1,"Domain\/Model\/ProductReview.php.html#208","App\\Review\\Domain\\Model\\ProductReview::content","2"],[0,1,"Domain\/Model\/ProductReview.php.html#213","App\\Review\\Domain\\Model\\ProductReview::status","2"],[0,1,"Domain\/Model\/ProductReview.php.html#218","App\\Review\\Domain\\Model\\ProductReview::isVerifiedPurchase","2"],[0,1,"Domain\/Model\/ProductReview.php.html#223","App\\Review\\Domain\\Model\\ProductReview::createdAt","2"],[0,1,"Domain\/Model\/ProductReview.php.html#228","App\\Review\\Domain\\Model\\ProductReview::updatedAt","2"],[0,8,"Domain\/Model\/ProductReview.php.html#233","App\\Review\\Domain\\Model\\ProductReview::validateReview","72"],[0,2,"Domain\/Model\/ProductReview.php.html#257","App\\Review\\Domain\\Model\\ReviewId::__construct","6"],[0,1,"Domain\/Model\/ProductReview.php.html#265","App\\Review\\Domain\\Model\\ReviewId::generate","2"],[0,1,"Domain\/Model\/ProductReview.php.html#270","App\\Review\\Domain\\Model\\ReviewId::fromString","2"],[0,1,"Domain\/Model\/ProductReview.php.html#275","App\\Review\\Domain\\Model\\ReviewId::toString","2"],[0,1,"Domain\/Model\/ProductReview.php.html#280","App\\Review\\Domain\\Model\\ReviewId::value","2"],[0,1,"Domain\/Model\/ProductReview.php.html#285","App\\Review\\Domain\\Model\\ReviewId::equals","2"],[0,1,"Domain\/Model\/ProductReview.php.html#290","App\\Review\\Domain\\Model\\ReviewId::__toString","2"],[0,1,"Domain\/ValueObject\/Rating.php.html#15","App\\Review\\Domain\\ValueObject\\Rating::__construct","2"],[0,1,"Domain\/ValueObject\/Rating.php.html#21","App\\Review\\Domain\\ValueObject\\Rating::fromInt","2"],[0,1,"Domain\/ValueObject\/Rating.php.html#26","App\\Review\\Domain\\ValueObject\\Rating::value","2"],[0,1,"Domain\/ValueObject\/Rating.php.html#31","App\\Review\\Domain\\ValueObject\\Rating::equals","2"],[0,3,"Domain\/ValueObject\/Rating.php.html#36","App\\Review\\Domain\\ValueObject\\Rating::validate","12"],[0,1,"Domain\/ValueObject\/Rating.php.html#43","App\\Review\\Domain\\ValueObject\\Rating::__toString","2"],[0,1,"Domain\/ValueObject\/ReviewStatus.php.html#16","App\\Review\\Domain\\ValueObject\\ReviewStatus::isPending","2"],[0,1,"Domain\/ValueObject\/ReviewStatus.php.html#21","App\\Review\\Domain\\ValueObject\\ReviewStatus::isApproved","2"],[0,1,"Domain\/ValueObject\/ReviewStatus.php.html#26","App\\Review\\Domain\\ValueObject\\ReviewStatus::isRejected","2"],[0,1,"Infrastructure\/Fixtures\/ReviewFixtures.php.html#34","App\\Review\\Infrastructure\\Fixtures\\ReviewFixtures::__construct","2"],[0,4,"Infrastructure\/Fixtures\/ReviewFixtures.php.html#39","App\\Review\\Infrastructure\\Fixtures\\ReviewFixtures::load","20"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#72","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::__construct","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#81","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::fromDomainModel","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#103","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::toDomainModel","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#124","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::updateFromDomainModel","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#135","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::setTranslatableLocale","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#141","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::getId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#146","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::getProductId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#151","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::getTenantId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#156","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::getCustomerId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#161","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::getRating","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#166","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::getTitle","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#171","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::getContent","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#176","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::getStatus","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#181","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::isVerifiedPurchase","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ProductReviewEntity.php.html#186","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductReviewEntity::getCreatedAt","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineProductReviewRepository.php.html#19","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineProductReviewRepository::__construct","2"],[0,3,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineProductReviewRepository.php.html#25","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineProductReviewRepository::save","12"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineProductReviewRepository.php.html#44","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineProductReviewRepository::findById","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineProductReviewRepository.php.html#51","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineProductReviewRepository::findByProductId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineProductReviewRepository.php.html#62","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineProductReviewRepository::findApprovedByProductId","2"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineProductReviewRepository.php.html#77","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineProductReviewRepository::delete","6"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineProductReviewRepository.php.html#87","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineProductReviewRepository::getAverageRating","6"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineProductReviewRepository.php.html#104","App\\Review\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineProductReviewRepository::getReviewCount","2"],[0,1,"Presentation\/Api\/State\/DeleteReviewProcessor.php.html#15","App\\Review\\Presentation\\Api\\State\\DeleteReviewProcessor::__construct","2"],[0,2,"Presentation\/Api\/State\/DeleteReviewProcessor.php.html#20","App\\Review\\Presentation\\Api\\State\\DeleteReviewProcessor::process","6"],[0,1,"Presentation\/Api\/State\/ProductReviewProvider.php.html#19","App\\Review\\Presentation\\Api\\State\\ProductReviewProvider::__construct","2"],[0,3,"Presentation\/Api\/State\/ProductReviewProvider.php.html#25","App\\Review\\Presentation\\Api\\State\\ProductReviewProvider::provide","12"],[0,1,"Presentation\/Api\/State\/ProductReviewStatsProvider.php.html#20","App\\Review\\Presentation\\Api\\State\\ProductReviewStatsProvider::__construct","2"],[0,3,"Presentation\/Api\/State\/ProductReviewStatsProvider.php.html#27","App\\Review\\Presentation\\Api\\State\\ProductReviewStatsProvider::provide","12"],[0,1,"Presentation\/Api\/State\/ProductReviewsProvider.php.html#21","App\\Review\\Presentation\\Api\\State\\ProductReviewsProvider::__construct","2"],[0,3,"Presentation\/Api\/State\/ProductReviewsProvider.php.html#28","App\\Review\\Presentation\\Api\\State\\ProductReviewsProvider::provide","12"],[0,1,"Presentation\/Api\/State\/RatingDistributionProvider.php.html#20","App\\Review\\Presentation\\Api\\State\\RatingDistributionProvider::__construct","2"],[0,3,"Presentation\/Api\/State\/RatingDistributionProvider.php.html#27","App\\Review\\Presentation\\Api\\State\\RatingDistributionProvider::provide","12"],[0,1,"Presentation\/Api\/State\/SubmitReviewProcessor.php.html#20","App\\Review\\Presentation\\Api\\State\\SubmitReviewProcessor::__construct","2"],[0,4,"Presentation\/Api\/State\/SubmitReviewProcessor.php.html#26","App\\Review\\Presentation\\Api\\State\\SubmitReviewProcessor::process","20"],[0,1,"Presentation\/Api\/State\/UpdateReviewProcessor.php.html#16","App\\Review\\Presentation\\Api\\State\\UpdateReviewProcessor::__construct","2"],[0,4,"Presentation\/Api\/State\/UpdateReviewProcessor.php.html#21","App\\Review\\Presentation\\Api\\State\\UpdateReviewProcessor::process","20"]]</script>
+  <script type="text/javascript" defer>
+  const barLabels = [
+    '0%',
+    '0-10%',
+    '10-20%',
+    '20-30%',
+    '30-40%',
+    '40-50%',
+    '50-60%',
+    '60-70%',
+    '70-80%',
+    '80-90%',
+    '90-100%',
+    '100%'
+  ];
+  const barConfig = (name, fullName, values) => ({
+    axis: {
+      x: {
+        type: "category",
+        categories: barLabels,
+      },
+      y: {
+        label: {
+          text: `#${name}`,
+          position: 'outer-top',
+        },
+      },
+    },
+    bindto: `#${name}CoverageDistribution`,
+    data: {
+      columns: [
+        [fullName].concat(values),
+      ],
+      colors: {
+        [fullName]: "rgba(69, 114, 167, 0.75)",
+      },
+      type: "bar",
+    },
+    bar: {
+      width: {
+        ratio: 0.9,
+      },
+    },
+    grid: {
+      focus: {
+        show: false,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">Coverage ${barLabels[data[0].x]}</th></tr>
+            <tr><td class="value">${data[0].value} ${name}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  bb.generate(
+    barConfig('classes', "Class Coverage", [37,0,0,0,0,0,0,0,0,0,0,1])
+  );
+  bb.generate(
+    barConfig('methods', "Method Coverage", [109,0,0,0,0,0,0,0,0,0,0,0])
+  );
+
+  const scatterConfig = (name, complexityData) => ({
+    axis: {
+      x: {
+        label: {
+          text: 'Code Coverage (in percent)',
+          position: 'outer-right',
+        },
+        tick: {
+          values: [0, 20, 40, 60, 80, 100],
+        },
+      },
+      y: {
+        label: {
+          text: 'Cyclomatic Complexity',
+          position: 'outer-top',
+        },
+        min: 0,
+        padding: {
+          bottom: 0,
+          top: 5,
+        },
+      },
+    },
+    bindto: `#${name}Complexity`,
+    data: {
+      columns: [
+        ["complexity_x"].concat(complexityData.map(d => d[0])),
+        ["complexity"].concat(complexityData.map(d => d[1])),
+      ],
+      onclick: function(data, element) {
+        window.location = complexityData[data.index][2];
+      },
+      type: "scatter",
+      xs: {
+        "complexity": "complexity_x",
+      },
+    },
+    grid: {
+      focus: {
+        show: true,
+        y: true,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        const coverage = Math.round(data[0].x);
+        const complexity = data[0].value;
+        const targetName = complexityData[data[0].index][3];
+        const crap = complexityData[data[0].index][4];
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">${targetName}</th></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Coverage</td><td class="name">${coverage}%</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Complexity</td><td class="value">${complexity}</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Crap</td><td class="value">${crap}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  const classComplexityData = JSON.parse(document.getElementById('complexity_class').textContent);
+  bb.generate(
+    scatterConfig("class", classComplexityData)
+  );
+  const methodComplexityData = JSON.parse(document.getElementById('complexity_method').textContent);
+  bb.generate(
+    scatterConfig("method", methodComplexityData),
+  );
+  </script>
+ </body>
+</html>

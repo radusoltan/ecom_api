@@ -58,4 +58,23 @@ interface CartRepositoryInterface
      * @return Cart[]
      */
     public function findActiveByTenantAndEmail(TenantId $tenantId, string $customerEmail): array;
+
+    /**
+     * Find abandoned carts ready for email notification.
+     *
+     * Returns active carts that:
+     * - Have not been updated in the specified time window
+     * - Have not already received abandonment email
+     * - Have at least one item
+     *
+     * @param \DateTimeImmutable $abandonedBefore Carts not updated since this time
+     * @param int $limit Maximum number of carts to return
+     * @return CartId[] Array of cart IDs
+     */
+    public function findAbandonedCartsForEmail(\DateTimeImmutable $abandonedBefore, int $limit = 100): array;
+
+    /**
+     * Mark cart as having received abandonment email.
+     */
+    public function markAbandonmentEmailSent(CartId $cartId): void;
 }

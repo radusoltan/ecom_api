@@ -75,6 +75,7 @@ final readonly class ReserveStockProcessor implements ProcessorInterface
         $reservation = StockReservation::create(
             $data->referenceId,
             $stockItem->id(),
+            $stockItem->warehouseId(),
             $tenantId,
             Quantity::fromInt($data->quantity)
         );

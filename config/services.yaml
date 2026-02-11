@@ -27,6 +27,10 @@ services:
     App\Shared\Infrastructure\Tenant\TenantContext:
         shared: true
 
+    # Tenant Context Interface alias for Application layer
+    App\Shared\Application\Service\TenantContextInterface:
+        alias: App\Shared\Infrastructure\Tenant\TenantContext
+
     # Prometheus CollectorRegistry alias for autowiring
     Prometheus\CollectorRegistry:
         alias: prometheus_metrics_bundle.collector_registry
@@ -201,6 +205,16 @@ services:
     # Cart Repository interface binding
     App\Cart\Domain\Repository\CartRepositoryInterface:
         alias: App\Cart\Infrastructure\Persistence\Doctrine\Repository\DoctrineCartRepository
+
+    # Inventory Repository interface bindings
+    App\Inventory\Domain\Repository\StockItemRepositoryInterface:
+        alias: App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository
+
+    App\Inventory\Domain\Repository\StockReservationRepositoryInterface:
+        alias: App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockReservationRepository
+
+    App\Inventory\Domain\Repository\WarehouseRepositoryInterface:
+        alias: App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMWarehouseRepository
 
     # Cart Application Services
     App\Cart\Application\Service\CartPriceCalculator: ~
@@ -413,6 +427,7 @@ services:
     App\Inventory\Infrastructure\ApiPlatform\State\AllocateStockProcessor: ~
     App\Inventory\Infrastructure\ApiPlatform\State\ReleaseStockProcessor: ~
     App\Inventory\Infrastructure\ApiPlatform\State\BulkReserveStockProcessor: ~
+    App\Inventory\Infrastructure\ApiPlatform\State\CheckStockAvailabilityProcessor: ~
 
     # Warehouse State Providers (define inner services)
     App\Inventory\Presentation\Api\Provider\WarehouseCollectionProvider: ~
@@ -485,6 +500,14 @@ services:
             $decorated: '@.inner'
             $requestStack: '@request_stack'
 
+    tenant_context_check_stock_availability_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Inventory\Infrastructure\ApiPlatform\State\CheckStockAvailabilityProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
     # Inventory Context - Command Handlers
     App\Inventory\Application\Command\CreateStockItem\CreateStockItemHandler:
         tags:
@@ -516,6 +539,10 @@ services:
 
     # Inventory Context - Query Handlers
     App\Inventory\Application\Query\GetStockByProduct\GetStockByProductHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Inventory\Application\Query\CheckStockAvailability\CheckStockAvailabilityHandler:
         tags:
             - { name: messenger.message_handler, bus: query.bus }
 
@@ -797,6 +824,21 @@ services:
             $decorated: '@.inner'
             $requestStack: '@request_stack'
 
+    # Customer Repository interface bindings
+    App\Customer\Domain\Repository\CustomerRepositoryInterface:
+        alias: App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository
+
+    App\Customer\Domain\Repository\CustomerSearchRepositoryInterface:
+        alias: App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineCustomerSearchRepository
+
+    App\Customer\Domain\Repository\LoyaltyProgramRepositoryInterface:
+        alias: App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineLoyaltyProgramRepository
+
+    # Customer GDPR Services
+    App\Customer\Application\Service\DataExportService:
+        arguments:
+            $exportDirectory: '%kernel.project_dir%/var/exports'
+
     # Returns Context - Tenant decorators
     tenant_context_return_request_item_provider:
         class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
@@ -815,18 +857,9 @@ services:
             $requestStack: '@request_stack'
 
     # Payment Context - Gateway Adapters
-    App\Payment\Infrastructure\Gateway\StripePaymentGateway:
-        arguments:
-            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
-            $logger: '@logger'
+    # Payment Context - Gateway Adapters
+    # Note: StripeGateway and PayPalGatewayAdapter are defined below with their factories/args
 
-    App\Payment\Infrastructure\Gateway\PayPalPaymentGateway:
-        arguments:
-            $clientId: '%env(PAYPAL_CLIENT_ID)%'
-            $clientSecret: '%env(PAYPAL_SECRET_KEY)%'
-            $httpClient: '@Symfony\Contracts\HttpClient\HttpClientInterface'
-            $logger: '@logger'
-            $sandbox: true
 
     App\Payment\Infrastructure\Gateway\TwoCheckoutPaymentGateway:
         arguments:
@@ -837,13 +870,43 @@ services:
             $logger: '@logger'
             $sandbox: true
 
-    # Payment Gateway Factory
+    # Payment Gateway Interface - Default to Stripe
+    App\Payment\Domain\Service\PaymentGatewayInterface:
+        alias: App\Payment\Infrastructure\Gateway\StripeGateway
+
+    # Stripe Client Factory
+    App\Payment\Infrastructure\Gateway\StripeClientFactory:
+        arguments:
+            $apiKey: '%payment.stripe.api_key%'
+            $apiVersion: '%payment.stripe.api_version%'
+
+    # Stripe Gateway Adapter (implements PaymentGatewayInterface)
+    App\Payment\Infrastructure\Gateway\StripeGateway:
+        arguments:
+            $webhookSecret: '%payment.stripe.webhook_secret%'
+
+    # PayPal Client Factory
+    App\Payment\Infrastructure\Gateway\PayPalClientFactory:
+        arguments:
+            $clientId: '%env(PAYPAL_CLIENT_ID)%'
+            $clientSecret: '%env(PAYPAL_SECRET_KEY)%'
+            $environment: '%env(default::PAYPAL_ENVIRONMENT)%'
+            $logger: '@logger'
+
+    # PayPal Client (created via factory)
+    App\Payment\Infrastructure\Gateway\PayPalClient:
+        factory: ['@App\Payment\Infrastructure\Gateway\PayPalClientFactory', 'create']
+
+    # Payment Gateway Factory (implements PaymentGatewayFactoryInterface)
+    # Uses factory pattern to create gateway adapters based on PaymentMethod enum
     App\Payment\Infrastructure\Gateway\PaymentGatewayFactory:
         arguments:
-            $gateways:
-                stripe: '@App\Payment\Infrastructure\Gateway\StripePaymentGateway'
-                paypal: '@App\Payment\Infrastructure\Gateway\PayPalPaymentGateway'
-                twocheckout: '@App\Payment\Infrastructure\Gateway\TwoCheckoutPaymentGateway'
+            $stripeGateway: '@App\Payment\Infrastructure\Gateway\StripeGateway'
+            $paypalGateway: '@App\Payment\Infrastructure\Gateway\PayPalGatewayAdapter'
+
+    # Payment Gateway Factory Interface binding
+    App\Payment\Domain\Service\PaymentGatewayFactoryInterface:
+        alias: App\Payment\Infrastructure\Gateway\PaymentGatewayFactory
 
     # Payment Repository
     App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository:
@@ -854,6 +917,15 @@ services:
     # Payment Repository interface binding
     App\Payment\Domain\Repository\PaymentRepositoryInterface:
         alias: App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository
+
+    # Transaction Repository
+    App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMTransactionRepository:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+
+    # Transaction Repository interface binding
+    App\Payment\Domain\Repository\TransactionRepositoryInterface:
+        alias: App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMTransactionRepository
 
     # Payment Context - Command Handlers
     App\Payment\Application\Command\CreatePaymentHandler:
@@ -1011,19 +1083,35 @@ services:
             $queryBus: '@query.bus'
             $logger: '@logger'
 
+    # PayPal Webhook Handler
+    App\Payment\Infrastructure\Webhook\PayPalWebhookHandler:
+        arguments:
+            $webhookId: '%env(PAYPAL_WEBHOOK_ID)%'
+            $clientId: '%env(PAYPAL_CLIENT_ID)%'
+            $clientSecret: '%env(PAYPAL_SECRET_KEY)%'
+            $httpClient: '@http_client'
+            $commandBus: '@command.bus'
+            $queryBus: '@query.bus'
+            $logger: '@logger'
+            $sandbox: true
+
     # Tax Context - Repository
     App\Tax\Domain\Repository\TaxRuleRepositoryInterface:
-        alias: App\Tax\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMTaxRuleRepository
+        alias: App\Tax\Infrastructure\Persistence\Doctrine\Repository\DoctrineTaxRuleRepository
 
-    App\Tax\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMTaxRuleRepository:
+    App\Tax\Infrastructure\Persistence\Doctrine\Repository\DoctrineTaxRuleRepository:
         arguments:
             $entityManager: '@doctrine.orm.entity_manager'
-            $eventDispatcher: '@event_dispatcher'
+            $eventBus: '@event.bus'
 
     # Tax Context - Domain Services
     App\Tax\Domain\Service\TaxCalculationService:
         arguments:
             $taxRuleRepository: '@App\Tax\Domain\Repository\TaxRuleRepositoryInterface'
+
+    # Tax Calculator Interface - Composite calculator (orchestrates EU VAT, US Sales Tax, etc.)
+    App\Tax\Domain\Service\TaxCalculatorInterface:
+        alias: App\Tax\Infrastructure\Calculator\CompositeTaxCalculator
 
     # Tax Context - Command Handlers
     App\Tax\Application\Command\CreateTaxRuleHandler:
@@ -1110,7 +1198,7 @@ services:
     App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository:
         arguments:
             $entityManager: '@doctrine.orm.entity_manager'
-            $eventBus: '@messenger.default_bus'
+            $eventBus: '@event.bus'
 
     # Returns Context - Event Subscribers
     App\Returns\Application\EventSubscriber\ReturnRequestCreatedSubscriber:
@@ -1177,6 +1265,26 @@ services:
             $entityManager: '@doctrine.orm.entity_manager'
             $eventBus: '@messenger.default_bus'
 
+    # User Context - Repository
+    App\User\Domain\Repository\UserRepositoryInterface:
+        alias: App\User\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMUserRepository
+
+    # User Context - Password Reset Email Handler
+    App\User\Application\Command\RequestPasswordReset\SendPasswordResetEmailHandler:
+        arguments:
+            $frontendUrl: '%env(FRONTEND_URL)%'
+            $fromEmail: '%env(MAILER_FROM)%'
+
+    # Notifications Email Service
+    App\Notifications\Infrastructure\Email\SymfonyEmailSender:
+        public: true
+        arguments:
+            $fromEmail: '%env(MAILER_FROM)%'
+
+    # Bind EmailSenderInterface to SymfonyEmailSender
+    App\Notifications\Domain\Service\EmailSenderInterface:
+        alias: App\Notifications\Infrastructure\Email\SymfonyEmailSender
+
     # Search bounded context services
     App\Search\Domain\Service\SearchServiceInterface:
         alias: App\Search\Infrastructure\Elasticsearch\ElasticsearchSearchService
@@ -1196,3 +1304,25 @@ services:
     App\Internationalization\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslationEntryRepository:
         arguments:
             $connection: '@doctrine.dbal.default_connection'
+
+    # DomPDF Factory for Invoice PDF Generation
+    App\Invoice\Infrastructure\Pdf\DompdfFactory:
+        arguments:
+            $options: '%dompdf.options%'
+
+    # Invoice Number Generator
+    App\Invoice\Domain\Service\InvoiceNumberGeneratorInterface:
+        alias: App\Invoice\Infrastructure\NumberGenerator\SequentialInvoiceNumberGenerator
+
+    # Invoice PDF Generator
+    App\Invoice\Infrastructure\Pdf\InvoicePdfGenerator:
+        arguments:
+            $invoicesDir: '%kernel.project_dir%/var/invoices'
+            $companyName: '%env(COMPANY_NAME)%'
+            $companyAddress: '%env(COMPANY_ADDRESS)%'
+            $companyVatNumber: '%env(COMPANY_VAT_NUMBER)%'
+            $logoPath: '%kernel.project_dir%/public/images/logo.png'
+
+    # Invoice PDF Generator Interface binding
+    App\Invoice\Domain\Service\InvoicePdfGeneratorInterface:
+        alias: App\Invoice\Infrastructure\Pdf\InvoicePdfGenerator

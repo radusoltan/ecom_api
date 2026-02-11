@@ -11,8 +11,11 @@ use App\Customer\Domain\Event\CustomerSegmentChanged;
 use App\Customer\Domain\Event\CustomerUpdated;
 use App\Customer\Domain\Event\LoyaltyPointsAwarded;
 use App\Customer\Domain\Model\Customer;
+use App\Customer\Domain\ValueObject\CustomerConsent;
 use App\Customer\Domain\ValueObject\CustomerId;
+use App\Customer\Domain\ValueObject\CustomerPreferences;
 use App\Customer\Domain\ValueObject\CustomerSegment;
+use App\Customer\Domain\ValueObject\NotificationPreferences;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
@@ -414,6 +417,9 @@ final class CustomerTest extends TestCase
             CustomerSegment::vip(),
             150,
             false,
+            CustomerPreferences::create(),
+            CustomerConsent::default(),
+            NotificationPreferences::default(),
             $now,
             $now
         );

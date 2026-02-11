@@ -239,7 +239,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
             resourceType: 'payment',
             resourceId: $event->paymentId->toString(),
             metadata: [
-                'failureReason' => $event->failureReason,
+                'errorMessage' => $event->errorMessage,
                 'event' => 'PaymentFailed',
             ]
         );

@@ -38,21 +38,15 @@ final class TaxRuleItemProvider implements ProviderInterface
             throw new BadRequestHttpException('Tax rule ID is required');
         }
 
-        // Get tenant ID from request headers
-        $request = $context['request'] ?? null;
-        if (!$request) {
-            throw new BadRequestHttpException('Request context is missing');
-        }
-
-        $tenantId = $request->headers->get('X-Tenant-ID');
-        if (!$tenantId) {
-            throw new BadRequestHttpException('X-Tenant-ID header is required');
-        }
+        // Extract tenant ID from context (injected by TenantContextProvider)
+        $tenantId = TenantId::fromString(
+            $context['tenant_id'] ?? throw new \InvalidArgumentException('Tenant ID is required')
+        );
 
         // Create query
         $query = new GetTaxRuleById(
             id: TaxRuleId::fromString($id),
-            tenantId: TenantId::fromString($tenantId)
+            tenantId: $tenantId
         );
 
         // Execute query

@@ -6,19 +6,21 @@ namespace App\Customer\Presentation\Api\Provider;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Customer\Application\DTO\CustomerDTO;
-use App\Customer\Application\Query\GetAllCustomersQuery;
+use App\Customer\Application\Query\SearchCustomers\SearchCustomersQuery;
+use App\Customer\Application\Query\SearchCustomers\SearchCustomersQueryHandler;
 use App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
+ * Customer Collection Provider with Search & Filtering.
+ *
  * @implements ProviderInterface<CustomerEntity>
  */
 final readonly class CustomerCollectionProvider implements ProviderInterface
 {
     public function __construct(
-        private MessageBusInterface $queryBus
+        private SearchCustomersQueryHandler $searchHandler,
+        private RequestStack $requestStack
     ) {
     }
 
@@ -27,35 +29,68 @@ final readonly class CustomerCollectionProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
-        // Get tenant ID from context (set by TenantContextProvider or similar)
-        $tenantId = $context['tenant_id'] ?? throw new \InvalidArgumentException('Tenant ID is required');
-
-        // Get optional segment filter from query parameters
-        $segment = $context['filters']['segment'] ?? null;
-
-        $envelope = $this->queryBus->dispatch(new GetAllCustomersQuery($tenantId, $segment));
-        $handledStamp = $envelope->last(HandledStamp::class);
-
-        if (!$handledStamp instanceof HandledStamp) {
+        $request = $this->requestStack->getCurrentRequest();
+        if (null === $request) {
             return [];
         }
 
-        $customerDTOs = $handledStamp->getResult();
-
-        if (null === $customerDTOs || !is_array($customerDTOs)) {
-            return [];
+        // Get tenant ID from context or header
+        $tenantId = $context['tenant_id'] ?? $request->headers->get('X-Tenant-ID');
+        if (null === $tenantId) {
+            throw new \InvalidArgumentException('Tenant ID is required (X-Tenant-ID header or context)');
         }
 
-        // Convert DTOs to entities for API Platform
+        // Extract all search/filter parameters
+        $searchTerm = $request->query->get('search');
+        $status = $request->query->get('status');
+        $segment = $request->query->get('segment');
+        $registeredFrom = $request->query->get('registeredFrom');
+        $registeredTo = $request->query->get('registeredTo');
+        $hasOrders = $request->query->get('hasOrders');
+        $minOrderCount = $request->query->get('minOrderCount');
+        $maxOrderCount = $request->query->get('maxOrderCount');
+
+        $sortByParam = $request->query->get('sortBy', 'createdAt');
+        $sortBy = is_string($sortByParam) ? $sortByParam : 'createdAt';
+
+        $sortOrderParam = $request->query->get('sortOrder', 'DESC');
+        $sortOrder = is_string($sortOrderParam) ? strtoupper($sortOrderParam) : 'DESC';
+
+        $page = (int) $request->query->get('page', 1);
+        $limit = min((int) $request->query->get('limit', 20), 100);
+
+        $query = new SearchCustomersQuery(
+            tenantId: $tenantId,
+            searchTerm: is_string($searchTerm) ? $searchTerm : null,
+            status: is_string($status) ? $status : null,
+            segment: is_string($segment) ? $segment : null,
+            registeredFrom: is_string($registeredFrom) ? new \DateTimeImmutable($registeredFrom) : null,
+            registeredTo: is_string($registeredTo) ? new \DateTimeImmutable($registeredTo) : null,
+            hasOrders: null !== $hasOrders ? filter_var($hasOrders, FILTER_VALIDATE_BOOLEAN) : null,
+            minOrderCount: null !== $minOrderCount ? (int) $minOrderCount : null,
+            maxOrderCount: null !== $maxOrderCount ? (int) $maxOrderCount : null,
+            sortBy: $sortBy,
+            sortOrder: $sortOrder,
+            page: $page,
+            limit: $limit
+        );
+
+        $result = ($this->searchHandler)($query);
+
+        // Convert CustomerSummaryDTOs to entities for API Platform
         return array_map(
             fn ($dto) => $this->populateEntityFromDTO(new CustomerEntity(), $dto),
-            $customerDTOs
+            $result->items
         );
     }
 
-    private function populateEntityFromDTO(CustomerEntity $entity, CustomerDTO $dto): CustomerEntity
+    /**
+     * Populate entity from CustomerSummaryDTO for API response.
+     *
+     * @param mixed $dto CustomerSummaryDTO
+     */
+    private function populateEntityFromDTO(CustomerEntity $entity, mixed $dto): CustomerEntity
     {
-        // Use setters to populate entity for API response
         $entity->setId($dto->id);
         $entity->setTenantId($dto->tenantId);
         $entity->setEmail($dto->email);
@@ -65,8 +100,8 @@ final readonly class CustomerCollectionProvider implements ProviderInterface
         $entity->setSegment($dto->segment);
         $entity->setLoyaltyPoints($dto->loyaltyPoints);
         $entity->setIsActive($dto->isActive);
-        $entity->setCreatedAt(new \DateTimeImmutable($dto->createdAt));
-        $entity->setUpdatedAt(new \DateTimeImmutable($dto->updatedAt));
+        $entity->setCreatedAt($dto->createdAt);
+        $entity->setUpdatedAt($dto->updatedAt);
 
         return $entity;
     }

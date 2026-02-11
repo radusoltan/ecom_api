@@ -33,6 +33,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_payments_gateway', columns: ['gateway'])]
 #[ORM\Index(name: 'idx_payments_tenant_status', columns: ['tenant_id', 'status'])]
 #[ORM\Index(name: 'idx_payments_created_at', columns: ['created_at'])]
+#[ORM\Index(name: 'idx_payments_retry', columns: ['status', 'next_retry_at', 'retry_count'])]
 #[ApiResource(
     shortName: 'Payment',
     operations: [
@@ -96,8 +97,17 @@ class PaymentEntity
     #[ORM\Column(type: 'text', nullable: true, name: 'error_message')]
     private ?string $errorMessage = null;
 
+    #[ORM\Column(type: 'string', length: 100, nullable: true, name: 'error_code')]
+    private ?string $errorCode = null;
+
     #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0], name: 'refunded_amount_in_cents')]
     private int $refundedAmountInCents = 0;
+
+    #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0], name: 'retry_count')]
+    private int $retryCount = 0;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'next_retry_at')]
+    private ?\DateTimeImmutable $nextRetryAt = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'created_at')]
     private \DateTimeImmutable $createdAt;
@@ -118,7 +128,10 @@ class PaymentEntity
         $entity->status = $payment->status()->value();
         $entity->gatewayTransactionId = $payment->gatewayTransactionId();
         $entity->errorMessage = $payment->errorMessage();
+        $entity->errorCode = $payment->errorCode();
         $entity->refundedAmountInCents = $payment->refundedAmountInCents();
+        $entity->retryCount = $payment->retryCount();
+        $entity->nextRetryAt = $payment->nextRetryAt();
         $entity->createdAt = $payment->createdAt();
         $entity->updatedAt = $payment->updatedAt();
 
@@ -160,7 +173,10 @@ class PaymentEntity
             errorMessage: $this->errorMessage,
             refundedAmountInCents: $this->refundedAmountInCents,
             createdAt: $this->createdAt,
-            updatedAt: $this->updatedAt
+            updatedAt: $this->updatedAt,
+            errorCode: $this->errorCode,
+            retryCount: $this->retryCount,
+            nextRetryAt: $this->nextRetryAt
         );
     }
 
@@ -174,7 +190,10 @@ class PaymentEntity
         $this->status = $payment->status()->value();
         $this->gatewayTransactionId = $payment->gatewayTransactionId();
         $this->errorMessage = $payment->errorMessage();
+        $this->errorCode = $payment->errorCode();
         $this->refundedAmountInCents = $payment->refundedAmountInCents();
+        $this->retryCount = $payment->retryCount();
+        $this->nextRetryAt = $payment->nextRetryAt();
         $this->updatedAt = $payment->updatedAt();
     }
 
@@ -229,9 +248,24 @@ class PaymentEntity
         return $this->errorMessage;
     }
 
+    public function getErrorCode(): ?string
+    {
+        return $this->errorCode;
+    }
+
     public function getRefundedAmountInCents(): int
     {
         return $this->refundedAmountInCents;
+    }
+
+    public function getRetryCount(): int
+    {
+        return $this->retryCount;
+    }
+
+    public function getNextRetryAt(): ?\DateTimeImmutable
+    {
+        return $this->nextRetryAt;
     }
 
     public function getCreatedAt(): \DateTimeImmutable
@@ -295,9 +329,24 @@ class PaymentEntity
         $this->errorMessage = $errorMessage;
     }
 
+    public function setErrorCode(?string $errorCode): void
+    {
+        $this->errorCode = $errorCode;
+    }
+
     public function setRefundedAmountInCents(int $refundedAmountInCents): void
     {
         $this->refundedAmountInCents = $refundedAmountInCents;
+    }
+
+    public function setRetryCount(int $retryCount): void
+    {
+        $this->retryCount = $retryCount;
+    }
+
+    public function setNextRetryAt(?\DateTimeImmutable $nextRetryAt): void
+    {
+        $this->nextRetryAt = $nextRetryAt;
     }
 
     public function setCreatedAt(\DateTimeImmutable $createdAt): void

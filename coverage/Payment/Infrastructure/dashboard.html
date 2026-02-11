@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/new_ecom/backend/src/Payment/Infrastructure</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../_css/bootstrap.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../../_css/billboard.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../../_css/style.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../../index.html">/var/www/new_ecom/backend/src</a></li>
+         <li class="breadcrumb-item"><a href="../index.html">Payment</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Infrastructure</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classesCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Command/Test2CheckoutIntegrationCommand.php.html#25">App\Payment\Infrastructure\Command\Test2CheckoutIntegrationCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/TestPayPalIntegrationCommand.php.html#33">App\Payment\Infrastructure\Command\TestPayPalIntegrationCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/TestStripeIntegrationCommand.php.html#25">App\Payment\Infrastructure\Command\TestStripeIntegrationCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/ProcessPaymentRetriesCommand.php.html#33">App\Payment\Infrastructure\Console\ProcessPaymentRetriesCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/FakePayPalGateway.php.html#17">App\Payment\Infrastructure\Gateway\FakePayPalGateway</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/MockPaymentGateway.php.html#16">App\Payment\Infrastructure\Gateway\MockPaymentGateway</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#20">App\Payment\Infrastructure\Gateway\PayPalPaymentGateway</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#21">App\Payment\Infrastructure\Gateway\StripePaymentGateway</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#27">App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#15">App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentGatewayType.php.html#11">App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentGatewayType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentIdType.php.html#11">App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentIdType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentMethodType.php.html#11">App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentMethodType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentStatusType.php.html#11">App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentStatusType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Schedule/Message/ProcessPaymentRetries.php.html#22">App\Payment\Infrastructure\Schedule\Message\ProcessPaymentRetries</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Schedule/MessageHandler/ProcessPaymentRetriesHandler.php.html#29">App\Payment\Infrastructure\Schedule\MessageHandler\ProcessPaymentRetriesHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Schedule/PaymentScheduleProvider.php.html#34">App\Payment\Infrastructure\Schedule\PaymentScheduleProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#30">App\Payment\Infrastructure\Webhook\PayPalWebhookHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/StripeWebhookHandler.php.html#31">App\Payment\Infrastructure\Webhook\StripeWebhookHandler</a></td><td class="text-right">10%</td></tr>
+       <tr><td><a href="Gateway/PaymentGatewayFactory.php.html#16">App\Payment\Infrastructure\Gateway\PaymentGatewayFactory</a></td><td class="text-right">57%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#30">App\Payment\Infrastructure\Webhook\PayPalWebhookHandler</a></td><td class="text-right">0.0%</td><td class="text-right">26</td><td class="text-right">702</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#20">App\Payment\Infrastructure\Gateway\PayPalPaymentGateway</a></td><td class="text-right">0.0%</td><td class="text-right">23</td><td class="text-right">552</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#21">App\Payment\Infrastructure\Gateway\StripePaymentGateway</a></td><td class="text-right">0.0%</td><td class="text-right">23</td><td class="text-right">552</td></tr>
+       <tr><td><a href="Webhook/StripeWebhookHandler.php.html#31">App\Payment\Infrastructure\Webhook\StripeWebhookHandler</a></td><td class="text-right">11.0%</td><td class="text-right">24</td><td class="text-right">430</td></tr>
+       <tr><td><a href="Command/Test2CheckoutIntegrationCommand.php.html#25">App\Payment\Infrastructure\Command\Test2CheckoutIntegrationCommand</a></td><td class="text-right">0.0%</td><td class="text-right">20</td><td class="text-right">420</td></tr>
+       <tr><td><a href="Command/TestStripeIntegrationCommand.php.html#25">App\Payment\Infrastructure\Command\TestStripeIntegrationCommand</a></td><td class="text-right">0.0%</td><td class="text-right">15</td><td class="text-right">240</td></tr>
+       <tr><td><a href="Console/ProcessPaymentRetriesCommand.php.html#33">App\Payment\Infrastructure\Console\ProcessPaymentRetriesCommand</a></td><td class="text-right">0.0%</td><td class="text-right">14</td><td class="text-right">210</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#15">App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository</a></td><td class="text-right">0.0%</td><td class="text-right">13</td><td class="text-right">182</td></tr>
+       <tr><td><a href="Command/TestPayPalIntegrationCommand.php.html#33">App\Payment\Infrastructure\Command\TestPayPalIntegrationCommand</a></td><td class="text-right">0.0%</td><td class="text-right">11</td><td class="text-right">132</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentGatewayType.php.html#11">App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentGatewayType</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentIdType.php.html#11">App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentIdType</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentMethodType.php.html#11">App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentMethodType</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentStatusType.php.html#11">App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentStatusType</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Schedule/MessageHandler/ProcessPaymentRetriesHandler.php.html#29">App\Payment\Infrastructure\Schedule\MessageHandler\ProcessPaymentRetriesHandler</a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Gateway/PaymentGatewayFactory.php.html#16">App\Payment\Infrastructure\Gateway\PaymentGatewayFactory</a></td><td class="text-right">57.1%</td><td class="text-right">5</td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2 style="margin-top: 3rem;">Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodsCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Command/Test2CheckoutIntegrationCommand.php.html#31"><abbr title="App\Payment\Infrastructure\Command\Test2CheckoutIntegrationCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/Test2CheckoutIntegrationCommand.php.html#38"><abbr title="App\Payment\Infrastructure\Command\Test2CheckoutIntegrationCommand::execute">execute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/TestPayPalIntegrationCommand.php.html#44"><abbr title="App\Payment\Infrastructure\Command\TestPayPalIntegrationCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/TestPayPalIntegrationCommand.php.html#51"><abbr title="App\Payment\Infrastructure\Command\TestPayPalIntegrationCommand::execute">execute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/TestPayPalIntegrationCommand.php.html#298"><abbr title="App\Payment\Infrastructure\Command\TestPayPalIntegrationCommand::getPayment">getPayment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/TestStripeIntegrationCommand.php.html#31"><abbr title="App\Payment\Infrastructure\Command\TestStripeIntegrationCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/TestStripeIntegrationCommand.php.html#38"><abbr title="App\Payment\Infrastructure\Command\TestStripeIntegrationCommand::execute">execute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/ProcessPaymentRetriesCommand.php.html#39"><abbr title="App\Payment\Infrastructure\Console\ProcessPaymentRetriesCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/ProcessPaymentRetriesCommand.php.html#46"><abbr title="App\Payment\Infrastructure\Console\ProcessPaymentRetriesCommand::configure">configure</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/ProcessPaymentRetriesCommand.php.html#97"><abbr title="App\Payment\Infrastructure\Console\ProcessPaymentRetriesCommand::execute">execute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/FakePayPalGateway.php.html#19"><abbr title="App\Payment\Infrastructure\Gateway\FakePayPalGateway::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/FakePayPalGateway.php.html#24"><abbr title="App\Payment\Infrastructure\Gateway\FakePayPalGateway::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/FakePayPalGateway.php.html#51"><abbr title="App\Payment\Infrastructure\Gateway\FakePayPalGateway::capture">capture</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/FakePayPalGateway.php.html#66"><abbr title="App\Payment\Infrastructure\Gateway\FakePayPalGateway::refund">refund</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/FakePayPalGateway.php.html#84"><abbr title="App\Payment\Infrastructure\Gateway\FakePayPalGateway::cancel">cancel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/FakePayPalGateway.php.html#96"><abbr title="App\Payment\Infrastructure\Gateway\FakePayPalGateway::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/FakePayPalGateway.php.html#114"><abbr title="App\Payment\Infrastructure\Gateway\FakePayPalGateway::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/MockPaymentGateway.php.html#18"><abbr title="App\Payment\Infrastructure\Gateway\MockPaymentGateway::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/MockPaymentGateway.php.html#32"><abbr title="App\Payment\Infrastructure\Gateway\MockPaymentGateway::capture">capture</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/MockPaymentGateway.php.html#44"><abbr title="App\Payment\Infrastructure\Gateway\MockPaymentGateway::refund">refund</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/MockPaymentGateway.php.html#57"><abbr title="App\Payment\Infrastructure\Gateway\MockPaymentGateway::cancel">cancel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/MockPaymentGateway.php.html#67"><abbr title="App\Payment\Infrastructure\Gateway\MockPaymentGateway::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/MockPaymentGateway.php.html#78"><abbr title="App\Payment\Infrastructure\Gateway\MockPaymentGateway::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#27"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#37"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#97"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::capture">capture</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#157"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::refund">refund</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#213"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::cancel">cancel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#256"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#284"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#292"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::getAccessToken">getAccessToken</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#313"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::getOrderDetails">getOrderDetails</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#327"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::getCaptureDetails">getCaptureDetails</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#341"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::getAuthorizationId">getAuthorizationId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#353"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::getApprovalUrl">getApprovalUrl</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PaymentGatewayFactory.php.html#45"><abbr title="App\Payment\Infrastructure\Gateway\PaymentGatewayFactory::supports">supports</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/PaymentGatewayFactory.php.html#55"><abbr title="App\Payment\Infrastructure\Gateway\PaymentGatewayFactory::getSupportedGateways">getSupportedGateways</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#25"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#32"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#79"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::capture">capture</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#114"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::refund">refund</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#153"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::cancel">cancel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#183"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#208"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#216"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::mapPaymentMethod">mapPaymentMethod</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#227"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::mapRefundReason">mapRefundReason</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#243"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::mapCancellationReason">mapCancellationReason</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#118"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::fromDomainModel">fromDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#141"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::fromDTO">fromDTO</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#161"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::toDomainModel">toDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#183"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::updateFromDomainModel">updateFromDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#201"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#206"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getTenantId">getTenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#211"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getOrderId">getOrderId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#216"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getAmountInCents">getAmountInCents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#221"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getCurrency">getCurrency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#226"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getMethod">getMethod</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#231"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getGateway">getGateway</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#236"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#241"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getGatewayTransactionId">getGatewayTransactionId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#246"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getErrorMessage">getErrorMessage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#251"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getErrorCode">getErrorCode</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#256"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getRefundedAmountInCents">getRefundedAmountInCents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#261"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getRetryCount">getRetryCount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#266"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getNextRetryAt">getNextRetryAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#271"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getCreatedAt">getCreatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#276"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::getUpdatedAt">getUpdatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#282"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setId">setId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#287"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setTenantId">setTenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#292"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setOrderId">setOrderId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#297"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setAmountInCents">setAmountInCents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#302"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setCurrency">setCurrency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#307"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setMethod">setMethod</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#312"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setGateway">setGateway</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#317"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setStatus">setStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#322"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setGatewayTransactionId">setGatewayTransactionId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#327"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setErrorMessage">setErrorMessage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#332"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setErrorCode">setErrorCode</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#337"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setRefundedAmountInCents">setRefundedAmountInCents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#342"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setRetryCount">setRetryCount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#347"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setNextRetryAt">setNextRetryAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#352"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setCreatedAt">setCreatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Entity/PaymentEntity.php.html#357"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity::setUpdatedAt">setUpdatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#17"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#23"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#46"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#64"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository::findByOrderId">findByOrderId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#81"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository::findByGatewayTransactionId">findByGatewayTransactionId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#99"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository::findAll">findAll</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#113"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository::delete">delete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#140"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository::findPendingRetries">findPendingRetries</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentGatewayType.php.html#15"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentGatewayType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentGatewayType.php.html#20"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentGatewayType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentGatewayType.php.html#29"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentGatewayType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentGatewayType.php.html#42"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentGatewayType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentGatewayType.php.html#47"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentGatewayType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentIdType.php.html#15"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentIdType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentIdType.php.html#20"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentIdType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentIdType.php.html#29"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentIdType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentIdType.php.html#42"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentIdType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentIdType.php.html#47"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentIdType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentMethodType.php.html#15"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentMethodType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentMethodType.php.html#20"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentMethodType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentMethodType.php.html#29"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentMethodType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentMethodType.php.html#42"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentMethodType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentMethodType.php.html#47"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentMethodType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentStatusType.php.html#15"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentStatusType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentStatusType.php.html#20"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentStatusType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentStatusType.php.html#29"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentStatusType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentStatusType.php.html#42"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentStatusType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentStatusType.php.html#47"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentStatusType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Schedule/Message/ProcessPaymentRetries.php.html#24"><abbr title="App\Payment\Infrastructure\Schedule\Message\ProcessPaymentRetries::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Schedule/MessageHandler/ProcessPaymentRetriesHandler.php.html#32"><abbr title="App\Payment\Infrastructure\Schedule\MessageHandler\ProcessPaymentRetriesHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Schedule/MessageHandler/ProcessPaymentRetriesHandler.php.html#38"><abbr title="App\Payment\Infrastructure\Schedule\MessageHandler\ProcessPaymentRetriesHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Schedule/PaymentScheduleProvider.php.html#37"><abbr title="App\Payment\Infrastructure\Schedule\PaymentScheduleProvider::getSchedule">getSchedule</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#37"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#55"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::handle">handle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#123"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::verifySignature">verifySignature</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#170"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::getAccessToken">getAccessToken</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#195"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::handleCaptureCompleted">handleCaptureCompleted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#275"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::handleCaptureDenied">handleCaptureDenied</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#307"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::handleCaptureRefunded">handleCaptureRefunded</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#328"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::handleUnknownEvent">handleUnknownEvent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/StripeWebhookHandler.php.html#99"><abbr title="App\Payment\Infrastructure\Webhook\StripeWebhookHandler::handlePaymentIntentSucceeded">handlePaymentIntentSucceeded</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/StripeWebhookHandler.php.html#178"><abbr title="App\Payment\Infrastructure\Webhook\StripeWebhookHandler::handlePaymentIntentFailed">handlePaymentIntentFailed</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/StripeWebhookHandler.php.html#242"><abbr title="App\Payment\Infrastructure\Webhook\StripeWebhookHandler::handlePaymentIntentCanceled">handlePaymentIntentCanceled</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/StripeWebhookHandler.php.html#270"><abbr title="App\Payment\Infrastructure\Webhook\StripeWebhookHandler::handleChargeRefunded">handleChargeRefunded</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/StripeWebhookHandler.php.html#289"><abbr title="App\Payment\Infrastructure\Webhook\StripeWebhookHandler::handleUnknownEvent">handleUnknownEvent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Webhook/StripeWebhookHandler.php.html#46"><abbr title="App\Payment\Infrastructure\Webhook\StripeWebhookHandler::handle">handle</abbr></a></td><td class="text-right">45%</td></tr>
+       <tr><td><a href="Gateway/PaymentGatewayFactory.php.html#31"><abbr title="App\Payment\Infrastructure\Gateway\PaymentGatewayFactory::getGateway">getGateway</abbr></a></td><td class="text-right">75%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Command/Test2CheckoutIntegrationCommand.php.html#38"><abbr title="App\Payment\Infrastructure\Command\Test2CheckoutIntegrationCommand::execute">execute</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">19</td><td class="text-right">380</td></tr>
+       <tr><td><a href="Command/TestStripeIntegrationCommand.php.html#38"><abbr title="App\Payment\Infrastructure\Command\TestStripeIntegrationCommand::execute">execute</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">14</td><td class="text-right">210</td></tr>
+       <tr><td><a href="Console/ProcessPaymentRetriesCommand.php.html#97"><abbr title="App\Payment\Infrastructure\Console\ProcessPaymentRetriesCommand::execute">execute</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">12</td><td class="text-right">156</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#55"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::handle">handle</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Command/TestPayPalIntegrationCommand.php.html#51"><abbr title="App\Payment\Infrastructure\Command\TestPayPalIntegrationCommand::execute">execute</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Schedule/MessageHandler/ProcessPaymentRetriesHandler.php.html#38"><abbr title="App\Payment\Infrastructure\Schedule\MessageHandler\ProcessPaymentRetriesHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#195"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::handleCaptureCompleted">handleCaptureCompleted</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Webhook/StripeWebhookHandler.php.html#99"><abbr title="App\Payment\Infrastructure\Webhook\StripeWebhookHandler::handlePaymentIntentSucceeded">handlePaymentIntentSucceeded</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Webhook/StripeWebhookHandler.php.html#46"><abbr title="App\Payment\Infrastructure\Webhook\StripeWebhookHandler::handle">handle</abbr></a></td><td class="text-right">45.5%</td><td class="text-right">9</td><td class="text-right">22</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#243"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::mapCancellationReason">mapCancellationReason</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Webhook/StripeWebhookHandler.php.html#178"><abbr title="App\Payment\Infrastructure\Webhook\StripeWebhookHandler::handlePaymentIntentFailed">handlePaymentIntentFailed</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#97"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::capture">capture</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#353"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::getApprovalUrl">getApprovalUrl</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#79"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::capture">capture</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#216"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::mapPaymentMethod">mapPaymentMethod</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#227"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::mapRefundReason">mapRefundReason</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#23"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository::save">save</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentGatewayType.php.html#29"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentGatewayType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentIdType.php.html#29"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentIdType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentMethodType.php.html#29"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentMethodType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentStatusType.php.html#29"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentStatusType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#170"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::getAccessToken">getAccessToken</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Command/TestPayPalIntegrationCommand.php.html#298"><abbr title="App\Payment\Infrastructure\Command\TestPayPalIntegrationCommand::getPayment">getPayment</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#27"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::__construct">__construct</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#37"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::authorize">authorize</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#157"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::refund">refund</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#213"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::cancel">cancel</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#256"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::getStatus">getStatus</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#292"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::getAccessToken">getAccessToken</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Gateway/PayPalPaymentGateway.php.html#341"><abbr title="App\Payment\Infrastructure\Gateway\PayPalPaymentGateway::getAuthorizationId">getAuthorizationId</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#32"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::authorize">authorize</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#114"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::refund">refund</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#153"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::cancel">cancel</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Gateway/StripePaymentGateway.php.html#183"><abbr title="App\Payment\Infrastructure\Gateway\StripePaymentGateway::getStatus">getStatus</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#46"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository::findById">findById</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#81"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository::findByGatewayTransactionId">findByGatewayTransactionId</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Repository/DoctrineORMPaymentRepository.php.html#113"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository::delete">delete</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentGatewayType.php.html#20"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentGatewayType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentIdType.php.html#20"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentIdType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentMethodType.php.html#20"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentMethodType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Persistence/Doctrine/Type/PaymentStatusType.php.html#20"><abbr title="App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentStatusType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#37"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::__construct">__construct</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#123"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::verifySignature">verifySignature</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Webhook/PayPalWebhookHandler.php.html#275"><abbr title="App\Payment\Infrastructure\Webhook\PayPalWebhookHandler::handleCaptureDenied">handleCaptureDenied</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Webhook/StripeWebhookHandler.php.html#242"><abbr title="App\Payment\Infrastructure\Webhook\StripeWebhookHandler::handlePaymentIntentCanceled">handlePaymentIntentCanceled</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Gateway/PaymentGatewayFactory.php.html#31"><abbr title="App\Payment\Infrastructure\Gateway\PaymentGatewayFactory::getGateway">getGateway</abbr></a></td><td class="text-right">75.0%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 12.4.0</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.14</a> and <a href="https://phpunit.de/">PHPUnit 12.4.1</a> at Thu Nov 27 8:00:35 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../../_js/billboard.pkgd.min.js?v=12.4.0" type="text/javascript"></script>
+  <script type="application/json" id="complexity_class">[[0,20,"Command\/Test2CheckoutIntegrationCommand.php.html#25","App\\Payment\\Infrastructure\\Command\\Test2CheckoutIntegrationCommand","420"],[0,11,"Command\/TestPayPalIntegrationCommand.php.html#33","App\\Payment\\Infrastructure\\Command\\TestPayPalIntegrationCommand","132"],[0,15,"Command\/TestStripeIntegrationCommand.php.html#25","App\\Payment\\Infrastructure\\Command\\TestStripeIntegrationCommand","240"],[0,14,"Console\/ProcessPaymentRetriesCommand.php.html#33","App\\Payment\\Infrastructure\\Console\\ProcessPaymentRetriesCommand","210"],[0,7,"Gateway\/FakePayPalGateway.php.html#17","App\\Payment\\Infrastructure\\Gateway\\FakePayPalGateway","56"],[0,6,"Gateway\/MockPaymentGateway.php.html#16","App\\Payment\\Infrastructure\\Gateway\\MockPaymentGateway","42"],[0,23,"Gateway\/PayPalPaymentGateway.php.html#20","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway","552"],[0,23,"Gateway\/StripePaymentGateway.php.html#21","App\\Payment\\Infrastructure\\Gateway\\StripePaymentGateway","552"],[0,36,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#27","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity","1332"],[0,13,"Persistence\/Doctrine\/Repository\/DoctrineORMPaymentRepository.php.html#15","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMPaymentRepository","182"],[0,8,"Persistence\/Doctrine\/Type\/PaymentGatewayType.php.html#11","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentGatewayType","72"],[0,8,"Persistence\/Doctrine\/Type\/PaymentIdType.php.html#11","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentIdType","72"],[0,8,"Persistence\/Doctrine\/Type\/PaymentMethodType.php.html#11","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentMethodType","72"],[0,8,"Persistence\/Doctrine\/Type\/PaymentStatusType.php.html#11","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentStatusType","72"],[0,1,"Schedule\/Message\/ProcessPaymentRetries.php.html#22","App\\Payment\\Infrastructure\\Schedule\\Message\\ProcessPaymentRetries","2"],[0,7,"Schedule\/MessageHandler\/ProcessPaymentRetriesHandler.php.html#29","App\\Payment\\Infrastructure\\Schedule\\MessageHandler\\ProcessPaymentRetriesHandler","56"],[0,1,"Schedule\/PaymentScheduleProvider.php.html#34","App\\Payment\\Infrastructure\\Schedule\\PaymentScheduleProvider","2"],[0,26,"Webhook\/PayPalWebhookHandler.php.html#30","App\\Payment\\Infrastructure\\Webhook\\PayPalWebhookHandler","702"],[10.95890410958904,24,"Webhook\/StripeWebhookHandler.php.html#31","App\\Payment\\Infrastructure\\Webhook\\StripeWebhookHandler","430.62"],[57.14285714285714,5,"Gateway\/PaymentGatewayFactory.php.html#16","App\\Payment\\Infrastructure\\Gateway\\PaymentGatewayFactory","6.97"],[100,10,"Gateway\/FakeStripeGateway.php.html#32","App\\Payment\\Infrastructure\\Gateway\\FakeStripeGateway","10"],[100,23,"Gateway\/TwoCheckoutPaymentGateway.php.html#20","App\\Payment\\Infrastructure\\Gateway\\TwoCheckoutPaymentGateway","23"]]</script>
+  <script type="application/json" id="complexity_method">[[0,1,"Command\/Test2CheckoutIntegrationCommand.php.html#31","App\\Payment\\Infrastructure\\Command\\Test2CheckoutIntegrationCommand::__construct","2"],[0,19,"Command\/Test2CheckoutIntegrationCommand.php.html#38","App\\Payment\\Infrastructure\\Command\\Test2CheckoutIntegrationCommand::execute","380"],[0,1,"Command\/TestPayPalIntegrationCommand.php.html#44","App\\Payment\\Infrastructure\\Command\\TestPayPalIntegrationCommand::__construct","2"],[0,8,"Command\/TestPayPalIntegrationCommand.php.html#51","App\\Payment\\Infrastructure\\Command\\TestPayPalIntegrationCommand::execute","72"],[0,2,"Command\/TestPayPalIntegrationCommand.php.html#298","App\\Payment\\Infrastructure\\Command\\TestPayPalIntegrationCommand::getPayment","6"],[0,1,"Command\/TestStripeIntegrationCommand.php.html#31","App\\Payment\\Infrastructure\\Command\\TestStripeIntegrationCommand::__construct","2"],[0,14,"Command\/TestStripeIntegrationCommand.php.html#38","App\\Payment\\Infrastructure\\Command\\TestStripeIntegrationCommand::execute","210"],[0,1,"Console\/ProcessPaymentRetriesCommand.php.html#39","App\\Payment\\Infrastructure\\Console\\ProcessPaymentRetriesCommand::__construct","2"],[0,1,"Console\/ProcessPaymentRetriesCommand.php.html#46","App\\Payment\\Infrastructure\\Console\\ProcessPaymentRetriesCommand::configure","2"],[0,12,"Console\/ProcessPaymentRetriesCommand.php.html#97","App\\Payment\\Infrastructure\\Console\\ProcessPaymentRetriesCommand::execute","156"],[0,1,"Gateway\/FakePayPalGateway.php.html#19","App\\Payment\\Infrastructure\\Gateway\\FakePayPalGateway::__construct","2"],[0,1,"Gateway\/FakePayPalGateway.php.html#24","App\\Payment\\Infrastructure\\Gateway\\FakePayPalGateway::authorize","2"],[0,1,"Gateway\/FakePayPalGateway.php.html#51","App\\Payment\\Infrastructure\\Gateway\\FakePayPalGateway::capture","2"],[0,1,"Gateway\/FakePayPalGateway.php.html#66","App\\Payment\\Infrastructure\\Gateway\\FakePayPalGateway::refund","2"],[0,1,"Gateway\/FakePayPalGateway.php.html#84","App\\Payment\\Infrastructure\\Gateway\\FakePayPalGateway::cancel","2"],[0,1,"Gateway\/FakePayPalGateway.php.html#96","App\\Payment\\Infrastructure\\Gateway\\FakePayPalGateway::getStatus","2"],[0,1,"Gateway\/FakePayPalGateway.php.html#114","App\\Payment\\Infrastructure\\Gateway\\FakePayPalGateway::getName","2"],[0,1,"Gateway\/MockPaymentGateway.php.html#18","App\\Payment\\Infrastructure\\Gateway\\MockPaymentGateway::authorize","2"],[0,1,"Gateway\/MockPaymentGateway.php.html#32","App\\Payment\\Infrastructure\\Gateway\\MockPaymentGateway::capture","2"],[0,1,"Gateway\/MockPaymentGateway.php.html#44","App\\Payment\\Infrastructure\\Gateway\\MockPaymentGateway::refund","2"],[0,1,"Gateway\/MockPaymentGateway.php.html#57","App\\Payment\\Infrastructure\\Gateway\\MockPaymentGateway::cancel","2"],[0,1,"Gateway\/MockPaymentGateway.php.html#67","App\\Payment\\Infrastructure\\Gateway\\MockPaymentGateway::getStatus","2"],[0,1,"Gateway\/MockPaymentGateway.php.html#78","App\\Payment\\Infrastructure\\Gateway\\MockPaymentGateway::getName","2"],[0,2,"Gateway\/PayPalPaymentGateway.php.html#27","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway::__construct","6"],[0,2,"Gateway\/PayPalPaymentGateway.php.html#37","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway::authorize","6"],[0,3,"Gateway\/PayPalPaymentGateway.php.html#97","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway::capture","12"],[0,2,"Gateway\/PayPalPaymentGateway.php.html#157","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway::refund","6"],[0,2,"Gateway\/PayPalPaymentGateway.php.html#213","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway::cancel","6"],[0,2,"Gateway\/PayPalPaymentGateway.php.html#256","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway::getStatus","6"],[0,1,"Gateway\/PayPalPaymentGateway.php.html#284","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway::getName","2"],[0,2,"Gateway\/PayPalPaymentGateway.php.html#292","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway::getAccessToken","6"],[0,1,"Gateway\/PayPalPaymentGateway.php.html#313","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway::getOrderDetails","2"],[0,1,"Gateway\/PayPalPaymentGateway.php.html#327","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway::getCaptureDetails","2"],[0,2,"Gateway\/PayPalPaymentGateway.php.html#341","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway::getAuthorizationId","6"],[0,3,"Gateway\/PayPalPaymentGateway.php.html#353","App\\Payment\\Infrastructure\\Gateway\\PayPalPaymentGateway::getApprovalUrl","12"],[0,1,"Gateway\/PaymentGatewayFactory.php.html#45","App\\Payment\\Infrastructure\\Gateway\\PaymentGatewayFactory::supports","2"],[0,1,"Gateway\/PaymentGatewayFactory.php.html#55","App\\Payment\\Infrastructure\\Gateway\\PaymentGatewayFactory::getSupportedGateways","2"],[0,1,"Gateway\/StripePaymentGateway.php.html#25","App\\Payment\\Infrastructure\\Gateway\\StripePaymentGateway::__construct","2"],[0,2,"Gateway\/StripePaymentGateway.php.html#32","App\\Payment\\Infrastructure\\Gateway\\StripePaymentGateway::authorize","6"],[0,3,"Gateway\/StripePaymentGateway.php.html#79","App\\Payment\\Infrastructure\\Gateway\\StripePaymentGateway::capture","12"],[0,2,"Gateway\/StripePaymentGateway.php.html#114","App\\Payment\\Infrastructure\\Gateway\\StripePaymentGateway::refund","6"],[0,2,"Gateway\/StripePaymentGateway.php.html#153","App\\Payment\\Infrastructure\\Gateway\\StripePaymentGateway::cancel","6"],[0,2,"Gateway\/StripePaymentGateway.php.html#183","App\\Payment\\Infrastructure\\Gateway\\StripePaymentGateway::getStatus","6"],[0,1,"Gateway\/StripePaymentGateway.php.html#208","App\\Payment\\Infrastructure\\Gateway\\StripePaymentGateway::getName","2"],[0,3,"Gateway\/StripePaymentGateway.php.html#216","App\\Payment\\Infrastructure\\Gateway\\StripePaymentGateway::mapPaymentMethod","12"],[0,3,"Gateway\/StripePaymentGateway.php.html#227","App\\Payment\\Infrastructure\\Gateway\\StripePaymentGateway::mapRefundReason","12"],[0,4,"Gateway\/StripePaymentGateway.php.html#243","App\\Payment\\Infrastructure\\Gateway\\StripePaymentGateway::mapCancellationReason","20"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#118","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::fromDomainModel","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#141","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::fromDTO","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#161","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::toDomainModel","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#183","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::updateFromDomainModel","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#201","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getId","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#206","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getTenantId","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#211","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getOrderId","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#216","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getAmountInCents","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#221","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getCurrency","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#226","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getMethod","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#231","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getGateway","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#236","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getStatus","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#241","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getGatewayTransactionId","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#246","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getErrorMessage","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#251","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getErrorCode","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#256","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getRefundedAmountInCents","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#261","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getRetryCount","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#266","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getNextRetryAt","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#271","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getCreatedAt","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#276","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::getUpdatedAt","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#282","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setId","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#287","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setTenantId","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#292","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setOrderId","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#297","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setAmountInCents","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#302","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setCurrency","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#307","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setMethod","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#312","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setGateway","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#317","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setStatus","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#322","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setGatewayTransactionId","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#327","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setErrorMessage","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#332","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setErrorCode","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#337","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setRefundedAmountInCents","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#342","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setRetryCount","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#347","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setNextRetryAt","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#352","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setCreatedAt","2"],[0,1,"Persistence\/Doctrine\/Entity\/PaymentEntity.php.html#357","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentEntity::setUpdatedAt","2"],[0,1,"Persistence\/Doctrine\/Repository\/DoctrineORMPaymentRepository.php.html#17","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMPaymentRepository::__construct","2"],[0,3,"Persistence\/Doctrine\/Repository\/DoctrineORMPaymentRepository.php.html#23","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMPaymentRepository::save","12"],[0,2,"Persistence\/Doctrine\/Repository\/DoctrineORMPaymentRepository.php.html#46","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMPaymentRepository::findById","6"],[0,1,"Persistence\/Doctrine\/Repository\/DoctrineORMPaymentRepository.php.html#64","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMPaymentRepository::findByOrderId","2"],[0,2,"Persistence\/Doctrine\/Repository\/DoctrineORMPaymentRepository.php.html#81","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMPaymentRepository::findByGatewayTransactionId","6"],[0,1,"Persistence\/Doctrine\/Repository\/DoctrineORMPaymentRepository.php.html#99","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMPaymentRepository::findAll","2"],[0,2,"Persistence\/Doctrine\/Repository\/DoctrineORMPaymentRepository.php.html#113","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMPaymentRepository::delete","6"],[0,1,"Persistence\/Doctrine\/Repository\/DoctrineORMPaymentRepository.php.html#140","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMPaymentRepository::findPendingRetries","2"],[0,1,"Persistence\/Doctrine\/Type\/PaymentGatewayType.php.html#15","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentGatewayType::getSQLDeclaration","2"],[0,2,"Persistence\/Doctrine\/Type\/PaymentGatewayType.php.html#20","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentGatewayType::convertToPHPValue","6"],[0,3,"Persistence\/Doctrine\/Type\/PaymentGatewayType.php.html#29","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentGatewayType::convertToDatabaseValue","12"],[0,1,"Persistence\/Doctrine\/Type\/PaymentGatewayType.php.html#42","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentGatewayType::getName","2"],[0,1,"Persistence\/Doctrine\/Type\/PaymentGatewayType.php.html#47","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentGatewayType::requiresSQLCommentHint","2"],[0,1,"Persistence\/Doctrine\/Type\/PaymentIdType.php.html#15","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentIdType::getSQLDeclaration","2"],[0,2,"Persistence\/Doctrine\/Type\/PaymentIdType.php.html#20","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentIdType::convertToPHPValue","6"],[0,3,"Persistence\/Doctrine\/Type\/PaymentIdType.php.html#29","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentIdType::convertToDatabaseValue","12"],[0,1,"Persistence\/Doctrine\/Type\/PaymentIdType.php.html#42","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentIdType::getName","2"],[0,1,"Persistence\/Doctrine\/Type\/PaymentIdType.php.html#47","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentIdType::requiresSQLCommentHint","2"],[0,1,"Persistence\/Doctrine\/Type\/PaymentMethodType.php.html#15","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentMethodType::getSQLDeclaration","2"],[0,2,"Persistence\/Doctrine\/Type\/PaymentMethodType.php.html#20","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentMethodType::convertToPHPValue","6"],[0,3,"Persistence\/Doctrine\/Type\/PaymentMethodType.php.html#29","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentMethodType::convertToDatabaseValue","12"],[0,1,"Persistence\/Doctrine\/Type\/PaymentMethodType.php.html#42","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentMethodType::getName","2"],[0,1,"Persistence\/Doctrine\/Type\/PaymentMethodType.php.html#47","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentMethodType::requiresSQLCommentHint","2"],[0,1,"Persistence\/Doctrine\/Type\/PaymentStatusType.php.html#15","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentStatusType::getSQLDeclaration","2"],[0,2,"Persistence\/Doctrine\/Type\/PaymentStatusType.php.html#20","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentStatusType::convertToPHPValue","6"],[0,3,"Persistence\/Doctrine\/Type\/PaymentStatusType.php.html#29","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentStatusType::convertToDatabaseValue","12"],[0,1,"Persistence\/Doctrine\/Type\/PaymentStatusType.php.html#42","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentStatusType::getName","2"],[0,1,"Persistence\/Doctrine\/Type\/PaymentStatusType.php.html#47","App\\Payment\\Infrastructure\\Persistence\\Doctrine\\Type\\PaymentStatusType::requiresSQLCommentHint","2"],[0,1,"Schedule\/Message\/ProcessPaymentRetries.php.html#24","App\\Payment\\Infrastructure\\Schedule\\Message\\ProcessPaymentRetries::__construct","2"],[0,1,"Schedule\/MessageHandler\/ProcessPaymentRetriesHandler.php.html#32","App\\Payment\\Infrastructure\\Schedule\\MessageHandler\\ProcessPaymentRetriesHandler::__construct","2"],[0,6,"Schedule\/MessageHandler\/ProcessPaymentRetriesHandler.php.html#38","App\\Payment\\Infrastructure\\Schedule\\MessageHandler\\ProcessPaymentRetriesHandler::__invoke","42"],[0,1,"Schedule\/PaymentScheduleProvider.php.html#37","App\\Payment\\Infrastructure\\Schedule\\PaymentScheduleProvider::getSchedule","2"],[0,2,"Webhook\/PayPalWebhookHandler.php.html#37","App\\Payment\\Infrastructure\\Webhook\\PayPalWebhookHandler::__construct","6"],[0,9,"Webhook\/PayPalWebhookHandler.php.html#55","App\\Payment\\Infrastructure\\Webhook\\PayPalWebhookHandler::handle","90"],[0,2,"Webhook\/PayPalWebhookHandler.php.html#123","App\\Payment\\Infrastructure\\Webhook\\PayPalWebhookHandler::verifySignature","6"],[0,3,"Webhook\/PayPalWebhookHandler.php.html#170","App\\Payment\\Infrastructure\\Webhook\\PayPalWebhookHandler::getAccessToken","12"],[0,6,"Webhook\/PayPalWebhookHandler.php.html#195","App\\Payment\\Infrastructure\\Webhook\\PayPalWebhookHandler::handleCaptureCompleted","42"],[0,2,"Webhook\/PayPalWebhookHandler.php.html#275","App\\Payment\\Infrastructure\\Webhook\\PayPalWebhookHandler::handleCaptureDenied","6"],[0,1,"Webhook\/PayPalWebhookHandler.php.html#307","App\\Payment\\Infrastructure\\Webhook\\PayPalWebhookHandler::handleCaptureRefunded","2"],[0,1,"Webhook\/PayPalWebhookHandler.php.html#328","App\\Payment\\Infrastructure\\Webhook\\PayPalWebhookHandler::handleUnknownEvent","2"],[0,6,"Webhook\/StripeWebhookHandler.php.html#99","App\\Payment\\Infrastructure\\Webhook\\StripeWebhookHandler::handlePaymentIntentSucceeded","42"],[0,4,"Webhook\/StripeWebhookHandler.php.html#178","App\\Payment\\Infrastructure\\Webhook\\StripeWebhookHandler::handlePaymentIntentFailed","20"],[0,2,"Webhook\/StripeWebhookHandler.php.html#242","App\\Payment\\Infrastructure\\Webhook\\StripeWebhookHandler::handlePaymentIntentCanceled","6"],[0,1,"Webhook\/StripeWebhookHandler.php.html#270","App\\Payment\\Infrastructure\\Webhook\\StripeWebhookHandler::handleChargeRefunded","2"],[0,1,"Webhook\/StripeWebhookHandler.php.html#289","App\\Payment\\Infrastructure\\Webhook\\StripeWebhookHandler::handleUnknownEvent","2"],[45.45454545454545,9,"Webhook\/StripeWebhookHandler.php.html#46","App\\Payment\\Infrastructure\\Webhook\\StripeWebhookHandler::handle","22.15"],[75,2,"Gateway\/PaymentGatewayFactory.php.html#31","App\\Payment\\Infrastructure\\Gateway\\PaymentGatewayFactory::getGateway","2.06"],[100,1,"Gateway\/FakeStripeGateway.php.html#34","App\\Payment\\Infrastructure\\Gateway\\FakeStripeGateway::__construct","1"],[100,3,"Gateway\/FakeStripeGateway.php.html#40","App\\Payment\\Infrastructure\\Gateway\\FakeStripeGateway::authorize","3"],[100,1,"Gateway\/FakeStripeGateway.php.html#96","App\\Payment\\Infrastructure\\Gateway\\FakeStripeGateway::capture","1"],[100,1,"Gateway\/FakeStripeGateway.php.html#111","App\\Payment\\Infrastructure\\Gateway\\FakeStripeGateway::refund","1"],[100,1,"Gateway\/FakeStripeGateway.php.html#129","App\\Payment\\Infrastructure\\Gateway\\FakeStripeGateway::cancel","1"],[100,2,"Gateway\/FakeStripeGateway.php.html#141","App\\Payment\\Infrastructure\\Gateway\\FakeStripeGateway::getStatus","2"],[100,1,"Gateway\/FakeStripeGateway.php.html#164","App\\Payment\\Infrastructure\\Gateway\\FakeStripeGateway::getName","1"],[100,1,"Gateway\/PaymentGatewayFactory.php.html#21","App\\Payment\\Infrastructure\\Gateway\\PaymentGatewayFactory::__construct","1"],[100,1,"Gateway\/TwoCheckoutPaymentGateway.php.html#26","App\\Payment\\Infrastructure\\Gateway\\TwoCheckoutPaymentGateway::__construct","1"],[100,3,"Gateway\/TwoCheckoutPaymentGateway.php.html#36","App\\Payment\\Infrastructure\\Gateway\\TwoCheckoutPaymentGateway::authorize","3"],[100,3,"Gateway\/TwoCheckoutPaymentGateway.php.html#126","App\\Payment\\Infrastructure\\Gateway\\TwoCheckoutPaymentGateway::capture","3"],[100,2,"Gateway\/TwoCheckoutPaymentGateway.php.html#177","App\\Payment\\Infrastructure\\Gateway\\TwoCheckoutPaymentGateway::refund","2"],[100,2,"Gateway\/TwoCheckoutPaymentGateway.php.html#230","App\\Payment\\Infrastructure\\Gateway\\TwoCheckoutPaymentGateway::cancel","2"],[100,3,"Gateway\/TwoCheckoutPaymentGateway.php.html#275","App\\Payment\\Infrastructure\\Gateway\\TwoCheckoutPaymentGateway::getStatus","3"],[100,1,"Gateway\/TwoCheckoutPaymentGateway.php.html#316","App\\Payment\\Infrastructure\\Gateway\\TwoCheckoutPaymentGateway::getName","1"],[100,1,"Gateway\/TwoCheckoutPaymentGateway.php.html#324","App\\Payment\\Infrastructure\\Gateway\\TwoCheckoutPaymentGateway::generateSignature","1"],[100,1,"Gateway\/TwoCheckoutPaymentGateway.php.html#342","App\\Payment\\Infrastructure\\Gateway\\TwoCheckoutPaymentGateway::generateGetSignature","1"],[100,3,"Gateway\/TwoCheckoutPaymentGateway.php.html#361","App\\Payment\\Infrastructure\\Gateway\\TwoCheckoutPaymentGateway::serializePayload","3"],[100,3,"Gateway\/TwoCheckoutPaymentGateway.php.html#382","App\\Payment\\Infrastructure\\Gateway\\TwoCheckoutPaymentGateway::mapPaymentMethod","3"],[100,1,"Webhook\/StripeWebhookHandler.php.html#33","App\\Payment\\Infrastructure\\Webhook\\StripeWebhookHandler::__construct","1"]]</script>
+  <script type="text/javascript" defer>
+  const barLabels = [
+    '0%',
+    '0-10%',
+    '10-20%',
+    '20-30%',
+    '30-40%',
+    '40-50%',
+    '50-60%',
+    '60-70%',
+    '70-80%',
+    '80-90%',
+    '90-100%',
+    '100%'
+  ];
+  const barConfig = (name, fullName, values) => ({
+    axis: {
+      x: {
+        type: "category",
+        categories: barLabels,
+      },
+      y: {
+        label: {
+          text: `#${name}`,
+          position: 'outer-top',
+        },
+      },
+    },
+    bindto: `#${name}CoverageDistribution`,
+    data: {
+      columns: [
+        [fullName].concat(values),
+      ],
+      colors: {
+        [fullName]: "rgba(69, 114, 167, 0.75)",
+      },
+      type: "bar",
+    },
+    bar: {
+      width: {
+        ratio: 0.9,
+      },
+    },
+    grid: {
+      focus: {
+        show: false,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">Coverage ${barLabels[data[0].x]}</th></tr>
+            <tr><td class="value">${data[0].value} ${name}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  bb.generate(
+    barConfig('classes', "Class Coverage", [18,0,1,0,0,0,1,0,0,0,0,2])
+  );
+  bb.generate(
+    barConfig('methods', "Method Coverage", [128,0,0,0,0,1,0,0,1,0,0,20])
+  );
+
+  const scatterConfig = (name, complexityData) => ({
+    axis: {
+      x: {
+        label: {
+          text: 'Code Coverage (in percent)',
+          position: 'outer-right',
+        },
+        tick: {
+          values: [0, 20, 40, 60, 80, 100],
+        },
+      },
+      y: {
+        label: {
+          text: 'Cyclomatic Complexity',
+          position: 'outer-top',
+        },
+        min: 0,
+        padding: {
+          bottom: 0,
+          top: 5,
+        },
+      },
+    },
+    bindto: `#${name}Complexity`,
+    data: {
+      columns: [
+        ["complexity_x"].concat(complexityData.map(d => d[0])),
+        ["complexity"].concat(complexityData.map(d => d[1])),
+      ],
+      onclick: function(data, element) {
+        window.location = complexityData[data.index][2];
+      },
+      type: "scatter",
+      xs: {
+        "complexity": "complexity_x",
+      },
+    },
+    grid: {
+      focus: {
+        show: true,
+        y: true,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        const coverage = Math.round(data[0].x);
+        const complexity = data[0].value;
+        const targetName = complexityData[data[0].index][3];
+        const crap = complexityData[data[0].index][4];
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">${targetName}</th></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Coverage</td><td class="name">${coverage}%</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Complexity</td><td class="value">${complexity}</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Crap</td><td class="value">${crap}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  const classComplexityData = JSON.parse(document.getElementById('complexity_class').textContent);
+  bb.generate(
+    scatterConfig("class", classComplexityData)
+  );
+  const methodComplexityData = JSON.parse(document.getElementById('complexity_method').textContent);
+  bb.generate(
+    scatterConfig("method", methodComplexityData),
+  );
+  </script>
+ </body>
+</html>

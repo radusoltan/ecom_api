@@ -50,6 +50,9 @@ final readonly class DownloadableFileUpdated implements DomainEvent
         return 'catalog.downloadable_file.updated';
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function toArray(): array
     {
         return [

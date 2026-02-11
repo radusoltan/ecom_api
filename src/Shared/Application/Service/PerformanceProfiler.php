@@ -204,7 +204,7 @@ final class PerformanceProfiler
      *
      * @param callable(): T $callback
      *
-     * @return array{result: T, metrics: array}
+     * @return array{result: T, metrics: array<string, mixed>}
      */
     public function profile(string $section, callable $callback): array
     {

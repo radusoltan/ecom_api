@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Email;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -31,6 +32,17 @@ final class OrderPlacedSubscriberTest extends TestCase
         $this->mailer = $this->createMock(MailerInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+
+        // Mock translator to return a meaningful subject
+        $this->translator
+            ->method('trans')
+            ->willReturnCallback(function (string $id): string {
+                return match ($id) {
+                    'emails.order.placed.title' => 'Order Confirmation',
+                    'emails.order.cancelled.title' => 'Order Cancelled',
+                    default => $id,
+                };
+            });
 
         $this->subscriber = new OrderPlacedSubscriber(
             mailer: $this->mailer,
@@ -71,13 +83,19 @@ final class OrderPlacedSubscriberTest extends TestCase
             ->expects(self::once())
             ->method('send')
             ->with(self::callback(function (Email $email) use ($event): bool {
+                self::assertInstanceOf(TemplatedEmail::class, $email);
+
                 $toAddresses = $email->getTo();
                 self::assertCount(1, $toAddresses);
                 self::assertEquals('customer@example.com', $toAddresses[0]->getAddress());
                 self::assertStringContainsString('Order Confirmation', $email->getSubject());
-                self::assertStringContainsString($event->orderId->toString(), $email->getHtmlBody());
-                self::assertStringContainsString('50', $email->getHtmlBody()); // 5000 cents = $50
-                self::assertStringContainsString('USD', $email->getHtmlBody());
+
+                // Check template and context instead of rendered HTML
+                /** @var TemplatedEmail $email */
+                $context = $email->getContext();
+                self::assertEquals($event->orderId->toString(), $context['orderId']);
+                self::assertEquals('50.00', $context['total']); // 5000 cents = $50.00
+                self::assertEquals('USD', $context['currency']);
 
                 return true;
             }));
@@ -139,13 +157,13 @@ final class OrderPlacedSubscriberTest extends TestCase
             ->expects(self::once())
             ->method('send')
             ->with(self::callback(function (Email $email): bool {
-                $htmlBody = $email->getHtmlBody();
-                self::assertStringContainsString('123.45', $htmlBody);
-                self::assertStringContainsString('EUR', $htmlBody);
+                self::assertInstanceOf(TemplatedEmail::class, $email);
 
-                $textBody = $email->getTextBody();
-                self::assertStringContainsString('123.45', $textBody);
-                self::assertStringContainsString('EUR', $textBody);
+                // Check context instead of rendered HTML
+                /** @var TemplatedEmail $email */
+                $context = $email->getContext();
+                self::assertEquals('123.45', $context['total']);
+                self::assertEquals('EUR', $context['currency']);
 
                 return true;
             }));
@@ -169,10 +187,11 @@ final class OrderPlacedSubscriberTest extends TestCase
             ->expects(self::once())
             ->method('send')
             ->with(self::callback(function (Email $email): bool {
-                self::assertNotNull($email->getHtmlBody());
-                self::assertNotNull($email->getTextBody());
-                self::assertStringContainsString('<html>', $email->getHtmlBody());
-                self::assertStringNotContainsString('<html>', $email->getTextBody());
+                self::assertInstanceOf(TemplatedEmail::class, $email);
+
+                // Check that template is set (HTML template will auto-generate text version)
+                /** @var TemplatedEmail $email */
+                self::assertEquals('emails/order/order_placed.html.twig', $email->getHtmlTemplate());
 
                 return true;
             }));

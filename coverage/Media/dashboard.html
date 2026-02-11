@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/new_ecom/backend/src/Media</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/billboard.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/var/www/new_ecom/backend/src</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Media</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classesCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Application/Message/DeleteImageAssetsMessage.php.html#7">App\Media\Application\Message\DeleteImageAssetsMessage</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Message/GenerateThumbnailsMessage.php.html#11">App\Media\Application\Message\GenerateThumbnailsMessage</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Security/HeaderTenantContext.php.html#10">App\Media\Application\Security\HeaderTenantContext</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#16">App\Media\Domain\Model\Image</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#13">App\Media\Domain\Model\Thumbnail</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Service/DTO/GeneratedThumbnail.php.html#11">App\Media\Domain\Service\DTO\GeneratedThumbnail</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Service/DefaultThumbnailPolicy.php.html#9">App\Media\Domain\Service\DefaultThumbnailPolicy</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/CropArea.php.html#7">App\Media\Domain\ValueObject\CropArea</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/FilePath.php.html#7">App\Media\Domain\ValueObject\FilePath</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ImageId.php.html#9">App\Media\Domain\ValueObject\ImageId</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/MimeType.php.html#7">App\Media\Domain\ValueObject\MimeType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/OwnerReference.php.html#9">App\Media\Domain\ValueObject\OwnerReference</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/OwnerType.php.html#7">App\Media\Domain\ValueObject\OwnerType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/SizeLabel.php.html#7">App\Media\Domain\ValueObject\SizeLabel</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ThumbnailId.php.html#9">App\Media\Domain\ValueObject\ThumbnailId</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/MessageHandler/DeleteImageAssetsHandler.php.html#11">App\Media\Infrastructure\MessageHandler\DeleteImageAssetsHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/MessageHandler/GenerateThumbnailsHandler.php.html#15">App\Media\Infrastructure\MessageHandler\GenerateThumbnailsHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#19">App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ThumbnailEntity.php.html#16">App\Media\Infrastructure\Persistence\Doctrine\Entity\ThumbnailEntity</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineImageRepository.php.html#17">App\Media\Infrastructure\Persistence\Doctrine\Repository\DoctrineImageRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/ImageVoter.php.html#12">App\Media\Infrastructure\Security\ImageVoter</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/NullTenantContext.php.html#7">App\Media\Infrastructure\Security\NullTenantContext</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/TenantAwareImageSecurityPolicy.php.html#11">App\Media\Infrastructure\Security\TenantAwareImageSecurityPolicy</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MediaObjectNormalizer.php.html#11">App\Media\Infrastructure\Serializer\MediaObjectNormalizer</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MultipartDecoder.php.html#10">App\Media\Infrastructure\Serializer\MultipartDecoder</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/UploadedFileDenormalizer.php.html#10">App\Media\Infrastructure\Serializer\UploadedFileDenormalizer</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Storage/LocalImageStorage.php.html#14">App\Media\Infrastructure\Storage\LocalImageStorage</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#16">App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Validator/CropAreaValidator.php.html#12">App\Media\Infrastructure\Validator\CropAreaValidator</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Validator/ValidCropArea.php.html#13">App\Media\Infrastructure\Validator\ValidCropArea</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageCollectionProvider.php.html#14">App\Media\Presentation\Api\State\ImageCollectionProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageDeleteProcessor.php.html#17">App\Media\Presentation\Api\State\ImageDeleteProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageItemProvider.php.html#14">App\Media\Presentation\Api\State\ImageItemProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageUploadProcessor.php.html#33">App\Media\Presentation\Api\State\ImageUploadProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/RegenerateThumbnailsProcessor.php.html#26">App\Media\Presentation\Api\State\RegenerateThumbnailsProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Transformer/ImageResourceTransformer.php.html#10">App\Media\Presentation\Api\Transformer\ImageResourceTransformer</a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#16">App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator</a></td><td class="text-right">0.0%</td><td class="text-right">40</td><td class="text-right">1640</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#16">App\Media\Domain\Model\Image</a></td><td class="text-right">0.0%</td><td class="text-right">24</td><td class="text-right">600</td></tr>
+       <tr><td><a href="Infrastructure/Validator/CropAreaValidator.php.html#12">App\Media\Infrastructure\Validator\CropAreaValidator</a></td><td class="text-right">0.0%</td><td class="text-right">24</td><td class="text-right">600</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageUploadProcessor.php.html#33">App\Media\Presentation\Api\State\ImageUploadProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">21</td><td class="text-right">462</td></tr>
+       <tr><td><a href="Presentation/Api/State/RegenerateThumbnailsProcessor.php.html#26">App\Media\Presentation\Api\State\RegenerateThumbnailsProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">20</td><td class="text-right">420</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#13">App\Media\Domain\Model\Thumbnail</a></td><td class="text-right">0.0%</td><td class="text-right">15</td><td class="text-right">240</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#19">App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity</a></td><td class="text-right">0.0%</td><td class="text-right">15</td><td class="text-right">240</td></tr>
+       <tr><td><a href="Infrastructure/Security/ImageVoter.php.html#12">App\Media\Infrastructure\Security\ImageVoter</a></td><td class="text-right">0.0%</td><td class="text-right">15</td><td class="text-right">240</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MediaObjectNormalizer.php.html#11">App\Media\Infrastructure\Serializer\MediaObjectNormalizer</a></td><td class="text-right">0.0%</td><td class="text-right">12</td><td class="text-right">156</td></tr>
+       <tr><td><a href="Domain/ValueObject/CropArea.php.html#7">App\Media\Domain\ValueObject\CropArea</a></td><td class="text-right">0.0%</td><td class="text-right">11</td><td class="text-right">132</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineImageRepository.php.html#17">App\Media\Infrastructure\Persistence\Doctrine\Repository\DoctrineImageRepository</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MultipartDecoder.php.html#10">App\Media\Infrastructure\Serializer\MultipartDecoder</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Domain/Service/DefaultThumbnailPolicy.php.html#9">App\Media\Domain\Service\DefaultThumbnailPolicy</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Infrastructure/Storage/LocalImageStorage.php.html#14">App\Media\Infrastructure\Storage\LocalImageStorage</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Domain/ValueObject/FilePath.php.html#7">App\Media\Domain\ValueObject\FilePath</a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Domain/ValueObject/ImageId.php.html#9">App\Media\Domain\ValueObject\ImageId</a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Domain/ValueObject/MimeType.php.html#7">App\Media\Domain\ValueObject\MimeType</a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Domain/ValueObject/ThumbnailId.php.html#9">App\Media\Domain\ValueObject\ThumbnailId</a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Domain/ValueObject/OwnerReference.php.html#9">App\Media\Domain\ValueObject\OwnerReference</a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Domain/ValueObject/SizeLabel.php.html#7">App\Media\Domain\ValueObject\SizeLabel</a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Infrastructure/MessageHandler/DeleteImageAssetsHandler.php.html#11">App\Media\Infrastructure\MessageHandler\DeleteImageAssetsHandler</a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Infrastructure/MessageHandler/GenerateThumbnailsHandler.php.html#15">App\Media\Infrastructure\MessageHandler\GenerateThumbnailsHandler</a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Domain/ValueObject/OwnerType.php.html#7">App\Media\Domain\ValueObject\OwnerType</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Infrastructure/Security/TenantAwareImageSecurityPolicy.php.html#11">App\Media\Infrastructure\Security\TenantAwareImageSecurityPolicy</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageDeleteProcessor.php.html#17">App\Media\Presentation\Api\State\ImageDeleteProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/UploadedFileDenormalizer.php.html#10">App\Media\Infrastructure\Serializer\UploadedFileDenormalizer</a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageItemProvider.php.html#14">App\Media\Presentation\Api\State\ImageItemProvider</a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Domain/Service/DTO/GeneratedThumbnail.php.html#11">App\Media\Domain\Service\DTO\GeneratedThumbnail</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Validator/ValidCropArea.php.html#13">App\Media\Infrastructure\Validator\ValidCropArea</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageCollectionProvider.php.html#14">App\Media\Presentation\Api\State\ImageCollectionProvider</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/Transformer/ImageResourceTransformer.php.html#10">App\Media\Presentation\Api\Transformer\ImageResourceTransformer</a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2 style="margin-top: 3rem;">Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodsCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Application/Message/DeleteImageAssetsMessage.php.html#12"><abbr title="App\Media\Application\Message\DeleteImageAssetsMessage::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Message/GenerateThumbnailsMessage.php.html#17"><abbr title="App\Media\Application\Message\GenerateThumbnailsMessage::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Security/HeaderTenantContext.php.html#12"><abbr title="App\Media\Application\Security\HeaderTenantContext::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Security/HeaderTenantContext.php.html#16"><abbr title="App\Media\Application\Security\HeaderTenantContext::getTenantId">getTenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#21"><abbr title="App\Media\Domain\Model\Image::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#34"><abbr title="App\Media\Domain\Model\Image::upload">upload</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#62"><abbr title="App\Media\Domain\Model\Image::id">id</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#67"><abbr title="App\Media\Domain\Model\Image::tenantId">tenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#72"><abbr title="App\Media\Domain\Model\Image::owner">owner</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#77"><abbr title="App\Media\Domain\Model\Image::mimeType">mimeType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#82"><abbr title="App\Media\Domain\Model\Image::fileSize">fileSize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#87"><abbr title="App\Media\Domain\Model\Image::originalPath">originalPath</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#92"><abbr title="App\Media\Domain\Model\Image::title">title</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#97"><abbr title="App\Media\Domain\Model\Image::altText">altText</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#102"><abbr title="App\Media\Domain\Model\Image::uploadedAt">uploadedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#107"><abbr title="App\Media\Domain\Model\Image::attachTo">attachTo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#112"><abbr title="App\Media\Domain\Model\Image::rename">rename</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#118"><abbr title="App\Media\Domain\Model\Image::moveOriginal">moveOriginal</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#129"><abbr title="App\Media\Domain\Model\Image::addOrUpdateThumbnail">addOrUpdateThumbnail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#134"><abbr title="App\Media\Domain\Model\Image::removeThumbnail">removeThumbnail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#139"><abbr title="App\Media\Domain\Model\Image::getThumbnail">getThumbnail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#147"><abbr title="App\Media\Domain\Model\Image::thumbnails">thumbnails</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#152"><abbr title="App\Media\Domain\Model\Image::reconstitute">reconstitute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#187"><abbr title="App\Media\Domain\Model\Image::newThumbnail">newThumbnail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#15"><abbr title="App\Media\Domain\Model\Thumbnail::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#27"><abbr title="App\Media\Domain\Model\Thumbnail::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#53"><abbr title="App\Media\Domain\Model\Thumbnail::id">id</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#58"><abbr title="App\Media\Domain\Model\Thumbnail::imageId">imageId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#63"><abbr title="App\Media\Domain\Model\Thumbnail::sizeLabel">sizeLabel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#68"><abbr title="App\Media\Domain\Model\Thumbnail::path">path</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#73"><abbr title="App\Media\Domain\Model\Thumbnail::width">width</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#78"><abbr title="App\Media\Domain\Model\Thumbnail::height">height</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#83"><abbr title="App\Media\Domain\Model\Thumbnail::cropArea">cropArea</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#88"><abbr title="App\Media\Domain\Model\Thumbnail::createdAt">createdAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#93"><abbr title="App\Media\Domain\Model\Thumbnail::updatePath">updatePath</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Service/DTO/GeneratedThumbnail.php.html#13"><abbr title="App\Media\Domain\Service\DTO\GeneratedThumbnail::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Service/DefaultThumbnailPolicy.php.html#21"><abbr title="App\Media\Domain\Service\DefaultThumbnailPolicy::allowedSizes">allowedSizes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Service/DefaultThumbnailPolicy.php.html#31"><abbr title="App\Media\Domain\Service\DefaultThumbnailPolicy::dimensionsFor">dimensionsFor</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Service/DefaultThumbnailPolicy.php.html#42"><abbr title="App\Media\Domain\Service\DefaultThumbnailPolicy::assertValid">assertValid</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/CropArea.php.html#9"><abbr title="App\Media\Domain\ValueObject\CropArea::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/CropArea.php.html#17"><abbr title="App\Media\Domain\ValueObject\CropArea::fromDimensions">fromDimensions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/CropArea.php.html#30"><abbr title="App\Media\Domain\ValueObject\CropArea::x">x</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/CropArea.php.html#35"><abbr title="App\Media\Domain\ValueObject\CropArea::y">y</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/CropArea.php.html#40"><abbr title="App\Media\Domain\ValueObject\CropArea::width">width</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/CropArea.php.html#45"><abbr title="App\Media\Domain\ValueObject\CropArea::height">height</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/CropArea.php.html#53"><abbr title="App\Media\Domain\ValueObject\CropArea::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/FilePath.php.html#9"><abbr title="App\Media\Domain\ValueObject\FilePath::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/FilePath.php.html#14"><abbr title="App\Media\Domain\ValueObject\FilePath::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/FilePath.php.html#29"><abbr title="App\Media\Domain\ValueObject\FilePath::toString">toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/FilePath.php.html#34"><abbr title="App\Media\Domain\ValueObject\FilePath::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/FilePath.php.html#39"><abbr title="App\Media\Domain\ValueObject\FilePath::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ImageId.php.html#11"><abbr title="App\Media\Domain\ValueObject\ImageId::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ImageId.php.html#16"><abbr title="App\Media\Domain\ValueObject\ImageId::generate">generate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ImageId.php.html#21"><abbr title="App\Media\Domain\ValueObject\ImageId::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ImageId.php.html#30"><abbr title="App\Media\Domain\ValueObject\ImageId::toString">toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ImageId.php.html#35"><abbr title="App\Media\Domain\ValueObject\ImageId::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ImageId.php.html#40"><abbr title="App\Media\Domain\ValueObject\ImageId::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/MimeType.php.html#17"><abbr title="App\Media\Domain\ValueObject\MimeType::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/MimeType.php.html#22"><abbr title="App\Media\Domain\ValueObject\MimeType::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/MimeType.php.html#37"><abbr title="App\Media\Domain\ValueObject\MimeType::toString">toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/MimeType.php.html#42"><abbr title="App\Media\Domain\ValueObject\MimeType::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/MimeType.php.html#47"><abbr title="App\Media\Domain\ValueObject\MimeType::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/OwnerReference.php.html#11"><abbr title="App\Media\Domain\ValueObject\OwnerReference::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/OwnerReference.php.html#18"><abbr title="App\Media\Domain\ValueObject\OwnerReference::from">from</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/OwnerReference.php.html#27"><abbr title="App\Media\Domain\ValueObject\OwnerReference::tenantId">tenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/OwnerReference.php.html#32"><abbr title="App\Media\Domain\ValueObject\OwnerReference::type">type</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/OwnerReference.php.html#37"><abbr title="App\Media\Domain\ValueObject\OwnerReference::ownerId">ownerId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/OwnerType.php.html#13"><abbr title="App\Media\Domain\ValueObject\OwnerType::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/SizeLabel.php.html#14"><abbr title="App\Media\Domain\ValueObject\SizeLabel::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ThumbnailId.php.html#11"><abbr title="App\Media\Domain\ValueObject\ThumbnailId::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ThumbnailId.php.html#16"><abbr title="App\Media\Domain\ValueObject\ThumbnailId::generate">generate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ThumbnailId.php.html#21"><abbr title="App\Media\Domain\ValueObject\ThumbnailId::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ThumbnailId.php.html#30"><abbr title="App\Media\Domain\ValueObject\ThumbnailId::toString">toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ThumbnailId.php.html#35"><abbr title="App\Media\Domain\ValueObject\ThumbnailId::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ThumbnailId.php.html#40"><abbr title="App\Media\Domain\ValueObject\ThumbnailId::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/MessageHandler/DeleteImageAssetsHandler.php.html#16"><abbr title="App\Media\Infrastructure\MessageHandler\DeleteImageAssetsHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/MessageHandler/DeleteImageAssetsHandler.php.html#25"><abbr title="App\Media\Infrastructure\MessageHandler\DeleteImageAssetsHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/MessageHandler/DeleteImageAssetsHandler.php.html#34"><abbr title="App\Media\Infrastructure\MessageHandler\DeleteImageAssetsHandler::removeFile">removeFile</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/MessageHandler/GenerateThumbnailsHandler.php.html#18"><abbr title="App\Media\Infrastructure\MessageHandler\GenerateThumbnailsHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/MessageHandler/GenerateThumbnailsHandler.php.html#26"><abbr title="App\Media\Infrastructure\MessageHandler\GenerateThumbnailsHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#63"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#68"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::fromDomain">fromDomain</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#91"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::updateFromDomain">updateFromDomain</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#128"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::toDomain">toDomain</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#155"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#160"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::getTenantId">getTenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#165"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::setId">setId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#170"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::addThumbnail">addThumbnail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#181"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::getThumbnails">getThumbnails</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ThumbnailEntity.php.html#50"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ThumbnailEntity::fromDomain">fromDomain</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ThumbnailEntity.php.html#66"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ThumbnailEntity::updateFromDomain">updateFromDomain</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ThumbnailEntity.php.html#75"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ThumbnailEntity::toDomain">toDomain</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ThumbnailEntity.php.html#94"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ThumbnailEntity::setImage">setImage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ThumbnailEntity.php.html#99"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ThumbnailEntity::getSizeLabel">getSizeLabel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineImageRepository.php.html#19"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Repository\DoctrineImageRepository::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineImageRepository.php.html#25"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Repository\DoctrineImageRepository::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineImageRepository.php.html#39"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Repository\DoctrineImageRepository::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineImageRepository.php.html#50"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Repository\DoctrineImageRepository::findByOwner">findByOwner</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineImageRepository.php.html#68"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Repository\DoctrineImageRepository::findByTenant">findByTenant</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineImageRepository.php.html#85"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Repository\DoctrineImageRepository::remove">remove</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/ImageVoter.php.html#17"><abbr title="App\Media\Infrastructure\Security\ImageVoter::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/ImageVoter.php.html#21"><abbr title="App\Media\Infrastructure\Security\ImageVoter::supports">supports</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/ImageVoter.php.html#26"><abbr title="App\Media\Infrastructure\Security\ImageVoter::voteOnAttribute">voteOnAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/ImageVoter.php.html#56"><abbr title="App\Media\Infrastructure\Security\ImageVoter::canView">canView</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/ImageVoter.php.html#73"><abbr title="App\Media\Infrastructure\Security\ImageVoter::canManage">canManage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/NullTenantContext.php.html#9"><abbr title="App\Media\Infrastructure\Security\NullTenantContext::getTenantId">getTenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/TenantAwareImageSecurityPolicy.php.html#13"><abbr title="App\Media\Infrastructure\Security\TenantAwareImageSecurityPolicy::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/TenantAwareImageSecurityPolicy.php.html#17"><abbr title="App\Media\Infrastructure\Security\TenantAwareImageSecurityPolicy::canView">canView</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/TenantAwareImageSecurityPolicy.php.html#28"><abbr title="App\Media\Infrastructure\Security\TenantAwareImageSecurityPolicy::canManage">canManage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MediaObjectNormalizer.php.html#15"><abbr title="App\Media\Infrastructure\Serializer\MediaObjectNormalizer::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MediaObjectNormalizer.php.html#23"><abbr title="App\Media\Infrastructure\Serializer\MediaObjectNormalizer::normalize">normalize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MediaObjectNormalizer.php.html#48"><abbr title="App\Media\Infrastructure\Serializer\MediaObjectNormalizer::supportsNormalization">supportsNormalization</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MediaObjectNormalizer.php.html#57"><abbr title="App\Media\Infrastructure\Serializer\MediaObjectNormalizer::getSupportedTypes">getSupportedTypes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MultipartDecoder.php.html#14"><abbr title="App\Media\Infrastructure\Serializer\MultipartDecoder::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MultipartDecoder.php.html#19"><abbr title="App\Media\Infrastructure\Serializer\MultipartDecoder::decode">decode</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MultipartDecoder.php.html#37"><abbr title="App\Media\Infrastructure\Serializer\MultipartDecoder::supportsDecoding">supportsDecoding</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MultipartDecoder.php.html#42"><abbr title="App\Media\Infrastructure\Serializer\MultipartDecoder::decodeValue">decodeValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/UploadedFileDenormalizer.php.html#12"><abbr title="App\Media\Infrastructure\Serializer\UploadedFileDenormalizer::denormalize">denormalize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/UploadedFileDenormalizer.php.html#21"><abbr title="App\Media\Infrastructure\Serializer\UploadedFileDenormalizer::supportsDenormalization">supportsDenormalization</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/UploadedFileDenormalizer.php.html#26"><abbr title="App\Media\Infrastructure\Serializer\UploadedFileDenormalizer::getSupportedTypes">getSupportedTypes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Storage/LocalImageStorage.php.html#18"><abbr title="App\Media\Infrastructure\Storage\LocalImageStorage::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Storage/LocalImageStorage.php.html#25"><abbr title="App\Media\Infrastructure\Storage\LocalImageStorage::storeOriginal">storeOriginal</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Storage/LocalImageStorage.php.html#40"><abbr title="App\Media\Infrastructure\Storage\LocalImageStorage::remove">remove</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Storage/LocalImageStorage.php.html#49"><abbr title="App\Media\Infrastructure\Storage\LocalImageStorage::resolveAbsolutePath">resolveAbsolutePath</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#28"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#38"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::generate">generate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#78"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::resolveAbsoluteOriginal">resolveAbsoluteOriginal</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#92"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::detectMimeType">detectMimeType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#102"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::createImageResource">createImageResource</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#120"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::ensureResource">ensureResource</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#129"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::resourceDimensions">resourceDimensions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#137"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::normalizeCropArea">normalizeCropArea</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#160"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::cropImage">cropImage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#170"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::resizeImage">resizeImage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#201"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::configureTransparency">configureTransparency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#211"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::saveImage">saveImage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Validator/CropAreaValidator.php.html#14"><abbr title="App\Media\Infrastructure\Validator\CropAreaValidator::validate">validate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Validator/CropAreaValidator.php.html#56"><abbr title="App\Media\Infrastructure\Validator\CropAreaValidator::validateCropArea">validateCropArea</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Validator/CropAreaValidator.php.html#93"><abbr title="App\Media\Infrastructure\Validator\CropAreaValidator::validateCropArray">validateCropArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Validator/ValidCropArea.php.html#29"><abbr title="App\Media\Infrastructure\Validator\ValidCropArea::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Validator/ValidCropArea.php.html#50"><abbr title="App\Media\Infrastructure\Validator\ValidCropArea::validatedBy">validatedBy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageCollectionProvider.php.html#16"><abbr title="App\Media\Presentation\Api\State\ImageCollectionProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageCollectionProvider.php.html#22"><abbr title="App\Media\Presentation\Api\State\ImageCollectionProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageDeleteProcessor.php.html#19"><abbr title="App\Media\Presentation\Api\State\ImageDeleteProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageDeleteProcessor.php.html#26"><abbr title="App\Media\Presentation\Api\State\ImageDeleteProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageItemProvider.php.html#16"><abbr title="App\Media\Presentation\Api\State\ImageItemProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageItemProvider.php.html#22"><abbr title="App\Media\Presentation\Api\State\ImageItemProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageUploadProcessor.php.html#35"><abbr title="App\Media\Presentation\Api\State\ImageUploadProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageUploadProcessor.php.html#49"><abbr title="App\Media\Presentation\Api\State\ImageUploadProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageUploadProcessor.php.html#137"><abbr title="App\Media\Presentation\Api\State\ImageUploadProcessor::attachImageToProduct">attachImageToProduct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageUploadProcessor.php.html#162"><abbr title="App\Media\Presentation\Api\State\ImageUploadProcessor::attachImageToCategory">attachImageToCategory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/RegenerateThumbnailsProcessor.php.html#28"><abbr title="App\Media\Presentation\Api\State\RegenerateThumbnailsProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/State/RegenerateThumbnailsProcessor.php.html#40"><abbr title="App\Media\Presentation\Api\State\RegenerateThumbnailsProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Transformer/ImageResourceTransformer.php.html#12"><abbr title="App\Media\Presentation\Api\Transformer\ImageResourceTransformer::transform">transform</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Presentation/Api/State/RegenerateThumbnailsProcessor.php.html#40"><abbr title="App\Media\Presentation\Api\State\RegenerateThumbnailsProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">19</td><td class="text-right">380</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageUploadProcessor.php.html#49"><abbr title="App\Media\Presentation\Api\State\ImageUploadProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">12</td><td class="text-right">156</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#102"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::createImageResource">createImageResource</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#211"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::saveImage">saveImage</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Infrastructure/Validator/CropAreaValidator.php.html#56"><abbr title="App\Media\Infrastructure\Validator\CropAreaValidator::validateCropArea">validateCropArea</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MediaObjectNormalizer.php.html#23"><abbr title="App\Media\Infrastructure\Serializer\MediaObjectNormalizer::normalize">normalize</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Infrastructure/Validator/CropAreaValidator.php.html#14"><abbr title="App\Media\Infrastructure\Validator\CropAreaValidator::validate">validate</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Infrastructure/Validator/CropAreaValidator.php.html#93"><abbr title="App\Media\Infrastructure\Validator\CropAreaValidator::validateCropArray">validateCropArray</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Domain/ValueObject/SizeLabel.php.html#14"><abbr title="App\Media\Domain\ValueObject\SizeLabel::fromString">fromString</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Infrastructure/Security/ImageVoter.php.html#26"><abbr title="App\Media\Infrastructure\Security\ImageVoter::voteOnAttribute">voteOnAttribute</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Domain/Service/DefaultThumbnailPolicy.php.html#42"><abbr title="App\Media\Domain\Service\DefaultThumbnailPolicy::assertValid">assertValid</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Domain/ValueObject/CropArea.php.html#17"><abbr title="App\Media\Domain\ValueObject\CropArea::fromDimensions">fromDimensions</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Domain/ValueObject/OwnerType.php.html#13"><abbr title="App\Media\Domain\ValueObject\OwnerType::fromString">fromString</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Infrastructure/MessageHandler/GenerateThumbnailsHandler.php.html#26"><abbr title="App\Media\Infrastructure\MessageHandler\GenerateThumbnailsHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#91"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::updateFromDomain">updateFromDomain</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Infrastructure/Security/ImageVoter.php.html#56"><abbr title="App\Media\Infrastructure\Security\ImageVoter::canView">canView</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MultipartDecoder.php.html#42"><abbr title="App\Media\Infrastructure\Serializer\MultipartDecoder::decodeValue">decodeValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageDeleteProcessor.php.html#26"><abbr title="App\Media\Presentation\Api\State\ImageDeleteProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageUploadProcessor.php.html#137"><abbr title="App\Media\Presentation\Api\State\ImageUploadProcessor::attachImageToProduct">attachImageToProduct</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageUploadProcessor.php.html#162"><abbr title="App\Media\Presentation\Api\State\ImageUploadProcessor::attachImageToCategory">attachImageToCategory</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#152"><abbr title="App\Media\Domain\Model\Image::reconstitute">reconstitute</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#27"><abbr title="App\Media\Domain\Model\Thumbnail::create">create</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Domain/Model/Thumbnail.php.html#93"><abbr title="App\Media\Domain\Model\Thumbnail::updatePath">updatePath</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Domain/Service/DTO/GeneratedThumbnail.php.html#13"><abbr title="App\Media\Domain\Service\DTO\GeneratedThumbnail::__construct">__construct</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Domain/ValueObject/FilePath.php.html#14"><abbr title="App\Media\Domain\ValueObject\FilePath::fromString">fromString</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Domain/ValueObject/MimeType.php.html#22"><abbr title="App\Media\Domain\ValueObject\MimeType::fromString">fromString</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/MessageHandler/DeleteImageAssetsHandler.php.html#34"><abbr title="App\Media\Infrastructure\MessageHandler\DeleteImageAssetsHandler::removeFile">removeFile</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MultipartDecoder.php.html#19"><abbr title="App\Media\Infrastructure\Serializer\MultipartDecoder::decode">decode</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Storage/LocalImageStorage.php.html#25"><abbr title="App\Media\Infrastructure\Storage\LocalImageStorage::storeOriginal">storeOriginal</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#92"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::detectMimeType">detectMimeType</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#120"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::ensureResource">ensureResource</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#137"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::normalizeCropArea">normalizeCropArea</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#170"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::resizeImage">resizeImage</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageItemProvider.php.html#22"><abbr title="App\Media\Presentation\Api\State\ImageItemProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#34"><abbr title="App\Media\Domain\Model\Image::upload">upload</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/Model/Image.php.html#118"><abbr title="App\Media\Domain\Model\Image::moveOriginal">moveOriginal</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/Service/DefaultThumbnailPolicy.php.html#31"><abbr title="App\Media\Domain\Service\DefaultThumbnailPolicy::dimensionsFor">dimensionsFor</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/ValueObject/ImageId.php.html#21"><abbr title="App\Media\Domain\ValueObject\ImageId::fromString">fromString</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/ValueObject/OwnerReference.php.html#18"><abbr title="App\Media\Domain\ValueObject\OwnerReference::from">from</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/ValueObject/ThumbnailId.php.html#21"><abbr title="App\Media\Domain\ValueObject\ThumbnailId::fromString">fromString</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/MessageHandler/DeleteImageAssetsHandler.php.html#25"><abbr title="App\Media\Infrastructure\MessageHandler\DeleteImageAssetsHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#68"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::fromDomain">fromDomain</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ImageEntity.php.html#170"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::addThumbnail">addThumbnail</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineImageRepository.php.html#25"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Repository\DoctrineImageRepository::save">save</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineImageRepository.php.html#39"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Repository\DoctrineImageRepository::findById">findById</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineImageRepository.php.html#85"><abbr title="App\Media\Infrastructure\Persistence\Doctrine\Repository\DoctrineImageRepository::remove">remove</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Security/ImageVoter.php.html#21"><abbr title="App\Media\Infrastructure\Security\ImageVoter::supports">supports</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Security/ImageVoter.php.html#73"><abbr title="App\Media\Infrastructure\Security\ImageVoter::canManage">canManage</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Security/TenantAwareImageSecurityPolicy.php.html#17"><abbr title="App\Media\Infrastructure\Security\TenantAwareImageSecurityPolicy::canView">canView</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Security/TenantAwareImageSecurityPolicy.php.html#28"><abbr title="App\Media\Infrastructure\Security\TenantAwareImageSecurityPolicy::canManage">canManage</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/MediaObjectNormalizer.php.html#48"><abbr title="App\Media\Infrastructure\Serializer\MediaObjectNormalizer::supportsNormalization">supportsNormalization</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Serializer/UploadedFileDenormalizer.php.html#12"><abbr title="App\Media\Infrastructure\Serializer\UploadedFileDenormalizer::denormalize">denormalize</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Storage/LocalImageStorage.php.html#40"><abbr title="App\Media\Infrastructure\Storage\LocalImageStorage::remove">remove</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Storage/LocalImageStorage.php.html#49"><abbr title="App\Media\Infrastructure\Storage\LocalImageStorage::resolveAbsolutePath">resolveAbsolutePath</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#38"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::generate">generate</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#78"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::resolveAbsoluteOriginal">resolveAbsoluteOriginal</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#160"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::cropImage">cropImage</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Thumbnail/LocalThumbnailGenerator.php.html#201"><abbr title="App\Media\Infrastructure\Thumbnail\LocalThumbnailGenerator::configureTransparency">configureTransparency</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Validator/ValidCropArea.php.html#29"><abbr title="App\Media\Infrastructure\Validator\ValidCropArea::__construct">__construct</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Presentation/Api/State/ImageCollectionProvider.php.html#22"><abbr title="App\Media\Presentation\Api\State\ImageCollectionProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Presentation/Api/Transformer/ImageResourceTransformer.php.html#12"><abbr title="App\Media\Presentation\Api\Transformer\ImageResourceTransformer::transform">transform</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 12.4.0</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.14</a> and <a href="https://phpunit.de/">PHPUnit 12.4.1</a> at Thu Nov 27 8:00:35 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/billboard.pkgd.min.js?v=12.4.0" type="text/javascript"></script>
+  <script type="application/json" id="complexity_class">[[0,1,"Application\/Message\/DeleteImageAssetsMessage.php.html#7","App\\Media\\Application\\Message\\DeleteImageAssetsMessage","2"],[0,1,"Application\/Message\/GenerateThumbnailsMessage.php.html#11","App\\Media\\Application\\Message\\GenerateThumbnailsMessage","2"],[0,2,"Application\/Security\/HeaderTenantContext.php.html#10","App\\Media\\Application\\Security\\HeaderTenantContext","6"],[0,24,"Domain\/Model\/Image.php.html#16","App\\Media\\Domain\\Model\\Image","600"],[0,15,"Domain\/Model\/Thumbnail.php.html#13","App\\Media\\Domain\\Model\\Thumbnail","240"],[0,3,"Domain\/Service\/DTO\/GeneratedThumbnail.php.html#11","App\\Media\\Domain\\Service\\DTO\\GeneratedThumbnail","12"],[0,8,"Domain\/Service\/DefaultThumbnailPolicy.php.html#9","App\\Media\\Domain\\Service\\DefaultThumbnailPolicy","72"],[0,11,"Domain\/ValueObject\/CropArea.php.html#7","App\\Media\\Domain\\ValueObject\\CropArea","132"],[0,7,"Domain\/ValueObject\/FilePath.php.html#7","App\\Media\\Domain\\ValueObject\\FilePath","56"],[0,7,"Domain\/ValueObject\/ImageId.php.html#9","App\\Media\\Domain\\ValueObject\\ImageId","56"],[0,7,"Domain\/ValueObject\/MimeType.php.html#7","App\\Media\\Domain\\ValueObject\\MimeType","56"],[0,6,"Domain\/ValueObject\/OwnerReference.php.html#9","App\\Media\\Domain\\ValueObject\\OwnerReference","42"],[0,5,"Domain\/ValueObject\/OwnerType.php.html#7","App\\Media\\Domain\\ValueObject\\OwnerType","30"],[0,6,"Domain\/ValueObject\/SizeLabel.php.html#7","App\\Media\\Domain\\ValueObject\\SizeLabel","42"],[0,7,"Domain\/ValueObject\/ThumbnailId.php.html#9","App\\Media\\Domain\\ValueObject\\ThumbnailId","56"],[0,6,"Infrastructure\/MessageHandler\/DeleteImageAssetsHandler.php.html#11","App\\Media\\Infrastructure\\MessageHandler\\DeleteImageAssetsHandler","42"],[0,6,"Infrastructure\/MessageHandler\/GenerateThumbnailsHandler.php.html#15","App\\Media\\Infrastructure\\MessageHandler\\GenerateThumbnailsHandler","42"],[0,15,"Infrastructure\/Persistence\/Doctrine\/Entity\/ImageEntity.php.html#19","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ImageEntity","240"],[0,5,"Infrastructure\/Persistence\/Doctrine\/Entity\/ThumbnailEntity.php.html#16","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ThumbnailEntity","30"],[0,9,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineImageRepository.php.html#17","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineImageRepository","90"],[0,15,"Infrastructure\/Security\/ImageVoter.php.html#12","App\\Media\\Infrastructure\\Security\\ImageVoter","240"],[0,1,"Infrastructure\/Security\/NullTenantContext.php.html#7","App\\Media\\Infrastructure\\Security\\NullTenantContext","2"],[0,5,"Infrastructure\/Security\/TenantAwareImageSecurityPolicy.php.html#11","App\\Media\\Infrastructure\\Security\\TenantAwareImageSecurityPolicy","30"],[0,12,"Infrastructure\/Serializer\/MediaObjectNormalizer.php.html#11","App\\Media\\Infrastructure\\Serializer\\MediaObjectNormalizer","156"],[0,9,"Infrastructure\/Serializer\/MultipartDecoder.php.html#10","App\\Media\\Infrastructure\\Serializer\\MultipartDecoder","90"],[0,4,"Infrastructure\/Serializer\/UploadedFileDenormalizer.php.html#10","App\\Media\\Infrastructure\\Serializer\\UploadedFileDenormalizer","20"],[0,8,"Infrastructure\/Storage\/LocalImageStorage.php.html#14","App\\Media\\Infrastructure\\Storage\\LocalImageStorage","72"],[0,40,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#16","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator","1640"],[0,24,"Infrastructure\/Validator\/CropAreaValidator.php.html#12","App\\Media\\Infrastructure\\Validator\\CropAreaValidator","600"],[0,3,"Infrastructure\/Validator\/ValidCropArea.php.html#13","App\\Media\\Infrastructure\\Validator\\ValidCropArea","12"],[0,3,"Presentation\/Api\/State\/ImageCollectionProvider.php.html#14","App\\Media\\Presentation\\Api\\State\\ImageCollectionProvider","12"],[0,5,"Presentation\/Api\/State\/ImageDeleteProcessor.php.html#17","App\\Media\\Presentation\\Api\\State\\ImageDeleteProcessor","30"],[0,4,"Presentation\/Api\/State\/ImageItemProvider.php.html#14","App\\Media\\Presentation\\Api\\State\\ImageItemProvider","20"],[0,21,"Presentation\/Api\/State\/ImageUploadProcessor.php.html#33","App\\Media\\Presentation\\Api\\State\\ImageUploadProcessor","462"],[0,20,"Presentation\/Api\/State\/RegenerateThumbnailsProcessor.php.html#26","App\\Media\\Presentation\\Api\\State\\RegenerateThumbnailsProcessor","420"],[0,2,"Presentation\/Api\/Transformer\/ImageResourceTransformer.php.html#10","App\\Media\\Presentation\\Api\\Transformer\\ImageResourceTransformer","6"],[100,0,"Presentation\/Api\/Resource\/ImageResource.php.html#23","App\\Media\\Presentation\\Api\\Resource\\ImageResource","0"],[100,0,"Presentation\/Api\/Resource\/ThumbnailRegenerationRequest.php.html#11","App\\Media\\Presentation\\Api\\Resource\\ThumbnailRegenerationRequest","0"]]</script>
+  <script type="application/json" id="complexity_method">[[0,1,"Application\/Message\/DeleteImageAssetsMessage.php.html#12","App\\Media\\Application\\Message\\DeleteImageAssetsMessage::__construct","2"],[0,1,"Application\/Message\/GenerateThumbnailsMessage.php.html#17","App\\Media\\Application\\Message\\GenerateThumbnailsMessage::__construct","2"],[0,1,"Application\/Security\/HeaderTenantContext.php.html#12","App\\Media\\Application\\Security\\HeaderTenantContext::__construct","2"],[0,1,"Application\/Security\/HeaderTenantContext.php.html#16","App\\Media\\Application\\Security\\HeaderTenantContext::getTenantId","2"],[0,1,"Domain\/Model\/Image.php.html#21","App\\Media\\Domain\\Model\\Image::__construct","2"],[0,2,"Domain\/Model\/Image.php.html#34","App\\Media\\Domain\\Model\\Image::upload","6"],[0,1,"Domain\/Model\/Image.php.html#62","App\\Media\\Domain\\Model\\Image::id","2"],[0,1,"Domain\/Model\/Image.php.html#67","App\\Media\\Domain\\Model\\Image::tenantId","2"],[0,1,"Domain\/Model\/Image.php.html#72","App\\Media\\Domain\\Model\\Image::owner","2"],[0,1,"Domain\/Model\/Image.php.html#77","App\\Media\\Domain\\Model\\Image::mimeType","2"],[0,1,"Domain\/Model\/Image.php.html#82","App\\Media\\Domain\\Model\\Image::fileSize","2"],[0,1,"Domain\/Model\/Image.php.html#87","App\\Media\\Domain\\Model\\Image::originalPath","2"],[0,1,"Domain\/Model\/Image.php.html#92","App\\Media\\Domain\\Model\\Image::title","2"],[0,1,"Domain\/Model\/Image.php.html#97","App\\Media\\Domain\\Model\\Image::altText","2"],[0,1,"Domain\/Model\/Image.php.html#102","App\\Media\\Domain\\Model\\Image::uploadedAt","2"],[0,1,"Domain\/Model\/Image.php.html#107","App\\Media\\Domain\\Model\\Image::attachTo","2"],[0,1,"Domain\/Model\/Image.php.html#112","App\\Media\\Domain\\Model\\Image::rename","2"],[0,2,"Domain\/Model\/Image.php.html#118","App\\Media\\Domain\\Model\\Image::moveOriginal","6"],[0,1,"Domain\/Model\/Image.php.html#129","App\\Media\\Domain\\Model\\Image::addOrUpdateThumbnail","2"],[0,1,"Domain\/Model\/Image.php.html#134","App\\Media\\Domain\\Model\\Image::removeThumbnail","2"],[0,1,"Domain\/Model\/Image.php.html#139","App\\Media\\Domain\\Model\\Image::getThumbnail","2"],[0,1,"Domain\/Model\/Image.php.html#147","App\\Media\\Domain\\Model\\Image::thumbnails","2"],[0,3,"Domain\/Model\/Image.php.html#152","App\\Media\\Domain\\Model\\Image::reconstitute","12"],[0,1,"Domain\/Model\/Image.php.html#187","App\\Media\\Domain\\Model\\Image::newThumbnail","2"],[0,1,"Domain\/Model\/Thumbnail.php.html#15","App\\Media\\Domain\\Model\\Thumbnail::__construct","2"],[0,3,"Domain\/Model\/Thumbnail.php.html#27","App\\Media\\Domain\\Model\\Thumbnail::create","12"],[0,1,"Domain\/Model\/Thumbnail.php.html#53","App\\Media\\Domain\\Model\\Thumbnail::id","2"],[0,1,"Domain\/Model\/Thumbnail.php.html#58","App\\Media\\Domain\\Model\\Thumbnail::imageId","2"],[0,1,"Domain\/Model\/Thumbnail.php.html#63","App\\Media\\Domain\\Model\\Thumbnail::sizeLabel","2"],[0,1,"Domain\/Model\/Thumbnail.php.html#68","App\\Media\\Domain\\Model\\Thumbnail::path","2"],[0,1,"Domain\/Model\/Thumbnail.php.html#73","App\\Media\\Domain\\Model\\Thumbnail::width","2"],[0,1,"Domain\/Model\/Thumbnail.php.html#78","App\\Media\\Domain\\Model\\Thumbnail::height","2"],[0,1,"Domain\/Model\/Thumbnail.php.html#83","App\\Media\\Domain\\Model\\Thumbnail::cropArea","2"],[0,1,"Domain\/Model\/Thumbnail.php.html#88","App\\Media\\Domain\\Model\\Thumbnail::createdAt","2"],[0,3,"Domain\/Model\/Thumbnail.php.html#93","App\\Media\\Domain\\Model\\Thumbnail::updatePath","12"],[0,3,"Domain\/Service\/DTO\/GeneratedThumbnail.php.html#13","App\\Media\\Domain\\Service\\DTO\\GeneratedThumbnail::__construct","12"],[0,1,"Domain\/Service\/DefaultThumbnailPolicy.php.html#21","App\\Media\\Domain\\Service\\DefaultThumbnailPolicy::allowedSizes","2"],[0,2,"Domain\/Service\/DefaultThumbnailPolicy.php.html#31","App\\Media\\Domain\\Service\\DefaultThumbnailPolicy::dimensionsFor","6"],[0,5,"Domain\/Service\/DefaultThumbnailPolicy.php.html#42","App\\Media\\Domain\\Service\\DefaultThumbnailPolicy::assertValid","30"],[0,1,"Domain\/ValueObject\/CropArea.php.html#9","App\\Media\\Domain\\ValueObject\\CropArea::__construct","2"],[0,5,"Domain\/ValueObject\/CropArea.php.html#17","App\\Media\\Domain\\ValueObject\\CropArea::fromDimensions","30"],[0,1,"Domain\/ValueObject\/CropArea.php.html#30","App\\Media\\Domain\\ValueObject\\CropArea::x","2"],[0,1,"Domain\/ValueObject\/CropArea.php.html#35","App\\Media\\Domain\\ValueObject\\CropArea::y","2"],[0,1,"Domain\/ValueObject\/CropArea.php.html#40","App\\Media\\Domain\\ValueObject\\CropArea::width","2"],[0,1,"Domain\/ValueObject\/CropArea.php.html#45","App\\Media\\Domain\\ValueObject\\CropArea::height","2"],[0,1,"Domain\/ValueObject\/CropArea.php.html#53","App\\Media\\Domain\\ValueObject\\CropArea::toArray","2"],[0,1,"Domain\/ValueObject\/FilePath.php.html#9","App\\Media\\Domain\\ValueObject\\FilePath::__construct","2"],[0,3,"Domain\/ValueObject\/FilePath.php.html#14","App\\Media\\Domain\\ValueObject\\FilePath::fromString","12"],[0,1,"Domain\/ValueObject\/FilePath.php.html#29","App\\Media\\Domain\\ValueObject\\FilePath::toString","2"],[0,1,"Domain\/ValueObject\/FilePath.php.html#34","App\\Media\\Domain\\ValueObject\\FilePath::equals","2"],[0,1,"Domain\/ValueObject\/FilePath.php.html#39","App\\Media\\Domain\\ValueObject\\FilePath::__toString","2"],[0,1,"Domain\/ValueObject\/ImageId.php.html#11","App\\Media\\Domain\\ValueObject\\ImageId::__construct","2"],[0,1,"Domain\/ValueObject\/ImageId.php.html#16","App\\Media\\Domain\\ValueObject\\ImageId::generate","2"],[0,2,"Domain\/ValueObject\/ImageId.php.html#21","App\\Media\\Domain\\ValueObject\\ImageId::fromString","6"],[0,1,"Domain\/ValueObject\/ImageId.php.html#30","App\\Media\\Domain\\ValueObject\\ImageId::toString","2"],[0,1,"Domain\/ValueObject\/ImageId.php.html#35","App\\Media\\Domain\\ValueObject\\ImageId::equals","2"],[0,1,"Domain\/ValueObject\/ImageId.php.html#40","App\\Media\\Domain\\ValueObject\\ImageId::__toString","2"],[0,1,"Domain\/ValueObject\/MimeType.php.html#17","App\\Media\\Domain\\ValueObject\\MimeType::__construct","2"],[0,3,"Domain\/ValueObject\/MimeType.php.html#22","App\\Media\\Domain\\ValueObject\\MimeType::fromString","12"],[0,1,"Domain\/ValueObject\/MimeType.php.html#37","App\\Media\\Domain\\ValueObject\\MimeType::toString","2"],[0,1,"Domain\/ValueObject\/MimeType.php.html#42","App\\Media\\Domain\\ValueObject\\MimeType::equals","2"],[0,1,"Domain\/ValueObject\/MimeType.php.html#47","App\\Media\\Domain\\ValueObject\\MimeType::__toString","2"],[0,1,"Domain\/ValueObject\/OwnerReference.php.html#11","App\\Media\\Domain\\ValueObject\\OwnerReference::__construct","2"],[0,2,"Domain\/ValueObject\/OwnerReference.php.html#18","App\\Media\\Domain\\ValueObject\\OwnerReference::from","6"],[0,1,"Domain\/ValueObject\/OwnerReference.php.html#27","App\\Media\\Domain\\ValueObject\\OwnerReference::tenantId","2"],[0,1,"Domain\/ValueObject\/OwnerReference.php.html#32","App\\Media\\Domain\\ValueObject\\OwnerReference::type","2"],[0,1,"Domain\/ValueObject\/OwnerReference.php.html#37","App\\Media\\Domain\\ValueObject\\OwnerReference::ownerId","2"],[0,5,"Domain\/ValueObject\/OwnerType.php.html#13","App\\Media\\Domain\\ValueObject\\OwnerType::fromString","30"],[0,6,"Domain\/ValueObject\/SizeLabel.php.html#14","App\\Media\\Domain\\ValueObject\\SizeLabel::fromString","42"],[0,1,"Domain\/ValueObject\/ThumbnailId.php.html#11","App\\Media\\Domain\\ValueObject\\ThumbnailId::__construct","2"],[0,1,"Domain\/ValueObject\/ThumbnailId.php.html#16","App\\Media\\Domain\\ValueObject\\ThumbnailId::generate","2"],[0,2,"Domain\/ValueObject\/ThumbnailId.php.html#21","App\\Media\\Domain\\ValueObject\\ThumbnailId::fromString","6"],[0,1,"Domain\/ValueObject\/ThumbnailId.php.html#30","App\\Media\\Domain\\ValueObject\\ThumbnailId::toString","2"],[0,1,"Domain\/ValueObject\/ThumbnailId.php.html#35","App\\Media\\Domain\\ValueObject\\ThumbnailId::equals","2"],[0,1,"Domain\/ValueObject\/ThumbnailId.php.html#40","App\\Media\\Domain\\ValueObject\\ThumbnailId::__toString","2"],[0,1,"Infrastructure\/MessageHandler\/DeleteImageAssetsHandler.php.html#16","App\\Media\\Infrastructure\\MessageHandler\\DeleteImageAssetsHandler::__construct","2"],[0,2,"Infrastructure\/MessageHandler\/DeleteImageAssetsHandler.php.html#25","App\\Media\\Infrastructure\\MessageHandler\\DeleteImageAssetsHandler::__invoke","6"],[0,3,"Infrastructure\/MessageHandler\/DeleteImageAssetsHandler.php.html#34","App\\Media\\Infrastructure\\MessageHandler\\DeleteImageAssetsHandler::removeFile","12"],[0,1,"Infrastructure\/MessageHandler\/GenerateThumbnailsHandler.php.html#18","App\\Media\\Infrastructure\\MessageHandler\\GenerateThumbnailsHandler::__construct","2"],[0,5,"Infrastructure\/MessageHandler\/GenerateThumbnailsHandler.php.html#26","App\\Media\\Infrastructure\\MessageHandler\\GenerateThumbnailsHandler::__invoke","30"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ImageEntity.php.html#63","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ImageEntity::__construct","2"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Entity\/ImageEntity.php.html#68","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ImageEntity::fromDomain","6"],[0,5,"Infrastructure\/Persistence\/Doctrine\/Entity\/ImageEntity.php.html#91","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ImageEntity::updateFromDomain","30"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ImageEntity.php.html#128","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ImageEntity::toDomain","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ImageEntity.php.html#155","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ImageEntity::getId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ImageEntity.php.html#160","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ImageEntity::getTenantId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ImageEntity.php.html#165","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ImageEntity::setId","2"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Entity\/ImageEntity.php.html#170","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ImageEntity::addThumbnail","6"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ImageEntity.php.html#181","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ImageEntity::getThumbnails","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ThumbnailEntity.php.html#50","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ThumbnailEntity::fromDomain","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ThumbnailEntity.php.html#66","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ThumbnailEntity::updateFromDomain","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ThumbnailEntity.php.html#75","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ThumbnailEntity::toDomain","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ThumbnailEntity.php.html#94","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ThumbnailEntity::setImage","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ThumbnailEntity.php.html#99","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Entity\\ThumbnailEntity::getSizeLabel","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineImageRepository.php.html#19","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineImageRepository::__construct","2"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineImageRepository.php.html#25","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineImageRepository::save","6"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineImageRepository.php.html#39","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineImageRepository::findById","6"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineImageRepository.php.html#50","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineImageRepository::findByOwner","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineImageRepository.php.html#68","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineImageRepository::findByTenant","2"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineImageRepository.php.html#85","App\\Media\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineImageRepository::remove","6"],[0,1,"Infrastructure\/Security\/ImageVoter.php.html#17","App\\Media\\Infrastructure\\Security\\ImageVoter::__construct","2"],[0,2,"Infrastructure\/Security\/ImageVoter.php.html#21","App\\Media\\Infrastructure\\Security\\ImageVoter::supports","6"],[0,6,"Infrastructure\/Security\/ImageVoter.php.html#26","App\\Media\\Infrastructure\\Security\\ImageVoter::voteOnAttribute","42"],[0,4,"Infrastructure\/Security\/ImageVoter.php.html#56","App\\Media\\Infrastructure\\Security\\ImageVoter::canView","20"],[0,2,"Infrastructure\/Security\/ImageVoter.php.html#73","App\\Media\\Infrastructure\\Security\\ImageVoter::canManage","6"],[0,1,"Infrastructure\/Security\/NullTenantContext.php.html#9","App\\Media\\Infrastructure\\Security\\NullTenantContext::getTenantId","2"],[0,1,"Infrastructure\/Security\/TenantAwareImageSecurityPolicy.php.html#13","App\\Media\\Infrastructure\\Security\\TenantAwareImageSecurityPolicy::__construct","2"],[0,2,"Infrastructure\/Security\/TenantAwareImageSecurityPolicy.php.html#17","App\\Media\\Infrastructure\\Security\\TenantAwareImageSecurityPolicy::canView","6"],[0,2,"Infrastructure\/Security\/TenantAwareImageSecurityPolicy.php.html#28","App\\Media\\Infrastructure\\Security\\TenantAwareImageSecurityPolicy::canManage","6"],[0,1,"Infrastructure\/Serializer\/MediaObjectNormalizer.php.html#15","App\\Media\\Infrastructure\\Serializer\\MediaObjectNormalizer::__construct","2"],[0,8,"Infrastructure\/Serializer\/MediaObjectNormalizer.php.html#23","App\\Media\\Infrastructure\\Serializer\\MediaObjectNormalizer::normalize","72"],[0,2,"Infrastructure\/Serializer\/MediaObjectNormalizer.php.html#48","App\\Media\\Infrastructure\\Serializer\\MediaObjectNormalizer::supportsNormalization","6"],[0,1,"Infrastructure\/Serializer\/MediaObjectNormalizer.php.html#57","App\\Media\\Infrastructure\\Serializer\\MediaObjectNormalizer::getSupportedTypes","2"],[0,1,"Infrastructure\/Serializer\/MultipartDecoder.php.html#14","App\\Media\\Infrastructure\\Serializer\\MultipartDecoder::__construct","2"],[0,3,"Infrastructure\/Serializer\/MultipartDecoder.php.html#19","App\\Media\\Infrastructure\\Serializer\\MultipartDecoder::decode","12"],[0,1,"Infrastructure\/Serializer\/MultipartDecoder.php.html#37","App\\Media\\Infrastructure\\Serializer\\MultipartDecoder::supportsDecoding","2"],[0,4,"Infrastructure\/Serializer\/MultipartDecoder.php.html#42","App\\Media\\Infrastructure\\Serializer\\MultipartDecoder::decodeValue","20"],[0,2,"Infrastructure\/Serializer\/UploadedFileDenormalizer.php.html#12","App\\Media\\Infrastructure\\Serializer\\UploadedFileDenormalizer::denormalize","6"],[0,1,"Infrastructure\/Serializer\/UploadedFileDenormalizer.php.html#21","App\\Media\\Infrastructure\\Serializer\\UploadedFileDenormalizer::supportsDenormalization","2"],[0,1,"Infrastructure\/Serializer\/UploadedFileDenormalizer.php.html#26","App\\Media\\Infrastructure\\Serializer\\UploadedFileDenormalizer::getSupportedTypes","2"],[0,1,"Infrastructure\/Storage\/LocalImageStorage.php.html#18","App\\Media\\Infrastructure\\Storage\\LocalImageStorage::__construct","2"],[0,3,"Infrastructure\/Storage\/LocalImageStorage.php.html#25","App\\Media\\Infrastructure\\Storage\\LocalImageStorage::storeOriginal","12"],[0,2,"Infrastructure\/Storage\/LocalImageStorage.php.html#40","App\\Media\\Infrastructure\\Storage\\LocalImageStorage::remove","6"],[0,2,"Infrastructure\/Storage\/LocalImageStorage.php.html#49","App\\Media\\Infrastructure\\Storage\\LocalImageStorage::resolveAbsolutePath","6"],[0,1,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#28","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator::__construct","2"],[0,2,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#38","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator::generate","6"],[0,2,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#78","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator::resolveAbsoluteOriginal","6"],[0,3,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#92","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator::detectMimeType","12"],[0,9,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#102","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator::createImageResource","90"],[0,3,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#120","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator::ensureResource","12"],[0,1,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#129","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator::resourceDimensions","2"],[0,3,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#137","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator::normalizeCropArea","12"],[0,2,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#160","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator::cropImage","6"],[0,3,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#170","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator::resizeImage","12"],[0,2,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#201","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator::configureTransparency","6"],[0,9,"Infrastructure\/Thumbnail\/LocalThumbnailGenerator.php.html#211","App\\Media\\Infrastructure\\Thumbnail\\LocalThumbnailGenerator::saveImage","90"],[0,8,"Infrastructure\/Validator\/CropAreaValidator.php.html#14","App\\Media\\Infrastructure\\Validator\\CropAreaValidator::validate","72"],[0,9,"Infrastructure\/Validator\/CropAreaValidator.php.html#56","App\\Media\\Infrastructure\\Validator\\CropAreaValidator::validateCropArea","90"],[0,7,"Infrastructure\/Validator\/CropAreaValidator.php.html#93","App\\Media\\Infrastructure\\Validator\\CropAreaValidator::validateCropArray","56"],[0,2,"Infrastructure\/Validator\/ValidCropArea.php.html#29","App\\Media\\Infrastructure\\Validator\\ValidCropArea::__construct","6"],[0,1,"Infrastructure\/Validator\/ValidCropArea.php.html#50","App\\Media\\Infrastructure\\Validator\\ValidCropArea::validatedBy","2"],[0,1,"Presentation\/Api\/State\/ImageCollectionProvider.php.html#16","App\\Media\\Presentation\\Api\\State\\ImageCollectionProvider::__construct","2"],[0,2,"Presentation\/Api\/State\/ImageCollectionProvider.php.html#22","App\\Media\\Presentation\\Api\\State\\ImageCollectionProvider::provide","6"],[0,1,"Presentation\/Api\/State\/ImageDeleteProcessor.php.html#19","App\\Media\\Presentation\\Api\\State\\ImageDeleteProcessor::__construct","2"],[0,4,"Presentation\/Api\/State\/ImageDeleteProcessor.php.html#26","App\\Media\\Presentation\\Api\\State\\ImageDeleteProcessor::process","20"],[0,1,"Presentation\/Api\/State\/ImageItemProvider.php.html#16","App\\Media\\Presentation\\Api\\State\\ImageItemProvider::__construct","2"],[0,3,"Presentation\/Api\/State\/ImageItemProvider.php.html#22","App\\Media\\Presentation\\Api\\State\\ImageItemProvider::provide","12"],[0,1,"Presentation\/Api\/State\/ImageUploadProcessor.php.html#35","App\\Media\\Presentation\\Api\\State\\ImageUploadProcessor::__construct","2"],[0,12,"Presentation\/Api\/State\/ImageUploadProcessor.php.html#49","App\\Media\\Presentation\\Api\\State\\ImageUploadProcessor::process","156"],[0,4,"Presentation\/Api\/State\/ImageUploadProcessor.php.html#137","App\\Media\\Presentation\\Api\\State\\ImageUploadProcessor::attachImageToProduct","20"],[0,4,"Presentation\/Api\/State\/ImageUploadProcessor.php.html#162","App\\Media\\Presentation\\Api\\State\\ImageUploadProcessor::attachImageToCategory","20"],[0,1,"Presentation\/Api\/State\/RegenerateThumbnailsProcessor.php.html#28","App\\Media\\Presentation\\Api\\State\\RegenerateThumbnailsProcessor::__construct","2"],[0,19,"Presentation\/Api\/State\/RegenerateThumbnailsProcessor.php.html#40","App\\Media\\Presentation\\Api\\State\\RegenerateThumbnailsProcessor::process","380"],[0,2,"Presentation\/Api\/Transformer\/ImageResourceTransformer.php.html#12","App\\Media\\Presentation\\Api\\Transformer\\ImageResourceTransformer::transform","6"]]</script>
+  <script type="text/javascript" defer>
+  const barLabels = [
+    '0%',
+    '0-10%',
+    '10-20%',
+    '20-30%',
+    '30-40%',
+    '40-50%',
+    '50-60%',
+    '60-70%',
+    '70-80%',
+    '80-90%',
+    '90-100%',
+    '100%'
+  ];
+  const barConfig = (name, fullName, values) => ({
+    axis: {
+      x: {
+        type: "category",
+        categories: barLabels,
+      },
+      y: {
+        label: {
+          text: `#${name}`,
+          position: 'outer-top',
+        },
+      },
+    },
+    bindto: `#${name}CoverageDistribution`,
+    data: {
+      columns: [
+        [fullName].concat(values),
+      ],
+      colors: {
+        [fullName]: "rgba(69, 114, 167, 0.75)",
+      },
+      type: "bar",
+    },
+    bar: {
+      width: {
+        ratio: 0.9,
+      },
+    },
+    grid: {
+      focus: {
+        show: false,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">Coverage ${barLabels[data[0].x]}</th></tr>
+            <tr><td class="value">${data[0].value} ${name}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  bb.generate(
+    barConfig('classes', "Class Coverage", [36,0,0,0,0,0,0,0,0,0,0,2])
+  );
+  bb.generate(
+    barConfig('methods', "Method Coverage", [154,0,0,0,0,0,0,0,0,0,0,0])
+  );
+
+  const scatterConfig = (name, complexityData) => ({
+    axis: {
+      x: {
+        label: {
+          text: 'Code Coverage (in percent)',
+          position: 'outer-right',
+        },
+        tick: {
+          values: [0, 20, 40, 60, 80, 100],
+        },
+      },
+      y: {
+        label: {
+          text: 'Cyclomatic Complexity',
+          position: 'outer-top',
+        },
+        min: 0,
+        padding: {
+          bottom: 0,
+          top: 5,
+        },
+      },
+    },
+    bindto: `#${name}Complexity`,
+    data: {
+      columns: [
+        ["complexity_x"].concat(complexityData.map(d => d[0])),
+        ["complexity"].concat(complexityData.map(d => d[1])),
+      ],
+      onclick: function(data, element) {
+        window.location = complexityData[data.index][2];
+      },
+      type: "scatter",
+      xs: {
+        "complexity": "complexity_x",
+      },
+    },
+    grid: {
+      focus: {
+        show: true,
+        y: true,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        const coverage = Math.round(data[0].x);
+        const complexity = data[0].value;
+        const targetName = complexityData[data[0].index][3];
+        const crap = complexityData[data[0].index][4];
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">${targetName}</th></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Coverage</td><td class="name">${coverage}%</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Complexity</td><td class="value">${complexity}</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Crap</td><td class="value">${crap}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  const classComplexityData = JSON.parse(document.getElementById('complexity_class').textContent);
+  bb.generate(
+    scatterConfig("class", classComplexityData)
+  );
+  const methodComplexityData = JSON.parse(document.getElementById('complexity_method').textContent);
+  bb.generate(
+    scatterConfig("method", methodComplexityData),
+  );
+  </script>
+ </body>
+</html>

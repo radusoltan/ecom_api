@@ -17,6 +17,8 @@ use App\Catalog\Domain\Model\VariantId;
 use App\Catalog\Domain\ValueObject\VariantSKU;
 use App\Shared\Domain\ValueObject\Money;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * Doctrine entity for Variant.
@@ -28,19 +30,24 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_product_variants_product_active', columns: ['configurable_product_id', 'is_active'])]
 #[ApiResource(
     operations: [
-        new GetCollection(),
+        new GetCollection(
+            provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantCollectionProvider::class
+        ),
         new Post(
             processor: \App\Catalog\Infrastructure\ApiPlatform\State\CreateVariantProcessor::class
         ),
-        new Get(),
+        new Get(
+            provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantItemProvider::class
+        ),
         new Patch(
+            provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantItemProvider::class,
             processor: \App\Catalog\Infrastructure\ApiPlatform\State\UpdateVariantProcessor::class
         ),
         new Delete(
+            provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantItemProvider::class,
             processor: \App\Catalog\Infrastructure\ApiPlatform\State\DeleteVariantProcessor::class
         ),
-    ],
-    provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantCollectionProvider::class
+    ]
 )]
 class VariantEntity
 {
@@ -50,6 +57,8 @@ class VariantEntity
 
     #[ORM\ManyToOne(targetEntity: ConfigurableProductEntity::class, inversedBy: 'variants')]
     #[ORM\JoinColumn(name: 'configurable_product_id', nullable: false, onDelete: 'CASCADE')]
+    #[Ignore] // Prevent circular reference during serialization (Variant -> ConfigurableProduct -> Variants)
+    #[MaxDepth(1)] // Additional safeguard to limit recursion depth
     private ?ConfigurableProductEntity $configurableProduct = null;
 
     #[ORM\Column(type: 'string', length: 64)]

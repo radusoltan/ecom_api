@@ -42,6 +42,12 @@ final class TenantRLSTest extends KernelTestCase
         // Reset tenant context before each test
         $this->connection->executeStatement("SELECT set_config('app.tenant_id', NULL, false)");
         $this->tenantContext->clearCurrentTenant();
+
+        // Set default tenant context to allow tenant creation (can be cleared in specific tests)
+        $defaultTenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
+        $this->connection->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $defaultTenantId->toString())
+        );
     }
 
     public function testRLSIsEnabledOnTenantsTable(): void
@@ -67,29 +73,50 @@ final class TenantRLSTest extends KernelTestCase
 
     public function testTenantCanOnlySeeOwnData(): void
     {
-        // Create two tenants
-        $tenant1 = Tenant::create(
-            TenantName::fromString('Tenant 1'),
-            Email::fromString('tenant1@example.com')
-        );
-        $this->tenantRepository->save($tenant1);
+        // Create two tenants using direct SQL to bypass RLS during creation
+        $tenant1Id = TenantId::generate();
+        $tenant2Id = TenantId::generate();
 
-        $tenant2 = Tenant::create(
-            TenantName::fromString('Tenant 2'),
-            Email::fromString('tenant2@example.com')
+        // Insert tenant1 (set context to tenant1 first)
+        $this->connection->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $tenant1Id->toString())
         );
-        $this->tenantRepository->save($tenant2);
+        $this->connection->executeStatement(
+            'INSERT INTO tenants (id, name, owner_email, status, created_at, slug, default_locale, enabled_locales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                $tenant1Id->toString(),
+                'Tenant 1',
+                'tenant1@example.com',
+                'active',
+                (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+                'tenant-1',
+                'en',
+                json_encode(['en']),
+            ]
+        );
 
-        // Flush to database
-        $this->entityManager->flush();
+        // Insert tenant2 (set context to tenant2 first)
+        $this->connection->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $tenant2Id->toString())
+        );
+        $this->connection->executeStatement(
+            'INSERT INTO tenants (id, name, owner_email, status, created_at, slug, default_locale, enabled_locales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                $tenant2Id->toString(),
+                'Tenant 2',
+                'tenant2@example.com',
+                'active',
+                (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+                'tenant-2',
+                'en',
+                json_encode(['en']),
+            ]
+        );
 
         // Set tenant context to tenant1
-        $this->tenantContext->setCurrentTenant($tenant1->id());
-
-        // Execute RLS function to set app.tenant_id
+        $this->tenantContext->setCurrentTenant($tenant1Id);
         $this->connection->executeStatement(
-            'SELECT set_tenant_context(?)',
-            [$tenant1->id()->toString()]
+            sprintf("SET app.tenant_id = '%s'", $tenant1Id->toString())
         );
 
         // Query tenants - should only see tenant1
@@ -98,26 +125,51 @@ final class TenantRLSTest extends KernelTestCase
         );
 
         $this->assertCount(1, $visibleTenants, 'Should only see own tenant');
-        $this->assertEquals($tenant1->id()->toString(), $visibleTenants[0]['id']);
+        $this->assertEquals($tenant1Id->toString(), $visibleTenants[0]['id']);
         $this->assertEquals('Tenant 1', $visibleTenants[0]['name']);
     }
 
     public function testAdminCanSeeAllTenantsWhenNoContextSet(): void
     {
-        // Create two tenants
-        $tenant1 = Tenant::create(
-            TenantName::fromString('Admin Tenant 1'),
-            Email::fromString('admin1@example.com')
-        );
-        $this->tenantRepository->save($tenant1);
+        // Create two tenants using direct SQL
+        $tenant1Id = TenantId::generate();
+        $tenant2Id = TenantId::generate();
 
-        $tenant2 = Tenant::create(
-            TenantName::fromString('Admin Tenant 2'),
-            Email::fromString('admin2@example.com')
+        // Insert tenant1 (set context to tenant1 first)
+        $this->connection->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $tenant1Id->toString())
         );
-        $this->tenantRepository->save($tenant2);
+        $this->connection->executeStatement(
+            'INSERT INTO tenants (id, name, owner_email, status, created_at, slug, default_locale, enabled_locales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                $tenant1Id->toString(),
+                'Admin Tenant 1',
+                'admin1@example.com',
+                'active',
+                (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+                'admin-tenant-1',
+                'en',
+                json_encode(['en']),
+            ]
+        );
 
-        $this->entityManager->flush();
+        // Insert tenant2 (set context to tenant2 first)
+        $this->connection->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $tenant2Id->toString())
+        );
+        $this->connection->executeStatement(
+            'INSERT INTO tenants (id, name, owner_email, status, created_at, slug, default_locale, enabled_locales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                $tenant2Id->toString(),
+                'Admin Tenant 2',
+                'admin2@example.com',
+                'active',
+                (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+                'admin-tenant-2',
+                'en',
+                json_encode(['en']),
+            ]
+        );
 
         // Clear tenant context (admin mode)
         $this->tenantContext->clearCurrentTenant();
@@ -136,67 +188,104 @@ final class TenantRLSTest extends KernelTestCase
 
     public function testTenantCannotInsertWithDifferentTenantId(): void
     {
-        $tenant1 = Tenant::create(
-            TenantName::fromString('Tenant Insert Test'),
-            Email::fromString('insert@example.com')
+        // Create tenant1 using direct SQL
+        $tenant1Id = TenantId::generate();
+        $this->connection->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $tenant1Id->toString())
         );
-        $this->tenantRepository->save($tenant1);
-        $this->entityManager->flush();
+        $this->connection->executeStatement(
+            'INSERT INTO tenants (id, name, owner_email, status, created_at, slug, default_locale, enabled_locales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                $tenant1Id->toString(),
+                'Tenant Insert Test',
+                'insert@example.com',
+                'active',
+                (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+                'tenant-insert-test',
+                'en',
+                json_encode(['en']),
+            ]
+        );
 
         // Set context to tenant1
-        $this->tenantContext->setCurrentTenant($tenant1->id());
-
+        $this->tenantContext->setCurrentTenant($tenant1Id);
         $this->connection->executeStatement(
-            'SELECT set_tenant_context(?)',
-            [$tenant1->id()->toString()]
+            sprintf("SET app.tenant_id = '%s'", $tenant1Id->toString())
         );
 
-        // Try to insert a different tenant (should fail or be filtered)
+        // Try to insert a different tenant (should fail due to RLS)
         $differentTenantId = TenantId::generate()->toString();
 
         $this->expectException(\Doctrine\DBAL\Exception::class);
 
         $this->connection->executeStatement(
-            'INSERT INTO tenants (id, name, owner_email, status, created_at)
-             VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO tenants (id, name, owner_email, status, created_at, slug, default_locale, enabled_locales)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             [
                 $differentTenantId,
                 'Malicious Tenant',
                 'hacker@example.com',
                 'active',
                 (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+                'malicious-tenant',
+                'en',
+                json_encode(['en']),
             ]
         );
     }
 
     public function testTenantCannotUpdateOtherTenantData(): void
     {
-        // Create two tenants as admin
-        $tenant1 = Tenant::create(
-            TenantName::fromString('Tenant Update 1'),
-            Email::fromString('update1@example.com')
-        );
-        $this->tenantRepository->save($tenant1);
+        // Create two tenants using direct SQL
+        $tenant1Id = TenantId::generate();
+        $tenant2Id = TenantId::generate();
 
-        $tenant2 = Tenant::create(
-            TenantName::fromString('Tenant Update 2'),
-            Email::fromString('update2@example.com')
+        // Insert tenant1 (set context to tenant1 first)
+        $this->connection->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $tenant1Id->toString())
         );
-        $this->tenantRepository->save($tenant2);
-        $this->entityManager->flush();
+        $this->connection->executeStatement(
+            'INSERT INTO tenants (id, name, owner_email, status, created_at, slug, default_locale, enabled_locales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                $tenant1Id->toString(),
+                'Tenant Update 1',
+                'update1@example.com',
+                'active',
+                (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+                'tenant-update-1',
+                'en',
+                json_encode(['en']),
+            ]
+        );
+
+        // Insert tenant2 (set context to tenant2 first)
+        $this->connection->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $tenant2Id->toString())
+        );
+        $this->connection->executeStatement(
+            'INSERT INTO tenants (id, name, owner_email, status, created_at, slug, default_locale, enabled_locales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                $tenant2Id->toString(),
+                'Tenant Update 2',
+                'update2@example.com',
+                'active',
+                (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+                'tenant-update-2',
+                'en',
+                json_encode(['en']),
+            ]
+        );
 
         // Set context to tenant1
-        $this->tenantContext->setCurrentTenant($tenant1->id());
-
+        $this->tenantContext->setCurrentTenant($tenant1Id);
         $this->connection->executeStatement(
-            'SELECT set_tenant_context(?)',
-            [$tenant1->id()->toString()]
+            sprintf("SET app.tenant_id = '%s'", $tenant1Id->toString())
         );
 
         // Try to update tenant2's data (should affect 0 rows due to RLS)
         $affectedRows = $this->connection->executeStatement(
             'UPDATE tenants SET name = ? WHERE id = ?',
-            ['Hacked Name', $tenant2->id()->toString()]
+            ['Hacked Name', $tenant2Id->toString()]
         );
 
         $this->assertEquals(0, $affectedRows, 'Should not be able to update other tenant data');
@@ -204,26 +293,35 @@ final class TenantRLSTest extends KernelTestCase
 
     public function testTenantCanUpdateOwnData(): void
     {
-        // Create tenant
-        $tenant1 = Tenant::create(
-            TenantName::fromString('Tenant Own Update'),
-            Email::fromString('ownupdate@example.com')
+        // Create tenant using direct SQL
+        $tenant1Id = TenantId::generate();
+        $this->connection->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $tenant1Id->toString())
         );
-        $this->tenantRepository->save($tenant1);
-        $this->entityManager->flush();
+        $this->connection->executeStatement(
+            'INSERT INTO tenants (id, name, owner_email, status, created_at, slug, default_locale, enabled_locales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                $tenant1Id->toString(),
+                'Tenant Own Update',
+                'ownupdate@example.com',
+                'active',
+                (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+                'tenant-own-update',
+                'en',
+                json_encode(['en']),
+            ]
+        );
 
         // Set context to tenant1
-        $this->tenantContext->setCurrentTenant($tenant1->id());
-
+        $this->tenantContext->setCurrentTenant($tenant1Id);
         $this->connection->executeStatement(
-            'SELECT set_tenant_context(?)',
-            [$tenant1->id()->toString()]
+            sprintf("SET app.tenant_id = '%s'", $tenant1Id->toString())
         );
 
         // Update own data (should work)
         $affectedRows = $this->connection->executeStatement(
             'UPDATE tenants SET name = ? WHERE id = ?',
-            ['Updated Name', $tenant1->id()->toString()]
+            ['Updated Name', $tenant1Id->toString()]
         );
 
         $this->assertEquals(1, $affectedRows, 'Should be able to update own data');
@@ -231,7 +329,7 @@ final class TenantRLSTest extends KernelTestCase
         // Verify the update
         $updatedName = $this->connection->fetchOne(
             'SELECT name FROM tenants WHERE id = ?',
-            [$tenant1->id()->toString()]
+            [$tenant1Id->toString()]
         );
 
         $this->assertEquals('Updated Name', $updatedName);

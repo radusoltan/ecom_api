@@ -31,6 +31,8 @@ final class SecurityHeadersTest extends WebTestCase
     public function testXFrameOptionsHeaderIsPresent(): void
     {
         $client = static::createClient();
+        // Follow redirects to get the final response (not a redirect response)
+        $client->followRedirects();
         $client->request('GET', '/api');
 
         $response = $client->getResponse();
@@ -40,7 +42,8 @@ final class SecurityHeadersTest extends WebTestCase
             'X-Frame-Options header should be present'
         );
 
-        $this->assertSame(
+        // Header values may be lowercase due to HTTP normalization
+        $this->assertEqualsIgnoringCase(
             'DENY',
             $response->headers->get('X-Frame-Options'),
             'X-Frame-Options should be set to DENY'
@@ -55,6 +58,7 @@ final class SecurityHeadersTest extends WebTestCase
     public function testXContentTypeOptionsHeaderIsPresent(): void
     {
         $client = static::createClient();
+        $client->followRedirects();
         $client->request('GET', '/api');
 
         $response = $client->getResponse();
@@ -79,6 +83,7 @@ final class SecurityHeadersTest extends WebTestCase
     public function testReferrerPolicyHeaderIsPresent(): void
     {
         $client = static::createClient();
+        $client->followRedirects();
         $client->request('GET', '/api');
 
         $response = $client->getResponse();
@@ -105,6 +110,7 @@ final class SecurityHeadersTest extends WebTestCase
     public function testContentSecurityPolicyHeaderIsPresent(): void
     {
         $client = static::createClient();
+        $client->followRedirects();
         $client->request('GET', '/api');
 
         $response = $client->getResponse();
@@ -134,6 +140,7 @@ final class SecurityHeadersTest extends WebTestCase
             'HTTPS' => 'on',
         ]);
 
+        $client->followRedirects();
         $client->request('GET', '/api');
 
         $response = $client->getResponse();
@@ -157,6 +164,7 @@ final class SecurityHeadersTest extends WebTestCase
     public function testPermissionsPolicyHeaderIsPresent(): void
     {
         $client = static::createClient();
+        $client->followRedirects();
         $client->request('GET', '/api');
 
         $response = $client->getResponse();
@@ -179,6 +187,7 @@ final class SecurityHeadersTest extends WebTestCase
     public function testSecurityHeadersOnApiResourceEndpoints(): void
     {
         $client = static::createClient();
+        $client->followRedirects();
 
         // Test /api/docs endpoint (API Platform documentation)
         $client->request('GET', '/api/docs');
@@ -203,6 +212,7 @@ final class SecurityHeadersTest extends WebTestCase
     public function testCspAllowsApiPlatformResources(): void
     {
         $client = static::createClient();
+        $client->followRedirects();
         $client->request('GET', '/api/docs');
 
         $response = $client->getResponse();
@@ -268,19 +278,24 @@ final class SecurityHeadersTest extends WebTestCase
     public function testSecurityHeadersDoNotLeakInformation(): void
     {
         $client = static::createClient();
+        $client->followRedirects();
         $client->request('GET', '/api');
 
         $response = $client->getResponse();
 
-        // Ensure no Server header exposing PHP version
-        if ($response->headers->has('X-Powered-By')) {
-            $this->fail('X-Powered-By header should be removed (leaks PHP version)');
-        }
+        // Ensure no X-Powered-By header (leaks PHP version)
+        $this->assertFalse(
+            $response->headers->has('X-Powered-By'),
+            'X-Powered-By header should not be present (leaks PHP version)'
+        );
 
         // Ensure Server header doesn't expose too much info
         if ($response->headers->has('Server')) {
             $server = $response->headers->get('Server');
             $this->assertStringNotContainsString('PHP', $server, 'Server header should not expose PHP version');
+        } else {
+            // If no Server header, that's also acceptable
+            $this->assertTrue(true, 'No Server header is present (good for security)');
         }
     }
 
@@ -290,6 +305,7 @@ final class SecurityHeadersTest extends WebTestCase
     public function testSecurityHeadersConsistencyAcrossEndpoints(): void
     {
         $client = static::createClient();
+        $client->followRedirects();
 
         $endpoints = [
             '/api',

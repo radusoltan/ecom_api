@@ -12,12 +12,16 @@ use App\Pricing\Domain\ValueObject\PromotionId;
 use App\Pricing\Domain\ValueObject\PromotionType;
 use App\Pricing\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPromotionRepository;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Tenant\TenantContext;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class PromotionApiTest extends ApiTestCase
 {
+    private const DEFAULT_TENANT_ID = '00000000-0000-4000-8000-000000000001';
+
     private EntityManagerInterface $entityManager;
     private DoctrineORMPromotionRepository $promotionRepository;
+    private TenantContext $tenantContext;
     private TenantId $tenantId;
 
     protected function setUp(): void
@@ -27,8 +31,12 @@ final class PromotionApiTest extends ApiTestCase
         $container = static::getContainer();
         $this->entityManager = $container->get(EntityManagerInterface::class);
         $this->promotionRepository = $container->get(DoctrineORMPromotionRepository::class);
+        $this->tenantContext = $container->get(TenantContext::class);
 
-        $this->tenantId = TenantId::generate();
+        $this->tenantId = TenantId::fromString(self::DEFAULT_TENANT_ID);
+
+        // Set tenant context using TenantContext service (persists across transactions)
+        $this->tenantContext->setCurrentTenant($this->tenantId);
 
         // Clean up database - only if table exists
         try {
@@ -101,7 +109,7 @@ final class PromotionApiTest extends ApiTestCase
         $response = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Summer Cart Sale',
@@ -136,7 +144,7 @@ final class PromotionApiTest extends ApiTestCase
         $response = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Electronics Discount',
@@ -166,7 +174,7 @@ final class PromotionApiTest extends ApiTestCase
         $response = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Welcome Coupon',
@@ -198,7 +206,7 @@ final class PromotionApiTest extends ApiTestCase
         $response = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Summer Sale 2025',
@@ -228,7 +236,7 @@ final class PromotionApiTest extends ApiTestCase
         $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'AB', // Too short (min 3 chars)
@@ -250,7 +258,7 @@ final class PromotionApiTest extends ApiTestCase
         $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Invalid Priority',
@@ -272,7 +280,7 @@ final class PromotionApiTest extends ApiTestCase
         $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Coupon Without Code',
@@ -309,7 +317,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $response = $client->request('GET', '/api/v1/promotions/'.$promotion->id()->toString(), [
             'headers' => [
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
         ]);
 
@@ -330,7 +338,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $client->request('GET', '/api/v1/promotions/01HQZXJ9K3M5N6P7Q8R9S0T1U2', [
             'headers' => [
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
         ]);
 
@@ -376,7 +384,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $response = $client->request('GET', '/api/v1/promotions', [
             'headers' => [
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
         ]);
 
@@ -451,7 +459,7 @@ final class PromotionApiTest extends ApiTestCase
         $response = $client->request('PUT', '/api/v1/promotions/'.$promotion->id()->toString(), [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Updated Name',
@@ -481,7 +489,7 @@ final class PromotionApiTest extends ApiTestCase
         $client->request('PUT', '/api/v1/promotions/01HQZXJ9K3M5N6P7Q8R9S0T1U2', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Updated Name',
@@ -520,7 +528,7 @@ final class PromotionApiTest extends ApiTestCase
         $response = $client->request('PATCH', '/api/v1/promotions/'.$promotion->id()->toString().'/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [],
         ]);
@@ -554,7 +562,7 @@ final class PromotionApiTest extends ApiTestCase
         $client->request('PATCH', '/api/v1/promotions/'.$promotion->id()->toString().'/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [],
         ]);
@@ -587,7 +595,7 @@ final class PromotionApiTest extends ApiTestCase
         $response = $client->request('PATCH', '/api/v1/promotions/'.$promotion->id()->toString().'/deactivate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [],
         ]);
@@ -619,7 +627,7 @@ final class PromotionApiTest extends ApiTestCase
         $client->request('PATCH', '/api/v1/promotions/'.$promotion->id()->toString().'/deactivate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [],
         ]);
@@ -637,7 +645,7 @@ final class PromotionApiTest extends ApiTestCase
         $createResponse = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Lifecycle Test Promotion',
@@ -658,7 +666,7 @@ final class PromotionApiTest extends ApiTestCase
         // 2. Get promotion (verify creation)
         $getResponse = $client->request('GET', '/api/v1/promotions/'.$promotionId, [
             'headers' => [
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
         ]);
 
@@ -670,7 +678,7 @@ final class PromotionApiTest extends ApiTestCase
         $activateResponse = $client->request('PATCH', '/api/v1/promotions/'.$promotionId.'/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [],
         ]);
@@ -684,7 +692,7 @@ final class PromotionApiTest extends ApiTestCase
         $updateResponse = $client->request('PUT', '/api/v1/promotions/'.$promotionId, [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Updated Lifecycle Promotion',
@@ -706,7 +714,7 @@ final class PromotionApiTest extends ApiTestCase
         $deactivateResponse = $client->request('PATCH', '/api/v1/promotions/'.$promotionId.'/deactivate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [],
         ]);
@@ -719,7 +727,7 @@ final class PromotionApiTest extends ApiTestCase
         // 6. Final verification
         $finalResponse = $client->request('GET', '/api/v1/promotions/'.$promotionId, [
             'headers' => [
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
         ]);
 
@@ -740,7 +748,7 @@ final class PromotionApiTest extends ApiTestCase
         $cartRuleResponse = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Cart Rule 20% Off',
@@ -758,7 +766,7 @@ final class PromotionApiTest extends ApiTestCase
         $catalogRuleResponse = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Catalog 10% Off',
@@ -776,7 +784,7 @@ final class PromotionApiTest extends ApiTestCase
         $couponResponse = $client->request('POST', '/api/v1/promotions', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'name' => 'Coupon 5% Off',
@@ -795,7 +803,7 @@ final class PromotionApiTest extends ApiTestCase
         $client->request('PATCH', '/api/v1/promotions/'.$cartRuleData['id'].'/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [],
         ]);
@@ -804,7 +812,7 @@ final class PromotionApiTest extends ApiTestCase
         $client->request('PATCH', '/api/v1/promotions/'.$catalogRuleData['id'].'/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [],
         ]);
@@ -813,7 +821,7 @@ final class PromotionApiTest extends ApiTestCase
         $client->request('PATCH', '/api/v1/promotions/'.$couponData['id'].'/activate', [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [],
         ]);
@@ -822,7 +830,7 @@ final class PromotionApiTest extends ApiTestCase
         // Get all promotions and verify all 3 are active
         $listResponse = $client->request('GET', '/api/v1/promotions', [
             'headers' => [
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
         ]);
 
@@ -880,7 +888,7 @@ final class PromotionApiTest extends ApiTestCase
 
         $response = $client->request('GET', '/api/v1/active-promotions', [
             'headers' => [
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
         ]);
 
@@ -930,7 +938,7 @@ final class PromotionApiTest extends ApiTestCase
         $response = $client->request('POST', '/api/v1/promotions/preview', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'subtotal' => 10000, // $100.00 in cents
@@ -978,7 +986,7 @@ final class PromotionApiTest extends ApiTestCase
         $response = $client->request('POST', '/api/v1/promotions/preview', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'subtotal' => 20000, // $200.00 in cents
@@ -1021,7 +1029,7 @@ final class PromotionApiTest extends ApiTestCase
         $response = $client->request('POST', '/api/v1/promotions/preview', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'subtotal' => 10000,
@@ -1052,7 +1060,7 @@ final class PromotionApiTest extends ApiTestCase
         $client->request('POST', '/api/v1/promotions/preview', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'X-Tenant-ID' => $this->tenantId->toString(),
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
             'json' => [
                 'currency' => 'USD',

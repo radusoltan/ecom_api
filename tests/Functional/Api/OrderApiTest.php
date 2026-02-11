@@ -83,7 +83,7 @@ final class OrderApiTest extends ApiTestCase
     private function createTenant(): string
     {
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('POST', '/api/tenants', [
+        $response = $client->request('POST', '/api/v1/tenants', [
             'json' => [
                 'name' => 'Test Tenant '.uniqid(),
                 'ownerEmail' => $this->generateUniqueEmail('tenant'),
@@ -135,7 +135,7 @@ final class OrderApiTest extends ApiTestCase
         $shippingAddress = $shippingAddress ?? $defaultAddress;
         $billingAddress = $billingAddress ?? $defaultAddress;
 
-        $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN', 'ROLE_USER'], $tenantId)->request('POST', '/api/orders', [
+        $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN', 'ROLE_USER'], $tenantId)->request('POST', '/api/v1/orders', [
             'json' => [
                 'tenantId' => $tenantId,
                 'customerEmail' => $customerEmail,
@@ -172,7 +172,7 @@ final class OrderApiTest extends ApiTestCase
         $customerEmail = $this->generateUniqueEmail();
 
         // Act
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/orders', [
+        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/orders', [
             'json' => [
                 'tenantId' => $tenantId,
                 'customerEmail' => $customerEmail,
@@ -223,7 +223,7 @@ final class OrderApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         // Act
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/orders', [
+        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/orders', [
             'json' => [
                 'tenantId' => $tenantId,
                 'customerEmail' => $this->generateUniqueEmail(),
@@ -274,7 +274,7 @@ final class OrderApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         // Act & Assert
-        $this->createAuthenticatedClient()->request('POST', '/api/orders', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/orders', [
             'json' => [
                 'tenantId' => $tenantId,
                 'lines' => [
@@ -312,7 +312,7 @@ final class OrderApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         // Act & Assert
-        $this->createAuthenticatedClient()->request('POST', '/api/orders', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/orders', [
             'json' => [
                 'tenantId' => $tenantId,
                 'customerEmail' => $this->generateUniqueEmail(),
@@ -343,7 +343,7 @@ final class OrderApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         // Act & Assert
-        $this->createAuthenticatedClient()->request('POST', '/api/orders', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/orders', [
             'json' => [
                 'tenantId' => $tenantId,
                 'customerEmail' => 'not-a-valid-email',
@@ -387,13 +387,13 @@ final class OrderApiTest extends ApiTestCase
         $orderId = $this->extractOrderId($orderData);
 
         // Act
-        $response = $this->createAuthenticatedClient()->request('GET', "/api/orders/$orderId");
+        $response = $this->createAuthenticatedClient()->request('GET', "/api/v1/orders/$orderId");
 
         // Assert
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
         $this->assertJsonContains([
-            '@context' => '/api/contexts/Order',
+            '@context' => '/api/v1/contexts/Order',
             '@type' => 'Order',
             'id' => $orderId,
         ]);
@@ -407,7 +407,7 @@ final class OrderApiTest extends ApiTestCase
         $orderId = $this->extractOrderId($orderData);
 
         // Act
-        $response = $this->createAuthenticatedClient()->request('GET', "/api/orders/$orderId");
+        $response = $this->createAuthenticatedClient()->request('GET', "/api/v1/orders/$orderId");
 
         // Assert
         $this->assertResponseIsSuccessful();
@@ -435,7 +435,7 @@ final class OrderApiTest extends ApiTestCase
 
         // Act & Assert
         $client = $this->createAuthenticatedClient();
-        $client->request('GET', "/api/orders/$nonExistentId");
+        $client->request('GET', "/api/v1/orders/$nonExistentId");
 
         $statusCode = $client->getResponse()->getStatusCode();
         $this->assertTrue(
@@ -456,13 +456,13 @@ final class OrderApiTest extends ApiTestCase
         $this->placeOrder(tenantId: $tenantId);
 
         // Act
-        $response = $this->createAuthenticatedClient()->request('GET', '/api/orders');
+        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/orders');
 
         // Assert
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
         $this->assertJsonContains([
-            '@context' => '/api/contexts/Order',
+            '@context' => '/api/v1/contexts/Order',
             '@type' => 'Collection',
         ]);
 
@@ -483,7 +483,7 @@ final class OrderApiTest extends ApiTestCase
         $this->placeOrder(tenantId: $tenantId, customerEmail: $customerEmail2);
 
         // Act - Filter by customer email
-        $response = $this->createAuthenticatedClient()->request('GET', '/api/orders', [
+        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/orders', [
             'query' => [
                 'customerEmail' => $customerEmail1,
             ],
@@ -512,7 +512,7 @@ final class OrderApiTest extends ApiTestCase
         $orderId = $this->extractOrderId($orderData);
 
         // Act
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => [
                 'status' => 'processing',
             ],
@@ -534,21 +534,21 @@ final class OrderApiTest extends ApiTestCase
         $orderId = $this->extractOrderId($orderData);
 
         // Step 1: pending → processing
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'processing'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
         $this->assertResponseIsSuccessful();
 
         // Step 2: processing → shipped
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'shipped'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
         $this->assertResponseIsSuccessful();
 
         // Step 3: shipped → delivered
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'delivered'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -565,7 +565,7 @@ final class OrderApiTest extends ApiTestCase
         $orderId = $this->extractOrderId($orderData);
 
         // Act & Assert
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'delivered'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -585,7 +585,7 @@ final class OrderApiTest extends ApiTestCase
         $orderId = $this->extractOrderId($orderData);
 
         // Act
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/cancel", [
+        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/cancel", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -605,13 +605,13 @@ final class OrderApiTest extends ApiTestCase
         $orderId = $this->extractOrderId($orderData);
 
         // Move to processing
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'processing'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
         // Act - Cancel from processing
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/cancel", [
+        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/cancel", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -629,17 +629,17 @@ final class OrderApiTest extends ApiTestCase
         $orderId = $this->extractOrderId($orderData);
 
         // Move to shipped
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'processing'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'shipped'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
         // Act & Assert - Try to cancel shipped order
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/cancel", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/cancel", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -655,21 +655,21 @@ final class OrderApiTest extends ApiTestCase
         $orderId = $this->extractOrderId($orderData);
 
         // Move to delivered
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'processing'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'shipped'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'delivered'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
         // Act & Assert - Try to cancel delivered order
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/cancel", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/cancel", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -685,14 +685,14 @@ final class OrderApiTest extends ApiTestCase
         $orderId = $this->extractOrderId($orderData);
 
         // Cancel once
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/cancel", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/cancel", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
         $this->assertResponseIsSuccessful();
 
         // Act & Assert - Try to cancel again
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/cancel", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/cancel", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -714,7 +714,7 @@ final class OrderApiTest extends ApiTestCase
         $this->assertSame('pending', $orderData['status']);
 
         // Step 2: Move to processing
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'processing'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -723,7 +723,7 @@ final class OrderApiTest extends ApiTestCase
         $this->assertSame('processing', $data['status']);
 
         // Step 3: Ship order
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'shipped'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -732,7 +732,7 @@ final class OrderApiTest extends ApiTestCase
         $this->assertSame('shipped', $data['status']);
 
         // Step 4: Deliver order
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'delivered'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -741,7 +741,7 @@ final class OrderApiTest extends ApiTestCase
         $this->assertSame('delivered', $data['status']);
 
         // Step 5: Verify via GET
-        $response = $this->createAuthenticatedClient()->request('GET', "/api/orders/$orderId");
+        $response = $this->createAuthenticatedClient()->request('GET', "/api/v1/orders/$orderId");
         $this->assertResponseIsSuccessful();
         $finalData = json_decode($response->getContent(), true);
         $this->assertSame('delivered', $finalData['status']);
@@ -755,14 +755,14 @@ final class OrderApiTest extends ApiTestCase
         $orderId = $this->extractOrderId($orderData);
 
         // Step 2: Move to processing
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'processing'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
         $this->assertResponseIsSuccessful();
 
         // Step 3: Cancel order
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/cancel", [
+        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/cancel", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -771,7 +771,7 @@ final class OrderApiTest extends ApiTestCase
         $this->assertSame('cancelled', $data['status']);
 
         // Step 4: Verify cancelled order cannot be updated
-        $this->createAuthenticatedClient()->request('PATCH', "/api/orders/$orderId/status", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/orders/$orderId/status", [
             'json' => ['status' => 'processing'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -789,7 +789,7 @@ final class OrderApiTest extends ApiTestCase
         $order3 = $this->placeOrder(tenantId: $tenantId, customerEmail: $customerEmail);
 
         // Act - Get orders for this customer
-        $response = $this->createAuthenticatedClient()->request('GET', '/api/orders', [
+        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/orders', [
             'query' => [
                 'customerEmail' => $customerEmail,
             ],

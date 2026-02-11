@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Order\Application\EventSubscriber;
 
+use App\Customer\Application\Service\NotificationPreferenceService;
 use App\Order\Domain\Event\OrderStatusChanged;
 use App\Order\Domain\Model\OrderStatus;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
+use App\Shared\Domain\ValueObject\Email;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -20,6 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * - Notify customer on every status change
  * - Different email templates for each status transition
  * - Include tracking information when order is shipped
+ * - Respect customer notification preferences
  * - Failures should be logged but not block status updates
  */
 final readonly class OrderStatusChangedSubscriber implements EventSubscriberInterface
@@ -29,6 +32,7 @@ final readonly class OrderStatusChangedSubscriber implements EventSubscriberInte
         private OrderRepositoryInterface $orderRepository,
         private TranslatorInterface $translator,
         private LoggerInterface $logger,
+        private NotificationPreferenceService $notificationPreferenceService,
         private string $senderEmail = 'orders@ecommerce.local',
         private string $senderName = 'E-Commerce Platform',
         private string $defaultLocale = 'en'
@@ -84,6 +88,18 @@ final readonly class OrderStatusChangedSubscriber implements EventSubscriberInte
         if (null === $order) {
             $this->logger->warning('Cannot send status change email - order not found', [
                 'orderId' => $event->orderId->toString(),
+            ]);
+
+            return;
+        }
+
+        // Check notification preferences before sending email
+        $customerEmail = Email::fromString($order->customerEmail());
+
+        if (!$this->notificationPreferenceService->shouldSendEmailByEmail($customerEmail, $order->tenantId(), 'order_update')) {
+            $this->logger->info('Order status change email skipped due to customer preferences', [
+                'orderId' => $order->id()->toString(),
+                'customerEmail' => $order->customerEmail(),
             ]);
 
             return;

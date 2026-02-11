@@ -40,8 +40,17 @@ final class CalculateTaxProcessor implements ProcessorInterface
             throw new BadRequestHttpException('amountInCents is required');
         }
 
+        if ($data->amountInCents < 0) {
+            throw new BadRequestHttpException('amountInCents must be non-negative');
+        }
+
         if (empty($data->countryCode)) {
             throw new BadRequestHttpException('countryCode is required');
+        }
+
+        // Validate country code format (should be 2-letter ISO code)
+        if (strlen($data->countryCode) !== 2 || !ctype_alpha($data->countryCode)) {
+            throw new BadRequestHttpException('countryCode must be a valid 2-letter ISO country code');
         }
 
         // Get tenant ID from request headers if not provided
@@ -71,7 +80,7 @@ final class CalculateTaxProcessor implements ProcessorInterface
         // Create response resource
         $response = new TaxCalculationResource();
         $response->taxAmount = $result['taxAmount'];
-        $response->taxRate = $result['taxRate'];
+        $response->taxRate = (float) $result['taxRate']; // Explicit cast to ensure float serialization
         $response->jurisdiction = $result['jurisdiction'];
         $response->taxRuleId = $result['taxRuleId'];
         $response->taxRuleName = $result['taxRuleName'];

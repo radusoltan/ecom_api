@@ -35,20 +35,20 @@ final readonly class UpdateTaxRuleProcessor implements ProcessorInterface
         // Get ID from URI variables
         $id = $uriVariables['id'] ?? null;
         if (!$id) {
-            throw new BadRequestHttpException('Tax rule ID is required');
+            throw new \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException('Tax rule ID is required');
         }
 
-        // Validate required fields
+        // Validate required fields - use 422 for validation errors
         if (empty($data->tenantId)) {
-            throw new BadRequestHttpException('tenantId is required');
+            throw new \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException('tenantId is required');
         }
 
         if (empty($data->name)) {
-            throw new BadRequestHttpException('name is required');
+            throw new \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException('name is required');
         }
 
         if (null === $data->ratePercentage) {
-            throw new BadRequestHttpException('ratePercentage is required');
+            throw new \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException('ratePercentage is required');
         }
 
         // Create command
@@ -59,8 +59,19 @@ final readonly class UpdateTaxRuleProcessor implements ProcessorInterface
             ratePercentage: $data->ratePercentage
         );
 
-        // Dispatch command
-        $this->commandBus->dispatch($command);
+        // Dispatch command - catch HandlerFailedException and extract domain validation errors
+        try {
+            $this->commandBus->dispatch($command);
+        } catch (\Symfony\Component\Messenger\Exception\HandlerFailedException $e) {
+            // Extract the original exception from HandlerFailedException
+            $originalException = $e->getPrevious();
+            if ($originalException instanceof \InvalidArgumentException) {
+                throw new \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException($originalException->getMessage(), $originalException);
+            }
+            throw $e;
+        } catch (\InvalidArgumentException $e) {
+            throw new \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException($e->getMessage(), $e);
+        }
 
         // Set ID in resource
         $data->id = $id;

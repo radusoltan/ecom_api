@@ -38,11 +38,8 @@ final readonly class HashedPassword implements \Stringable
             throw new \InvalidArgumentException('Password must be at least 8 characters long');
         }
 
+        // password_hash() always returns non-empty-string in PHP 8.3 (never null or false)
         $hash = password_hash($plainPassword, PASSWORD_BCRYPT);
-
-        if (false === $hash) {
-            throw new \RuntimeException('Failed to hash password');
-        }
 
         return new self($hash);
     }

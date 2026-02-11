@@ -27,5 +27,12 @@ interface StockReservationRepositoryInterface
      */
     public function findActiveByTenant(TenantId $tenantId): array;
 
+    /**
+     * Find all reservations for a specific order (by reservation ID which matches order ID).
+     *
+     * @return StockReservation[]
+     */
+    public function findByOrderId(string $orderId): array;
+
     public function delete(StockReservation $reservation): void;
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tenant\Application\Command;
 
 use App\Shared\Application\Service\PerformanceProfiler;
+use App\Shared\Application\Service\TenantContextInterface;
 use App\Shared\Domain\ValueObject\Email;
 use App\Tenant\Domain\Exception\TenantAlreadyExistsException;
 use App\Tenant\Domain\Model\Tenant;
@@ -19,7 +20,8 @@ final readonly class CreateTenantCommandHandler
     public function __construct(
         private TenantRepositoryInterface $tenantRepository,
         private PerformanceProfiler $profiler,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
+        private TenantContextInterface $tenantContext
     ) {
     }
 
@@ -41,6 +43,9 @@ final readonly class CreateTenantCommandHandler
                 TenantName::fromString($command->name),
                 $ownerEmail
             );
+
+            // Set tenant context for RLS before persisting
+            $this->tenantContext->setCurrentTenant($tenant->id());
 
             // Persist tenant
             $this->tenantRepository->save($tenant);

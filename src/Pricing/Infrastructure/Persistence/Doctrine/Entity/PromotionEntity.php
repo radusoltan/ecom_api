@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Pricing\Domain\Model\Promotion;
 use App\Pricing\Domain\ValueObject\CouponCode;
 use App\Pricing\Domain\ValueObject\Discount;
@@ -88,6 +89,9 @@ class PromotionEntity
     #[ORM\Column(type: 'json', nullable: false)]
     private array $conditions = [];
 
+    #[ORM\Column(type: 'json', nullable: false, name: 'target_segments')]
+    private array $targetSegments = [];
+
     #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'valid_from')]
     private ?\DateTimeImmutable $validFrom = null;
 
@@ -113,6 +117,7 @@ class PromotionEntity
         $entity->isActive = $promotion->isActive();
         $entity->couponCode = $promotion->couponCode()?->toString();
         $entity->conditions = $promotion->conditions();
+        $entity->targetSegments = array_map(fn ($segment) => $segment->value(), $promotion->targetSegments());
         $entity->validFrom = $promotion->validFrom();
         $entity->validTo = $promotion->validTo();
         $entity->createdAt = $promotion->createdAt();
@@ -144,6 +149,11 @@ class PromotionEntity
 
     public function toDomainModel(): Promotion
     {
+        $targetSegments = array_map(
+            fn (string $segment) => CustomerSegment::fromString($segment),
+            $this->targetSegments
+        );
+
         return Promotion::reconstituteFromPersistence(
             id: PromotionId::fromString($this->id),
             tenantId: TenantId::fromString($this->tenantId),
@@ -154,6 +164,7 @@ class PromotionEntity
             isActive: $this->isActive,
             couponCode: null !== $this->couponCode ? CouponCode::fromString($this->couponCode) : null,
             conditions: $this->conditions,
+            targetSegments: $targetSegments,
             validFrom: $this->validFrom,
             validTo: $this->validTo,
             createdAt: $this->createdAt,

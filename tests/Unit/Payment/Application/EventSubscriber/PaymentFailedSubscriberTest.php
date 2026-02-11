@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Payment\Application\EventSubscriber;
 use App\Payment\Application\EventSubscriber\PaymentFailedSubscriber;
 use App\Payment\Domain\Event\PaymentFailed;
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -43,8 +44,10 @@ final class PaymentFailedSubscriberTest extends TestCase
     public function testOnPaymentFailedSendsEmail(): void
     {
         // Arrange
+        $tenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
         $event = new PaymentFailed(
             paymentId: PaymentId::generate(),
+            tenantId: $tenantId,
             errorMessage: 'card_declined'
         );
 
@@ -66,8 +69,10 @@ final class PaymentFailedSubscriberTest extends TestCase
     {
         // Arrange
         $paymentId = PaymentId::generate();
+        $tenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
         $event = new PaymentFailed(
             paymentId: $paymentId,
+            tenantId: $tenantId,
             errorMessage: 'insufficient_funds'
         );
 
@@ -93,8 +98,10 @@ final class PaymentFailedSubscriberTest extends TestCase
     public function testOnPaymentFailedSanitizesErrorMessage(): void
     {
         // Arrange - Error message with sensitive keywords
+        $tenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
         $event = new PaymentFailed(
             paymentId: PaymentId::generate(),
+            tenantId: $tenantId,
             errorMessage: 'API Key verification failed'
         );
 
@@ -124,9 +131,12 @@ final class PaymentFailedSubscriberTest extends TestCase
             ['error' => 'incorrect_cvc', 'expectedText' => 'security code'],
         ];
 
+        $tenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
+
         foreach ($testCases as $testCase) {
             $event = new PaymentFailed(
                 paymentId: PaymentId::generate(),
+                tenantId: $tenantId,
                 errorMessage: $testCase['error']
             );
 
@@ -149,8 +159,10 @@ final class PaymentFailedSubscriberTest extends TestCase
     public function testOnPaymentFailedIncludesActionableSteps(): void
     {
         // Arrange
+        $tenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
         $event = new PaymentFailed(
             paymentId: PaymentId::generate(),
+            tenantId: $tenantId,
             errorMessage: 'card_declined'
         );
 
@@ -174,8 +186,10 @@ final class PaymentFailedSubscriberTest extends TestCase
     public function testOnPaymentFailedHandlesEmailFailureGracefully(): void
     {
         // Arrange
+        $tenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
         $event = new PaymentFailed(
             paymentId: PaymentId::generate(),
+            tenantId: $tenantId,
             errorMessage: 'processing_error'
         );
 

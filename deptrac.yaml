@@ -27,6 +27,22 @@ deptrac:
         - type: directory
           value: src/Tenant/Presentation/.*
 
+    # Notifications Context Layers
+    - name: Notifications_Domain
+      collectors:
+        - type: directory
+          value: src/Notifications/Domain/.*
+
+    - name: Notifications_Application
+      collectors:
+        - type: directory
+          value: src/Notifications/Application/.*
+
+    - name: Notifications_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Notifications/Infrastructure/.*
+
     # Shared Layers
     - name: Shared_Domain
       collectors:
@@ -63,6 +79,21 @@ deptrac:
       - Tenant_Application
       - Tenant_Domain
       - Shared_Domain
+
+    # Notifications Context Rules
+    Notifications_Domain:
+      - Shared_Domain
+
+    Notifications_Application:
+      - Notifications_Domain
+      - Shared_Domain
+      - Shared_Application
+
+    Notifications_Infrastructure:
+      - Notifications_Domain
+      - Notifications_Application
+      - Shared_Domain
+      - Shared_Infrastructure
 
     # Shared Rules
     Shared_Domain: []

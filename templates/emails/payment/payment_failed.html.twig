@@ -1,0 +1,92 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block email_title %}{{ 'emails.payment.failed.title'|trans }}{% endblock %}
+
+{% block header_icon %}❌{% endblock %}
+
+{% block header_title %}{{ 'emails.payment.failed.header'|trans }}{% endblock %}
+
+{% block content %}
+    <style>
+        .email-header {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+        }
+        .info-box {
+            border-left-color: #ef4444 !important;
+        }
+        .info-box h3 {
+            color: #ef4444 !important;
+        }
+        .button {
+            background-color: #ef4444 !important;
+        }
+        .button:hover {
+            background-color: #dc2626 !important;
+        }
+        .error-box {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .error-box p {
+            color: #991b1b;
+            margin: 5px 0;
+        }
+    </style>
+
+    <p>{{ 'emails.payment.failed.greeting'|trans({'%customer_name%': customer_name}) }}</p>
+
+    <p>{{ 'emails.payment.failed.notification'|trans }}</p>
+
+    <div class="info-box">
+        <h3>{{ 'emails.payment.payment_details'|trans }}</h3>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.payment.payment_id'|trans }}:</span>
+            <span class="info-value"><strong>{{ payment_id }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.payment.amount'|trans }}:</span>
+            <span class="info-value"><strong>{{ amount }} {{ currency }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.payment.date'|trans }}:</span>
+            <span class="info-value">{{ date|date('d/m/Y H:i') }}</span>
+        </div>
+        {% if order_id is defined %}
+            <div class="info-row">
+                <span class="info-label">{{ 'emails.payment.order_id'|trans }}:</span>
+                <span class="info-value">{{ order_id }}</span>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if error_message is defined and error_message is not empty %}
+        <div class="error-box">
+            <h4 style="color: #ef4444; margin-bottom: 10px;">{{ 'emails.payment.failed.error_reason'|trans }}</h4>
+            <p>{{ error_message|striptags|slice(0, 200) }}</p>
+        </div>
+    {% endif %}
+
+    <div class="info-box" style="border-left-color: #f59e0b;">
+        <h3 style="color: #f59e0b;">{{ 'emails.payment.failed.what_to_do'|trans }}</h3>
+        <ul style="margin-left: 20px; margin-top: 10px;">
+            <li>{{ 'emails.payment.failed.check_card_details'|trans }}</li>
+            <li>{{ 'emails.payment.failed.check_balance'|trans }}</li>
+            <li>{{ 'emails.payment.failed.contact_bank'|trans }}</li>
+            <li>{{ 'emails.payment.failed.try_different_method'|trans }}</li>
+        </ul>
+    </div>
+
+    {% if retryPaymentUrl is defined %}
+        <p style="text-align: center;">
+            <a href="{{ retryPaymentUrl }}" class="button">{{ 'emails.payment.failed.try_again'|trans }}</a>
+        </p>
+    {% endif %}
+
+    <div class="divider"></div>
+
+    <p>{{ 'emails.payment.failed.apology'|trans }}</p>
+    <p>{{ 'emails.payment.failed.support'|trans }}</p>
+{% endblock %}

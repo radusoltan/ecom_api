@@ -43,6 +43,9 @@ final readonly class DownloadableFileAttached implements DomainEvent
         return 'catalog.downloadable_file.attached';
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function toArray(): array
     {
         return [

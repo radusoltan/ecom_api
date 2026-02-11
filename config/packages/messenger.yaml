@@ -106,6 +106,14 @@ framework:
             'App\Order\Domain\Event\OrderCancelled': order_events
             'App\Order\Domain\Event\FulfillmentStatusChanged': order_events
 
+            # Returns Domain Events - synchronous processing
+            'App\Returns\Domain\Event\ReturnRequestCreated': sync
+            'App\Returns\Domain\Event\ReturnRequestApproved': sync
+            'App\Returns\Domain\Event\ReturnRequestRejected': sync
+            'App\Returns\Domain\Event\ReturnRequestReceived': sync
+            'App\Returns\Domain\Event\ReturnRequestInspected': sync
+            'App\Returns\Domain\Event\ReturnRequestCompleted': sync
+
             # Async email sending (Symfony Mailer)
             'Symfony\Component\Mailer\Messenger\SendEmailMessage': async
 

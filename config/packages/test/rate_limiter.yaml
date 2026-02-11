@@ -1,0 +1,50 @@
+# Test environment: Disable rate limiting by setting very high limits
+framework:
+    rate_limiter:
+        stock_operations:
+            limit: 100000
+            interval: '1 minute'
+
+        stock_operations_per_tenant:
+            limit: 100000
+            interval: '1 minute'
+
+        stock_reservations:
+            limit: 100000
+            rate:
+                interval: '1 minute'
+                amount: 100000
+
+        bulk_operations:
+            limit: 100000
+            interval: '1 minute'
+
+        orders_place:
+            limit: 100000
+            interval: '1 minute'
+
+        orders_per_tenant:
+            limit: 100000
+            interval: '1 minute'
+
+        api_public:
+            limit: 100000
+            interval: '1 minute'
+
+        api_authenticated:
+            limit: 100000
+            interval: '1 minute'
+
+        api_admin:
+            limit: 100000
+            interval: '1 minute'
+
+        api_search:
+            limit: 100000
+            interval: '1 minute'
+
+        api_checkout:
+            limit: 100000
+            rate:
+                interval: '1 minute'
+                amount: 100000

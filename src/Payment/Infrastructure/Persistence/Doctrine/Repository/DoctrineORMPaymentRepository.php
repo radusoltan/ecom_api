@@ -43,32 +43,45 @@ final readonly class DoctrineORMPaymentRepository implements PaymentRepositoryIn
         }
     }
 
-    public function findById(PaymentId $id, TenantId $tenantId): ?Payment
+    public function findById(PaymentId $id): ?Payment
+    {
+        $entity = $this->entityManager->find(PaymentEntity::class, $id->toString());
+
+        return $entity?->toDomainModel();
+    }
+
+    public function findByOrderId(string $orderId): ?Payment
+    {
+        $repository = $this->entityManager->getRepository(PaymentEntity::class);
+        $entity = $repository->findOneBy(['orderId' => $orderId]);
+
+        return $entity?->toDomainModel();
+    }
+
+    public function findByGatewayPaymentId(string $gatewayPaymentId): ?Payment
+    {
+        $repository = $this->entityManager->getRepository(PaymentEntity::class);
+        $entity = $repository->findOneBy(['gatewayTransactionId' => $gatewayPaymentId]);
+
+        return $entity?->toDomainModel();
+    }
+
+    public function findByIdempotencyKey(string $idempotencyKey, TenantId $tenantId): ?Payment
     {
         $repository = $this->entityManager->getRepository(PaymentEntity::class);
         $entity = $repository->findOneBy([
-            'id' => $id->toString(),
+            'idempotencyKey' => $idempotencyKey,
             'tenantId' => $tenantId->toString(),
         ]);
 
-        if (!$entity instanceof PaymentEntity) {
-            return null;
-        }
-
-        // Refresh entity from database to avoid stale data from identity map
-        $this->entityManager->refresh($entity);
-
-        return $entity->toDomainModel();
+        return $entity?->toDomainModel();
     }
 
-    public function findByOrderId(string $orderId, TenantId $tenantId): array
+    public function findAllByOrderId(string $orderId): array
     {
         $repository = $this->entityManager->getRepository(PaymentEntity::class);
         $entities = $repository->findBy(
-            [
-                'orderId' => $orderId,
-                'tenantId' => $tenantId->toString(),
-            ],
+            ['orderId' => $orderId],
             ['createdAt' => 'DESC']
         );
 
@@ -78,49 +91,23 @@ final readonly class DoctrineORMPaymentRepository implements PaymentRepositoryIn
         );
     }
 
-    public function findByGatewayTransactionId(string $gatewayTransactionId, string $tenantId): ?Payment
+    public function findPaymentsForRetry(\DateTimeImmutable $before): array
     {
-        $repository = $this->entityManager->getRepository(PaymentEntity::class);
-        $entity = $repository->findOneBy([
-            'gatewayTransactionId' => $gatewayTransactionId,
-            'tenantId' => $tenantId,
-        ]);
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('p')
+            ->from(PaymentEntity::class, 'p')
+            ->where('p.status = :status')
+            ->andWhere('p.nextRetryAt IS NOT NULL')
+            ->andWhere('p.nextRetryAt <= :before')
+            ->setParameter('status', 'failed')
+            ->setParameter('before', $before)
+            ->orderBy('p.nextRetryAt', 'ASC');
 
-        if (!$entity instanceof PaymentEntity) {
-            return null;
-        }
-
-        // Refresh entity from database to avoid stale data from identity map
-        $this->entityManager->refresh($entity);
-
-        return $entity->toDomainModel();
-    }
-
-    public function findAll(TenantId $tenantId): array
-    {
-        $repository = $this->entityManager->getRepository(PaymentEntity::class);
-        $entities = $repository->findBy(
-            ['tenantId' => $tenantId->toString()],
-            ['createdAt' => 'DESC']
-        );
+        $entities = $qb->getQuery()->getResult();
 
         return array_map(
             fn (PaymentEntity $entity) => $entity->toDomainModel(),
             $entities
         );
-    }
-
-    public function delete(Payment $payment): void
-    {
-        $repository = $this->entityManager->getRepository(PaymentEntity::class);
-        $entity = $repository->findOneBy([
-            'id' => $payment->id()->toString(),
-            'tenantId' => $payment->tenantId()->toString(),
-        ]);
-
-        if ($entity instanceof PaymentEntity) {
-            $this->entityManager->remove($entity);
-            $this->entityManager->flush();
-        }
     }
 }

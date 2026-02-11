@@ -171,4 +171,93 @@ final class RefundPaymentCommandHandlerTest extends TestCase
         // Act
         ($this->handler)($command);
     }
+
+    public function testHandleThrowsExceptionWhenGatewayRefundFails(): void
+    {
+        // Arrange
+        $paymentId = PaymentId::generate();
+        $tenantId = TenantId::generate();
+
+        $payment = Payment::create(
+            id: $paymentId,
+            tenantId: $tenantId,
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe()
+        );
+        $payment->authorize('pi_abc123xyz');
+        $payment->capture();
+
+        $command = new RefundPayment(
+            id: $paymentId,
+            tenantId: $tenantId,
+            refundAmountInCents: 5000,
+            reason: 'Customer requested refund'
+        );
+
+        // Set expectations - gateway throws exception
+        $this->stripeGateway->expects($this->once())
+            ->method('refund')
+            ->willThrowException(new \RuntimeException('Gateway error: Refund failed'));
+
+        $this->repository->expects($this->once())
+            ->method('findById')
+            ->willReturn($payment);
+
+        // Payment should NOT be saved if gateway fails
+        $this->repository->expects($this->never())
+            ->method('save');
+
+        // Assert
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Gateway error: Refund failed');
+
+        // Act
+        ($this->handler)($command);
+    }
+
+    public function testHandleThrowsExceptionWhenRefundingPendingPayment(): void
+    {
+        // Arrange
+        $paymentId = PaymentId::generate();
+        $tenantId = TenantId::generate();
+
+        // Create a pending payment (not captured)
+        $payment = Payment::create(
+            id: $paymentId,
+            tenantId: $tenantId,
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe()
+        );
+
+        $command = new RefundPayment(
+            id: $paymentId,
+            tenantId: $tenantId,
+            refundAmountInCents: 5000,
+            reason: 'Customer requested refund'
+        );
+
+        $this->repository->expects($this->once())
+            ->method('findById')
+            ->willReturn($payment);
+
+        // Gateway should never be called if payment is not in correct state
+        $this->stripeGateway->expects($this->never())
+            ->method('refund');
+
+        $this->repository->expects($this->never())
+            ->method('save');
+
+        // Assert - handler validates capture before calling domain
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessageMatches('/has not been captured yet/');
+
+        // Act
+        ($this->handler)($command);
+    }
 }

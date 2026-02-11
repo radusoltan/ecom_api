@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tax\Infrastructure\Persistence\Doctrine\Type;
 
-use App\Tax\Domain\ValueObject\TaxRuleId;
+use App\Tax\Domain\Model\TaxRuleId;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 
 /**
- * Doctrine Type for TaxRuleId.
+ * Doctrine Type for TaxRuleId value object.
+ *
+ * Maps TaxRuleId UUID to database UUID column.
  */
 final class TaxRuleIdType extends Type
 {
@@ -17,12 +19,16 @@ final class TaxRuleIdType extends Type
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getStringTypeDeclarationSQL($column);
+        return 'UUID';
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?TaxRuleId
     {
-        if (null === $value || $value instanceof TaxRuleId) {
+        if (null === $value || '' === $value) {
+            return null;
+        }
+
+        if ($value instanceof TaxRuleId) {
             return $value;
         }
 

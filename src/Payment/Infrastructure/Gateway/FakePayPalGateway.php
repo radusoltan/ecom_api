@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace App\Payment\Infrastructure\Gateway;
 
+use App\Payment\Domain\Exception\PaymentGatewayException;
+use App\Payment\Domain\Model\PaymentId;
+use App\Payment\Domain\Model\PaymentMethod;
 use App\Payment\Domain\Service\PaymentGatewayInterface;
-use App\Payment\Domain\ValueObject\PaymentMethod;
+use App\Payment\Domain\Service\PaymentIntentResult;
+use App\Payment\Domain\Service\RefundResult;
+use App\Shared\Domain\ValueObject\Money;
 use Psr\Log\LoggerInterface;
 
 /**
  * Fake PayPal Payment Gateway for Testing.
  *
  * Simulates PayPal API responses without making real HTTP calls.
- * Used in test environment to avoid dependency on external services.
  */
 final readonly class FakePayPalGateway implements PaymentGatewayInterface
 {
@@ -21,98 +25,119 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
     ) {
     }
 
-    public function authorize(
-        int $amountInCents,
+    public function createPaymentIntent(
+        PaymentId $paymentId,
+        Money $amount,
         string $currency,
-        PaymentMethod $method,
+        string $idempotencyKey,
+        ?string $customerId = null,
         array $metadata = []
-    ): array {
-        $this->logger->info('[FAKE] PayPal: Authorizing payment', [
-            'amount' => $amountInCents,
+    ): PaymentIntentResult {
+        $this->logger->info('[FAKE] PayPal: Creating payment intent', [
+            'payment_id' => $paymentId->toString(),
+            'amount' => $amount->amount(),
             'currency' => $currency,
-            'method' => $method->value(),
-            'metadata' => $metadata,
         ]);
 
-        // Generate fake transaction ID (PayPal format)
-        $transactionId = 'PAYID-'.strtoupper(bin2hex(random_bytes(16)));
-
-        return [
-            'transaction_id' => $transactionId,
-            'status' => 'AUTHORIZED',
-            'metadata' => [
-                'payer_id' => 'PAYER'.bin2hex(random_bytes(6)),
-                'amount' => $amountInCents,
-                'currency' => strtoupper($currency),
-            ],
-        ];
+        return new PaymentIntentResult(
+            gatewayPaymentIntentId: 'PAYID-' . strtoupper(bin2hex(random_bytes(16))),
+            clientSecret: 'secret_' . bin2hex(random_bytes(10)),
+            status: 'requires_payment_method',
+            amount: $amount->amount(),
+            currency: $currency,
+            rawData: ['mock' => true]
+        );
     }
 
-    public function capture(string $transactionId, ?int $amountInCents = null): array
-    {
-        $this->logger->info('[FAKE] PayPal: Capturing payment', [
-            'transaction_id' => $transactionId,
-            'amount' => $amountInCents,
+    public function confirmPaymentIntent(
+        string $gatewayPaymentIntentId,
+        string $paymentMethodId
+    ): PaymentIntentResult {
+        $this->logger->info('[FAKE] PayPal: Confirming payment intent', [
+            'intent_id' => $gatewayPaymentIntentId,
+            'method_id' => $paymentMethodId,
         ]);
 
-        // Simulate successful capture
-        return [
-            'transaction_id' => $transactionId,
-            'status' => 'COMPLETED',
-            'captured_amount' => $amountInCents ?? 9999, // Default if not specified
-        ];
+        return new PaymentIntentResult(
+            gatewayPaymentIntentId: $gatewayPaymentIntentId,
+            clientSecret: 'secret_confirmed',
+            status: 'succeeded', // Assume immediate success for fake
+            amount: 1000, // Dummy amount
+            currency: 'USD',
+            rawData: ['mock' => true]
+        );
     }
 
-    public function refund(string $transactionId, int $amountInCents, string $reason): array
+    public function capturePaymentIntent(
+        string $gatewayPaymentIntentId,
+        ?Money $amount = null
+    ): PaymentIntentResult {
+        $this->logger->info('[FAKE] PayPal: Capturing payment intent', [
+            'intent_id' => $gatewayPaymentIntentId,
+        ]);
+
+        return new PaymentIntentResult(
+            gatewayPaymentIntentId: $gatewayPaymentIntentId,
+            clientSecret: null,
+            status: 'succeeded',
+            amount: $amount ? $amount->amount() : 1000,
+            currency: 'USD',
+            rawData: ['mock' => true, 'captured' => true]
+        );
+    }
+
+    public function cancelPaymentIntent(string $gatewayPaymentIntentId): PaymentIntentResult
     {
-        $this->logger->info('[FAKE] PayPal: Processing refund', [
-            'transaction_id' => $transactionId,
-            'amount' => $amountInCents,
+        $this->logger->info('[FAKE] PayPal: Canceling payment intent', [
+            'intent_id' => $gatewayPaymentIntentId,
+        ]);
+
+        return new PaymentIntentResult(
+            gatewayPaymentIntentId: $gatewayPaymentIntentId,
+            clientSecret: null,
+            status: 'canceled',
+            amount: 0,
+            currency: 'USD',
+            rawData: ['mock' => true, 'canceled' => true]
+        );
+    }
+
+    public function createRefund(
+        string $gatewayPaymentIntentId,
+        Money $amount,
+        string $reason,
+        string $idempotencyKey
+    ): RefundResult {
+        $this->logger->info('[FAKE] PayPal: Creating refund', [
+            'intent_id' => $gatewayPaymentIntentId,
+            'amount' => $amount->amount(),
             'reason' => $reason,
         ]);
 
-        // Generate fake refund ID
-        $refundId = 'REFUND-'.strtoupper(bin2hex(random_bytes(12)));
-
-        return [
-            'refund_id' => $refundId,
-            'status' => 'COMPLETED',
-            'refunded_amount' => $amountInCents,
-        ];
+        return new RefundResult(
+            gatewayRefundId: 'REFUND-' . strtoupper(bin2hex(random_bytes(12))),
+            status: 'succeeded',
+            amount: $amount->amount(),
+            currency: 'USD',
+            rawData: ['mock' => true]
+        );
     }
 
-    public function cancel(string $transactionId, string $reason): array
-    {
-        $this->logger->info('[FAKE] PayPal: Cancelling payment', [
-            'transaction_id' => $transactionId,
-            'reason' => $reason,
-        ]);
-
-        return [
-            'status' => 'VOIDED',
-        ];
+    public function verifyWebhookSignature(
+        string $payload,
+        string $signature,
+        string $secret
+    ): bool {
+        return $signature === 'valid_signature';
     }
 
-    public function getStatus(string $transactionId): array
+    public function getGatewayId(): PaymentMethod
     {
-        $this->logger->info('[FAKE] PayPal: Getting payment status', [
-            'transaction_id' => $transactionId,
-        ]);
-
-        return [
-            'status' => 'AUTHORIZED',
-            'amount' => 9999,
-            'currency' => 'USD',
-            'metadata' => [
-                'authorization_id' => $transactionId,
-                'create_time' => date('c'),
-                'update_time' => date('c'),
-            ],
-        ];
+        return PaymentMethod::PAYPAL;
     }
 
     public function getName(): string
     {
-        return 'paypal';
+        return 'PayPal Sandbox';
     }
 }

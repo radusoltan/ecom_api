@@ -17,6 +17,8 @@ use Symfony\Component\Uid\Ulid;
  * BundleItemRepository.
  *
  * Manages persistence of bundle items separately from products.
+ *
+ * @extends ServiceEntityRepository<BundleItemEntity>
  */
 final class BundleItemRepository extends ServiceEntityRepository
 {
@@ -43,7 +45,7 @@ final class BundleItemRepository extends ServiceEntityRepository
             $entity->setProductId($item->productId()->toString());
             $entity->setQuantity($item->quantity());
             $entity->setPriceAmount($item->price()->getAmount());
-            $entity->setPriceCurrency($item->price()->getCurrency());
+            $entity->setPriceCurrency($item->price()->getCurrency()->getCurrencyCode());
 
             $em->persist($entity);
         }

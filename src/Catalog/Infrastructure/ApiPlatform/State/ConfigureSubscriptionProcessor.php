@@ -12,6 +12,9 @@ use App\Catalog\Domain\ValueObject\SubscriptionInterval;
 use App\Shared\Domain\ValueObject\Money;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+/**
+ * @implements ProcessorInterface<mixed, mixed>
+ */
 final readonly class ConfigureSubscriptionProcessor implements ProcessorInterface
 {
     public function __construct(

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Pricing\Domain\Model;
 
 use App\Catalog\Domain\Model\ProductId;
+use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Pricing\Domain\Event\PriceListActivated;
 use App\Pricing\Domain\Event\PriceListCreated;
 use App\Pricing\Domain\Event\PriceListDeactivated;
 use App\Pricing\Domain\Event\PricingRuleAdded;
 use App\Pricing\Domain\Event\PricingRuleRemoved;
+use App\Pricing\Domain\ValueObject\SegmentPricingRule;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
@@ -25,18 +27,24 @@ use App\Shared\Domain\ValueObject\TenantId;
  * - max_rules: 100
  * - valid_from < valid_to
  * - only_active_price_lists_apply: true
+ * - segment_rules_priority: segment rules take precedence over general rules
  */
 final class PriceList extends AggregateRoot
 {
     private const MAX_RULES = 100;
+    private const MAX_SEGMENT_RULES = 20;
 
-    /** @param array<PricingRule> $rules */
+    /**
+     * @param array<PricingRule> $rules
+     * @param array<SegmentPricingRule> $segmentRules
+     */
     private function __construct(
         private readonly PriceListId $id,
         private readonly TenantId $tenantId,
         private PriceListName $name,
         private int $priority,
         private array $rules,
+        private array $segmentRules,
         private ?\DateTimeImmutable $validFrom,
         private ?\DateTimeImmutable $validTo,
         private bool $isActive,
@@ -46,6 +54,7 @@ final class PriceList extends AggregateRoot
         $this->validatePriority();
         $this->validateDateRange();
         $this->validateRulesCount();
+        $this->validateSegmentRulesCount();
     }
 
     /**
@@ -67,6 +76,7 @@ final class PriceList extends AggregateRoot
             $name,
             $priority,
             [],
+            [], // Empty segment rules
             $validFrom,
             $validTo,
             false, // Created as inactive
@@ -89,6 +99,7 @@ final class PriceList extends AggregateRoot
      * Reconstitute from persistence.
      *
      * @param array<PricingRule> $rules
+     * @param array<SegmentPricingRule> $segmentRules
      */
     public static function reconstituteFromPersistence(
         PriceListId $id,
@@ -96,6 +107,7 @@ final class PriceList extends AggregateRoot
         PriceListName $name,
         int $priority,
         array $rules,
+        array $segmentRules,
         ?\DateTimeImmutable $validFrom,
         ?\DateTimeImmutable $validTo,
         bool $isActive,
@@ -108,6 +120,7 @@ final class PriceList extends AggregateRoot
             $name,
             $priority,
             $rules,
+            $segmentRules,
             $validFrom,
             $validTo,
             $isActive,
@@ -159,6 +172,72 @@ final class PriceList extends AggregateRoot
             $this->id->toString(),
             $removedRule->toArray()
         ));
+    }
+
+    /**
+     * Add a segment-based pricing rule.
+     *
+     * Segment rules take priority over general rules when calculating prices.
+     */
+    public function addSegmentRule(SegmentPricingRule $rule): void
+    {
+        if (count($this->segmentRules) >= self::MAX_SEGMENT_RULES) {
+            throw new \InvalidArgumentException(
+                sprintf('Cannot add more than %d segment rules to a price list', self::MAX_SEGMENT_RULES)
+            );
+        }
+
+        // Check for duplicate segment rules (same segment)
+        foreach ($this->segmentRules as $existingRule) {
+            if ($existingRule->segment()->equals($rule->segment())) {
+                throw new \InvalidArgumentException(
+                    sprintf('Segment rule for %s already exists', $rule->segment()->value())
+                );
+            }
+        }
+
+        $this->segmentRules[] = $rule;
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    /**
+     * Remove a segment pricing rule by segment.
+     */
+    public function removeSegmentRule(CustomerSegment $segment): void
+    {
+        $found = false;
+        foreach ($this->segmentRules as $index => $rule) {
+            if ($rule->segment()->equals($segment)) {
+                unset($this->segmentRules[$index]);
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            throw new \InvalidArgumentException(
+                sprintf('Segment rule for %s does not exist', $segment->value())
+            );
+        }
+
+        $this->segmentRules = array_values($this->segmentRules); // Re-index
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    /**
+     * Get applicable segment discount for a customer segment.
+     *
+     * Returns null if no segment rule applies.
+     */
+    public function getSegmentDiscount(CustomerSegment $segment): ?SegmentPricingRule
+    {
+        foreach ($this->segmentRules as $rule) {
+            if ($rule->appliesTo($segment)) {
+                return $rule;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -318,6 +397,15 @@ final class PriceList extends AggregateRoot
         }
     }
 
+    private function validateSegmentRulesCount(): void
+    {
+        if (count($this->segmentRules) > self::MAX_SEGMENT_RULES) {
+            throw new \InvalidArgumentException(
+                sprintf('PriceList cannot have more than %d segment rules', self::MAX_SEGMENT_RULES)
+            );
+        }
+    }
+
     // Getters
     public function id(): PriceListId
     {
@@ -343,6 +431,12 @@ final class PriceList extends AggregateRoot
     public function rules(): array
     {
         return $this->rules;
+    }
+
+    /** @return array<SegmentPricingRule> */
+    public function segmentRules(): array
+    {
+        return $this->segmentRules;
     }
 
     public function validFrom(): ?\DateTimeImmutable

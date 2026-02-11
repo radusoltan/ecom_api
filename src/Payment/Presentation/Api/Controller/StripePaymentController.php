@@ -35,61 +35,62 @@ class StripePaymentController extends AbstractController
             $amount = $data['amount'] ?? null;
             $currency = $data['currency'] ?? 'usd';
             $customerEmail = $data['customerEmail'] ?? null;
-            $paymentId = $data['paymentId'] ?? null;
             $orderId = $data['orderId'] ?? null;
             $tenantId = $request->headers->get('X-Tenant-ID');
 
+            // Validation
             if (null === $amount || $amount <= 0) {
                 return new JsonResponse([
                     'error' => 'Invalid amount',
                 ], Response::HTTP_BAD_REQUEST);
             }
 
-            // Create payment intent with metadata
-            $metadata = [
-                'tenant_id' => $tenantId,
-            ];
-
-            if ($paymentId) {
-                $metadata['payment_id'] = $paymentId;
+            if (!$orderId) {
+                return new JsonResponse([
+                    'error' => 'orderId is required',
+                ], Response::HTTP_BAD_REQUEST);
             }
 
-            if ($orderId) {
-                $metadata['order_id'] = $orderId;
+            if (!$tenantId) {
+                return new JsonResponse([
+                    'error' => 'X-Tenant-ID header is required',
+                ], Response::HTTP_BAD_REQUEST);
             }
 
-            $paymentIntent = PaymentIntent::create([
-                'amount' => (int) $amount,
-                'currency' => strtolower($currency),
-                'automatic_payment_methods' => [
-                    'enabled' => true,
-                ],
-                'receipt_email' => $customerEmail,
-                'metadata' => $metadata,
-            ]);
+            if (!$customerEmail) {
+                return new JsonResponse([
+                    'error' => 'customerEmail is required',
+                ], Response::HTTP_BAD_REQUEST);
+            }
 
-            // If paymentId is provided, authorize payment with gateway_transaction_id
-            if ($paymentId && $tenantId) {
-                try {
-                    $payment = $this->paymentRepository->findById(
-                        \App\Payment\Domain\ValueObject\PaymentId::fromString($paymentId),
-                        \App\Shared\Domain\ValueObject\TenantId::fromString($tenantId)
-                    );
+            // Create payment ID
+            $paymentId = \App\Payment\Domain\ValueObject\PaymentId::generate();
 
-                    if ($payment) {
-                        // Authorize payment with gateway transaction ID
-                        $payment->authorize($paymentIntent->id);
-                        $this->paymentRepository->save($payment);
-                    }
-                } catch (\Exception $e) {
-                    // Log error but don't fail the request
-                    error_log('Failed to authorize payment with gateway_transaction_id: '.$e->getMessage());
-                }
+            // Dispatch InitiatePayment command
+            $command = new \App\Payment\Application\Command\InitiatePayment(
+                paymentId: $paymentId,
+                tenantId: \App\Shared\Domain\ValueObject\TenantId::fromString($tenantId),
+                orderId: $orderId,
+                amountInCents: (int) $amount,
+                currency: strtoupper($currency),
+                customerEmail: $customerEmail,
+                method: \App\Payment\Domain\ValueObject\PaymentMethod::card(),
+                gateway: \App\Payment\Domain\ValueObject\PaymentGateway::stripe()
+            );
+
+            $result = $this->commandBus->dispatch($command);
+
+            // Extract result from envelope
+            $handlerResult = $result->last(\Symfony\Component\Messenger\Stamp\HandledStamp::class)?->getResult();
+
+            if (!$handlerResult) {
+                throw new \RuntimeException('Payment initiation failed');
             }
 
             return new JsonResponse([
-                'clientSecret' => $paymentIntent->client_secret,
-                'paymentIntentId' => $paymentIntent->id,
+                'clientSecret' => $handlerResult['clientSecret'],
+                'paymentIntentId' => $handlerResult['paymentIntentId'],
+                'paymentId' => $handlerResult['paymentId'],
             ]);
         } catch (\Exception $e) {
             return new JsonResponse([

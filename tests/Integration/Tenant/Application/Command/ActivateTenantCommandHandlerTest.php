@@ -18,12 +18,14 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 final class ActivateTenantCommandHandlerTest extends KernelTestCase
 {
     use TenantTestTrait;
+
     private TenantRepositoryInterface $tenantRepository;
     private ActivateTenantCommandHandler $handler;
     private static int $counter = 0;
 
     protected function setUp(): void
     {
+        parent::setUp();
         self::bootKernel();
 
         $container = self::getContainer();
@@ -31,7 +33,13 @@ final class ActivateTenantCommandHandlerTest extends KernelTestCase
         $this->handler = $container->get(ActivateTenantCommandHandler::class);
 
         // Set tenant context for RLS
-        $this->setTenantContext($this->getDefaultTenantId()->toString());
+        $this->tenantId = $this->getDefaultTenantId();
+        $this->setTenantContext($this->tenantId->toString());
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
     }
 
     private function generateUniqueEmail(string $prefix = 'test'): string
@@ -41,11 +49,14 @@ final class ActivateTenantCommandHandlerTest extends KernelTestCase
 
     public function testItActivatesInactiveTenant(): void
     {
-        // Arrange - Create an inactive tenant
+        // Arrange - Use the default test tenant (required for RLS)
         $email = $this->generateUniqueEmail();
-        $tenant = Tenant::create(
-            TenantName::fromString('Test Company'),
-            Email::fromString($email)
+        $tenant = Tenant::fromPersistence(
+            id: $this->tenantId,
+            name: TenantName::fromString('Test Company'),
+            ownerEmail: Email::fromString($email),
+            status: \App\Tenant\Domain\ValueObject\TenantStatus::active(),
+            createdAt: new \DateTimeImmutable()
         );
 
         // Deactivate the tenant
@@ -86,11 +97,14 @@ final class ActivateTenantCommandHandlerTest extends KernelTestCase
 
     public function testItSavesTenantAfterActivation(): void
     {
-        // Arrange - Create an inactive tenant
+        // Arrange - Use the default test tenant (required for RLS)
         $email = $this->generateUniqueEmail('admin');
-        $tenant = Tenant::create(
-            TenantName::fromString('Acme Corporation'),
-            Email::fromString($email)
+        $tenant = Tenant::fromPersistence(
+            id: $this->tenantId,
+            name: TenantName::fromString('Acme Corporation'),
+            ownerEmail: Email::fromString($email),
+            status: \App\Tenant\Domain\ValueObject\TenantStatus::active(),
+            createdAt: new \DateTimeImmutable()
         );
 
         // Deactivate the tenant

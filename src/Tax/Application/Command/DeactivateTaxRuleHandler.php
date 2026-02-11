@@ -20,14 +20,22 @@ final readonly class DeactivateTaxRuleHandler
 
     public function __invoke(DeactivateTaxRule $command): void
     {
-        $taxRule = $this->taxRuleRepository->findById($command->id, $command->tenantId);
+        // Retrieve tax rule
+        $taxRule = $this->taxRuleRepository->findById($command->id);
 
         if (null === $taxRule) {
-            throw new \DomainException(sprintf('Tax rule "%s" not found', $command->id->toString()));
+            throw new \DomainException(sprintf('Tax rule with ID %s not found', $command->id->toString()));
         }
 
+        // Verify tenant ownership
+        if (!$taxRule->tenantId()->equals($command->tenantId)) {
+            throw new \DomainException('Tax rule does not belong to this tenant');
+        }
+
+        // Deactivate
         $taxRule->deactivate();
 
+        // Persist and dispatch events
         $this->taxRuleRepository->save($taxRule);
     }
 }

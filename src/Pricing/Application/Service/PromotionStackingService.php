@@ -21,7 +21,7 @@ use App\Shared\Domain\ValueObject\Money;
  * 2. catalog_rule (applied second)
  * 3. coupon (applied last)
  */
-final class PromotionStackingService
+final class PromotionStackingService implements PromotionStackingServiceInterface
 {
     private const MAX_STACKABLE_PROMOTIONS = 3;
 
@@ -121,6 +121,18 @@ final class PromotionStackingService
         // e.g., check for conflicting promotions, exclusivity rules, etc.
 
         return true;
+    }
+
+    /**
+     * Check if promotions can be stacked together (alias for validateStackability).
+     *
+     * @param Promotion[] $promotions Array of promotions to check
+     *
+     * @return bool True if promotions can be stacked
+     */
+    public function canStack(array $promotions): bool
+    {
+        return $this->validateStackability($promotions);
     }
 
     public function getMaxStackablePromotions(): int

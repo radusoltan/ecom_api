@@ -10,10 +10,14 @@ use App\Payment\Domain\Event\PaymentCaptured;
 use App\Payment\Domain\Event\PaymentCreated;
 use App\Payment\Domain\Event\PaymentFailed;
 use App\Payment\Domain\Event\PaymentRefunded;
+use App\Payment\Domain\Event\PaymentRetryAttempted;
+use App\Payment\Domain\Event\PaymentRetryExhausted;
+use App\Payment\Domain\Event\PaymentRetryScheduled;
 use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
 use App\Payment\Domain\ValueObject\PaymentStatus;
+use App\Payment\Domain\ValueObject\RetryPolicy;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\TenantId;
 
@@ -35,6 +39,11 @@ use App\Shared\Domain\ValueObject\TenantId;
  * - Refunds only allowed for captured payments
  * - Partial refunds supported (up to captured amount)
  * - Multi-currency support (amount stored in cents)
+ * - Retry Policy:
+ *   - Maximum 3 retry attempts for transient failures
+ *   - Exponential backoff: 1h, 4h, 24h
+ *   - Only retry transient errors (card_declined, insufficient_funds, processing_error)
+ *   - Never retry: expired_card, fraudulent, invalid_card_number
  */
 final class Payment extends AggregateRoot
 {
@@ -48,7 +57,10 @@ final class Payment extends AggregateRoot
     private PaymentStatus $status;
     private ?string $gatewayTransactionId;
     private ?string $errorMessage;
+    private ?string $errorCode; // Normalized error code for retry logic
     private int $refundedAmountInCents;
+    private int $retryCount; // Number of retry attempts made (0-indexed)
+    private ?\DateTimeImmutable $nextRetryAt; // Scheduled time for next retry
     private \DateTimeImmutable $createdAt;
     private \DateTimeImmutable $updatedAt;
 
@@ -79,7 +91,10 @@ final class Payment extends AggregateRoot
         $payment->status = PaymentStatus::pending();
         $payment->gatewayTransactionId = null;
         $payment->errorMessage = null;
+        $payment->errorCode = null;
         $payment->refundedAmountInCents = 0;
+        $payment->retryCount = 0;
+        $payment->nextRetryAt = null;
         $payment->createdAt = new \DateTimeImmutable();
         $payment->updatedAt = new \DateTimeImmutable();
 
@@ -108,7 +123,11 @@ final class Payment extends AggregateRoot
         ?string $errorMessage,
         int $refundedAmountInCents,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
+        // New retry-related fields with defaults for backwards compatibility
+        ?string $errorCode = null,
+        int $retryCount = 0,
+        ?\DateTimeImmutable $nextRetryAt = null
     ): self {
         $payment = new self();
         $payment->id = $id;
@@ -121,7 +140,10 @@ final class Payment extends AggregateRoot
         $payment->status = $status;
         $payment->gatewayTransactionId = $gatewayTransactionId;
         $payment->errorMessage = $errorMessage;
+        $payment->errorCode = $errorCode;
         $payment->refundedAmountInCents = $refundedAmountInCents;
+        $payment->retryCount = $retryCount;
+        $payment->nextRetryAt = $nextRetryAt;
         $payment->createdAt = $createdAt;
         $payment->updatedAt = $updatedAt;
 
@@ -191,6 +213,7 @@ final class Payment extends AggregateRoot
 
         $this->recordEvent(new PaymentRefunded(
             $this->id,
+            $this->tenantId,
             $refundAmountInCents,
             $reason
         ));
@@ -211,11 +234,12 @@ final class Payment extends AggregateRoot
 
         $this->recordEvent(new PaymentCancelled(
             $this->id,
+            $this->tenantId,
             $reason
         ));
     }
 
-    public function markAsFailed(string $errorMessage): void
+    public function markAsFailed(string $errorMessage, ?string $errorCode = null): void
     {
         if (!$this->status->canTransitionTo(PaymentStatus::failed())) {
             throw new \InvalidArgumentException(sprintf('Cannot mark payment as failed in status: %s', $this->status->value()));
@@ -227,12 +251,120 @@ final class Payment extends AggregateRoot
 
         $this->status = PaymentStatus::failed();
         $this->errorMessage = $errorMessage;
+        $this->errorCode = $errorCode;
         $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new PaymentFailed(
             $this->id,
+            $this->tenantId,
             $errorMessage
         ));
+    }
+
+    /**
+     * Schedule a retry for this payment.
+     *
+     * @param RetryPolicy $policy Retry policy to use
+     *
+     * @throws \InvalidArgumentException if max retries reached
+     */
+    public function scheduleRetry(RetryPolicy $policy): void
+    {
+        if (!$this->status->isFailed()) {
+            throw new \InvalidArgumentException('Can only schedule retry for failed payments');
+        }
+
+        if ($this->retryCount >= $policy->maxAttempts()) {
+            throw new \InvalidArgumentException(sprintf('Cannot schedule retry. Max attempts (%d) reached', $policy->maxAttempts()));
+        }
+
+        $this->nextRetryAt = $policy->calculateNextRetryTime($this->retryCount);
+        $this->updatedAt = new \DateTimeImmutable();
+
+        $this->recordEvent(new PaymentRetryScheduled(
+            $this->id,
+            $this->tenantId,
+            $this->retryCount + 1, // Next attempt number (1-indexed)
+            $this->nextRetryAt,
+            $this->errorCode ?? 'unknown',
+            $this->orderId
+        ));
+    }
+
+    /**
+     * Record that a retry attempt was made.
+     *
+     * @param bool        $wasSuccessful Whether the retry succeeded
+     * @param string|null $errorCode     Error code if retry failed
+     * @param string|null $errorMessage  Error message if retry failed
+     */
+    public function recordRetryAttempt(bool $wasSuccessful, ?string $errorCode = null, ?string $errorMessage = null): void
+    {
+        ++$this->retryCount;
+        $this->updatedAt = new \DateTimeImmutable();
+
+        if (!$wasSuccessful) {
+            $this->errorCode = $errorCode;
+            $this->errorMessage = $errorMessage;
+        }
+
+        $this->recordEvent(new PaymentRetryAttempted(
+            $this->id,
+            $this->tenantId,
+            $this->retryCount,
+            $wasSuccessful,
+            $errorCode,
+            $errorMessage
+        ));
+    }
+
+    /**
+     * Mark all retries as exhausted.
+     *
+     * @param RetryPolicy $policy Retry policy used
+     */
+    public function markRetryExhausted(RetryPolicy $policy): void
+    {
+        if ($this->retryCount < $policy->maxAttempts()) {
+            throw new \InvalidArgumentException('Cannot mark retry exhausted before reaching max attempts');
+        }
+
+        $this->nextRetryAt = null;
+        $this->updatedAt = new \DateTimeImmutable();
+
+        $this->recordEvent(new PaymentRetryExhausted(
+            $this->id,
+            $this->tenantId,
+            $this->retryCount,
+            $this->errorCode ?? 'unknown',
+            $this->errorMessage ?? 'Unknown error',
+            $this->orderId
+        ));
+    }
+
+    /**
+     * Check if payment is eligible for retry.
+     */
+    public function canRetry(RetryPolicy $policy): bool
+    {
+        return $this->status->isFailed()
+            && $this->retryCount < $policy->maxAttempts()
+            && null !== $this->errorCode
+            && $policy->isRetryable($this->errorCode);
+    }
+
+    /**
+     * Check if payment is due for retry.
+     */
+    public function isDueForRetry(?\DateTimeImmutable $now = null): bool
+    {
+        if (null === $this->nextRetryAt) {
+            return false;
+        }
+
+        $now = $now ?? new \DateTimeImmutable();
+
+        return $now >= $this->nextRetryAt;
     }
 
     private static function validateAmount(int $amountInCents): void
@@ -306,9 +438,24 @@ final class Payment extends AggregateRoot
         return $this->errorMessage;
     }
 
+    public function errorCode(): ?string
+    {
+        return $this->errorCode;
+    }
+
     public function refundedAmountInCents(): int
     {
         return $this->refundedAmountInCents;
+    }
+
+    public function retryCount(): int
+    {
+        return $this->retryCount;
+    }
+
+    public function nextRetryAt(): ?\DateTimeImmutable
+    {
+        return $this->nextRetryAt;
     }
 
     public function createdAt(): \DateTimeImmutable

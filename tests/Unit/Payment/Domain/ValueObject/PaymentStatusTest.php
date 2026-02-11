@@ -241,4 +241,46 @@ final class PaymentStatusTest extends TestCase
         $this->assertFalse($cancelled->canTransitionTo(PaymentStatus::refunded()));
         $this->assertFalse($cancelled->canTransitionTo(PaymentStatus::failed()));
     }
+
+    // ========================================
+    // Edge Case Tests
+    // ========================================
+
+    public function testFromStringWithUppercaseConvertsToLowercase(): void
+    {
+        $status = PaymentStatus::fromString('PENDING');
+
+        $this->assertTrue($status->isPending());
+        $this->assertSame('pending', $status->value());
+    }
+
+    public function testFromStringWithMixedCaseConvertsToLowercase(): void
+    {
+        $status = PaymentStatus::fromString('Authorized');
+
+        $this->assertTrue($status->isAuthorized());
+        $this->assertSame('authorized', $status->value());
+    }
+
+    public function testToStringReturnsValue(): void
+    {
+        $status = PaymentStatus::captured();
+
+        $this->assertSame('captured', (string) $status);
+    }
+
+    public function testEqualsWithSameInstanceReturnsTrue(): void
+    {
+        $status = PaymentStatus::pending();
+
+        $this->assertTrue($status->equals($status));
+    }
+
+    public function testCanTransitionToSameStatusReturnsFalse(): void
+    {
+        $pending = PaymentStatus::pending();
+
+        // Cannot transition to itself
+        $this->assertFalse($pending->canTransitionTo($pending));
+    }
 }

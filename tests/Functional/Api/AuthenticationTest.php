@@ -74,7 +74,7 @@ final class AuthenticationTest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
 
         // Act
-        $client->request('GET', '/api/tenants');
+        $client->request('GET', '/api/v1/tenants');
 
         // Assert
         $this->assertResponseIsSuccessful();
@@ -87,7 +87,7 @@ final class AuthenticationTest extends ApiTestCase
         $client = static::createClient();
 
         // Act
-        $client->request('GET', '/api/tenants', [
+        $client->request('GET', '/api/v1/tenants', [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -107,7 +107,7 @@ final class AuthenticationTest extends ApiTestCase
         $client = static::createClient();
 
         // Act
-        $client->request('GET', '/api/tenants', [
+        $client->request('GET', '/api/v1/tenants', [
             'headers' => [
                 'Authorization' => 'Bearer invalid.token.here',
                 'Accept' => 'application/json',
@@ -124,7 +124,7 @@ final class AuthenticationTest extends ApiTestCase
         $client = static::createClient();
 
         // Act
-        $client->request('GET', '/api/tenants', [
+        $client->request('GET', '/api/v1/tenants', [
             'headers' => [
                 'Authorization' => 'Bearer notavalidtoken',
                 'Accept' => 'application/json',
@@ -149,7 +149,7 @@ final class AuthenticationTest extends ApiTestCase
         ]);
 
         // Act - Send token without Bearer prefix
-        $client->request('GET', '/api/tenants', [
+        $client->request('GET', '/api/v1/tenants', [
             'headers' => [
                 'Authorization' => $token, // No Bearer prefix
                 'Accept' => 'application/json',
@@ -174,7 +174,7 @@ final class AuthenticationTest extends ApiTestCase
         ]);
 
         // Act
-        $client->request('GET', '/api/tenants', [
+        $client->request('GET', '/api/v1/tenants', [
             'headers' => [
                 'Authorization' => 'Bearer '.$token,
                 'Accept' => 'application/json',
@@ -195,7 +195,7 @@ final class AuthenticationTest extends ApiTestCase
         $client = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN', 'ROLE_USER']);
 
         // Act
-        $client->request('GET', '/api/tenants');
+        $client->request('GET', '/api/v1/tenants');
 
         // Assert
         $this->assertResponseIsSuccessful();
@@ -207,7 +207,7 @@ final class AuthenticationTest extends ApiTestCase
         $client = $this->createAuthenticatedClient('user@example.com', ['ROLE_USER']);
 
         // Act
-        $client->request('GET', '/api/tenants');
+        $client->request('GET', '/api/v1/tenants');
 
         // Assert
         $this->assertResponseIsSuccessful();
@@ -274,7 +274,7 @@ final class AuthenticationTest extends ApiTestCase
 
         // Act & Assert - Make multiple requests with same token
         for ($i = 0; $i < 3; ++$i) {
-            $client->request('GET', '/api/tenants');
+            $client->request('GET', '/api/v1/tenants');
             $this->assertResponseIsSuccessful();
         }
     }
@@ -286,7 +286,7 @@ final class AuthenticationTest extends ApiTestCase
         $uniqueEmail = 'authtest-'.bin2hex(random_bytes(4)).'@example.com';
 
         // Act
-        $client->request('POST', '/api/tenants', [
+        $client->request('POST', '/api/v1/tenants', [
             'json' => [
                 'name' => 'Auth Test Company',
                 'ownerEmail' => $uniqueEmail,
@@ -306,7 +306,7 @@ final class AuthenticationTest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
         $uniqueEmail = 'activate-'.bin2hex(random_bytes(4)).'@example.com';
 
-        $createResponse = $client->request('POST', '/api/tenants', [
+        $createResponse = $client->request('POST', '/api/v1/tenants', [
             'json' => [
                 'name' => 'Activate Test Company',
                 'ownerEmail' => $uniqueEmail,
@@ -318,7 +318,7 @@ final class AuthenticationTest extends ApiTestCase
         $tenantId = $createData['id'];
 
         // Deactivate first
-        $client->request('PATCH', "/api/tenants/$tenantId/deactivate", [
+        $client->request('PATCH', "/api/v1/tenants/$tenantId/deactivate", [
             'json' => [],
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
@@ -327,7 +327,7 @@ final class AuthenticationTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
 
         // Act - Activate with authenticated client
-        $client->request('PATCH', "/api/tenants/$tenantId/activate", [
+        $client->request('PATCH', "/api/v1/tenants/$tenantId/activate", [
             'json' => [],
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
@@ -344,17 +344,17 @@ final class AuthenticationTest extends ApiTestCase
     {
         // Arrange & Act & Assert - User 1
         $client1 = $this->createAuthenticatedClient('user1@example.com', ['ROLE_USER']);
-        $client1->request('GET', '/api/tenants');
+        $client1->request('GET', '/api/v1/tenants');
         $this->assertResponseIsSuccessful();
 
         // Arrange & Act & Assert - User 2
         $client2 = $this->createAuthenticatedClient('user2@example.com', ['ROLE_USER']);
-        $client2->request('GET', '/api/tenants');
+        $client2->request('GET', '/api/v1/tenants');
         $this->assertResponseIsSuccessful();
 
         // Arrange & Act & Assert - Admin
         $client3 = $this->createAuthenticatedClient('admin@example.com', ['ROLE_SUPER_ADMIN', 'ROLE_USER']);
-        $client3->request('GET', '/api/tenants');
+        $client3->request('GET', '/api/v1/tenants');
         $this->assertResponseIsSuccessful();
     }
 }

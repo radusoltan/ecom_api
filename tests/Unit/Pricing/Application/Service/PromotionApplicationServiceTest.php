@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Pricing\Application\Service;
 
 use App\Pricing\Application\Service\PromotionApplicationService;
-use App\Pricing\Application\Service\PromotionStackingService;
+use App\Pricing\Application\Service\PromotionStackingServiceInterface;
 use App\Pricing\Domain\Model\Promotion;
 use App\Pricing\Domain\Repository\PromotionRepositoryInterface;
 use App\Pricing\Domain\ValueObject\CouponCode;
@@ -20,7 +20,7 @@ use Psr\Log\LoggerInterface;
 final class PromotionApplicationServiceTest extends TestCase
 {
     private PromotionRepositoryInterface $promotionRepository;
-    private PromotionStackingService $stackingService;
+    private PromotionStackingServiceInterface $stackingService;
     private LoggerInterface $logger;
     private PromotionApplicationService $service;
     private TenantId $tenantId;
@@ -28,7 +28,7 @@ final class PromotionApplicationServiceTest extends TestCase
     protected function setUp(): void
     {
         $this->promotionRepository = $this->createMock(PromotionRepositoryInterface::class);
-        $this->stackingService = $this->createMock(PromotionStackingService::class);
+        $this->stackingService = $this->createMock(PromotionStackingServiceInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->service = new PromotionApplicationService(
@@ -75,7 +75,7 @@ final class PromotionApplicationServiceTest extends TestCase
             couponCode: 'WELCOME10'
         );
 
-        $this->assertTrue($result['finalPrice']->isEqualTo($expectedFinalPrice));
+        $this->assertTrue($result['finalPrice']->equals($expectedFinalPrice));
         $this->assertSame('WELCOME10', $result['couponCode']);
         $this->assertSame(1, count($result['appliedPromotions']));
     }
@@ -106,7 +106,7 @@ final class PromotionApplicationServiceTest extends TestCase
             couponCode: 'INVALID'
         );
 
-        $this->assertTrue($result['finalPrice']->isEqualTo($subtotal));
+        $this->assertTrue($result['finalPrice']->equals($subtotal));
         $this->assertSame(0, count($result['appliedPromotions']));
         $this->assertSame('INVALID', $result['couponCode']);
     }

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/new_ecom/backend/src/Inventory/Infrastructure/Persistence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../../_css/bootstrap.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../../../_css/billboard.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../../../_css/style.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../../../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../../../index.html">/var/www/new_ecom/backend/src</a></li>
+         <li class="breadcrumb-item"><a href="../../index.html">Inventory</a></li>
+         <li class="breadcrumb-item"><a href="../index.html">Infrastructure</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Persistence</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classesCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Doctrine/Entity/StockItemEntity.php.html#16">App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockItemEntity</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/StockReservationEntity.php.html#15">App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockReservationEntity</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#15">App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineORMWarehouseRepository.php.html#16">App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMWarehouseRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#21">App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockReservationRepository.php.html#17">App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockReservationRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/QuantityType.php.html#11">App\Inventory\Infrastructure\Persistence\Doctrine\Type\QuantityType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/StockItemIdType.php.html#11">App\Inventory\Infrastructure\Persistence\Doctrine\Type\StockItemIdType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseCodeType.php.html#11">App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseCodeType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseIdType.php.html#11">App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseIdType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseNameType.php.html#11">App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseNameType</a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#21">App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository</a></td><td class="text-right">0.0%</td><td class="text-right">12</td><td class="text-right">156</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineORMWarehouseRepository.php.html#16">App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMWarehouseRepository</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockReservationRepository.php.html#17">App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockReservationRepository</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Doctrine/Type/StockItemIdType.php.html#11">App\Inventory\Infrastructure\Persistence\Doctrine\Type\StockItemIdType</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseCodeType.php.html#11">App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseCodeType</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseIdType.php.html#11">App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseIdType</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseNameType.php.html#11">App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseNameType</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Doctrine/Type/QuantityType.php.html#11">App\Inventory\Infrastructure\Persistence\Doctrine\Type\QuantityType</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2 style="margin-top: 3rem;">Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodsCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Doctrine/Entity/StockItemEntity.php.html#54"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockItemEntity::fromDomainModel">fromDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/StockItemEntity.php.html#71"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockItemEntity::updateFromDomainModel">updateFromDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/StockItemEntity.php.html#80"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockItemEntity::toDomainModel">toDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/StockItemEntity.php.html#96"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockItemEntity::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/StockItemEntity.php.html#101"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockItemEntity::getTenantId">getTenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/StockItemEntity.php.html#106"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockItemEntity::getProductId">getProductId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/StockItemEntity.php.html#111"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockItemEntity::getWarehouseId">getWarehouseId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/StockReservationEntity.php.html#50"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockReservationEntity::fromDomainModel">fromDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/StockReservationEntity.php.html#66"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockReservationEntity::updateFromDomainModel">updateFromDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/StockReservationEntity.php.html#73"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockReservationEntity::toDomainModel">toDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/StockReservationEntity.php.html#88"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\StockReservationEntity::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#53"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#76"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#81"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::getTenantId">getTenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#86"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::getCode">getCode</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#91"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#96"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::getAddress">getAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#101"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::getPriority">getPriority</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#106"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::isActive">isActive</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#111"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::getCreatedAt">getCreatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#116"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::getUpdatedAt">getUpdatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#122"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::setName">setName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#127"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::setAddress">setAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#132"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::setPriority">setPriority</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#137"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::setIsActive">setIsActive</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#142"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::setUpdatedAt">setUpdatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#150"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::toDomainModel">toDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#168"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::fromDomainModel">fromDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Entity/WarehouseEntity.php.html#192"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity::updateFromDomainModel">updateFromDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineORMWarehouseRepository.php.html#18"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMWarehouseRepository::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineORMWarehouseRepository.php.html#24"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMWarehouseRepository::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineORMWarehouseRepository.php.html#48"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMWarehouseRepository::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineORMWarehouseRepository.php.html#55"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMWarehouseRepository::findByCodeAndTenant">findByCodeAndTenant</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineORMWarehouseRepository.php.html#67"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMWarehouseRepository::findByTenant">findByTenant</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineORMWarehouseRepository.php.html#82"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMWarehouseRepository::findActiveByTenant">findActiveByTenant</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineORMWarehouseRepository.php.html#100"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMWarehouseRepository::codeExistsForTenant">codeExistsForTenant</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#23"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#30"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#56"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#67"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository::findByProductAndWarehouse">findByProductAndWarehouse</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#85"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository::findByProduct">findByProduct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#98"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository::findByWarehouse">findByWarehouse</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#111"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository::findLowStockItems">findLowStockItems</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#123"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository::findByTenant">findByTenant</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#134"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository::delete">delete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockReservationRepository.php.html#19"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockReservationRepository::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockReservationRepository.php.html#24"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockReservationRepository::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockReservationRepository.php.html#42"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockReservationRepository::findByReservationId">findByReservationId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockReservationRepository.php.html#53"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockReservationRepository::findExpiredReservations">findExpiredReservations</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockReservationRepository.php.html#68"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockReservationRepository::findActiveByTenant">findActiveByTenant</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockReservationRepository.php.html#85"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockReservationRepository::findByOrderId">findByOrderId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockReservationRepository.php.html#96"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockReservationRepository::delete">delete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/QuantityType.php.html#15"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\QuantityType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/QuantityType.php.html#20"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\QuantityType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/QuantityType.php.html#29"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\QuantityType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/QuantityType.php.html#42"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\QuantityType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/QuantityType.php.html#47"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\QuantityType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/StockItemIdType.php.html#15"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\StockItemIdType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/StockItemIdType.php.html#20"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\StockItemIdType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/StockItemIdType.php.html#29"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\StockItemIdType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/StockItemIdType.php.html#42"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\StockItemIdType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/StockItemIdType.php.html#47"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\StockItemIdType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseCodeType.php.html#15"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseCodeType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseCodeType.php.html#20"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseCodeType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseCodeType.php.html#29"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseCodeType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseCodeType.php.html#42"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseCodeType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseCodeType.php.html#47"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseCodeType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseIdType.php.html#15"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseIdType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseIdType.php.html#20"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseIdType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseIdType.php.html#29"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseIdType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseIdType.php.html#42"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseIdType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseIdType.php.html#47"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseIdType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseNameType.php.html#15"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseNameType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseNameType.php.html#20"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseNameType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseNameType.php.html#29"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseNameType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseNameType.php.html#42"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseNameType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseNameType.php.html#47"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseNameType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Doctrine/Repository/DoctrineORMWarehouseRepository.php.html#24"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMWarehouseRepository::save">save</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#30"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository::save">save</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Doctrine/Type/QuantityType.php.html#29"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\QuantityType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Doctrine/Type/StockItemIdType.php.html#20"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\StockItemIdType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Doctrine/Type/StockItemIdType.php.html#29"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\StockItemIdType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseCodeType.php.html#20"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseCodeType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseCodeType.php.html#29"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseCodeType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseIdType.php.html#20"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseIdType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseIdType.php.html#29"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseIdType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseNameType.php.html#20"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseNameType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Doctrine/Type/WarehouseNameType.php.html#29"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\WarehouseNameType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockItemRepository.php.html#134"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockItemRepository::delete">delete</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockReservationRepository.php.html#24"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockReservationRepository::save">save</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Doctrine/Repository/DoctrineStockReservationRepository.php.html#96"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineStockReservationRepository::delete">delete</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Doctrine/Type/QuantityType.php.html#20"><abbr title="App\Inventory\Infrastructure\Persistence\Doctrine\Type\QuantityType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 12.4.0</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.14</a> and <a href="https://phpunit.de/">PHPUnit 12.4.1</a> at Thu Nov 27 8:00:35 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../../../_js/billboard.pkgd.min.js?v=12.4.0" type="text/javascript"></script>
+  <script type="application/json" id="complexity_class">[[0,7,"Doctrine\/Entity\/StockItemEntity.php.html#16","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockItemEntity","56"],[0,4,"Doctrine\/Entity\/StockReservationEntity.php.html#15","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockReservationEntity","20"],[0,18,"Doctrine\/Entity\/WarehouseEntity.php.html#15","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity","342"],[0,9,"Doctrine\/Repository\/DoctrineORMWarehouseRepository.php.html#16","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMWarehouseRepository","90"],[0,12,"Doctrine\/Repository\/DoctrineStockItemRepository.php.html#21","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockItemRepository","156"],[0,9,"Doctrine\/Repository\/DoctrineStockReservationRepository.php.html#17","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockReservationRepository","90"],[0,8,"Doctrine\/Type\/QuantityType.php.html#11","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\QuantityType","72"],[0,9,"Doctrine\/Type\/StockItemIdType.php.html#11","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\StockItemIdType","90"],[0,9,"Doctrine\/Type\/WarehouseCodeType.php.html#11","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseCodeType","90"],[0,9,"Doctrine\/Type\/WarehouseIdType.php.html#11","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseIdType","90"],[0,9,"Doctrine\/Type\/WarehouseNameType.php.html#11","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseNameType","90"]]</script>
+  <script type="application/json" id="complexity_method">[[0,1,"Doctrine\/Entity\/StockItemEntity.php.html#54","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockItemEntity::fromDomainModel","2"],[0,1,"Doctrine\/Entity\/StockItemEntity.php.html#71","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockItemEntity::updateFromDomainModel","2"],[0,1,"Doctrine\/Entity\/StockItemEntity.php.html#80","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockItemEntity::toDomainModel","2"],[0,1,"Doctrine\/Entity\/StockItemEntity.php.html#96","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockItemEntity::getId","2"],[0,1,"Doctrine\/Entity\/StockItemEntity.php.html#101","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockItemEntity::getTenantId","2"],[0,1,"Doctrine\/Entity\/StockItemEntity.php.html#106","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockItemEntity::getProductId","2"],[0,1,"Doctrine\/Entity\/StockItemEntity.php.html#111","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockItemEntity::getWarehouseId","2"],[0,1,"Doctrine\/Entity\/StockReservationEntity.php.html#50","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockReservationEntity::fromDomainModel","2"],[0,1,"Doctrine\/Entity\/StockReservationEntity.php.html#66","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockReservationEntity::updateFromDomainModel","2"],[0,1,"Doctrine\/Entity\/StockReservationEntity.php.html#73","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockReservationEntity::toDomainModel","2"],[0,1,"Doctrine\/Entity\/StockReservationEntity.php.html#88","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\StockReservationEntity::getId","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#53","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::__construct","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#76","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::getId","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#81","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::getTenantId","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#86","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::getCode","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#91","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::getName","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#96","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::getAddress","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#101","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::getPriority","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#106","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::isActive","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#111","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::getCreatedAt","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#116","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::getUpdatedAt","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#122","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::setName","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#127","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::setAddress","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#132","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::setPriority","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#137","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::setIsActive","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#142","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::setUpdatedAt","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#150","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::toDomainModel","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#168","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::fromDomainModel","2"],[0,1,"Doctrine\/Entity\/WarehouseEntity.php.html#192","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Entity\\WarehouseEntity::updateFromDomainModel","2"],[0,1,"Doctrine\/Repository\/DoctrineORMWarehouseRepository.php.html#18","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMWarehouseRepository::__construct","2"],[0,3,"Doctrine\/Repository\/DoctrineORMWarehouseRepository.php.html#24","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMWarehouseRepository::save","12"],[0,1,"Doctrine\/Repository\/DoctrineORMWarehouseRepository.php.html#48","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMWarehouseRepository::findById","2"],[0,1,"Doctrine\/Repository\/DoctrineORMWarehouseRepository.php.html#55","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMWarehouseRepository::findByCodeAndTenant","2"],[0,1,"Doctrine\/Repository\/DoctrineORMWarehouseRepository.php.html#67","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMWarehouseRepository::findByTenant","2"],[0,1,"Doctrine\/Repository\/DoctrineORMWarehouseRepository.php.html#82","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMWarehouseRepository::findActiveByTenant","2"],[0,1,"Doctrine\/Repository\/DoctrineORMWarehouseRepository.php.html#100","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMWarehouseRepository::codeExistsForTenant","2"],[0,1,"Doctrine\/Repository\/DoctrineStockItemRepository.php.html#23","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockItemRepository::__construct","2"],[0,3,"Doctrine\/Repository\/DoctrineStockItemRepository.php.html#30","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockItemRepository::save","12"],[0,1,"Doctrine\/Repository\/DoctrineStockItemRepository.php.html#56","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockItemRepository::findById","2"],[0,1,"Doctrine\/Repository\/DoctrineStockItemRepository.php.html#67","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockItemRepository::findByProductAndWarehouse","2"],[0,1,"Doctrine\/Repository\/DoctrineStockItemRepository.php.html#85","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockItemRepository::findByProduct","2"],[0,1,"Doctrine\/Repository\/DoctrineStockItemRepository.php.html#98","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockItemRepository::findByWarehouse","2"],[0,1,"Doctrine\/Repository\/DoctrineStockItemRepository.php.html#111","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockItemRepository::findLowStockItems","2"],[0,1,"Doctrine\/Repository\/DoctrineStockItemRepository.php.html#123","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockItemRepository::findByTenant","2"],[0,2,"Doctrine\/Repository\/DoctrineStockItemRepository.php.html#134","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockItemRepository::delete","6"],[0,1,"Doctrine\/Repository\/DoctrineStockReservationRepository.php.html#19","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockReservationRepository::__construct","2"],[0,2,"Doctrine\/Repository\/DoctrineStockReservationRepository.php.html#24","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockReservationRepository::save","6"],[0,1,"Doctrine\/Repository\/DoctrineStockReservationRepository.php.html#42","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockReservationRepository::findByReservationId","2"],[0,1,"Doctrine\/Repository\/DoctrineStockReservationRepository.php.html#53","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockReservationRepository::findExpiredReservations","2"],[0,1,"Doctrine\/Repository\/DoctrineStockReservationRepository.php.html#68","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockReservationRepository::findActiveByTenant","2"],[0,1,"Doctrine\/Repository\/DoctrineStockReservationRepository.php.html#85","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockReservationRepository::findByOrderId","2"],[0,2,"Doctrine\/Repository\/DoctrineStockReservationRepository.php.html#96","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineStockReservationRepository::delete","6"],[0,1,"Doctrine\/Type\/QuantityType.php.html#15","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\QuantityType::getSQLDeclaration","2"],[0,2,"Doctrine\/Type\/QuantityType.php.html#20","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\QuantityType::convertToPHPValue","6"],[0,3,"Doctrine\/Type\/QuantityType.php.html#29","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\QuantityType::convertToDatabaseValue","12"],[0,1,"Doctrine\/Type\/QuantityType.php.html#42","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\QuantityType::getName","2"],[0,1,"Doctrine\/Type\/QuantityType.php.html#47","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\QuantityType::requiresSQLCommentHint","2"],[0,1,"Doctrine\/Type\/StockItemIdType.php.html#15","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\StockItemIdType::getSQLDeclaration","2"],[0,3,"Doctrine\/Type\/StockItemIdType.php.html#20","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\StockItemIdType::convertToPHPValue","12"],[0,3,"Doctrine\/Type\/StockItemIdType.php.html#29","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\StockItemIdType::convertToDatabaseValue","12"],[0,1,"Doctrine\/Type\/StockItemIdType.php.html#42","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\StockItemIdType::getName","2"],[0,1,"Doctrine\/Type\/StockItemIdType.php.html#47","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\StockItemIdType::requiresSQLCommentHint","2"],[0,1,"Doctrine\/Type\/WarehouseCodeType.php.html#15","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseCodeType::getSQLDeclaration","2"],[0,3,"Doctrine\/Type\/WarehouseCodeType.php.html#20","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseCodeType::convertToPHPValue","12"],[0,3,"Doctrine\/Type\/WarehouseCodeType.php.html#29","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseCodeType::convertToDatabaseValue","12"],[0,1,"Doctrine\/Type\/WarehouseCodeType.php.html#42","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseCodeType::getName","2"],[0,1,"Doctrine\/Type\/WarehouseCodeType.php.html#47","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseCodeType::requiresSQLCommentHint","2"],[0,1,"Doctrine\/Type\/WarehouseIdType.php.html#15","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseIdType::getSQLDeclaration","2"],[0,3,"Doctrine\/Type\/WarehouseIdType.php.html#20","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseIdType::convertToPHPValue","12"],[0,3,"Doctrine\/Type\/WarehouseIdType.php.html#29","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseIdType::convertToDatabaseValue","12"],[0,1,"Doctrine\/Type\/WarehouseIdType.php.html#42","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseIdType::getName","2"],[0,1,"Doctrine\/Type\/WarehouseIdType.php.html#47","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseIdType::requiresSQLCommentHint","2"],[0,1,"Doctrine\/Type\/WarehouseNameType.php.html#15","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseNameType::getSQLDeclaration","2"],[0,3,"Doctrine\/Type\/WarehouseNameType.php.html#20","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseNameType::convertToPHPValue","12"],[0,3,"Doctrine\/Type\/WarehouseNameType.php.html#29","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseNameType::convertToDatabaseValue","12"],[0,1,"Doctrine\/Type\/WarehouseNameType.php.html#42","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseNameType::getName","2"],[0,1,"Doctrine\/Type\/WarehouseNameType.php.html#47","App\\Inventory\\Infrastructure\\Persistence\\Doctrine\\Type\\WarehouseNameType::requiresSQLCommentHint","2"]]</script>
+  <script type="text/javascript" defer>
+  const barLabels = [
+    '0%',
+    '0-10%',
+    '10-20%',
+    '20-30%',
+    '30-40%',
+    '40-50%',
+    '50-60%',
+    '60-70%',
+    '70-80%',
+    '80-90%',
+    '90-100%',
+    '100%'
+  ];
+  const barConfig = (name, fullName, values) => ({
+    axis: {
+      x: {
+        type: "category",
+        categories: barLabels,
+      },
+      y: {
+        label: {
+          text: `#${name}`,
+          position: 'outer-top',
+        },
+      },
+    },
+    bindto: `#${name}CoverageDistribution`,
+    data: {
+      columns: [
+        [fullName].concat(values),
+      ],
+      colors: {
+        [fullName]: "rgba(69, 114, 167, 0.75)",
+      },
+      type: "bar",
+    },
+    bar: {
+      width: {
+        ratio: 0.9,
+      },
+    },
+    grid: {
+      focus: {
+        show: false,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">Coverage ${barLabels[data[0].x]}</th></tr>
+            <tr><td class="value">${data[0].value} ${name}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  bb.generate(
+    barConfig('classes', "Class Coverage", [11,0,0,0,0,0,0,0,0,0,0,0])
+  );
+  bb.generate(
+    barConfig('methods', "Method Coverage", [77,0,0,0,0,0,0,0,0,0,0,0])
+  );
+
+  const scatterConfig = (name, complexityData) => ({
+    axis: {
+      x: {
+        label: {
+          text: 'Code Coverage (in percent)',
+          position: 'outer-right',
+        },
+        tick: {
+          values: [0, 20, 40, 60, 80, 100],
+        },
+      },
+      y: {
+        label: {
+          text: 'Cyclomatic Complexity',
+          position: 'outer-top',
+        },
+        min: 0,
+        padding: {
+          bottom: 0,
+          top: 5,
+        },
+      },
+    },
+    bindto: `#${name}Complexity`,
+    data: {
+      columns: [
+        ["complexity_x"].concat(complexityData.map(d => d[0])),
+        ["complexity"].concat(complexityData.map(d => d[1])),
+      ],
+      onclick: function(data, element) {
+        window.location = complexityData[data.index][2];
+      },
+      type: "scatter",
+      xs: {
+        "complexity": "complexity_x",
+      },
+    },
+    grid: {
+      focus: {
+        show: true,
+        y: true,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        const coverage = Math.round(data[0].x);
+        const complexity = data[0].value;
+        const targetName = complexityData[data[0].index][3];
+        const crap = complexityData[data[0].index][4];
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">${targetName}</th></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Coverage</td><td class="name">${coverage}%</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Complexity</td><td class="value">${complexity}</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Crap</td><td class="value">${crap}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  const classComplexityData = JSON.parse(document.getElementById('complexity_class').textContent);
+  bb.generate(
+    scatterConfig("class", classComplexityData)
+  );
+  const methodComplexityData = JSON.parse(document.getElementById('complexity_method').textContent);
+  bb.generate(
+    scatterConfig("method", methodComplexityData),
+  );
+  </script>
+ </body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/new_ecom/backend/src/Returns</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/billboard.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/var/www/new_ecom/backend/src</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Returns</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classesCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Application/Command/ApproveReturnRequest.php.html#12">App\Returns\Application\Command\ApproveReturnRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/ApproveReturnRequestHandler.php.html#14">App\Returns\Application\Command\ApproveReturnRequestHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CompleteReturnRequest.php.html#12">App\Returns\Application\Command\CompleteReturnRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CompleteReturnRequestHandler.php.html#19">App\Returns\Application\Command\CompleteReturnRequestHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CreateReturnRequest.php.html#12">App\Returns\Application\Command\CreateReturnRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CreateReturnRequestHandler.php.html#22">App\Returns\Application\Command\CreateReturnRequestHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/InspectReturnRequest.php.html#12">App\Returns\Application\Command\InspectReturnRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/InspectReturnRequestHandler.php.html#14">App\Returns\Application\Command\InspectReturnRequestHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/MarkReturnAsReceived.php.html#12">App\Returns\Application\Command\MarkReturnAsReceived</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/MarkReturnAsReceivedHandler.php.html#14">App\Returns\Application\Command\MarkReturnAsReceivedHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/RejectReturnRequest.php.html#12">App\Returns\Application\Command\RejectReturnRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/RejectReturnRequestHandler.php.html#14">App\Returns\Application\Command\RejectReturnRequestHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/DTO/ReturnRequestDTO.php.html#14">App\Returns\Application\DTO\ReturnRequestDTO</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestApprovedSubscriber.php.html#32">App\Returns\Application\EventSubscriber\ReturnRequestApprovedSubscriber</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCompletedSubscriber.php.html#35">App\Returns\Application\EventSubscriber\ReturnRequestCompletedSubscriber</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCreatedSubscriber.php.html#26">App\Returns\Application\EventSubscriber\ReturnRequestCreatedSubscriber</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#35">App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestRejectedSubscriber.php.html#29">App\Returns\Application\EventSubscriber\ReturnRequestRejectedSubscriber</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetAllReturnRequests.php.html#13">App\Returns\Application\Query\GetAllReturnRequests</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetAllReturnRequestsHandler.php.html#15">App\Returns\Application\Query\GetAllReturnRequestsHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReturnRequestById.php.html#12">App\Returns\Application\Query\GetReturnRequestById</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReturnRequestByIdHandler.php.html#15">App\Returns\Application\Query\GetReturnRequestByIdHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReturnRequestsByOrderId.php.html#12">App\Returns\Application\Query\GetReturnRequestsByOrderId</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReturnRequestsByOrderIdHandler.php.html#15">App\Returns\Application\Query\GetReturnRequestsByOrderIdHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#23">App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMReturnRequestRepository.php.html#24">App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnRequestIdType.php.html#17">App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnRequestIdType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnStatusType.php.html#17">App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ApproveReturnRequestProcessor.php.html#19">App\Returns\Presentation\Api\Processor\ApproveReturnRequestProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/CompleteReturnRequestProcessor.php.html#19">App\Returns\Presentation\Api\Processor\CompleteReturnRequestProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/CreateReturnRequestProcessor.php.html#20">App\Returns\Presentation\Api\Processor\CreateReturnRequestProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/InspectReturnRequestProcessor.php.html#19">App\Returns\Presentation\Api\Processor\InspectReturnRequestProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/MarkReturnAsReceivedProcessor.php.html#19">App\Returns\Presentation\Api\Processor\MarkReturnAsReceivedProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/RejectReturnRequestProcessor.php.html#19">App\Returns\Presentation\Api\Processor\RejectReturnRequestProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ReturnRequestCollectionProvider.php.html#23">App\Returns\Presentation\Api\Provider\ReturnRequestCollectionProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ReturnRequestItemProvider.php.html#17">App\Returns\Presentation\Api\Provider\ReturnRequestItemProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Transformer/ReturnRequestResourceTransformer.php.html#13">App\Returns\Presentation\Api\Transformer\ReturnRequestResourceTransformer</a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#23">App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity</a></td><td class="text-right">0.0%</td><td class="text-right">20</td><td class="text-right">420</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#35">App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber</a></td><td class="text-right">0.0%</td><td class="text-right">15</td><td class="text-right">240</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnRequestIdType.php.html#17">App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnRequestIdType</a></td><td class="text-right">0.0%</td><td class="text-right">11</td><td class="text-right">132</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnStatusType.php.html#17">App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType</a></td><td class="text-right">0.0%</td><td class="text-right">11</td><td class="text-right">132</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCompletedSubscriber.php.html#35">App\Returns\Application\EventSubscriber\ReturnRequestCompletedSubscriber</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMReturnRequestRepository.php.html#24">App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestRejectedSubscriber.php.html#29">App\Returns\Application\EventSubscriber\ReturnRequestRejectedSubscriber</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestApprovedSubscriber.php.html#32">App\Returns\Application\EventSubscriber\ReturnRequestApprovedSubscriber</a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCreatedSubscriber.php.html#26">App\Returns\Application\EventSubscriber\ReturnRequestCreatedSubscriber</a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Application/Command/ApproveReturnRequestHandler.php.html#14">App\Returns\Application\Command\ApproveReturnRequestHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Command/CompleteReturnRequestHandler.php.html#19">App\Returns\Application\Command\CompleteReturnRequestHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Command/InspectReturnRequestHandler.php.html#14">App\Returns\Application\Command\InspectReturnRequestHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Command/MarkReturnAsReceivedHandler.php.html#14">App\Returns\Application\Command\MarkReturnAsReceivedHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Command/RejectReturnRequestHandler.php.html#14">App\Returns\Application\Command\RejectReturnRequestHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Query/GetAllReturnRequestsHandler.php.html#15">App\Returns\Application\Query\GetAllReturnRequestsHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Query/GetReturnRequestByIdHandler.php.html#15">App\Returns\Application\Query\GetReturnRequestByIdHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ReturnRequestCollectionProvider.php.html#23">App\Returns\Presentation\Api\Provider\ReturnRequestCollectionProvider</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ReturnRequestItemProvider.php.html#17">App\Returns\Presentation\Api\Provider\ReturnRequestItemProvider</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2 style="margin-top: 3rem;">Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodsCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Application/Command/ApproveReturnRequest.php.html#14"><abbr title="App\Returns\Application\Command\ApproveReturnRequest::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/ApproveReturnRequestHandler.php.html#17"><abbr title="App\Returns\Application\Command\ApproveReturnRequestHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/ApproveReturnRequestHandler.php.html#22"><abbr title="App\Returns\Application\Command\ApproveReturnRequestHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CompleteReturnRequest.php.html#14"><abbr title="App\Returns\Application\Command\CompleteReturnRequest::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CompleteReturnRequestHandler.php.html#22"><abbr title="App\Returns\Application\Command\CompleteReturnRequestHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CompleteReturnRequestHandler.php.html#27"><abbr title="App\Returns\Application\Command\CompleteReturnRequestHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CreateReturnRequest.php.html#14"><abbr title="App\Returns\Application\Command\CreateReturnRequest::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CreateReturnRequestHandler.php.html#25"><abbr title="App\Returns\Application\Command\CreateReturnRequestHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CreateReturnRequestHandler.php.html#30"><abbr title="App\Returns\Application\Command\CreateReturnRequestHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/InspectReturnRequest.php.html#14"><abbr title="App\Returns\Application\Command\InspectReturnRequest::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/InspectReturnRequestHandler.php.html#17"><abbr title="App\Returns\Application\Command\InspectReturnRequestHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/InspectReturnRequestHandler.php.html#22"><abbr title="App\Returns\Application\Command\InspectReturnRequestHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/MarkReturnAsReceived.php.html#14"><abbr title="App\Returns\Application\Command\MarkReturnAsReceived::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/MarkReturnAsReceivedHandler.php.html#17"><abbr title="App\Returns\Application\Command\MarkReturnAsReceivedHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/MarkReturnAsReceivedHandler.php.html#22"><abbr title="App\Returns\Application\Command\MarkReturnAsReceivedHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/RejectReturnRequest.php.html#14"><abbr title="App\Returns\Application\Command\RejectReturnRequest::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/RejectReturnRequestHandler.php.html#17"><abbr title="App\Returns\Application\Command\RejectReturnRequestHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/RejectReturnRequestHandler.php.html#22"><abbr title="App\Returns\Application\Command\RejectReturnRequestHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/DTO/ReturnRequestDTO.php.html#16"><abbr title="App\Returns\Application\DTO\ReturnRequestDTO::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/DTO/ReturnRequestDTO.php.html#33"><abbr title="App\Returns\Application\DTO\ReturnRequestDTO::fromDomain">fromDomain</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestApprovedSubscriber.php.html#34"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestApprovedSubscriber::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestApprovedSubscriber.php.html#42"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestApprovedSubscriber::getSubscribedEvents">getSubscribedEvents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestApprovedSubscriber.php.html#49"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestApprovedSubscriber::onReturnRequestApproved">onReturnRequestApproved</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestApprovedSubscriber.php.html#67"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestApprovedSubscriber::sendReturnLabelEmail">sendReturnLabelEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestApprovedSubscriber.php.html#90"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestApprovedSubscriber::buildEmailHtml">buildEmailHtml</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestApprovedSubscriber.php.html#186"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestApprovedSubscriber::buildEmailText">buildEmailText</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCompletedSubscriber.php.html#37"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCompletedSubscriber::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCompletedSubscriber.php.html#46"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCompletedSubscriber::getSubscribedEvents">getSubscribedEvents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCompletedSubscriber.php.html#53"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCompletedSubscriber::onReturnRequestCompleted">onReturnRequestCompleted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCompletedSubscriber.php.html#76"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCompletedSubscriber::triggerRefundProcess">triggerRefundProcess</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCompletedSubscriber.php.html#109"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCompletedSubscriber::sendRefundConfirmationEmail">sendRefundConfirmationEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCompletedSubscriber.php.html#129"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCompletedSubscriber::buildEmailHtml">buildEmailHtml</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCompletedSubscriber.php.html#200"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCompletedSubscriber::buildEmailText">buildEmailText</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCreatedSubscriber.php.html#28"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCreatedSubscriber::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCreatedSubscriber.php.html#36"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCreatedSubscriber::getSubscribedEvents">getSubscribedEvents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCreatedSubscriber.php.html#43"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCreatedSubscriber::onReturnRequestCreated">onReturnRequestCreated</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCreatedSubscriber.php.html#63"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCreatedSubscriber::sendRMAConfirmationEmail">sendRMAConfirmationEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCreatedSubscriber.php.html#84"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCreatedSubscriber::buildEmailHtml">buildEmailHtml</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCreatedSubscriber.php.html#146"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCreatedSubscriber::buildEmailText">buildEmailText</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#37"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#47"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber::getSubscribedEvents">getSubscribedEvents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#54"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber::onReturnRequestInspected">onReturnRequestInspected</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#81"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber::handleResellableItem">handleResellableItem</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#129"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber::handleNonResellableItem">handleNonResellableItem</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#139"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber::sendInspectionResultEmail">sendInspectionResultEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#159"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber::buildEmailHtml">buildEmailHtml</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#224"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber::buildEmailText">buildEmailText</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestRejectedSubscriber.php.html#31"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestRejectedSubscriber::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestRejectedSubscriber.php.html#39"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestRejectedSubscriber::getSubscribedEvents">getSubscribedEvents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestRejectedSubscriber.php.html#46"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestRejectedSubscriber::onReturnRequestRejected">onReturnRequestRejected</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestRejectedSubscriber.php.html#68"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestRejectedSubscriber::handleReturnShipping">handleReturnShipping</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestRejectedSubscriber.php.html#83"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestRejectedSubscriber::sendRejectionEmail">sendRejectionEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestRejectedSubscriber.php.html#103"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestRejectedSubscriber::buildEmailHtml">buildEmailHtml</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestRejectedSubscriber.php.html#179"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestRejectedSubscriber::buildEmailText">buildEmailText</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetAllReturnRequests.php.html#15"><abbr title="App\Returns\Application\Query\GetAllReturnRequests::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetAllReturnRequestsHandler.php.html#18"><abbr title="App\Returns\Application\Query\GetAllReturnRequestsHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetAllReturnRequestsHandler.php.html#26"><abbr title="App\Returns\Application\Query\GetAllReturnRequestsHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReturnRequestById.php.html#14"><abbr title="App\Returns\Application\Query\GetReturnRequestById::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReturnRequestByIdHandler.php.html#18"><abbr title="App\Returns\Application\Query\GetReturnRequestByIdHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReturnRequestByIdHandler.php.html#23"><abbr title="App\Returns\Application\Query\GetReturnRequestByIdHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReturnRequestsByOrderId.php.html#14"><abbr title="App\Returns\Application\Query\GetReturnRequestsByOrderId::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReturnRequestsByOrderIdHandler.php.html#18"><abbr title="App\Returns\Application\Query\GetReturnRequestsByOrderIdHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetReturnRequestsByOrderIdHandler.php.html#26"><abbr title="App\Returns\Application\Query\GetReturnRequestsByOrderIdHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ReturnRequestId.php.html#48"><abbr title="App\Returns\Domain\ValueObject\ReturnRequestId::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ReturnStatus.php.html#129"><abbr title="App\Returns\Domain\ValueObject\ReturnStatus::isTerminal">isTerminal</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ReturnStatus.php.html#149"><abbr title="App\Returns\Domain\ValueObject\ReturnStatus::getAllowedTransitions">getAllowedTransitions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ReturnStatus.php.html#159"><abbr title="App\Returns\Domain\ValueObject\ReturnStatus::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#76"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::fromDomainModel">fromDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#103"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::updateFromDomainModel">updateFromDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#127"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::toDomainModel">toDomainModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#152"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#157"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::getTenantId">getTenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#162"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::getOrderId">getOrderId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#167"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::getReason">getReason</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#172"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#177"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::getWarehouseId">getWarehouseId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#182"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::getRefundAmount">getRefundAmount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#187"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::getRefundCurrency">getRefundCurrency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#192"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::isResellable">isResellable</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#197"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::getInspectionNotes">getInspectionNotes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#202"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::getRejectionReason">getRejectionReason</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#207"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::getCreatedAt">getCreatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#212"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::getUpdatedAt">getUpdatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMReturnRequestRepository.php.html#26"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMReturnRequestRepository.php.html#32"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMReturnRequestRepository.php.html#55"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMReturnRequestRepository.php.html#66"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository::findByOrderId">findByOrderId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMReturnRequestRepository.php.html#84"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository::findByTenantId">findByTenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMReturnRequestRepository.php.html#102"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository::findByStatus">findByStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnRequestIdType.php.html#21"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnRequestIdType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnRequestIdType.php.html#29"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnRequestIdType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnRequestIdType.php.html#42"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnRequestIdType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnRequestIdType.php.html#59"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnRequestIdType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnRequestIdType.php.html#64"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnRequestIdType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnStatusType.php.html#21"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnStatusType.php.html#29"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnStatusType.php.html#42"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnStatusType.php.html#59"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnStatusType.php.html#64"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ApproveReturnRequestProcessor.php.html#23"><abbr title="App\Returns\Presentation\Api\Processor\ApproveReturnRequestProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ApproveReturnRequestProcessor.php.html#30"><abbr title="App\Returns\Presentation\Api\Processor\ApproveReturnRequestProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/CompleteReturnRequestProcessor.php.html#23"><abbr title="App\Returns\Presentation\Api\Processor\CompleteReturnRequestProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/CompleteReturnRequestProcessor.php.html#30"><abbr title="App\Returns\Presentation\Api\Processor\CompleteReturnRequestProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/CreateReturnRequestProcessor.php.html#24"><abbr title="App\Returns\Presentation\Api\Processor\CreateReturnRequestProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/CreateReturnRequestProcessor.php.html#31"><abbr title="App\Returns\Presentation\Api\Processor\CreateReturnRequestProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/InspectReturnRequestProcessor.php.html#23"><abbr title="App\Returns\Presentation\Api\Processor\InspectReturnRequestProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/InspectReturnRequestProcessor.php.html#30"><abbr title="App\Returns\Presentation\Api\Processor\InspectReturnRequestProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/MarkReturnAsReceivedProcessor.php.html#23"><abbr title="App\Returns\Presentation\Api\Processor\MarkReturnAsReceivedProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/MarkReturnAsReceivedProcessor.php.html#30"><abbr title="App\Returns\Presentation\Api\Processor\MarkReturnAsReceivedProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/RejectReturnRequestProcessor.php.html#23"><abbr title="App\Returns\Presentation\Api\Processor\RejectReturnRequestProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/RejectReturnRequestProcessor.php.html#30"><abbr title="App\Returns\Presentation\Api\Processor\RejectReturnRequestProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ReturnRequestCollectionProvider.php.html#27"><abbr title="App\Returns\Presentation\Api\Provider\ReturnRequestCollectionProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ReturnRequestCollectionProvider.php.html#33"><abbr title="App\Returns\Presentation\Api\Provider\ReturnRequestCollectionProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ReturnRequestItemProvider.php.html#21"><abbr title="App\Returns\Presentation\Api\Provider\ReturnRequestItemProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ReturnRequestItemProvider.php.html#27"><abbr title="App\Returns\Presentation\Api\Provider\ReturnRequestItemProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Transformer/ReturnRequestResourceTransformer.php.html#15"><abbr title="App\Returns\Presentation\Api\Transformer\ReturnRequestResourceTransformer::fromDTO">fromDTO</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnRequestIdType.php.html#42"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnRequestIdType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnStatusType.php.html#42"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#81"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber::handleResellableItem">handleResellableItem</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#54"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber::onReturnRequestInspected">onReturnRequestInspected</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#127"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::toDomainModel">toDomainModel</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMReturnRequestRepository.php.html#32"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository::save">save</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnRequestIdType.php.html#29"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnRequestIdType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/ReturnStatusType.php.html#29"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Command/ApproveReturnRequestHandler.php.html#22"><abbr title="App\Returns\Application\Command\ApproveReturnRequestHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Command/CompleteReturnRequestHandler.php.html#27"><abbr title="App\Returns\Application\Command\CompleteReturnRequestHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Command/InspectReturnRequestHandler.php.html#22"><abbr title="App\Returns\Application\Command\InspectReturnRequestHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Command/MarkReturnAsReceivedHandler.php.html#22"><abbr title="App\Returns\Application\Command\MarkReturnAsReceivedHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Command/RejectReturnRequestHandler.php.html#22"><abbr title="App\Returns\Application\Command\RejectReturnRequestHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestApprovedSubscriber.php.html#49"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestApprovedSubscriber::onReturnRequestApproved">onReturnRequestApproved</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCompletedSubscriber.php.html#53"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCompletedSubscriber::onReturnRequestCompleted">onReturnRequestCompleted</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCompletedSubscriber.php.html#76"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCompletedSubscriber::triggerRefundProcess">triggerRefundProcess</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestCreatedSubscriber.php.html#43"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestCreatedSubscriber::onReturnRequestCreated">onReturnRequestCreated</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#159"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber::buildEmailHtml">buildEmailHtml</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestInspectedSubscriber.php.html#224"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestInspectedSubscriber::buildEmailText">buildEmailText</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/EventSubscriber/ReturnRequestRejectedSubscriber.php.html#46"><abbr title="App\Returns\Application\EventSubscriber\ReturnRequestRejectedSubscriber::onReturnRequestRejected">onReturnRequestRejected</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Query/GetAllReturnRequestsHandler.php.html#26"><abbr title="App\Returns\Application\Query\GetAllReturnRequestsHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Query/GetReturnRequestByIdHandler.php.html#23"><abbr title="App\Returns\Application\Query\GetReturnRequestByIdHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/ValueObject/ReturnStatus.php.html#129"><abbr title="App\Returns\Domain\ValueObject\ReturnStatus::isTerminal">isTerminal</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#76"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::fromDomainModel">fromDomainModel</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/ReturnRequestEntity.php.html#103"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Entity\ReturnRequestEntity::updateFromDomainModel">updateFromDomainModel</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMReturnRequestRepository.php.html#55"><abbr title="App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository::findById">findById</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ReturnRequestCollectionProvider.php.html#33"><abbr title="App\Returns\Presentation\Api\Provider\ReturnRequestCollectionProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ReturnRequestItemProvider.php.html#27"><abbr title="App\Returns\Presentation\Api\Provider\ReturnRequestItemProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 12.4.0</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.14</a> and <a href="https://phpunit.de/">PHPUnit 12.4.1</a> at Thu Nov 27 8:00:35 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/billboard.pkgd.min.js?v=12.4.0" type="text/javascript"></script>
+  <script type="application/json" id="complexity_class">[[0,1,"Application\/Command\/ApproveReturnRequest.php.html#12","App\\Returns\\Application\\Command\\ApproveReturnRequest","2"],[0,3,"Application\/Command\/ApproveReturnRequestHandler.php.html#14","App\\Returns\\Application\\Command\\ApproveReturnRequestHandler","12"],[0,1,"Application\/Command\/CompleteReturnRequest.php.html#12","App\\Returns\\Application\\Command\\CompleteReturnRequest","2"],[0,3,"Application\/Command\/CompleteReturnRequestHandler.php.html#19","App\\Returns\\Application\\Command\\CompleteReturnRequestHandler","12"],[0,1,"Application\/Command\/CreateReturnRequest.php.html#12","App\\Returns\\Application\\Command\\CreateReturnRequest","2"],[0,2,"Application\/Command\/CreateReturnRequestHandler.php.html#22","App\\Returns\\Application\\Command\\CreateReturnRequestHandler","6"],[0,1,"Application\/Command\/InspectReturnRequest.php.html#12","App\\Returns\\Application\\Command\\InspectReturnRequest","2"],[0,3,"Application\/Command\/InspectReturnRequestHandler.php.html#14","App\\Returns\\Application\\Command\\InspectReturnRequestHandler","12"],[0,1,"Application\/Command\/MarkReturnAsReceived.php.html#12","App\\Returns\\Application\\Command\\MarkReturnAsReceived","2"],[0,3,"Application\/Command\/MarkReturnAsReceivedHandler.php.html#14","App\\Returns\\Application\\Command\\MarkReturnAsReceivedHandler","12"],[0,1,"Application\/Command\/RejectReturnRequest.php.html#12","App\\Returns\\Application\\Command\\RejectReturnRequest","2"],[0,3,"Application\/Command\/RejectReturnRequestHandler.php.html#14","App\\Returns\\Application\\Command\\RejectReturnRequestHandler","12"],[0,2,"Application\/DTO\/ReturnRequestDTO.php.html#14","App\\Returns\\Application\\DTO\\ReturnRequestDTO","6"],[0,7,"Application\/EventSubscriber\/ReturnRequestApprovedSubscriber.php.html#32","App\\Returns\\Application\\EventSubscriber\\ReturnRequestApprovedSubscriber","56"],[0,9,"Application\/EventSubscriber\/ReturnRequestCompletedSubscriber.php.html#35","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCompletedSubscriber","90"],[0,7,"Application\/EventSubscriber\/ReturnRequestCreatedSubscriber.php.html#26","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCreatedSubscriber","56"],[0,15,"Application\/EventSubscriber\/ReturnRequestInspectedSubscriber.php.html#35","App\\Returns\\Application\\EventSubscriber\\ReturnRequestInspectedSubscriber","240"],[0,8,"Application\/EventSubscriber\/ReturnRequestRejectedSubscriber.php.html#29","App\\Returns\\Application\\EventSubscriber\\ReturnRequestRejectedSubscriber","72"],[0,1,"Application\/Query\/GetAllReturnRequests.php.html#13","App\\Returns\\Application\\Query\\GetAllReturnRequests","2"],[0,3,"Application\/Query\/GetAllReturnRequestsHandler.php.html#15","App\\Returns\\Application\\Query\\GetAllReturnRequestsHandler","12"],[0,1,"Application\/Query\/GetReturnRequestById.php.html#12","App\\Returns\\Application\\Query\\GetReturnRequestById","2"],[0,3,"Application\/Query\/GetReturnRequestByIdHandler.php.html#15","App\\Returns\\Application\\Query\\GetReturnRequestByIdHandler","12"],[0,1,"Application\/Query\/GetReturnRequestsByOrderId.php.html#12","App\\Returns\\Application\\Query\\GetReturnRequestsByOrderId","2"],[0,2,"Application\/Query\/GetReturnRequestsByOrderIdHandler.php.html#15","App\\Returns\\Application\\Query\\GetReturnRequestsByOrderIdHandler","6"],[0,20,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#23","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity","420"],[0,9,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMReturnRequestRepository.php.html#24","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMReturnRequestRepository","90"],[0,11,"Infrastructure\/Persistence\/Doctrine\/Type\/ReturnRequestIdType.php.html#17","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Type\\ReturnRequestIdType","132"],[0,11,"Infrastructure\/Persistence\/Doctrine\/Type\/ReturnStatusType.php.html#17","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Type\\ReturnStatusType","132"],[0,2,"Presentation\/Api\/Processor\/ApproveReturnRequestProcessor.php.html#19","App\\Returns\\Presentation\\Api\\Processor\\ApproveReturnRequestProcessor","6"],[0,2,"Presentation\/Api\/Processor\/CompleteReturnRequestProcessor.php.html#19","App\\Returns\\Presentation\\Api\\Processor\\CompleteReturnRequestProcessor","6"],[0,2,"Presentation\/Api\/Processor\/CreateReturnRequestProcessor.php.html#20","App\\Returns\\Presentation\\Api\\Processor\\CreateReturnRequestProcessor","6"],[0,2,"Presentation\/Api\/Processor\/InspectReturnRequestProcessor.php.html#19","App\\Returns\\Presentation\\Api\\Processor\\InspectReturnRequestProcessor","6"],[0,2,"Presentation\/Api\/Processor\/MarkReturnAsReceivedProcessor.php.html#19","App\\Returns\\Presentation\\Api\\Processor\\MarkReturnAsReceivedProcessor","6"],[0,2,"Presentation\/Api\/Processor\/RejectReturnRequestProcessor.php.html#19","App\\Returns\\Presentation\\Api\\Processor\\RejectReturnRequestProcessor","6"],[0,3,"Presentation\/Api\/Provider\/ReturnRequestCollectionProvider.php.html#23","App\\Returns\\Presentation\\Api\\Provider\\ReturnRequestCollectionProvider","12"],[0,3,"Presentation\/Api\/Provider\/ReturnRequestItemProvider.php.html#17","App\\Returns\\Presentation\\Api\\Provider\\ReturnRequestItemProvider","12"],[0,1,"Presentation\/Api\/Transformer\/ReturnRequestResourceTransformer.php.html#13","App\\Returns\\Presentation\\Api\\Transformer\\ReturnRequestResourceTransformer","2"],[86.36363636363636,22,"Domain\/ValueObject\/ReturnStatus.php.html#20","App\\Returns\\Domain\\ValueObject\\ReturnStatus","23.23"],[87.5,7,"Domain\/ValueObject\/ReturnRequestId.php.html#17","App\\Returns\\Domain\\ValueObject\\ReturnRequestId","7.10"],[100,2,"Domain\/Event\/ReturnRequestApproved.php.html#20","App\\Returns\\Domain\\Event\\ReturnRequestApproved","2"],[100,2,"Domain\/Event\/ReturnRequestCompleted.php.html#20","App\\Returns\\Domain\\Event\\ReturnRequestCompleted","2"],[100,2,"Domain\/Event\/ReturnRequestCreated.php.html#20","App\\Returns\\Domain\\Event\\ReturnRequestCreated","2"],[100,2,"Domain\/Event\/ReturnRequestInspected.php.html#20","App\\Returns\\Domain\\Event\\ReturnRequestInspected","2"],[100,2,"Domain\/Event\/ReturnRequestReceived.php.html#20","App\\Returns\\Domain\\Event\\ReturnRequestReceived","2"],[100,2,"Domain\/Event\/ReturnRequestRejected.php.html#20","App\\Returns\\Domain\\Event\\ReturnRequestRejected","2"],[100,33,"Domain\/Model\/ReturnRequest.php.html#35","App\\Returns\\Domain\\Model\\ReturnRequest","33"],[100,15,"Domain\/ValueObject\/ReturnInspection.php.html#18","App\\Returns\\Domain\\ValueObject\\ReturnInspection","15"],[100,8,"Domain\/ValueObject\/ReturnReason.php.html#15","App\\Returns\\Domain\\ValueObject\\ReturnReason","8"],[100,0,"Presentation\/Api\/Resource\/ReturnRequestResource.php.html#27","App\\Returns\\Presentation\\Api\\Resource\\ReturnRequestResource","0"]]</script>
+  <script type="application/json" id="complexity_method">[[0,1,"Application\/Command\/ApproveReturnRequest.php.html#14","App\\Returns\\Application\\Command\\ApproveReturnRequest::__construct","2"],[0,1,"Application\/Command\/ApproveReturnRequestHandler.php.html#17","App\\Returns\\Application\\Command\\ApproveReturnRequestHandler::__construct","2"],[0,2,"Application\/Command\/ApproveReturnRequestHandler.php.html#22","App\\Returns\\Application\\Command\\ApproveReturnRequestHandler::__invoke","6"],[0,1,"Application\/Command\/CompleteReturnRequest.php.html#14","App\\Returns\\Application\\Command\\CompleteReturnRequest::__construct","2"],[0,1,"Application\/Command\/CompleteReturnRequestHandler.php.html#22","App\\Returns\\Application\\Command\\CompleteReturnRequestHandler::__construct","2"],[0,2,"Application\/Command\/CompleteReturnRequestHandler.php.html#27","App\\Returns\\Application\\Command\\CompleteReturnRequestHandler::__invoke","6"],[0,1,"Application\/Command\/CreateReturnRequest.php.html#14","App\\Returns\\Application\\Command\\CreateReturnRequest::__construct","2"],[0,1,"Application\/Command\/CreateReturnRequestHandler.php.html#25","App\\Returns\\Application\\Command\\CreateReturnRequestHandler::__construct","2"],[0,1,"Application\/Command\/CreateReturnRequestHandler.php.html#30","App\\Returns\\Application\\Command\\CreateReturnRequestHandler::__invoke","2"],[0,1,"Application\/Command\/InspectReturnRequest.php.html#14","App\\Returns\\Application\\Command\\InspectReturnRequest::__construct","2"],[0,1,"Application\/Command\/InspectReturnRequestHandler.php.html#17","App\\Returns\\Application\\Command\\InspectReturnRequestHandler::__construct","2"],[0,2,"Application\/Command\/InspectReturnRequestHandler.php.html#22","App\\Returns\\Application\\Command\\InspectReturnRequestHandler::__invoke","6"],[0,1,"Application\/Command\/MarkReturnAsReceived.php.html#14","App\\Returns\\Application\\Command\\MarkReturnAsReceived::__construct","2"],[0,1,"Application\/Command\/MarkReturnAsReceivedHandler.php.html#17","App\\Returns\\Application\\Command\\MarkReturnAsReceivedHandler::__construct","2"],[0,2,"Application\/Command\/MarkReturnAsReceivedHandler.php.html#22","App\\Returns\\Application\\Command\\MarkReturnAsReceivedHandler::__invoke","6"],[0,1,"Application\/Command\/RejectReturnRequest.php.html#14","App\\Returns\\Application\\Command\\RejectReturnRequest::__construct","2"],[0,1,"Application\/Command\/RejectReturnRequestHandler.php.html#17","App\\Returns\\Application\\Command\\RejectReturnRequestHandler::__construct","2"],[0,2,"Application\/Command\/RejectReturnRequestHandler.php.html#22","App\\Returns\\Application\\Command\\RejectReturnRequestHandler::__invoke","6"],[0,1,"Application\/DTO\/ReturnRequestDTO.php.html#16","App\\Returns\\Application\\DTO\\ReturnRequestDTO::__construct","2"],[0,1,"Application\/DTO\/ReturnRequestDTO.php.html#33","App\\Returns\\Application\\DTO\\ReturnRequestDTO::fromDomain","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestApprovedSubscriber.php.html#34","App\\Returns\\Application\\EventSubscriber\\ReturnRequestApprovedSubscriber::__construct","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestApprovedSubscriber.php.html#42","App\\Returns\\Application\\EventSubscriber\\ReturnRequestApprovedSubscriber::getSubscribedEvents","2"],[0,2,"Application\/EventSubscriber\/ReturnRequestApprovedSubscriber.php.html#49","App\\Returns\\Application\\EventSubscriber\\ReturnRequestApprovedSubscriber::onReturnRequestApproved","6"],[0,1,"Application\/EventSubscriber\/ReturnRequestApprovedSubscriber.php.html#67","App\\Returns\\Application\\EventSubscriber\\ReturnRequestApprovedSubscriber::sendReturnLabelEmail","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestApprovedSubscriber.php.html#90","App\\Returns\\Application\\EventSubscriber\\ReturnRequestApprovedSubscriber::buildEmailHtml","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestApprovedSubscriber.php.html#186","App\\Returns\\Application\\EventSubscriber\\ReturnRequestApprovedSubscriber::buildEmailText","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestCompletedSubscriber.php.html#37","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCompletedSubscriber::__construct","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestCompletedSubscriber.php.html#46","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCompletedSubscriber::getSubscribedEvents","2"],[0,2,"Application\/EventSubscriber\/ReturnRequestCompletedSubscriber.php.html#53","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCompletedSubscriber::onReturnRequestCompleted","6"],[0,2,"Application\/EventSubscriber\/ReturnRequestCompletedSubscriber.php.html#76","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCompletedSubscriber::triggerRefundProcess","6"],[0,1,"Application\/EventSubscriber\/ReturnRequestCompletedSubscriber.php.html#109","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCompletedSubscriber::sendRefundConfirmationEmail","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestCompletedSubscriber.php.html#129","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCompletedSubscriber::buildEmailHtml","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestCompletedSubscriber.php.html#200","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCompletedSubscriber::buildEmailText","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestCreatedSubscriber.php.html#28","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCreatedSubscriber::__construct","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestCreatedSubscriber.php.html#36","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCreatedSubscriber::getSubscribedEvents","2"],[0,2,"Application\/EventSubscriber\/ReturnRequestCreatedSubscriber.php.html#43","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCreatedSubscriber::onReturnRequestCreated","6"],[0,1,"Application\/EventSubscriber\/ReturnRequestCreatedSubscriber.php.html#63","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCreatedSubscriber::sendRMAConfirmationEmail","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestCreatedSubscriber.php.html#84","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCreatedSubscriber::buildEmailHtml","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestCreatedSubscriber.php.html#146","App\\Returns\\Application\\EventSubscriber\\ReturnRequestCreatedSubscriber::buildEmailText","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestInspectedSubscriber.php.html#37","App\\Returns\\Application\\EventSubscriber\\ReturnRequestInspectedSubscriber::__construct","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestInspectedSubscriber.php.html#47","App\\Returns\\Application\\EventSubscriber\\ReturnRequestInspectedSubscriber::getSubscribedEvents","2"],[0,3,"Application\/EventSubscriber\/ReturnRequestInspectedSubscriber.php.html#54","App\\Returns\\Application\\EventSubscriber\\ReturnRequestInspectedSubscriber::onReturnRequestInspected","12"],[0,4,"Application\/EventSubscriber\/ReturnRequestInspectedSubscriber.php.html#81","App\\Returns\\Application\\EventSubscriber\\ReturnRequestInspectedSubscriber::handleResellableItem","20"],[0,1,"Application\/EventSubscriber\/ReturnRequestInspectedSubscriber.php.html#129","App\\Returns\\Application\\EventSubscriber\\ReturnRequestInspectedSubscriber::handleNonResellableItem","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestInspectedSubscriber.php.html#139","App\\Returns\\Application\\EventSubscriber\\ReturnRequestInspectedSubscriber::sendInspectionResultEmail","2"],[0,2,"Application\/EventSubscriber\/ReturnRequestInspectedSubscriber.php.html#159","App\\Returns\\Application\\EventSubscriber\\ReturnRequestInspectedSubscriber::buildEmailHtml","6"],[0,2,"Application\/EventSubscriber\/ReturnRequestInspectedSubscriber.php.html#224","App\\Returns\\Application\\EventSubscriber\\ReturnRequestInspectedSubscriber::buildEmailText","6"],[0,1,"Application\/EventSubscriber\/ReturnRequestRejectedSubscriber.php.html#31","App\\Returns\\Application\\EventSubscriber\\ReturnRequestRejectedSubscriber::__construct","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestRejectedSubscriber.php.html#39","App\\Returns\\Application\\EventSubscriber\\ReturnRequestRejectedSubscriber::getSubscribedEvents","2"],[0,2,"Application\/EventSubscriber\/ReturnRequestRejectedSubscriber.php.html#46","App\\Returns\\Application\\EventSubscriber\\ReturnRequestRejectedSubscriber::onReturnRequestRejected","6"],[0,1,"Application\/EventSubscriber\/ReturnRequestRejectedSubscriber.php.html#68","App\\Returns\\Application\\EventSubscriber\\ReturnRequestRejectedSubscriber::handleReturnShipping","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestRejectedSubscriber.php.html#83","App\\Returns\\Application\\EventSubscriber\\ReturnRequestRejectedSubscriber::sendRejectionEmail","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestRejectedSubscriber.php.html#103","App\\Returns\\Application\\EventSubscriber\\ReturnRequestRejectedSubscriber::buildEmailHtml","2"],[0,1,"Application\/EventSubscriber\/ReturnRequestRejectedSubscriber.php.html#179","App\\Returns\\Application\\EventSubscriber\\ReturnRequestRejectedSubscriber::buildEmailText","2"],[0,1,"Application\/Query\/GetAllReturnRequests.php.html#15","App\\Returns\\Application\\Query\\GetAllReturnRequests::__construct","2"],[0,1,"Application\/Query\/GetAllReturnRequestsHandler.php.html#18","App\\Returns\\Application\\Query\\GetAllReturnRequestsHandler::__construct","2"],[0,2,"Application\/Query\/GetAllReturnRequestsHandler.php.html#26","App\\Returns\\Application\\Query\\GetAllReturnRequestsHandler::__invoke","6"],[0,1,"Application\/Query\/GetReturnRequestById.php.html#14","App\\Returns\\Application\\Query\\GetReturnRequestById::__construct","2"],[0,1,"Application\/Query\/GetReturnRequestByIdHandler.php.html#18","App\\Returns\\Application\\Query\\GetReturnRequestByIdHandler::__construct","2"],[0,2,"Application\/Query\/GetReturnRequestByIdHandler.php.html#23","App\\Returns\\Application\\Query\\GetReturnRequestByIdHandler::__invoke","6"],[0,1,"Application\/Query\/GetReturnRequestsByOrderId.php.html#14","App\\Returns\\Application\\Query\\GetReturnRequestsByOrderId::__construct","2"],[0,1,"Application\/Query\/GetReturnRequestsByOrderIdHandler.php.html#18","App\\Returns\\Application\\Query\\GetReturnRequestsByOrderIdHandler::__construct","2"],[0,1,"Application\/Query\/GetReturnRequestsByOrderIdHandler.php.html#26","App\\Returns\\Application\\Query\\GetReturnRequestsByOrderIdHandler::__invoke","2"],[0,1,"Domain\/ValueObject\/ReturnRequestId.php.html#48","App\\Returns\\Domain\\ValueObject\\ReturnRequestId::__toString","2"],[0,2,"Domain\/ValueObject\/ReturnStatus.php.html#129","App\\Returns\\Domain\\ValueObject\\ReturnStatus::isTerminal","6"],[0,1,"Domain\/ValueObject\/ReturnStatus.php.html#149","App\\Returns\\Domain\\ValueObject\\ReturnStatus::getAllowedTransitions","2"],[0,1,"Domain\/ValueObject\/ReturnStatus.php.html#159","App\\Returns\\Domain\\ValueObject\\ReturnStatus::__toString","2"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#76","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::fromDomainModel","6"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#103","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::updateFromDomainModel","6"],[0,3,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#127","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::toDomainModel","12"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#152","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::getId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#157","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::getTenantId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#162","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::getOrderId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#167","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::getReason","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#172","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::getStatus","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#177","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::getWarehouseId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#182","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::getRefundAmount","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#187","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::getRefundCurrency","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#192","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::isResellable","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#197","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::getInspectionNotes","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#202","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::getRejectionReason","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#207","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::getCreatedAt","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/ReturnRequestEntity.php.html#212","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Entity\\ReturnRequestEntity::getUpdatedAt","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMReturnRequestRepository.php.html#26","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMReturnRequestRepository::__construct","2"],[0,3,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMReturnRequestRepository.php.html#32","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMReturnRequestRepository::save","12"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMReturnRequestRepository.php.html#55","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMReturnRequestRepository::findById","6"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMReturnRequestRepository.php.html#66","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMReturnRequestRepository::findByOrderId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMReturnRequestRepository.php.html#84","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMReturnRequestRepository::findByTenantId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMReturnRequestRepository.php.html#102","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMReturnRequestRepository::findByStatus","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/ReturnRequestIdType.php.html#21","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Type\\ReturnRequestIdType::getSQLDeclaration","2"],[0,3,"Infrastructure\/Persistence\/Doctrine\/Type\/ReturnRequestIdType.php.html#29","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Type\\ReturnRequestIdType::convertToDatabaseValue","12"],[0,5,"Infrastructure\/Persistence\/Doctrine\/Type\/ReturnRequestIdType.php.html#42","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Type\\ReturnRequestIdType::convertToPHPValue","30"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/ReturnRequestIdType.php.html#59","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Type\\ReturnRequestIdType::getName","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/ReturnRequestIdType.php.html#64","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Type\\ReturnRequestIdType::requiresSQLCommentHint","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/ReturnStatusType.php.html#21","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Type\\ReturnStatusType::getSQLDeclaration","2"],[0,3,"Infrastructure\/Persistence\/Doctrine\/Type\/ReturnStatusType.php.html#29","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Type\\ReturnStatusType::convertToDatabaseValue","12"],[0,5,"Infrastructure\/Persistence\/Doctrine\/Type\/ReturnStatusType.php.html#42","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Type\\ReturnStatusType::convertToPHPValue","30"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/ReturnStatusType.php.html#59","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Type\\ReturnStatusType::getName","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/ReturnStatusType.php.html#64","App\\Returns\\Infrastructure\\Persistence\\Doctrine\\Type\\ReturnStatusType::requiresSQLCommentHint","2"],[0,1,"Presentation\/Api\/Processor\/ApproveReturnRequestProcessor.php.html#23","App\\Returns\\Presentation\\Api\\Processor\\ApproveReturnRequestProcessor::__construct","2"],[0,1,"Presentation\/Api\/Processor\/ApproveReturnRequestProcessor.php.html#30","App\\Returns\\Presentation\\Api\\Processor\\ApproveReturnRequestProcessor::process","2"],[0,1,"Presentation\/Api\/Processor\/CompleteReturnRequestProcessor.php.html#23","App\\Returns\\Presentation\\Api\\Processor\\CompleteReturnRequestProcessor::__construct","2"],[0,1,"Presentation\/Api\/Processor\/CompleteReturnRequestProcessor.php.html#30","App\\Returns\\Presentation\\Api\\Processor\\CompleteReturnRequestProcessor::process","2"],[0,1,"Presentation\/Api\/Processor\/CreateReturnRequestProcessor.php.html#24","App\\Returns\\Presentation\\Api\\Processor\\CreateReturnRequestProcessor::__construct","2"],[0,1,"Presentation\/Api\/Processor\/CreateReturnRequestProcessor.php.html#31","App\\Returns\\Presentation\\Api\\Processor\\CreateReturnRequestProcessor::process","2"],[0,1,"Presentation\/Api\/Processor\/InspectReturnRequestProcessor.php.html#23","App\\Returns\\Presentation\\Api\\Processor\\InspectReturnRequestProcessor::__construct","2"],[0,1,"Presentation\/Api\/Processor\/InspectReturnRequestProcessor.php.html#30","App\\Returns\\Presentation\\Api\\Processor\\InspectReturnRequestProcessor::process","2"],[0,1,"Presentation\/Api\/Processor\/MarkReturnAsReceivedProcessor.php.html#23","App\\Returns\\Presentation\\Api\\Processor\\MarkReturnAsReceivedProcessor::__construct","2"],[0,1,"Presentation\/Api\/Processor\/MarkReturnAsReceivedProcessor.php.html#30","App\\Returns\\Presentation\\Api\\Processor\\MarkReturnAsReceivedProcessor::process","2"],[0,1,"Presentation\/Api\/Processor\/RejectReturnRequestProcessor.php.html#23","App\\Returns\\Presentation\\Api\\Processor\\RejectReturnRequestProcessor::__construct","2"],[0,1,"Presentation\/Api\/Processor\/RejectReturnRequestProcessor.php.html#30","App\\Returns\\Presentation\\Api\\Processor\\RejectReturnRequestProcessor::process","2"],[0,1,"Presentation\/Api\/Provider\/ReturnRequestCollectionProvider.php.html#27","App\\Returns\\Presentation\\Api\\Provider\\ReturnRequestCollectionProvider::__construct","2"],[0,2,"Presentation\/Api\/Provider\/ReturnRequestCollectionProvider.php.html#33","App\\Returns\\Presentation\\Api\\Provider\\ReturnRequestCollectionProvider::provide","6"],[0,1,"Presentation\/Api\/Provider\/ReturnRequestItemProvider.php.html#21","App\\Returns\\Presentation\\Api\\Provider\\ReturnRequestItemProvider::__construct","2"],[0,2,"Presentation\/Api\/Provider\/ReturnRequestItemProvider.php.html#27","App\\Returns\\Presentation\\Api\\Provider\\ReturnRequestItemProvider::provide","6"],[0,1,"Presentation\/Api\/Transformer\/ReturnRequestResourceTransformer.php.html#15","App\\Returns\\Presentation\\Api\\Transformer\\ReturnRequestResourceTransformer::fromDTO","2"],[100,1,"Domain\/Event\/ReturnRequestApproved.php.html#22","App\\Returns\\Domain\\Event\\ReturnRequestApproved::__construct","1"],[100,1,"Domain\/Event\/ReturnRequestApproved.php.html#29","App\\Returns\\Domain\\Event\\ReturnRequestApproved::create","1"],[100,1,"Domain\/Event\/ReturnRequestCompleted.php.html#22","App\\Returns\\Domain\\Event\\ReturnRequestCompleted::__construct","1"],[100,1,"Domain\/Event\/ReturnRequestCompleted.php.html#31","App\\Returns\\Domain\\Event\\ReturnRequestCompleted::create","1"],[100,1,"Domain\/Event\/ReturnRequestCreated.php.html#22","App\\Returns\\Domain\\Event\\ReturnRequestCreated::__construct","1"],[100,1,"Domain\/Event\/ReturnRequestCreated.php.html#31","App\\Returns\\Domain\\Event\\ReturnRequestCreated::create","1"],[100,1,"Domain\/Event\/ReturnRequestInspected.php.html#22","App\\Returns\\Domain\\Event\\ReturnRequestInspected::__construct","1"],[100,1,"Domain\/Event\/ReturnRequestInspected.php.html#31","App\\Returns\\Domain\\Event\\ReturnRequestInspected::create","1"],[100,1,"Domain\/Event\/ReturnRequestReceived.php.html#22","App\\Returns\\Domain\\Event\\ReturnRequestReceived::__construct","1"],[100,1,"Domain\/Event\/ReturnRequestReceived.php.html#30","App\\Returns\\Domain\\Event\\ReturnRequestReceived::create","1"],[100,1,"Domain\/Event\/ReturnRequestRejected.php.html#22","App\\Returns\\Domain\\Event\\ReturnRequestRejected::__construct","1"],[100,1,"Domain\/Event\/ReturnRequestRejected.php.html#30","App\\Returns\\Domain\\Event\\ReturnRequestRejected::create","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#40","App\\Returns\\Domain\\Model\\ReturnRequest::__construct","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#62","App\\Returns\\Domain\\Model\\ReturnRequest::create","1"],[100,2,"Domain\/Model\/ReturnRequest.php.html#99","App\\Returns\\Domain\\Model\\ReturnRequest::approve","2"],[100,3,"Domain\/Model\/ReturnRequest.php.html#120","App\\Returns\\Domain\\Model\\ReturnRequest::markAsReceived","3"],[100,3,"Domain\/Model\/ReturnRequest.php.html#147","App\\Returns\\Domain\\Model\\ReturnRequest::inspect","3"],[100,3,"Domain\/Model\/ReturnRequest.php.html#175","App\\Returns\\Domain\\Model\\ReturnRequest::complete","3"],[100,4,"Domain\/Model\/ReturnRequest.php.html#206","App\\Returns\\Domain\\Model\\ReturnRequest::reject","4"],[100,1,"Domain\/Model\/ReturnRequest.php.html#229","App\\Returns\\Domain\\Model\\ReturnRequest::reconstituteFromPersistence","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#261","App\\Returns\\Domain\\Model\\ReturnRequest::id","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#266","App\\Returns\\Domain\\Model\\ReturnRequest::tenantId","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#271","App\\Returns\\Domain\\Model\\ReturnRequest::orderId","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#276","App\\Returns\\Domain\\Model\\ReturnRequest::reason","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#281","App\\Returns\\Domain\\Model\\ReturnRequest::status","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#286","App\\Returns\\Domain\\Model\\ReturnRequest::warehouseId","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#291","App\\Returns\\Domain\\Model\\ReturnRequest::refundAmount","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#296","App\\Returns\\Domain\\Model\\ReturnRequest::isResellable","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#301","App\\Returns\\Domain\\Model\\ReturnRequest::inspectionNotes","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#306","App\\Returns\\Domain\\Model\\ReturnRequest::rejectionReason","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#311","App\\Returns\\Domain\\Model\\ReturnRequest::createdAt","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#316","App\\Returns\\Domain\\Model\\ReturnRequest::updatedAt","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#323","App\\Returns\\Domain\\Model\\ReturnRequest::recordEvent","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#331","App\\Returns\\Domain\\Model\\ReturnRequest::getRecordedEvents","1"],[100,1,"Domain\/Model\/ReturnRequest.php.html#336","App\\Returns\\Domain\\Model\\ReturnRequest::clearRecordedEvents","1"],[100,1,"Domain\/ValueObject\/ReturnInspection.php.html#23","App\\Returns\\Domain\\ValueObject\\ReturnInspection::__construct","1"],[100,4,"Domain\/ValueObject\/ReturnInspection.php.html#39","App\\Returns\\Domain\\ValueObject\\ReturnInspection::create","4"],[100,1,"Domain\/ValueObject\/ReturnInspection.php.html#65","App\\Returns\\Domain\\ValueObject\\ReturnInspection::isResellable","1"],[100,1,"Domain\/ValueObject\/ReturnInspection.php.html#70","App\\Returns\\Domain\\ValueObject\\ReturnInspection::notes","1"],[100,1,"Domain\/ValueObject\/ReturnInspection.php.html#75","App\\Returns\\Domain\\ValueObject\\ReturnInspection::inspectedAt","1"],[100,1,"Domain\/ValueObject\/ReturnInspection.php.html#83","App\\Returns\\Domain\\ValueObject\\ReturnInspection::isDamaged","1"],[100,2,"Domain\/ValueObject\/ReturnInspection.php.html#94","App\\Returns\\Domain\\ValueObject\\ReturnInspection::wasInspectedBetween","2"],[100,1,"Domain\/ValueObject\/ReturnInspection.php.html#102","App\\Returns\\Domain\\ValueObject\\ReturnInspection::getAgeInDays","1"],[100,3,"Domain\/ValueObject\/ReturnInspection.php.html#109","App\\Returns\\Domain\\ValueObject\\ReturnInspection::equals","3"],[100,4,"Domain\/ValueObject\/ReturnReason.php.html#20","App\\Returns\\Domain\\ValueObject\\ReturnReason::__construct","4"],[100,1,"Domain\/ValueObject\/ReturnReason.php.html#40","App\\Returns\\Domain\\ValueObject\\ReturnReason::fromString","1"],[100,1,"Domain\/ValueObject\/ReturnReason.php.html#45","App\\Returns\\Domain\\ValueObject\\ReturnReason::value","1"],[100,1,"Domain\/ValueObject\/ReturnReason.php.html#50","App\\Returns\\Domain\\ValueObject\\ReturnReason::equals","1"],[100,1,"Domain\/ValueObject\/ReturnReason.php.html#55","App\\Returns\\Domain\\ValueObject\\ReturnReason::__toString","1"],[100,1,"Domain\/ValueObject\/ReturnRequestId.php.html#19","App\\Returns\\Domain\\ValueObject\\ReturnRequestId::__construct","1"],[100,1,"Domain\/ValueObject\/ReturnRequestId.php.html#24","App\\Returns\\Domain\\ValueObject\\ReturnRequestId::generate","1"],[100,2,"Domain\/ValueObject\/ReturnRequestId.php.html#29","App\\Returns\\Domain\\ValueObject\\ReturnRequestId::fromString","2"],[100,1,"Domain\/ValueObject\/ReturnRequestId.php.html#38","App\\Returns\\Domain\\ValueObject\\ReturnRequestId::toString","1"],[100,1,"Domain\/ValueObject\/ReturnRequestId.php.html#43","App\\Returns\\Domain\\ValueObject\\ReturnRequestId::equals","1"],[100,2,"Domain\/ValueObject\/ReturnStatus.php.html#51","App\\Returns\\Domain\\ValueObject\\ReturnStatus::__construct","2"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#59","App\\Returns\\Domain\\ValueObject\\ReturnStatus::requested","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#64","App\\Returns\\Domain\\ValueObject\\ReturnStatus::approved","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#69","App\\Returns\\Domain\\ValueObject\\ReturnStatus::received","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#74","App\\Returns\\Domain\\ValueObject\\ReturnStatus::inspected","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#79","App\\Returns\\Domain\\ValueObject\\ReturnStatus::completed","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#84","App\\Returns\\Domain\\ValueObject\\ReturnStatus::rejected","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#89","App\\Returns\\Domain\\ValueObject\\ReturnStatus::fromString","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#94","App\\Returns\\Domain\\ValueObject\\ReturnStatus::value","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#99","App\\Returns\\Domain\\ValueObject\\ReturnStatus::isRequested","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#104","App\\Returns\\Domain\\ValueObject\\ReturnStatus::isApproved","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#109","App\\Returns\\Domain\\ValueObject\\ReturnStatus::isReceived","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#114","App\\Returns\\Domain\\ValueObject\\ReturnStatus::isInspected","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#119","App\\Returns\\Domain\\ValueObject\\ReturnStatus::isCompleted","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#124","App\\Returns\\Domain\\ValueObject\\ReturnStatus::isRejected","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#137","App\\Returns\\Domain\\ValueObject\\ReturnStatus::canTransitionTo","1"],[100,1,"Domain\/ValueObject\/ReturnStatus.php.html#154","App\\Returns\\Domain\\ValueObject\\ReturnStatus::equals","1"]]</script>
+  <script type="text/javascript" defer>
+  const barLabels = [
+    '0%',
+    '0-10%',
+    '10-20%',
+    '20-30%',
+    '30-40%',
+    '40-50%',
+    '50-60%',
+    '60-70%',
+    '70-80%',
+    '80-90%',
+    '90-100%',
+    '100%'
+  ];
+  const barConfig = (name, fullName, values) => ({
+    axis: {
+      x: {
+        type: "category",
+        categories: barLabels,
+      },
+      y: {
+        label: {
+          text: `#${name}`,
+          position: 'outer-top',
+        },
+      },
+    },
+    bindto: `#${name}CoverageDistribution`,
+    data: {
+      columns: [
+        [fullName].concat(values),
+      ],
+      colors: {
+        [fullName]: "rgba(69, 114, 167, 0.75)",
+      },
+      type: "bar",
+    },
+    bar: {
+      width: {
+        ratio: 0.9,
+      },
+    },
+    grid: {
+      focus: {
+        show: false,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">Coverage ${barLabels[data[0].x]}</th></tr>
+            <tr><td class="value">${data[0].value} ${name}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  bb.generate(
+    barConfig('classes', "Class Coverage", [37,0,0,0,0,0,0,0,0,2,0,10])
+  );
+  bb.generate(
+    barConfig('methods', "Method Coverage", [116,0,0,0,0,0,0,0,0,0,0,71])
+  );
+
+  const scatterConfig = (name, complexityData) => ({
+    axis: {
+      x: {
+        label: {
+          text: 'Code Coverage (in percent)',
+          position: 'outer-right',
+        },
+        tick: {
+          values: [0, 20, 40, 60, 80, 100],
+        },
+      },
+      y: {
+        label: {
+          text: 'Cyclomatic Complexity',
+          position: 'outer-top',
+        },
+        min: 0,
+        padding: {
+          bottom: 0,
+          top: 5,
+        },
+      },
+    },
+    bindto: `#${name}Complexity`,
+    data: {
+      columns: [
+        ["complexity_x"].concat(complexityData.map(d => d[0])),
+        ["complexity"].concat(complexityData.map(d => d[1])),
+      ],
+      onclick: function(data, element) {
+        window.location = complexityData[data.index][2];
+      },
+      type: "scatter",
+      xs: {
+        "complexity": "complexity_x",
+      },
+    },
+    grid: {
+      focus: {
+        show: true,
+        y: true,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        const coverage = Math.round(data[0].x);
+        const complexity = data[0].value;
+        const targetName = complexityData[data[0].index][3];
+        const crap = complexityData[data[0].index][4];
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">${targetName}</th></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Coverage</td><td class="name">${coverage}%</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Complexity</td><td class="value">${complexity}</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Crap</td><td class="value">${crap}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  const classComplexityData = JSON.parse(document.getElementById('complexity_class').textContent);
+  bb.generate(
+    scatterConfig("class", classComplexityData)
+  );
+  const methodComplexityData = JSON.parse(document.getElementById('complexity_method').textContent);
+  bb.generate(
+    scatterConfig("method", methodComplexityData),
+  );
+  </script>
+ </body>
+</html>

@@ -36,17 +36,30 @@ final readonly class VariantItemProvider implements ProviderInterface
             throw new \RuntimeException('X-Tenant-ID header is required');
         }
 
-        // Get product ID and variant ID from URI variables
-        if (!isset($uriVariables['productId'])) {
-            throw new \InvalidArgumentException('Product ID is required in URI');
-        }
-
+        // Get variant ID from URI variables
         if (!isset($uriVariables['id'])) {
             throw new \InvalidArgumentException('Variant ID is required in URI');
         }
 
-        $productIdString = (string) $uriVariables['productId'];
         $variantIdString = (string) $uriVariables['id'];
+
+        // Get product ID from URI variables or query parameter
+        $productIdString = null;
+
+        // Check URI variables first (for nested routes like /products/{productId}/variants/{id})
+        if (isset($uriVariables['productId'])) {
+            $productIdString = (string) $uriVariables['productId'];
+        }
+
+        // Check query parameters (for routes like /variants/{id}?productId=xxx)
+        if (!$productIdString && $request) {
+            $queryProductId = $request->query->get('productId');
+            $productIdString = is_string($queryProductId) ? $queryProductId : null;
+        }
+
+        if (!$productIdString) {
+            throw new \InvalidArgumentException('Product ID is required (provide as productId query parameter)');
+        }
 
         // Find configurable product
         $configurableProduct = $this->configurableProductRepository->findByProductId(
@@ -115,6 +128,9 @@ final readonly class VariantItemProvider implements ProviderInterface
         $imagesProperty = $reflection->getProperty('images');
         $imagesProperty->setAccessible(true);
         $imagesProperty->setValue($entity, array_map(fn ($img) => $img->toArray(), $variant->getImages()));
+
+        // Set the productId temporary field for processors to use
+        $entity->productId = $productIdString;
 
         return $entity;
     }

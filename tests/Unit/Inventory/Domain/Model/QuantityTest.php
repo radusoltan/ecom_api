@@ -106,4 +106,100 @@ final class QuantityTest extends TestCase
         $this->assertEquals('42', $quantity->toString());
         $this->assertEquals('42', (string) $quantity);
     }
+
+    public function testAddResultCannotExceedMaxQuantity(): void
+    {
+        $qty1 = Quantity::fromInt(999000);
+        $qty2 = Quantity::fromInt(5000);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Quantity cannot exceed 999999');
+
+        $qty1->add($qty2);
+    }
+
+    public function testIsLessThanOrEqual(): void
+    {
+        $qty5 = Quantity::fromInt(5);
+        $qty10 = Quantity::fromInt(10);
+        $qty10b = Quantity::fromInt(10);
+
+        $this->assertTrue($qty5->isLessThanOrEqual($qty10));
+        $this->assertTrue($qty10->isLessThanOrEqual($qty10b));
+        $this->assertFalse($qty10->isLessThanOrEqual($qty5));
+    }
+
+    public function testAddWithZeroQuantity(): void
+    {
+        $qty = Quantity::fromInt(10);
+        $zero = Quantity::zero();
+
+        $result = $qty->add($zero);
+
+        $this->assertEquals(10, $result->value());
+    }
+
+    public function testSubtractWithZeroQuantity(): void
+    {
+        $qty = Quantity::fromInt(10);
+        $zero = Quantity::zero();
+
+        $result = $qty->subtract($zero);
+
+        $this->assertEquals(10, $result->value());
+    }
+
+    public function testSubtractResultingInZero(): void
+    {
+        $qty = Quantity::fromInt(10);
+
+        $result = $qty->subtract($qty);
+
+        $this->assertTrue($result->isZero());
+        $this->assertEquals(0, $result->value());
+    }
+
+    public function testMaxQuantityBoundary(): void
+    {
+        $maxQuantity = Quantity::fromInt(999999);
+
+        $this->assertEquals(999999, $maxQuantity->value());
+        $this->assertTrue($maxQuantity->isPositive());
+    }
+
+    public function testZeroBoundary(): void
+    {
+        $zero = Quantity::fromInt(0);
+
+        $this->assertEquals(0, $zero->value());
+        $this->assertTrue($zero->isZero());
+        $this->assertFalse($zero->isPositive());
+    }
+
+    public function testEqualityReflexive(): void
+    {
+        $qty = Quantity::fromInt(42);
+
+        $this->assertTrue($qty->equals($qty));
+    }
+
+    public function testEqualitySymmetric(): void
+    {
+        $qty1 = Quantity::fromInt(42);
+        $qty2 = Quantity::fromInt(42);
+
+        $this->assertTrue($qty1->equals($qty2));
+        $this->assertTrue($qty2->equals($qty1));
+    }
+
+    public function testComparisonWithSameValue(): void
+    {
+        $qty1 = Quantity::fromInt(10);
+        $qty2 = Quantity::fromInt(10);
+
+        $this->assertFalse($qty1->isGreaterThan($qty2));
+        $this->assertTrue($qty1->isGreaterThanOrEqual($qty2));
+        $this->assertFalse($qty1->isLessThan($qty2));
+        $this->assertTrue($qty1->isLessThanOrEqual($qty2));
+    }
 }

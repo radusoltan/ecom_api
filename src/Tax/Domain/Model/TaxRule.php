@@ -4,184 +4,280 @@ declare(strict_types=1);
 
 namespace App\Tax\Domain\Model;
 
+use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Tax\Domain\Event\TaxRateChanged;
+use App\Tax\Domain\Event\TaxRuleActivated;
 use App\Tax\Domain\Event\TaxRuleCreated;
 use App\Tax\Domain\Event\TaxRuleDeactivated;
-use App\Tax\Domain\Event\TaxRuleUpdated;
-use App\Tax\Domain\ValueObject\TaxJurisdiction;
-use App\Tax\Domain\ValueObject\TaxRate;
-use App\Tax\Domain\ValueObject\TaxRuleId;
 
 /**
- * Tax Rule Aggregate Root.
+ * TaxRule Aggregate Root.
  *
- * Represents a tax rule for a specific jurisdiction.
- * Supports multi-jurisdiction tax calculation with destination-based logic.
+ * Defines how tax is calculated for a specific jurisdiction and category.
+ * Each rule belongs to a tenant (multi-tenancy) and can be time-limited.
  *
  * Business Rules:
- * - Each tax rule applies to one jurisdiction (country or country+region)
- * - Tax rate must be between 0-100%
- * - Multiple tax rules can exist per tenant for different jurisdictions
- * - Tax rules can be active/inactive
- * - Tax name is for display purposes (e.g., "VAT", "Sales Tax", "GST")
+ * - A TaxRule defines how tax is calculated for a specific jurisdiction and category
+ * - Each rule belongs to a tenant (multi-tenancy)
+ * - Rules have priority for conflict resolution (higher priority wins)
+ * - Rules can be activated/deactivated
+ * - Start and end dates for time-limited tax rules (e.g., COVID relief periods)
+ * - B2B rules can specify reverse charge mechanism for EU VAT
+ * - Priority must be >= 0 (default 0)
+ * - validFrom must be <= validTo (if validTo is set)
+ * - Cannot change rate on inactive rule
+ * - Name must not be empty
+ *
+ * Examples:
+ * - Standard VAT DE: 19% standard rate for Germany
+ * - Reduced VAT FR: 5.5% reduced rate for France (books, food)
+ * - COVID Relief DE: 16% temporary standard rate (Jul-Dec 2020)
+ * - B2B Reverse Charge: 0% with reverse charge for EU B2B transactions
  */
-final class TaxRule
+final class TaxRule extends AggregateRoot
 {
-    /** @var array<string, mixed> */
-    private array $domainEvents = [];
+    private TaxRuleId $id;
+    private TenantId $tenantId;
+    private TaxJurisdiction $jurisdiction;
+    private TaxCategory $category;
+    private TaxRate $rate;
+    private string $name;
+    private ?string $description = null;
+    private int $priority = 0;
+    private bool $isActive = true;
+    private \DateTimeImmutable $validFrom;
+    private ?\DateTimeImmutable $validTo = null;
+    private bool $isReverseCharge = false;
+    private \DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $updatedAt;
 
-    private function __construct(
-        private TaxRuleId $id,
-        private TenantId $tenantId,
-        private string $name,
-        private TaxJurisdiction $jurisdiction,
-        private TaxRate $rate,
-        private bool $isActive,
-        private \DateTimeImmutable $createdAt,
-        private \DateTimeImmutable $updatedAt
-    ) {
+    private function __construct()
+    {
     }
 
-    /**
-     * Create new tax rule.
-     */
     public static function create(
         TaxRuleId $id,
         TenantId $tenantId,
-        string $name,
         TaxJurisdiction $jurisdiction,
-        TaxRate $rate
+        TaxCategory $category,
+        TaxRate $rate,
+        string $name,
+        ?string $description = null,
+        int $priority = 0,
+        bool $isActive = true,
+        ?\DateTimeImmutable $validFrom = null,
+        ?\DateTimeImmutable $validTo = null,
+        bool $isReverseCharge = false
     ): self {
-        $name = trim($name);
-        if (strlen($name) < 2 || strlen($name) > 100) {
-            throw new \InvalidArgumentException('Tax rule name must be between 2 and 100 characters');
+        // Validate name
+        $trimmedName = trim($name);
+        if (empty($trimmedName)) {
+            throw new \InvalidArgumentException('Tax rule name cannot be empty');
         }
 
-        $now = new \DateTimeImmutable();
+        // Validate priority
+        if ($priority < 0) {
+            throw new \InvalidArgumentException(
+                sprintf('Priority must be >= 0, got %d', $priority)
+            );
+        }
 
-        $taxRule = new self(
-            id: $id,
-            tenantId: $tenantId,
-            name: $name,
-            jurisdiction: $jurisdiction,
-            rate: $rate,
-            isActive: true,
-            createdAt: $now,
-            updatedAt: $now
-        );
+        // Validate date range
+        $from = $validFrom ?? new \DateTimeImmutable();
+        if ($validTo !== null && $from > $validTo) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'validFrom (%s) must be <= validTo (%s)',
+                    $from->format('Y-m-d H:i:s'),
+                    $validTo->format('Y-m-d H:i:s')
+                )
+            );
+        }
 
-        $taxRule->recordEvent(new TaxRuleCreated(
-            taxRuleId: $id,
-            tenantId: $tenantId,
-            name: $name,
-            jurisdiction: $jurisdiction,
-            rate: $rate
+        // Validate reverse charge logic
+        if ($isReverseCharge && !$jurisdiction->isEu()) {
+            throw new \InvalidArgumentException(
+                'Reverse charge mechanism is only applicable to EU jurisdictions'
+            );
+        }
+
+        if ($isReverseCharge && $category === TaxCategory::EXEMPT) {
+            throw new \InvalidArgumentException(
+                'Reverse charge cannot be applied to exempt category'
+            );
+        }
+
+        $rule = new self();
+        $rule->id = $id;
+        $rule->tenantId = $tenantId;
+        $rule->jurisdiction = $jurisdiction;
+        $rule->category = $category;
+        $rule->rate = $rate;
+        $rule->name = $trimmedName;
+        $rule->description = $description;
+        $rule->priority = $priority;
+        $rule->isActive = $isActive;
+        $rule->validFrom = $from;
+        $rule->validTo = $validTo;
+        $rule->isReverseCharge = $isReverseCharge;
+        $rule->createdAt = new \DateTimeImmutable();
+        $rule->updatedAt = new \DateTimeImmutable();
+
+        $rule->recordEvent(new TaxRuleCreated(
+            $rule->id,
+            $rule->tenantId,
+            $rule->jurisdiction,
+            $rule->category,
+            $rule->rate,
+            $rule->name,
+            $rule->priority,
+            $rule->isActive
         ));
 
-        return $taxRule;
+        return $rule;
     }
 
-    /**
-     * Update tax rule details.
-     */
-    public function update(
+    public static function reconstituteFromPersistence(
+        TaxRuleId $id,
+        TenantId $tenantId,
+        TaxJurisdiction $jurisdiction,
+        TaxCategory $category,
+        TaxRate $rate,
         string $name,
-        TaxRate $rate
-    ): void {
-        $name = trim($name);
-        if (strlen($name) < 2 || strlen($name) > 100) {
-            throw new \InvalidArgumentException('Tax rule name must be between 2 and 100 characters');
+        ?string $description,
+        int $priority,
+        bool $isActive,
+        \DateTimeImmutable $validFrom,
+        ?\DateTimeImmutable $validTo,
+        bool $isReverseCharge,
+        \DateTimeImmutable $createdAt,
+        \DateTimeImmutable $updatedAt
+    ): self {
+        $rule = new self();
+        $rule->id = $id;
+        $rule->tenantId = $tenantId;
+        $rule->jurisdiction = $jurisdiction;
+        $rule->category = $category;
+        $rule->rate = $rate;
+        $rule->name = $name;
+        $rule->description = $description;
+        $rule->priority = $priority;
+        $rule->isActive = $isActive;
+        $rule->validFrom = $validFrom;
+        $rule->validTo = $validTo;
+        $rule->isReverseCharge = $isReverseCharge;
+        $rule->createdAt = $createdAt;
+        $rule->updatedAt = $updatedAt;
+
+        return $rule;
+    }
+
+    public function activate(): void
+    {
+        if ($this->isActive) {
+            throw new \InvalidArgumentException('Tax rule is already active');
         }
 
-        $this->name = $name;
-        $this->rate = $rate;
+        $this->isActive = true;
         $this->updatedAt = new \DateTimeImmutable();
 
-        $this->recordEvent(new TaxRuleUpdated(
-            taxRuleId: $this->id,
-            tenantId: $this->tenantId,
-            name: $this->name,
-            rate: $this->rate
+        $this->recordEvent(new TaxRuleActivated(
+            $this->id,
+            $this->tenantId,
+            $this->jurisdiction,
+            $this->category
         ));
     }
 
-    /**
-     * Deactivate tax rule.
-     */
     public function deactivate(): void
     {
         if (!$this->isActive) {
-            throw new \DomainException(sprintf('Tax rule "%s" is already inactive', $this->id->toString()));
+            throw new \InvalidArgumentException('Tax rule is already inactive');
         }
 
         $this->isActive = false;
         $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new TaxRuleDeactivated(
-            taxRuleId: $this->id,
-            tenantId: $this->tenantId
+            $this->id,
+            $this->tenantId,
+            $this->jurisdiction,
+            $this->category
         ));
     }
 
-    /**
-     * Activate tax rule.
-     */
-    public function activate(): void
+    public function updateRate(TaxRate $rate): void
     {
-        if ($this->isActive) {
-            throw new \DomainException(sprintf('Tax rule "%s" is already active', $this->id->toString()));
+        if (!$this->isActive) {
+            throw new \InvalidArgumentException(
+                'Cannot change tax rate on inactive rule. Activate the rule first.'
+            );
         }
 
-        $this->isActive = true;
+        if ($this->rate->equals($rate)) {
+            return; // No change needed
+        }
+
+        $oldRate = $this->rate;
+        $this->rate = $rate;
+        $this->updatedAt = new \DateTimeImmutable();
+
+        $this->recordEvent(new TaxRateChanged(
+            $this->id,
+            $this->tenantId,
+            $this->jurisdiction,
+            $this->category,
+            $oldRate,
+            $rate
+        ));
+    }
+
+    public function updateValidity(
+        \DateTimeImmutable $from,
+        ?\DateTimeImmutable $to = null
+    ): void {
+        if ($to !== null && $from > $to) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'validFrom (%s) must be <= validTo (%s)',
+                    $from->format('Y-m-d H:i:s'),
+                    $to->format('Y-m-d H:i:s')
+                )
+            );
+        }
+
+        $this->validFrom = $from;
+        $this->validTo = $to;
         $this->updatedAt = new \DateTimeImmutable();
     }
 
-    /**
-     * Check if this rule applies to given jurisdiction.
-     */
-    public function appliesTo(TaxJurisdiction $jurisdiction): bool
+    public function isValidAt(\DateTimeImmutable $date): bool
     {
         if (!$this->isActive) {
             return false;
         }
 
-        return $this->jurisdiction->matches($jurisdiction);
+        // Check if date is after validFrom
+        if ($date < $this->validFrom) {
+            return false;
+        }
+
+        // Check if date is before validTo (if set)
+        if ($this->validTo !== null && $date > $this->validTo) {
+            return false;
+        }
+
+        return true;
     }
 
-    /**
-     * Calculate tax amount for given price.
-     */
-    public function calculateTax(int $priceInCents): int
-    {
-        return $this->rate->calculateTaxAmount($priceInCents);
-    }
-
-    /**
-     * Reconstitute from persistence.
-     */
-    public static function reconstituteFromPersistence(
-        TaxRuleId $id,
-        TenantId $tenantId,
-        string $name,
+    public function appliesTo(
         TaxJurisdiction $jurisdiction,
-        TaxRate $rate,
-        bool $isActive,
-        \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
-    ): self {
-        return new self(
-            id: $id,
-            tenantId: $tenantId,
-            name: $name,
-            jurisdiction: $jurisdiction,
-            rate: $rate,
-            isActive: $isActive,
-            createdAt: $createdAt,
-            updatedAt: $updatedAt
-        );
+        TaxCategory $category
+    ): bool {
+        return $this->jurisdiction->equals($jurisdiction)
+            && $this->category === $category;
     }
-
-    // Getters
 
     public function id(): TaxRuleId
     {
@@ -193,14 +289,14 @@ final class TaxRule
         return $this->tenantId;
     }
 
-    public function name(): string
-    {
-        return $this->name;
-    }
-
     public function jurisdiction(): TaxJurisdiction
     {
         return $this->jurisdiction;
+    }
+
+    public function category(): TaxCategory
+    {
+        return $this->category;
     }
 
     public function rate(): TaxRate
@@ -208,9 +304,39 @@ final class TaxRule
         return $this->rate;
     }
 
+    public function name(): string
+    {
+        return $this->name;
+    }
+
+    public function description(): ?string
+    {
+        return $this->description;
+    }
+
+    public function priority(): int
+    {
+        return $this->priority;
+    }
+
     public function isActive(): bool
     {
         return $this->isActive;
+    }
+
+    public function validFrom(): \DateTimeImmutable
+    {
+        return $this->validFrom;
+    }
+
+    public function validTo(): ?\DateTimeImmutable
+    {
+        return $this->validTo;
+    }
+
+    public function isReverseCharge(): bool
+    {
+        return $this->isReverseCharge;
     }
 
     public function createdAt(): \DateTimeImmutable
@@ -221,20 +347,5 @@ final class TaxRule
     public function updatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
-    }
-
-    // Domain events
-
-    private function recordEvent(object $event): void
-    {
-        $this->domainEvents[] = $event;
-    }
-
-    public function pullDomainEvents(): array
-    {
-        $events = $this->domainEvents;
-        $this->domainEvents = [];
-
-        return $events;
     }
 }

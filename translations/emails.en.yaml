@@ -30,14 +30,6 @@ customer:
     title: "Account Verified!"
     body: "Your email address has been successfully verified. You can now enjoy all features of your account."
 
-cart:
-  abandoned:
-    subject: "You left items in your cart"
-    title: "Don't forget about your cart!"
-    body: "You have {{ count }} item(s) waiting for you in your cart."
-    complete: "Complete your purchase"
-    expires: "Items in your cart are reserved for {{ hours }} hours."
-
 notification:
   low_stock:
     subject: "Product back in stock: {{ product_name }}"
@@ -45,6 +37,7 @@ notification:
     body: "{{ product_name }} is back in stock. Get it before it's gone again!"
     shop_now: "Shop Now"
 
+# All email templates under single emails key
 emails:
   default_title: 'Notification'
 
@@ -55,10 +48,31 @@ emails:
     contact: 'Contact Support'
     copyright: '© %year% All rights reserved.'
 
+  # Cart email templates
+  cart:
+    abandoned:
+      title: 'You left items in your cart'
+      subject: 'You left items in your cart'
+      header: "Don't Forget Your Cart!"
+      greeting: 'Hello %customer_name%,'
+      message: "We noticed you left %item_count% item(s) in your shopping cart. Complete your purchase before they're gone!"
+      cart_summary: 'Your Cart Summary'
+      items: 'Items'
+      total: 'Total'
+      expires: 'Cart Expires'
+      your_items: 'Items in Your Cart'
+      special_offer: 'Special Offer'
+      discount_message: 'Complete your order now and get %discount% off!'
+      complete_order: 'Complete Your Order'
+      hurry: "Don't wait! Items in your cart may sell out or prices may change."
+      questions: 'Have questions? Our customer support team is here to help!'
+
+  # Order email templates
   order:
     order_details: 'Order Details'
     order_id: 'Order ID'
     order_date: 'Order Date'
+    status_label: 'Status'
     total: 'Total'
     items: 'Order Items'
     shipping_address: 'Shipping Address'
@@ -101,7 +115,7 @@ emails:
       greeting: 'Dear %customer_name%,'
       confirmation: 'Thank you for your order! We have received your order and will process it shortly.'
       next_steps: 'We will send you another email once your payment is confirmed and your order is being prepared for shipment.'
-      questions: 'If you have any questions about your order, please don''t hesitate to contact our support team.'
+      questions: "If you have any questions about your order, please don't hesitate to contact our support team."
 
     paid:
       title: 'Payment Confirmed'
@@ -135,4 +149,76 @@ emails:
       confirmation: 'Great news! Your order has been successfully delivered.'
       enjoy_message: 'We hope you enjoy your purchase!'
       feedback_request: 'We would love to hear your feedback about your experience. Please consider leaving a review.'
-      questions: 'If you have any questions or concerns about your order, please don''t hesitate to contact our support team.'
+      questions: "If you have any questions or concerns about your order, please don't hesitate to contact our support team."
+
+  # Payment email templates
+  payment:
+    # Shared keys
+    payment_details: 'Payment Details'
+    payment_id: 'Payment ID'
+    amount: 'Amount'
+    date: 'Date'
+    order_id: 'Order ID'
+    view_order: 'View Order'
+    questions: 'If you have any questions, please contact our support team.'
+    footer_automated: 'This is an automated email. Please do not reply to this message.'
+
+    # Payment Captured (Success)
+    captured:
+      title: 'Payment Confirmation'
+      header: 'Payment Successful'
+      greeting: 'Dear %customer_name%,'
+      confirmation: 'We have successfully received your payment. Thank you for your purchase!'
+      what_happens_next: 'What Happens Next'
+      next_steps: 'Your order is now being processed. You will receive a shipping confirmation email once your order has been dispatched.'
+      receipt_notice: 'This email serves as your payment receipt.'
+
+    # Payment Failed
+    failed:
+      title: 'Payment Failed'
+      header: 'Payment Unsuccessful'
+      greeting: 'Dear %customer_name%,'
+      confirmation: 'We were unable to process your payment. Your order has not been completed.'
+      error_details: 'Error Details'
+      error_message: 'Error'
+      what_to_do: 'What to Do Next'
+      try_again: 'Try Payment Again'
+      action_check_info: 'Check that your payment information is correct'
+      action_check_funds: 'Ensure you have sufficient funds available'
+      action_contact_bank: 'Contact your bank if you believe this is an error'
+      action_try_different: 'Try using a different payment method'
+      retry_notice: 'Automatic Retry Scheduled'
+      retry_message: 'We will automatically attempt to process your payment again in %retry_delay%. You will receive a notification before the retry attempt.'
+      final_failure: 'All Retry Attempts Exhausted'
+      final_failure_message: 'We were unable to process your payment after multiple attempts. Please update your payment method or try a different card.'
+
+    # Payment Refunded
+    refunded:
+      title: 'Refund Processed'
+      header: 'Refund Confirmation'
+      greeting: 'Dear %customer_name%,'
+      confirmation: 'We have processed your refund. The funds will be returned to your original payment method.'
+      refund_details: 'Refund Details'
+      refund_amount: 'Refund Amount'
+      reason: 'Reason'
+      processing_time: 'Processing Time'
+      processing_notice: 'Depending on your payment method and financial institution, it may take 5-10 business days for the refund to appear in your account.'
+      card_refund_time: 'Credit/Debit Cards: 5-10 business days'
+      bank_refund_time: 'Bank Transfers: 3-7 business days'
+      apology: 'We apologize for any inconvenience and hope to serve you again in the future.'
+
+    # Payment Cancelled
+    cancelled:
+      title: 'Payment Cancelled'
+      header: 'Payment Cancellation'
+      greeting: 'Dear %customer_name%,'
+      confirmation: 'Your payment has been cancelled. No charges have been made to your account.'
+      cancellation_details: 'Cancellation Details'
+      reason: 'Reason'
+      no_charge_notice: 'No Charges Applied'
+      no_charge_message: 'Your payment was cancelled before any funds were captured. No charges have been made to your payment method.'
+      what_happens_next: 'What Happens Next'
+      order_not_processed: 'Your order will not be processed'
+      funds_released: 'Any authorization hold will be released within 1-3 business days'
+      place_new_order: 'Place New Order'
+      try_again_message: 'If you still wish to complete your purchase, please place a new order.'

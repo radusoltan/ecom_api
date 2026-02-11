@@ -128,7 +128,7 @@ class ReturnRequestEntity
     {
         $refundAmount = null;
         if (null !== $this->refundAmount && null !== $this->refundCurrency) {
-            $refundAmount = Money::fromScalars($this->refundAmount, $this->refundCurrency);
+            $refundAmount = Money::fromScalars((int) $this->refundAmount, $this->refundCurrency);
         }
 
         return ReturnRequest::reconstituteFromPersistence(

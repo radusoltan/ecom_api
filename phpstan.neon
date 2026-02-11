@@ -9,3 +9,4 @@ parameters:
         - src/Kernel.php
     tmpDir: var/cache/phpstan
     treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false

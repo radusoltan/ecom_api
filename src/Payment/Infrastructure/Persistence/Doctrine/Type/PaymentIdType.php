@@ -4,26 +4,40 @@ declare(strict_types=1);
 
 namespace App\Payment\Infrastructure\Persistence\Doctrine\Type;
 
-use App\Payment\Domain\ValueObject\PaymentId;
+use App\Payment\Domain\Model\PaymentId;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 
+/**
+ * Custom Doctrine type for PaymentId value object.
+ *
+ * Converts between PaymentId (PHP) and UUID string (database).
+ */
 final class PaymentIdType extends Type
 {
     private const TYPE_NAME = 'payment_id';
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getStringTypeDeclarationSQL(['length' => 26]);
+        return $platform->getStringTypeDeclarationSQL(['length' => 36]);
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?PaymentId
     {
-        if (null === $value) {
+        if (null === $value || '' === $value) {
             return null;
         }
 
-        return PaymentId::fromString((string) $value);
+        if ($value instanceof PaymentId) {
+            return $value;
+        }
+
+        try {
+            return PaymentId::fromString((string) $value);
+        } catch (\InvalidArgumentException $e) {
+            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'UUID v4 string', $e);
+        }
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
@@ -36,7 +50,7 @@ final class PaymentIdType extends Type
             return $value->toString();
         }
 
-        throw new \InvalidArgumentException(sprintf('Expected %s, got %s', PaymentId::class, get_debug_type($value)));
+        throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', PaymentId::class]);
     }
 
     public function getName(): string

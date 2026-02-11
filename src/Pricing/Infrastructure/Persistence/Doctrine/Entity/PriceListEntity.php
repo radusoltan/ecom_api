@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Pricing\Infrastructure\Persistence\Doctrine\Entity;
 
 use App\Catalog\Domain\Model\ProductId;
+use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Pricing\Domain\Model\Discount;
 use App\Pricing\Domain\Model\PriceList;
 use App\Pricing\Domain\Model\PriceListId;
 use App\Pricing\Domain\Model\PriceListName;
 use App\Pricing\Domain\Model\PricingRule;
+use App\Pricing\Domain\ValueObject\SegmentPricingRule;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\DBAL\Types\Types;
@@ -43,6 +45,9 @@ class PriceListEntity
     #[ORM\Column(type: Types::JSON)]
     private array $rules = [];
 
+    #[ORM\Column(type: Types::JSON)]
+    private array $segmentRules = [];
+
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $validFrom = null;
 
@@ -69,6 +74,7 @@ class PriceListEntity
         $entity->name = $priceList->name()->value();
         $entity->priority = $priceList->priority();
         $entity->rules = array_map(fn ($rule) => $rule->toArray(), $priceList->rules());
+        $entity->segmentRules = array_map(fn ($rule) => $rule->toArray(), $priceList->segmentRules());
         $entity->validFrom = $priceList->validFrom();
         $entity->validTo = $priceList->validTo();
         $entity->isActive = $priceList->isActive();
@@ -86,6 +92,7 @@ class PriceListEntity
         $this->name = $priceList->name()->value();
         $this->priority = $priceList->priority();
         $this->rules = array_map(fn ($rule) => $rule->toArray(), $priceList->rules());
+        $this->segmentRules = array_map(fn ($rule) => $rule->toArray(), $priceList->segmentRules());
         $this->validFrom = $priceList->validFrom();
         $this->validTo = $priceList->validTo();
         $this->isActive = $priceList->isActive();
@@ -102,12 +109,18 @@ class PriceListEntity
             $this->rules
         );
 
+        $segmentRules = array_map(
+            fn (array $ruleData) => SegmentPricingRule::fromArray($ruleData),
+            $this->segmentRules
+        );
+
         return PriceList::reconstituteFromPersistence(
             PriceListId::fromString($this->id),
             TenantId::fromString($this->tenantId),
             PriceListName::fromString($this->name),
             $this->priority,
             $rules,
+            $segmentRules,
             $this->validFrom,
             $this->validTo,
             $this->isActive,

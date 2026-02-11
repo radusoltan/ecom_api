@@ -15,18 +15,31 @@ use App\Catalog\Domain\ValueObject\SubscriptionInterval;
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Tests\Support\TenantTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class SubscriptionPersistenceTest extends KernelTestCase
 {
-    public function testSubscriptionDataPersistsAndReconstitutes(): void
+    use TenantTestTrait;
+
+    private TenantId $tenantId;
+
+    protected function setUp(): void
     {
+        parent::setUp();
         self::bootKernel();
 
+        // Set tenant context for RLS
+        $this->tenantId = $this->getDefaultTenantId();
+        $this->setTenantContext($this->tenantId->toString());
+    }
+
+    public function testSubscriptionDataPersistsAndReconstitutes(): void
+    {
         // Create product with subscription
         $product = Product::create(
             id: ProductId::generate(),
-            tenantId: TenantId::generate(),
+            tenantId: $this->tenantId,
             sku: SKU::fromString('SUB-123456'),
             name: ProductName::fromString('Monthly Box'),
             description: 'Subscription box',
@@ -68,11 +81,9 @@ final class SubscriptionPersistenceTest extends KernelTestCase
 
     public function testProductWithoutSubscriptionReconstitutesCorrectly(): void
     {
-        self::bootKernel();
-
         $product = Product::create(
             id: ProductId::generate(),
-            tenantId: TenantId::generate(),
+            tenantId: $this->tenantId,
             sku: SKU::fromString('SIM-123456'),
             name: ProductName::fromString('Simple Product'),
             description: 'Simple',

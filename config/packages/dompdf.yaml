@@ -1,0 +1,29 @@
+# DomPDF Configuration for Invoice Generation
+parameters:
+    dompdf.options:
+        # Paper size
+        defaultPaperSize: 'A4'
+        defaultPaperOrientation: 'portrait'
+
+        # Font settings
+        defaultFont: 'DejaVu Sans'
+        isFontSubsettingEnabled: true
+
+        # Enable remote content (for logos)
+        isRemoteEnabled: true
+
+        # Enable HTML5 parser
+        isHtml5ParserEnabled: true
+
+        # Cache and temp directories
+        fontDir: '%kernel.project_dir%/var/fonts'
+        fontCache: '%kernel.project_dir%/var/fonts'
+        tempDir: '%kernel.project_dir%/var/tmp'
+
+        # Debug
+        debugCss: false
+        debugLayout: false
+        debugLayoutLines: false
+        debugLayoutBlocks: false
+        debugLayoutInline: false
+        debugLayoutPaddingBox: false

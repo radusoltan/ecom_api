@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/new_ecom/backend/src/Tenant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/billboard.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/var/www/new_ecom/backend/src</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Tenant</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classesCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Application/Command/ActivateTenantCommandHandler.php.html#15">App\Tenant\Application\Command\ActivateTenantCommandHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CreateTenantCommandHandler.php.html#16">App\Tenant\Application\Command\CreateTenantCommandHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeactivateTenantCommandHandler.php.html#15">App\Tenant\Application\Command\DeactivateTenantCommandHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeleteTenantCommand.php.html#7">App\Tenant\Application\Command\DeleteTenantCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeleteTenantCommandHandler.php.html#11">App\Tenant\Application\Command\DeleteTenantCommandHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DisableLocaleCommand.php.html#7">App\Tenant\Application\Command\DisableLocaleCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DisableLocaleCommandHandler.php.html#16">App\Tenant\Application\Command\DisableLocaleCommandHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/EnableLocaleCommand.php.html#7">App\Tenant\Application\Command\EnableLocaleCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/EnableLocaleCommandHandler.php.html#16">App\Tenant\Application\Command\EnableLocaleCommandHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/ReactivateTenantCommand.php.html#7">App\Tenant\Application\Command\ReactivateTenantCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/ReactivateTenantCommandHandler.php.html#15">App\Tenant\Application\Command\ReactivateTenantCommandHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SetDefaultLocaleCommand.php.html#7">App\Tenant\Application\Command\SetDefaultLocaleCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SetDefaultLocaleCommandHandler.php.html#16">App\Tenant\Application\Command\SetDefaultLocaleCommandHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SuspendTenantCommand.php.html#7">App\Tenant\Application\Command\SuspendTenantCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SuspendTenantCommandHandler.php.html#15">App\Tenant\Application\Command\SuspendTenantCommandHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/UpdateTenantCommand.php.html#7">App\Tenant\Application\Command\UpdateTenantCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/UpdateTenantCommandHandler.php.html#13">App\Tenant\Application\Command\UpdateTenantCommandHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetAllTenantsQueryHandler.php.html#14">App\Tenant\Application\Query\GetAllTenantsQueryHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetTenantByIdQueryHandler.php.html#16">App\Tenant\Application\Query\GetTenantByIdQueryHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetTenantByOwnerEmailQueryHandler.php.html#14">App\Tenant\Application\Query\GetTenantByOwnerEmailQueryHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/TenantUpdated.php.html#11">App\Tenant\Domain\Event\TenantUpdated</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Exception/TenantAlreadyExistsException.php.html#9">App\Tenant\Domain\Exception\TenantAlreadyExistsException</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Exception/TenantNotFoundException.php.html#9">App\Tenant\Domain\Exception\TenantNotFoundException</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Command/DemoTranslatableTenantCommand.php.html#26">App\Tenant\Infrastructure\Command\DemoTranslatableTenantCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Command/SimpleDemoTranslatableCommand.php.html#22">App\Tenant\Infrastructure\Command\SimpleDemoTranslatableCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#17">App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantIdType.php.html#12">App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantNameType.php.html#12">App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantNameType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantStatusType.php.html#12">App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantStatusType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Repository/DoctrineORMTenantRepository.php.html#15">App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DeleteTenantProcessor.php.html#16">App\Tenant\Presentation\Api\Processor\DeleteTenantProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DisableLocaleProcessor.php.html#20">App\Tenant\Presentation\Api\Processor\DisableLocaleProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/EnableLocaleProcessor.php.html#20">App\Tenant\Presentation\Api\Processor\EnableLocaleProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ReactivateTenantProcessor.php.html#20">App\Tenant\Presentation\Api\Processor\ReactivateTenantProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/SetDefaultLocaleProcessor.php.html#20">App\Tenant\Presentation\Api\Processor\SetDefaultLocaleProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/SuspendTenantProcessor.php.html#20">App\Tenant\Presentation\Api\Processor\SuspendTenantProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/UpdateTenantProcessor.php.html#19">App\Tenant\Presentation\Api\Processor\UpdateTenantProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/TenantCollectionProvider.php.html#19">App\Tenant\Presentation\Api\Provider\TenantCollectionProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/TenantItemProvider.php.html#19">App\Tenant\Presentation\Api\Provider\TenantItemProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/DTO/TenantDTO.php.html#9">App\Tenant\Application\DTO\TenantDTO</a></td><td class="text-right">7%</td></tr>
+       <tr><td><a href="Domain/Event/TenantReactivated.php.html#9">App\Tenant\Domain\Event\TenantReactivated</a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Domain/Event/TenantSuspended.php.html#9">App\Tenant\Domain\Event\TenantSuspended</a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Presentation/Api/Transformer/TenantResourceTransformer.php.html#10">App\Tenant\Presentation\Api\Transformer\TenantResourceTransformer</a></td><td class="text-right">69%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantIdType.php.html#12">App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType</a></td><td class="text-right">0.0%</td><td class="text-right">11</td><td class="text-right">132</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantNameType.php.html#12">App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantNameType</a></td><td class="text-right">0.0%</td><td class="text-right">11</td><td class="text-right">132</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantStatusType.php.html#12">App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantStatusType</a></td><td class="text-right">0.0%</td><td class="text-right">11</td><td class="text-right">132</td></tr>
+       <tr><td><a href="Infrastructure/Repository/DoctrineORMTenantRepository.php.html#15">App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository</a></td><td class="text-right">0.0%</td><td class="text-right">10</td><td class="text-right">110</td></tr>
+       <tr><td><a href="Infrastructure/Command/DemoTranslatableTenantCommand.php.html#26">App\Tenant\Infrastructure\Command\DemoTranslatableTenantCommand</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/UpdateTenantProcessor.php.html#19">App\Tenant\Presentation\Api\Processor\UpdateTenantProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DisableLocaleProcessor.php.html#20">App\Tenant\Presentation\Api\Processor\DisableLocaleProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/EnableLocaleProcessor.php.html#20">App\Tenant\Presentation\Api\Processor\EnableLocaleProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/SetDefaultLocaleProcessor.php.html#20">App\Tenant\Presentation\Api\Processor\SetDefaultLocaleProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Application/Command/ActivateTenantCommandHandler.php.html#15">App\Tenant\Application\Command\ActivateTenantCommandHandler</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/Command/CreateTenantCommandHandler.php.html#16">App\Tenant\Application\Command\CreateTenantCommandHandler</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/Command/DeactivateTenantCommandHandler.php.html#15">App\Tenant\Application\Command\DeactivateTenantCommandHandler</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/Command/DisableLocaleCommandHandler.php.html#16">App\Tenant\Application\Command\DisableLocaleCommandHandler</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/Command/EnableLocaleCommandHandler.php.html#16">App\Tenant\Application\Command\EnableLocaleCommandHandler</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/Command/ReactivateTenantCommandHandler.php.html#15">App\Tenant\Application\Command\ReactivateTenantCommandHandler</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/Command/SetDefaultLocaleCommandHandler.php.html#16">App\Tenant\Application\Command\SetDefaultLocaleCommandHandler</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/Command/SuspendTenantCommandHandler.php.html#15">App\Tenant\Application\Command\SuspendTenantCommandHandler</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/Query/GetTenantByIdQueryHandler.php.html#16">App\Tenant\Application\Query\GetTenantByIdQueryHandler</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ReactivateTenantProcessor.php.html#20">App\Tenant\Presentation\Api\Processor\ReactivateTenantProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/SuspendTenantProcessor.php.html#20">App\Tenant\Presentation\Api\Processor\SuspendTenantProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/TenantItemProvider.php.html#19">App\Tenant\Presentation\Api\Provider\TenantItemProvider</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/Query/GetAllTenantsQueryHandler.php.html#14">App\Tenant\Application\Query\GetAllTenantsQueryHandler</a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/TenantCollectionProvider.php.html#19">App\Tenant\Presentation\Api\Provider\TenantCollectionProvider</a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Command/DeleteTenantCommandHandler.php.html#11">App\Tenant\Application\Command\DeleteTenantCommandHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Command/UpdateTenantCommandHandler.php.html#13">App\Tenant\Application\Command\UpdateTenantCommandHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Query/GetTenantByOwnerEmailQueryHandler.php.html#14">App\Tenant\Application\Query\GetTenantByOwnerEmailQueryHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Command/SimpleDemoTranslatableCommand.php.html#22">App\Tenant\Infrastructure\Command\SimpleDemoTranslatableCommand</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DeleteTenantProcessor.php.html#16">App\Tenant\Presentation\Api\Processor\DeleteTenantProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2 style="margin-top: 3rem;">Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodsCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Application/Command/ActivateTenantCommandHandler.php.html#18"><abbr title="App\Tenant\Application\Command\ActivateTenantCommandHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/ActivateTenantCommandHandler.php.html#25"><abbr title="App\Tenant\Application\Command\ActivateTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CreateTenantCommandHandler.php.html#19"><abbr title="App\Tenant\Application\Command\CreateTenantCommandHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/CreateTenantCommandHandler.php.html#27"><abbr title="App\Tenant\Application\Command\CreateTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeactivateTenantCommandHandler.php.html#18"><abbr title="App\Tenant\Application\Command\DeactivateTenantCommandHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeactivateTenantCommandHandler.php.html#25"><abbr title="App\Tenant\Application\Command\DeactivateTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeleteTenantCommand.php.html#9"><abbr title="App\Tenant\Application\Command\DeleteTenantCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeleteTenantCommandHandler.php.html#14"><abbr title="App\Tenant\Application\Command\DeleteTenantCommandHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DeleteTenantCommandHandler.php.html#19"><abbr title="App\Tenant\Application\Command\DeleteTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DisableLocaleCommand.php.html#9"><abbr title="App\Tenant\Application\Command\DisableLocaleCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DisableLocaleCommandHandler.php.html#19"><abbr title="App\Tenant\Application\Command\DisableLocaleCommandHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/DisableLocaleCommandHandler.php.html#26"><abbr title="App\Tenant\Application\Command\DisableLocaleCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/EnableLocaleCommand.php.html#9"><abbr title="App\Tenant\Application\Command\EnableLocaleCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/EnableLocaleCommandHandler.php.html#19"><abbr title="App\Tenant\Application\Command\EnableLocaleCommandHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/EnableLocaleCommandHandler.php.html#26"><abbr title="App\Tenant\Application\Command\EnableLocaleCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/ReactivateTenantCommand.php.html#9"><abbr title="App\Tenant\Application\Command\ReactivateTenantCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/ReactivateTenantCommandHandler.php.html#18"><abbr title="App\Tenant\Application\Command\ReactivateTenantCommandHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/ReactivateTenantCommandHandler.php.html#25"><abbr title="App\Tenant\Application\Command\ReactivateTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SetDefaultLocaleCommand.php.html#9"><abbr title="App\Tenant\Application\Command\SetDefaultLocaleCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SetDefaultLocaleCommandHandler.php.html#19"><abbr title="App\Tenant\Application\Command\SetDefaultLocaleCommandHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SetDefaultLocaleCommandHandler.php.html#26"><abbr title="App\Tenant\Application\Command\SetDefaultLocaleCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SuspendTenantCommand.php.html#9"><abbr title="App\Tenant\Application\Command\SuspendTenantCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SuspendTenantCommandHandler.php.html#18"><abbr title="App\Tenant\Application\Command\SuspendTenantCommandHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/SuspendTenantCommandHandler.php.html#25"><abbr title="App\Tenant\Application\Command\SuspendTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/UpdateTenantCommand.php.html#9"><abbr title="App\Tenant\Application\Command\UpdateTenantCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/UpdateTenantCommandHandler.php.html#16"><abbr title="App\Tenant\Application\Command\UpdateTenantCommandHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/UpdateTenantCommandHandler.php.html#21"><abbr title="App\Tenant\Application\Command\UpdateTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/DTO/TenantDTO.php.html#25"><abbr title="App\Tenant\Application\DTO\TenantDTO::fromAggregate">fromAggregate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetAllTenantsQueryHandler.php.html#17"><abbr title="App\Tenant\Application\Query\GetAllTenantsQueryHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetAllTenantsQueryHandler.php.html#27"><abbr title="App\Tenant\Application\Query\GetAllTenantsQueryHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetTenantByIdQueryHandler.php.html#19"><abbr title="App\Tenant\Application\Query\GetTenantByIdQueryHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetTenantByIdQueryHandler.php.html#26"><abbr title="App\Tenant\Application\Query\GetTenantByIdQueryHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetTenantByOwnerEmailQueryHandler.php.html#17"><abbr title="App\Tenant\Application\Query\GetTenantByOwnerEmailQueryHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetTenantByOwnerEmailQueryHandler.php.html#22"><abbr title="App\Tenant\Application\Query\GetTenantByOwnerEmailQueryHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/TenantReactivated.php.html#17"><abbr title="App\Tenant\Domain\Event\TenantReactivated::occurredOn">occurredOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/TenantSuspended.php.html#17"><abbr title="App\Tenant\Domain\Event\TenantSuspended::occurredOn">occurredOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/TenantUpdated.php.html#13"><abbr title="App\Tenant\Domain\Event\TenantUpdated::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/TenantUpdated.php.html#21"><abbr title="App\Tenant\Domain\Event\TenantUpdated::occurredOn">occurredOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Exception/TenantAlreadyExistsException.php.html#11"><abbr title="App\Tenant\Domain\Exception\TenantAlreadyExistsException::withId">withId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Exception/TenantAlreadyExistsException.php.html#18"><abbr title="App\Tenant\Domain\Exception\TenantAlreadyExistsException::withEmail">withEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Exception/TenantNotFoundException.php.html#11"><abbr title="App\Tenant\Domain\Exception\TenantNotFoundException::withId">withId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Exception/TenantNotFoundException.php.html#18"><abbr title="App\Tenant\Domain\Exception\TenantNotFoundException::withEmail">withEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Tenant.php.html#132"><abbr title="App\Tenant\Domain\Model\Tenant::update">update</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Command/DemoTranslatableTenantCommand.php.html#32"><abbr title="App\Tenant\Infrastructure\Command\DemoTranslatableTenantCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Command/DemoTranslatableTenantCommand.php.html#39"><abbr title="App\Tenant\Infrastructure\Command\DemoTranslatableTenantCommand::execute">execute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Command/SimpleDemoTranslatableCommand.php.html#28"><abbr title="App\Tenant\Infrastructure\Command\SimpleDemoTranslatableCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Command/SimpleDemoTranslatableCommand.php.html#35"><abbr title="App\Tenant\Infrastructure\Command\SimpleDemoTranslatableCommand::execute">execute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#24"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#59"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::setTranslatableLocale">setTranslatableLocale</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#64"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#69"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#74"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::setName">setName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#79"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::getOwnerEmail">getOwnerEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#84"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::setOwnerEmail">setOwnerEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#89"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#94"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::setStatus">setStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#99"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::getCreatedAt">getCreatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#104"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::getDescription">getDescription</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#109"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::setDescription">setDescription</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#114"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::getSlug">getSlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#119"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::getDefaultLocale">getDefaultLocale</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#124"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::setDefaultLocale">setDefaultLocale</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#129"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::getEnabledLocales">getEnabledLocales</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#134"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::setEnabledLocales">setEnabledLocales</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#139"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::getTranslationQuota">getTranslationQuota</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#144"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::setTranslationQuota">setTranslationQuota</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#149"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::getTranslationUsage">getTranslationUsage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#154"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::setTranslationUsage">setTranslationUsage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#162"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::toDomain">toDomain</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#185"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::fromDomain">fromDomain</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/TenantEntity.php.html#208"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity::updateFromDomain">updateFromDomain</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantIdType.php.html#16"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantIdType.php.html#21"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantIdType.php.html#38"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantIdType.php.html#51"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantIdType.php.html#56"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantNameType.php.html#16"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantNameType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantNameType.php.html#21"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantNameType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantNameType.php.html#38"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantNameType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantNameType.php.html#51"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantNameType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantNameType.php.html#56"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantNameType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantStatusType.php.html#16"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantStatusType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantStatusType.php.html#21"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantStatusType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantStatusType.php.html#38"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantStatusType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantStatusType.php.html#51"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantStatusType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantStatusType.php.html#56"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantStatusType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Repository/DoctrineORMTenantRepository.php.html#17"><abbr title="App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Repository/DoctrineORMTenantRepository.php.html#23"><abbr title="App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Repository/DoctrineORMTenantRepository.php.html#47"><abbr title="App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository::delete">delete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Repository/DoctrineORMTenantRepository.php.html#62"><abbr title="App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Repository/DoctrineORMTenantRepository.php.html#69"><abbr title="App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository::findByOwnerEmail">findByOwnerEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Repository/DoctrineORMTenantRepository.php.html#78"><abbr title="App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository::findAll">findAll</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DeleteTenantProcessor.php.html#18"><abbr title="App\Tenant\Presentation\Api\Processor\DeleteTenantProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DeleteTenantProcessor.php.html#23"><abbr title="App\Tenant\Presentation\Api\Processor\DeleteTenantProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DisableLocaleProcessor.php.html#22"><abbr title="App\Tenant\Presentation\Api\Processor\DisableLocaleProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DisableLocaleProcessor.php.html#31"><abbr title="App\Tenant\Presentation\Api\Processor\DisableLocaleProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/EnableLocaleProcessor.php.html#22"><abbr title="App\Tenant\Presentation\Api\Processor\EnableLocaleProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/EnableLocaleProcessor.php.html#31"><abbr title="App\Tenant\Presentation\Api\Processor\EnableLocaleProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ReactivateTenantProcessor.php.html#22"><abbr title="App\Tenant\Presentation\Api\Processor\ReactivateTenantProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ReactivateTenantProcessor.php.html#31"><abbr title="App\Tenant\Presentation\Api\Processor\ReactivateTenantProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/SetDefaultLocaleProcessor.php.html#22"><abbr title="App\Tenant\Presentation\Api\Processor\SetDefaultLocaleProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/SetDefaultLocaleProcessor.php.html#31"><abbr title="App\Tenant\Presentation\Api\Processor\SetDefaultLocaleProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/SuspendTenantProcessor.php.html#22"><abbr title="App\Tenant\Presentation\Api\Processor\SuspendTenantProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/SuspendTenantProcessor.php.html#31"><abbr title="App\Tenant\Presentation\Api\Processor\SuspendTenantProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/UpdateTenantProcessor.php.html#21"><abbr title="App\Tenant\Presentation\Api\Processor\UpdateTenantProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/UpdateTenantProcessor.php.html#27"><abbr title="App\Tenant\Presentation\Api\Processor\UpdateTenantProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/TenantCollectionProvider.php.html#21"><abbr title="App\Tenant\Presentation\Api\Provider\TenantCollectionProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/TenantCollectionProvider.php.html#29"><abbr title="App\Tenant\Presentation\Api\Provider\TenantCollectionProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/TenantItemProvider.php.html#21"><abbr title="App\Tenant\Presentation\Api\Provider\TenantItemProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/TenantItemProvider.php.html#26"><abbr title="App\Tenant\Presentation\Api\Provider\TenantItemProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Transformer/TenantResourceTransformer.php.html#31"><abbr title="App\Tenant\Presentation\Api\Transformer\TenantResourceTransformer::fromDTOs">fromDTOs</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Tenant.php.html#182"><abbr title="App\Tenant\Domain\Model\Tenant::validateDefaultLocaleIsEnabled">validateDefaultLocaleIsEnabled</abbr></a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Domain/Model/Tenant.php.html#189"><abbr title="App\Tenant\Domain\Model\Tenant::validateTranslationQuota">validateTranslationQuota</abbr></a></td><td class="text-right">50%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Infrastructure/Command/DemoTranslatableTenantCommand.php.html#39"><abbr title="App\Tenant\Infrastructure\Command\DemoTranslatableTenantCommand::execute">execute</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/UpdateTenantProcessor.php.html#27"><abbr title="App\Tenant\Presentation\Api\Processor\UpdateTenantProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantIdType.php.html#21"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantNameType.php.html#21"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantNameType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantStatusType.php.html#21"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantStatusType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DisableLocaleProcessor.php.html#31"><abbr title="App\Tenant\Presentation\Api\Processor\DisableLocaleProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/EnableLocaleProcessor.php.html#31"><abbr title="App\Tenant\Presentation\Api\Processor\EnableLocaleProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/SetDefaultLocaleProcessor.php.html#31"><abbr title="App\Tenant\Presentation\Api\Processor\SetDefaultLocaleProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/Command/ActivateTenantCommandHandler.php.html#25"><abbr title="App\Tenant\Application\Command\ActivateTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Command/CreateTenantCommandHandler.php.html#27"><abbr title="App\Tenant\Application\Command\CreateTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Command/DeactivateTenantCommandHandler.php.html#25"><abbr title="App\Tenant\Application\Command\DeactivateTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Command/DisableLocaleCommandHandler.php.html#26"><abbr title="App\Tenant\Application\Command\DisableLocaleCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Command/EnableLocaleCommandHandler.php.html#26"><abbr title="App\Tenant\Application\Command\EnableLocaleCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Command/ReactivateTenantCommandHandler.php.html#25"><abbr title="App\Tenant\Application\Command\ReactivateTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Command/SetDefaultLocaleCommandHandler.php.html#26"><abbr title="App\Tenant\Application\Command\SetDefaultLocaleCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Command/SuspendTenantCommandHandler.php.html#25"><abbr title="App\Tenant\Application\Command\SuspendTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Query/GetTenantByIdQueryHandler.php.html#26"><abbr title="App\Tenant\Application\Query\GetTenantByIdQueryHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ReactivateTenantProcessor.php.html#31"><abbr title="App\Tenant\Presentation\Api\Processor\ReactivateTenantProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/SuspendTenantProcessor.php.html#31"><abbr title="App\Tenant\Presentation\Api\Processor\SuspendTenantProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/TenantItemProvider.php.html#26"><abbr title="App\Tenant\Presentation\Api\Provider\TenantItemProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Query/GetAllTenantsQueryHandler.php.html#27"><abbr title="App\Tenant\Application\Query\GetAllTenantsQueryHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantIdType.php.html#38"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantNameType.php.html#38"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantNameType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/TenantStatusType.php.html#38"><abbr title="App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantStatusType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Repository/DoctrineORMTenantRepository.php.html#23"><abbr title="App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository::save">save</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Repository/DoctrineORMTenantRepository.php.html#47"><abbr title="App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository::delete">delete</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/TenantCollectionProvider.php.html#29"><abbr title="App\Tenant\Presentation\Api\Provider\TenantCollectionProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Command/DeleteTenantCommandHandler.php.html#19"><abbr title="App\Tenant\Application\Command\DeleteTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Command/UpdateTenantCommandHandler.php.html#21"><abbr title="App\Tenant\Application\Command\UpdateTenantCommandHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Query/GetTenantByOwnerEmailQueryHandler.php.html#22"><abbr title="App\Tenant\Application\Query\GetTenantByOwnerEmailQueryHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/Model/Tenant.php.html#189"><abbr title="App\Tenant\Domain\Model\Tenant::validateTranslationQuota">validateTranslationQuota</abbr></a></td><td class="text-right">50.0%</td><td class="text-right">4</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Command/SimpleDemoTranslatableCommand.php.html#35"><abbr title="App\Tenant\Infrastructure\Command\SimpleDemoTranslatableCommand::execute">execute</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DeleteTenantProcessor.php.html#23"><abbr title="App\Tenant\Presentation\Api\Processor\DeleteTenantProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/Model/Tenant.php.html#182"><abbr title="App\Tenant\Domain\Model\Tenant::validateDefaultLocaleIsEnabled">validateDefaultLocaleIsEnabled</abbr></a></td><td class="text-right">50.0%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 12.4.0</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.14</a> and <a href="https://phpunit.de/">PHPUnit 12.4.1</a> at Thu Nov 27 8:00:35 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/billboard.pkgd.min.js?v=12.4.0" type="text/javascript"></script>
+  <script type="application/json" id="complexity_class">[[0,5,"Application\/Command\/ActivateTenantCommandHandler.php.html#15","App\\Tenant\\Application\\Command\\ActivateTenantCommandHandler","30"],[0,5,"Application\/Command\/CreateTenantCommandHandler.php.html#16","App\\Tenant\\Application\\Command\\CreateTenantCommandHandler","30"],[0,5,"Application\/Command\/DeactivateTenantCommandHandler.php.html#15","App\\Tenant\\Application\\Command\\DeactivateTenantCommandHandler","30"],[0,1,"Application\/Command\/DeleteTenantCommand.php.html#7","App\\Tenant\\Application\\Command\\DeleteTenantCommand","2"],[0,3,"Application\/Command\/DeleteTenantCommandHandler.php.html#11","App\\Tenant\\Application\\Command\\DeleteTenantCommandHandler","12"],[0,1,"Application\/Command\/DisableLocaleCommand.php.html#7","App\\Tenant\\Application\\Command\\DisableLocaleCommand","2"],[0,5,"Application\/Command\/DisableLocaleCommandHandler.php.html#16","App\\Tenant\\Application\\Command\\DisableLocaleCommandHandler","30"],[0,1,"Application\/Command\/EnableLocaleCommand.php.html#7","App\\Tenant\\Application\\Command\\EnableLocaleCommand","2"],[0,5,"Application\/Command\/EnableLocaleCommandHandler.php.html#16","App\\Tenant\\Application\\Command\\EnableLocaleCommandHandler","30"],[0,1,"Application\/Command\/ReactivateTenantCommand.php.html#7","App\\Tenant\\Application\\Command\\ReactivateTenantCommand","2"],[0,5,"Application\/Command\/ReactivateTenantCommandHandler.php.html#15","App\\Tenant\\Application\\Command\\ReactivateTenantCommandHandler","30"],[0,1,"Application\/Command\/SetDefaultLocaleCommand.php.html#7","App\\Tenant\\Application\\Command\\SetDefaultLocaleCommand","2"],[0,5,"Application\/Command\/SetDefaultLocaleCommandHandler.php.html#16","App\\Tenant\\Application\\Command\\SetDefaultLocaleCommandHandler","30"],[0,1,"Application\/Command\/SuspendTenantCommand.php.html#7","App\\Tenant\\Application\\Command\\SuspendTenantCommand","2"],[0,5,"Application\/Command\/SuspendTenantCommandHandler.php.html#15","App\\Tenant\\Application\\Command\\SuspendTenantCommandHandler","30"],[0,1,"Application\/Command\/UpdateTenantCommand.php.html#7","App\\Tenant\\Application\\Command\\UpdateTenantCommand","2"],[0,3,"Application\/Command\/UpdateTenantCommandHandler.php.html#13","App\\Tenant\\Application\\Command\\UpdateTenantCommandHandler","12"],[0,4,"Application\/Query\/GetAllTenantsQueryHandler.php.html#14","App\\Tenant\\Application\\Query\\GetAllTenantsQueryHandler","20"],[0,5,"Application\/Query\/GetTenantByIdQueryHandler.php.html#16","App\\Tenant\\Application\\Query\\GetTenantByIdQueryHandler","30"],[0,3,"Application\/Query\/GetTenantByOwnerEmailQueryHandler.php.html#14","App\\Tenant\\Application\\Query\\GetTenantByOwnerEmailQueryHandler","12"],[0,2,"Domain\/Event\/TenantUpdated.php.html#11","App\\Tenant\\Domain\\Event\\TenantUpdated","6"],[0,2,"Domain\/Exception\/TenantAlreadyExistsException.php.html#9","App\\Tenant\\Domain\\Exception\\TenantAlreadyExistsException","6"],[0,2,"Domain\/Exception\/TenantNotFoundException.php.html#9","App\\Tenant\\Domain\\Exception\\TenantNotFoundException","6"],[0,8,"Infrastructure\/Command\/DemoTranslatableTenantCommand.php.html#26","App\\Tenant\\Infrastructure\\Command\\DemoTranslatableTenantCommand","72"],[0,3,"Infrastructure\/Command\/SimpleDemoTranslatableCommand.php.html#22","App\\Tenant\\Infrastructure\\Command\\SimpleDemoTranslatableCommand","12"],[0,24,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#17","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity","600"],[0,11,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantIdType.php.html#12","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantIdType","132"],[0,11,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantNameType.php.html#12","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantNameType","132"],[0,11,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantStatusType.php.html#12","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantStatusType","132"],[0,10,"Infrastructure\/Repository\/DoctrineORMTenantRepository.php.html#15","App\\Tenant\\Infrastructure\\Repository\\DoctrineORMTenantRepository","110"],[0,3,"Presentation\/Api\/Processor\/DeleteTenantProcessor.php.html#16","App\\Tenant\\Presentation\\Api\\Processor\\DeleteTenantProcessor","12"],[0,6,"Presentation\/Api\/Processor\/DisableLocaleProcessor.php.html#20","App\\Tenant\\Presentation\\Api\\Processor\\DisableLocaleProcessor","42"],[0,6,"Presentation\/Api\/Processor\/EnableLocaleProcessor.php.html#20","App\\Tenant\\Presentation\\Api\\Processor\\EnableLocaleProcessor","42"],[0,5,"Presentation\/Api\/Processor\/ReactivateTenantProcessor.php.html#20","App\\Tenant\\Presentation\\Api\\Processor\\ReactivateTenantProcessor","30"],[0,6,"Presentation\/Api\/Processor\/SetDefaultLocaleProcessor.php.html#20","App\\Tenant\\Presentation\\Api\\Processor\\SetDefaultLocaleProcessor","42"],[0,5,"Presentation\/Api\/Processor\/SuspendTenantProcessor.php.html#20","App\\Tenant\\Presentation\\Api\\Processor\\SuspendTenantProcessor","30"],[0,8,"Presentation\/Api\/Processor\/UpdateTenantProcessor.php.html#19","App\\Tenant\\Presentation\\Api\\Processor\\UpdateTenantProcessor","72"],[0,4,"Presentation\/Api\/Provider\/TenantCollectionProvider.php.html#19","App\\Tenant\\Presentation\\Api\\Provider\\TenantCollectionProvider","20"],[0,5,"Presentation\/Api\/Provider\/TenantItemProvider.php.html#19","App\\Tenant\\Presentation\\Api\\Provider\\TenantItemProvider","30"],[7.142857142857142,2,"Application\/DTO\/TenantDTO.php.html#9","App\\Tenant\\Application\\DTO\\TenantDTO","5.20"],[50,2,"Domain\/Event\/TenantReactivated.php.html#9","App\\Tenant\\Domain\\Event\\TenantReactivated","2.50"],[50,2,"Domain\/Event\/TenantSuspended.php.html#9","App\\Tenant\\Domain\\Event\\TenantSuspended","2.50"],[69.23076923076923,2,"Presentation\/Api\/Transformer\/TenantResourceTransformer.php.html#10","App\\Tenant\\Presentation\\Api\\Transformer\\TenantResourceTransformer","2.12"],[91.91919191919192,48,"Domain\/Model\/Tenant.php.html#21","App\\Tenant\\Domain\\Model\\Tenant","49.22"],[100,1,"Application\/Command\/ActivateTenantCommand.php.html#7","App\\Tenant\\Application\\Command\\ActivateTenantCommand","1"],[100,1,"Application\/Command\/CreateTenantCommand.php.html#7","App\\Tenant\\Application\\Command\\CreateTenantCommand","1"],[100,1,"Application\/Command\/DeactivateTenantCommand.php.html#7","App\\Tenant\\Application\\Command\\DeactivateTenantCommand","1"],[100,0,"Application\/Exception\/TenantValidationException.php.html#7","App\\Tenant\\Application\\Exception\\TenantValidationException","0"],[100,0,"Application\/Query\/GetAllTenantsQuery.php.html#7","App\\Tenant\\Application\\Query\\GetAllTenantsQuery","0"],[100,1,"Application\/Query\/GetTenantByIdQuery.php.html#7","App\\Tenant\\Application\\Query\\GetTenantByIdQuery","1"],[100,1,"Application\/Query\/GetTenantByOwnerEmailQuery.php.html#7","App\\Tenant\\Application\\Query\\GetTenantByOwnerEmailQuery","1"],[100,2,"Domain\/Event\/TenantActivated.php.html#9","App\\Tenant\\Domain\\Event\\TenantActivated","2"],[100,2,"Domain\/Event\/TenantCreated.php.html#11","App\\Tenant\\Domain\\Event\\TenantCreated","2"],[100,2,"Domain\/Event\/TenantDeactivated.php.html#9","App\\Tenant\\Domain\\Event\\TenantDeactivated","2"],[100,1,"Domain\/Exception\/TranslationQuotaExceededException.php.html#7","App\\Tenant\\Domain\\Exception\\TranslationQuotaExceededException","1"],[100,10,"Domain\/ValueObject\/TenantName.php.html#7","App\\Tenant\\Domain\\ValueObject\\TenantName","10"],[100,12,"Domain\/ValueObject\/TenantStatus.php.html#7","App\\Tenant\\Domain\\ValueObject\\TenantStatus","12"],[100,5,"Presentation\/Api\/Processor\/ActivateTenantProcessor.php.html#20","App\\Tenant\\Presentation\\Api\\Processor\\ActivateTenantProcessor","5"],[100,7,"Presentation\/Api\/Processor\/CreateTenantProcessor.php.html#20","App\\Tenant\\Presentation\\Api\\Processor\\CreateTenantProcessor","7"],[100,5,"Presentation\/Api\/Processor\/DeactivateTenantProcessor.php.html#20","App\\Tenant\\Presentation\\Api\\Processor\\DeactivateTenantProcessor","5"],[100,0,"Presentation\/Api\/TenantResource.php.html#29","App\\Tenant\\Presentation\\Api\\TenantResource","0"]]</script>
+  <script type="application/json" id="complexity_method">[[0,1,"Application\/Command\/ActivateTenantCommandHandler.php.html#18","App\\Tenant\\Application\\Command\\ActivateTenantCommandHandler::__construct","2"],[0,4,"Application\/Command\/ActivateTenantCommandHandler.php.html#25","App\\Tenant\\Application\\Command\\ActivateTenantCommandHandler::__invoke","20"],[0,1,"Application\/Command\/CreateTenantCommandHandler.php.html#19","App\\Tenant\\Application\\Command\\CreateTenantCommandHandler::__construct","2"],[0,4,"Application\/Command\/CreateTenantCommandHandler.php.html#27","App\\Tenant\\Application\\Command\\CreateTenantCommandHandler::__invoke","20"],[0,1,"Application\/Command\/DeactivateTenantCommandHandler.php.html#18","App\\Tenant\\Application\\Command\\DeactivateTenantCommandHandler::__construct","2"],[0,4,"Application\/Command\/DeactivateTenantCommandHandler.php.html#25","App\\Tenant\\Application\\Command\\DeactivateTenantCommandHandler::__invoke","20"],[0,1,"Application\/Command\/DeleteTenantCommand.php.html#9","App\\Tenant\\Application\\Command\\DeleteTenantCommand::__construct","2"],[0,1,"Application\/Command\/DeleteTenantCommandHandler.php.html#14","App\\Tenant\\Application\\Command\\DeleteTenantCommandHandler::__construct","2"],[0,2,"Application\/Command\/DeleteTenantCommandHandler.php.html#19","App\\Tenant\\Application\\Command\\DeleteTenantCommandHandler::__invoke","6"],[0,1,"Application\/Command\/DisableLocaleCommand.php.html#9","App\\Tenant\\Application\\Command\\DisableLocaleCommand::__construct","2"],[0,1,"Application\/Command\/DisableLocaleCommandHandler.php.html#19","App\\Tenant\\Application\\Command\\DisableLocaleCommandHandler::__construct","2"],[0,4,"Application\/Command\/DisableLocaleCommandHandler.php.html#26","App\\Tenant\\Application\\Command\\DisableLocaleCommandHandler::__invoke","20"],[0,1,"Application\/Command\/EnableLocaleCommand.php.html#9","App\\Tenant\\Application\\Command\\EnableLocaleCommand::__construct","2"],[0,1,"Application\/Command\/EnableLocaleCommandHandler.php.html#19","App\\Tenant\\Application\\Command\\EnableLocaleCommandHandler::__construct","2"],[0,4,"Application\/Command\/EnableLocaleCommandHandler.php.html#26","App\\Tenant\\Application\\Command\\EnableLocaleCommandHandler::__invoke","20"],[0,1,"Application\/Command\/ReactivateTenantCommand.php.html#9","App\\Tenant\\Application\\Command\\ReactivateTenantCommand::__construct","2"],[0,1,"Application\/Command\/ReactivateTenantCommandHandler.php.html#18","App\\Tenant\\Application\\Command\\ReactivateTenantCommandHandler::__construct","2"],[0,4,"Application\/Command\/ReactivateTenantCommandHandler.php.html#25","App\\Tenant\\Application\\Command\\ReactivateTenantCommandHandler::__invoke","20"],[0,1,"Application\/Command\/SetDefaultLocaleCommand.php.html#9","App\\Tenant\\Application\\Command\\SetDefaultLocaleCommand::__construct","2"],[0,1,"Application\/Command\/SetDefaultLocaleCommandHandler.php.html#19","App\\Tenant\\Application\\Command\\SetDefaultLocaleCommandHandler::__construct","2"],[0,4,"Application\/Command\/SetDefaultLocaleCommandHandler.php.html#26","App\\Tenant\\Application\\Command\\SetDefaultLocaleCommandHandler::__invoke","20"],[0,1,"Application\/Command\/SuspendTenantCommand.php.html#9","App\\Tenant\\Application\\Command\\SuspendTenantCommand::__construct","2"],[0,1,"Application\/Command\/SuspendTenantCommandHandler.php.html#18","App\\Tenant\\Application\\Command\\SuspendTenantCommandHandler::__construct","2"],[0,4,"Application\/Command\/SuspendTenantCommandHandler.php.html#25","App\\Tenant\\Application\\Command\\SuspendTenantCommandHandler::__invoke","20"],[0,1,"Application\/Command\/UpdateTenantCommand.php.html#9","App\\Tenant\\Application\\Command\\UpdateTenantCommand::__construct","2"],[0,1,"Application\/Command\/UpdateTenantCommandHandler.php.html#16","App\\Tenant\\Application\\Command\\UpdateTenantCommandHandler::__construct","2"],[0,2,"Application\/Command\/UpdateTenantCommandHandler.php.html#21","App\\Tenant\\Application\\Command\\UpdateTenantCommandHandler::__invoke","6"],[0,1,"Application\/DTO\/TenantDTO.php.html#25","App\\Tenant\\Application\\DTO\\TenantDTO::fromAggregate","2"],[0,1,"Application\/Query\/GetAllTenantsQueryHandler.php.html#17","App\\Tenant\\Application\\Query\\GetAllTenantsQueryHandler::__construct","2"],[0,3,"Application\/Query\/GetAllTenantsQueryHandler.php.html#27","App\\Tenant\\Application\\Query\\GetAllTenantsQueryHandler::__invoke","12"],[0,1,"Application\/Query\/GetTenantByIdQueryHandler.php.html#19","App\\Tenant\\Application\\Query\\GetTenantByIdQueryHandler::__construct","2"],[0,4,"Application\/Query\/GetTenantByIdQueryHandler.php.html#26","App\\Tenant\\Application\\Query\\GetTenantByIdQueryHandler::__invoke","20"],[0,1,"Application\/Query\/GetTenantByOwnerEmailQueryHandler.php.html#17","App\\Tenant\\Application\\Query\\GetTenantByOwnerEmailQueryHandler::__construct","2"],[0,2,"Application\/Query\/GetTenantByOwnerEmailQueryHandler.php.html#22","App\\Tenant\\Application\\Query\\GetTenantByOwnerEmailQueryHandler::__invoke","6"],[0,1,"Domain\/Event\/TenantReactivated.php.html#17","App\\Tenant\\Domain\\Event\\TenantReactivated::occurredOn","2"],[0,1,"Domain\/Event\/TenantSuspended.php.html#17","App\\Tenant\\Domain\\Event\\TenantSuspended::occurredOn","2"],[0,1,"Domain\/Event\/TenantUpdated.php.html#13","App\\Tenant\\Domain\\Event\\TenantUpdated::__construct","2"],[0,1,"Domain\/Event\/TenantUpdated.php.html#21","App\\Tenant\\Domain\\Event\\TenantUpdated::occurredOn","2"],[0,1,"Domain\/Exception\/TenantAlreadyExistsException.php.html#11","App\\Tenant\\Domain\\Exception\\TenantAlreadyExistsException::withId","2"],[0,1,"Domain\/Exception\/TenantAlreadyExistsException.php.html#18","App\\Tenant\\Domain\\Exception\\TenantAlreadyExistsException::withEmail","2"],[0,1,"Domain\/Exception\/TenantNotFoundException.php.html#11","App\\Tenant\\Domain\\Exception\\TenantNotFoundException::withId","2"],[0,1,"Domain\/Exception\/TenantNotFoundException.php.html#18","App\\Tenant\\Domain\\Exception\\TenantNotFoundException::withEmail","2"],[0,1,"Domain\/Model\/Tenant.php.html#132","App\\Tenant\\Domain\\Model\\Tenant::update","2"],[0,1,"Infrastructure\/Command\/DemoTranslatableTenantCommand.php.html#32","App\\Tenant\\Infrastructure\\Command\\DemoTranslatableTenantCommand::__construct","2"],[0,7,"Infrastructure\/Command\/DemoTranslatableTenantCommand.php.html#39","App\\Tenant\\Infrastructure\\Command\\DemoTranslatableTenantCommand::execute","56"],[0,1,"Infrastructure\/Command\/SimpleDemoTranslatableCommand.php.html#28","App\\Tenant\\Infrastructure\\Command\\SimpleDemoTranslatableCommand::__construct","2"],[0,2,"Infrastructure\/Command\/SimpleDemoTranslatableCommand.php.html#35","App\\Tenant\\Infrastructure\\Command\\SimpleDemoTranslatableCommand::execute","6"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#24","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::__construct","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#59","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::setTranslatableLocale","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#64","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::getId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#69","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::getName","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#74","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::setName","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#79","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::getOwnerEmail","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#84","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::setOwnerEmail","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#89","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::getStatus","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#94","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::setStatus","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#99","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::getCreatedAt","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#104","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::getDescription","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#109","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::setDescription","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#114","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::getSlug","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#119","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::getDefaultLocale","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#124","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::setDefaultLocale","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#129","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::getEnabledLocales","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#134","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::setEnabledLocales","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#139","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::getTranslationQuota","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#144","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::setTranslationQuota","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#149","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::getTranslationUsage","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#154","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::setTranslationUsage","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#162","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::toDomain","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#185","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::fromDomain","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/TenantEntity.php.html#208","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Entity\\TenantEntity::updateFromDomain","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantIdType.php.html#16","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantIdType::getSQLDeclaration","2"],[0,5,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantIdType.php.html#21","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantIdType::convertToPHPValue","30"],[0,3,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantIdType.php.html#38","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantIdType::convertToDatabaseValue","12"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantIdType.php.html#51","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantIdType::getName","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantIdType.php.html#56","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantIdType::requiresSQLCommentHint","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantNameType.php.html#16","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantNameType::getSQLDeclaration","2"],[0,5,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantNameType.php.html#21","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantNameType::convertToPHPValue","30"],[0,3,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantNameType.php.html#38","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantNameType::convertToDatabaseValue","12"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantNameType.php.html#51","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantNameType::getName","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantNameType.php.html#56","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantNameType::requiresSQLCommentHint","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantStatusType.php.html#16","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantStatusType::getSQLDeclaration","2"],[0,5,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantStatusType.php.html#21","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantStatusType::convertToPHPValue","30"],[0,3,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantStatusType.php.html#38","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantStatusType::convertToDatabaseValue","12"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantStatusType.php.html#51","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantStatusType::getName","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/TenantStatusType.php.html#56","App\\Tenant\\Infrastructure\\Persistence\\Doctrine\\Type\\TenantStatusType::requiresSQLCommentHint","2"],[0,1,"Infrastructure\/Repository\/DoctrineORMTenantRepository.php.html#17","App\\Tenant\\Infrastructure\\Repository\\DoctrineORMTenantRepository::__construct","2"],[0,3,"Infrastructure\/Repository\/DoctrineORMTenantRepository.php.html#23","App\\Tenant\\Infrastructure\\Repository\\DoctrineORMTenantRepository::save","12"],[0,3,"Infrastructure\/Repository\/DoctrineORMTenantRepository.php.html#47","App\\Tenant\\Infrastructure\\Repository\\DoctrineORMTenantRepository::delete","12"],[0,1,"Infrastructure\/Repository\/DoctrineORMTenantRepository.php.html#62","App\\Tenant\\Infrastructure\\Repository\\DoctrineORMTenantRepository::findById","2"],[0,1,"Infrastructure\/Repository\/DoctrineORMTenantRepository.php.html#69","App\\Tenant\\Infrastructure\\Repository\\DoctrineORMTenantRepository::findByOwnerEmail","2"],[0,1,"Infrastructure\/Repository\/DoctrineORMTenantRepository.php.html#78","App\\Tenant\\Infrastructure\\Repository\\DoctrineORMTenantRepository::findAll","2"],[0,1,"Presentation\/Api\/Processor\/DeleteTenantProcessor.php.html#18","App\\Tenant\\Presentation\\Api\\Processor\\DeleteTenantProcessor::__construct","2"],[0,2,"Presentation\/Api\/Processor\/DeleteTenantProcessor.php.html#23","App\\Tenant\\Presentation\\Api\\Processor\\DeleteTenantProcessor::process","6"],[0,1,"Presentation\/Api\/Processor\/DisableLocaleProcessor.php.html#22","App\\Tenant\\Presentation\\Api\\Processor\\DisableLocaleProcessor::__construct","2"],[0,5,"Presentation\/Api\/Processor\/DisableLocaleProcessor.php.html#31","App\\Tenant\\Presentation\\Api\\Processor\\DisableLocaleProcessor::process","30"],[0,1,"Presentation\/Api\/Processor\/EnableLocaleProcessor.php.html#22","App\\Tenant\\Presentation\\Api\\Processor\\EnableLocaleProcessor::__construct","2"],[0,5,"Presentation\/Api\/Processor\/EnableLocaleProcessor.php.html#31","App\\Tenant\\Presentation\\Api\\Processor\\EnableLocaleProcessor::process","30"],[0,1,"Presentation\/Api\/Processor\/ReactivateTenantProcessor.php.html#22","App\\Tenant\\Presentation\\Api\\Processor\\ReactivateTenantProcessor::__construct","2"],[0,4,"Presentation\/Api\/Processor\/ReactivateTenantProcessor.php.html#31","App\\Tenant\\Presentation\\Api\\Processor\\ReactivateTenantProcessor::process","20"],[0,1,"Presentation\/Api\/Processor\/SetDefaultLocaleProcessor.php.html#22","App\\Tenant\\Presentation\\Api\\Processor\\SetDefaultLocaleProcessor::__construct","2"],[0,5,"Presentation\/Api\/Processor\/SetDefaultLocaleProcessor.php.html#31","App\\Tenant\\Presentation\\Api\\Processor\\SetDefaultLocaleProcessor::process","30"],[0,1,"Presentation\/Api\/Processor\/SuspendTenantProcessor.php.html#22","App\\Tenant\\Presentation\\Api\\Processor\\SuspendTenantProcessor::__construct","2"],[0,4,"Presentation\/Api\/Processor\/SuspendTenantProcessor.php.html#31","App\\Tenant\\Presentation\\Api\\Processor\\SuspendTenantProcessor::process","20"],[0,1,"Presentation\/Api\/Processor\/UpdateTenantProcessor.php.html#21","App\\Tenant\\Presentation\\Api\\Processor\\UpdateTenantProcessor::__construct","2"],[0,7,"Presentation\/Api\/Processor\/UpdateTenantProcessor.php.html#27","App\\Tenant\\Presentation\\Api\\Processor\\UpdateTenantProcessor::process","56"],[0,1,"Presentation\/Api\/Provider\/TenantCollectionProvider.php.html#21","App\\Tenant\\Presentation\\Api\\Provider\\TenantCollectionProvider::__construct","2"],[0,3,"Presentation\/Api\/Provider\/TenantCollectionProvider.php.html#29","App\\Tenant\\Presentation\\Api\\Provider\\TenantCollectionProvider::provide","12"],[0,1,"Presentation\/Api\/Provider\/TenantItemProvider.php.html#21","App\\Tenant\\Presentation\\Api\\Provider\\TenantItemProvider::__construct","2"],[0,4,"Presentation\/Api\/Provider\/TenantItemProvider.php.html#26","App\\Tenant\\Presentation\\Api\\Provider\\TenantItemProvider::provide","20"],[0,1,"Presentation\/Api\/Transformer\/TenantResourceTransformer.php.html#31","App\\Tenant\\Presentation\\Api\\Transformer\\TenantResourceTransformer::fromDTOs","2"],[50,2,"Domain\/Model\/Tenant.php.html#182","App\\Tenant\\Domain\\Model\\Tenant::validateDefaultLocaleIsEnabled","2.50"],[50,4,"Domain\/Model\/Tenant.php.html#189","App\\Tenant\\Domain\\Model\\Tenant::validateTranslationQuota","6.00"],[83.33333333333334,3,"Domain\/Model\/Tenant.php.html#202","App\\Tenant\\Domain\\Model\\Tenant::incrementTranslationUsage","3.04"],[100,1,"Application\/Command\/ActivateTenantCommand.php.html#9","App\\Tenant\\Application\\Command\\ActivateTenantCommand::__construct","1"],[100,1,"Application\/Command\/CreateTenantCommand.php.html#9","App\\Tenant\\Application\\Command\\CreateTenantCommand::__construct","1"],[100,1,"Application\/Command\/DeactivateTenantCommand.php.html#9","App\\Tenant\\Application\\Command\\DeactivateTenantCommand::__construct","1"],[100,1,"Application\/DTO\/TenantDTO.php.html#14","App\\Tenant\\Application\\DTO\\TenantDTO::__construct","1"],[100,1,"Application\/Query\/GetTenantByIdQuery.php.html#9","App\\Tenant\\Application\\Query\\GetTenantByIdQuery::__construct","1"],[100,1,"Application\/Query\/GetTenantByOwnerEmailQuery.php.html#9","App\\Tenant\\Application\\Query\\GetTenantByOwnerEmailQuery::__construct","1"],[100,1,"Domain\/Event\/TenantActivated.php.html#11","App\\Tenant\\Domain\\Event\\TenantActivated::__construct","1"],[100,1,"Domain\/Event\/TenantActivated.php.html#17","App\\Tenant\\Domain\\Event\\TenantActivated::occurredOn","1"],[100,1,"Domain\/Event\/TenantCreated.php.html#13","App\\Tenant\\Domain\\Event\\TenantCreated::__construct","1"],[100,1,"Domain\/Event\/TenantCreated.php.html#21","App\\Tenant\\Domain\\Event\\TenantCreated::occurredOn","1"],[100,1,"Domain\/Event\/TenantDeactivated.php.html#11","App\\Tenant\\Domain\\Event\\TenantDeactivated::__construct","1"],[100,1,"Domain\/Event\/TenantDeactivated.php.html#17","App\\Tenant\\Domain\\Event\\TenantDeactivated::occurredOn","1"],[100,1,"Domain\/Event\/TenantReactivated.php.html#11","App\\Tenant\\Domain\\Event\\TenantReactivated::__construct","1"],[100,1,"Domain\/Event\/TenantSuspended.php.html#11","App\\Tenant\\Domain\\Event\\TenantSuspended::__construct","1"],[100,1,"Domain\/Exception\/TranslationQuotaExceededException.php.html#9","App\\Tenant\\Domain\\Exception\\TranslationQuotaExceededException::forTenant","1"],[100,1,"Domain\/Model\/Tenant.php.html#34","App\\Tenant\\Domain\\Model\\Tenant::__construct","1"],[100,1,"Domain\/Model\/Tenant.php.html#52","App\\Tenant\\Domain\\Model\\Tenant::create","1"],[100,1,"Domain\/Model\/Tenant.php.html#63","App\\Tenant\\Domain\\Model\\Tenant::fromPersistence","1"],[100,2,"Domain\/Model\/Tenant.php.html#90","App\\Tenant\\Domain\\Model\\Tenant::activate","2"],[100,2,"Domain\/Model\/Tenant.php.html#99","App\\Tenant\\Domain\\Model\\Tenant::deactivate","2"],[100,3,"Domain\/Model\/Tenant.php.html#108","App\\Tenant\\Domain\\Model\\Tenant::suspend","3"],[100,3,"Domain\/Model\/Tenant.php.html#120","App\\Tenant\\Domain\\Model\\Tenant::reactivate","3"],[100,2,"Domain\/Model\/Tenant.php.html#139","App\\Tenant\\Domain\\Model\\Tenant::setDefaultLocale","2"],[100,2,"Domain\/Model\/Tenant.php.html#147","App\\Tenant\\Domain\\Model\\Tenant::enableLocale","2"],[100,3,"Domain\/Model\/Tenant.php.html#155","App\\Tenant\\Domain\\Model\\Tenant::disableLocale","3"],[100,3,"Domain\/Model\/Tenant.php.html#171","App\\Tenant\\Domain\\Model\\Tenant::isLocaleEnabled","3"],[100,3,"Domain\/Model\/Tenant.php.html#217","App\\Tenant\\Domain\\Model\\Tenant::setTranslationQuota","3"],[100,1,"Domain\/Model\/Tenant.php.html#228","App\\Tenant\\Domain\\Model\\Tenant::resetTranslationUsage","1"],[100,1,"Domain\/Model\/Tenant.php.html#233","App\\Tenant\\Domain\\Model\\Tenant::hasTranslationQuotaAvailable","1"],[100,1,"Domain\/Model\/Tenant.php.html#238","App\\Tenant\\Domain\\Model\\Tenant::remainingTranslationQuota","1"],[100,1,"Domain\/Model\/Tenant.php.html#244","App\\Tenant\\Domain\\Model\\Tenant::id","1"],[100,1,"Domain\/Model\/Tenant.php.html#249","App\\Tenant\\Domain\\Model\\Tenant::name","1"],[100,1,"Domain\/Model\/Tenant.php.html#254","App\\Tenant\\Domain\\Model\\Tenant::ownerEmail","1"],[100,1,"Domain\/Model\/Tenant.php.html#259","App\\Tenant\\Domain\\Model\\Tenant::status","1"],[100,1,"Domain\/Model\/Tenant.php.html#264","App\\Tenant\\Domain\\Model\\Tenant::createdAt","1"],[100,1,"Domain\/Model\/Tenant.php.html#269","App\\Tenant\\Domain\\Model\\Tenant::defaultLocale","1"],[100,1,"Domain\/Model\/Tenant.php.html#277","App\\Tenant\\Domain\\Model\\Tenant::enabledLocales","1"],[100,1,"Domain\/Model\/Tenant.php.html#282","App\\Tenant\\Domain\\Model\\Tenant::translationQuota","1"],[100,1,"Domain\/Model\/Tenant.php.html#287","App\\Tenant\\Domain\\Model\\Tenant::translationUsage","1"],[100,6,"Domain\/ValueObject\/TenantName.php.html#14","App\\Tenant\\Domain\\ValueObject\\TenantName::__construct","6"],[100,1,"Domain\/ValueObject\/TenantName.php.html#38","App\\Tenant\\Domain\\ValueObject\\TenantName::fromString","1"],[100,1,"Domain\/ValueObject\/TenantName.php.html#43","App\\Tenant\\Domain\\ValueObject\\TenantName::value","1"],[100,1,"Domain\/ValueObject\/TenantName.php.html#48","App\\Tenant\\Domain\\ValueObject\\TenantName::equals","1"],[100,1,"Domain\/ValueObject\/TenantName.php.html#53","App\\Tenant\\Domain\\ValueObject\\TenantName::__toString","1"],[100,2,"Domain\/ValueObject\/TenantStatus.php.html#13","App\\Tenant\\Domain\\ValueObject\\TenantStatus::__construct","2"],[100,1,"Domain\/ValueObject\/TenantStatus.php.html#20","App\\Tenant\\Domain\\ValueObject\\TenantStatus::active","1"],[100,1,"Domain\/ValueObject\/TenantStatus.php.html#25","App\\Tenant\\Domain\\ValueObject\\TenantStatus::inactive","1"],[100,1,"Domain\/ValueObject\/TenantStatus.php.html#30","App\\Tenant\\Domain\\ValueObject\\TenantStatus::suspended","1"],[100,1,"Domain\/ValueObject\/TenantStatus.php.html#35","App\\Tenant\\Domain\\ValueObject\\TenantStatus::fromString","1"],[100,1,"Domain\/ValueObject\/TenantStatus.php.html#40","App\\Tenant\\Domain\\ValueObject\\TenantStatus::isActive","1"],[100,1,"Domain\/ValueObject\/TenantStatus.php.html#45","App\\Tenant\\Domain\\ValueObject\\TenantStatus::isInactive","1"],[100,1,"Domain\/ValueObject\/TenantStatus.php.html#50","App\\Tenant\\Domain\\ValueObject\\TenantStatus::isSuspended","1"],[100,1,"Domain\/ValueObject\/TenantStatus.php.html#55","App\\Tenant\\Domain\\ValueObject\\TenantStatus::value","1"],[100,1,"Domain\/ValueObject\/TenantStatus.php.html#60","App\\Tenant\\Domain\\ValueObject\\TenantStatus::equals","1"],[100,1,"Domain\/ValueObject\/TenantStatus.php.html#65","App\\Tenant\\Domain\\ValueObject\\TenantStatus::__toString","1"],[100,1,"Presentation\/Api\/Processor\/ActivateTenantProcessor.php.html#22","App\\Tenant\\Presentation\\Api\\Processor\\ActivateTenantProcessor::__construct","1"],[100,4,"Presentation\/Api\/Processor\/ActivateTenantProcessor.php.html#31","App\\Tenant\\Presentation\\Api\\Processor\\ActivateTenantProcessor::process","4"],[100,1,"Presentation\/Api\/Processor\/CreateTenantProcessor.php.html#22","App\\Tenant\\Presentation\\Api\\Processor\\CreateTenantProcessor::__construct","1"],[100,6,"Presentation\/Api\/Processor\/CreateTenantProcessor.php.html#28","App\\Tenant\\Presentation\\Api\\Processor\\CreateTenantProcessor::process","6"],[100,1,"Presentation\/Api\/Processor\/DeactivateTenantProcessor.php.html#22","App\\Tenant\\Presentation\\Api\\Processor\\DeactivateTenantProcessor::__construct","1"],[100,4,"Presentation\/Api\/Processor\/DeactivateTenantProcessor.php.html#31","App\\Tenant\\Presentation\\Api\\Processor\\DeactivateTenantProcessor::process","4"],[100,1,"Presentation\/Api\/Transformer\/TenantResourceTransformer.php.html#12","App\\Tenant\\Presentation\\Api\\Transformer\\TenantResourceTransformer::fromDTO","1"]]</script>
+  <script type="text/javascript" defer>
+  const barLabels = [
+    '0%',
+    '0-10%',
+    '10-20%',
+    '20-30%',
+    '30-40%',
+    '40-50%',
+    '50-60%',
+    '60-70%',
+    '70-80%',
+    '80-90%',
+    '90-100%',
+    '100%'
+  ];
+  const barConfig = (name, fullName, values) => ({
+    axis: {
+      x: {
+        type: "category",
+        categories: barLabels,
+      },
+      y: {
+        label: {
+          text: `#${name}`,
+          position: 'outer-top',
+        },
+      },
+    },
+    bindto: `#${name}CoverageDistribution`,
+    data: {
+      columns: [
+        [fullName].concat(values),
+      ],
+      colors: {
+        [fullName]: "rgba(69, 114, 167, 0.75)",
+      },
+      type: "bar",
+    },
+    bar: {
+      width: {
+        ratio: 0.9,
+      },
+    },
+    grid: {
+      focus: {
+        show: false,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">Coverage ${barLabels[data[0].x]}</th></tr>
+            <tr><td class="value">${data[0].value} ${name}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  bb.generate(
+    barConfig('classes', "Class Coverage", [39,1,0,0,0,0,2,1,0,0,1,17])
+  );
+  bb.generate(
+    barConfig('methods', "Method Coverage", [111,0,0,0,0,0,2,0,0,1,0,62])
+  );
+
+  const scatterConfig = (name, complexityData) => ({
+    axis: {
+      x: {
+        label: {
+          text: 'Code Coverage (in percent)',
+          position: 'outer-right',
+        },
+        tick: {
+          values: [0, 20, 40, 60, 80, 100],
+        },
+      },
+      y: {
+        label: {
+          text: 'Cyclomatic Complexity',
+          position: 'outer-top',
+        },
+        min: 0,
+        padding: {
+          bottom: 0,
+          top: 5,
+        },
+      },
+    },
+    bindto: `#${name}Complexity`,
+    data: {
+      columns: [
+        ["complexity_x"].concat(complexityData.map(d => d[0])),
+        ["complexity"].concat(complexityData.map(d => d[1])),
+      ],
+      onclick: function(data, element) {
+        window.location = complexityData[data.index][2];
+      },
+      type: "scatter",
+      xs: {
+        "complexity": "complexity_x",
+      },
+    },
+    grid: {
+      focus: {
+        show: true,
+        y: true,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        const coverage = Math.round(data[0].x);
+        const complexity = data[0].value;
+        const targetName = complexityData[data[0].index][3];
+        const crap = complexityData[data[0].index][4];
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">${targetName}</th></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Coverage</td><td class="name">${coverage}%</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Complexity</td><td class="value">${complexity}</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Crap</td><td class="value">${crap}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  const classComplexityData = JSON.parse(document.getElementById('complexity_class').textContent);
+  bb.generate(
+    scatterConfig("class", classComplexityData)
+  );
+  const methodComplexityData = JSON.parse(document.getElementById('complexity_method').textContent);
+  bb.generate(
+    scatterConfig("method", methodComplexityData),
+  );
+  </script>
+ </body>
+</html>

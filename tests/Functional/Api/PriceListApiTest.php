@@ -66,7 +66,7 @@ final class PriceListApiTest extends ApiTestCase
     private function createTenant(): string
     {
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('POST', '/api/tenants', [
+        $response = $client->request('POST', '/api/v1/tenants', [
             'json' => [
                 'name' => 'Test Tenant '.uniqid(),
                 'ownerEmail' => sprintf('tenant-%d-%s@example.com', ++self::$counter, uniqid()),
@@ -91,7 +91,7 @@ final class PriceListApiTest extends ApiTestCase
     {
         $tenantId = $this->createTenant();
 
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/price_lists', [
+        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/price_lists', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'Summer Sale 2025',
@@ -114,7 +114,7 @@ final class PriceListApiTest extends ApiTestCase
     {
         $tenantId = $this->createTenant();
 
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/price_lists', [
+        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/price_lists', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'Standard Price List',
@@ -130,7 +130,7 @@ final class PriceListApiTest extends ApiTestCase
     {
         $tenantId = $this->createTenant();
 
-        $this->createAuthenticatedClient()->request('POST', '/api/price_lists', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/price_lists', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'AB', // Too short (min 3)
@@ -149,7 +149,7 @@ final class PriceListApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         // Create price list
-        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/price_lists', [
+        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/price_lists', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'Test Price List',
@@ -159,7 +159,7 @@ final class PriceListApiTest extends ApiTestCase
         $priceListId = $createData['id'];
 
         // Get price list
-        $response = $this->createAuthenticatedClient()->request('GET', "/api/price_lists/$priceListId");
+        $response = $this->createAuthenticatedClient()->request('GET', "/api/v1/price_lists/$priceListId");
 
         $this->assertResponseIsSuccessful();
         $data = json_decode($response->getContent(), true);
@@ -175,7 +175,7 @@ final class PriceListApiTest extends ApiTestCase
         $nonExistentId = '00000000-0000-4000-8000-000000000000';
 
         $client = $this->createAuthenticatedClient();
-        $client->request('GET', "/api/price_lists/$nonExistentId");
+        $client->request('GET', "/api/v1/price_lists/$nonExistentId");
 
         $statusCode = $client->getResponse()->getStatusCode();
         $this->assertTrue(in_array($statusCode, [404, 500]));
@@ -190,27 +190,27 @@ final class PriceListApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         // Create multiple price lists
-        $response1 = $this->createAuthenticatedClient()->request('POST', '/api/price_lists', [
+        $response1 = $this->createAuthenticatedClient()->request('POST', '/api/v1/price_lists', [
             'json' => ['tenantId' => $tenantId, 'name' => 'Price List 1', 'priority' => 300],
         ]);
         $priceListId1 = json_decode($response1->getContent(), true)['id'];
 
-        $response2 = $this->createAuthenticatedClient()->request('POST', '/api/price_lists', [
+        $response2 = $this->createAuthenticatedClient()->request('POST', '/api/v1/price_lists', [
             'json' => ['tenantId' => $tenantId, 'name' => 'Price List 2', 'priority' => 100],
         ]);
         $priceListId2 = json_decode($response2->getContent(), true)['id'];
 
         // Activate both price lists
-        $this->createAuthenticatedClient()->request('PATCH', "/api/price_lists/$priceListId1/activate", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/price_lists/$priceListId1/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
-        $this->createAuthenticatedClient()->request('PATCH', "/api/price_lists/$priceListId2/activate", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/price_lists/$priceListId2/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        $response = $this->createAuthenticatedClient()->request('GET', '/api/price_lists');
+        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/price_lists');
 
         $this->assertResponseIsSuccessful();
         $data = json_decode($response->getContent(), true);
@@ -229,13 +229,13 @@ final class PriceListApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         // Create inactive price list
-        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/price_lists', [
+        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/price_lists', [
             'json' => ['tenantId' => $tenantId, 'name' => 'Inactive Price List'],
         ]);
         $priceListId = json_decode($createResponse->getContent(), true)['id'];
 
         // Activate
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/price_lists/$priceListId/activate", [
+        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/price_lists/$priceListId/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -250,18 +250,18 @@ final class PriceListApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         // Create and activate
-        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/price_lists', [
+        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/price_lists', [
             'json' => ['tenantId' => $tenantId, 'name' => 'Test Price List'],
         ]);
         $priceListId = json_decode($createResponse->getContent(), true)['id'];
 
-        $this->createAuthenticatedClient()->request('PATCH', "/api/price_lists/$priceListId/activate", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/price_lists/$priceListId/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
         // Try to activate again
-        $this->createAuthenticatedClient()->request('PATCH', "/api/price_lists/$priceListId/activate", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/price_lists/$priceListId/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -278,18 +278,18 @@ final class PriceListApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         // Create and activate
-        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/price_lists', [
+        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/price_lists', [
             'json' => ['tenantId' => $tenantId, 'name' => 'Active Price List'],
         ]);
         $priceListId = json_decode($createResponse->getContent(), true)['id'];
 
-        $this->createAuthenticatedClient()->request('PATCH', "/api/price_lists/$priceListId/activate", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/price_lists/$priceListId/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
         // Deactivate
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/price_lists/$priceListId/deactivate", [
+        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/price_lists/$priceListId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -304,13 +304,13 @@ final class PriceListApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         // Create (inactive by default)
-        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/price_lists', [
+        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/price_lists', [
             'json' => ['tenantId' => $tenantId, 'name' => 'Inactive Price List'],
         ]);
         $priceListId = json_decode($createResponse->getContent(), true)['id'];
 
         // Try to deactivate already inactive
-        $this->createAuthenticatedClient()->request('PATCH', "/api/price_lists/$priceListId/deactivate", [
+        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/price_lists/$priceListId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -327,7 +327,7 @@ final class PriceListApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         // 1. Create
-        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/price_lists', [
+        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/price_lists', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'Lifecycle Price List',
@@ -338,12 +338,12 @@ final class PriceListApiTest extends ApiTestCase
         $priceListId = json_decode($createResponse->getContent(), true)['id'];
 
         // 2. Get (verify inactive)
-        $getResponse = $this->createAuthenticatedClient()->request('GET', "/api/price_lists/$priceListId");
+        $getResponse = $this->createAuthenticatedClient()->request('GET', "/api/v1/price_lists/$priceListId");
         $data = json_decode($getResponse->getContent(), true);
         $this->assertFalse($data['isActive']);
 
         // 3. Activate
-        $activateResponse = $this->createAuthenticatedClient()->request('PATCH', "/api/price_lists/$priceListId/activate", [
+        $activateResponse = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/price_lists/$priceListId/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -351,7 +351,7 @@ final class PriceListApiTest extends ApiTestCase
         $this->assertTrue($activateData['isActive']);
 
         // 4. Deactivate
-        $deactivateResponse = $this->createAuthenticatedClient()->request('PATCH', "/api/price_lists/$priceListId/deactivate", [
+        $deactivateResponse = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/price_lists/$priceListId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -359,7 +359,7 @@ final class PriceListApiTest extends ApiTestCase
         $this->assertFalse($deactivateData['isActive']);
 
         // 5. Final verification
-        $finalResponse = $this->createAuthenticatedClient()->request('GET', "/api/price_lists/$priceListId");
+        $finalResponse = $this->createAuthenticatedClient()->request('GET', "/api/v1/price_lists/$priceListId");
         $finalData = json_decode($finalResponse->getContent(), true);
         $this->assertSame('Lifecycle Price List', $finalData['name']);
         $this->assertFalse($finalData['isActive']);

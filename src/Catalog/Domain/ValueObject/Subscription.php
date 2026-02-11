@@ -171,7 +171,7 @@ final readonly class Subscription
         $currentDate = $startDate;
 
         // If trial period exists, start billing after trial ends
-        if ($this->hasTrial() && $this->isTrialActive()) {
+        if ($this->hasTrial() && $this->isTrialActive() && $this->trialPeriodEnd !== null) {
             $currentDate = $this->trialPeriodEnd;
         }
 

@@ -6,6 +6,7 @@ namespace App\Cart\Application\Service;
 
 use App\Cart\Domain\Exception\InsufficientStockException;
 use App\Catalog\Domain\Model\ProductId;
+use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
@@ -17,19 +18,19 @@ use App\Shared\Domain\ValueObject\TenantId;
  * - Throw InsufficientStockException if insufficient stock
  *
  * Integration Points:
- * - Inventory context: Query stock availability
+ * - Inventory context: Query stock availability via StockItemRepository
  * - Multi-warehouse aggregation
  *
  * Business Rules:
  * - Show available quantity in error message
  * - "Only 5 items available" vs "Out of stock"
  * - Check across all warehouses for availability
+ * - Available = onHand - reserved - allocated (per warehouse)
  */
 final readonly class StockValidator
 {
     public function __construct(
-        // TODO: Inject InventoryQuery service when Inventory context is ready
-        // private GetStockAvailabilityQueryHandler $stockQueryHandler
+        private StockItemRepositoryInterface $stockItemRepository
     ) {
     }
 
@@ -59,8 +60,11 @@ final readonly class StockValidator
     /**
      * Get available quantity for a product/variant.
      *
+     * Aggregates available stock across all warehouses for the product.
+     * Available stock = onHand - reserved - allocated
+     *
      * @param ProductId   $productId The product to check
-     * @param string|null $variantId Optional variant ID
+     * @param string|null $variantId Optional variant ID (currently not used - future enhancement)
      * @param TenantId    $tenantId  Tenant context
      *
      * @return int Available quantity (aggregated across warehouses)
@@ -70,17 +74,24 @@ final readonly class StockValidator
         ?string $variantId,
         TenantId $tenantId
     ): int {
-        // TODO: Query Inventory context for stock availability
-        // For now, return a placeholder value
-        // This will be implemented when Inventory context integration is ready
+        // Query all stock items for this product across all warehouses
+        $stockItems = $this->stockItemRepository->findByProduct($productId, $tenantId);
 
-        // Query: GetStockAvailability
-        // Input: ProductId, ?VariantId, TenantId
-        // Output: { available: int, reserved: int, warehouses: [] }
+        // If no stock items found, product has zero availability
+        if (empty($stockItems)) {
+            return 0;
+        }
 
-        // Temporary implementation: assume stock is available
-        // In production, this would query the Inventory bounded context
-        return 999; // Placeholder - always available for now
+        // Aggregate available quantity across all warehouses
+        // Available = onHand - reserved - allocated (per warehouse)
+        $totalAvailable = 0;
+
+        foreach ($stockItems as $stockItem) {
+            $available = $stockItem->calculateAvailable();
+            $totalAvailable += $available->value();
+        }
+
+        return $totalAvailable;
     }
 
     /**

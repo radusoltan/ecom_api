@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/new_ecom/backend/src/Customer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/billboard.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/var/www/new_ecom/backend/src</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Customer</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classesCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Application/EventSubscriber/OrderCompletedSubscriber.php.html#25">App\Customer\Application\EventSubscriber\OrderCompletedSubscriber</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerByEmailQuery.php.html#7">App\Customer\Application\Query\GetCustomerByEmailQuery</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerByEmailQueryHandler.php.html#13">App\Customer\Application\Query\GetCustomerByEmailQueryHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerOrdersQuery.php.html#10">App\Customer\Application\Query\GetCustomerOrdersQuery</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerOrdersQueryHandler.php.html#11">App\Customer\Application\Query\GetCustomerOrdersQueryHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Address.php.html#16">App\Customer\Domain\ValueObject\Address</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#16">App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerIdType.php.html#11">App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerIdType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerSegmentType.php.html#11">App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerSegmentType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ActivateCustomerProcessor.php.html#19">App\Customer\Presentation\Api\Processor\ActivateCustomerProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/AwardLoyaltyPointsProcessor.php.html#18">App\Customer\Presentation\Api\Processor\AwardLoyaltyPointsProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ChangeSegmentProcessor.php.html#19">App\Customer\Presentation\Api\Processor\ChangeSegmentProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DeactivateCustomerProcessor.php.html#19">App\Customer\Presentation\Api\Processor\DeactivateCustomerProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/RegisterCustomerProcessor.php.html#24">App\Customer\Presentation\Api\Processor\RegisterCustomerProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/UpdateCustomerProcessor.php.html#19">App\Customer\Presentation\Api\Processor\UpdateCustomerProcessor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/AddressesProvider.php.html#25">App\Customer\Presentation\Api\Provider\AddressesProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerCollectionProvider.php.html#18">App\Customer\Presentation\Api\Provider\CustomerCollectionProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerItemProvider.php.html#18">App\Customer\Presentation\Api\Provider\CustomerItemProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerOrdersProvider.php.html#18">App\Customer\Presentation\Api\Provider\CustomerOrdersProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/PaymentMethodsProvider.php.html#26">App\Customer\Presentation\Api\Provider\PaymentMethodsProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ProfileProvider.php.html#27">App\Customer\Presentation\Api\Provider\ProfileProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerCreated.php.html#11">App\Customer\Domain\Event\CustomerCreated</a></td><td class="text-right">16%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerUpdated.php.html#9">App\Customer\Domain\Event\CustomerUpdated</a></td><td class="text-right">20%</td></tr>
+       <tr><td><a href="Domain/Event/LoyaltyPointsAwarded.php.html#9">App\Customer\Domain\Event\LoyaltyPointsAwarded</a></td><td class="text-right">20%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerSegmentChanged.php.html#10">App\Customer\Domain\Event\CustomerSegmentChanged</a></td><td class="text-right">25%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerActivated.php.html#9">App\Customer\Domain\Event\CustomerActivated</a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerDeactivated.php.html#9">App\Customer\Domain\Event\CustomerDeactivated</a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Domain/Service/CustomerSegmentationService.php.html#19">App\Customer\Domain\Service\CustomerSegmentationService</a></td><td class="text-right">72%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#31">App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity</a></td><td class="text-right">75%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Domain/ValueObject/Address.php.html#16">App\Customer\Domain\ValueObject\Address</a></td><td class="text-right">0.0%</td><td class="text-right">16</td><td class="text-right">272</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/RegisterCustomerProcessor.php.html#24">App\Customer\Presentation\Api\Processor\RegisterCustomerProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">13</td><td class="text-right">182</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#16">App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository</a></td><td class="text-right">0.0%</td><td class="text-right">12</td><td class="text-right">156</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerIdType.php.html#11">App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerIdType</a></td><td class="text-right">0.0%</td><td class="text-right">10</td><td class="text-right">110</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerSegmentType.php.html#11">App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerSegmentType</a></td><td class="text-right">0.0%</td><td class="text-right">10</td><td class="text-right">110</td></tr>
+       <tr><td><a href="Application/EventSubscriber/OrderCompletedSubscriber.php.html#25">App\Customer\Application\EventSubscriber\OrderCompletedSubscriber</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ChangeSegmentProcessor.php.html#19">App\Customer\Presentation\Api\Processor\ChangeSegmentProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/UpdateCustomerProcessor.php.html#19">App\Customer\Presentation\Api\Processor\UpdateCustomerProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ProfileProvider.php.html#27">App\Customer\Presentation\Api\Provider\ProfileProvider</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ActivateCustomerProcessor.php.html#19">App\Customer\Presentation\Api\Processor\ActivateCustomerProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DeactivateCustomerProcessor.php.html#19">App\Customer\Presentation\Api\Processor\DeactivateCustomerProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerCollectionProvider.php.html#18">App\Customer\Presentation\Api\Provider\CustomerCollectionProvider</a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerItemProvider.php.html#18">App\Customer\Presentation\Api\Provider\CustomerItemProvider</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/AddressesProvider.php.html#25">App\Customer\Presentation\Api\Provider\AddressesProvider</a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/PaymentMethodsProvider.php.html#26">App\Customer\Presentation\Api\Provider\PaymentMethodsProvider</a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerByEmailQueryHandler.php.html#13">App\Customer\Application\Query\GetCustomerByEmailQueryHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerOrdersQueryHandler.php.html#11">App\Customer\Application\Query\GetCustomerOrdersQueryHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/AwardLoyaltyPointsProcessor.php.html#18">App\Customer\Presentation\Api\Processor\AwardLoyaltyPointsProcessor</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Domain/Service/CustomerSegmentationService.php.html#19">App\Customer\Domain\Service\CustomerSegmentationService</a></td><td class="text-right">72.7%</td><td class="text-right">8</td><td class="text-right">9</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2 style="margin-top: 3rem;">Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodsCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Application/EventSubscriber/OrderCompletedSubscriber.php.html#27"><abbr title="App\Customer\Application\EventSubscriber\OrderCompletedSubscriber::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/OrderCompletedSubscriber.php.html#36"><abbr title="App\Customer\Application\EventSubscriber\OrderCompletedSubscriber::getSubscribedEvents">getSubscribedEvents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/OrderCompletedSubscriber.php.html#46"><abbr title="App\Customer\Application\EventSubscriber\OrderCompletedSubscriber::onOrderPlaced">onOrderPlaced</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/EventSubscriber/OrderCompletedSubscriber.php.html#111"><abbr title="App\Customer\Application\EventSubscriber\OrderCompletedSubscriber::calculateTotalSpent">calculateTotalSpent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerByEmailQuery.php.html#9"><abbr title="App\Customer\Application\Query\GetCustomerByEmailQuery::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerByEmailQueryHandler.php.html#16"><abbr title="App\Customer\Application\Query\GetCustomerByEmailQueryHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerByEmailQueryHandler.php.html#21"><abbr title="App\Customer\Application\Query\GetCustomerByEmailQueryHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerOrdersQuery.php.html#12"><abbr title="App\Customer\Application\Query\GetCustomerOrdersQuery::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerOrdersQuery.php.html#18"><abbr title="App\Customer\Application\Query\GetCustomerOrdersQuery::customerId">customerId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerOrdersQuery.php.html#23"><abbr title="App\Customer\Application\Query\GetCustomerOrdersQuery::tenantId">tenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerOrdersQueryHandler.php.html#14"><abbr title="App\Customer\Application\Query\GetCustomerOrdersQueryHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerOrdersQueryHandler.php.html#23"><abbr title="App\Customer\Application\Query\GetCustomerOrdersQueryHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerActivated.php.html#16"><abbr title="App\Customer\Domain\Event\CustomerActivated::customerId">customerId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerCreated.php.html#22"><abbr title="App\Customer\Domain\Event\CustomerCreated::customerId">customerId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerCreated.php.html#27"><abbr title="App\Customer\Domain\Event\CustomerCreated::tenantId">tenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerCreated.php.html#32"><abbr title="App\Customer\Domain\Event\CustomerCreated::email">email</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerCreated.php.html#37"><abbr title="App\Customer\Domain\Event\CustomerCreated::firstName">firstName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerCreated.php.html#42"><abbr title="App\Customer\Domain\Event\CustomerCreated::lastName">lastName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerDeactivated.php.html#16"><abbr title="App\Customer\Domain\Event\CustomerDeactivated::customerId">customerId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerSegmentChanged.php.html#19"><abbr title="App\Customer\Domain\Event\CustomerSegmentChanged::customerId">customerId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerSegmentChanged.php.html#24"><abbr title="App\Customer\Domain\Event\CustomerSegmentChanged::oldSegment">oldSegment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerSegmentChanged.php.html#29"><abbr title="App\Customer\Domain\Event\CustomerSegmentChanged::newSegment">newSegment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerUpdated.php.html#19"><abbr title="App\Customer\Domain\Event\CustomerUpdated::customerId">customerId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerUpdated.php.html#24"><abbr title="App\Customer\Domain\Event\CustomerUpdated::firstName">firstName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerUpdated.php.html#29"><abbr title="App\Customer\Domain\Event\CustomerUpdated::lastName">lastName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/CustomerUpdated.php.html#34"><abbr title="App\Customer\Domain\Event\CustomerUpdated::phoneNumber">phoneNumber</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/LoyaltyPointsAwarded.php.html#19"><abbr title="App\Customer\Domain\Event\LoyaltyPointsAwarded::customerId">customerId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/LoyaltyPointsAwarded.php.html#24"><abbr title="App\Customer\Domain\Event\LoyaltyPointsAwarded::pointsAwarded">pointsAwarded</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/LoyaltyPointsAwarded.php.html#29"><abbr title="App\Customer\Domain\Event\LoyaltyPointsAwarded::newTotalPoints">newTotalPoints</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Event/LoyaltyPointsAwarded.php.html#34"><abbr title="App\Customer\Domain\Event\LoyaltyPointsAwarded::reason">reason</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Service/CustomerSegmentationService.php.html#81"><abbr title="App\Customer\Domain\Service\CustomerSegmentationService::getRecommendedSegment">getRecommendedSegment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Service/CustomerSegmentationService.php.html#89"><abbr title="App\Customer\Domain\Service\CustomerSegmentationService::getVipTotalSpentThreshold">getVipTotalSpentThreshold</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Service/CustomerSegmentationService.php.html#97"><abbr title="App\Customer\Domain\Service\CustomerSegmentationService::getVipLoyaltyPointsThreshold">getVipLoyaltyPointsThreshold</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Address.php.html#21"><abbr title="App\Customer\Domain\ValueObject\Address::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Address.php.html#33"><abbr title="App\Customer\Domain\ValueObject\Address::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Address.php.html#45"><abbr title="App\Customer\Domain\ValueObject\Address::validate">validate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Address.php.html#68"><abbr title="App\Customer\Domain\ValueObject\Address::isBilling">isBilling</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Address.php.html#73"><abbr title="App\Customer\Domain\ValueObject\Address::isShipping">isShipping</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Address.php.html#78"><abbr title="App\Customer\Domain\ValueObject\Address::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/Address.php.html#88"><abbr title="App\Customer\Domain\ValueObject\Address::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/CustomerSegment.php.html#54"><abbr title="App\Customer\Domain\ValueObject\CustomerSegment::premium">premium</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/CustomerSegment.php.html#89"><abbr title="App\Customer\Domain\ValueObject\CustomerSegment::isPremium">isPremium</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#218"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::getFullName">getFullName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#224"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::setId">setId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#229"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::setTenantId">setTenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#234"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::setEmail">setEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#239"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::setFirstName">setFirstName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#244"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::setLastName">setLastName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#249"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::setPhoneNumber">setPhoneNumber</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#254"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::setSegment">setSegment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#259"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::setLoyaltyPoints">setLoyaltyPoints</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#264"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::setIsActive">setIsActive</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#269"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::setCreatedAt">setCreatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#274"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::setUpdatedAt">setUpdatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#279"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::getPlainPassword">getPlainPassword</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Entity/CustomerEntity.php.html#284"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity::setPlainPassword">setPlainPassword</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#18"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#24"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#47"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#67"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository::findByEmail">findByEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#85"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository::findAll">findAll</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#99"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository::findBySegment">findBySegment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#113"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository::delete">delete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerIdType.php.html#15"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerIdType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerIdType.php.html#20"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerIdType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerIdType.php.html#33"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerIdType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerIdType.php.html#46"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerIdType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerIdType.php.html#51"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerIdType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerSegmentType.php.html#15"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerSegmentType::getSQLDeclaration">getSQLDeclaration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerSegmentType.php.html#20"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerSegmentType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerSegmentType.php.html#33"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerSegmentType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerSegmentType.php.html#46"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerSegmentType::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerSegmentType.php.html#51"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerSegmentType::requiresSQLCommentHint">requiresSQLCommentHint</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/Security/CustomerVoter.php.html#30"><abbr title="App\Customer\Infrastructure\Security\CustomerVoter::getResourceName">getResourceName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ActivateCustomerProcessor.php.html#21"><abbr title="App\Customer\Presentation\Api\Processor\ActivateCustomerProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ActivateCustomerProcessor.php.html#27"><abbr title="App\Customer\Presentation\Api\Processor\ActivateCustomerProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ActivateCustomerProcessor.php.html#68"><abbr title="App\Customer\Presentation\Api\Processor\ActivateCustomerProcessor::populateEntityFromDTO">populateEntityFromDTO</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/AwardLoyaltyPointsProcessor.php.html#20"><abbr title="App\Customer\Presentation\Api\Processor\AwardLoyaltyPointsProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/AwardLoyaltyPointsProcessor.php.html#29"><abbr title="App\Customer\Presentation\Api\Processor\AwardLoyaltyPointsProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ChangeSegmentProcessor.php.html#21"><abbr title="App\Customer\Presentation\Api\Processor\ChangeSegmentProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ChangeSegmentProcessor.php.html#27"><abbr title="App\Customer\Presentation\Api\Processor\ChangeSegmentProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ChangeSegmentProcessor.php.html#79"><abbr title="App\Customer\Presentation\Api\Processor\ChangeSegmentProcessor::populateEntityFromDTO">populateEntityFromDTO</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DeactivateCustomerProcessor.php.html#21"><abbr title="App\Customer\Presentation\Api\Processor\DeactivateCustomerProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DeactivateCustomerProcessor.php.html#27"><abbr title="App\Customer\Presentation\Api\Processor\DeactivateCustomerProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DeactivateCustomerProcessor.php.html#68"><abbr title="App\Customer\Presentation\Api\Processor\DeactivateCustomerProcessor::populateEntityFromDTO">populateEntityFromDTO</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/RegisterCustomerProcessor.php.html#26"><abbr title="App\Customer\Presentation\Api\Processor\RegisterCustomerProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/RegisterCustomerProcessor.php.html#34"><abbr title="App\Customer\Presentation\Api\Processor\RegisterCustomerProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/RegisterCustomerProcessor.php.html#92"><abbr title="App\Customer\Presentation\Api\Processor\RegisterCustomerProcessor::populateEntityFromDTO">populateEntityFromDTO</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/RegisterCustomerProcessor.php.html#113"><abbr title="App\Customer\Presentation\Api\Processor\RegisterCustomerProcessor::createUserForCustomer">createUserForCustomer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/UpdateCustomerProcessor.php.html#21"><abbr title="App\Customer\Presentation\Api\Processor\UpdateCustomerProcessor::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/UpdateCustomerProcessor.php.html#27"><abbr title="App\Customer\Presentation\Api\Processor\UpdateCustomerProcessor::process">process</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/UpdateCustomerProcessor.php.html#76"><abbr title="App\Customer\Presentation\Api\Processor\UpdateCustomerProcessor::populateEntityFromDTO">populateEntityFromDTO</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/AddressesProvider.php.html#27"><abbr title="App\Customer\Presentation\Api\Provider\AddressesProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/AddressesProvider.php.html#33"><abbr title="App\Customer\Presentation\Api\Provider\AddressesProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerCollectionProvider.php.html#20"><abbr title="App\Customer\Presentation\Api\Provider\CustomerCollectionProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerCollectionProvider.php.html#28"><abbr title="App\Customer\Presentation\Api\Provider\CustomerCollectionProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerCollectionProvider.php.html#56"><abbr title="App\Customer\Presentation\Api\Provider\CustomerCollectionProvider::populateEntityFromDTO">populateEntityFromDTO</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerItemProvider.php.html#20"><abbr title="App\Customer\Presentation\Api\Provider\CustomerItemProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerItemProvider.php.html#25"><abbr title="App\Customer\Presentation\Api\Provider\CustomerItemProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerItemProvider.php.html#49"><abbr title="App\Customer\Presentation\Api\Provider\CustomerItemProvider::populateEntityFromDTO">populateEntityFromDTO</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerOrdersProvider.php.html#20"><abbr title="App\Customer\Presentation\Api\Provider\CustomerOrdersProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerOrdersProvider.php.html#28"><abbr title="App\Customer\Presentation\Api\Provider\CustomerOrdersProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/PaymentMethodsProvider.php.html#28"><abbr title="App\Customer\Presentation\Api\Provider\PaymentMethodsProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/PaymentMethodsProvider.php.html#34"><abbr title="App\Customer\Presentation\Api\Provider\PaymentMethodsProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ProfileProvider.php.html#29"><abbr title="App\Customer\Presentation\Api\Provider\ProfileProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ProfileProvider.php.html#36"><abbr title="App\Customer\Presentation\Api\Provider\ProfileProvider::provide">provide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ProfileProvider.php.html#78"><abbr title="App\Customer\Presentation\Api\Provider\ProfileProvider::populateEntityFromDTO">populateEntityFromDTO</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Model/Customer.php.html#229"><abbr title="App\Customer\Domain\Model\Customer::validatePhoneNumber">validatePhoneNumber</abbr></a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Infrastructure/Security/CustomerVoter.php.html#45"><abbr title="App\Customer\Infrastructure\Security\CustomerVoter::voteOnAttribute">voteOnAttribute</abbr></a></td><td class="text-right">78%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Presentation/Api/Processor/RegisterCustomerProcessor.php.html#34"><abbr title="App\Customer\Presentation\Api\Processor\RegisterCustomerProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ChangeSegmentProcessor.php.html#27"><abbr title="App\Customer\Presentation\Api\Processor\ChangeSegmentProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/UpdateCustomerProcessor.php.html#27"><abbr title="App\Customer\Presentation\Api\Processor\UpdateCustomerProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Domain/ValueObject/Address.php.html#45"><abbr title="App\Customer\Domain\ValueObject\Address::validate">validate</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/ProfileProvider.php.html#36"><abbr title="App\Customer\Presentation\Api\Provider\ProfileProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Domain/ValueObject/Address.php.html#78"><abbr title="App\Customer\Domain\ValueObject\Address::equals">equals</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/ActivateCustomerProcessor.php.html#27"><abbr title="App\Customer\Presentation\Api\Processor\ActivateCustomerProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/DeactivateCustomerProcessor.php.html#27"><abbr title="App\Customer\Presentation\Api\Processor\DeactivateCustomerProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/EventSubscriber/OrderCompletedSubscriber.php.html#46"><abbr title="App\Customer\Application\EventSubscriber\OrderCompletedSubscriber::onOrderPlaced">onOrderPlaced</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerIdType.php.html#20"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerIdType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerSegmentType.php.html#20"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerSegmentType::convertToPHPValue">convertToPHPValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerCollectionProvider.php.html#28"><abbr title="App\Customer\Presentation\Api\Provider\CustomerCollectionProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/EventSubscriber/OrderCompletedSubscriber.php.html#111"><abbr title="App\Customer\Application\EventSubscriber\OrderCompletedSubscriber::calculateTotalSpent">calculateTotalSpent</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#24"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository::save">save</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerIdType.php.html#33"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerIdType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Type/CustomerSegmentType.php.html#33"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerSegmentType::convertToDatabaseValue">convertToDatabaseValue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/RegisterCustomerProcessor.php.html#113"><abbr title="App\Customer\Presentation\Api\Processor\RegisterCustomerProcessor::createUserForCustomer">createUserForCustomer</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/AddressesProvider.php.html#33"><abbr title="App\Customer\Presentation\Api\Provider\AddressesProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/CustomerItemProvider.php.html#25"><abbr title="App\Customer\Presentation\Api\Provider\CustomerItemProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Presentation/Api/Provider/PaymentMethodsProvider.php.html#34"><abbr title="App\Customer\Presentation\Api\Provider\PaymentMethodsProvider::provide">provide</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/Security/CustomerVoter.php.html#45"><abbr title="App\Customer\Infrastructure\Security\CustomerVoter::voteOnAttribute">voteOnAttribute</abbr></a></td><td class="text-right">78.6%</td><td class="text-right">8</td><td class="text-right">8</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerByEmailQueryHandler.php.html#21"><abbr title="App\Customer\Application\Query\GetCustomerByEmailQueryHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Query/GetCustomerOrdersQueryHandler.php.html#23"><abbr title="App\Customer\Application\Query\GetCustomerOrdersQueryHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#47"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository::findById">findById</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#67"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository::findByEmail">findByEmail</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/Persistence/Doctrine/Repository/DoctrineORMCustomerRepository.php.html#113"><abbr title="App\Customer\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMCustomerRepository::delete">delete</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Presentation/Api/Processor/AwardLoyaltyPointsProcessor.php.html#29"><abbr title="App\Customer\Presentation\Api\Processor\AwardLoyaltyPointsProcessor::process">process</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/Model/Customer.php.html#229"><abbr title="App\Customer\Domain\Model\Customer::validatePhoneNumber">validatePhoneNumber</abbr></a></td><td class="text-right">50.0%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 12.4.0</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.14</a> and <a href="https://phpunit.de/">PHPUnit 12.4.1</a> at Thu Nov 27 8:00:35 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/billboard.pkgd.min.js?v=12.4.0" type="text/javascript"></script>
+  <script type="application/json" id="complexity_class">[[0,9,"Application\/EventSubscriber\/OrderCompletedSubscriber.php.html#25","App\\Customer\\Application\\EventSubscriber\\OrderCompletedSubscriber","90"],[0,1,"Application\/Query\/GetCustomerByEmailQuery.php.html#7","App\\Customer\\Application\\Query\\GetCustomerByEmailQuery","2"],[0,3,"Application\/Query\/GetCustomerByEmailQueryHandler.php.html#13","App\\Customer\\Application\\Query\\GetCustomerByEmailQueryHandler","12"],[0,3,"Application\/Query\/GetCustomerOrdersQuery.php.html#10","App\\Customer\\Application\\Query\\GetCustomerOrdersQuery","12"],[0,3,"Application\/Query\/GetCustomerOrdersQueryHandler.php.html#11","App\\Customer\\Application\\Query\\GetCustomerOrdersQueryHandler","12"],[0,16,"Domain\/ValueObject\/Address.php.html#16","App\\Customer\\Domain\\ValueObject\\Address","272"],[0,12,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMCustomerRepository.php.html#16","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMCustomerRepository","156"],[0,10,"Infrastructure\/Persistence\/Doctrine\/Type\/CustomerIdType.php.html#11","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Type\\CustomerIdType","110"],[0,10,"Infrastructure\/Persistence\/Doctrine\/Type\/CustomerSegmentType.php.html#11","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Type\\CustomerSegmentType","110"],[0,7,"Presentation\/Api\/Processor\/ActivateCustomerProcessor.php.html#19","App\\Customer\\Presentation\\Api\\Processor\\ActivateCustomerProcessor","56"],[0,3,"Presentation\/Api\/Processor\/AwardLoyaltyPointsProcessor.php.html#18","App\\Customer\\Presentation\\Api\\Processor\\AwardLoyaltyPointsProcessor","12"],[0,9,"Presentation\/Api\/Processor\/ChangeSegmentProcessor.php.html#19","App\\Customer\\Presentation\\Api\\Processor\\ChangeSegmentProcessor","90"],[0,7,"Presentation\/Api\/Processor\/DeactivateCustomerProcessor.php.html#19","App\\Customer\\Presentation\\Api\\Processor\\DeactivateCustomerProcessor","56"],[0,13,"Presentation\/Api\/Processor\/RegisterCustomerProcessor.php.html#24","App\\Customer\\Presentation\\Api\\Processor\\RegisterCustomerProcessor","182"],[0,9,"Presentation\/Api\/Processor\/UpdateCustomerProcessor.php.html#19","App\\Customer\\Presentation\\Api\\Processor\\UpdateCustomerProcessor","90"],[0,4,"Presentation\/Api\/Provider\/AddressesProvider.php.html#25","App\\Customer\\Presentation\\Api\\Provider\\AddressesProvider","20"],[0,6,"Presentation\/Api\/Provider\/CustomerCollectionProvider.php.html#18","App\\Customer\\Presentation\\Api\\Provider\\CustomerCollectionProvider","42"],[0,5,"Presentation\/Api\/Provider\/CustomerItemProvider.php.html#18","App\\Customer\\Presentation\\Api\\Provider\\CustomerItemProvider","30"],[0,2,"Presentation\/Api\/Provider\/CustomerOrdersProvider.php.html#18","App\\Customer\\Presentation\\Api\\Provider\\CustomerOrdersProvider","6"],[0,4,"Presentation\/Api\/Provider\/PaymentMethodsProvider.php.html#26","App\\Customer\\Presentation\\Api\\Provider\\PaymentMethodsProvider","20"],[0,8,"Presentation\/Api\/Provider\/ProfileProvider.php.html#27","App\\Customer\\Presentation\\Api\\Provider\\ProfileProvider","72"],[16.666666666666664,6,"Domain\/Event\/CustomerCreated.php.html#11","App\\Customer\\Domain\\Event\\CustomerCreated","26.83"],[20,5,"Domain\/Event\/CustomerUpdated.php.html#9","App\\Customer\\Domain\\Event\\CustomerUpdated","17.80"],[20,5,"Domain\/Event\/LoyaltyPointsAwarded.php.html#9","App\\Customer\\Domain\\Event\\LoyaltyPointsAwarded","17.80"],[25,4,"Domain\/Event\/CustomerSegmentChanged.php.html#10","App\\Customer\\Domain\\Event\\CustomerSegmentChanged","10.75"],[50,2,"Domain\/Event\/CustomerActivated.php.html#9","App\\Customer\\Domain\\Event\\CustomerActivated","2.50"],[50,2,"Domain\/Event\/CustomerDeactivated.php.html#9","App\\Customer\\Domain\\Event\\CustomerDeactivated","2.50"],[72.72727272727273,8,"Domain\/Service\/CustomerSegmentationService.php.html#19","App\\Customer\\Domain\\Service\\CustomerSegmentationService","9.30"],[75.86206896551724,28,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#31","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity","39.03"],[80.95238095238095,10,"Infrastructure\/Security\/CustomerVoter.php.html#23","App\\Customer\\Infrastructure\\Security\\CustomerVoter","10.69"],[86.66666666666667,15,"Domain\/ValueObject\/CustomerSegment.php.html#17","App\\Customer\\Domain\\ValueObject\\CustomerSegment","15.53"],[90,8,"Domain\/ValueObject\/CustomerId.php.html#14","App\\Customer\\Domain\\ValueObject\\CustomerId","8.06"],[99.05660377358491,34,"Domain\/Model\/Customer.php.html#31","App\\Customer\\Domain\\Model\\Customer","34"],[100,1,"Application\/Command\/ActivateCustomerCommand.php.html#7","App\\Customer\\Application\\Command\\ActivateCustomerCommand","1"],[100,3,"Application\/Command\/ActivateCustomerCommandHandler.php.html#12","App\\Customer\\Application\\Command\\ActivateCustomerCommandHandler","3"],[100,1,"Application\/Command\/AwardLoyaltyPointsCommand.php.html#7","App\\Customer\\Application\\Command\\AwardLoyaltyPointsCommand","1"],[100,3,"Application\/Command\/AwardLoyaltyPointsCommandHandler.php.html#12","App\\Customer\\Application\\Command\\AwardLoyaltyPointsCommandHandler","3"],[100,1,"Application\/Command\/ChangeSegmentCommand.php.html#7","App\\Customer\\Application\\Command\\ChangeSegmentCommand","1"],[100,3,"Application\/Command\/ChangeSegmentCommandHandler.php.html#13","App\\Customer\\Application\\Command\\ChangeSegmentCommandHandler","3"],[100,1,"Application\/Command\/DeactivateCustomerCommand.php.html#7","App\\Customer\\Application\\Command\\DeactivateCustomerCommand","1"],[100,3,"Application\/Command\/DeactivateCustomerCommandHandler.php.html#12","App\\Customer\\Application\\Command\\DeactivateCustomerCommandHandler","3"],[100,1,"Application\/Command\/RegisterCustomerCommand.php.html#7","App\\Customer\\Application\\Command\\RegisterCustomerCommand","1"],[100,3,"Application\/Command\/RegisterCustomerCommandHandler.php.html#14","App\\Customer\\Application\\Command\\RegisterCustomerCommandHandler","3"],[100,1,"Application\/Command\/UpdateCustomerCommand.php.html#7","App\\Customer\\Application\\Command\\UpdateCustomerCommand","1"],[100,3,"Application\/Command\/UpdateCustomerCommandHandler.php.html#12","App\\Customer\\Application\\Command\\UpdateCustomerCommandHandler","3"],[100,2,"Application\/DTO\/CustomerDTO.php.html#9","App\\Customer\\Application\\DTO\\CustomerDTO","2"],[100,1,"Application\/Query\/GetAllCustomersQuery.php.html#7","App\\Customer\\Application\\Query\\GetAllCustomersQuery","1"],[100,3,"Application\/Query\/GetAllCustomersQueryHandler.php.html#12","App\\Customer\\Application\\Query\\GetAllCustomersQueryHandler","3"],[100,1,"Application\/Query\/GetCustomerByIdQuery.php.html#7","App\\Customer\\Application\\Query\\GetCustomerByIdQuery","1"],[100,3,"Application\/Query\/GetCustomerByIdQueryHandler.php.html#13","App\\Customer\\Application\\Query\\GetCustomerByIdQueryHandler","3"],[100,0,"Infrastructure\/Persistence\/Doctrine\/Entity\/AddressCollectionEntity.php.html#16","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\AddressCollectionEntity","0"],[100,0,"Infrastructure\/Persistence\/Doctrine\/Entity\/PaymentMethodCollectionEntity.php.html#16","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\PaymentMethodCollectionEntity","0"]]</script>
+  <script type="application/json" id="complexity_method">[[0,1,"Application\/EventSubscriber\/OrderCompletedSubscriber.php.html#27","App\\Customer\\Application\\EventSubscriber\\OrderCompletedSubscriber::__construct","2"],[0,1,"Application\/EventSubscriber\/OrderCompletedSubscriber.php.html#36","App\\Customer\\Application\\EventSubscriber\\OrderCompletedSubscriber::getSubscribedEvents","2"],[0,4,"Application\/EventSubscriber\/OrderCompletedSubscriber.php.html#46","App\\Customer\\Application\\EventSubscriber\\OrderCompletedSubscriber::onOrderPlaced","20"],[0,3,"Application\/EventSubscriber\/OrderCompletedSubscriber.php.html#111","App\\Customer\\Application\\EventSubscriber\\OrderCompletedSubscriber::calculateTotalSpent","12"],[0,1,"Application\/Query\/GetCustomerByEmailQuery.php.html#9","App\\Customer\\Application\\Query\\GetCustomerByEmailQuery::__construct","2"],[0,1,"Application\/Query\/GetCustomerByEmailQueryHandler.php.html#16","App\\Customer\\Application\\Query\\GetCustomerByEmailQueryHandler::__construct","2"],[0,2,"Application\/Query\/GetCustomerByEmailQueryHandler.php.html#21","App\\Customer\\Application\\Query\\GetCustomerByEmailQueryHandler::__invoke","6"],[0,1,"Application\/Query\/GetCustomerOrdersQuery.php.html#12","App\\Customer\\Application\\Query\\GetCustomerOrdersQuery::__construct","2"],[0,1,"Application\/Query\/GetCustomerOrdersQuery.php.html#18","App\\Customer\\Application\\Query\\GetCustomerOrdersQuery::customerId","2"],[0,1,"Application\/Query\/GetCustomerOrdersQuery.php.html#23","App\\Customer\\Application\\Query\\GetCustomerOrdersQuery::tenantId","2"],[0,1,"Application\/Query\/GetCustomerOrdersQueryHandler.php.html#14","App\\Customer\\Application\\Query\\GetCustomerOrdersQueryHandler::__construct","2"],[0,2,"Application\/Query\/GetCustomerOrdersQueryHandler.php.html#23","App\\Customer\\Application\\Query\\GetCustomerOrdersQueryHandler::__invoke","6"],[0,1,"Domain\/Event\/CustomerActivated.php.html#16","App\\Customer\\Domain\\Event\\CustomerActivated::customerId","2"],[0,1,"Domain\/Event\/CustomerCreated.php.html#22","App\\Customer\\Domain\\Event\\CustomerCreated::customerId","2"],[0,1,"Domain\/Event\/CustomerCreated.php.html#27","App\\Customer\\Domain\\Event\\CustomerCreated::tenantId","2"],[0,1,"Domain\/Event\/CustomerCreated.php.html#32","App\\Customer\\Domain\\Event\\CustomerCreated::email","2"],[0,1,"Domain\/Event\/CustomerCreated.php.html#37","App\\Customer\\Domain\\Event\\CustomerCreated::firstName","2"],[0,1,"Domain\/Event\/CustomerCreated.php.html#42","App\\Customer\\Domain\\Event\\CustomerCreated::lastName","2"],[0,1,"Domain\/Event\/CustomerDeactivated.php.html#16","App\\Customer\\Domain\\Event\\CustomerDeactivated::customerId","2"],[0,1,"Domain\/Event\/CustomerSegmentChanged.php.html#19","App\\Customer\\Domain\\Event\\CustomerSegmentChanged::customerId","2"],[0,1,"Domain\/Event\/CustomerSegmentChanged.php.html#24","App\\Customer\\Domain\\Event\\CustomerSegmentChanged::oldSegment","2"],[0,1,"Domain\/Event\/CustomerSegmentChanged.php.html#29","App\\Customer\\Domain\\Event\\CustomerSegmentChanged::newSegment","2"],[0,1,"Domain\/Event\/CustomerUpdated.php.html#19","App\\Customer\\Domain\\Event\\CustomerUpdated::customerId","2"],[0,1,"Domain\/Event\/CustomerUpdated.php.html#24","App\\Customer\\Domain\\Event\\CustomerUpdated::firstName","2"],[0,1,"Domain\/Event\/CustomerUpdated.php.html#29","App\\Customer\\Domain\\Event\\CustomerUpdated::lastName","2"],[0,1,"Domain\/Event\/CustomerUpdated.php.html#34","App\\Customer\\Domain\\Event\\CustomerUpdated::phoneNumber","2"],[0,1,"Domain\/Event\/LoyaltyPointsAwarded.php.html#19","App\\Customer\\Domain\\Event\\LoyaltyPointsAwarded::customerId","2"],[0,1,"Domain\/Event\/LoyaltyPointsAwarded.php.html#24","App\\Customer\\Domain\\Event\\LoyaltyPointsAwarded::pointsAwarded","2"],[0,1,"Domain\/Event\/LoyaltyPointsAwarded.php.html#29","App\\Customer\\Domain\\Event\\LoyaltyPointsAwarded::newTotalPoints","2"],[0,1,"Domain\/Event\/LoyaltyPointsAwarded.php.html#34","App\\Customer\\Domain\\Event\\LoyaltyPointsAwarded::reason","2"],[0,1,"Domain\/Service\/CustomerSegmentationService.php.html#81","App\\Customer\\Domain\\Service\\CustomerSegmentationService::getRecommendedSegment","2"],[0,1,"Domain\/Service\/CustomerSegmentationService.php.html#89","App\\Customer\\Domain\\Service\\CustomerSegmentationService::getVipTotalSpentThreshold","2"],[0,1,"Domain\/Service\/CustomerSegmentationService.php.html#97","App\\Customer\\Domain\\Service\\CustomerSegmentationService::getVipLoyaltyPointsThreshold","2"],[0,1,"Domain\/ValueObject\/Address.php.html#21","App\\Customer\\Domain\\ValueObject\\Address::__construct","2"],[0,1,"Domain\/ValueObject\/Address.php.html#33","App\\Customer\\Domain\\ValueObject\\Address::create","2"],[0,6,"Domain\/ValueObject\/Address.php.html#45","App\\Customer\\Domain\\ValueObject\\Address::validate","42"],[0,1,"Domain\/ValueObject\/Address.php.html#68","App\\Customer\\Domain\\ValueObject\\Address::isBilling","2"],[0,1,"Domain\/ValueObject\/Address.php.html#73","App\\Customer\\Domain\\ValueObject\\Address::isShipping","2"],[0,5,"Domain\/ValueObject\/Address.php.html#78","App\\Customer\\Domain\\ValueObject\\Address::equals","30"],[0,1,"Domain\/ValueObject\/Address.php.html#88","App\\Customer\\Domain\\ValueObject\\Address::toArray","2"],[0,1,"Domain\/ValueObject\/CustomerSegment.php.html#54","App\\Customer\\Domain\\ValueObject\\CustomerSegment::premium","2"],[0,1,"Domain\/ValueObject\/CustomerSegment.php.html#89","App\\Customer\\Domain\\ValueObject\\CustomerSegment::isPremium","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#218","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::getFullName","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#224","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::setId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#229","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::setTenantId","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#234","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::setEmail","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#239","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::setFirstName","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#244","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::setLastName","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#249","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::setPhoneNumber","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#254","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::setSegment","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#259","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::setLoyaltyPoints","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#264","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::setIsActive","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#269","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::setCreatedAt","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#274","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::setUpdatedAt","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#279","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::getPlainPassword","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#284","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::setPlainPassword","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMCustomerRepository.php.html#18","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMCustomerRepository::__construct","2"],[0,3,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMCustomerRepository.php.html#24","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMCustomerRepository::save","12"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMCustomerRepository.php.html#47","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMCustomerRepository::findById","6"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMCustomerRepository.php.html#67","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMCustomerRepository::findByEmail","6"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMCustomerRepository.php.html#85","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMCustomerRepository::findAll","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMCustomerRepository.php.html#99","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMCustomerRepository::findBySegment","2"],[0,2,"Infrastructure\/Persistence\/Doctrine\/Repository\/DoctrineORMCustomerRepository.php.html#113","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineORMCustomerRepository::delete","6"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/CustomerIdType.php.html#15","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Type\\CustomerIdType::getSQLDeclaration","2"],[0,4,"Infrastructure\/Persistence\/Doctrine\/Type\/CustomerIdType.php.html#20","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Type\\CustomerIdType::convertToPHPValue","20"],[0,3,"Infrastructure\/Persistence\/Doctrine\/Type\/CustomerIdType.php.html#33","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Type\\CustomerIdType::convertToDatabaseValue","12"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/CustomerIdType.php.html#46","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Type\\CustomerIdType::getName","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/CustomerIdType.php.html#51","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Type\\CustomerIdType::requiresSQLCommentHint","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/CustomerSegmentType.php.html#15","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Type\\CustomerSegmentType::getSQLDeclaration","2"],[0,4,"Infrastructure\/Persistence\/Doctrine\/Type\/CustomerSegmentType.php.html#20","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Type\\CustomerSegmentType::convertToPHPValue","20"],[0,3,"Infrastructure\/Persistence\/Doctrine\/Type\/CustomerSegmentType.php.html#33","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Type\\CustomerSegmentType::convertToDatabaseValue","12"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/CustomerSegmentType.php.html#46","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Type\\CustomerSegmentType::getName","2"],[0,1,"Infrastructure\/Persistence\/Doctrine\/Type\/CustomerSegmentType.php.html#51","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Type\\CustomerSegmentType::requiresSQLCommentHint","2"],[0,1,"Infrastructure\/Security\/CustomerVoter.php.html#30","App\\Customer\\Infrastructure\\Security\\CustomerVoter::getResourceName","2"],[0,1,"Presentation\/Api\/Processor\/ActivateCustomerProcessor.php.html#21","App\\Customer\\Presentation\\Api\\Processor\\ActivateCustomerProcessor::__construct","2"],[0,5,"Presentation\/Api\/Processor\/ActivateCustomerProcessor.php.html#27","App\\Customer\\Presentation\\Api\\Processor\\ActivateCustomerProcessor::process","30"],[0,1,"Presentation\/Api\/Processor\/ActivateCustomerProcessor.php.html#68","App\\Customer\\Presentation\\Api\\Processor\\ActivateCustomerProcessor::populateEntityFromDTO","2"],[0,1,"Presentation\/Api\/Processor\/AwardLoyaltyPointsProcessor.php.html#20","App\\Customer\\Presentation\\Api\\Processor\\AwardLoyaltyPointsProcessor::__construct","2"],[0,2,"Presentation\/Api\/Processor\/AwardLoyaltyPointsProcessor.php.html#29","App\\Customer\\Presentation\\Api\\Processor\\AwardLoyaltyPointsProcessor::process","6"],[0,1,"Presentation\/Api\/Processor\/ChangeSegmentProcessor.php.html#21","App\\Customer\\Presentation\\Api\\Processor\\ChangeSegmentProcessor::__construct","2"],[0,7,"Presentation\/Api\/Processor\/ChangeSegmentProcessor.php.html#27","App\\Customer\\Presentation\\Api\\Processor\\ChangeSegmentProcessor::process","56"],[0,1,"Presentation\/Api\/Processor\/ChangeSegmentProcessor.php.html#79","App\\Customer\\Presentation\\Api\\Processor\\ChangeSegmentProcessor::populateEntityFromDTO","2"],[0,1,"Presentation\/Api\/Processor\/DeactivateCustomerProcessor.php.html#21","App\\Customer\\Presentation\\Api\\Processor\\DeactivateCustomerProcessor::__construct","2"],[0,5,"Presentation\/Api\/Processor\/DeactivateCustomerProcessor.php.html#27","App\\Customer\\Presentation\\Api\\Processor\\DeactivateCustomerProcessor::process","30"],[0,1,"Presentation\/Api\/Processor\/DeactivateCustomerProcessor.php.html#68","App\\Customer\\Presentation\\Api\\Processor\\DeactivateCustomerProcessor::populateEntityFromDTO","2"],[0,1,"Presentation\/Api\/Processor\/RegisterCustomerProcessor.php.html#26","App\\Customer\\Presentation\\Api\\Processor\\RegisterCustomerProcessor::__construct","2"],[0,8,"Presentation\/Api\/Processor\/RegisterCustomerProcessor.php.html#34","App\\Customer\\Presentation\\Api\\Processor\\RegisterCustomerProcessor::process","72"],[0,1,"Presentation\/Api\/Processor\/RegisterCustomerProcessor.php.html#92","App\\Customer\\Presentation\\Api\\Processor\\RegisterCustomerProcessor::populateEntityFromDTO","2"],[0,3,"Presentation\/Api\/Processor\/RegisterCustomerProcessor.php.html#113","App\\Customer\\Presentation\\Api\\Processor\\RegisterCustomerProcessor::createUserForCustomer","12"],[0,1,"Presentation\/Api\/Processor\/UpdateCustomerProcessor.php.html#21","App\\Customer\\Presentation\\Api\\Processor\\UpdateCustomerProcessor::__construct","2"],[0,7,"Presentation\/Api\/Processor\/UpdateCustomerProcessor.php.html#27","App\\Customer\\Presentation\\Api\\Processor\\UpdateCustomerProcessor::process","56"],[0,1,"Presentation\/Api\/Processor\/UpdateCustomerProcessor.php.html#76","App\\Customer\\Presentation\\Api\\Processor\\UpdateCustomerProcessor::populateEntityFromDTO","2"],[0,1,"Presentation\/Api\/Provider\/AddressesProvider.php.html#27","App\\Customer\\Presentation\\Api\\Provider\\AddressesProvider::__construct","2"],[0,3,"Presentation\/Api\/Provider\/AddressesProvider.php.html#33","App\\Customer\\Presentation\\Api\\Provider\\AddressesProvider::provide","12"],[0,1,"Presentation\/Api\/Provider\/CustomerCollectionProvider.php.html#20","App\\Customer\\Presentation\\Api\\Provider\\CustomerCollectionProvider::__construct","2"],[0,4,"Presentation\/Api\/Provider\/CustomerCollectionProvider.php.html#28","App\\Customer\\Presentation\\Api\\Provider\\CustomerCollectionProvider::provide","20"],[0,1,"Presentation\/Api\/Provider\/CustomerCollectionProvider.php.html#56","App\\Customer\\Presentation\\Api\\Provider\\CustomerCollectionProvider::populateEntityFromDTO","2"],[0,1,"Presentation\/Api\/Provider\/CustomerItemProvider.php.html#20","App\\Customer\\Presentation\\Api\\Provider\\CustomerItemProvider::__construct","2"],[0,3,"Presentation\/Api\/Provider\/CustomerItemProvider.php.html#25","App\\Customer\\Presentation\\Api\\Provider\\CustomerItemProvider::provide","12"],[0,1,"Presentation\/Api\/Provider\/CustomerItemProvider.php.html#49","App\\Customer\\Presentation\\Api\\Provider\\CustomerItemProvider::populateEntityFromDTO","2"],[0,1,"Presentation\/Api\/Provider\/CustomerOrdersProvider.php.html#20","App\\Customer\\Presentation\\Api\\Provider\\CustomerOrdersProvider::__construct","2"],[0,1,"Presentation\/Api\/Provider\/CustomerOrdersProvider.php.html#28","App\\Customer\\Presentation\\Api\\Provider\\CustomerOrdersProvider::provide","2"],[0,1,"Presentation\/Api\/Provider\/PaymentMethodsProvider.php.html#28","App\\Customer\\Presentation\\Api\\Provider\\PaymentMethodsProvider::__construct","2"],[0,3,"Presentation\/Api\/Provider\/PaymentMethodsProvider.php.html#34","App\\Customer\\Presentation\\Api\\Provider\\PaymentMethodsProvider::provide","12"],[0,1,"Presentation\/Api\/Provider\/ProfileProvider.php.html#29","App\\Customer\\Presentation\\Api\\Provider\\ProfileProvider::__construct","2"],[0,6,"Presentation\/Api\/Provider\/ProfileProvider.php.html#36","App\\Customer\\Presentation\\Api\\Provider\\ProfileProvider::provide","42"],[0,1,"Presentation\/Api\/Provider\/ProfileProvider.php.html#78","App\\Customer\\Presentation\\Api\\Provider\\ProfileProvider::populateEntityFromDTO","2"],[50,2,"Domain\/Model\/Customer.php.html#229","App\\Customer\\Domain\\Model\\Customer::validatePhoneNumber","2.50"],[78.57142857142857,8,"Infrastructure\/Security\/CustomerVoter.php.html#45","App\\Customer\\Infrastructure\\Security\\CustomerVoter::voteOnAttribute","8.63"],[80,3,"Domain\/ValueObject\/CustomerId.php.html#16","App\\Customer\\Domain\\ValueObject\\CustomerId::__construct","3.07"],[100,1,"Application\/Command\/ActivateCustomerCommand.php.html#9","App\\Customer\\Application\\Command\\ActivateCustomerCommand::__construct","1"],[100,1,"Application\/Command\/ActivateCustomerCommandHandler.php.html#15","App\\Customer\\Application\\Command\\ActivateCustomerCommandHandler::__construct","1"],[100,2,"Application\/Command\/ActivateCustomerCommandHandler.php.html#20","App\\Customer\\Application\\Command\\ActivateCustomerCommandHandler::__invoke","2"],[100,1,"Application\/Command\/AwardLoyaltyPointsCommand.php.html#9","App\\Customer\\Application\\Command\\AwardLoyaltyPointsCommand::__construct","1"],[100,1,"Application\/Command\/AwardLoyaltyPointsCommandHandler.php.html#15","App\\Customer\\Application\\Command\\AwardLoyaltyPointsCommandHandler::__construct","1"],[100,2,"Application\/Command\/AwardLoyaltyPointsCommandHandler.php.html#20","App\\Customer\\Application\\Command\\AwardLoyaltyPointsCommandHandler::__invoke","2"],[100,1,"Application\/Command\/ChangeSegmentCommand.php.html#9","App\\Customer\\Application\\Command\\ChangeSegmentCommand::__construct","1"],[100,1,"Application\/Command\/ChangeSegmentCommandHandler.php.html#16","App\\Customer\\Application\\Command\\ChangeSegmentCommandHandler::__construct","1"],[100,2,"Application\/Command\/ChangeSegmentCommandHandler.php.html#21","App\\Customer\\Application\\Command\\ChangeSegmentCommandHandler::__invoke","2"],[100,1,"Application\/Command\/DeactivateCustomerCommand.php.html#9","App\\Customer\\Application\\Command\\DeactivateCustomerCommand::__construct","1"],[100,1,"Application\/Command\/DeactivateCustomerCommandHandler.php.html#15","App\\Customer\\Application\\Command\\DeactivateCustomerCommandHandler::__construct","1"],[100,2,"Application\/Command\/DeactivateCustomerCommandHandler.php.html#20","App\\Customer\\Application\\Command\\DeactivateCustomerCommandHandler::__invoke","2"],[100,1,"Application\/Command\/RegisterCustomerCommand.php.html#9","App\\Customer\\Application\\Command\\RegisterCustomerCommand::__construct","1"],[100,1,"Application\/Command\/RegisterCustomerCommandHandler.php.html#17","App\\Customer\\Application\\Command\\RegisterCustomerCommandHandler::__construct","1"],[100,2,"Application\/Command\/RegisterCustomerCommandHandler.php.html#22","App\\Customer\\Application\\Command\\RegisterCustomerCommandHandler::__invoke","2"],[100,1,"Application\/Command\/UpdateCustomerCommand.php.html#9","App\\Customer\\Application\\Command\\UpdateCustomerCommand::__construct","1"],[100,1,"Application\/Command\/UpdateCustomerCommandHandler.php.html#15","App\\Customer\\Application\\Command\\UpdateCustomerCommandHandler::__construct","1"],[100,2,"Application\/Command\/UpdateCustomerCommandHandler.php.html#20","App\\Customer\\Application\\Command\\UpdateCustomerCommandHandler::__invoke","2"],[100,1,"Application\/DTO\/CustomerDTO.php.html#11","App\\Customer\\Application\\DTO\\CustomerDTO::__construct","1"],[100,1,"Application\/DTO\/CustomerDTO.php.html#27","App\\Customer\\Application\\DTO\\CustomerDTO::fromDomain","1"],[100,1,"Application\/Query\/GetAllCustomersQuery.php.html#9","App\\Customer\\Application\\Query\\GetAllCustomersQuery::__construct","1"],[100,1,"Application\/Query\/GetAllCustomersQueryHandler.php.html#15","App\\Customer\\Application\\Query\\GetAllCustomersQueryHandler::__construct","1"],[100,2,"Application\/Query\/GetAllCustomersQueryHandler.php.html#23","App\\Customer\\Application\\Query\\GetAllCustomersQueryHandler::__invoke","2"],[100,1,"Application\/Query\/GetCustomerByIdQuery.php.html#9","App\\Customer\\Application\\Query\\GetCustomerByIdQuery::__construct","1"],[100,1,"Application\/Query\/GetCustomerByIdQueryHandler.php.html#16","App\\Customer\\Application\\Query\\GetCustomerByIdQueryHandler::__construct","1"],[100,2,"Application\/Query\/GetCustomerByIdQueryHandler.php.html#21","App\\Customer\\Application\\Query\\GetCustomerByIdQueryHandler::__invoke","2"],[100,1,"Domain\/Event\/CustomerActivated.php.html#11","App\\Customer\\Domain\\Event\\CustomerActivated::__construct","1"],[100,1,"Domain\/Event\/CustomerCreated.php.html#13","App\\Customer\\Domain\\Event\\CustomerCreated::__construct","1"],[100,1,"Domain\/Event\/CustomerDeactivated.php.html#11","App\\Customer\\Domain\\Event\\CustomerDeactivated::__construct","1"],[100,1,"Domain\/Event\/CustomerSegmentChanged.php.html#12","App\\Customer\\Domain\\Event\\CustomerSegmentChanged::__construct","1"],[100,1,"Domain\/Event\/CustomerUpdated.php.html#11","App\\Customer\\Domain\\Event\\CustomerUpdated::__construct","1"],[100,1,"Domain\/Event\/LoyaltyPointsAwarded.php.html#11","App\\Customer\\Domain\\Event\\LoyaltyPointsAwarded::__construct","1"],[100,1,"Domain\/Model\/Customer.php.html#45","App\\Customer\\Domain\\Model\\Customer::__construct","1"],[100,2,"Domain\/Model\/Customer.php.html#49","App\\Customer\\Domain\\Model\\Customer::register","2"],[100,1,"Domain\/Model\/Customer.php.html#88","App\\Customer\\Domain\\Model\\Customer::reconstituteFromPersistence","1"],[100,2,"Domain\/Model\/Customer.php.html#117","App\\Customer\\Domain\\Model\\Customer::updateProfile","2"],[100,2,"Domain\/Model\/Customer.php.html#142","App\\Customer\\Domain\\Model\\Customer::changeSegment","2"],[100,2,"Domain\/Model\/Customer.php.html#159","App\\Customer\\Domain\\Model\\Customer::awardLoyaltyPoints","2"],[100,3,"Domain\/Model\/Customer.php.html#176","App\\Customer\\Domain\\Model\\Customer::redeemLoyaltyPoints","3"],[100,2,"Domain\/Model\/Customer.php.html#190","App\\Customer\\Domain\\Model\\Customer::activate","2"],[100,2,"Domain\/Model\/Customer.php.html#202","App\\Customer\\Domain\\Model\\Customer::deactivate","2"],[100,1,"Domain\/Model\/Customer.php.html#214","App\\Customer\\Domain\\Model\\Customer::fullName","1"],[100,3,"Domain\/Model\/Customer.php.html#219","App\\Customer\\Domain\\Model\\Customer::validateName","3"],[100,1,"Domain\/Model\/Customer.php.html#238","App\\Customer\\Domain\\Model\\Customer::id","1"],[100,1,"Domain\/Model\/Customer.php.html#243","App\\Customer\\Domain\\Model\\Customer::tenantId","1"],[100,1,"Domain\/Model\/Customer.php.html#248","App\\Customer\\Domain\\Model\\Customer::email","1"],[100,1,"Domain\/Model\/Customer.php.html#253","App\\Customer\\Domain\\Model\\Customer::firstName","1"],[100,1,"Domain\/Model\/Customer.php.html#258","App\\Customer\\Domain\\Model\\Customer::lastName","1"],[100,1,"Domain\/Model\/Customer.php.html#263","App\\Customer\\Domain\\Model\\Customer::phoneNumber","1"],[100,1,"Domain\/Model\/Customer.php.html#268","App\\Customer\\Domain\\Model\\Customer::segment","1"],[100,1,"Domain\/Model\/Customer.php.html#273","App\\Customer\\Domain\\Model\\Customer::loyaltyPoints","1"],[100,1,"Domain\/Model\/Customer.php.html#278","App\\Customer\\Domain\\Model\\Customer::isActive","1"],[100,1,"Domain\/Model\/Customer.php.html#283","App\\Customer\\Domain\\Model\\Customer::createdAt","1"],[100,1,"Domain\/Model\/Customer.php.html#288","App\\Customer\\Domain\\Model\\Customer::updatedAt","1"],[100,4,"Domain\/Service\/CustomerSegmentationService.php.html#35","App\\Customer\\Domain\\Service\\CustomerSegmentationService::evaluateSegment","4"],[100,1,"Domain\/Service\/CustomerSegmentationService.php.html#65","App\\Customer\\Domain\\Service\\CustomerSegmentationService::shouldChangeSegment","1"],[100,1,"Domain\/ValueObject\/CustomerId.php.html#29","App\\Customer\\Domain\\ValueObject\\CustomerId::generate","1"],[100,1,"Domain\/ValueObject\/CustomerId.php.html#34","App\\Customer\\Domain\\ValueObject\\CustomerId::fromString","1"],[100,1,"Domain\/ValueObject\/CustomerId.php.html#39","App\\Customer\\Domain\\ValueObject\\CustomerId::toString","1"],[100,1,"Domain\/ValueObject\/CustomerId.php.html#44","App\\Customer\\Domain\\ValueObject\\CustomerId::equals","1"],[100,1,"Domain\/ValueObject\/CustomerId.php.html#49","App\\Customer\\Domain\\ValueObject\\CustomerId::__toString","1"],[100,2,"Domain\/ValueObject\/CustomerSegment.php.html#31","App\\Customer\\Domain\\ValueObject\\CustomerSegment::__construct","2"],[100,1,"Domain\/ValueObject\/CustomerSegment.php.html#39","App\\Customer\\Domain\\ValueObject\\CustomerSegment::regular","1"],[100,1,"Domain\/ValueObject\/CustomerSegment.php.html#44","App\\Customer\\Domain\\ValueObject\\CustomerSegment::vip","1"],[100,1,"Domain\/ValueObject\/CustomerSegment.php.html#49","App\\Customer\\Domain\\ValueObject\\CustomerSegment::wholesale","1"],[100,1,"Domain\/ValueObject\/CustomerSegment.php.html#59","App\\Customer\\Domain\\ValueObject\\CustomerSegment::fromString","1"],[100,1,"Domain\/ValueObject\/CustomerSegment.php.html#64","App\\Customer\\Domain\\ValueObject\\CustomerSegment::value","1"],[100,1,"Domain\/ValueObject\/CustomerSegment.php.html#69","App\\Customer\\Domain\\ValueObject\\CustomerSegment::toString","1"],[100,1,"Domain\/ValueObject\/CustomerSegment.php.html#74","App\\Customer\\Domain\\ValueObject\\CustomerSegment::isRegular","1"],[100,1,"Domain\/ValueObject\/CustomerSegment.php.html#79","App\\Customer\\Domain\\ValueObject\\CustomerSegment::isVip","1"],[100,1,"Domain\/ValueObject\/CustomerSegment.php.html#84","App\\Customer\\Domain\\ValueObject\\CustomerSegment::isWholesale","1"],[100,1,"Domain\/ValueObject\/CustomerSegment.php.html#94","App\\Customer\\Domain\\ValueObject\\CustomerSegment::equals","1"],[100,1,"Domain\/ValueObject\/CustomerSegment.php.html#99","App\\Customer\\Domain\\ValueObject\\CustomerSegment::__toString","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#115","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::fromDomainModel","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#133","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::updateFromDomainModel","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#145","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::toDomainModel","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#163","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::getId","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#168","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::getTenantId","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#173","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::getEmail","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#178","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::getFirstName","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#183","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::getLastName","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#188","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::getPhoneNumber","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#193","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::getSegment","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#198","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::getLoyaltyPoints","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#203","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::isActive","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#208","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::getCreatedAt","1"],[100,1,"Infrastructure\/Persistence\/Doctrine\/Entity\/CustomerEntity.php.html#213","App\\Customer\\Infrastructure\\Persistence\\Doctrine\\Entity\\CustomerEntity::getUpdatedAt","1"],[100,1,"Infrastructure\/Security\/CustomerVoter.php.html#35","App\\Customer\\Infrastructure\\Security\\CustomerVoter::getSupportedAttributes","1"]]</script>
+  <script type="text/javascript" defer>
+  const barLabels = [
+    '0%',
+    '0-10%',
+    '10-20%',
+    '20-30%',
+    '30-40%',
+    '40-50%',
+    '50-60%',
+    '60-70%',
+    '70-80%',
+    '80-90%',
+    '90-100%',
+    '100%'
+  ];
+  const barConfig = (name, fullName, values) => ({
+    axis: {
+      x: {
+        type: "category",
+        categories: barLabels,
+      },
+      y: {
+        label: {
+          text: `#${name}`,
+          position: 'outer-top',
+        },
+      },
+    },
+    bindto: `#${name}CoverageDistribution`,
+    data: {
+      columns: [
+        [fullName].concat(values),
+      ],
+      colors: {
+        [fullName]: "rgba(69, 114, 167, 0.75)",
+      },
+      type: "bar",
+    },
+    bar: {
+      width: {
+        ratio: 0.9,
+      },
+    },
+    grid: {
+      focus: {
+        show: false,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">Coverage ${barLabels[data[0].x]}</th></tr>
+            <tr><td class="value">${data[0].value} ${name}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  bb.generate(
+    barConfig('classes', "Class Coverage", [21,0,1,3,0,0,2,0,2,2,2,19])
+  );
+  bb.generate(
+    barConfig('methods', "Method Coverage", [107,0,0,0,0,0,1,0,1,1,0,88])
+  );
+
+  const scatterConfig = (name, complexityData) => ({
+    axis: {
+      x: {
+        label: {
+          text: 'Code Coverage (in percent)',
+          position: 'outer-right',
+        },
+        tick: {
+          values: [0, 20, 40, 60, 80, 100],
+        },
+      },
+      y: {
+        label: {
+          text: 'Cyclomatic Complexity',
+          position: 'outer-top',
+        },
+        min: 0,
+        padding: {
+          bottom: 0,
+          top: 5,
+        },
+      },
+    },
+    bindto: `#${name}Complexity`,
+    data: {
+      columns: [
+        ["complexity_x"].concat(complexityData.map(d => d[0])),
+        ["complexity"].concat(complexityData.map(d => d[1])),
+      ],
+      onclick: function(data, element) {
+        window.location = complexityData[data.index][2];
+      },
+      type: "scatter",
+      xs: {
+        "complexity": "complexity_x",
+      },
+    },
+    grid: {
+      focus: {
+        show: true,
+        y: true,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        const coverage = Math.round(data[0].x);
+        const complexity = data[0].value;
+        const targetName = complexityData[data[0].index][3];
+        const crap = complexityData[data[0].index][4];
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">${targetName}</th></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Coverage</td><td class="name">${coverage}%</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Complexity</td><td class="value">${complexity}</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Crap</td><td class="value">${crap}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  const classComplexityData = JSON.parse(document.getElementById('complexity_class').textContent);
+  bb.generate(
+    scatterConfig("class", classComplexityData)
+  );
+  const methodComplexityData = JSON.parse(document.getElementById('complexity_method').textContent);
+  bb.generate(
+    scatterConfig("method", methodComplexityData),
+  );
+  </script>
+ </body>
+</html>

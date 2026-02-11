@@ -41,23 +41,28 @@ use App\Returns\Presentation\Api\Provider\ReturnRequestItemProvider;
         ),
         new Patch(
             uriTemplate: '/return-requests/{id}/approve',
-            processor: ApproveReturnRequestProcessor::class
+            processor: ApproveReturnRequestProcessor::class,
+            read: false
         ),
         new Patch(
             uriTemplate: '/return-requests/{id}/receive',
-            processor: MarkReturnAsReceivedProcessor::class
+            processor: MarkReturnAsReceivedProcessor::class,
+            read: false
         ),
         new Patch(
             uriTemplate: '/return-requests/{id}/inspect',
-            processor: InspectReturnRequestProcessor::class
+            processor: InspectReturnRequestProcessor::class,
+            read: false
         ),
         new Patch(
             uriTemplate: '/return-requests/{id}/complete',
-            processor: CompleteReturnRequestProcessor::class
+            processor: CompleteReturnRequestProcessor::class,
+            read: false
         ),
         new Patch(
             uriTemplate: '/return-requests/{id}/reject',
-            processor: RejectReturnRequestProcessor::class
+            processor: RejectReturnRequestProcessor::class,
+            read: false
         ),
     ]
 )]

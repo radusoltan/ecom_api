@@ -6,8 +6,11 @@ namespace App\Tests\Unit\Customer\Domain\Service;
 
 use App\Customer\Domain\Model\Customer;
 use App\Customer\Domain\Service\CustomerSegmentationService;
+use App\Customer\Domain\ValueObject\CustomerConsent;
 use App\Customer\Domain\ValueObject\CustomerId;
+use App\Customer\Domain\ValueObject\CustomerPreferences;
 use App\Customer\Domain\ValueObject\CustomerSegment;
+use App\Customer\Domain\ValueObject\NotificationPreferences;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
@@ -205,6 +208,9 @@ final class CustomerSegmentationServiceTest extends TestCase
             $segment ?? CustomerSegment::regular(),
             $loyaltyPoints,
             true,
+            CustomerPreferences::create(),
+            CustomerConsent::default(),
+            NotificationPreferences::default(),
             new \DateTimeImmutable(),
             new \DateTimeImmutable()
         );

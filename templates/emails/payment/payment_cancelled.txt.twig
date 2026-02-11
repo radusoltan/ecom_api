@@ -1,0 +1,30 @@
+{{ 'emails.payment.cancelled.header'|trans }}
+
+{{ 'emails.payment.cancelled.greeting'|trans({'%customer_name%': customerName}) }}
+
+{{ 'emails.payment.cancelled.confirmation'|trans }}
+
+{{ 'emails.payment.cancellation_details'|trans }}:
+- {{ 'emails.payment.payment_id'|trans }}: {{ paymentId }}
+- {{ 'emails.payment.order_id'|trans }}: {{ orderId }}
+- {{ 'emails.payment.amount'|trans }}: {{ amount }} {{ currency }}
+- {{ 'emails.payment.date'|trans }}: {{ cancelledDate|date('d/m/Y H:i') }}
+{% if reason is defined %}
+- {{ 'emails.payment.reason'|trans }}: {{ reason }}
+{% endif %}
+
+{{ 'emails.payment.cancelled.no_charge_notice'|trans }}:
+{{ 'emails.payment.cancelled.no_charge_message'|trans }}
+
+{{ 'emails.payment.cancelled.what_happens_next'|trans }}:
+- {{ 'emails.payment.cancelled.order_not_processed'|trans }}
+- {{ 'emails.payment.cancelled.funds_released'|trans }}
+
+{{ 'emails.payment.cancelled.try_again_message'|trans }}
+{{ 'emails.payment.cancelled.place_new_order'|trans }}: {{ placeOrderUrl }}
+
+{{ 'emails.payment.questions'|trans }}
+
+---
+{{ 'emails.footer.thanks'|trans }}
+{{ 'emails.footer.company'|trans }}

@@ -72,17 +72,14 @@ final readonly class OrderPlacedFulfillmentSubscriber implements EventSubscriber
         }
 
         // Start fulfillment automatically
-        // TODO: Re-enable when FulfillmentRepository is implemented
-        /*
         $this->commandBus->dispatch(new StartFulfillment(
             fulfillmentId: FulfillmentId::generate(),
             orderId: $orderId,
             warehouseId: $warehouseId,
             tenantId: $tenantId,
         ));
-        */
 
-        $this->logger->info('Order placed, fulfillment pending implementation', [
+        $this->logger->info('Fulfillment started for order', [
             'order_id' => $orderId->toString(),
             'warehouse_id' => $warehouseId->toString(),
             'tenant_id' => $tenantId->toString(),

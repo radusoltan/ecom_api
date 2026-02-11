@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tax\Application\Query;
 
-use App\Tax\Application\DTO\TaxRuleDTO;
+use App\Tax\Application\DTO\TaxRuleDto;
 use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
  * Get Tax Rule By ID Query Handler.
+ *
+ * Returns a single tax rule by ID, or null if not found.
  */
 #[AsMessageHandler]
 final readonly class GetTaxRuleByIdHandler
@@ -19,24 +21,14 @@ final readonly class GetTaxRuleByIdHandler
     ) {
     }
 
-    public function __invoke(GetTaxRuleById $query): ?TaxRuleDTO
+    public function __invoke(GetTaxRuleById $query): ?TaxRuleDto
     {
-        $taxRule = $this->taxRuleRepository->findById($query->id, $query->tenantId);
+        $taxRule = $this->taxRuleRepository->findById($query->id);
 
         if (null === $taxRule) {
             return null;
         }
 
-        return new TaxRuleDTO(
-            id: $taxRule->id()->toString(),
-            tenantId: $taxRule->tenantId()->toString(),
-            name: $taxRule->name(),
-            countryCode: $taxRule->jurisdiction()->getCountryCode(),
-            regionCode: $taxRule->jurisdiction()->getRegionCode(),
-            ratePercentage: $taxRule->rate()->getPercentage(),
-            isActive: $taxRule->isActive(),
-            createdAt: $taxRule->createdAt()->format('c'),
-            updatedAt: $taxRule->updatedAt()->format('c')
-        );
+        return TaxRuleDto::fromDomainModel($taxRule);
     }
 }

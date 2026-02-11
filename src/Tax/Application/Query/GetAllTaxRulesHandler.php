@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tax\Application\Query;
 
-use App\Tax\Application\DTO\TaxRuleDTO;
+use App\Tax\Application\DTO\TaxRuleDto;
 use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
  * Get All Tax Rules Query Handler.
+ *
+ * Returns all tax rules for a tenant.
+ * This is an alias for GetTaxRulesByTenant for backward compatibility.
  */
 #[AsMessageHandler]
 final readonly class GetAllTaxRulesHandler
@@ -20,26 +23,16 @@ final readonly class GetAllTaxRulesHandler
     }
 
     /**
-     * @return TaxRuleDTO[]
+     * @return TaxRuleDto[]
      */
     public function __invoke(GetAllTaxRules $query): array
     {
-        $taxRules = $query->activeOnly
-            ? $this->taxRuleRepository->findActive($query->tenantId)
-            : $this->taxRuleRepository->findAll($query->tenantId, $query->limit, $query->offset);
+        // Use findByTenantId which returns all rules for the tenant
+        $taxRules = $this->taxRuleRepository->findByTenantId($query->tenantId);
 
+        // Map to DTOs
         return array_map(
-            fn ($taxRule) => new TaxRuleDTO(
-                id: $taxRule->id()->toString(),
-                tenantId: $taxRule->tenantId()->toString(),
-                name: $taxRule->name(),
-                countryCode: $taxRule->jurisdiction()->getCountryCode(),
-                regionCode: $taxRule->jurisdiction()->getRegionCode(),
-                ratePercentage: $taxRule->rate()->getPercentage(),
-                isActive: $taxRule->isActive(),
-                createdAt: $taxRule->createdAt()->format('c'),
-                updatedAt: $taxRule->updatedAt()->format('c')
-            ),
+            fn ($taxRule) => TaxRuleDto::fromDomainModel($taxRule),
             $taxRules
         );
     }

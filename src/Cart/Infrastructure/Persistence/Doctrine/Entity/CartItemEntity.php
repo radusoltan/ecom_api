@@ -21,8 +21,9 @@ class CartItemEntity
     #[ORM\Column(type: 'string', length: 26)]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 26, name: 'cart_id')]
-    private string $cartId;
+    #[ORM\ManyToOne(targetEntity: CartEntity::class, inversedBy: 'items')]
+    #[ORM\JoinColumn(name: 'cart_id', referencedColumnName: 'id', nullable: false)]
+    private ?CartEntity $cart = null;
 
     #[ORM\Column(type: 'string', length: 36, name: 'product_id')]
     private string $productId;
@@ -39,11 +40,11 @@ class CartItemEntity
     #[ORM\Column(type: 'string', length: 3, name: 'unit_price_currency')]
     private string $unitPriceCurrency;
 
-    public static function fromDomainModel(CartItem $item, string $cartId): self
+    public static function fromDomainModel(CartItem $item, CartEntity $cartEntity): self
     {
         $entity = new self();
         $entity->id = $item->id()->toString();
-        $entity->cartId = $cartId;
+        $entity->cart = $cartEntity;
         $entity->productId = $item->productId()->toString();
         $entity->variantId = $item->variantId();
         $entity->quantity = $item->quantity()->toInt();
@@ -60,7 +61,8 @@ class CartItemEntity
             ProductId::fromString($this->productId),
             $this->variantId,
             Quantity::fromInt($this->quantity),
-            Money::fromScalars($this->unitPriceAmount, $this->unitPriceCurrency)
+            // Cast to int as Money expects integer minor units (cents)
+            Money::fromScalars((int) $this->unitPriceAmount, $this->unitPriceCurrency)
         );
     }
 
@@ -83,7 +85,17 @@ class CartItemEntity
 
     public function getCartId(): string
     {
-        return $this->cartId;
+        return $this->cart?->getId() ?? '';
+    }
+
+    public function getCart(): ?CartEntity
+    {
+        return $this->cart;
+    }
+
+    public function setCart(CartEntity $cart): void
+    {
+        $this->cart = $cart;
     }
 
     public function getProductId(): string

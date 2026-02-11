@@ -38,7 +38,8 @@ final readonly class TenantContextProcessor
 
         // Add tenant_id if available
         if ($this->tenantContext->hasCurrentTenant()) {
-            $extra['tenant_id'] = $this->tenantContext->getCurrentTenantId()->toString();
+            $tenantId = $this->tenantContext->getCurrentTenantId();
+            $extra['tenant_id'] = $tenantId !== null ? $tenantId->toString() : null;
         } else {
             $extra['tenant_id'] = null;
         }

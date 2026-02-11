@@ -23,16 +23,17 @@ final class StockItemRepositoryTest extends KernelTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
         self::bootKernel();
-
-        $container = static::getContainer();
-        $this->repository = $container->get(StockItemRepositoryInterface::class);
 
         // Use default test tenant ID
         $this->tenantId = $this->getDefaultTenantId();
 
-        // Set tenant context for RLS (Row-Level Security)
+        // Set tenant context for RLS (Row-Level Security) BEFORE getting any services
         $this->setTenantContext($this->tenantId->toString());
+
+        $container = static::getContainer();
+        $this->repository = $container->get(StockItemRepositoryInterface::class);
 
         // Clean up existing test data to avoid pollution between tests
         $this->cleanupTestData();

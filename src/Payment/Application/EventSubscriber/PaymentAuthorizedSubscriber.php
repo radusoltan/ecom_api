@@ -25,7 +25,7 @@ final readonly class PaymentAuthorizedSubscriber implements EventSubscriberInter
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
         private MessageBusInterface $commandBus,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -40,7 +40,7 @@ final readonly class PaymentAuthorizedSubscriber implements EventSubscriberInter
     {
         try {
             // Fetch payment to get order information
-            $payment = $this->paymentRepository->findById($event->paymentId, $event->tenantId);
+            $payment = $this->paymentRepository->findById($event->paymentId);
 
             if (null === $payment) {
                 $this->logger->error('Payment not found when handling PaymentAuthorized event', [

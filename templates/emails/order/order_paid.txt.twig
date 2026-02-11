@@ -1,0 +1,19 @@
+{{ 'emails.order.paid.header'|trans }}
+
+{{ 'emails.order.paid.greeting'|trans({'%customer_name%': customerName}) }}
+
+{{ 'emails.order.paid.confirmation'|trans }}
+
+{{ 'emails.order.order_details'|trans }}:
+- {{ 'emails.order.order_id'|trans }}: {{ orderId }}
+- {{ 'emails.order.amount_paid'|trans }}: {{ total }} {{ currency }}
+- {{ 'emails.order.payment_date'|trans }}: {{ paymentDate|date('d/m/Y H:i') }}
+
+{{ 'emails.order.paid.next_steps'|trans }}
+{{ 'emails.order.paid.processing'|trans }}
+
+{{ 'emails.order.view_order'|trans }}: {{ orderViewUrl }}
+
+---
+{{ 'emails.footer.thanks'|trans }}
+{{ 'emails.footer.company'|trans }}

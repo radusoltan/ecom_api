@@ -1,0 +1,24 @@
+{{ 'emails.payment.captured.header'|trans }}
+
+{{ 'emails.payment.captured.greeting'|trans({'%customer_name%': customerName}) }}
+
+{{ 'emails.payment.captured.confirmation'|trans }}
+
+{{ 'emails.payment.payment_details'|trans }}:
+- {{ 'emails.payment.payment_id'|trans }}: {{ paymentId }}
+- {{ 'emails.payment.order_id'|trans }}: {{ orderId }}
+- {{ 'emails.payment.amount'|trans }}: {{ amount }} {{ currency }}
+- {{ 'emails.payment.date'|trans }}: {{ paymentDate|date('d/m/Y H:i') }}
+
+{{ 'emails.payment.captured.what_happens_next'|trans }}:
+{{ 'emails.payment.captured.next_steps'|trans }}
+{{ 'emails.payment.captured.receipt_notice'|trans }}
+
+{{ 'emails.payment.view_order'|trans }}: {{ orderViewUrl }}
+
+{{ 'emails.payment.questions'|trans }}
+
+---
+{{ 'emails.footer.thanks'|trans }}
+{{ 'emails.footer.company'|trans }}
+{{ 'emails.payment.footer_automated'|trans }}

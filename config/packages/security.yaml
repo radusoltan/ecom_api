@@ -69,6 +69,8 @@ security:
         - { path: ^/api/v1/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/docs, roles: PUBLIC_ACCESS }  # Allow access to API documentation
         - { path: ^/api/v1/translations, roles: PUBLIC_ACCESS }  # Allow access to translations
+        - { path: ^/api/v1/auth/register, roles: PUBLIC_ACCESS }  # Allow public user registration
+        - { path: ^/api/v1/auth/token/refresh, roles: PUBLIC_ACCESS }  # Allow public token refresh
         - { path: ^/api/v1/storefront, roles: PUBLIC_ACCESS }  # Allow public access to storefront endpoints
         - { path: ^/api/v1/categories, roles: PUBLIC_ACCESS }  # Allow public access to categories for storefront
         - { path: ^/api/v1/category_entities, roles: PUBLIC_ACCESS }  # Allow public access to category entities for storefront filters
@@ -98,6 +100,8 @@ security:
         - { path: ^/api/v1/payments/stripe/capture-after-success, roles: PUBLIC_ACCESS }  # Allow public payment capture (v1, dev only)
         - { path: ^/api/v1/payments/stripe/webhook, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks (v1)
         - { path: ^/api/v1/webhooks/stripe, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks (v1)
+        - { path: ^/api/webhooks/paypal, roles: PUBLIC_ACCESS }  # Allow PayPal webhooks
+        - { path: ^/api/v1/webhooks/paypal, roles: PUBLIC_ACCESS }  # Allow PayPal webhooks (v1)
         - { path: ^/api/v1/dashboard/stats, roles: PUBLIC_ACCESS }  # Allow public access to dashboard stats (dev only)
         - { path: ^/api/v1/inventory/stats, roles: PUBLIC_ACCESS }  # Allow public access to inventory stats (dev only)
         - { path: ^/api/stock-items, roles: PUBLIC_ACCESS }  # Allow public access to stock items (dev only)
@@ -111,6 +115,9 @@ security:
         - { path: ^/api/product-option-values, roles: PUBLIC_ACCESS }  # Allow public access to product option values (dev only - no v1)
         - { path: ^/api/v1/cart, roles: PUBLIC_ACCESS }  # Allow public access to cart for guest users
         - { path: ^/api/cart, roles: PUBLIC_ACCESS }  # Allow public access to cart for guest users (no v1)
+        - { path: ^/api/v1/auth/register, roles: PUBLIC_ACCESS }  # Allow public user registration
+        - { path: ^/api/v1/auth/password, roles: PUBLIC_ACCESS }  # Allow public password reset
+        - { path: ^/api/v1/auth/token/refresh, roles: PUBLIC_ACCESS }  # Allow public token refresh
         - { path: ^/api/v1/profile, roles: IS_AUTHENTICATED_FULLY }  # Require authentication for profile endpoints
         - { path: ^/api/v1/profile/addresses, roles: IS_AUTHENTICATED_FULLY }  # Require authentication for addresses
         - { path: ^/api/v1/profile/payment-methods, roles: IS_AUTHENTICATED_FULLY }  # Require authentication for payment methods

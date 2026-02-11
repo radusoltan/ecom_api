@@ -22,6 +22,8 @@ doctrine:
             email: App\Shared\Infrastructure\Persistence\Doctrine\Type\EmailType
             language_code: App\Shared\Infrastructure\Doctrine\Type\LanguageCodeType
             tax_rule_id: App\Tax\Infrastructure\Persistence\Doctrine\Type\TaxRuleIdType
+            tax_rate: App\Tax\Infrastructure\Persistence\Doctrine\Type\TaxRateType
+            tax_category: App\Tax\Infrastructure\Persistence\Doctrine\Type\TaxCategoryType
             translated_string: App\Shared\Infrastructure\Persistence\Doctrine\Type\TranslatedStringType
             order_id: App\Order\Infrastructure\Persistence\Doctrine\Type\OrderIdType
             order_status: App\Order\Infrastructure\Persistence\Doctrine\Type\OrderStatusType
@@ -36,10 +38,19 @@ doctrine:
             coupon_code: App\Pricing\Infrastructure\Persistence\Doctrine\Type\CouponCodeType
             customer_id: App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerIdType
             customer_segment: App\Customer\Infrastructure\Persistence\Doctrine\Type\CustomerSegmentType
+            address_type: App\Customer\Infrastructure\Persistence\Doctrine\Type\AddressTypeType
+            earning_rate: App\Customer\Infrastructure\Persistence\Doctrine\Type\EarningRateType
+            loyalty_program_id: App\Customer\Infrastructure\Persistence\Doctrine\Type\LoyaltyProgramIdType
+            loyalty_tier_id: App\Customer\Infrastructure\Persistence\Doctrine\Type\LoyaltyTierIdType
+            transaction_type: App\Customer\Infrastructure\Persistence\Doctrine\Type\TransactionTypeType
+            loyalty_point_transaction_id: App\Customer\Infrastructure\Persistence\Doctrine\Type\LoyaltyPointTransactionIdType
             payment_id: App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentIdType
             payment_method: App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentMethodType
             payment_status: App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentStatusType
             payment_gateway: App\Payment\Infrastructure\Persistence\Doctrine\Type\PaymentGatewayType
+            payment_transaction_id: App\Payment\Infrastructure\Persistence\Doctrine\Type\TransactionIdType
+            payment_transaction_status: App\Payment\Infrastructure\Persistence\Doctrine\Type\TransactionStatusType
+            payment_transaction_type: App\Payment\Infrastructure\Persistence\Doctrine\Type\TransactionTypeType
             return_request_id: App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnRequestIdType
             return_status: App\Returns\Infrastructure\Persistence\Doctrine\Type\ReturnStatusType
             fulfillment_id: App\Order\Infrastructure\Persistence\Doctrine\Type\FulfillmentIdType
@@ -49,6 +60,13 @@ doctrine:
             consent_purpose: App\Privacy\Infrastructure\Persistence\Doctrine\Type\ConsentPurposeType
             request_type: App\Privacy\Infrastructure\Persistence\Doctrine\Type\RequestTypeType
             request_status: App\Privacy\Infrastructure\Persistence\Doctrine\Type\RequestStatusType
+            notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
+            notification_type: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationTypeType
+            notification_status: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationStatusType
+            invoice_id: App\Invoice\Infrastructure\Persistence\Doctrine\Type\InvoiceIdType
+            invoice_number: App\Invoice\Infrastructure\Persistence\Doctrine\Type\InvoiceNumberType
+            invoice_status: App\Invoice\Infrastructure\Persistence\Doctrine\Type\InvoiceStatusType
+            invoice_line_id: App\Invoice\Infrastructure\Persistence\Doctrine\Type\InvoiceLineIdType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
@@ -149,6 +167,18 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Wishlist/Infrastructure/Persistence/Doctrine/Entity'
                 prefix: 'App\Wishlist\Infrastructure\Persistence\Doctrine\Entity'
                 alias: Wishlist
+            Notifications:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Notifications/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Notifications\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Notifications
+            Invoice:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Invoice/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Invoice\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Invoice
         controller_resolver:
             auto_mapping: false
 

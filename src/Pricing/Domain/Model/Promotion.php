@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Pricing\Domain\Model;
 
+use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Pricing\Domain\Event\PromotionActivated;
 use App\Pricing\Domain\Event\PromotionCreated;
 use App\Pricing\Domain\Event\PromotionDeactivated;
@@ -25,6 +26,7 @@ use App\Shared\Domain\ValueObject\TenantId;
  * - valid_from/valid_to: optional date range
  * - coupon_code: required for coupon type promotions
  * - conditions: JSON conditions for applying promotion (e.g., min_cart_value, product_ids)
+ * - target_segments: array of customer segments that can use this promotion (empty = all segments)
  */
 final class Promotion extends AggregateRoot
 {
@@ -34,6 +36,9 @@ final class Promotion extends AggregateRoot
     private const MAX_PRIORITY = 1000;
     private const DEFAULT_PRIORITY = 100;
 
+    /**
+     * @param array<CustomerSegment> $targetSegments
+     */
     private function __construct(
         private readonly PromotionId $id,
         private readonly TenantId $tenantId,
@@ -44,6 +49,7 @@ final class Promotion extends AggregateRoot
         private bool $isActive,
         private ?CouponCode $couponCode,
         private array $conditions,
+        private array $targetSegments,
         private ?\DateTimeImmutable $validFrom,
         private ?\DateTimeImmutable $validTo,
         private readonly \DateTimeImmutable $createdAt,
@@ -55,6 +61,9 @@ final class Promotion extends AggregateRoot
         $this->validateDateRange($this->validFrom, $this->validTo);
     }
 
+    /**
+     * @param array<CustomerSegment> $targetSegments
+     */
     public static function create(
         PromotionId $id,
         TenantId $tenantId,
@@ -64,6 +73,7 @@ final class Promotion extends AggregateRoot
         int $priority = self::DEFAULT_PRIORITY,
         ?CouponCode $couponCode = null,
         array $conditions = [],
+        array $targetSegments = [],
         ?\DateTimeImmutable $validFrom = null,
         ?\DateTimeImmutable $validTo = null
     ): self {
@@ -79,6 +89,7 @@ final class Promotion extends AggregateRoot
             isActive: false,
             couponCode: $couponCode,
             conditions: $conditions,
+            targetSegments: $targetSegments,
             validFrom: $validFrom,
             validTo: $validTo,
             createdAt: $now,
@@ -96,6 +107,9 @@ final class Promotion extends AggregateRoot
         return $promotion;
     }
 
+    /**
+     * @param array<CustomerSegment> $targetSegments
+     */
     public static function reconstituteFromPersistence(
         PromotionId $id,
         TenantId $tenantId,
@@ -106,6 +120,7 @@ final class Promotion extends AggregateRoot
         bool $isActive,
         ?CouponCode $couponCode,
         array $conditions,
+        array $targetSegments,
         ?\DateTimeImmutable $validFrom,
         ?\DateTimeImmutable $validTo,
         \DateTimeImmutable $createdAt,
@@ -121,6 +136,7 @@ final class Promotion extends AggregateRoot
             isActive: $isActive,
             couponCode: $couponCode,
             conditions: $conditions,
+            targetSegments: $targetSegments,
             validFrom: $validFrom,
             validTo: $validTo,
             createdAt: $createdAt,
@@ -210,6 +226,72 @@ final class Promotion extends AggregateRoot
         return $this->type->isCoupon();
     }
 
+    /**
+     * Check if this promotion is applicable to a specific customer segment.
+     *
+     * Returns true if:
+     * - No target segments defined (applies to all)
+     * - Customer segment is in target segments
+     */
+    public function isApplicableToSegment(CustomerSegment $segment): bool
+    {
+        // Empty targetSegments means promotion applies to all customer segments
+        if (empty($this->targetSegments)) {
+            return true;
+        }
+
+        // Check if customer's segment is in the target list
+        foreach ($this->targetSegments as $targetSegment) {
+            if ($targetSegment->equals($segment)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Add a target segment to this promotion.
+     */
+    public function addTargetSegment(CustomerSegment $segment): void
+    {
+        // Check if segment already exists
+        foreach ($this->targetSegments as $existing) {
+            if ($existing->equals($segment)) {
+                throw new \InvalidArgumentException(
+                    sprintf('Segment %s is already a target for this promotion', $segment->value())
+                );
+            }
+        }
+
+        $this->targetSegments[] = $segment;
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    /**
+     * Remove a target segment from this promotion.
+     */
+    public function removeTargetSegment(CustomerSegment $segment): void
+    {
+        $found = false;
+        foreach ($this->targetSegments as $index => $existing) {
+            if ($existing->equals($segment)) {
+                unset($this->targetSegments[$index]);
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            throw new \InvalidArgumentException(
+                sprintf('Segment %s is not a target for this promotion', $segment->value())
+            );
+        }
+
+        $this->targetSegments = array_values($this->targetSegments); // Re-index
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     private function validateName(string $name): void
     {
         $length = mb_strlen($name);
@@ -288,6 +370,12 @@ final class Promotion extends AggregateRoot
     public function conditions(): array
     {
         return $this->conditions;
+    }
+
+    /** @return array<CustomerSegment> */
+    public function targetSegments(): array
+    {
+        return $this->targetSegments;
     }
 
     public function validFrom(): ?\DateTimeImmutable

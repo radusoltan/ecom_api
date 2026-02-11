@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/new_ecom/backend/src/Privacy/Domain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../_css/bootstrap.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../../_css/billboard.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../../_css/style.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../../index.html">/var/www/new_ecom/backend/src</a></li>
+         <li class="breadcrumb-item"><a href="../index.html">Privacy</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Domain</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classesCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Event/ConsentGranted.php.html#12">App\Privacy\Domain\Event\ConsentGranted</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/ConsentWithdrawn.php.html#12">App\Privacy\Domain\Event\ConsentWithdrawn</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/DataErasureRequested.php.html#11">App\Privacy\Domain\Event\DataErasureRequested</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/DataSubjectRequestCompleted.php.html#11">App\Privacy\Domain\Event\DataSubjectRequestCompleted</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/DataSubjectRequestSubmitted.php.html#12">App\Privacy\Domain\Event\DataSubjectRequestSubmitted</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#27">App\Privacy\Domain\Model\Consent</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#28">App\Privacy\Domain\Model\DataSubjectRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentId.php.html#9">App\Privacy\Domain\ValueObject\ConsentId</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#18">App\Privacy\Domain\ValueObject\ConsentPurpose</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/DataSubjectRequestId.php.html#9">App\Privacy\Domain\ValueObject\DataSubjectRequestId</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#15">App\Privacy\Domain\ValueObject\RequestStatus</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#18">App\Privacy\Domain\ValueObject\RequestType</a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#28">App\Privacy\Domain\Model\DataSubjectRequest</a></td><td class="text-right">0.0%</td><td class="text-right">48</td><td class="text-right">2352</td></tr>
+       <tr><td><a href="Model/Consent.php.html#27">App\Privacy\Domain\Model\Consent</a></td><td class="text-right">0.0%</td><td class="text-right">29</td><td class="text-right">870</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#18">App\Privacy\Domain\ValueObject\RequestType</a></td><td class="text-right">0.0%</td><td class="text-right">14</td><td class="text-right">210</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#18">App\Privacy\Domain\ValueObject\ConsentPurpose</a></td><td class="text-right">0.0%</td><td class="text-right">13</td><td class="text-right">182</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#15">App\Privacy\Domain\ValueObject\RequestStatus</a></td><td class="text-right">0.0%</td><td class="text-right">12</td><td class="text-right">156</td></tr>
+       <tr><td><a href="ValueObject/ConsentId.php.html#9">App\Privacy\Domain\ValueObject\ConsentId</a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="ValueObject/DataSubjectRequestId.php.html#9">App\Privacy\Domain\ValueObject\DataSubjectRequestId</a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2 style="margin-top: 3rem;">Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodsCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Event/ConsentGranted.php.html#14"><abbr title="App\Privacy\Domain\Event\ConsentGranted::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/ConsentGranted.php.html#22"><abbr title="App\Privacy\Domain\Event\ConsentGranted::occurredOn">occurredOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/ConsentWithdrawn.php.html#14"><abbr title="App\Privacy\Domain\Event\ConsentWithdrawn::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/ConsentWithdrawn.php.html#22"><abbr title="App\Privacy\Domain\Event\ConsentWithdrawn::occurredOn">occurredOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/DataErasureRequested.php.html#13"><abbr title="App\Privacy\Domain\Event\DataErasureRequested::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/DataErasureRequested.php.html#20"><abbr title="App\Privacy\Domain\Event\DataErasureRequested::occurredOn">occurredOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/DataSubjectRequestCompleted.php.html#13"><abbr title="App\Privacy\Domain\Event\DataSubjectRequestCompleted::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/DataSubjectRequestCompleted.php.html#20"><abbr title="App\Privacy\Domain\Event\DataSubjectRequestCompleted::occurredOn">occurredOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/DataSubjectRequestSubmitted.php.html#14"><abbr title="App\Privacy\Domain\Event\DataSubjectRequestSubmitted::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Event/DataSubjectRequestSubmitted.php.html#22"><abbr title="App\Privacy\Domain\Event\DataSubjectRequestSubmitted::occurredOn">occurredOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#43"><abbr title="App\Privacy\Domain\Model\Consent::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#47"><abbr title="App\Privacy\Domain\Model\Consent::grant">grant</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#87"><abbr title="App\Privacy\Domain\Model\Consent::reconstituteFromPersistence">reconstituteFromPersistence</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#120"><abbr title="App\Privacy\Domain\Model\Consent::withdraw">withdraw</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#138"><abbr title="App\Privacy\Domain\Model\Consent::validateIpAddress">validateIpAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#145"><abbr title="App\Privacy\Domain\Model\Consent::validateUserAgent">validateUserAgent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#157"><abbr title="App\Privacy\Domain\Model\Consent::validateConsentText">validateConsentText</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#169"><abbr title="App\Privacy\Domain\Model\Consent::validateConsentVersion">validateConsentVersion</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#183"><abbr title="App\Privacy\Domain\Model\Consent::id">id</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#188"><abbr title="App\Privacy\Domain\Model\Consent::tenantId">tenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#193"><abbr title="App\Privacy\Domain\Model\Consent::customerId">customerId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#198"><abbr title="App\Privacy\Domain\Model\Consent::purpose">purpose</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#203"><abbr title="App\Privacy\Domain\Model\Consent::isGranted">isGranted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#208"><abbr title="App\Privacy\Domain\Model\Consent::ipAddress">ipAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#213"><abbr title="App\Privacy\Domain\Model\Consent::userAgent">userAgent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#218"><abbr title="App\Privacy\Domain\Model\Consent::consentText">consentText</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#223"><abbr title="App\Privacy\Domain\Model\Consent::consentVersion">consentVersion</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#228"><abbr title="App\Privacy\Domain\Model\Consent::grantedAt">grantedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#233"><abbr title="App\Privacy\Domain\Model\Consent::withdrawnAt">withdrawnAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#238"><abbr title="App\Privacy\Domain\Model\Consent::createdAt">createdAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/Consent.php.html#243"><abbr title="App\Privacy\Domain\Model\Consent::updatedAt">updatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#49"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#53"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::submit">submit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#100"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::reconstituteFromPersistence">reconstituteFromPersistence</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#137"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::startReview">startReview</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#148"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::complete">complete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#170"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::reject">reject</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#182"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::extendDeadline">extendDeadline</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#197"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::isOverdue">isOverdue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#202"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::daysUntilDeadline">daysUntilDeadline</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#210"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::ensureCanTransition">ensureCanTransition</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#217"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::validateReason">validateReason</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#233"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::validateReviewNotes">validateReviewNotes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#245"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::validateRejectionReason">validateRejectionReason</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#262"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::id">id</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#267"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::tenantId">tenantId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#272"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::customerId">customerId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#277"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::requestType">requestType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#282"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::status">status</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#287"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::reason">reason</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#292"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::reviewNotes">reviewNotes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#297"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::rejectionReason">rejectionReason</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#302"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::exportData">exportData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#307"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::submittedAt">submittedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#312"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::completedAt">completedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#317"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::deadline">deadline</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#322"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::isExtended">isExtended</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#327"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::createdAt">createdAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#332"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::updatedAt">updatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentId.php.html#11"><abbr title="App\Privacy\Domain\ValueObject\ConsentId::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentId.php.html#18"><abbr title="App\Privacy\Domain\ValueObject\ConsentId::generate">generate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentId.php.html#23"><abbr title="App\Privacy\Domain\ValueObject\ConsentId::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentId.php.html#28"><abbr title="App\Privacy\Domain\ValueObject\ConsentId::toString">toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentId.php.html#33"><abbr title="App\Privacy\Domain\ValueObject\ConsentId::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentId.php.html#38"><abbr title="App\Privacy\Domain\ValueObject\ConsentId::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#36"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#43"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::marketing">marketing</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#48"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::analytics">analytics</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#53"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::profiling">profiling</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#58"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::necessary">necessary</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#63"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::legal">legal</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#68"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::thirdPartySharing">thirdPartySharing</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#73"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#78"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::value">value</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#83"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::requiresExplicitConsent">requiresExplicitConsent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#93"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#98"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/DataSubjectRequestId.php.html#11"><abbr title="App\Privacy\Domain\ValueObject\DataSubjectRequestId::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/DataSubjectRequestId.php.html#18"><abbr title="App\Privacy\Domain\ValueObject\DataSubjectRequestId::generate">generate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/DataSubjectRequestId.php.html#23"><abbr title="App\Privacy\Domain\ValueObject\DataSubjectRequestId::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/DataSubjectRequestId.php.html#28"><abbr title="App\Privacy\Domain\ValueObject\DataSubjectRequestId::toString">toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/DataSubjectRequestId.php.html#33"><abbr title="App\Privacy\Domain\ValueObject\DataSubjectRequestId::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/DataSubjectRequestId.php.html#38"><abbr title="App\Privacy\Domain\ValueObject\DataSubjectRequestId::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#36"><abbr title="App\Privacy\Domain\ValueObject\RequestStatus::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#43"><abbr title="App\Privacy\Domain\ValueObject\RequestStatus::pending">pending</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#48"><abbr title="App\Privacy\Domain\ValueObject\RequestStatus::underReview">underReview</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#53"><abbr title="App\Privacy\Domain\ValueObject\RequestStatus::completed">completed</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#58"><abbr title="App\Privacy\Domain\ValueObject\RequestStatus::rejected">rejected</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#63"><abbr title="App\Privacy\Domain\ValueObject\RequestStatus::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#68"><abbr title="App\Privacy\Domain\ValueObject\RequestStatus::value">value</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#73"><abbr title="App\Privacy\Domain\ValueObject\RequestStatus::canTransitionTo">canTransitionTo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#78"><abbr title="App\Privacy\Domain\ValueObject\RequestStatus::isFinal">isFinal</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#83"><abbr title="App\Privacy\Domain\ValueObject\RequestStatus::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#88"><abbr title="App\Privacy\Domain\ValueObject\RequestStatus::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#36"><abbr title="App\Privacy\Domain\ValueObject\RequestType::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#43"><abbr title="App\Privacy\Domain\ValueObject\RequestType::access">access</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#48"><abbr title="App\Privacy\Domain\ValueObject\RequestType::rectification">rectification</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#53"><abbr title="App\Privacy\Domain\ValueObject\RequestType::erasure">erasure</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#58"><abbr title="App\Privacy\Domain\ValueObject\RequestType::portability">portability</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#63"><abbr title="App\Privacy\Domain\ValueObject\RequestType::restriction">restriction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#68"><abbr title="App\Privacy\Domain\ValueObject\RequestType::objection">objection</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#73"><abbr title="App\Privacy\Domain\ValueObject\RequestType::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#78"><abbr title="App\Privacy\Domain\ValueObject\RequestType::value">value</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#83"><abbr title="App\Privacy\Domain\ValueObject\RequestType::isDestructive">isDestructive</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#88"><abbr title="App\Privacy\Domain\ValueObject\RequestType::requiresManualReview">requiresManualReview</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#97"><abbr title="App\Privacy\Domain\ValueObject\RequestType::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#102"><abbr title="App\Privacy\Domain\ValueObject\RequestType::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#148"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::complete">complete</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#217"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::validateReason">validateReason</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#245"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::validateRejectionReason">validateRejectionReason</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Model/Consent.php.html#145"><abbr title="App\Privacy\Domain\Model\Consent::validateUserAgent">validateUserAgent</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Model/Consent.php.html#157"><abbr title="App\Privacy\Domain\Model\Consent::validateConsentText">validateConsentText</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Model/Consent.php.html#169"><abbr title="App\Privacy\Domain\Model\Consent::validateConsentVersion">validateConsentVersion</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#53"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::submit">submit</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#182"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::extendDeadline">extendDeadline</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#233"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::validateReviewNotes">validateReviewNotes</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Model/Consent.php.html#120"><abbr title="App\Privacy\Domain\Model\Consent::withdraw">withdraw</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Model/Consent.php.html#138"><abbr title="App\Privacy\Domain\Model\Consent::validateIpAddress">validateIpAddress</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#197"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::isOverdue">isOverdue</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#202"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::daysUntilDeadline">daysUntilDeadline</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Model/DataSubjectRequest.php.html#210"><abbr title="App\Privacy\Domain\Model\DataSubjectRequest::ensureCanTransition">ensureCanTransition</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="ValueObject/ConsentId.php.html#11"><abbr title="App\Privacy\Domain\ValueObject\ConsentId::__construct">__construct</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="ValueObject/ConsentPurpose.php.html#36"><abbr title="App\Privacy\Domain\ValueObject\ConsentPurpose::__construct">__construct</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="ValueObject/DataSubjectRequestId.php.html#11"><abbr title="App\Privacy\Domain\ValueObject\DataSubjectRequestId::__construct">__construct</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="ValueObject/RequestStatus.php.html#36"><abbr title="App\Privacy\Domain\ValueObject\RequestStatus::__construct">__construct</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="ValueObject/RequestType.php.html#36"><abbr title="App\Privacy\Domain\ValueObject\RequestType::__construct">__construct</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 12.4.0</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.14</a> and <a href="https://phpunit.de/">PHPUnit 12.4.1</a> at Thu Nov 27 8:00:35 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../../_js/billboard.pkgd.min.js?v=12.4.0" type="text/javascript"></script>
+  <script type="application/json" id="complexity_class">[[0,2,"Event\/ConsentGranted.php.html#12","App\\Privacy\\Domain\\Event\\ConsentGranted","6"],[0,2,"Event\/ConsentWithdrawn.php.html#12","App\\Privacy\\Domain\\Event\\ConsentWithdrawn","6"],[0,2,"Event\/DataErasureRequested.php.html#11","App\\Privacy\\Domain\\Event\\DataErasureRequested","6"],[0,2,"Event\/DataSubjectRequestCompleted.php.html#11","App\\Privacy\\Domain\\Event\\DataSubjectRequestCompleted","6"],[0,2,"Event\/DataSubjectRequestSubmitted.php.html#12","App\\Privacy\\Domain\\Event\\DataSubjectRequestSubmitted","6"],[0,29,"Model\/Consent.php.html#27","App\\Privacy\\Domain\\Model\\Consent","870"],[0,48,"Model\/DataSubjectRequest.php.html#28","App\\Privacy\\Domain\\Model\\DataSubjectRequest","2352"],[0,7,"ValueObject\/ConsentId.php.html#9","App\\Privacy\\Domain\\ValueObject\\ConsentId","56"],[0,13,"ValueObject\/ConsentPurpose.php.html#18","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose","182"],[0,7,"ValueObject\/DataSubjectRequestId.php.html#9","App\\Privacy\\Domain\\ValueObject\\DataSubjectRequestId","56"],[0,12,"ValueObject\/RequestStatus.php.html#15","App\\Privacy\\Domain\\ValueObject\\RequestStatus","156"],[0,14,"ValueObject\/RequestType.php.html#18","App\\Privacy\\Domain\\ValueObject\\RequestType","210"]]</script>
+  <script type="application/json" id="complexity_method">[[0,1,"Event\/ConsentGranted.php.html#14","App\\Privacy\\Domain\\Event\\ConsentGranted::__construct","2"],[0,1,"Event\/ConsentGranted.php.html#22","App\\Privacy\\Domain\\Event\\ConsentGranted::occurredOn","2"],[0,1,"Event\/ConsentWithdrawn.php.html#14","App\\Privacy\\Domain\\Event\\ConsentWithdrawn::__construct","2"],[0,1,"Event\/ConsentWithdrawn.php.html#22","App\\Privacy\\Domain\\Event\\ConsentWithdrawn::occurredOn","2"],[0,1,"Event\/DataErasureRequested.php.html#13","App\\Privacy\\Domain\\Event\\DataErasureRequested::__construct","2"],[0,1,"Event\/DataErasureRequested.php.html#20","App\\Privacy\\Domain\\Event\\DataErasureRequested::occurredOn","2"],[0,1,"Event\/DataSubjectRequestCompleted.php.html#13","App\\Privacy\\Domain\\Event\\DataSubjectRequestCompleted::__construct","2"],[0,1,"Event\/DataSubjectRequestCompleted.php.html#20","App\\Privacy\\Domain\\Event\\DataSubjectRequestCompleted::occurredOn","2"],[0,1,"Event\/DataSubjectRequestSubmitted.php.html#14","App\\Privacy\\Domain\\Event\\DataSubjectRequestSubmitted::__construct","2"],[0,1,"Event\/DataSubjectRequestSubmitted.php.html#22","App\\Privacy\\Domain\\Event\\DataSubjectRequestSubmitted::occurredOn","2"],[0,1,"Model\/Consent.php.html#43","App\\Privacy\\Domain\\Model\\Consent::__construct","2"],[0,1,"Model\/Consent.php.html#47","App\\Privacy\\Domain\\Model\\Consent::grant","2"],[0,1,"Model\/Consent.php.html#87","App\\Privacy\\Domain\\Model\\Consent::reconstituteFromPersistence","2"],[0,2,"Model\/Consent.php.html#120","App\\Privacy\\Domain\\Model\\Consent::withdraw","6"],[0,2,"Model\/Consent.php.html#138","App\\Privacy\\Domain\\Model\\Consent::validateIpAddress","6"],[0,3,"Model\/Consent.php.html#145","App\\Privacy\\Domain\\Model\\Consent::validateUserAgent","12"],[0,3,"Model\/Consent.php.html#157","App\\Privacy\\Domain\\Model\\Consent::validateConsentText","12"],[0,3,"Model\/Consent.php.html#169","App\\Privacy\\Domain\\Model\\Consent::validateConsentVersion","12"],[0,1,"Model\/Consent.php.html#183","App\\Privacy\\Domain\\Model\\Consent::id","2"],[0,1,"Model\/Consent.php.html#188","App\\Privacy\\Domain\\Model\\Consent::tenantId","2"],[0,1,"Model\/Consent.php.html#193","App\\Privacy\\Domain\\Model\\Consent::customerId","2"],[0,1,"Model\/Consent.php.html#198","App\\Privacy\\Domain\\Model\\Consent::purpose","2"],[0,1,"Model\/Consent.php.html#203","App\\Privacy\\Domain\\Model\\Consent::isGranted","2"],[0,1,"Model\/Consent.php.html#208","App\\Privacy\\Domain\\Model\\Consent::ipAddress","2"],[0,1,"Model\/Consent.php.html#213","App\\Privacy\\Domain\\Model\\Consent::userAgent","2"],[0,1,"Model\/Consent.php.html#218","App\\Privacy\\Domain\\Model\\Consent::consentText","2"],[0,1,"Model\/Consent.php.html#223","App\\Privacy\\Domain\\Model\\Consent::consentVersion","2"],[0,1,"Model\/Consent.php.html#228","App\\Privacy\\Domain\\Model\\Consent::grantedAt","2"],[0,1,"Model\/Consent.php.html#233","App\\Privacy\\Domain\\Model\\Consent::withdrawnAt","2"],[0,1,"Model\/Consent.php.html#238","App\\Privacy\\Domain\\Model\\Consent::createdAt","2"],[0,1,"Model\/Consent.php.html#243","App\\Privacy\\Domain\\Model\\Consent::updatedAt","2"],[0,1,"Model\/DataSubjectRequest.php.html#49","App\\Privacy\\Domain\\Model\\DataSubjectRequest::__construct","2"],[0,3,"Model\/DataSubjectRequest.php.html#53","App\\Privacy\\Domain\\Model\\DataSubjectRequest::submit","12"],[0,1,"Model\/DataSubjectRequest.php.html#100","App\\Privacy\\Domain\\Model\\DataSubjectRequest::reconstituteFromPersistence","2"],[0,1,"Model\/DataSubjectRequest.php.html#137","App\\Privacy\\Domain\\Model\\DataSubjectRequest::startReview","2"],[0,5,"Model\/DataSubjectRequest.php.html#148","App\\Privacy\\Domain\\Model\\DataSubjectRequest::complete","30"],[0,1,"Model\/DataSubjectRequest.php.html#170","App\\Privacy\\Domain\\Model\\DataSubjectRequest::reject","2"],[0,3,"Model\/DataSubjectRequest.php.html#182","App\\Privacy\\Domain\\Model\\DataSubjectRequest::extendDeadline","12"],[0,2,"Model\/DataSubjectRequest.php.html#197","App\\Privacy\\Domain\\Model\\DataSubjectRequest::isOverdue","6"],[0,2,"Model\/DataSubjectRequest.php.html#202","App\\Privacy\\Domain\\Model\\DataSubjectRequest::daysUntilDeadline","6"],[0,2,"Model\/DataSubjectRequest.php.html#210","App\\Privacy\\Domain\\Model\\DataSubjectRequest::ensureCanTransition","6"],[0,5,"Model\/DataSubjectRequest.php.html#217","App\\Privacy\\Domain\\Model\\DataSubjectRequest::validateReason","30"],[0,3,"Model\/DataSubjectRequest.php.html#233","App\\Privacy\\Domain\\Model\\DataSubjectRequest::validateReviewNotes","12"],[0,4,"Model\/DataSubjectRequest.php.html#245","App\\Privacy\\Domain\\Model\\DataSubjectRequest::validateRejectionReason","20"],[0,1,"Model\/DataSubjectRequest.php.html#262","App\\Privacy\\Domain\\Model\\DataSubjectRequest::id","2"],[0,1,"Model\/DataSubjectRequest.php.html#267","App\\Privacy\\Domain\\Model\\DataSubjectRequest::tenantId","2"],[0,1,"Model\/DataSubjectRequest.php.html#272","App\\Privacy\\Domain\\Model\\DataSubjectRequest::customerId","2"],[0,1,"Model\/DataSubjectRequest.php.html#277","App\\Privacy\\Domain\\Model\\DataSubjectRequest::requestType","2"],[0,1,"Model\/DataSubjectRequest.php.html#282","App\\Privacy\\Domain\\Model\\DataSubjectRequest::status","2"],[0,1,"Model\/DataSubjectRequest.php.html#287","App\\Privacy\\Domain\\Model\\DataSubjectRequest::reason","2"],[0,1,"Model\/DataSubjectRequest.php.html#292","App\\Privacy\\Domain\\Model\\DataSubjectRequest::reviewNotes","2"],[0,1,"Model\/DataSubjectRequest.php.html#297","App\\Privacy\\Domain\\Model\\DataSubjectRequest::rejectionReason","2"],[0,1,"Model\/DataSubjectRequest.php.html#302","App\\Privacy\\Domain\\Model\\DataSubjectRequest::exportData","2"],[0,1,"Model\/DataSubjectRequest.php.html#307","App\\Privacy\\Domain\\Model\\DataSubjectRequest::submittedAt","2"],[0,1,"Model\/DataSubjectRequest.php.html#312","App\\Privacy\\Domain\\Model\\DataSubjectRequest::completedAt","2"],[0,1,"Model\/DataSubjectRequest.php.html#317","App\\Privacy\\Domain\\Model\\DataSubjectRequest::deadline","2"],[0,1,"Model\/DataSubjectRequest.php.html#322","App\\Privacy\\Domain\\Model\\DataSubjectRequest::isExtended","2"],[0,1,"Model\/DataSubjectRequest.php.html#327","App\\Privacy\\Domain\\Model\\DataSubjectRequest::createdAt","2"],[0,1,"Model\/DataSubjectRequest.php.html#332","App\\Privacy\\Domain\\Model\\DataSubjectRequest::updatedAt","2"],[0,2,"ValueObject\/ConsentId.php.html#11","App\\Privacy\\Domain\\ValueObject\\ConsentId::__construct","6"],[0,1,"ValueObject\/ConsentId.php.html#18","App\\Privacy\\Domain\\ValueObject\\ConsentId::generate","2"],[0,1,"ValueObject\/ConsentId.php.html#23","App\\Privacy\\Domain\\ValueObject\\ConsentId::fromString","2"],[0,1,"ValueObject\/ConsentId.php.html#28","App\\Privacy\\Domain\\ValueObject\\ConsentId::toString","2"],[0,1,"ValueObject\/ConsentId.php.html#33","App\\Privacy\\Domain\\ValueObject\\ConsentId::equals","2"],[0,1,"ValueObject\/ConsentId.php.html#38","App\\Privacy\\Domain\\ValueObject\\ConsentId::__toString","2"],[0,2,"ValueObject\/ConsentPurpose.php.html#36","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose::__construct","6"],[0,1,"ValueObject\/ConsentPurpose.php.html#43","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose::marketing","2"],[0,1,"ValueObject\/ConsentPurpose.php.html#48","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose::analytics","2"],[0,1,"ValueObject\/ConsentPurpose.php.html#53","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose::profiling","2"],[0,1,"ValueObject\/ConsentPurpose.php.html#58","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose::necessary","2"],[0,1,"ValueObject\/ConsentPurpose.php.html#63","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose::legal","2"],[0,1,"ValueObject\/ConsentPurpose.php.html#68","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose::thirdPartySharing","2"],[0,1,"ValueObject\/ConsentPurpose.php.html#73","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose::fromString","2"],[0,1,"ValueObject\/ConsentPurpose.php.html#78","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose::value","2"],[0,1,"ValueObject\/ConsentPurpose.php.html#83","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose::requiresExplicitConsent","2"],[0,1,"ValueObject\/ConsentPurpose.php.html#93","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose::equals","2"],[0,1,"ValueObject\/ConsentPurpose.php.html#98","App\\Privacy\\Domain\\ValueObject\\ConsentPurpose::__toString","2"],[0,2,"ValueObject\/DataSubjectRequestId.php.html#11","App\\Privacy\\Domain\\ValueObject\\DataSubjectRequestId::__construct","6"],[0,1,"ValueObject\/DataSubjectRequestId.php.html#18","App\\Privacy\\Domain\\ValueObject\\DataSubjectRequestId::generate","2"],[0,1,"ValueObject\/DataSubjectRequestId.php.html#23","App\\Privacy\\Domain\\ValueObject\\DataSubjectRequestId::fromString","2"],[0,1,"ValueObject\/DataSubjectRequestId.php.html#28","App\\Privacy\\Domain\\ValueObject\\DataSubjectRequestId::toString","2"],[0,1,"ValueObject\/DataSubjectRequestId.php.html#33","App\\Privacy\\Domain\\ValueObject\\DataSubjectRequestId::equals","2"],[0,1,"ValueObject\/DataSubjectRequestId.php.html#38","App\\Privacy\\Domain\\ValueObject\\DataSubjectRequestId::__toString","2"],[0,2,"ValueObject\/RequestStatus.php.html#36","App\\Privacy\\Domain\\ValueObject\\RequestStatus::__construct","6"],[0,1,"ValueObject\/RequestStatus.php.html#43","App\\Privacy\\Domain\\ValueObject\\RequestStatus::pending","2"],[0,1,"ValueObject\/RequestStatus.php.html#48","App\\Privacy\\Domain\\ValueObject\\RequestStatus::underReview","2"],[0,1,"ValueObject\/RequestStatus.php.html#53","App\\Privacy\\Domain\\ValueObject\\RequestStatus::completed","2"],[0,1,"ValueObject\/RequestStatus.php.html#58","App\\Privacy\\Domain\\ValueObject\\RequestStatus::rejected","2"],[0,1,"ValueObject\/RequestStatus.php.html#63","App\\Privacy\\Domain\\ValueObject\\RequestStatus::fromString","2"],[0,1,"ValueObject\/RequestStatus.php.html#68","App\\Privacy\\Domain\\ValueObject\\RequestStatus::value","2"],[0,1,"ValueObject\/RequestStatus.php.html#73","App\\Privacy\\Domain\\ValueObject\\RequestStatus::canTransitionTo","2"],[0,1,"ValueObject\/RequestStatus.php.html#78","App\\Privacy\\Domain\\ValueObject\\RequestStatus::isFinal","2"],[0,1,"ValueObject\/RequestStatus.php.html#83","App\\Privacy\\Domain\\ValueObject\\RequestStatus::equals","2"],[0,1,"ValueObject\/RequestStatus.php.html#88","App\\Privacy\\Domain\\ValueObject\\RequestStatus::__toString","2"],[0,2,"ValueObject\/RequestType.php.html#36","App\\Privacy\\Domain\\ValueObject\\RequestType::__construct","6"],[0,1,"ValueObject\/RequestType.php.html#43","App\\Privacy\\Domain\\ValueObject\\RequestType::access","2"],[0,1,"ValueObject\/RequestType.php.html#48","App\\Privacy\\Domain\\ValueObject\\RequestType::rectification","2"],[0,1,"ValueObject\/RequestType.php.html#53","App\\Privacy\\Domain\\ValueObject\\RequestType::erasure","2"],[0,1,"ValueObject\/RequestType.php.html#58","App\\Privacy\\Domain\\ValueObject\\RequestType::portability","2"],[0,1,"ValueObject\/RequestType.php.html#63","App\\Privacy\\Domain\\ValueObject\\RequestType::restriction","2"],[0,1,"ValueObject\/RequestType.php.html#68","App\\Privacy\\Domain\\ValueObject\\RequestType::objection","2"],[0,1,"ValueObject\/RequestType.php.html#73","App\\Privacy\\Domain\\ValueObject\\RequestType::fromString","2"],[0,1,"ValueObject\/RequestType.php.html#78","App\\Privacy\\Domain\\ValueObject\\RequestType::value","2"],[0,1,"ValueObject\/RequestType.php.html#83","App\\Privacy\\Domain\\ValueObject\\RequestType::isDestructive","2"],[0,1,"ValueObject\/RequestType.php.html#88","App\\Privacy\\Domain\\ValueObject\\RequestType::requiresManualReview","2"],[0,1,"ValueObject\/RequestType.php.html#97","App\\Privacy\\Domain\\ValueObject\\RequestType::equals","2"],[0,1,"ValueObject\/RequestType.php.html#102","App\\Privacy\\Domain\\ValueObject\\RequestType::__toString","2"]]</script>
+  <script type="text/javascript" defer>
+  const barLabels = [
+    '0%',
+    '0-10%',
+    '10-20%',
+    '20-30%',
+    '30-40%',
+    '40-50%',
+    '50-60%',
+    '60-70%',
+    '70-80%',
+    '80-90%',
+    '90-100%',
+    '100%'
+  ];
+  const barConfig = (name, fullName, values) => ({
+    axis: {
+      x: {
+        type: "category",
+        categories: barLabels,
+      },
+      y: {
+        label: {
+          text: `#${name}`,
+          position: 'outer-top',
+        },
+      },
+    },
+    bindto: `#${name}CoverageDistribution`,
+    data: {
+      columns: [
+        [fullName].concat(values),
+      ],
+      colors: {
+        [fullName]: "rgba(69, 114, 167, 0.75)",
+      },
+      type: "bar",
+    },
+    bar: {
+      width: {
+        ratio: 0.9,
+      },
+    },
+    grid: {
+      focus: {
+        show: false,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">Coverage ${barLabels[data[0].x]}</th></tr>
+            <tr><td class="value">${data[0].value} ${name}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  bb.generate(
+    barConfig('classes', "Class Coverage", [12,0,0,0,0,0,0,0,0,0,0,0])
+  );
+  bb.generate(
+    barConfig('methods', "Method Coverage", [107,0,0,0,0,0,0,0,0,0,0,0])
+  );
+
+  const scatterConfig = (name, complexityData) => ({
+    axis: {
+      x: {
+        label: {
+          text: 'Code Coverage (in percent)',
+          position: 'outer-right',
+        },
+        tick: {
+          values: [0, 20, 40, 60, 80, 100],
+        },
+      },
+      y: {
+        label: {
+          text: 'Cyclomatic Complexity',
+          position: 'outer-top',
+        },
+        min: 0,
+        padding: {
+          bottom: 0,
+          top: 5,
+        },
+      },
+    },
+    bindto: `#${name}Complexity`,
+    data: {
+      columns: [
+        ["complexity_x"].concat(complexityData.map(d => d[0])),
+        ["complexity"].concat(complexityData.map(d => d[1])),
+      ],
+      onclick: function(data, element) {
+        window.location = complexityData[data.index][2];
+      },
+      type: "scatter",
+      xs: {
+        "complexity": "complexity_x",
+      },
+    },
+    grid: {
+      focus: {
+        show: true,
+        y: true,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        const coverage = Math.round(data[0].x);
+        const complexity = data[0].value;
+        const targetName = complexityData[data[0].index][3];
+        const crap = complexityData[data[0].index][4];
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">${targetName}</th></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Coverage</td><td class="name">${coverage}%</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Complexity</td><td class="value">${complexity}</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Crap</td><td class="value">${crap}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  const classComplexityData = JSON.parse(document.getElementById('complexity_class').textContent);
+  bb.generate(
+    scatterConfig("class", classComplexityData)
+  );
+  const methodComplexityData = JSON.parse(document.getElementById('complexity_method').textContent);
+  bb.generate(
+    scatterConfig("method", methodComplexityData),
+  );
+  </script>
+ </body>
+</html>

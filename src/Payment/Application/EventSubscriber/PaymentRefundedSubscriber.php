@@ -25,7 +25,7 @@ final readonly class PaymentRefundedSubscriber implements EventSubscriberInterfa
         private MailerInterface $mailer,
         private LoggerInterface $logger,
         private string $senderEmail = 'payments@ecommerce.local',
-        private string $senderName = 'E-Commerce Platform'
+        private string $senderName = 'E-Commerce Platform',
     ) {
     }
 

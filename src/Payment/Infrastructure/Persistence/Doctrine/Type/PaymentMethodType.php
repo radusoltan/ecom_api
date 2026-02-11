@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace App\Payment\Infrastructure\Persistence\Doctrine\Type;
 
-use App\Payment\Domain\ValueObject\PaymentMethod;
+use App\Payment\Domain\Model\PaymentMethod;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 
+/**
+ * Custom Doctrine type for PaymentMethod enum.
+ *
+ * Converts between PaymentMethod (PHP) and string (database).
+ */
 final class PaymentMethodType extends Type
 {
     private const TYPE_NAME = 'payment_method';
@@ -19,11 +25,24 @@ final class PaymentMethodType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?PaymentMethod
     {
-        if (null === $value) {
+        if (null === $value || '' === $value) {
             return null;
         }
 
-        return PaymentMethod::fromString((string) $value);
+        if ($value instanceof PaymentMethod) {
+            return $value;
+        }
+
+        try {
+            return PaymentMethod::from((string) $value);
+        } catch (\ValueError $e) {
+            throw ConversionException::conversionFailedFormat(
+                $value,
+                $this->getName(),
+                'One of: ' . implode(', ', array_map(fn(PaymentMethod $case) => $case->value, PaymentMethod::cases())),
+                $e
+            );
+        }
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
@@ -33,10 +52,10 @@ final class PaymentMethodType extends Type
         }
 
         if ($value instanceof PaymentMethod) {
-            return $value->value();
+            return $value->value;
         }
 
-        throw new \InvalidArgumentException(sprintf('Expected %s, got %s', PaymentMethod::class, get_debug_type($value)));
+        throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', PaymentMethod::class]);
     }
 
     public function getName(): string

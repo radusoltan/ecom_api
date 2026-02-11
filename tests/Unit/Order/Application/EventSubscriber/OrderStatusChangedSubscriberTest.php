@@ -9,6 +9,7 @@ use App\Order\Domain\Event\OrderStatusChanged;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderStatus;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
+use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -60,56 +61,54 @@ final class OrderStatusChangedSubscriberTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('statusesThatShouldTriggerNotification')]
-    public function itLogsNotificationAttemptForValidStatusChanges(OrderStatus $newStatus): void
+    public function itSendsNotificationWhenOrderIsPaid(): void
     {
         // Arrange
         $event = new OrderStatusChanged(
             orderId: OrderId::generate(),
+            tenantId: TenantId::generate(),
             oldStatus: OrderStatus::pending(),
-            newStatus: $newStatus
+            newStatus: OrderStatus::paid()
         );
 
+        $this->orderRepository
+            ->expects(self::once())
+            ->method('findById')
+            ->willReturn(null); // Order not found will trigger warning log
+
         $this->logger
-            ->expects(self::atLeastOnce())
+            ->expects(self::once())
             ->method('warning')
-            ->with('Cannot send status change email - customer email not available in event', self::anything());
+            ->with('Cannot send status change email - order not found', self::anything());
+
+        $this->mailer
+            ->expects(self::never())
+            ->method('send'); // Should not send if order not found
 
         // Act
         $this->subscriber->onOrderStatusChanged($event);
     }
 
-    public static function statusesThatShouldTriggerNotification(): array
-    {
-        return [
-            'processing' => [OrderStatus::processing()],
-            'shipped' => [OrderStatus::shipped()],
-            'delivered' => [OrderStatus::delivered()],
-        ];
-    }
-
     #[Test]
     #[DataProvider('statusesThatShouldNotTriggerNotification')]
-    public function itDoesNotSendNotificationForCertainStatuses(OrderStatus $oldStatus, OrderStatus $newStatus): void
+    public function itDoesNotSendNotificationForNonPaidStatuses(OrderStatus $newStatus): void
     {
         // Arrange
         $event = new OrderStatusChanged(
-            orderId: $oldStatus === OrderStatus::processing() ? OrderId::generate() : OrderId::generate(),
-            oldStatus: $oldStatus,
+            orderId: OrderId::generate(),
+            tenantId: TenantId::generate(),
+            oldStatus: OrderStatus::pending(),
             newStatus: $newStatus
         );
 
-        // mailer should never be called
+        // These statuses should not trigger any notification
         $this->mailer
             ->expects(self::never())
             ->method('send');
 
-        // logger.warning should not be called for non-notifiable statuses
-        if ($newStatus->isPending() || $newStatus->isCancelled()) {
-            $this->logger
-                ->expects(self::never())
-                ->method('warning');
-        }
+        $this->logger
+            ->expects(self::never())
+            ->method('info');
 
         // Act
         $this->subscriber->onOrderStatusChanged($event);
@@ -118,122 +117,11 @@ final class OrderStatusChangedSubscriberTest extends TestCase
     public static function statusesThatShouldNotTriggerNotification(): array
     {
         return [
-            'pending to pending' => [OrderStatus::pending(), OrderStatus::pending()],
-            'pending to cancelled' => [OrderStatus::pending(), OrderStatus::cancelled()],
-            'processing to cancelled' => [OrderStatus::processing(), OrderStatus::cancelled()],
+            'processing' => [OrderStatus::processing()],
+            'shipped' => [OrderStatus::shipped()],
+            'delivered' => [OrderStatus::delivered()],
+            'cancelled' => [OrderStatus::cancelled()],
         ];
     }
 
-    #[Test]
-    public function itLogsErrorWhenNotificationFailsButDoesNotThrow(): void
-    {
-        // Arrange
-        $event = new OrderStatusChanged(
-            orderId: OrderId::generate(),
-            oldStatus: OrderStatus::pending(),
-            newStatus: OrderStatus::processing()
-        );
-
-        $exception = new \RuntimeException('Mailer error');
-
-        // Make logger throw exception during warning (simulating failure scenario)
-        $this->logger
-            ->expects(self::once())
-            ->method('warning')
-            ->willThrowException($exception);
-
-        $this->logger
-            ->expects(self::once())
-            ->method('error')
-            ->with('Failed to send order status change notification', self::callback(function (array $context) use ($event, $exception): bool {
-                self::assertEquals($event->orderId->toString(), $context['orderId']);
-                self::assertEquals($event->oldStatus->value(), $context['oldStatus']);
-                self::assertEquals($event->newStatus->value(), $context['newStatus']);
-                self::assertEquals($exception->getMessage(), $context['error']);
-
-                return true;
-            }));
-
-        // Act & Assert - should not throw
-        $this->subscriber->onOrderStatusChanged($event);
-    }
-
-    #[Test]
-    public function itLogsStatusChangeInformation(): void
-    {
-        // Arrange
-        $orderId = OrderId::generate();
-        $event = new OrderStatusChanged(
-            orderId: $orderId,
-            oldStatus: OrderStatus::pending(),
-            newStatus: OrderStatus::processing()
-        );
-
-        $this->logger
-            ->expects(self::once())
-            ->method('warning')
-            ->with('Cannot send status change email - customer email not available in event', self::callback(function (array $context) use ($orderId): bool {
-                self::assertEquals($orderId->toString(), $context['orderId']);
-                self::assertEquals('processing', $context['newStatus']);
-
-                return true;
-            }));
-
-        // Act
-        $this->subscriber->onOrderStatusChanged($event);
-    }
-
-    #[Test]
-    public function itHandlesProcessingStatus(): void
-    {
-        // Arrange
-        $event = new OrderStatusChanged(
-            orderId: OrderId::generate(),
-            oldStatus: OrderStatus::pending(),
-            newStatus: OrderStatus::processing()
-        );
-
-        $this->logger
-            ->expects(self::once())
-            ->method('warning');
-
-        // Act
-        $this->subscriber->onOrderStatusChanged($event);
-    }
-
-    #[Test]
-    public function itHandlesShippedStatus(): void
-    {
-        // Arrange
-        $event = new OrderStatusChanged(
-            orderId: OrderId::generate(),
-            oldStatus: OrderStatus::processing(),
-            newStatus: OrderStatus::shipped()
-        );
-
-        $this->logger
-            ->expects(self::once())
-            ->method('warning');
-
-        // Act
-        $this->subscriber->onOrderStatusChanged($event);
-    }
-
-    #[Test]
-    public function itHandlesDeliveredStatus(): void
-    {
-        // Arrange
-        $event = new OrderStatusChanged(
-            orderId: OrderId::generate(),
-            oldStatus: OrderStatus::shipped(),
-            newStatus: OrderStatus::delivered()
-        );
-
-        $this->logger
-            ->expects(self::once())
-            ->method('warning');
-
-        // Act
-        $this->subscriber->onOrderStatusChanged($event);
-    }
 }

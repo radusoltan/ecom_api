@@ -82,6 +82,17 @@ final class DoctrineStockReservationRepository extends ServiceEntityRepository i
         return array_map(fn ($entity) => $entity->toDomainModel(), $entities);
     }
 
+    public function findByOrderId(string $orderId): array
+    {
+        $qb = $this->createQueryBuilder('r');
+        $qb->where('r.id = :orderId')
+            ->setParameter('orderId', $orderId);
+
+        $entities = $qb->getQuery()->getResult();
+
+        return array_map(fn ($entity) => $entity->toDomainModel(), $entities);
+    }
+
     public function delete(StockReservation $reservation): void
     {
         $qb = $this->createQueryBuilder('r');

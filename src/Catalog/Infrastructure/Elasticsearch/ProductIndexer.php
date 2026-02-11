@@ -236,24 +236,35 @@ final readonly class ProductIndexer
      */
     private function getRatingStats(string $productId, string $tenantId): array
     {
-        $sql = "
-            SELECT
-                AVG(rating)::float as average_rating,
-                COUNT(*)::int as review_count
-            FROM product_reviews
-            WHERE product_id = :product_id
-            AND tenant_id = :tenant_id
-            AND status = 'approved'
-        ";
+        // TODO: When Reviews feature is implemented, this will query the product_reviews table
+        // For now, return default values to prevent SQL errors
+        try {
+            $sql = "
+                SELECT
+                    AVG(rating)::float as average_rating,
+                    COUNT(*)::int as review_count
+                FROM product_reviews
+                WHERE product_id = :product_id
+                AND tenant_id = :tenant_id
+                AND status = 'approved'
+            ";
 
-        $result = $this->connection->executeQuery($sql, [
-            'product_id' => $productId,
-            'tenant_id' => $tenantId,
-        ])->fetchAssociative();
+            $result = $this->connection->executeQuery($sql, [
+                'product_id' => $productId,
+                'tenant_id' => $tenantId,
+            ])->fetchAssociative();
 
-        return [
-            'average_rating' => $result['average_rating'] ?? 0.0,
-            'review_count' => $result['review_count'] ?? 0,
-        ];
+            return [
+                'average_rating' => $result['average_rating'] ?? 0.0,
+                'review_count' => $result['review_count'] ?? 0,
+            ];
+        } catch (\Doctrine\DBAL\Exception $e) {
+            // Table doesn't exist yet - Reviews feature not implemented
+            // Return default values (no reviews)
+            return [
+                'average_rating' => 0.0,
+                'review_count' => 0,
+            ];
+        }
     }
 }

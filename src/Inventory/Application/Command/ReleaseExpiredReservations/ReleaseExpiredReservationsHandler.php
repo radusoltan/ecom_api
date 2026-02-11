@@ -53,6 +53,7 @@ final readonly class ReleaseExpiredReservationsHandler
                 // Release the reserved stock
                 $stockItem->release(
                     $reservation->quantity(),
+                    $reservation->reservationId(),
                     sprintf('Reservation timeout (reservation: %s)', $reservation->reservationId())
                 );
 

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Order\Application\EventSubscriber;
 
+use App\Customer\Application\Service\NotificationPreferenceService;
 use App\Order\Domain\Event\OrderPlaced;
+use App\Shared\Domain\ValueObject\Email;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -17,6 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Business Rules:
  * - Send confirmation email immediately after order placement
  * - Email includes order ID, total amount, and customer details
+ * - Respect customer notification preferences
  * - Failures should be logged but not block order placement
  */
 final readonly class OrderPlacedSubscriber implements EventSubscriberInterface
@@ -25,6 +28,7 @@ final readonly class OrderPlacedSubscriber implements EventSubscriberInterface
         private MailerInterface $mailer,
         private TranslatorInterface $translator,
         private LoggerInterface $logger,
+        private NotificationPreferenceService $notificationPreferenceService,
         private string $senderEmail = 'orders@ecommerce.local',
         private string $senderName = 'E-Commerce Platform',
         private string $defaultLocale = 'en'
@@ -41,6 +45,18 @@ final readonly class OrderPlacedSubscriber implements EventSubscriberInterface
     public function onOrderPlaced(OrderPlaced $event): void
     {
         try {
+            // Check notification preferences before sending email
+            $customerEmail = Email::fromString($event->customerEmail);
+
+            if (!$this->notificationPreferenceService->shouldSendEmailByEmail($customerEmail, $event->tenantId, 'order_update')) {
+                $this->logger->info('Order confirmation email skipped due to customer preferences', [
+                    'orderId' => $event->orderId->toString(),
+                    'customerEmail' => $event->customerEmail,
+                ]);
+
+                return;
+            }
+
             $this->sendConfirmationEmail($event);
 
             $this->logger->info('Order confirmation email sent', [

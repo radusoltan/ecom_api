@@ -1,0 +1,27 @@
+{{ 'emails.order.cancelled.header'|trans }}
+
+{{ 'emails.order.cancelled.greeting'|trans({'%customer_name%': customerName}) }}
+
+{{ 'emails.order.cancelled.confirmation'|trans }}
+
+{{ 'emails.order.cancellation_details'|trans }}:
+- {{ 'emails.order.order_id'|trans }}: {{ orderId }}
+- {{ 'emails.order.cancelled_date'|trans }}: {{ cancelledDate|date('d/m/Y H:i') }}
+- {{ 'emails.order.original_total'|trans }}: {{ total }} {{ currency }}
+{% if reason is defined %}
+- {{ 'emails.order.reason'|trans }}: {{ reason }}
+{% endif %}
+
+{{ 'emails.order.refund_details'|trans }}:
+- {{ 'emails.order.refund_amount'|trans }}: {{ refundAmount }} {{ currency }}
+- {{ 'emails.order.refund_method'|trans }}: {{ refundMethod }}
+
+{{ 'emails.order.cancelled.refund_time'|trans }}
+{{ 'emails.order.cancelled.apology'|trans }}
+{{ 'emails.order.cancelled.questions'|trans }}
+
+{{ 'emails.order.view_order'|trans }}: {{ orderViewUrl }}
+
+---
+{{ 'emails.footer.thanks'|trans }}
+{{ 'emails.footer.company'|trans }}

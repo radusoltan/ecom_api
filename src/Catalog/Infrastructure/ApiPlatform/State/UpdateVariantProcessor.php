@@ -44,17 +44,36 @@ final readonly class UpdateVariantProcessor implements ProcessorInterface
             throw new \RuntimeException('X-Tenant-ID header is required');
         }
 
-        // Get product ID and variant ID from URI variables
-        if (!isset($uriVariables['productId'])) {
-            throw new \InvalidArgumentException('Product ID is required in URI');
-        }
-
+        // Get variant ID from URI variables
         if (!isset($uriVariables['id'])) {
             throw new \InvalidArgumentException('Variant ID is required in URI');
         }
 
-        $productIdString = (string) $uriVariables['productId'];
         $variantIdString = (string) $uriVariables['id'];
+
+        // Get product ID from entity or query parameter
+        $productIdString = null;
+
+        // Try to get from relationship if available
+        $configurableProduct = $data->getConfigurableProduct();
+        if ($configurableProduct) {
+            $productIdString = $configurableProduct->getId();
+        }
+
+        // Fallback to productId from entity's temporary field
+        if (!$productIdString && $data->productId) {
+            $productIdString = $data->productId;
+        }
+
+        // Fallback to query parameter
+        if (!$productIdString && $request) {
+            $queryProductId = $request->query->get('productId');
+            $productIdString = is_string($queryProductId) ? $queryProductId : null;
+        }
+
+        if (!$productIdString) {
+            throw new \RuntimeException('Product ID is required (provide as productId in request body or query parameter)');
+        }
 
         // Create command with updated values
         $command = new UpdateVariant(

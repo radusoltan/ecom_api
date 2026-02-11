@@ -117,7 +117,10 @@ final readonly class GlobalApiRateLimitListener implements EventSubscriberInterf
 
         // Checkout routes - most restrictive (per session)
         if (preg_match('#^/api/(orders|checkout|cart)#', $path)) {
-            $sessionId = $request->getSession()->getId();
+            // Use session ID if available, otherwise fallback to IP
+            $sessionId = $request->hasSession() && $request->getSession()->isStarted()
+                ? $request->getSession()->getId()
+                : ($request->getClientIp() ?? 'no-session');
             $tenantId = $request->headers->get('X-Tenant-ID', 'default');
 
             return [$this->apiCheckoutLimiter, sprintf('%s:%s', $sessionId, $tenantId)];

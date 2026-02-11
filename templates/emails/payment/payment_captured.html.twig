@@ -1,0 +1,68 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block email_title %}{{ 'emails.payment.captured.title'|trans }}{% endblock %}
+
+{% block header_icon %}✓{% endblock %}
+
+{% block header_title %}{{ 'emails.payment.captured.header'|trans }}{% endblock %}
+
+{% block content %}
+    <style>
+        .email-header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        }
+        .info-box {
+            border-left-color: #10b981 !important;
+        }
+        .info-box h3 {
+            color: #10b981 !important;
+        }
+        .button {
+            background-color: #10b981 !important;
+        }
+        .button:hover {
+            background-color: #059669 !important;
+        }
+    </style>
+
+    <p>{{ 'emails.payment.captured.greeting'|trans({'%customer_name%': customerName}) }}</p>
+
+    <p>{{ 'emails.payment.captured.confirmation'|trans }}</p>
+
+    <div class="info-box">
+        <h3>{{ 'emails.payment.payment_details'|trans }}</h3>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.payment.payment_id'|trans }}:</span>
+            <span class="info-value"><strong>{{ paymentId }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.payment.amount'|trans }}:</span>
+            <span class="info-value"><strong>{{ amount }} {{ currency }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.payment.date'|trans }}:</span>
+            <span class="info-value">{{ paymentDate|date('d/m/Y H:i') }}</span>
+        </div>
+        {% if orderId is defined %}
+            <div class="info-row">
+                <span class="info-label">{{ 'emails.payment.order_id'|trans }}:</span>
+                <span class="info-value">{{ orderId }}</span>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="info-box" style="border-left-color: #3b82f6;">
+        <h3 style="color: #3b82f6;">{{ 'emails.payment.captured.next_steps'|trans }}</h3>
+        <p>{{ 'emails.payment.captured.next_steps'|trans }}</p>
+    </div>
+
+    {% if orderViewUrl is defined %}
+        <p style="text-align: center;">
+            <a href="{{ orderViewUrl }}" class="button">{{ 'emails.payment.view_order'|trans }}</a>
+        </p>
+    {% endif %}
+
+    <div class="divider"></div>
+
+    <p>{{ 'emails.payment.questions'|trans }}</p>
+{% endblock %}

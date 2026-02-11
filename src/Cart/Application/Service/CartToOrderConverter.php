@@ -71,15 +71,19 @@ final readonly class CartToOrderConverter
         $this->validateAddress($shippingAddress, 'Shipping');
         $this->validateAddress($billingAddress, 'Billing');
 
+        // Sanitize addresses by trimming all string values
+        $sanitizedShipping = $this->sanitizeAddress($shippingAddress);
+        $sanitizedBilling = $this->sanitizeAddress($billingAddress);
+
         // Map cart items to order lines
         $orderLines = [];
         foreach ($cart->items() as $cartItem) {
             $orderLines[] = [
                 'productId' => $cartItem->productId()->toString(),
                 'productName' => $this->getProductName($cartItem->productId()->toString()), // Placeholder - will be fetched from Catalog
-                'quantity' => $cartItem->quantity()->value(),
+                'quantity' => $cartItem->quantity()->toInt(),
                 'unitPriceAmount' => $cartItem->unitPrice()->getAmount(),
-                'unitPriceCurrency' => $cartItem->unitPrice()->getCurrency(),
+                'unitPriceCurrency' => $cartItem->unitPrice()->getCurrency()->getCurrencyCode(),
             ];
         }
 
@@ -92,8 +96,8 @@ final readonly class CartToOrderConverter
             tenantId: $cart->tenantId()->toString(),
             customerEmail: trim($customerEmail),
             lines: $orderLines,
-            shippingAddress: $shippingAddress,
-            billingAddress: $billingAddress,
+            shippingAddress: $sanitizedShipping,
+            billingAddress: $sanitizedBilling,
             couponCode: $couponCode,
             promotionContext: $promotionContext
         );
@@ -116,6 +120,21 @@ final readonly class CartToOrderConverter
                 throw new \InvalidArgumentException(sprintf('%s address is missing required field: %s', $type, $field));
             }
         }
+    }
+
+    /**
+     * Sanitize address by trimming all string values.
+     *
+     * @param array<string, mixed> $address
+     *
+     * @return array<string, mixed>
+     */
+    private function sanitizeAddress(array $address): array
+    {
+        return array_map(
+            fn ($value) => is_string($value) ? trim($value) : $value,
+            $address
+        );
     }
 
     /**

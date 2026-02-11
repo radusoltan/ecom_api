@@ -8,9 +8,13 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Cart\Application\Command\RemoveItemFromCart;
 use App\Cart\Application\Query\GetCart;
+use App\Cart\Domain\Exception\CartItemNotFoundException;
 use App\Cart\Domain\Exception\CartNotFoundException;
 use App\Cart\Presentation\Api\Resource\CartResource;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -28,13 +32,13 @@ final readonly class RemoveItemFromCartProcessor implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): CartResource
     {
-        $itemId = $uriVariables['itemId'] ?? throw new \InvalidArgumentException('Cart item ID is required');
+        $itemId = $uriVariables['itemId'] ?? throw new BadRequestHttpException('Cart item ID is required');
 
         // Get cart ID from context or from X-Cart-ID header
         $cartId = $context['cart_id'] ?? null;
         if (null === $cartId) {
             $request = $this->requestStack->getCurrentRequest();
-            $cartId = $request?->headers->get('X-Cart-ID') ?? throw new \InvalidArgumentException('Cart ID is required (provide via X-Cart-ID header or context)');
+            $cartId = $request?->headers->get('X-Cart-ID') ?? throw new BadRequestHttpException('Cart ID is required (provide via X-Cart-ID header or context)');
         }
 
         $command = new RemoveItemFromCart(
@@ -42,7 +46,20 @@ final readonly class RemoveItemFromCartProcessor implements ProcessorInterface
             cartItemId: $itemId
         );
 
-        $this->commandBus->dispatch($command);
+        try {
+            $this->commandBus->dispatch($command);
+        } catch (HandlerFailedException $e) {
+            // Unwrap the exception to check the actual cause
+            foreach ($e->getWrappedExceptions() as $nested) {
+                if ($nested instanceof CartItemNotFoundException) {
+                    throw new NotFoundHttpException($nested->getMessage(), $nested);
+                }
+                if ($nested instanceof CartNotFoundException) {
+                    throw new NotFoundHttpException($nested->getMessage(), $nested);
+                }
+            }
+            throw $e;
+        }
 
         // Retrieve the updated cart
         $envelope = $this->queryBus->dispatch(new GetCart($cartId));

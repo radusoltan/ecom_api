@@ -27,7 +27,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final readonly class PaymentMetricsSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private MetricsCollector $metricsCollector
+        private MetricsCollector $metricsCollector,
     ) {
     }
 

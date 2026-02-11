@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice {{ invoice.number.value }}</title>
+    <style>
+        /* Professional invoice styling */
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 10pt;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            display: table;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        .header-left {
+            display: table-cell;
+            width: 50%;
+        }
+
+        .header-right {
+            display: table-cell;
+            width: 50%;
+            text-align: right;
+            vertical-align: top;
+        }
+
+        .logo {
+            max-height: 60px;
+            max-width: 200px;
+        }
+
+        .company-info {
+            font-size: 9pt;
+            line-height: 1.5;
+        }
+
+        .invoice-title {
+            font-size: 24pt;
+            color: #333;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .invoice-meta {
+            margin-bottom: 30px;
+        }
+
+        .invoice-meta table {
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .invoice-meta td {
+            padding: 5px 10px;
+            border: none;
+        }
+
+        .invoice-meta td:first-child {
+            font-weight: normal;
+            width: 120px;
+        }
+
+        .addresses {
+            display: table;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .billing-address,
+        .company-address {
+            display: table-cell;
+            width: 45%;
+            vertical-align: top;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+
+        .billing-address {
+            margin-right: 10%;
+        }
+
+        .addresses strong {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 11pt;
+        }
+
+        table.items {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table.items th {
+            background: #f5f5f5;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 2px solid #333;
+            font-weight: bold;
+        }
+
+        table.items td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .amount {
+            text-align: right;
+        }
+
+        .totals {
+            margin-top: 20px;
+            float: right;
+            width: 300px;
+        }
+
+        .totals table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .totals tr td {
+            border: none;
+            padding: 5px 10px;
+        }
+
+        .totals .total {
+            font-weight: bold;
+            font-size: 12pt;
+            border-top: 2px solid #333;
+        }
+
+        .reverse-charge {
+            background: #fff3cd;
+            padding: 10px 15px;
+            margin: 20px 0;
+            border: 1px solid #ffc107;
+            border-radius: 3px;
+        }
+
+        .payment-info {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 3px solid #333;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 8pt;
+            color: #666;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            background: #28a745;
+            color: white;
+            border-radius: 3px;
+            font-size: 8pt;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-badge.pending {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .status-badge.overdue {
+            background: #dc3545;
+        }
+
+        .status-badge.credited {
+            background: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="header-left">
+        {% if logo %}
+            <img src="{{ logo }}" alt="Logo" class="logo">
+        {% endif %}
+    </div>
+    <div class="header-right">
+        <div class="company-info">
+            <strong>{{ company.name }}</strong><br>
+            {{ company.address|nl2br }}<br>
+            VAT: {{ company.vatNumber }}
+        </div>
+    </div>
+</div>
+
+<h1 class="invoice-title">
+    {% if invoice.status.value == 'credited' %}CREDIT NOTE{% else %}INVOICE{% endif %}
+</h1>
+
+<div class="invoice-meta">
+    <table>
+        <tr>
+            <td>Invoice Number:</td>
+            <td><strong>{{ invoice.number ? invoice.number.toString : 'DRAFT' }}</strong></td>
+        </tr>
+        <tr>
+            <td>Issue Date:</td>
+            <td>{{ invoice.issueDate ? invoice.issueDate|date('d/m/Y') : 'Not issued' }}</td>
+        </tr>
+        {% if invoice.dueDate %}
+            <tr>
+                <td>Due Date:</td>
+                <td>{{ invoice.dueDate|date('d/m/Y') }}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td>Status:</td>
+            <td>
+                <span class="status-badge {{ invoice.status.value }}">
+                    {{ invoice.status.value|upper }}
+                </span>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="addresses">
+    <div class="billing-address">
+        <strong>Bill To:</strong><br>
+        {{ invoice.billingAddress.name }}<br>
+        {{ invoice.billingAddress.addressLine1 }}<br>
+        {% if invoice.billingAddress.addressLine2 %}
+            {{ invoice.billingAddress.addressLine2 }}<br>
+        {% endif %}
+        {{ invoice.billingAddress.postalCode }} {{ invoice.billingAddress.city }}<br>
+        {{ invoice.billingAddress.country }}<br>
+        {% if invoice.billingAddress.vatNumber %}
+            <br>VAT: {{ invoice.billingAddress.vatNumber }}
+        {% endif %}
+    </div>
+</div>
+
+{% if invoice.isReverseCharge %}
+    <div class="reverse-charge">
+        <strong>Reverse Charge:</strong> VAT to be accounted for by the recipient as per Article 194/196 of VAT
+        Directive 2006/112/EC.
+    </div>
+{% endif %}
+
+<table class="items">
+    <thead>
+    <tr>
+        <th style="width: 50%">Description</th>
+        <th class="amount">Qty</th>
+        <th class="amount">Unit Price</th>
+        <th class="amount">VAT %</th>
+        <th class="amount">VAT Amount</th>
+        <th class="amount">Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for line in invoice.lines %}
+        <tr>
+            <td>
+                {{ line.description }}
+                {% if line.sku %}
+                    <br><small style="color: #666;">SKU: {{ line.sku }}</small>
+                {% endif %}
+            </td>
+            <td class="amount">{{ line.quantity }}</td>
+            <td class="amount">{{ line.unitPrice|money }}</td>
+            <td class="amount">{{ line.taxRate }}%</td>
+            <td class="amount">{{ line.taxAmount|money }}</td>
+            <td class="amount">{{ line.grossTotal|money }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div class="totals">
+    <table>
+        <tr>
+            <td>Subtotal:</td>
+            <td class="amount">{{ invoice.subtotal|money }}</td>
+        </tr>
+        {% for rate, amount in invoice.taxBreakdown %}
+            <tr>
+                <td>VAT {{ rate }}%:</td>
+                <td class="amount">{{ amount|money }}</td>
+            </tr>
+        {% endfor %}
+        <tr class="total">
+            <td>Total:</td>
+            <td class="amount">{{ invoice.total|money }}</td>
+        </tr>
+    </table>
+</div>
+
+<div style="clear: both;"></div>
+
+{% if invoice.notes %}
+    <div class="payment-info">
+        <strong>Notes:</strong><br>
+        {{ invoice.notes|nl2br }}
+    </div>
+{% endif %}
+
+<div class="footer">
+    {{ company.name }} | {{ company.vatNumber }} | Generated on {{ "now"|date('d/m/Y H:i') }}
+</div>
+</body>
+</html>

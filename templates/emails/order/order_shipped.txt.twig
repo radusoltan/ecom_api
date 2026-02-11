@@ -1,0 +1,22 @@
+{{ 'emails.order.shipped.header'|trans }}
+
+{{ 'emails.order.shipped.greeting'|trans({'%customer_name%': customerName}) }}
+
+{{ 'emails.order.shipped.confirmation'|trans }}
+
+{{ 'emails.order.shipping_details'|trans }}:
+- {{ 'emails.order.order_id'|trans }}: {{ orderId }}
+- {{ 'emails.order.carrier'|trans }}: {{ carrier }}
+- {{ 'emails.order.tracking_number'|trans }}: {{ trackingNumber }}
+- {{ 'emails.order.estimated_delivery'|trans }}: {{ estimatedDelivery|date('d/m/Y') }}
+
+{{ 'emails.order.track_shipment'|trans }}: {{ trackingUrl }}
+
+{{ 'emails.order.shipped.delivery_info'|trans }}
+{{ 'emails.order.shipped.questions'|trans }}
+
+{{ 'emails.order.view_order'|trans }}: {{ orderViewUrl }}
+
+---
+{{ 'emails.footer.thanks'|trans }}
+{{ 'emails.footer.company'|trans }}

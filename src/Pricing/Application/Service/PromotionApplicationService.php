@@ -26,7 +26,7 @@ final readonly class PromotionApplicationService
 {
     public function __construct(
         private PromotionRepositoryInterface $promotionRepository,
-        private PromotionStackingService $stackingService,
+        private PromotionStackingServiceInterface $stackingService,
         private LoggerInterface $logger
     ) {
     }

@@ -118,6 +118,7 @@ class ProductEntity
     private bool $isFeatured = false;
 
     #[ORM\Column(type: 'decimal', precision: 5, scale: 2, nullable: true, name: 'bundle_discount_percentage')]
+    /** @phpstan-ignore property.unusedType, property.onlyWritten (DB column exists but unused - bundle data stored in bundle_items table) */
     private ?float $bundleDiscountPercentage = null;
 
     // Subscription fields
@@ -186,21 +187,25 @@ class ProductEntity
         // Map subscription if present
         if ($product->hasSubscription()) {
             $subscription = $product->subscription();
-            $entity->subscriptionInterval = $subscription->interval()->value;
-            $entity->subscriptionBillingCycles = $subscription->billingCycles();
-            $entity->subscriptionSetupFeeAmount = $subscription->setupFee()->getAmount();
-            $entity->subscriptionSetupFeeCurrency = $subscription->setupFee()->getCurrency()->getCurrencyCode();
-            $entity->subscriptionTrialEnd = $subscription->trialPeriodEnd();
+            if ($subscription !== null) {
+                $entity->subscriptionInterval = $subscription->interval()->value;
+                $entity->subscriptionBillingCycles = $subscription->billingCycles();
+                $entity->subscriptionSetupFeeAmount = $subscription->setupFee()->getAmount();
+                $entity->subscriptionSetupFeeCurrency = $subscription->setupFee()->getCurrency()->getCurrencyCode();
+                $entity->subscriptionTrialEnd = $subscription->trialPeriodEnd();
+            }
         }
 
         // Map downloadable file if present
         if ($product->hasDownloadableFile()) {
             $file = $product->downloadableFile();
-            $entity->downloadableFilename = $file->filename();
-            $entity->downloadableUrl = $file->fileUrl();
-            $entity->downloadableSizeBytes = $file->fileSizeBytes();
-            $entity->downloadableLimit = $file->downloadLimit();
-            $entity->downloadableExpiresAt = $file->expiresAt();
+            if ($file !== null) {
+                $entity->downloadableFilename = $file->filename();
+                $entity->downloadableUrl = $file->fileUrl();
+                $entity->downloadableSizeBytes = $file->fileSizeBytes();
+                $entity->downloadableLimit = $file->downloadLimit();
+                $entity->downloadableExpiresAt = $file->expiresAt();
+            }
         }
 
         return $entity;
@@ -210,13 +215,13 @@ class ProductEntity
     {
         // Reconstitute subscription if data exists
         $subscription = null;
-        if ($this->subscriptionInterval !== null && $this->subscriptionBillingCycles !== null) {
+        if (null !== $this->subscriptionInterval && null !== $this->subscriptionBillingCycles) {
             $setupFee = Money::fromScalars(
                 $this->subscriptionSetupFeeAmount ?? 0,
                 $this->subscriptionSetupFeeCurrency ?? 'USD'
             );
 
-            $subscription = $this->subscriptionTrialEnd !== null
+            $subscription = null !== $this->subscriptionTrialEnd
                 ? \App\Catalog\Domain\ValueObject\Subscription::createWithTrial(
                     \App\Catalog\Domain\ValueObject\SubscriptionInterval::fromString($this->subscriptionInterval),
                     $this->subscriptionBillingCycles,
@@ -232,8 +237,8 @@ class ProductEntity
 
         // Reconstitute downloadable file if data exists
         $downloadableFile = null;
-        if ($this->downloadableFilename !== null && $this->downloadableUrl !== null && $this->downloadableSizeBytes !== null) {
-            $downloadableFile = $this->downloadableExpiresAt !== null
+        if (null !== $this->downloadableFilename && null !== $this->downloadableUrl && null !== $this->downloadableSizeBytes) {
+            $downloadableFile = null !== $this->downloadableExpiresAt
                 ? \App\Catalog\Domain\ValueObject\DownloadableFile::createWithExpiration(
                     $this->downloadableFilename,
                     $this->downloadableUrl,

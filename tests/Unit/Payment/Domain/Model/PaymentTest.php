@@ -348,6 +348,346 @@ final class PaymentTest extends TestCase
         $this->assertEmpty($events2);
     }
 
+    // ========================================
+    // Retry Mechanism Tests
+    // ========================================
+
+    public function testScheduleRetryForFailedPayment(): void
+    {
+        $payment = $this->createPendingPayment();
+        $payment->markAsFailed('Card declined', 'card_declined');
+        $payment->popEvents(); // Clear failed event
+
+        $policy = \App\Payment\Domain\ValueObject\RetryPolicy::default();
+        $payment->scheduleRetry($policy);
+
+        $this->assertNotNull($payment->nextRetryAt());
+        $this->assertSame(0, $payment->retryCount());
+
+        $events = $payment->popEvents();
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf(\App\Payment\Domain\Event\PaymentRetryScheduled::class, $events[0]);
+    }
+
+    public function testScheduleRetryThrowsWhenPaymentNotFailed(): void
+    {
+        $payment = $this->createPendingPayment();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Can only schedule retry for failed payments');
+
+        $policy = \App\Payment\Domain\ValueObject\RetryPolicy::default();
+        $payment->scheduleRetry($policy);
+    }
+
+    public function testScheduleRetryThrowsWhenMaxAttemptsReached(): void
+    {
+        $payment = Payment::reconstituteFromPersistence(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe(),
+            status: \App\Payment\Domain\ValueObject\PaymentStatus::failed(),
+            gatewayTransactionId: 'pi_abc123xyz',
+            errorMessage: 'Card declined',
+            refundedAmountInCents: 0,
+            createdAt: new \DateTimeImmutable(),
+            updatedAt: new \DateTimeImmutable(),
+            errorCode: 'card_declined',
+            retryCount: 3, // Max attempts reached
+            nextRetryAt: null
+        );
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot schedule retry. Max attempts (3) reached');
+
+        $policy = \App\Payment\Domain\ValueObject\RetryPolicy::default();
+        $payment->scheduleRetry($policy);
+    }
+
+    public function testRecordRetryAttemptSuccess(): void
+    {
+        $payment = $this->createPendingPayment();
+        $payment->markAsFailed('Card declined', 'card_declined');
+        $payment->popEvents();
+
+        $payment->recordRetryAttempt(wasSuccessful: true);
+
+        $this->assertSame(1, $payment->retryCount());
+
+        $events = $payment->popEvents();
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf(\App\Payment\Domain\Event\PaymentRetryAttempted::class, $events[0]);
+    }
+
+    public function testRecordRetryAttemptFailure(): void
+    {
+        $payment = $this->createPendingPayment();
+        $payment->markAsFailed('Card declined', 'card_declined');
+        $payment->popEvents();
+
+        $payment->recordRetryAttempt(
+            wasSuccessful: false,
+            errorCode: 'insufficient_funds',
+            errorMessage: 'Insufficient funds'
+        );
+
+        $this->assertSame(1, $payment->retryCount());
+        $this->assertSame('insufficient_funds', $payment->errorCode());
+        $this->assertSame('Insufficient funds', $payment->errorMessage());
+
+        $events = $payment->popEvents();
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf(\App\Payment\Domain\Event\PaymentRetryAttempted::class, $events[0]);
+    }
+
+    public function testMarkRetryExhausted(): void
+    {
+        $payment = Payment::reconstituteFromPersistence(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe(),
+            status: \App\Payment\Domain\ValueObject\PaymentStatus::failed(),
+            gatewayTransactionId: 'pi_abc123xyz',
+            errorMessage: 'Card declined',
+            refundedAmountInCents: 0,
+            createdAt: new \DateTimeImmutable(),
+            updatedAt: new \DateTimeImmutable(),
+            errorCode: 'card_declined',
+            retryCount: 3,
+            nextRetryAt: new \DateTimeImmutable('+1 hour')
+        );
+
+        $policy = \App\Payment\Domain\ValueObject\RetryPolicy::default();
+        $payment->markRetryExhausted($policy);
+
+        $this->assertNull($payment->nextRetryAt());
+
+        $events = $payment->popEvents();
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf(\App\Payment\Domain\Event\PaymentRetryExhausted::class, $events[0]);
+    }
+
+    public function testMarkRetryExhaustedThrowsWhenNotAtMaxAttempts(): void
+    {
+        $payment = $this->createPendingPayment();
+        $payment->markAsFailed('Card declined', 'card_declined');
+        $payment->popEvents();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot mark retry exhausted before reaching max attempts');
+
+        $policy = \App\Payment\Domain\ValueObject\RetryPolicy::default();
+        $payment->markRetryExhausted($policy);
+    }
+
+    public function testCanRetryReturnsTrueForEligiblePayment(): void
+    {
+        $payment = $this->createPendingPayment();
+        $payment->markAsFailed('Card declined', 'card_declined');
+
+        $policy = \App\Payment\Domain\ValueObject\RetryPolicy::default();
+        $this->assertTrue($payment->canRetry($policy));
+    }
+
+    public function testCanRetryReturnsFalseWhenNotFailed(): void
+    {
+        $payment = $this->createPendingPayment();
+
+        $policy = \App\Payment\Domain\ValueObject\RetryPolicy::default();
+        $this->assertFalse($payment->canRetry($policy));
+    }
+
+    public function testCanRetryReturnsFalseWhenMaxAttemptsReached(): void
+    {
+        $payment = Payment::reconstituteFromPersistence(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe(),
+            status: \App\Payment\Domain\ValueObject\PaymentStatus::failed(),
+            gatewayTransactionId: null,
+            errorMessage: 'Card declined',
+            refundedAmountInCents: 0,
+            createdAt: new \DateTimeImmutable(),
+            updatedAt: new \DateTimeImmutable(),
+            errorCode: 'card_declined',
+            retryCount: 3,
+            nextRetryAt: null
+        );
+
+        $policy = \App\Payment\Domain\ValueObject\RetryPolicy::default();
+        $this->assertFalse($payment->canRetry($policy));
+    }
+
+    public function testCanRetryReturnsFalseForNonRetryableError(): void
+    {
+        $payment = $this->createPendingPayment();
+        $payment->markAsFailed('Expired card', 'expired_card');
+
+        $policy = \App\Payment\Domain\ValueObject\RetryPolicy::default();
+        $this->assertFalse($payment->canRetry($policy));
+    }
+
+    public function testIsDueForRetryReturnsTrueWhenTimeHasPassed(): void
+    {
+        $payment = Payment::reconstituteFromPersistence(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe(),
+            status: \App\Payment\Domain\ValueObject\PaymentStatus::failed(),
+            gatewayTransactionId: null,
+            errorMessage: 'Card declined',
+            refundedAmountInCents: 0,
+            createdAt: new \DateTimeImmutable(),
+            updatedAt: new \DateTimeImmutable(),
+            errorCode: 'card_declined',
+            retryCount: 1,
+            nextRetryAt: new \DateTimeImmutable('-1 hour') // Past time
+        );
+
+        $this->assertTrue($payment->isDueForRetry());
+    }
+
+    public function testIsDueForRetryReturnsFalseWhenTimeNotYet(): void
+    {
+        $payment = Payment::reconstituteFromPersistence(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe(),
+            status: \App\Payment\Domain\ValueObject\PaymentStatus::failed(),
+            gatewayTransactionId: null,
+            errorMessage: 'Card declined',
+            refundedAmountInCents: 0,
+            createdAt: new \DateTimeImmutable(),
+            updatedAt: new \DateTimeImmutable(),
+            errorCode: 'card_declined',
+            retryCount: 1,
+            nextRetryAt: new \DateTimeImmutable('+1 hour') // Future time
+        );
+
+        $this->assertFalse($payment->isDueForRetry());
+    }
+
+    public function testIsDueForRetryReturnsFalseWhenNoRetryScheduled(): void
+    {
+        $payment = $this->createPendingPayment();
+        $payment->markAsFailed('Card declined', 'card_declined');
+
+        $this->assertFalse($payment->isDueForRetry());
+    }
+
+    // ========================================
+    // Edge Case Tests
+    // ========================================
+
+    public function testCreatePaymentWithNegativeAmountThrowsException(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Payment amount must be greater than 0');
+
+        Payment::create(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: -1000,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe()
+        );
+    }
+
+    public function testCapturingCapturedPaymentThrowsException(): void
+    {
+        $payment = $this->createCapturedPayment();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot capture payment in status: captured');
+
+        $payment->capture();
+    }
+
+    public function testRefundZeroAmountThrowsException(): void
+    {
+        $payment = $this->createCapturedPayment();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Refund amount must be greater than 0');
+
+        $payment->refund(0, 'Invalid refund');
+    }
+
+    public function testRefundNegativeAmountThrowsException(): void
+    {
+        $payment = $this->createCapturedPayment();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Refund amount must be greater than 0');
+
+        $payment->refund(-1000, 'Invalid refund');
+    }
+
+    public function testMarkAsFailedWithErrorCode(): void
+    {
+        $payment = $this->createPendingPayment();
+
+        $payment->markAsFailed('Card declined', 'card_declined');
+
+        $this->assertTrue($payment->status()->isFailed());
+        $this->assertSame('Card declined', $payment->errorMessage());
+        $this->assertSame('card_declined', $payment->errorCode());
+    }
+
+    public function testCurrencyIsNormalizedToUppercase(): void
+    {
+        $payment = Payment::create(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: 9999,
+            currency: 'USD', // Already uppercase
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe()
+        );
+
+        // Verify currency is stored in uppercase
+        $this->assertSame('USD', $payment->currency());
+    }
+
+    public function testCreatePaymentWithLowercaseCurrencyThrowsException(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/Invalid currency code/');
+
+        Payment::create(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: 9999,
+            currency: 'usd', // lowercase - invalid
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe()
+        );
+    }
+
     // Helper methods
     private function createPendingPayment(): Payment
     {

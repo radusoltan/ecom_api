@@ -1,0 +1,34 @@
+{{ 'emails.order.placed.header'|trans }}
+
+{{ 'emails.order.placed.greeting'|trans({'%customer_name%': customerName}) }}
+
+{{ 'emails.order.placed.confirmation'|trans }}
+
+{{ 'emails.order.order_details'|trans }}:
+- {{ 'emails.order.order_id'|trans }}: {{ orderId }}
+- {{ 'emails.order.order_date'|trans }}: {{ orderDate|date('d/m/Y H:i') }}
+- {{ 'emails.order.total'|trans }}: {{ total }} {{ currency }}
+- {{ 'emails.order.status_label'|trans }}: {{ ('emails.order.status.' ~ status)|trans }}
+
+{% if items is defined and items|length > 0 %}
+{{ 'emails.order.items'|trans }}:
+{% for item in items %}
+- {{ item.name }} - {{ item.quantity }} × {{ item.price }} {{ currency }}
+{% endfor %}
+{% endif %}
+
+{% if shippingAddress is defined %}
+{{ 'emails.order.shipping_address'|trans }}:
+{{ shippingAddress.street }}
+{{ shippingAddress.city }}, {{ shippingAddress.postalCode }}
+{{ shippingAddress.country }}
+{% endif %}
+
+{{ 'emails.order.view_order'|trans }}: {{ orderViewUrl }}
+
+{{ 'emails.order.placed.next_steps'|trans }}
+{{ 'emails.order.placed.questions'|trans }}
+
+---
+{{ 'emails.footer.thanks'|trans }}
+{{ 'emails.footer.company'|trans }}

@@ -1,2 +1,3 @@
 gesdinet_jwt_refresh_token:
-    path: /api/token/refresh
+    path: /api/v1/auth/token/refresh
+    controller: gesdinet_jwt_refresh_token.controller.refresh_token

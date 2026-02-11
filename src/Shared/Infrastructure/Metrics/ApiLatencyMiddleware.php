@@ -74,7 +74,10 @@ final class ApiLatencyMiddleware implements EventSubscriberInterface
         // Get tenant ID if available
         $tenantId = 'unknown';
         if ($this->tenantContext->hasCurrentTenant()) {
-            $tenantId = $this->tenantContext->getCurrentTenantId()->toString();
+            $currentTenantId = $this->tenantContext->getCurrentTenantId();
+            if ($currentTenantId !== null) {
+                $tenantId = $currentTenantId->toString();
+            }
         }
 
         $this->metricsCollector->recordApiLatency($tenantId, $route, $latency);

@@ -10,6 +10,7 @@ use App\Returns\Application\Command\CreateReturnRequest;
 use App\Returns\Application\Query\GetReturnRequestById;
 use App\Returns\Presentation\Api\Resource\ReturnRequestResource;
 use App\Returns\Presentation\Api\Transformer\ReturnRequestResourceTransformer;
+use App\Shared\Infrastructure\Tenant\TenantContext;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Uid\Ulid;
@@ -23,7 +24,8 @@ final class CreateReturnRequestProcessor implements ProcessorInterface
 
     public function __construct(
         private readonly MessageBusInterface $commandBus,
-        private readonly MessageBusInterface $queryBus
+        private readonly MessageBusInterface $queryBus,
+        private readonly TenantContext $tenantContext
     ) {
         $this->messageBus = $commandBus;
     }
@@ -34,9 +36,23 @@ final class CreateReturnRequestProcessor implements ProcessorInterface
 
         $returnRequestId = (string) new Ulid();
 
+        // Get tenant ID from context (set by middleware from X-Tenant-ID header)
+        $tenantId = $this->tenantContext->getTenantId();
+        if (null === $tenantId) {
+            throw new \RuntimeException('Tenant context not set. X-Tenant-ID header required.');
+        }
+
+        // Validate required fields
+        if (null === $data->orderId || '' === trim($data->orderId)) {
+            throw new \InvalidArgumentException('Order ID is required.');
+        }
+        if (null === $data->reason || '' === trim($data->reason)) {
+            throw new \InvalidArgumentException('Return reason is required.');
+        }
+
         $command = new CreateReturnRequest(
             returnRequestId: $returnRequestId,
-            tenantId: $data->tenantId,
+            tenantId: $tenantId,
             orderId: $data->orderId,
             reason: $data->reason
         );

@@ -11,6 +11,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * Doctrine entity for ConfigurableProduct
@@ -44,6 +45,7 @@ class ConfigurableProductEntity
      * @var Collection<int, VariantEntity>
      */
     #[ORM\OneToMany(mappedBy: 'configurableProduct', targetEntity: VariantEntity::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[MaxDepth(2)] // Limit recursion depth to prevent circular references (ConfigurableProduct -> Variants -> ConfigurableProduct)
     private Collection $variants;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
@@ -117,25 +119,89 @@ class ConfigurableProductEntity
 
     /**
      * Update entity from domain model.
+     *
+     * Note: This method updates the existing entity collections by matching IDs
+     * to avoid Doctrine identity map conflicts. It does NOT clear and recreate
+     * all entities, which would cause "entity already exists in identity map" errors.
      */
     public function updateFromDomainModel(ConfigurableProduct $configurableProduct): void
     {
         $this->updatedAt = new \DateTimeImmutable();
 
-        // Update options
-        $this->options->clear();
-        foreach ($configurableProduct->getOptions() as $option) {
-            $optionEntity = OptionEntity::fromDomainModel($option);
-            $optionEntity->setConfigurableProduct($this);
-            $this->options->add($optionEntity);
+        // Update options: match existing by ID or create new
+        $newOptionIds = array_map(
+            fn ($option) => $option->getId()->toString(),
+            $configurableProduct->getOptions()
+        );
+
+        // Remove options that are no longer in the domain model
+        foreach ($this->options as $existingOption) {
+            if (!in_array($existingOption->getId(), $newOptionIds, true)) {
+                $this->options->removeElement($existingOption);
+            }
         }
 
-        // Update variants
-        $this->variants->clear();
+        // Add or update options from domain model
+        foreach ($configurableProduct->getOptions() as $option) {
+            $optionId = $option->getId()->toString();
+            $existingOption = null;
+
+            // Find existing option by ID
+            foreach ($this->options as $opt) {
+                if ($opt->getId() === $optionId) {
+                    $existingOption = $opt;
+
+                    break;
+                }
+            }
+
+            if ($existingOption) {
+                // Update existing option (if needed, we can add an update method to OptionEntity)
+                // For now, options are immutable in domain, so no update needed
+            } else {
+                // Create new option entity
+                $optionEntity = OptionEntity::fromDomainModel($option);
+                $optionEntity->setConfigurableProduct($this);
+                $this->options->add($optionEntity);
+            }
+        }
+
+        // Update variants: match existing by ID or create new
+        $newVariantIds = array_map(
+            fn ($variant) => $variant->getId()->toString(),
+            $configurableProduct->getVariants()
+        );
+
+        // Remove variants that are no longer in the domain model
+        foreach ($this->variants as $existingVariant) {
+            if (!in_array($existingVariant->getId(), $newVariantIds, true)) {
+                $this->variants->removeElement($existingVariant);
+            }
+        }
+
+        // Add or update variants from domain model
         foreach ($configurableProduct->getVariants() as $variant) {
-            $variantEntity = VariantEntity::fromDomainModel($variant);
-            $variantEntity->setConfigurableProduct($this);
-            $this->variants->add($variantEntity);
+            $variantId = $variant->getId()->toString();
+            $existingVariant = null;
+
+            // Find existing variant by ID
+            foreach ($this->variants as $var) {
+                if ($var->getId() === $variantId) {
+                    $existingVariant = $var;
+
+                    break;
+                }
+            }
+
+            if ($existingVariant) {
+                // Update existing variant
+                $existingVariant->updateFromDomainModel($variant);
+            } else {
+                // Create new variant entity
+                $variantEntity = VariantEntity::fromDomainModel($variant);
+                $variantEntity->setConfigurableProduct($this);
+                $this->variants->add($variantEntity);
+            }
         }
     }
 

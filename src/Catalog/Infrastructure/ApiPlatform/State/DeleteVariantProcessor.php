@@ -38,17 +38,38 @@ final readonly class DeleteVariantProcessor implements ProcessorInterface
             throw new \RuntimeException('X-Tenant-ID header is required');
         }
 
-        // Get product ID and variant ID from URI variables
-        if (!isset($uriVariables['productId'])) {
-            throw new \InvalidArgumentException('Product ID is required in URI');
-        }
-
+        // Get variant ID from URI variables
         if (!isset($uriVariables['id'])) {
             throw new \InvalidArgumentException('Variant ID is required in URI');
         }
 
-        $productIdString = (string) $uriVariables['productId'];
         $variantIdString = (string) $uriVariables['id'];
+
+        // For DELETE, $data will be the entity loaded by API Platform
+        // We need to check if it's a VariantEntity to get the product ID
+        $productIdString = null;
+
+        if ($data instanceof \App\Catalog\Infrastructure\Persistence\Doctrine\Entity\VariantEntity) {
+            $configurableProduct = $data->getConfigurableProduct();
+            if ($configurableProduct) {
+                $productIdString = $configurableProduct->getId();
+            }
+
+            // Fallback to productId from entity's temporary field
+            if (!$productIdString && $data->productId) {
+                $productIdString = $data->productId;
+            }
+        }
+
+        // Fallback to query parameter
+        if (!$productIdString && $request) {
+            $queryProductId = $request->query->get('productId');
+            $productIdString = is_string($queryProductId) ? $queryProductId : null;
+        }
+
+        if (!$productIdString) {
+            throw new \RuntimeException('Product ID is required (provide as productId query parameter)');
+        }
 
         // Create and dispatch command
         $command = new DeleteVariant(

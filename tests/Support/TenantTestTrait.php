@@ -47,6 +47,38 @@ trait TenantTestTrait
     }
 
     /**
+     * Enable RLS bypass for tests (allows querying all tenants).
+     *
+     * This sets app.bypass_rls = 'true' which allows tests to bypass Row-Level Security
+     * policies. Useful for functional tests that need to query multiple tenants or list
+     * all tenants (e.g., admin interfaces).
+     *
+     * Security: This should ONLY be used in test environments.
+     */
+    private function enableRLSBypass(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->getEntityManager();
+        $connection = $em->getConnection();
+
+        // Enable RLS bypass for this connection
+        $connection->executeStatement("SET app.bypass_rls = 'true'");
+    }
+
+    /**
+     * Disable RLS bypass (restore standard RLS protection).
+     */
+    private function disableRLSBypass(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->getEntityManager();
+        $connection = $em->getConnection();
+
+        // Disable RLS bypass
+        $connection->executeStatement("SET app.bypass_rls = 'false'");
+    }
+
+    /**
      * Get default tenant ID from environment.
      *
      * Returns the test tenant UUID configured in tests/bootstrap.php
@@ -91,19 +123,79 @@ trait TenantTestTrait
     }
 
     /**
+     * Clean up test data for the current tenant.
+     *
+     * This method deletes all test data for the current tenant across all tables.
+     * It should be called in setUp() and tearDown() to ensure test isolation.
+     *
+     * Note: Requires setTenantContext() to be called first to set RLS context.
+     */
+    private function cleanupTestData(): void
+    {
+        if (!isset($this->tenantId)) {
+            return; // No tenant set, skip cleanup
+        }
+
+        $em = $this->getEntityManager();
+        $connection = $em->getConnection();
+
+        // Tables to clean up (in order due to foreign key constraints)
+        $tables = [
+            'password_reset_tokens',
+            'cart_items',
+            'carts',
+            'stock_reservations',
+            'stock_items',
+            'payments',
+            'return_requests',
+            'orders',
+            'catalog_variants',
+            'catalog_options',
+            'catalog_configurable_products',
+            'catalog_products',
+            'catalog_categories',
+            'price_lists',
+            'promotions',
+            'tax_rules',
+            'warehouses',
+            'customers',
+        ];
+
+        foreach ($tables as $table) {
+            try {
+                $connection->executeStatement(
+                    "DELETE FROM {$table} WHERE tenant_id = :tenant_id",
+                    ['tenant_id' => $this->tenantId->toString()]
+                );
+            } catch (\Exception $e) {
+                // Table might not exist or might not have tenant_id column - ignore
+                continue;
+            }
+        }
+    }
+
+    /**
      * Get entity manager from test container.
      *
      * Override this in your test class if you need custom EM access.
      */
     private function getEntityManager(): EntityManagerInterface
     {
-        if (!method_exists($this, 'getContainer')) {
-            throw new \RuntimeException('getEntityManager() requires getContainer() method. Make sure your test extends KernelTestCase.');
+        // For ApiTestCase, use createClient() to get container
+        if (method_exists($this, 'createClient')) {
+            $client = static::createClient();
+            /** @var EntityManagerInterface $em */
+            $em = $client->getContainer()->get('doctrine.orm.entity_manager');
+            return $em;
         }
 
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
+        // For KernelTestCase, use getContainer() directly
+        if (method_exists($this, 'getContainer')) {
+            /** @var EntityManagerInterface $em */
+            $em = $this->getContainer()->get('doctrine.orm.entity_manager');
+            return $em;
+        }
 
-        return $em;
+        throw new \RuntimeException('getEntityManager() requires getContainer() or createClient() method. Make sure your test extends KernelTestCase or ApiTestCase.');
     }
 }

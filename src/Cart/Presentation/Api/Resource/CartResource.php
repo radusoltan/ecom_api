@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Cart\Presentation\Api\Resource;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model;
 use App\Cart\Presentation\Api\Processor\AddItemToCartProcessor;
+use App\Cart\Presentation\Api\Processor\AssignCartToCustomerProcessor;
 use App\Cart\Presentation\Api\Processor\ClearCartProcessor;
 use App\Cart\Presentation\Api\Processor\RemoveItemFromCartProcessor;
 use App\Cart\Presentation\Api\Processor\UpdateCartItemProcessor;
@@ -123,6 +126,10 @@ use App\Cart\Presentation\Api\Provider\GetCartProvider;
         ),
         new Patch(
             uriTemplate: '/cart/items/{itemId}',
+            read: false,
+            uriVariables: [
+                'itemId' => new Link(parameterName: 'itemId'),
+            ],
             processor: UpdateCartItemProcessor::class,
             openapi: new Model\Operation(
                 summary: 'Update cart item quantity',
@@ -167,6 +174,11 @@ use App\Cart\Presentation\Api\Provider\GetCartProvider;
         ),
         new Delete(
             uriTemplate: '/cart/items/{itemId}',
+            read: false,
+            status: 200,
+            uriVariables: [
+                'itemId' => new Link(parameterName: 'itemId'),
+            ],
             processor: RemoveItemFromCartProcessor::class,
             openapi: new Model\Operation(
                 summary: 'Remove item from cart',
@@ -195,6 +207,8 @@ use App\Cart\Presentation\Api\Provider\GetCartProvider;
         ),
         new Delete(
             uriTemplate: '/cart',
+            read: false,
+            status: 200,
             processor: ClearCartProcessor::class,
             openapi: new Model\Operation(
                 summary: 'Clear entire cart',
@@ -210,6 +224,49 @@ use App\Cart\Presentation\Api\Provider\GetCartProvider;
                 ],
                 responses: [
                     '200' => new Model\Response(description: 'Cart cleared successfully'),
+                    '404' => new Model\Response(description: 'Cart not found'),
+                ]
+            )
+        ),
+        new Post(
+            uriTemplate: '/cart/assign',
+            status: 200,
+            processor: AssignCartToCustomerProcessor::class,
+            openapi: new Model\Operation(
+                summary: 'Assign guest cart to customer',
+                description: 'Assigns a guest cart to a customer after login. If the customer already has a cart, the guest cart items are merged into their existing cart.',
+                parameters: [
+                    new Model\Parameter(
+                        name: 'X-Cart-ID',
+                        in: 'header',
+                        description: 'Guest cart identifier to assign/merge',
+                        required: true,
+                        schema: ['type' => 'string', 'format' => 'uuid']
+                    ),
+                    new Model\Parameter(
+                        name: 'X-Tenant-ID',
+                        in: 'header',
+                        description: 'Tenant identifier',
+                        required: true,
+                        schema: ['type' => 'string', 'format' => 'uuid']
+                    ),
+                ],
+                requestBody: new Model\RequestBody(
+                    content: new \ArrayObject([
+                        'application/json' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'required' => ['customerId'],
+                                'properties' => [
+                                    'customerId' => ['type' => 'string', 'format' => 'uuid', 'description' => 'Customer ID to assign the cart to'],
+                                ],
+                            ],
+                        ],
+                    ])
+                ),
+                responses: [
+                    '200' => new Model\Response(description: 'Cart assigned/merged successfully'),
+                    '400' => new Model\Response(description: 'Invalid request (missing customerId or X-Cart-ID)'),
                     '404' => new Model\Response(description: 'Cart not found'),
                 ]
             )

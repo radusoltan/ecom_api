@@ -175,7 +175,7 @@ final class ImageUploadProcessorTest extends KernelTestCase
         $product = Product::create(
             ProductId::generate(),
             $tenantShared,
-            SKU::fromString('ABC-DEF-000001'),
+            SKU::fromString('TST-000001'),
             ProductName::fromString('Attachment Product'),
             'Description',
             'Short description',

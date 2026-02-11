@@ -46,7 +46,8 @@ final readonly class AddItemToCartHandler
         // Step 2: Determine price: use provided price or fetch current price
         if (null !== $command->unitPriceAmount && null !== $command->unitPriceCurrency) {
             // Price provided explicitly (backwards compatibility)
-            $unitPrice = Money::fromScalars($command->unitPriceAmount, $command->unitPriceCurrency);
+            // Convert float to int (price is in cents/minor units)
+            $unitPrice = Money::fromScalars((int) $command->unitPriceAmount, $command->unitPriceCurrency);
         } else {
             // Fetch current price from catalog/pricing
             $unitPrice = $this->priceCalculator->calculateItemPrice(

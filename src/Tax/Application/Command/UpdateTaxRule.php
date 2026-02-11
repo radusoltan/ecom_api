@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tax\Application\Command;
 
 use App\Shared\Domain\ValueObject\TenantId;
-use App\Tax\Domain\ValueObject\TaxRuleId;
+use App\Tax\Domain\Model\TaxRuleId;
 
 /**
  * Update Tax Rule Command.

@@ -67,12 +67,14 @@ final class TenantContextMiddleware implements MiddlewareInterface
             if (null === $envelope->last(TenantStamp::class)) {
                 if ($this->tenantContext->hasCurrentTenant()) {
                     $tenantId = $this->tenantContext->getCurrentTenantId();
-                    $envelope = $envelope->with(new TenantStamp($tenantId->toString()));
+                    if ($tenantId !== null) {
+                        $envelope = $envelope->with(new TenantStamp($tenantId->toString()));
 
-                    $this->logger->debug('TenantStamp added to outgoing message', [
-                        'tenant_id' => $tenantId->toString(),
-                        'message_class' => get_class($envelope->getMessage()),
-                    ]);
+                        $this->logger->debug('TenantStamp added to outgoing message', [
+                            'tenant_id' => $tenantId->toString(),
+                            'message_class' => get_class($envelope->getMessage()),
+                        ]);
+                    }
                 }
             }
         }

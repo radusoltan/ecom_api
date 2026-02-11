@@ -13,7 +13,7 @@ final class TranslationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations');
+        $client->request('GET', '/api/v1/translations');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -31,7 +31,7 @@ final class TranslationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'en']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'en']);
 
         $this->assertResponseIsSuccessful();
 
@@ -43,15 +43,15 @@ final class TranslationApiTest extends WebTestCase
         $translations = $data['member'][0]['translations'];
         $this->assertArrayHasKey('common.save', $translations);
         $this->assertSame('Save', $translations['common.save']);
-        $this->assertArrayHasKey('buttons.add_to_cart', $translations);
-        $this->assertSame('Add to Cart', $translations['buttons.add_to_cart']);
+        $this->assertArrayHasKey('buttons.addToCart', $translations);
+        $this->assertSame('Add to Cart', $translations['buttons.addToCart']);
     }
 
     public function testGetTranslationsWithMessagesFrench(): void
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'fr']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'fr']);
 
         $this->assertResponseIsSuccessful();
 
@@ -63,15 +63,15 @@ final class TranslationApiTest extends WebTestCase
         $translations = $data['member'][0]['translations'];
         $this->assertArrayHasKey('common.save', $translations);
         $this->assertSame('Enregistrer', $translations['common.save']);
-        $this->assertArrayHasKey('buttons.add_to_cart', $translations);
-        $this->assertSame('Ajouter au Panier', $translations['buttons.add_to_cart']);
+        $this->assertArrayHasKey('buttons.addToCart', $translations);
+        $this->assertSame('Ajouter au Panier', $translations['buttons.addToCart']);
     }
 
     public function testGetTranslationsWithMessagesGerman(): void
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'de']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'de']);
 
         $this->assertResponseIsSuccessful();
 
@@ -83,15 +83,15 @@ final class TranslationApiTest extends WebTestCase
         $translations = $data['member'][0]['translations'];
         $this->assertArrayHasKey('common.save', $translations);
         $this->assertSame('Speichern', $translations['common.save']);
-        $this->assertArrayHasKey('buttons.add_to_cart', $translations);
-        $this->assertSame('In den Warenkorb', $translations['buttons.add_to_cart']);
+        $this->assertArrayHasKey('buttons.addToCart', $translations);
+        $this->assertSame('In den Warenkorb', $translations['buttons.addToCart']);
     }
 
     public function testGetTranslationsWithValidatorsDomain(): void
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'validators', 'locale' => 'en']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'validators', 'locale' => 'en']);
 
         $this->assertResponseIsSuccessful();
 
@@ -107,7 +107,7 @@ final class TranslationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'validators', 'locale' => 'fr']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'validators', 'locale' => 'fr']);
 
         $this->assertResponseIsSuccessful();
 
@@ -122,7 +122,7 @@ final class TranslationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'validators', 'locale' => 'de']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'validators', 'locale' => 'de']);
 
         $this->assertResponseIsSuccessful();
 
@@ -137,7 +137,7 @@ final class TranslationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'emails', 'locale' => 'en']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'emails', 'locale' => 'en']);
 
         $this->assertResponseIsSuccessful();
 
@@ -146,14 +146,14 @@ final class TranslationApiTest extends WebTestCase
         $this->assertSame('emails', $data['member'][0]['domain']);
         $translations = $data['member'][0]['translations'];
         $this->assertArrayHasKey('customer.welcome.subject', $translations);
-        $this->assertArrayHasKey('order.confirmation.subject', $translations);
+        $this->assertArrayHasKey('emails.order.placed.title', $translations);
     }
 
     public function testGetTranslationsReturnsClientErrorForInvalidDomain(): void
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'invalid_domain', 'locale' => 'en']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'invalid_domain', 'locale' => 'en']);
 
         $this->assertResponseStatusCodeSame(500);
 
@@ -166,7 +166,7 @@ final class TranslationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'es']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'es']);
 
         $this->assertResponseStatusCodeSame(500);
 
@@ -180,7 +180,7 @@ final class TranslationApiTest extends WebTestCase
         $client = static::createClient();
 
         // Request without authentication
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'fr']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'fr']);
 
         // Should succeed (not 401 Unauthorized)
         $this->assertResponseIsSuccessful();
@@ -190,7 +190,7 @@ final class TranslationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'en']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'en']);
 
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
     }
@@ -199,7 +199,7 @@ final class TranslationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'en']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'en']);
 
         $data = json_decode($client->getResponse()->getContent(), true);
 
@@ -212,7 +212,7 @@ final class TranslationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'en']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'en']);
 
         $data = json_decode($client->getResponse()->getContent(), true);
 
@@ -226,7 +226,7 @@ final class TranslationApiTest extends WebTestCase
         $client = static::createClient();
 
         // Request with no parameters should use defaults
-        $client->request('GET', '/api/translations');
+        $client->request('GET', '/api/v1/translations');
 
         $this->assertResponseIsSuccessful();
 
@@ -242,7 +242,7 @@ final class TranslationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/translations', ['domain' => $domain, 'locale' => $locale]);
+        $client->request('GET', '/api/v1/translations', ['domain' => $domain, 'locale' => $locale]);
 
         $this->assertResponseIsSuccessful();
 
@@ -260,17 +260,17 @@ final class TranslationApiTest extends WebTestCase
             'Messages EN' => [
                 'messages',
                 'en',
-                ['common.save', 'common.cancel', 'buttons.add_to_cart', 'navigation.home'],
+                ['common.save', 'common.cancel', 'buttons.addToCart', 'navigation.home'],
             ],
             'Messages FR' => [
                 'messages',
                 'fr',
-                ['common.save', 'common.cancel', 'buttons.add_to_cart', 'navigation.home'],
+                ['common.save', 'common.cancel', 'buttons.addToCart', 'navigation.home'],
             ],
             'Messages DE' => [
                 'messages',
                 'de',
-                ['common.save', 'common.cancel', 'buttons.add_to_cart', 'navigation.home'],
+                ['common.save', 'common.cancel', 'buttons.addToCart', 'navigation.home'],
             ],
             'Validators EN' => [
                 'validators',
@@ -290,7 +290,7 @@ final class TranslationApiTest extends WebTestCase
             'Emails EN' => [
                 'emails',
                 'en',
-                ['customer.welcome.subject', 'order.confirmation.subject'],
+                ['customer.welcome.subject', 'emails.order.placed.title'],
             ],
         ];
     }
@@ -300,7 +300,7 @@ final class TranslationApiTest extends WebTestCase
         $client = static::createClient();
 
         // Test uppercase locale
-        $client->request('GET', '/api/translations', ['domain' => 'messages', 'locale' => 'FR']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'FR']);
 
         $this->assertResponseIsSuccessful();
 

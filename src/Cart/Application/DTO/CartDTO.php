@@ -39,9 +39,14 @@ final readonly class CartDTO
                 'productId' => $item->productId()->toString(),
                 'variantId' => $item->variantId(),
                 'quantity' => $item->quantity()->toInt(),
-                'unitPriceAmount' => $item->unitPrice()->getAmount(),
-                'unitPriceCurrency' => $item->unitPrice()->getCurrency()->getCurrencyCode(),
-                'rowTotalAmount' => $item->rowTotal()->getAmount(),
+                'unitPrice' => [
+                    'amount' => $item->unitPrice()->getAmount(),
+                    'currency' => $item->unitPrice()->getCurrency()->getCurrencyCode(),
+                ],
+                'rowTotal' => [
+                    'amount' => $item->rowTotal()->getAmount(),
+                    'currency' => $item->rowTotal()->getCurrency()->getCurrencyCode(),
+                ],
             ],
             $cart->items()
         );

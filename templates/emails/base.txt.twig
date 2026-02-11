@@ -1,0 +1,8 @@
+{% block content %}{% endblock %}
+
+---
+{% block footer %}
+{{ 'emails.footer.thanks'|trans }}
+{{ 'emails.footer.company'|trans }}
+{{ 'emails.footer.copyright'|trans({'%year%': 'now'|date('Y')}) }}
+{% endblock %}

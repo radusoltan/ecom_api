@@ -100,6 +100,7 @@ final class EmailNotificationIntegrationTest extends KernelTestCase
 
         $event = new OrderStatusChanged(
             orderId: $order->id(),
+            tenantId: $tenantId,
             oldStatus: OrderStatus::pending(),
             newStatus: OrderStatus::paid()
         );
@@ -130,7 +131,9 @@ final class EmailNotificationIntegrationTest extends KernelTestCase
 
         $event = new OrderCancelled(
             orderId: $order->id(),
-            previousStatus: OrderStatus::pending()
+            tenantId: $tenantId,
+            previousStatus: OrderStatus::pending(),
+            reason: 'Test cancellation'
         );
 
         $subscriber->onOrderCancelled($event);
@@ -204,6 +207,7 @@ final class EmailNotificationIntegrationTest extends KernelTestCase
 
         $event = new OrderStatusChanged(
             orderId: OrderId::generate(),
+            tenantId: TenantId::generate(),
             oldStatus: OrderStatus::pending(),
             newStatus: OrderStatus::paid()
         );

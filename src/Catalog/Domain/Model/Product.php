@@ -865,6 +865,9 @@ final class Product extends AggregateRoot
      *
      * @throws \DomainException if bundle does not exist
      */
+    /**
+     * @phpstan-assert !null $this->bundle
+     */
     private function ensureBundleExists(): void
     {
         if ($this->bundle === null) {
@@ -894,6 +897,9 @@ final class Product extends AggregateRoot
      *
      * @throws \DomainException if subscription does not exist
      */
+    /**
+     * @phpstan-assert !null $this->subscription
+     */
     private function ensureSubscriptionExists(): void
     {
         if ($this->subscription === null) {
@@ -922,6 +928,9 @@ final class Product extends AggregateRoot
      * Ensure downloadable file exists.
      *
      * @throws \DomainException if downloadable file does not exist
+     */
+    /**
+     * @phpstan-assert !null $this->downloadableFile
      */
     private function ensureDownloadableFileExists(): void
     {

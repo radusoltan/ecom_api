@@ -10,8 +10,6 @@ use App\Catalog\Domain\Repository\ProductRepositoryInterface;
  * GetBundleItemsQueryHandler.
  *
  * Returns bundle items for a product.
- *
- * @return array{items: array<array{productId: string, quantity: int, priceAmount: int, priceCurrency: string}>, discountPercentage: float, calculatedPrice: array{amount: int, currency: string}}|null
  */
 final readonly class GetBundleItemsQueryHandler
 {
@@ -21,7 +19,7 @@ final readonly class GetBundleItemsQueryHandler
     }
 
     /**
-     * @return array{items: array<array{productId: string, quantity: int, priceAmount: int, priceCurrency: string}>, discountPercentage: float, calculatedPrice: array{amount: int, currency: string}}|null
+     * @return array{items: list<array{productId: string, quantity: int, priceAmount: int, priceCurrency: string}>, discountPercentage: float, calculatedPrice: array{amount: int, currency: string}}|null
      */
     public function __invoke(GetBundleItemsQuery $query): ?array
     {
@@ -52,7 +50,7 @@ final readonly class GetBundleItemsQueryHandler
                 'productId' => $item->productId()->toString(),
                 'quantity' => $item->quantity(),
                 'priceAmount' => $item->price()->getAmount(),
-                'priceCurrency' => $item->price()->getCurrency(),
+                'priceCurrency' => $item->price()->getCurrency()->getCurrencyCode(),
             ];
         }
 
@@ -63,7 +61,7 @@ final readonly class GetBundleItemsQueryHandler
             'discountPercentage' => $bundle->discountPercentage(),
             'calculatedPrice' => [
                 'amount' => $calculatedPrice->getAmount(),
-                'currency' => $calculatedPrice->getCurrency(),
+                'currency' => $calculatedPrice->getCurrency()->getCurrencyCode(),
             ],
         ];
     }

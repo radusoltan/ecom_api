@@ -105,6 +105,39 @@ final readonly class DoctrineORMPromotionRepository implements PromotionReposito
         );
     }
 
+    public function findActiveByTenantId(TenantId $tenantId, \DateTimeImmutable $date): array
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $entities = $qb->select('p')
+            ->from(PromotionEntity::class, 'p')
+            ->where('p.tenantId = :tenantId')
+            ->andWhere('p.isActive = true')
+            ->andWhere(
+                $qb->expr()->orX(
+                    'p.validFrom IS NULL',
+                    'p.validFrom <= :date'
+                )
+            )
+            ->andWhere(
+                $qb->expr()->orX(
+                    'p.validTo IS NULL',
+                    'p.validTo >= :date'
+                )
+            )
+            ->setParameter('tenantId', $tenantId->toString())
+            ->setParameter('date', $date)
+            ->orderBy('p.priority', 'DESC')
+            ->addOrderBy('p.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return array_map(
+            static fn (PromotionEntity $entity) => $entity->toDomainModel(),
+            $entities
+        );
+    }
+
     public function delete(Promotion $promotion): void
     {
         $entity = $this->entityManager->find(PromotionEntity::class, $promotion->id()->toString());

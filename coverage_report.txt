@@ -1,0 +1,200 @@
+App\Returns\Domain\Event\ReturnRequestCompleted
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  8/  8)
+App\Returns\Domain\Event\ReturnRequestCreated
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  8/  8)
+App\Returns\Domain\Event\ReturnRequestInspected
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  8/  8)
+App\Returns\Domain\Event\ReturnRequestReceived
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  7/  7)
+App\Returns\Domain\Event\ReturnRequestRejected
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  7/  7)
+App\Returns\Domain\Model\ReturnRequest
+  Methods: 100.00% (23/23)   Lines: 100.00% (102/102)
+App\Returns\Domain\ValueObject\ReturnInspection
+  Methods: 100.00% ( 9/ 9)   Lines: 100.00% ( 23/ 23)
+App\Returns\Domain\ValueObject\ReturnReason
+  Methods: 100.00% ( 5/ 5)   Lines: 100.00% ( 12/ 12)
+App\Returns\Domain\ValueObject\ReturnRequestId
+  Methods:  83.33% ( 5/ 6)   Lines:  87.50% (  7/  8)
+App\Returns\Domain\ValueObject\ReturnStatus
+  Methods:  85.00% (17/20)   Lines:  86.36% ( 19/ 22)
+App\Returns\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMReturnRequestRepository
+  Methods:  16.67% ( 1/ 6)   Lines:  16.33% (  8/ 49)
+App\Returns\Presentation\Api\Processor\CreateReturnRequestProcessor
+  Methods:  50.00% ( 1/ 2)   Lines:  66.67% (  8/ 12)
+App\Returns\Presentation\Api\Provider\ReturnRequestCollectionProvider
+  Methods:  50.00% ( 1/ 2)   Lines:  54.55% (  6/ 11)
+App\Schedule
+  Methods:  50.00% ( 1/ 2)   Lines:  14.29% (  1/  7)
+App\Shared\Application\Service\PerformanceProfiler
+  Methods: 100.00% (10/10)   Lines: 100.00% ( 80/ 80)
+App\Shared\Domain\Aggregate\AggregateRoot
+  Methods: 100.00% ( 5/ 5)   Lines: 100.00% (  7/  7)
+App\Shared\Domain\Exception\InvalidLanguageCodeException
+  Methods:  33.33% ( 1/ 3)   Lines:  46.15% (  6/ 13)
+App\Shared\Domain\ValueObject\Address
+  Methods:  63.64% ( 7/11)   Lines:  48.57% ( 17/ 35)
+App\Shared\Domain\ValueObject\Email
+  Methods: 100.00% ( 6/ 6)   Lines: 100.00% (  9/  9)
+App\Shared\Domain\ValueObject\LanguageCode
+  Methods: 100.00% (15/15)   Lines: 100.00% ( 23/ 23)
+App\Shared\Domain\ValueObject\Money
+  Methods: 100.00% (15/15)   Lines: 100.00% ( 22/ 22)
+App\Shared\Domain\ValueObject\TenantId
+  Methods: 100.00% ( 7/ 7)   Lines: 100.00% ( 13/ 13)
+App\Shared\Infrastructure\ApiPlatform\EventListener\LocaleResponseListener
+  Methods:  33.33% ( 1/ 3)   Lines:  81.82% ( 18/ 22)
+App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  5/  5)
+App\Shared\Infrastructure\Cache\CacheService
+  Methods: 100.00% ( 8/ 8)   Lines: 100.00% ( 61/ 61)
+App\Shared\Infrastructure\Doctrine\Service\LocaleProvider
+  Methods:  66.67% ( 2/ 3)   Lines:  66.67% (  2/  3)
+App\Shared\Infrastructure\Doctrine\TenantConnectionSubscriber
+  Methods:  50.00% ( 1/ 2)   Lines:  61.90% ( 13/ 21)
+App\Shared\Infrastructure\Elasticsearch\ElasticsearchClientFactory
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  7/  7)
+App\Shared\Infrastructure\Elasticsearch\IndexManager
+  Methods:  84.62% (11/13)   Lines:  96.63% (172/178)
+App\Shared\Infrastructure\Elasticsearch\SynonymManager
+  Methods: 100.00% ( 7/ 7)   Lines: 100.00% (149/149)
+App\Shared\Infrastructure\EventSubscriber\ApiCacheSubscriber
+  Methods:  25.00% ( 1/ 4)   Lines:  81.63% ( 40/ 49)
+App\Shared\Infrastructure\EventSubscriber\LocaleSubscriber
+  Methods:  66.67% ( 2/ 3)   Lines:  70.00% (  7/ 10)
+App\Shared\Infrastructure\EventSubscriber\RateLimitHeadersSubscriber
+  Methods:  50.00% ( 1/ 2)   Lines:  70.00% (  7/ 10)
+App\Shared\Infrastructure\Http\Controller\ApiRedirectController
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 11/ 11)
+App\Shared\Infrastructure\Http\EventListener\ApiMetricsListener
+  Methods:  60.00% ( 3/ 5)   Lines:  88.89% ( 48/ 54)
+App\Shared\Infrastructure\Http\EventListener\CorsPreflightListener
+  Methods:   0.00% ( 0/ 2)   Lines:  88.10% ( 37/ 42)
+App\Shared\Infrastructure\Http\EventListener\GlobalApiRateLimitListener
+  Methods:  25.00% ( 1/ 4)   Lines:  38.81% ( 26/ 67)
+App\Shared\Infrastructure\Http\Middleware\IdempotencyMiddleware
+  Methods:  66.67% ( 4/ 6)   Lines:  92.73% (102/110)
+App\Shared\Infrastructure\Locale\LocaleNegotiator
+  Methods:  90.00% ( 9/10)   Lines:  96.77% ( 30/ 31)
+App\Shared\Infrastructure\Messenger\TenantContextMiddleware
+  Methods:  50.00% ( 1/ 2)   Lines:  48.00% ( 12/ 25)
+App\Shared\Infrastructure\Messenger\TenantStamp
+  Methods:  50.00% ( 1/ 2)   Lines:  50.00% (  1/  2)
+App\Shared\Infrastructure\Metrics\ApiLatencyMiddleware
+  Methods:  50.00% ( 2/ 4)   Lines:  75.00% ( 18/ 24)
+App\Shared\Infrastructure\Metrics\MetricsCollector
+  Methods:  70.00% ( 7/10)   Lines:  97.54% (119/122)
+App\Shared\Infrastructure\Metrics\PrometheusMetricsCollector
+  Methods:  23.08% ( 3/13)   Lines:  19.30% ( 11/ 57)
+App\Shared\Infrastructure\Security\Voter\AbstractResourceVoter
+  Methods:  58.33% ( 7/12)   Lines:  40.00% ( 12/ 30)
+App\Shared\Infrastructure\Security\Voter\SettingsVoter
+  Methods:  66.67% ( 2/ 3)   Lines:  92.86% ( 13/ 14)
+App\Shared\Infrastructure\Tenant\TenantContext
+  Methods:  83.33% ( 5/ 6)   Lines:  90.91% ( 10/ 11)
+App\Shared\Infrastructure\Tenant\TenantRequestSubscriber
+  Methods:  60.00% ( 3/ 5)   Lines:  73.68% ( 14/ 19)
+App\Tax\Domain\Event\TaxRuleCreated
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
+App\Tax\Domain\Event\TaxRuleDeactivated
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
+App\Tax\Domain\Model\TaxRule
+  Methods:  72.22% (13/18)   Lines:  71.23% ( 52/ 73)
+App\Tax\Domain\Service\TaxCalculationService
+  Methods: 100.00% ( 5/ 5)   Lines: 100.00% ( 37/ 37)
+App\Tax\Domain\ValueObject\TaxJurisdiction
+  Methods:  60.00% ( 6/10)   Lines:  50.00% ( 10/ 20)
+App\Tax\Domain\ValueObject\TaxRate
+  Methods: 100.00% ( 9/ 9)   Lines: 100.00% ( 10/ 10)
+App\Tax\Domain\ValueObject\TaxRuleId
+  Methods:  50.00% ( 3/ 6)   Lines:  57.14% (  4/  7)
+App\Tax\Infrastructure\Persistence\Doctrine\Entity\TaxRuleEntity
+  Methods:  66.67% ( 2/ 3)   Lines:  85.71% ( 24/ 28)
+App\Tax\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMTaxRuleRepository
+  Methods:  33.33% ( 2/ 6)   Lines:  45.61% ( 26/ 57)
+App\Tax\Presentation\Api\Provider\TaxRuleCollectionProvider
+  Methods:  50.00% ( 1/ 2)   Lines:  33.33% (  6/ 18)
+App\Tenant\Application\Command\ActivateTenantCommand
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
+App\Tenant\Application\Command\ActivateTenantCommandHandler
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 17/ 17)
+App\Tenant\Application\Command\CreateTenantCommand
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
+App\Tenant\Application\Command\CreateTenantCommandHandler
+  Methods:  50.00% ( 1/ 2)   Lines:  42.86% (  9/ 21)
+App\Tenant\Application\Command\DeactivateTenantCommand
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
+App\Tenant\Application\Command\DeactivateTenantCommandHandler
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 17/ 17)
+App\Tenant\Application\DTO\TenantDTO
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 14/ 14)
+App\Tenant\Application\Query\GetAllTenantsQueryHandler
+  Methods:  50.00% ( 1/ 2)   Lines:  76.47% ( 13/ 17)
+App\Tenant\Application\Query\GetTenantByIdQuery
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
+App\Tenant\Application\Query\GetTenantByIdQueryHandler
+  Methods:  50.00% ( 1/ 2)   Lines:  41.18% (  7/ 17)
+App\Tenant\Application\Query\GetTenantByOwnerEmailQuery
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
+App\Tenant\Application\Query\GetTenantByOwnerEmailQueryHandler
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  6/  6)
+App\Tenant\Domain\Event\TenantActivated
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
+App\Tenant\Domain\Event\TenantCreated
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
+App\Tenant\Domain\Event\TenantDeactivated
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
+App\Tenant\Domain\Event\TenantReactivated
+  Methods:  50.00% ( 1/ 2)   Lines:  50.00% (  1/  2)
+App\Tenant\Domain\Event\TenantSuspended
+  Methods:  50.00% ( 1/ 2)   Lines:  50.00% (  1/  2)
+App\Tenant\Domain\Exception\TranslationQuotaExceededException
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  8/  8)
+App\Tenant\Domain\Model\Tenant
+  Methods:  85.71% (24/28)   Lines:  91.92% ( 91/ 99)
+App\Tenant\Domain\ValueObject\TenantName
+  Methods: 100.00% ( 5/ 5)   Lines: 100.00% ( 14/ 14)
+App\Tenant\Domain\ValueObject\TenantStatus
+  Methods: 100.00% (11/11)   Lines: 100.00% ( 12/ 12)
+App\Tenant\Infrastructure\Persistence\Doctrine\Entity\TenantEntity
+  Methods:  16.67% ( 4/24)   Lines:  67.21% ( 41/ 61)
+App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType
+  Methods:  20.00% ( 1/ 5)   Lines:   6.67% (  1/ 15)
+App\Tenant\Infrastructure\Repository\DoctrineORMTenantRepository
+  Methods:  83.33% ( 5/ 6)   Lines:  77.78% ( 21/ 27)
+App\Tenant\Presentation\Api\Processor\ActivateTenantProcessor
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 15/ 15)
+App\Tenant\Presentation\Api\Processor\CreateTenantProcessor
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 19/ 19)
+App\Tenant\Presentation\Api\Processor\DeactivateTenantProcessor
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 15/ 15)
+App\Tenant\Presentation\Api\Provider\TenantCollectionProvider
+  Methods:  50.00% ( 1/ 2)   Lines:  30.00% (  3/ 10)
+App\Tenant\Presentation\Api\Transformer\TenantResourceTransformer
+  Methods:  50.00% ( 1/ 2)   Lines:  69.23% (  9/ 13)
+App\User\Domain\Event\UserAccountLocked
+  Methods:  75.00% ( 3/ 4)   Lines:  75.00% (  3/  4)
+App\User\Domain\Event\UserAccountUnlocked
+  Methods:  66.67% ( 2/ 3)   Lines:  66.67% (  2/  3)
+App\User\Domain\Event\UserCreated
+  Methods:  80.00% ( 4/ 5)   Lines:  80.00% (  4/  5)
+App\User\Domain\Event\UserEmailVerified
+  Methods:  66.67% ( 2/ 3)   Lines:  66.67% (  2/  3)
+App\User\Domain\Event\UserPasswordChanged
+  Methods:  66.67% ( 2/ 3)   Lines:  66.67% (  2/  3)
+App\User\Domain\Event\UserRoleAdded
+  Methods:  75.00% ( 3/ 4)   Lines:  75.00% (  3/  4)
+App\User\Domain\Event\UserRoleRemoved
+  Methods:  75.00% ( 3/ 4)   Lines:  75.00% (  3/  4)
+App\User\Domain\Model\User
+  Methods: 100.00% (23/23)   Lines: 100.00% (117/117)
+App\User\Domain\ValueObject\HashedPassword
+  Methods:   0.00% ( 0/ 5)   Lines:  46.67% (  7/ 15)
+App\User\Domain\ValueObject\UserId
+  Methods:  33.33% ( 2/ 6)   Lines:  50.00% (  5/ 10)
+App\User\Domain\ValueObject\UserRole
+  Methods: 100.00% (24/24)   Lines: 100.00% ( 30/ 30)
+App\User\Domain\ValueObject\Username
+  Methods:  40.00% ( 2/ 5)   Lines:  53.85% (  7/ 13)
+App\User\Infrastructure\Security\UserVoter
+  Methods:  33.33% ( 1/ 3)   Lines:  91.30% ( 21/ 23)

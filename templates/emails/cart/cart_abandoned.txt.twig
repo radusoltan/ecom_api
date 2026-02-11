@@ -1,0 +1,29 @@
+{{ 'emails.cart.abandoned.header'|trans }}
+
+{{ 'emails.cart.abandoned.greeting'|trans({'%customer_name%': customerName}) }}
+
+{{ 'emails.cart.abandoned.message'|trans({'%item_count%': itemCount}) }}
+
+{{ 'emails.cart.abandoned.cart_summary'|trans }}:
+{% if items is defined %}
+{% for item in items %}
+- {{ item.name }} - {{ item.quantity }} × {{ item.price }} {{ currency }}
+{% endfor %}
+{% endif %}
+
+{{ 'emails.cart.abandoned.total'|trans }}: {{ total }} {{ currency }}
+{{ 'emails.cart.abandoned.expires'|trans }}: {{ expiresAt|date('d/m/Y H:i') }}
+
+{% if discount is defined %}
+{{ 'emails.cart.abandoned.special_offer'|trans }}
+{{ 'emails.cart.abandoned.discount_message'|trans({'%discount%': discount}) }}
+{% endif %}
+
+{{ 'emails.cart.abandoned.complete_order'|trans }}: {{ cartUrl }}
+
+{{ 'emails.cart.abandoned.hurry'|trans }}
+{{ 'emails.cart.abandoned.questions'|trans }}
+
+---
+{{ 'emails.footer.thanks'|trans }}
+{{ 'emails.footer.company'|trans }}

@@ -112,6 +112,40 @@ final readonly class DoctrineORMPriceListRepository implements PriceListReposito
         );
     }
 
+    public function findActiveByTenantId(TenantId $tenantId, \DateTimeImmutable $date): array
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $qb->select('pl')
+            ->from(PriceListEntity::class, 'pl')
+            ->where('pl.tenantId = :tenantId')
+            ->andWhere('pl.isActive = :isActive')
+            ->andWhere(
+                $qb->expr()->orX(
+                    'pl.validFrom IS NULL',
+                    'pl.validFrom <= :date'
+                )
+            )
+            ->andWhere(
+                $qb->expr()->orX(
+                    'pl.validTo IS NULL',
+                    'pl.validTo >= :date'
+                )
+            )
+            ->setParameter('tenantId', $tenantId->toString())
+            ->setParameter('isActive', true)
+            ->setParameter('date', $date)
+            ->orderBy('pl.priority', 'DESC')
+            ->addOrderBy('pl.createdAt', 'ASC');
+
+        $entities = $qb->getQuery()->getResult();
+
+        return array_map(
+            fn (PriceListEntity $entity) => $entity->toDomainModel(),
+            $entities
+        );
+    }
+
     public function delete(PriceList $priceList): void
     {
         $entity = $this->entityManager->find(PriceListEntity::class, $priceList->id()->toString());

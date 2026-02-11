@@ -73,6 +73,21 @@ final readonly class Money
         return $this->money->isNegative();
     }
 
+    public function isZero(): bool
+    {
+        return $this->money->isZero();
+    }
+
+    public function amount(): float
+    {
+        return $this->money->getAmount()->toFloat();
+    }
+
+    public function currency(): Currency
+    {
+        return $this->money->getCurrency();
+    }
+
     public function multiplyBy(int|float|string $multiplier): self
     {
         return $this->multiply($multiplier);

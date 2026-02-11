@@ -25,6 +25,13 @@ interface PromotionRepositoryInterface
     public function findActivePromotions(TenantId $tenantId): array;
 
     /**
+     * Find active promotions by tenant ID and date, ordered by priority (highest first).
+     *
+     * @return Promotion[]
+     */
+    public function findActiveByTenantId(TenantId $tenantId, \DateTimeImmutable $date): array;
+
+    /**
      * Find all promotions for tenant.
      *
      * @return Promotion[]

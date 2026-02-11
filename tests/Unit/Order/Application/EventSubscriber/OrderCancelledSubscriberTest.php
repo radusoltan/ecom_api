@@ -8,27 +8,46 @@ use App\Order\Application\EventSubscriber\OrderCancelledSubscriber;
 use App\Order\Domain\Event\OrderCancelled;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderStatus;
+use App\Order\Domain\Repository\OrderRepositoryInterface;
+use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[CoversClass(OrderCancelledSubscriber::class)]
 final class OrderCancelledSubscriberTest extends TestCase
 {
     private MailerInterface $mailer;
+    private OrderRepositoryInterface $orderRepository;
+    private TranslatorInterface $translator;
     private LoggerInterface $logger;
     private OrderCancelledSubscriber $subscriber;
 
     protected function setUp(): void
     {
         $this->mailer = $this->createMock(MailerInterface::class);
+        $this->orderRepository = $this->createMock(OrderRepositoryInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+
+        // Mock translator to return meaningful subjects
+        $this->translator
+            ->method('trans')
+            ->willReturnCallback(function (string $id): string {
+                return match ($id) {
+                    'emails.order.cancelled.title' => 'Order Cancelled',
+                    default => $id,
+                };
+            });
 
         $this->subscriber = new OrderCancelledSubscriber(
             mailer: $this->mailer,
+            orderRepository: $this->orderRepository,
+            translator: $this->translator,
             logger: $this->logger,
             senderEmail: 'test@example.com',
             senderName: 'Test Platform'
@@ -57,6 +76,7 @@ final class OrderCancelledSubscriberTest extends TestCase
         $orderId = OrderId::generate();
         $event = new OrderCancelled(
             orderId: $orderId,
+            tenantId: TenantId::generate(),
             previousStatus: OrderStatus::pending()
         );
 
@@ -86,6 +106,7 @@ final class OrderCancelledSubscriberTest extends TestCase
         $orderId = OrderId::generate();
         $event = new OrderCancelled(
             orderId: $orderId,
+            tenantId: TenantId::generate(),
             previousStatus: OrderStatus::processing()
         );
 
@@ -110,13 +131,20 @@ final class OrderCancelledSubscriberTest extends TestCase
         // Arrange
         $event = new OrderCancelled(
             orderId: OrderId::generate(),
+            tenantId: TenantId::generate(),
             previousStatus: OrderStatus::pending()
         );
+
+        // Order not found in repository
+        $this->orderRepository
+            ->expects(self::once())
+            ->method('findById')
+            ->willReturn(null);
 
         $this->logger
             ->expects(self::once())
             ->method('warning')
-            ->with('Cannot send cancellation email - customer email not available in event', self::anything());
+            ->with('Cannot send cancellation email - order not found', self::anything());
 
         // Act
         $this->subscriber->onOrderCancelled($event);
@@ -128,6 +156,7 @@ final class OrderCancelledSubscriberTest extends TestCase
         // Arrange
         $event = new OrderCancelled(
             orderId: OrderId::generate(),
+            tenantId: TenantId::generate(),
             previousStatus: OrderStatus::processing()
         );
 
@@ -159,6 +188,7 @@ final class OrderCancelledSubscriberTest extends TestCase
         // Arrange
         $event = new OrderCancelled(
             orderId: OrderId::generate(),
+            tenantId: TenantId::generate(),
             previousStatus: OrderStatus::pending()
         );
 
@@ -184,6 +214,7 @@ final class OrderCancelledSubscriberTest extends TestCase
         // Arrange
         $event = new OrderCancelled(
             orderId: OrderId::generate(),
+            tenantId: TenantId::generate(),
             previousStatus: OrderStatus::processing()
         );
 
@@ -210,6 +241,7 @@ final class OrderCancelledSubscriberTest extends TestCase
         $orderId = OrderId::generate();
         $event = new OrderCancelled(
             orderId: $orderId,
+            tenantId: TenantId::generate(),
             previousStatus: OrderStatus::pending()
         );
 
@@ -236,6 +268,7 @@ final class OrderCancelledSubscriberTest extends TestCase
         // Arrange
         $event = new OrderCancelled(
             orderId: OrderId::generate(),
+            tenantId: TenantId::generate(),
             previousStatus: OrderStatus::pending()
         );
 

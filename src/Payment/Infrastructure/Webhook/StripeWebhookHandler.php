@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Payment\Infrastructure\Webhook;
 
 use App\Payment\Application\Command\CapturePayment;
+use App\Payment\Application\Command\MarkPaymentAsFailed;
 use App\Payment\Application\Query\GetPaymentById;
-use App\Payment\Domain\ValueObject\PaymentId;
+use App\Payment\Domain\Model\PaymentId;
 use App\Shared\Domain\ValueObject\TenantId;
 use Psr\Log\LoggerInterface;
 use Stripe\Event;
@@ -97,8 +98,10 @@ final readonly class StripeWebhookHandler
      */
     private function handlePaymentIntentSucceeded(Event $event): string
     {
+        /** @var object{object: PaymentIntent} $data */
+        $data = $event->data;
         /** @var PaymentIntent $paymentIntent */
-        $paymentIntent = $event->data->object;
+        $paymentIntent = $data->object;
 
         $this->logger->info('Stripe webhook: PaymentIntent succeeded', [
             'payment_intent_id' => $paymentIntent->id,
@@ -122,8 +125,7 @@ final readonly class StripeWebhookHandler
         try {
             // Verificăm dacă payment există
             $query = new GetPaymentById(
-                id: PaymentId::fromString($paymentId),
-                tenantId: TenantId::fromString($tenantId)
+                id: PaymentId::fromString($paymentId)
             );
 
             $envelope = $this->queryBus->dispatch($query);
@@ -145,8 +147,7 @@ final readonly class StripeWebhookHandler
                 ]);
 
                 $captureCommand = new CapturePayment(
-                    id: PaymentId::fromString($paymentId),
-                    tenantId: TenantId::fromString($tenantId)
+                    id: PaymentId::fromString($paymentId)
                 );
 
                 $this->commandBus->dispatch($captureCommand);
@@ -176,28 +177,64 @@ final readonly class StripeWebhookHandler
      */
     private function handlePaymentIntentFailed(Event $event): string
     {
+        /** @var object{object: PaymentIntent} $data */
+        $data = $event->data;
         /** @var PaymentIntent $paymentIntent */
-        $paymentIntent = $event->data->object;
+        $paymentIntent = $data->object;
+
+        $errorMessage = $paymentIntent->last_payment_error->message ?? 'Unknown payment error';
+        $errorCode = $paymentIntent->last_payment_error->code ?? null;
 
         $this->logger->warning('Stripe webhook: PaymentIntent failed', [
             'payment_intent_id' => $paymentIntent->id,
             'amount' => $paymentIntent->amount,
-            'last_payment_error' => $paymentIntent->last_payment_error?->message,
+            'error_message' => $errorMessage,
+            'error_code' => $errorCode,
         ]);
 
+        // Extract payment_id and tenant_id from metadata
         $paymentId = $paymentIntent->metadata->payment_id ?? null;
+        $tenantId = $paymentIntent->metadata->tenant_id ?? null;
 
-        if ($paymentId) {
-            $this->logger->info('Stripe webhook: Marking payment as failed', [
-                'payment_id' => $paymentId,
-                'error' => $paymentIntent->last_payment_error?->message,
+        if (!$paymentId || !$tenantId) {
+            $this->logger->warning('Stripe webhook: Missing payment_id or tenant_id in metadata for failed payment', [
+                'payment_intent_id' => $paymentIntent->id,
+                'metadata' => $paymentIntent->metadata->toArray(),
             ]);
 
-            // În viitor, vom avea un command UpdatePaymentStatus pentru a marca ca failed
-            // Pentru moment, doar logăm
+            return 'Missing metadata';
         }
 
-        return 'Payment failure recorded';
+        try {
+            // Mark payment as failed
+            $this->logger->info('Stripe webhook: Marking payment as failed', [
+                'payment_id' => $paymentId,
+                'tenant_id' => $tenantId,
+                'error_message' => $errorMessage,
+                'error_code' => $errorCode,
+            ]);
+
+            $markFailedCommand = new MarkPaymentAsFailed(
+                id: PaymentId::fromString($paymentId),
+                errorMessage: $errorMessage,
+                errorCode: $errorCode
+            );
+
+            $this->commandBus->dispatch($markFailedCommand);
+
+            $this->logger->info('Stripe webhook: Payment marked as failed successfully', [
+                'payment_id' => $paymentId,
+            ]);
+
+            return 'Payment failure processed';
+        } catch (\Exception $e) {
+            $this->logger->error('Stripe webhook: Failed to mark payment as failed', [
+                'payment_id' => $paymentId,
+                'error' => $e->getMessage(),
+            ]);
+
+            throw $e;
+        }
     }
 
     /**
@@ -205,8 +242,10 @@ final readonly class StripeWebhookHandler
      */
     private function handlePaymentIntentCanceled(Event $event): string
     {
+        /** @var object{object: PaymentIntent} $data */
+        $data = $event->data;
         /** @var PaymentIntent $paymentIntent */
-        $paymentIntent = $event->data->object;
+        $paymentIntent = $data->object;
 
         $this->logger->info('Stripe webhook: PaymentIntent canceled', [
             'payment_intent_id' => $paymentIntent->id,
@@ -233,7 +272,9 @@ final readonly class StripeWebhookHandler
      */
     private function handleChargeRefunded(Event $event): string
     {
-        $charge = $event->data->object;
+        /** @var object{object: \Stripe\Charge} $data */
+        $data = $event->data;
+        $charge = $data->object;
 
         $this->logger->info('Stripe webhook: Charge refunded', [
             'charge_id' => $charge->id,

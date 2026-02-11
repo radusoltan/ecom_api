@@ -28,6 +28,7 @@ final class BundleController extends AbstractController
     use HandleTrait;
 
     public function __construct(
+        /** @phpstan-ignore-next-line property.onlyWritten (used via HandleTrait) */
         private readonly MessageBusInterface $commandBus,
         private readonly MessageBusInterface $queryBus
     ) {

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/new_ecom/backend/src/Cart/Application</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../_css/bootstrap.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../../_css/billboard.min.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../../_css/style.css?v=12.4.0" rel="stylesheet" type="text/css">
+  <link href="../../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../../index.html">/var/www/new_ecom/backend/src</a></li>
+         <li class="breadcrumb-item"><a href="../index.html">Cart</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Application</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classesCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Command/AddItemToCart.php.html#15">App\Cart\Application\Command\AddItemToCart</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/AddItemToCartHandler.php.html#17">App\Cart\Application\Command\AddItemToCartHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/AssignCartToCustomer.php.html#13">App\Cart\Application\Command\AssignCartToCustomer</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/AssignCartToCustomerHandler.php.html#13">App\Cart\Application\Command\AssignCartToCustomerHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/ClearCart.php.html#12">App\Cart\Application\Command\ClearCart</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/ClearCartHandler.php.html#12">App\Cart\Application\Command\ClearCartHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/CreateCart.php.html#12">App\Cart\Application\Command\CreateCart</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/CreateCartHandler.php.html#15">App\Cart\Application\Command\CreateCartHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/MergeCarts.php.html#18">App\Cart\Application\Command\MergeCarts</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/MergeCartsHandler.php.html#12">App\Cart\Application\Command\MergeCartsHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/RemoveItemFromCart.php.html#12">App\Cart\Application\Command\RemoveItemFromCart</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/RemoveItemFromCartHandler.php.html#13">App\Cart\Application\Command\RemoveItemFromCartHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/UpdateCartQuantity.php.html#12">App\Cart\Application\Command\UpdateCartQuantity</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/UpdateCartQuantityHandler.php.html#15">App\Cart\Application\Command\UpdateCartQuantityHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/CartDTO.php.html#14">App\Cart\Application\DTO\CartDTO</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/CartSummaryDTO.php.html#14">App\Cart\Application\DTO\CartSummaryDTO</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EventSubscriber/CartAbandonedSubscriber.php.html#24">App\Cart\Application\EventSubscriber\CartAbandonedSubscriber</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EventSubscriber/OrderPlacedCartClearingSubscriber.php.html#36">App\Cart\Application\EventSubscriber\OrderPlacedCartClearingSubscriber</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Query/GetCart.php.html#12">App\Cart\Application\Query\GetCart</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Query/GetCartHandler.php.html#12">App\Cart\Application\Query\GetCartHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Query/GetCartSummary.php.html#12">App\Cart\Application\Query\GetCartSummary</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Query/GetCartSummaryHandler.php.html#12">App\Cart\Application\Query\GetCartSummaryHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartAbandonmentService.php.html#24">App\Cart\Application\Service\CartAbandonmentService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartPriceCalculator.php.html#34">App\Cart\Application\Service\CartPriceCalculator</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartToOrderConverter.php.html#33">App\Cart\Application\Service\CartToOrderConverter</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/StockValidator.php.html#30">App\Cart\Application\Service\StockValidator</a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Service/CartToOrderConverter.php.html#33">App\Cart\Application\Service\CartToOrderConverter</a></td><td class="text-right">0.0%</td><td class="text-right">13</td><td class="text-right">182</td></tr>
+       <tr><td><a href="Service/CartAbandonmentService.php.html#24">App\Cart\Application\Service\CartAbandonmentService</a></td><td class="text-right">0.0%</td><td class="text-right">12</td><td class="text-right">156</td></tr>
+       <tr><td><a href="Command/CreateCartHandler.php.html#15">App\Cart\Application\Command\CreateCartHandler</a></td><td class="text-right">0.0%</td><td class="text-right">10</td><td class="text-right">110</td></tr>
+       <tr><td><a href="Service/CartPriceCalculator.php.html#34">App\Cart\Application\Service\CartPriceCalculator</a></td><td class="text-right">0.0%</td><td class="text-right">10</td><td class="text-right">110</td></tr>
+       <tr><td><a href="Service/StockValidator.php.html#30">App\Cart\Application\Service\StockValidator</a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Command/MergeCartsHandler.php.html#12">App\Cart\Application\Command\MergeCartsHandler</a></td><td class="text-right">0.0%</td><td class="text-right">8</td><td class="text-right">72</td></tr>
+       <tr><td><a href="Command/UpdateCartQuantityHandler.php.html#15">App\Cart\Application\Command\UpdateCartQuantityHandler</a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Command/AddItemToCartHandler.php.html#17">App\Cart\Application\Command\AddItemToCartHandler</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="EventSubscriber/CartAbandonedSubscriber.php.html#24">App\Cart\Application\EventSubscriber\CartAbandonedSubscriber</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="EventSubscriber/OrderPlacedCartClearingSubscriber.php.html#36">App\Cart\Application\EventSubscriber\OrderPlacedCartClearingSubscriber</a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Command/AssignCartToCustomerHandler.php.html#13">App\Cart\Application\Command\AssignCartToCustomerHandler</a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Command/ClearCartHandler.php.html#12">App\Cart\Application\Command\ClearCartHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Command/RemoveItemFromCartHandler.php.html#13">App\Cart\Application\Command\RemoveItemFromCartHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Query/GetCartHandler.php.html#12">App\Cart\Application\Query\GetCartHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Query/GetCartSummaryHandler.php.html#12">App\Cart\Application\Query\GetCartSummaryHandler</a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2 style="margin-top: 3rem;">Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodsCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Command/AddItemToCart.php.html#17"><abbr title="App\Cart\Application\Command\AddItemToCart::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/AddItemToCartHandler.php.html#20"><abbr title="App\Cart\Application\Command\AddItemToCartHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/AddItemToCartHandler.php.html#27"><abbr title="App\Cart\Application\Command\AddItemToCartHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/AssignCartToCustomer.php.html#15"><abbr title="App\Cart\Application\Command\AssignCartToCustomer::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/AssignCartToCustomerHandler.php.html#16"><abbr title="App\Cart\Application\Command\AssignCartToCustomerHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/AssignCartToCustomerHandler.php.html#25"><abbr title="App\Cart\Application\Command\AssignCartToCustomerHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/ClearCart.php.html#14"><abbr title="App\Cart\Application\Command\ClearCart::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/ClearCartHandler.php.html#15"><abbr title="App\Cart\Application\Command\ClearCartHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/ClearCartHandler.php.html#20"><abbr title="App\Cart\Application\Command\ClearCartHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/CreateCart.php.html#14"><abbr title="App\Cart\Application\Command\CreateCart::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/CreateCartHandler.php.html#18"><abbr title="App\Cart\Application\Command\CreateCartHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/CreateCartHandler.php.html#23"><abbr title="App\Cart\Application\Command\CreateCartHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/MergeCarts.php.html#20"><abbr title="App\Cart\Application\Command\MergeCarts::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/MergeCartsHandler.php.html#15"><abbr title="App\Cart\Application\Command\MergeCartsHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/MergeCartsHandler.php.html#24"><abbr title="App\Cart\Application\Command\MergeCartsHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/RemoveItemFromCart.php.html#14"><abbr title="App\Cart\Application\Command\RemoveItemFromCart::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/RemoveItemFromCartHandler.php.html#16"><abbr title="App\Cart\Application\Command\RemoveItemFromCartHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/RemoveItemFromCartHandler.php.html#21"><abbr title="App\Cart\Application\Command\RemoveItemFromCartHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/UpdateCartQuantity.php.html#14"><abbr title="App\Cart\Application\Command\UpdateCartQuantity::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/UpdateCartQuantityHandler.php.html#18"><abbr title="App\Cart\Application\Command\UpdateCartQuantityHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Command/UpdateCartQuantityHandler.php.html#24"><abbr title="App\Cart\Application\Command\UpdateCartQuantityHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/CartDTO.php.html#19"><abbr title="App\Cart\Application\DTO\CartDTO::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/CartDTO.php.html#34"><abbr title="App\Cart\Application\DTO\CartDTO::fromDomain">fromDomain</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/CartSummaryDTO.php.html#16"><abbr title="App\Cart\Application\DTO\CartSummaryDTO::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTO/CartSummaryDTO.php.html#26"><abbr title="App\Cart\Application\DTO\CartSummaryDTO::fromDomain">fromDomain</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EventSubscriber/CartAbandonedSubscriber.php.html#26"><abbr title="App\Cart\Application\EventSubscriber\CartAbandonedSubscriber::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EventSubscriber/CartAbandonedSubscriber.php.html#37"><abbr title="App\Cart\Application\EventSubscriber\CartAbandonedSubscriber::getSubscribedEvents">getSubscribedEvents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EventSubscriber/CartAbandonedSubscriber.php.html#44"><abbr title="App\Cart\Application\EventSubscriber\CartAbandonedSubscriber::onCartAbandoned">onCartAbandoned</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EventSubscriber/CartAbandonedSubscriber.php.html#67"><abbr title="App\Cart\Application\EventSubscriber\CartAbandonedSubscriber::sendAbandonmentEmail">sendAbandonmentEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EventSubscriber/OrderPlacedCartClearingSubscriber.php.html#38"><abbr title="App\Cart\Application\EventSubscriber\OrderPlacedCartClearingSubscriber::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EventSubscriber/OrderPlacedCartClearingSubscriber.php.html#45"><abbr title="App\Cart\Application\EventSubscriber\OrderPlacedCartClearingSubscriber::getSubscribedEvents">getSubscribedEvents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EventSubscriber/OrderPlacedCartClearingSubscriber.php.html#69"><abbr title="App\Cart\Application\EventSubscriber\OrderPlacedCartClearingSubscriber::onOrderPlaced">onOrderPlaced</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Query/GetCart.php.html#14"><abbr title="App\Cart\Application\Query\GetCart::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Query/GetCartHandler.php.html#15"><abbr title="App\Cart\Application\Query\GetCartHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Query/GetCartHandler.php.html#20"><abbr title="App\Cart\Application\Query\GetCartHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Query/GetCartSummary.php.html#14"><abbr title="App\Cart\Application\Query\GetCartSummary::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Query/GetCartSummaryHandler.php.html#15"><abbr title="App\Cart\Application\Query\GetCartSummaryHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Query/GetCartSummaryHandler.php.html#20"><abbr title="App\Cart\Application\Query\GetCartSummaryHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartAbandonmentService.php.html#29"><abbr title="App\Cart\Application\Service\CartAbandonmentService::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartAbandonmentService.php.html#42"><abbr title="App\Cart\Application\Service\CartAbandonmentService::processAbandonedCarts">processAbandonedCarts</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartAbandonmentService.php.html#110"><abbr title="App\Cart\Application\Service\CartAbandonmentService::processAbandonedCart">processAbandonedCart</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartPriceCalculator.php.html#36"><abbr title="App\Cart\Application\Service\CartPriceCalculator::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartPriceCalculator.php.html#53"><abbr title="App\Cart\Application\Service\CartPriceCalculator::calculateItemPrice">calculateItemPrice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartPriceCalculator.php.html#90"><abbr title="App\Cart\Application\Service\CartPriceCalculator::isPriceStillCurrent">isPriceStillCurrent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartPriceCalculator.php.html#118"><abbr title="App\Cart\Application\Service\CartPriceCalculator::getPriceChangeDetails">getPriceChangeDetails</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartToOrderConverter.php.html#47"><abbr title="App\Cart\Application\Service\CartToOrderConverter::convert">convert</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartToOrderConverter.php.html#114"><abbr title="App\Cart\Application\Service\CartToOrderConverter::validateAddress">validateAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartToOrderConverter.php.html#132"><abbr title="App\Cart\Application\Service\CartToOrderConverter::sanitizeAddress">sanitizeAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/CartToOrderConverter.php.html#146"><abbr title="App\Cart\Application\Service\CartToOrderConverter::getProductName">getProductName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/StockValidator.php.html#32"><abbr title="App\Cart\Application\Service\StockValidator::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/StockValidator.php.html#47"><abbr title="App\Cart\Application\Service\StockValidator::validateStockAvailability">validateStockAvailability</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/StockValidator.php.html#72"><abbr title="App\Cart\Application\Service\StockValidator::getAvailableQuantity">getAvailableQuantity</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/StockValidator.php.html#106"><abbr title="App\Cart\Application\Service\StockValidator::isInStock">isInStock</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Service/StockValidator.php.html#123"><abbr title="App\Cart\Application\Service\StockValidator::getStockDetails">getStockDetails</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Command/CreateCartHandler.php.html#23"><abbr title="App\Cart\Application\Command\CreateCartHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">9</td><td class="text-right">90</td></tr>
+       <tr><td><a href="Command/MergeCartsHandler.php.html#24"><abbr title="App\Cart\Application\Command\MergeCartsHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="Service/CartAbandonmentService.php.html#42"><abbr title="App\Cart\Application\Service\CartAbandonmentService::processAbandonedCarts">processAbandonedCarts</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Command/UpdateCartQuantityHandler.php.html#24"><abbr title="App\Cart\Application\Command\UpdateCartQuantityHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Service/CartAbandonmentService.php.html#110"><abbr title="App\Cart\Application\Service\CartAbandonmentService::processAbandonedCart">processAbandonedCart</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Service/CartToOrderConverter.php.html#47"><abbr title="App\Cart\Application\Service\CartToOrderConverter::convert">convert</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Service/CartToOrderConverter.php.html#114"><abbr title="App\Cart\Application\Service\CartToOrderConverter::validateAddress">validateAddress</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Command/AddItemToCartHandler.php.html#27"><abbr title="App\Cart\Application\Command\AddItemToCartHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Command/AssignCartToCustomerHandler.php.html#25"><abbr title="App\Cart\Application\Command\AssignCartToCustomerHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="EventSubscriber/OrderPlacedCartClearingSubscriber.php.html#69"><abbr title="App\Cart\Application\EventSubscriber\OrderPlacedCartClearingSubscriber::onOrderPlaced">onOrderPlaced</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Service/CartPriceCalculator.php.html#53"><abbr title="App\Cart\Application\Service\CartPriceCalculator::calculateItemPrice">calculateItemPrice</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Service/CartPriceCalculator.php.html#90"><abbr title="App\Cart\Application\Service\CartPriceCalculator::isPriceStillCurrent">isPriceStillCurrent</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Service/CartPriceCalculator.php.html#118"><abbr title="App\Cart\Application\Service\CartPriceCalculator::getPriceChangeDetails">getPriceChangeDetails</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Service/StockValidator.php.html#72"><abbr title="App\Cart\Application\Service\StockValidator::getAvailableQuantity">getAvailableQuantity</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Command/ClearCartHandler.php.html#20"><abbr title="App\Cart\Application\Command\ClearCartHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Command/RemoveItemFromCartHandler.php.html#21"><abbr title="App\Cart\Application\Command\RemoveItemFromCartHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="EventSubscriber/CartAbandonedSubscriber.php.html#44"><abbr title="App\Cart\Application\EventSubscriber\CartAbandonedSubscriber::onCartAbandoned">onCartAbandoned</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Query/GetCartHandler.php.html#20"><abbr title="App\Cart\Application\Query\GetCartHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Query/GetCartSummaryHandler.php.html#20"><abbr title="App\Cart\Application\Query\GetCartSummaryHandler::__invoke">__invoke</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Service/CartToOrderConverter.php.html#132"><abbr title="App\Cart\Application\Service\CartToOrderConverter::sanitizeAddress">sanitizeAddress</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Service/StockValidator.php.html#47"><abbr title="App\Cart\Application\Service\StockValidator::validateStockAvailability">validateStockAvailability</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Service/StockValidator.php.html#123"><abbr title="App\Cart\Application\Service\StockValidator::getStockDetails">getStockDetails</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 12.4.0</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.14</a> and <a href="https://phpunit.de/">PHPUnit 12.4.1</a> at Thu Nov 27 8:00:35 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../../_js/billboard.pkgd.min.js?v=12.4.0" type="text/javascript"></script>
+  <script type="application/json" id="complexity_class">[[0,1,"Command\/AddItemToCart.php.html#15","App\\Cart\\Application\\Command\\AddItemToCart","2"],[0,5,"Command\/AddItemToCartHandler.php.html#17","App\\Cart\\Application\\Command\\AddItemToCartHandler","30"],[0,1,"Command\/AssignCartToCustomer.php.html#13","App\\Cart\\Application\\Command\\AssignCartToCustomer","2"],[0,4,"Command\/AssignCartToCustomerHandler.php.html#13","App\\Cart\\Application\\Command\\AssignCartToCustomerHandler","20"],[0,1,"Command\/ClearCart.php.html#12","App\\Cart\\Application\\Command\\ClearCart","2"],[0,3,"Command\/ClearCartHandler.php.html#12","App\\Cart\\Application\\Command\\ClearCartHandler","12"],[0,1,"Command\/CreateCart.php.html#12","App\\Cart\\Application\\Command\\CreateCart","2"],[0,10,"Command\/CreateCartHandler.php.html#15","App\\Cart\\Application\\Command\\CreateCartHandler","110"],[0,1,"Command\/MergeCarts.php.html#18","App\\Cart\\Application\\Command\\MergeCarts","2"],[0,8,"Command\/MergeCartsHandler.php.html#12","App\\Cart\\Application\\Command\\MergeCartsHandler","72"],[0,1,"Command\/RemoveItemFromCart.php.html#12","App\\Cart\\Application\\Command\\RemoveItemFromCart","2"],[0,3,"Command\/RemoveItemFromCartHandler.php.html#13","App\\Cart\\Application\\Command\\RemoveItemFromCartHandler","12"],[0,1,"Command\/UpdateCartQuantity.php.html#12","App\\Cart\\Application\\Command\\UpdateCartQuantity","2"],[0,6,"Command\/UpdateCartQuantityHandler.php.html#15","App\\Cart\\Application\\Command\\UpdateCartQuantityHandler","42"],[0,2,"DTO\/CartDTO.php.html#14","App\\Cart\\Application\\DTO\\CartDTO","6"],[0,2,"DTO\/CartSummaryDTO.php.html#14","App\\Cart\\Application\\DTO\\CartSummaryDTO","6"],[0,5,"EventSubscriber\/CartAbandonedSubscriber.php.html#24","App\\Cart\\Application\\EventSubscriber\\CartAbandonedSubscriber","30"],[0,5,"EventSubscriber\/OrderPlacedCartClearingSubscriber.php.html#36","App\\Cart\\Application\\EventSubscriber\\OrderPlacedCartClearingSubscriber","30"],[0,1,"Query\/GetCart.php.html#12","App\\Cart\\Application\\Query\\GetCart","2"],[0,3,"Query\/GetCartHandler.php.html#12","App\\Cart\\Application\\Query\\GetCartHandler","12"],[0,1,"Query\/GetCartSummary.php.html#12","App\\Cart\\Application\\Query\\GetCartSummary","2"],[0,3,"Query\/GetCartSummaryHandler.php.html#12","App\\Cart\\Application\\Query\\GetCartSummaryHandler","12"],[0,12,"Service\/CartAbandonmentService.php.html#24","App\\Cart\\Application\\Service\\CartAbandonmentService","156"],[0,10,"Service\/CartPriceCalculator.php.html#34","App\\Cart\\Application\\Service\\CartPriceCalculator","110"],[0,13,"Service\/CartToOrderConverter.php.html#33","App\\Cart\\Application\\Service\\CartToOrderConverter","182"],[0,9,"Service\/StockValidator.php.html#30","App\\Cart\\Application\\Service\\StockValidator","90"]]</script>
+  <script type="application/json" id="complexity_method">[[0,1,"Command\/AddItemToCart.php.html#17","App\\Cart\\Application\\Command\\AddItemToCart::__construct","2"],[0,1,"Command\/AddItemToCartHandler.php.html#20","App\\Cart\\Application\\Command\\AddItemToCartHandler::__construct","2"],[0,4,"Command\/AddItemToCartHandler.php.html#27","App\\Cart\\Application\\Command\\AddItemToCartHandler::__invoke","20"],[0,1,"Command\/AssignCartToCustomer.php.html#15","App\\Cart\\Application\\Command\\AssignCartToCustomer::__construct","2"],[0,1,"Command\/AssignCartToCustomerHandler.php.html#16","App\\Cart\\Application\\Command\\AssignCartToCustomerHandler::__construct","2"],[0,3,"Command\/AssignCartToCustomerHandler.php.html#25","App\\Cart\\Application\\Command\\AssignCartToCustomerHandler::__invoke","12"],[0,1,"Command\/ClearCart.php.html#14","App\\Cart\\Application\\Command\\ClearCart::__construct","2"],[0,1,"Command\/ClearCartHandler.php.html#15","App\\Cart\\Application\\Command\\ClearCartHandler::__construct","2"],[0,2,"Command\/ClearCartHandler.php.html#20","App\\Cart\\Application\\Command\\ClearCartHandler::__invoke","6"],[0,1,"Command\/CreateCart.php.html#14","App\\Cart\\Application\\Command\\CreateCart::__construct","2"],[0,1,"Command\/CreateCartHandler.php.html#18","App\\Cart\\Application\\Command\\CreateCartHandler::__construct","2"],[0,9,"Command\/CreateCartHandler.php.html#23","App\\Cart\\Application\\Command\\CreateCartHandler::__invoke","90"],[0,1,"Command\/MergeCarts.php.html#20","App\\Cart\\Application\\Command\\MergeCarts::__construct","2"],[0,1,"Command\/MergeCartsHandler.php.html#15","App\\Cart\\Application\\Command\\MergeCartsHandler::__construct","2"],[0,7,"Command\/MergeCartsHandler.php.html#24","App\\Cart\\Application\\Command\\MergeCartsHandler::__invoke","56"],[0,1,"Command\/RemoveItemFromCart.php.html#14","App\\Cart\\Application\\Command\\RemoveItemFromCart::__construct","2"],[0,1,"Command\/RemoveItemFromCartHandler.php.html#16","App\\Cart\\Application\\Command\\RemoveItemFromCartHandler::__construct","2"],[0,2,"Command\/RemoveItemFromCartHandler.php.html#21","App\\Cart\\Application\\Command\\RemoveItemFromCartHandler::__invoke","6"],[0,1,"Command\/UpdateCartQuantity.php.html#14","App\\Cart\\Application\\Command\\UpdateCartQuantity::__construct","2"],[0,1,"Command\/UpdateCartQuantityHandler.php.html#18","App\\Cart\\Application\\Command\\UpdateCartQuantityHandler::__construct","2"],[0,5,"Command\/UpdateCartQuantityHandler.php.html#24","App\\Cart\\Application\\Command\\UpdateCartQuantityHandler::__invoke","30"],[0,1,"DTO\/CartDTO.php.html#19","App\\Cart\\Application\\DTO\\CartDTO::__construct","2"],[0,1,"DTO\/CartDTO.php.html#34","App\\Cart\\Application\\DTO\\CartDTO::fromDomain","2"],[0,1,"DTO\/CartSummaryDTO.php.html#16","App\\Cart\\Application\\DTO\\CartSummaryDTO::__construct","2"],[0,1,"DTO\/CartSummaryDTO.php.html#26","App\\Cart\\Application\\DTO\\CartSummaryDTO::fromDomain","2"],[0,1,"EventSubscriber\/CartAbandonedSubscriber.php.html#26","App\\Cart\\Application\\EventSubscriber\\CartAbandonedSubscriber::__construct","2"],[0,1,"EventSubscriber\/CartAbandonedSubscriber.php.html#37","App\\Cart\\Application\\EventSubscriber\\CartAbandonedSubscriber::getSubscribedEvents","2"],[0,2,"EventSubscriber\/CartAbandonedSubscriber.php.html#44","App\\Cart\\Application\\EventSubscriber\\CartAbandonedSubscriber::onCartAbandoned","6"],[0,1,"EventSubscriber\/CartAbandonedSubscriber.php.html#67","App\\Cart\\Application\\EventSubscriber\\CartAbandonedSubscriber::sendAbandonmentEmail","2"],[0,1,"EventSubscriber\/OrderPlacedCartClearingSubscriber.php.html#38","App\\Cart\\Application\\EventSubscriber\\OrderPlacedCartClearingSubscriber::__construct","2"],[0,1,"EventSubscriber\/OrderPlacedCartClearingSubscriber.php.html#45","App\\Cart\\Application\\EventSubscriber\\OrderPlacedCartClearingSubscriber::getSubscribedEvents","2"],[0,3,"EventSubscriber\/OrderPlacedCartClearingSubscriber.php.html#69","App\\Cart\\Application\\EventSubscriber\\OrderPlacedCartClearingSubscriber::onOrderPlaced","12"],[0,1,"Query\/GetCart.php.html#14","App\\Cart\\Application\\Query\\GetCart::__construct","2"],[0,1,"Query\/GetCartHandler.php.html#15","App\\Cart\\Application\\Query\\GetCartHandler::__construct","2"],[0,2,"Query\/GetCartHandler.php.html#20","App\\Cart\\Application\\Query\\GetCartHandler::__invoke","6"],[0,1,"Query\/GetCartSummary.php.html#14","App\\Cart\\Application\\Query\\GetCartSummary::__construct","2"],[0,1,"Query\/GetCartSummaryHandler.php.html#15","App\\Cart\\Application\\Query\\GetCartSummaryHandler::__construct","2"],[0,2,"Query\/GetCartSummaryHandler.php.html#20","App\\Cart\\Application\\Query\\GetCartSummaryHandler::__invoke","6"],[0,1,"Service\/CartAbandonmentService.php.html#29","App\\Cart\\Application\\Service\\CartAbandonmentService::__construct","2"],[0,6,"Service\/CartAbandonmentService.php.html#42","App\\Cart\\Application\\Service\\CartAbandonmentService::processAbandonedCarts","42"],[0,5,"Service\/CartAbandonmentService.php.html#110","App\\Cart\\Application\\Service\\CartAbandonmentService::processAbandonedCart","30"],[0,1,"Service\/CartPriceCalculator.php.html#36","App\\Cart\\Application\\Service\\CartPriceCalculator::__construct","2"],[0,3,"Service\/CartPriceCalculator.php.html#53","App\\Cart\\Application\\Service\\CartPriceCalculator::calculateItemPrice","12"],[0,3,"Service\/CartPriceCalculator.php.html#90","App\\Cart\\Application\\Service\\CartPriceCalculator::isPriceStillCurrent","12"],[0,3,"Service\/CartPriceCalculator.php.html#118","App\\Cart\\Application\\Service\\CartPriceCalculator::getPriceChangeDetails","12"],[0,5,"Service\/CartToOrderConverter.php.html#47","App\\Cart\\Application\\Service\\CartToOrderConverter::convert","30"],[0,5,"Service\/CartToOrderConverter.php.html#114","App\\Cart\\Application\\Service\\CartToOrderConverter::validateAddress","30"],[0,2,"Service\/CartToOrderConverter.php.html#132","App\\Cart\\Application\\Service\\CartToOrderConverter::sanitizeAddress","6"],[0,1,"Service\/CartToOrderConverter.php.html#146","App\\Cart\\Application\\Service\\CartToOrderConverter::getProductName","2"],[0,1,"Service\/StockValidator.php.html#32","App\\Cart\\Application\\Service\\StockValidator::__construct","2"],[0,2,"Service\/StockValidator.php.html#47","App\\Cart\\Application\\Service\\StockValidator::validateStockAvailability","6"],[0,3,"Service\/StockValidator.php.html#72","App\\Cart\\Application\\Service\\StockValidator::getAvailableQuantity","12"],[0,1,"Service\/StockValidator.php.html#106","App\\Cart\\Application\\Service\\StockValidator::isInStock","2"],[0,2,"Service\/StockValidator.php.html#123","App\\Cart\\Application\\Service\\StockValidator::getStockDetails","6"]]</script>
+  <script type="text/javascript" defer>
+  const barLabels = [
+    '0%',
+    '0-10%',
+    '10-20%',
+    '20-30%',
+    '30-40%',
+    '40-50%',
+    '50-60%',
+    '60-70%',
+    '70-80%',
+    '80-90%',
+    '90-100%',
+    '100%'
+  ];
+  const barConfig = (name, fullName, values) => ({
+    axis: {
+      x: {
+        type: "category",
+        categories: barLabels,
+      },
+      y: {
+        label: {
+          text: `#${name}`,
+          position: 'outer-top',
+        },
+      },
+    },
+    bindto: `#${name}CoverageDistribution`,
+    data: {
+      columns: [
+        [fullName].concat(values),
+      ],
+      colors: {
+        [fullName]: "rgba(69, 114, 167, 0.75)",
+      },
+      type: "bar",
+    },
+    bar: {
+      width: {
+        ratio: 0.9,
+      },
+    },
+    grid: {
+      focus: {
+        show: false,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">Coverage ${barLabels[data[0].x]}</th></tr>
+            <tr><td class="value">${data[0].value} ${name}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  bb.generate(
+    barConfig('classes', "Class Coverage", [26,0,0,0,0,0,0,0,0,0,0,0])
+  );
+  bb.generate(
+    barConfig('methods', "Method Coverage", [54,0,0,0,0,0,0,0,0,0,0,0])
+  );
+
+  const scatterConfig = (name, complexityData) => ({
+    axis: {
+      x: {
+        label: {
+          text: 'Code Coverage (in percent)',
+          position: 'outer-right',
+        },
+        tick: {
+          values: [0, 20, 40, 60, 80, 100],
+        },
+      },
+      y: {
+        label: {
+          text: 'Cyclomatic Complexity',
+          position: 'outer-top',
+        },
+        min: 0,
+        padding: {
+          bottom: 0,
+          top: 5,
+        },
+      },
+    },
+    bindto: `#${name}Complexity`,
+    data: {
+      columns: [
+        ["complexity_x"].concat(complexityData.map(d => d[0])),
+        ["complexity"].concat(complexityData.map(d => d[1])),
+      ],
+      onclick: function(data, element) {
+        window.location = complexityData[data.index][2];
+      },
+      type: "scatter",
+      xs: {
+        "complexity": "complexity_x",
+      },
+    },
+    grid: {
+      focus: {
+        show: true,
+        y: true,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        const coverage = Math.round(data[0].x);
+        const complexity = data[0].value;
+        const targetName = complexityData[data[0].index][3];
+        const crap = complexityData[data[0].index][4];
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">${targetName}</th></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Coverage</td><td class="name">${coverage}%</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Complexity</td><td class="value">${complexity}</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Crap</td><td class="value">${crap}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  const classComplexityData = JSON.parse(document.getElementById('complexity_class').textContent);
+  bb.generate(
+    scatterConfig("class", classComplexityData)
+  );
+  const methodComplexityData = JSON.parse(document.getElementById('complexity_method').textContent);
+  bb.generate(
+    scatterConfig("method", methodComplexityData),
+  );
+  </script>
+ </body>
+</html>

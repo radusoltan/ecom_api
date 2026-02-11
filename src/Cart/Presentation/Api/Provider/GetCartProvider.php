@@ -9,6 +9,8 @@ use ApiPlatform\State\ProviderInterface;
 use App\Cart\Application\Query\GetCart;
 use App\Cart\Presentation\Api\Resource\CartResource;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -23,26 +25,29 @@ final readonly class GetCartProvider implements ProviderInterface
     ) {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?CartResource
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): CartResource
     {
         // Get cart ID from context or from X-Cart-ID header
         $cartId = $context['cart_id'] ?? null;
         if (null === $cartId) {
             $request = $this->requestStack->getCurrentRequest();
-            $cartId = $request?->headers->get('X-Cart-ID') ?? throw new \InvalidArgumentException('Cart ID is required (provide via X-Cart-ID header or context)');
+            $cartId = $request?->headers->get('X-Cart-ID');
+            if (null === $cartId || '' === $cartId) {
+                throw new BadRequestHttpException('Cart ID is required (provide via X-Cart-ID header)');
+            }
         }
 
         $envelope = $this->queryBus->dispatch(new GetCart($cartId));
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {
-            return null;
+            throw new NotFoundHttpException('Cart not found');
         }
 
         $cartDTO = $handledStamp->getResult();
 
         if (null === $cartDTO) {
-            return null;
+            throw new NotFoundHttpException('Cart not found');
         }
 
         $resource = new CartResource();

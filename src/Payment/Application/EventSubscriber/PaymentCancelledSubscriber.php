@@ -25,7 +25,7 @@ final readonly class PaymentCancelledSubscriber implements EventSubscriberInterf
         private MailerInterface $mailer,
         private LoggerInterface $logger,
         private string $senderEmail = 'payments@ecommerce.local',
-        private string $senderName = 'E-Commerce Platform'
+        private string $senderName = 'E-Commerce Platform',
     ) {
     }
 

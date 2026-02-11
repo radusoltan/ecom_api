@@ -510,6 +510,36 @@ final class CartTest extends TestCase
         $this->assertTrue($cart->customerId()->equals($customerId));
     }
 
+    public function testItReassignsCartToNewCustomer(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $firstCustomerId = CustomerId::generate();
+        $secondCustomerId = CustomerId::generate();
+        $cart->assignToCustomer($firstCustomerId);
+
+        // Act
+        $cart->assignToCustomer($secondCustomerId);
+
+        // Assert
+        $this->assertTrue($cart->customerId()->equals($secondCustomerId));
+        $this->assertFalse($cart->customerId()->equals($firstCustomerId));
+    }
+
+    public function testItUpdatesTimestampWhenAssigningToCustomer(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $originalUpdatedAt = $cart->updatedAt();
+        sleep(1); // Wait to ensure timestamp changes
+
+        // Act
+        $cart->assignToCustomer(CustomerId::generate());
+
+        // Assert
+        $this->assertGreaterThan($originalUpdatedAt, $cart->updatedAt());
+    }
+
     // =============================================
     // Test Get Item Count
     // =============================================
@@ -538,6 +568,252 @@ final class CartTest extends TestCase
 
         // Assert
         $this->assertEquals(5, $count); // 2 + 3 = 5
+    }
+
+    // =============================================
+    // Test Edge Cases - Max Quantity
+    // =============================================
+
+    public function testItAddsItemWithMaxQuantity(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $productId = ProductId::generate();
+        $maxQuantity = Quantity::fromInt(999);
+        $unitPrice = Money::fromScalars(1000, 'USD');
+
+        // Act
+        $cart->addItem($productId, null, $maxQuantity, $unitPrice);
+
+        // Assert
+        $this->assertCount(1, $cart->items());
+        $this->assertEquals(999, $cart->items()[0]->quantity()->toInt());
+    }
+
+    public function testItThrowsWhenMergingQuantitiesExceedsMax(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $productId = ProductId::generate();
+        $unitPrice = Money::fromScalars(1000, 'USD');
+        $cart->addItem($productId, null, Quantity::fromInt(500), $unitPrice);
+
+        // Expect
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Quantity cannot exceed 999');
+
+        // Act - try to add 500 more (total would be 1000)
+        $cart->addItem($productId, null, Quantity::fromInt(500), $unitPrice);
+    }
+
+    // =============================================
+    // Test Edge Cases - Update Quantity
+    // =============================================
+
+    public function testItThrowsWhenUpdatingQuantityOnNonActiveCart(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $cart->addItem(ProductId::generate(), null, Quantity::fromInt(2), Money::fromScalars(1000, 'USD'));
+        $itemId = $cart->items()[0]->id();
+        $cart->markAsExpired();
+
+        // Expect
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot update quantities in a non-active cart');
+
+        // Act
+        $cart->updateQuantity($itemId, Quantity::fromInt(5));
+    }
+
+    public function testItThrowsWhenUpdatingQuantityOnConvertedCart(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $cart->addItem(ProductId::generate(), null, Quantity::fromInt(2), Money::fromScalars(1000, 'USD'));
+        $itemId = $cart->items()[0]->id();
+        $cart->markAsConverted();
+
+        // Expect
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot update quantities in a non-active cart');
+
+        // Act
+        $cart->updateQuantity($itemId, Quantity::fromInt(5));
+    }
+
+    // =============================================
+    // Test Edge Cases - Convert Cart
+    // =============================================
+
+    public function testItThrowsWhenConvertingAlreadyConvertedCart(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $cart->markAsConverted();
+
+        // Expect
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Only active carts can be converted to orders');
+
+        // Act
+        $cart->markAsConverted();
+    }
+
+    // =============================================
+    // Test Edge Cases - Variants
+    // =============================================
+
+    public function testItAddsItemsWithDifferentVariantsAsSeparateItems(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $productId = ProductId::generate();
+        $unitPrice = Money::fromScalars(1000, 'USD');
+
+        // Act
+        $cart->addItem($productId, 'variant-1', Quantity::fromInt(2), $unitPrice);
+        $cart->addItem($productId, 'variant-2', Quantity::fromInt(3), $unitPrice);
+
+        // Assert
+        $this->assertCount(2, $cart->items());
+    }
+
+    public function testItMergesItemsWithSameVariant(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $productId = ProductId::generate();
+        $variantId = 'variant-123';
+        $unitPrice = Money::fromScalars(1000, 'USD');
+
+        // Act
+        $cart->addItem($productId, $variantId, Quantity::fromInt(2), $unitPrice);
+        $cart->addItem($productId, $variantId, Quantity::fromInt(3), $unitPrice);
+
+        // Assert
+        $this->assertCount(1, $cart->items());
+        $this->assertEquals(5, $cart->items()[0]->quantity()->toInt());
+    }
+
+    public function testItTreatsNullVariantAndStringVariantAsDifferent(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $productId = ProductId::generate();
+        $unitPrice = Money::fromScalars(1000, 'USD');
+
+        // Act
+        $cart->addItem($productId, null, Quantity::fromInt(2), $unitPrice);
+        $cart->addItem($productId, 'variant-123', Quantity::fromInt(3), $unitPrice);
+
+        // Assert
+        $this->assertCount(2, $cart->items());
+    }
+
+    // =============================================
+    // Test Edge Cases - Total Calculation
+    // =============================================
+
+    public function testItCalculatesTotalWithMaxQuantityItems(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $cart->addItem(ProductId::generate(), null, Quantity::fromInt(999), Money::fromScalars(100, 'USD'));
+        $cart->addItem(ProductId::generate(), null, Quantity::fromInt(999), Money::fromScalars(200, 'USD'));
+
+        // Act
+        $total = $cart->calculateTotal();
+
+        // Assert
+        // (999 × 100) + (999 × 200) = 99900 + 199800 = 299700
+        $this->assertEquals(299700, $total->getAmount());
+    }
+
+    // =============================================
+    // Test Edge Cases - Cart at Max Items Capacity
+    // =============================================
+
+    public function testItAllowsExactly100Items(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $unitPrice = Money::fromScalars(1000, 'USD');
+
+        // Act - Add exactly 100 items
+        for ($i = 0; $i < 100; ++$i) {
+            $cart->addItem(ProductId::generate(), null, Quantity::fromInt(1), $unitPrice);
+        }
+
+        // Assert
+        $this->assertCount(100, $cart->items());
+    }
+
+    // =============================================
+    // Test Edge Cases - IsEmpty
+    // =============================================
+
+    public function testIsEmptyReturnsTrueForNewCart(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+
+        // Act & Assert
+        $this->assertTrue($cart->isEmpty());
+    }
+
+    public function testIsEmptyReturnsFalseForCartWithItems(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $cart->addItem(ProductId::generate(), null, Quantity::fromInt(1), Money::fromScalars(1000, 'USD'));
+
+        // Act & Assert
+        $this->assertFalse($cart->isEmpty());
+    }
+
+    public function testIsEmptyReturnsTrueAfterClearing(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $cart->addItem(ProductId::generate(), null, Quantity::fromInt(1), Money::fromScalars(1000, 'USD'));
+        $cart->clear();
+
+        // Act & Assert
+        $this->assertTrue($cart->isEmpty());
+    }
+
+    // =============================================
+    // Test Edge Cases - IsActive
+    // =============================================
+
+    public function testIsActiveReturnsTrueForNewCart(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+
+        // Act & Assert
+        $this->assertTrue($cart->isActive());
+    }
+
+    public function testIsActiveReturnsFalseForExpiredCart(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $cart->markAsExpired();
+
+        // Act & Assert
+        $this->assertFalse($cart->isActive());
+    }
+
+    public function testIsActiveReturnsFalseForConvertedCart(): void
+    {
+        // Arrange
+        $cart = $this->createSampleCart();
+        $cart->markAsConverted();
+
+        // Act & Assert
+        $this->assertFalse($cart->isActive());
     }
 
     // =============================================

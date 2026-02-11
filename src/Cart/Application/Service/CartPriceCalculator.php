@@ -70,10 +70,7 @@ final readonly class CartPriceCalculator
 
         $price = $product->price();
 
-        if (null === $price) {
-            throw new \RuntimeException(sprintf('Product with ID "%s" has no price configured', $productId->toString()));
-        }
-
+        // Price is always a Money object from Product domain model
         return $price;
     }
 

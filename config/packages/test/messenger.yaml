@@ -1,0 +1,49 @@
+framework:
+    messenger:
+        # In test environment, all transports use in-memory (sync) for fast execution
+        transports:
+            # Override async transports to use in-memory
+            async: 'in-memory://'
+            media_async: 'in-memory://'
+            payment_events: 'in-memory://'
+            order_events: 'in-memory://'
+            inventory_events: 'in-memory://'
+            failed: 'in-memory://'
+            sync: 'sync://'
+
+        # Ensure all commands/queries/events are handled synchronously in tests
+        default_bus: command.bus
+
+        routing:
+            # Password Reset Commands - sync in tests
+            'App\User\Application\Command\RequestPasswordReset\RequestPasswordReset': sync
+            'App\User\Application\Command\RequestPasswordReset\SendPasswordResetEmail': sync
+
+            # Media Messages - sync in tests (override async)
+            'App\Media\Application\Message\GenerateThumbnailsMessage': sync
+            'App\Media\Application\Message\DeleteImageAssetsMessage': sync
+
+            # Payment Domain Events - sync in tests
+            'App\Payment\Domain\Event\PaymentCaptured': sync
+            'App\Payment\Domain\Event\PaymentAuthorized': sync
+            'App\Payment\Domain\Event\PaymentRefunded': sync
+            'App\Payment\Domain\Event\PaymentFailed': sync
+            'App\Payment\Domain\Event\PaymentCancelled': sync
+
+            # Order Domain Events - sync in tests
+            'App\Order\Domain\Event\OrderPlaced': sync
+            'App\Order\Domain\Event\OrderPaid': sync
+            'App\Order\Domain\Event\OrderStatusChanged': sync
+            'App\Order\Domain\Event\OrderCancelled': sync
+            'App\Order\Domain\Event\FulfillmentStatusChanged': sync
+
+            # Returns Domain Events - sync in tests
+            'App\Returns\Domain\Event\ReturnRequestCreated': sync
+            'App\Returns\Domain\Event\ReturnRequestApproved': sync
+            'App\Returns\Domain\Event\ReturnRequestRejected': sync
+            'App\Returns\Domain\Event\ReturnRequestReceived': sync
+            'App\Returns\Domain\Event\ReturnRequestInspected': sync
+            'App\Returns\Domain\Event\ReturnRequestCompleted': sync
+
+            # Email sending - sync in tests (no async queue)
+            'Symfony\Component\Mailer\Messenger\SendEmailMessage': sync

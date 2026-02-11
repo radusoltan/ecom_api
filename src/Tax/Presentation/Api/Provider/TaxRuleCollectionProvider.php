@@ -8,14 +8,15 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Application\Query\GetAllTaxRules;
-use App\Tax\Presentation\Api\Resource\TaxRuleResource;
 use App\Tax\Presentation\Api\Transformer\TaxRuleResourceTransformer;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Provider for retrieving tax rule collections.
+ * Provider for retrieving tax rule collections with pagination.
+ *
+ * API Platform handles pagination automatically by slicing the returned array.
+ * Default: 30 items per page as configured in TaxRuleResource.
  */
 final class TaxRuleCollectionProvider implements ProviderInterface
 {
@@ -29,37 +30,30 @@ final class TaxRuleCollectionProvider implements ProviderInterface
     }
 
     /**
-     * @return TaxRuleResource[]
+     * @return array<\App\Tax\Presentation\Api\Resource\TaxRuleResource>
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
-        // Get tenant ID from request headers
-        $request = $context['request'] ?? null;
-        if (!$request) {
-            throw new BadRequestHttpException('Request context is missing');
-        }
+        // Extract tenant ID from context (injected by TenantContextProvider)
+        $tenantId = TenantId::fromString(
+            $context['tenant_id'] ?? throw new \InvalidArgumentException('Tenant ID is required')
+        );
 
-        $tenantId = $request->headers->get('X-Tenant-ID');
-        if (!$tenantId) {
-            throw new BadRequestHttpException('X-Tenant-ID header is required');
-        }
+        // Get query parameters from context filters
+        $activeOnly = 'true' === ($context['filters']['activeOnly'] ?? 'false');
 
-        // Get query parameters
-        $activeOnly = 'true' === $request->query->get('activeOnly', 'false');
-        $limit = (int) $request->query->get('limit', 30);
-        $offset = (int) $request->query->get('offset', 0);
-
-        // Create query
+        // Create query - return all tax rules (API Platform will paginate the result)
         $query = new GetAllTaxRules(
-            tenantId: TenantId::fromString($tenantId),
+            tenantId: $tenantId,
             activeOnly: $activeOnly,
-            limit: $limit,
-            offset: $offset
+            limit: 1000, // reasonable max - API Platform will paginate this
+            offset: 0
         );
 
         // Execute query
         $dtos = $this->handle($query);
 
+        // Transform to resources - API Platform will automatically paginate and wrap in Hydra format
         return $this->transformer->fromDTOs($dtos);
     }
 }

@@ -27,7 +27,9 @@ final readonly class ReleaseStockHandler
             throw new \DomainException(sprintf('Stock item not found for product %s in warehouse %s', $command->productId->toString(), $command->warehouseId->toString()));
         }
 
-        $stockItem->release($command->quantity, $command->reason);
+        // Generate a reference ID if not provided (using product+warehouse as reference)
+        $referenceId = sprintf('%s-%s', $command->productId->toString(), $command->warehouseId->toString());
+        $stockItem->release($command->quantity, $referenceId, $command->reason);
 
         $this->stockItemRepository->save($stockItem);
     }

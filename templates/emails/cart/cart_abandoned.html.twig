@@ -1,0 +1,59 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block email_title %}{{ 'emails.cart.abandoned.title'|trans }}{% endblock %}
+
+{% block header_icon %}🛒{% endblock %}
+
+{% block header_title %}{{ 'emails.cart.abandoned.header'|trans }}{% endblock %}
+
+{% block content %}
+    <p>{{ 'emails.cart.abandoned.greeting'|trans({'%customer_name%': customerName}) }}</p>
+
+    <p>{{ 'emails.cart.abandoned.message'|trans({'%item_count%': itemCount}) }}</p>
+
+    <div class="info-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b;">
+        <h3 style="color: #f59e0b;">{{ 'emails.cart.abandoned.cart_summary'|trans }}</h3>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.cart.abandoned.items'|trans }}:</span>
+            <span class="info-value"><strong>{{ itemCount }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">{{ 'emails.cart.abandoned.total'|trans }}:</span>
+            <span class="info-value"><strong>{{ total }} {{ currency }}</strong></span>
+        </div>
+        {% if expiresAt is defined %}
+            <div class="info-row">
+                <span class="info-label">{{ 'emails.cart.abandoned.expires'|trans }}:</span>
+                <span class="info-value">{{ expiresAt|date('d/m/Y H:i') }}</span>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if items is defined and items|length > 0 %}
+        <div class="info-box">
+            <h3>{{ 'emails.cart.abandoned.your_items'|trans }}</h3>
+            {% for item in items %}
+                <div class="info-row">
+                    <span class="info-label">{{ item.name }}</span>
+                    <span class="info-value">{{ item.quantity }} × {{ item.price }} {{ currency }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if discount is defined %}
+        <div class="info-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border-left: 4px solid #22c55e;">
+            <h3 style="color: #22c55e;">{{ 'emails.cart.abandoned.special_offer'|trans }}</h3>
+            <p style="margin: 0;">{{ 'emails.cart.abandoned.discount_message'|trans({'%discount%': discount}) }}</p>
+        </div>
+    {% endif %}
+
+    <p style="text-align: center;">
+        <a href="{{ cartUrl }}" class="button" style="background-color: #f59e0b;">{{ 'emails.cart.abandoned.complete_order'|trans }}</a>
+    </p>
+
+    <div class="divider"></div>
+
+    <p>{{ 'emails.cart.abandoned.hurry'|trans }}</p>
+    <p>{{ 'emails.cart.abandoned.questions'|trans }}</p>
+{% endblock %}

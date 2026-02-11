@@ -7,6 +7,7 @@ namespace App\Inventory\Infrastructure\Persistence\Doctrine\Entity;
 use App\Inventory\Domain\Model\Quantity;
 use App\Inventory\Domain\Model\StockItemId;
 use App\Inventory\Domain\Model\StockReservation;
+use App\Inventory\Domain\Model\WarehouseId;
 use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'stock_reservations')]
 #[ORM\Index(columns: ['tenant_id', 'expires_at', 'is_released'], name: 'idx_reservation_expiry')]
 #[ORM\Index(columns: ['stock_item_id'], name: 'idx_reservation_stock_item')]
+#[ORM\Index(columns: ['warehouse_id'], name: 'idx_reservation_warehouse')]
 class StockReservationEntity
 {
     #[ORM\Id]
@@ -23,6 +25,9 @@ class StockReservationEntity
 
     #[ORM\Column(type: 'string', length: 36, nullable: false, name: 'stock_item_id')]
     private string $stockItemId;
+
+    #[ORM\Column(type: 'string', length: 36, nullable: false, name: 'warehouse_id')]
+    private string $warehouseId;
 
     #[ORM\Column(type: 'string', length: 36, nullable: false, name: 'tenant_id')]
     private string $tenantId;
@@ -47,6 +52,7 @@ class StockReservationEntity
         $entity = new self();
         $entity->id = $reservation->reservationId();
         $entity->stockItemId = $reservation->stockItemId()->toString();
+        $entity->warehouseId = $reservation->warehouseId()->toString();
         $entity->tenantId = $reservation->tenantId()->toString();
         $entity->quantity = $reservation->quantity()->value();
         $entity->reservedAt = $reservation->reservedAt();
@@ -69,6 +75,7 @@ class StockReservationEntity
         return StockReservation::reconstituteFromPersistence(
             $this->id,
             StockItemId::fromString($this->stockItemId),
+            WarehouseId::fromString($this->warehouseId),
             TenantId::fromString($this->tenantId),
             Quantity::fromInt($this->quantity),
             $this->reservedAt,

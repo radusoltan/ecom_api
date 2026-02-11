@@ -72,7 +72,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
         $this->indexManager->refresh($this->indexManager->getProductIndexName($this->tenantId, $this->locale));
 
         // Autocomplete for "lap"
-        $response = static::createClient()->request('GET', '/api/search/autocomplete', [
+        $response = static::createClient()->request('GET', '/api/v1/search/autocomplete', [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
                 'Accept' => 'application/json',
@@ -96,7 +96,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
         $this->indexManager->refresh($this->indexManager->getProductIndexName($this->tenantId, $this->locale));
 
         // Autocomplete for "laptop"
-        $response = static::createClient()->request('GET', '/api/search/autocomplete', [
+        $response = static::createClient()->request('GET', '/api/v1/search/autocomplete', [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
                 'Accept' => 'application/json',
@@ -124,7 +124,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
         $this->indexManager->refresh($this->indexManager->getProductIndexName($this->tenantId, $this->locale));
 
         // Autocomplete with limit of 5
-        $response = static::createClient()->request('GET', '/api/search/autocomplete', [
+        $response = static::createClient()->request('GET', '/api/v1/search/autocomplete', [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
                 'Accept' => 'application/json',
@@ -144,7 +144,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
 
     public function testAutocompleteWithShortQueryFails(): void
     {
-        static::createClient()->request('GET', '/api/search/autocomplete', [
+        static::createClient()->request('GET', '/api/v1/search/autocomplete', [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
                 'Accept' => 'application/json',
@@ -160,7 +160,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
 
     public function testAutocompleteWithoutQueryFails(): void
     {
-        static::createClient()->request('GET', '/api/search/autocomplete', [
+        static::createClient()->request('GET', '/api/v1/search/autocomplete', [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
                 'Accept' => 'application/json',
@@ -175,7 +175,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
 
     public function testAutocompleteWithoutTenantIdFails(): void
     {
-        static::createClient()->request('GET', '/api/search/autocomplete', [
+        static::createClient()->request('GET', '/api/v1/search/autocomplete', [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -193,7 +193,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
 
         $this->indexManager->refresh($this->indexManager->getProductIndexName($this->tenantId, $this->locale));
 
-        $response = static::createClient()->request('GET', '/api/search/autocomplete', [
+        $response = static::createClient()->request('GET', '/api/v1/search/autocomplete', [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
                 'Accept' => 'application/json',
@@ -236,7 +236,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
         $this->indexManager->refresh($roIndexName);
 
         // Test English locale
-        $responseEn = static::createClient()->request('GET', '/api/search/autocomplete', [
+        $responseEn = static::createClient()->request('GET', '/api/v1/search/autocomplete', [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
                 'Accept' => 'application/json',
@@ -250,7 +250,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
 
         // Test Romanian locale
-        $responseRo = static::createClient()->request('GET', '/api/search/autocomplete', [
+        $responseRo = static::createClient()->request('GET', '/api/v1/search/autocomplete', [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
                 'Accept' => 'application/json',
@@ -277,10 +277,15 @@ final class ProductAutocompleteApiTest extends ApiTestCase
 
     private function createProduct(string $name): Product
     {
+        // Generate valid SKU format: ^[A-Z]{3}-[0-9]{6}$
+        static $counter = 0;
+        ++$counter;
+        $validSku = sprintf('TST-%06d', $counter);
+
         $product = Product::create(
             id: ProductId::generate(),
             tenantId: $this->tenantId,
-            sku: SKU::fromString(sprintf('TST-%06d', rand(1, 999999))),
+            sku: SKU::fromString($validSku),
             name: ProductName::fromString($name),
             description: 'Test product description',
             shortDescription: 'Short desc',

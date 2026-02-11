@@ -43,12 +43,16 @@ class CartEntity
 
     /**
      * @var Collection<int, CartItemEntity>
+     *
+     * Note: Using JoinColumn instead of mappedBy for unidirectional relationship
+     * This avoids requiring a ManyToOne back-reference in CartItemEntity
      */
     #[ORM\OneToMany(
         targetEntity: CartItemEntity::class,
-        mappedBy: 'cartId',
+        mappedBy: 'cart',
         cascade: ['persist', 'remove'],
-        orphanRemoval: true
+        orphanRemoval: true,
+        fetch: 'EAGER'
     )]
     private Collection $items;
 
@@ -57,6 +61,9 @@ class CartEntity
 
     #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
+
+    #[ORM\Column(type: 'boolean', name: 'abandonment_email_sent', options: ['default' => false])]
+    private bool $abandonmentEmailSent = false;
 
     public function __construct()
     {
@@ -76,7 +83,7 @@ class CartEntity
 
         // Convert domain cart items to entities
         foreach ($cart->items() as $item) {
-            $itemEntity = CartItemEntity::fromDomainModel($item, $entity->id);
+            $itemEntity = CartItemEntity::fromDomainModel($item, $entity);
             $entity->items->add($itemEntity);
         }
 
@@ -111,14 +118,34 @@ class CartEntity
         $this->status = $cart->status()->value();
         $this->updatedAt = $cart->updatedAt();
 
-        // Update items collection
-        // Clear existing items
-        $this->items->clear();
+        // Sync items collection (update existing, add new, remove deleted)
+        $domainItems = $cart->items();
+        $domainItemIds = array_map(fn ($item) => $item->id()->toString(), $domainItems);
 
-        // Add current items from domain model
-        foreach ($cart->items() as $item) {
-            $itemEntity = CartItemEntity::fromDomainModel($item, $this->id);
-            $this->items->add($itemEntity);
+        // Create a map of existing items by ID for quick lookup
+        $existingItemsById = [];
+        foreach ($this->items as $itemEntity) {
+            $existingItemsById[$itemEntity->getId()] = $itemEntity;
+        }
+
+        // Remove items that no longer exist in domain model
+        foreach ($this->items->toArray() as $itemEntity) {
+            if (!in_array($itemEntity->getId(), $domainItemIds, true)) {
+                $this->items->removeElement($itemEntity);
+            }
+        }
+
+        // Update existing or add new items
+        foreach ($domainItems as $domainItem) {
+            $itemId = $domainItem->id()->toString();
+            if (isset($existingItemsById[$itemId])) {
+                // Update existing item
+                $existingItemsById[$itemId]->updateFromDomainModel($domainItem);
+            } else {
+                // Add new item
+                $itemEntity = CartItemEntity::fromDomainModel($domainItem, $this);
+                $this->items->add($itemEntity);
+            }
         }
     }
 
@@ -165,5 +192,15 @@ class CartEntity
     public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
+    }
+
+    public function isAbandonmentEmailSent(): bool
+    {
+        return $this->abandonmentEmailSent;
+    }
+
+    public function markAbandonmentEmailSent(): void
+    {
+        $this->abandonmentEmailSent = true;
     }
 }

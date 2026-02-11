@@ -32,7 +32,7 @@ class ImageUploadApiTest extends ApiTestCase
         );
 
         $client = static::createClient();
-        $client->request('POST', '/api/media_images', [
+        $client->request('POST', '/api/v1/media_images', [
             'headers' => [
                 'Content-Type' => 'multipart/form-data',
                 'X-Tenant-ID' => self::TEST_TENANT_ID,
@@ -74,7 +74,7 @@ class ImageUploadApiTest extends ApiTestCase
         $client = static::createClient();
 
         // Test with missing file
-        $client->request('POST', '/api/media_images', [
+        $client->request('POST', '/api/v1/media_images', [
             'headers' => [
                 'Content-Type' => 'multipart/form-data',
                 'X-Tenant-ID' => self::TEST_TENANT_ID,
@@ -104,7 +104,7 @@ class ImageUploadApiTest extends ApiTestCase
         );
 
         $client = static::createClient();
-        $client->request('POST', '/api/media_images', [
+        $client->request('POST', '/api/v1/media_images', [
             'headers' => [
                 'Content-Type' => 'multipart/form-data',
                 'X-Tenant-ID' => self::TEST_TENANT_ID,
@@ -126,7 +126,7 @@ class ImageUploadApiTest extends ApiTestCase
         $imageId = $response['id'];
 
         // Now delete the image
-        $client->request('DELETE', '/api/media_images/'.$imageId, [
+        $client->request('DELETE', '/api/v1/media_images/'.$imageId, [
             'headers' => [
                 'X-Tenant-ID' => self::TEST_TENANT_ID,
             ],
@@ -151,7 +151,7 @@ class ImageUploadApiTest extends ApiTestCase
         );
 
         $client = static::createClient();
-        $client->request('POST', '/api/media_images', [
+        $client->request('POST', '/api/v1/media_images', [
             'headers' => [
                 'Content-Type' => 'multipart/form-data',
                 'X-Tenant-ID' => self::TEST_TENANT_ID,
@@ -173,7 +173,7 @@ class ImageUploadApiTest extends ApiTestCase
         $imageId = $response['id'];
 
         // Now regenerate thumbnails with crop
-        $client->request('PATCH', '/api/media_images/'.$imageId.'/regenerate-thumbnails', [
+        $client->request('PATCH', '/api/v1/media_images/'.$imageId.'/regenerate-thumbnails', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => self::TEST_TENANT_ID,
