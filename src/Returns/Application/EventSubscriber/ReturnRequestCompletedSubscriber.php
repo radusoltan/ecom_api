@@ -82,9 +82,8 @@ final readonly class ReturnRequestCompletedSubscriber implements EventSubscriber
         try {
             $this->commandBus->dispatch(
                 new RefundPayment(
-                    paymentId: $event->orderId->toString(), // In production: lookup actual paymentId
-                    refundAmount: $event->refundAmount,
-                    refundCurrency: $event->refundCurrency,
+                    id: \App\Payment\Domain\ValueObject\PaymentId::fromString($event->orderId->toString()), // In production: lookup actual paymentId
+                    refundAmountInCents: $event->refundAmount,
                     reason: 'Return completed - RMA: '.$event->returnRequestId->toString()
                 )
             );

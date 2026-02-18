@@ -7,7 +7,7 @@ namespace App\Payment\Infrastructure\Webhook;
 use App\Payment\Application\Command\CapturePayment;
 use App\Payment\Application\Command\MarkPaymentAsFailed;
 use App\Payment\Application\Query\GetPaymentById;
-use App\Payment\Domain\Model\PaymentId;
+use App\Payment\Domain\ValueObject\PaymentId;
 use Psr\Log\LoggerInterface;
 use Stripe\Event;
 use Stripe\Exception\SignatureVerificationException;

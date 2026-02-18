@@ -7,7 +7,7 @@ namespace App\Payment\Infrastructure\ApiPlatform\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Payment\Application\Command\ConfirmPayment\ConfirmPaymentCommand;
-use App\Payment\Domain\Model\PaymentId;
+use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity;
 use Symfony\Component\Messenger\MessageBusInterface;
 
