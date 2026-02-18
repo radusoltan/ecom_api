@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetCustomerPreferencesQueryHandler
 {
     public function __construct(
-        private CustomerRepositoryInterface $customerRepository
+        private CustomerRepositoryInterface $customerRepository,
     ) {
     }
 

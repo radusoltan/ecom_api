@@ -15,7 +15,7 @@ final readonly class CreateReturnRequest
         public string $returnRequestId,
         public string $tenantId,
         public string $orderId,
-        public string $reason
+        public string $reason,
     ) {
     }
 }

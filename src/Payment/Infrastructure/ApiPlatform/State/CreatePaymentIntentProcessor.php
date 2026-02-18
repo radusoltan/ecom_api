@@ -28,7 +28,7 @@ use Symfony\Component\Messenger\Stamp\HandledStamp;
 final readonly class CreatePaymentIntentProcessor implements ProcessorInterface
 {
     public function __construct(
-        private MessageBusInterface $commandBus
+        private MessageBusInterface $commandBus,
     ) {
     }
 

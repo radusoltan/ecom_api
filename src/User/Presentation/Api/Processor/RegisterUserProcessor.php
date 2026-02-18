@@ -37,7 +37,7 @@ final readonly class RegisterUserProcessor implements ProcessorInterface
         private JWTTokenManagerInterface $jwtManager,
         private RefreshTokenGeneratorInterface $refreshTokenGenerator,
         private RefreshTokenManagerInterface $refreshTokenManager,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

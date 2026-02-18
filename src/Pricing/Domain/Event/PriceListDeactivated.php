@@ -10,7 +10,7 @@ final readonly class PriceListDeactivated implements DomainEvent
 {
     public function __construct(
         private string $priceListId,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

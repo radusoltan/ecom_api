@@ -19,12 +19,12 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class DiscountsStacked implements DomainEvent
 {
     /**
-     * @param TenantId                                                                                                                                     $tenantId           Tenant context
-     * @param array<int, array{promotionId: string, name: string, type: string, discountAmount: int, priceAfterDiscount: int}> $appliedPromotions  Array of applied promotion details
-     * @param int                                                                                                                                          $originalAmount     Original price in minor units (cents)
-     * @param int                                                                                                                                          $finalAmount        Final price after discounts in minor units
-     * @param int                                                                                                                                          $totalDiscountAmount Total discount in minor units
-     * @param string                                                                                                                                       $currency           Currency code (e.g., EUR, USD)
+     * @param TenantId                                                                                                         $tenantId            Tenant context
+     * @param array<int, array{promotionId: string, name: string, type: string, discountAmount: int, priceAfterDiscount: int}> $appliedPromotions   Array of applied promotion details
+     * @param int                                                                                                              $originalAmount      Original price in minor units (cents)
+     * @param int                                                                                                              $finalAmount         Final price after discounts in minor units
+     * @param int                                                                                                              $totalDiscountAmount Total discount in minor units
+     * @param string                                                                                                           $currency            Currency code (e.g., EUR, USD)
      */
     public function __construct(
         private TenantId $tenantId,
@@ -33,7 +33,7 @@ final readonly class DiscountsStacked implements DomainEvent
         private int $finalAmount,
         private int $totalDiscountAmount,
         private string $currency,
-        private \DateTimeImmutable $occurredAt
+        private \DateTimeImmutable $occurredAt,
     ) {
     }
 

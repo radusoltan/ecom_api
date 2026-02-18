@@ -29,14 +29,14 @@ final readonly class CustomerSummaryDTO
         public int $orderCount,
         public ?Money $totalSpent,
         public \DateTimeImmutable $createdAt,
-        public \DateTimeImmutable $updatedAt
+        public \DateTimeImmutable $updatedAt,
     ) {
     }
 
     public static function fromDomainModel(
         Customer $customer,
         int $orderCount = 0,
-        ?Money $totalSpent = null
+        ?Money $totalSpent = null,
     ): self {
         return new self(
             id: $customer->id()->toString(),

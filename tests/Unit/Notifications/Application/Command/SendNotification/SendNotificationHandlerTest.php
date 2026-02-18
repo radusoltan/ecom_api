@@ -18,17 +18,17 @@ use PHPUnit\Framework\TestCase;
  */
 final class SendNotificationHandlerTest extends TestCase
 {
-    public function test_it_creates_and_saves_email_notification(): void
+    public function testItCreatesAndSavesEmailNotification(): void
     {
         // Arrange
         $repository = $this->createMock(NotificationRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('save')
             ->with($this->callback(function (Notification $notification) {
-                return $notification->type() === NotificationType::EMAIL
-                    && $notification->recipientEmail() === 'test@example.com'
-                    && $notification->subject() === 'Test Subject'
-                    && $notification->body() === 'Test Body';
+                return NotificationType::EMAIL === $notification->type()
+                    && 'test@example.com' === $notification->recipientEmail()
+                    && 'Test Subject' === $notification->subject()
+                    && 'Test Body' === $notification->body();
             }));
 
         $handler = new SendNotificationHandler($repository);
@@ -49,16 +49,16 @@ final class SendNotificationHandlerTest extends TestCase
         // Assert: Verified by mock expectations
     }
 
-    public function test_it_creates_and_saves_sms_notification(): void
+    public function testItCreatesAndSavesSmsNotification(): void
     {
         // Arrange
         $repository = $this->createMock(NotificationRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('save')
             ->with($this->callback(function (Notification $notification) {
-                return $notification->type() === NotificationType::SMS
-                    && $notification->recipientPhone() === '+40712345678'
-                    && $notification->recipientEmail() === null;
+                return NotificationType::SMS === $notification->type()
+                    && '+40712345678' === $notification->recipientPhone()
+                    && null === $notification->recipientEmail();
             }));
 
         $handler = new SendNotificationHandler($repository);
@@ -79,7 +79,7 @@ final class SendNotificationHandlerTest extends TestCase
         // Assert: Verified by mock expectations
     }
 
-    public function test_it_uses_notification_id_from_command(): void
+    public function testItUsesNotificationIdFromCommand(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();
@@ -108,7 +108,7 @@ final class SendNotificationHandlerTest extends TestCase
         // Assert: Verified by mock expectations
     }
 
-    public function test_it_uses_tenant_id_from_command(): void
+    public function testItUsesTenantIdFromCommand(): void
     {
         // Arrange
         $tenantId = TenantId::generate();
@@ -137,7 +137,7 @@ final class SendNotificationHandlerTest extends TestCase
         // Assert: Verified by mock expectations
     }
 
-    public function test_it_propagates_validation_errors(): void
+    public function testItPropagatesValidationErrors(): void
     {
         // Arrange
         $repository = $this->createMock(NotificationRepositoryInterface::class);

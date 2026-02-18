@@ -25,7 +25,7 @@ final readonly class DataSubjectRequestDTO
         public bool $isOverdue,
         public int $daysUntilDeadline,
         public \DateTimeImmutable $createdAt,
-        public \DateTimeImmutable $updatedAt
+        public \DateTimeImmutable $updatedAt,
     ) {
     }
 

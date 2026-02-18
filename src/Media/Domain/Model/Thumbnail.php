@@ -20,7 +20,7 @@ final class Thumbnail
         private int $width,
         private int $height,
         private CropArea $cropArea,
-        private readonly \DateTimeImmutable $createdAt
+        private readonly \DateTimeImmutable $createdAt,
     ) {
     }
 
@@ -32,7 +32,7 @@ final class Thumbnail
         int $width,
         int $height,
         CropArea $cropArea,
-        ?\DateTimeImmutable $createdAt = null
+        ?\DateTimeImmutable $createdAt = null,
     ): self {
         if ($width <= 0 || $height <= 0) {
             throw new \InvalidArgumentException('Thumbnail width and height must be greater than zero.');

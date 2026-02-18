@@ -24,7 +24,7 @@ final readonly class ReturnRequestCompleted
         public TenantId $tenantId,
         public int $refundAmount,
         public string $refundCurrency,
-        public \DateTimeImmutable $occurredOn
+        public \DateTimeImmutable $occurredOn,
     ) {
     }
 
@@ -32,7 +32,7 @@ final readonly class ReturnRequestCompleted
         ReturnRequestId $returnRequestId,
         TenantId $tenantId,
         int $refundAmount,
-        string $refundCurrency
+        string $refundCurrency,
     ): self {
         return new self(
             $returnRequestId,

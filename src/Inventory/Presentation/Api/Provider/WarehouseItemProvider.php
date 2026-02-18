@@ -26,7 +26,7 @@ final readonly class WarehouseItemProvider implements ProviderInterface
     public function provide(
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
+        array $context = [],
     ): ?WarehouseResource {
         $warehouseId = $uriVariables['id'] ?? null;
 

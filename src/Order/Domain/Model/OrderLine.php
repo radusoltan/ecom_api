@@ -23,7 +23,7 @@ final readonly class OrderLine
         private ProductId $productId,
         private string $productName,
         private int $quantity,
-        private Money $unitPrice
+        private Money $unitPrice,
     ) {
         if ($quantity <= 0) {
             throw new \InvalidArgumentException('Order line quantity must be greater than 0');
@@ -38,7 +38,7 @@ final readonly class OrderLine
         ProductId $productId,
         string $productName,
         int $quantity,
-        Money $unitPrice
+        Money $unitPrice,
     ): self {
         return new self($productId, $productName, $quantity, $unitPrice);
     }

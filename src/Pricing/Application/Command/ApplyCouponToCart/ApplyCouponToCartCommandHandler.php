@@ -19,13 +19,11 @@ final readonly class ApplyCouponToCartCommandHandler
 {
     public function __construct(
         private CartRepositoryInterface $cartRepository,
-        private PromotionApplicatorInterface $promotionApplicator
+        private PromotionApplicatorInterface $promotionApplicator,
     ) {
     }
 
     /**
-     * @param ApplyCouponToCartCommand $command
-     *
      * @return AppliedDiscountDTO Details of the applied discount
      *
      * @throws \RuntimeException         If cart not found

@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class SendNotificationHandler
 {
     public function __construct(
-        private NotificationRepositoryInterface $notificationRepository
+        private NotificationRepositoryInterface $notificationRepository,
     ) {
     }
 

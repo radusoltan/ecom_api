@@ -21,7 +21,7 @@ interface DeletionRequestRepositoryInterface
 
     /**
      * Find all deletion requests ready for execution.
-     * (Confirmed, past scheduled date, not on hold)
+     * (Confirmed, past scheduled date, not on hold).
      *
      * @return DeletionRequest[]
      */

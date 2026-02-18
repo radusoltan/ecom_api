@@ -17,7 +17,7 @@ final readonly class ProductIndexer
         private Client $client,
         private IndexManager $indexManager,
         private \Doctrine\ORM\EntityManagerInterface $entityManager,
-        private \Doctrine\DBAL\Connection $connection
+        private \Doctrine\DBAL\Connection $connection,
     ) {
     }
 

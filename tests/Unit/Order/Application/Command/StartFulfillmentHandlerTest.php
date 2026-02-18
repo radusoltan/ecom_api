@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Application\Command;
 
+use App\Catalog\Domain\Model\ProductId;
 use App\Inventory\Application\Command\AllocateStock\AllocateStockCommand;
 use App\Inventory\Domain\Model\Quantity;
 use App\Inventory\Domain\Model\WarehouseId;
@@ -15,7 +16,6 @@ use App\Order\Domain\Model\OrderLine;
 use App\Order\Domain\Repository\FulfillmentRepositoryInterface;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
 use App\Order\Domain\ValueObject\FulfillmentId;
-use App\Catalog\Domain\Model\ProductId;
 use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
@@ -101,8 +101,8 @@ final class StartFulfillmentHandlerTest extends TestCase
                 }
 
                 // Verify command fields
-                return ($command->productId->equals($productId1) && $command->quantity->toInt() === 3)
-                    || ($command->productId->equals($productId2) && $command->quantity->toInt() === 5)
+                return ($command->productId->equals($productId1) && 3 === $command->quantity->toInt())
+                    || ($command->productId->equals($productId2) && 5 === $command->quantity->toInt())
                     && $command->warehouseId->equals($warehouseId)
                     && $command->orderId === $orderId->toString()
                     && $command->tenantId->equals($tenantId);
@@ -120,8 +120,8 @@ final class StartFulfillmentHandlerTest extends TestCase
             ->with('Fulfillment started with stock allocation', $this->callback(function (array $context) use ($fulfillmentId, $orderId): bool {
                 return $context['fulfillment_id'] === $fulfillmentId->toString()
                     && $context['order_id'] === $orderId->toString()
-                    && $context['allocated_lines'] === 2
-                    && $context['total_lines'] === 2;
+                    && 2 === $context['allocated_lines']
+                    && 2 === $context['total_lines'];
             }));
 
         // Act
@@ -266,8 +266,8 @@ final class StartFulfillmentHandlerTest extends TestCase
             ->with('Stock allocation failed for order line', $this->callback(function (array $context) use ($orderId, $productId): bool {
                 return $context['order_id'] === $orderId->toString()
                     && $context['product_id'] === $productId->toString()
-                    && $context['quantity'] === 10
-                    && $context['error'] === 'Insufficient stock available';
+                    && 10 === $context['quantity']
+                    && 'Insufficient stock available' === $context['error'];
             }));
 
         // Assert
@@ -325,7 +325,7 @@ final class StartFulfillmentHandlerTest extends TestCase
             ->with('Stock allocated for order line', $this->callback(function (array $context) use ($orderId, $productId, $warehouseId): bool {
                 return $context['order_id'] === $orderId->toString()
                     && $context['product_id'] === $productId->toString()
-                    && $context['quantity'] === 2
+                    && 2 === $context['quantity']
                     && $context['warehouse_id'] === $warehouseId->toString();
             }));
 
@@ -381,7 +381,7 @@ final class StartFulfillmentHandlerTest extends TestCase
             ->with('Stock allocation failed for order line', $this->callback(function (array $context) use ($orderId, $productId, $warehouseId, $exception): bool {
                 return $context['order_id'] === $orderId->toString()
                     && $context['product_id'] === $productId->toString()
-                    && $context['quantity'] === 100
+                    && 100 === $context['quantity']
                     && $context['warehouse_id'] === $warehouseId->toString()
                     && $context['error'] === $exception->getMessage();
             }));
@@ -394,7 +394,7 @@ final class StartFulfillmentHandlerTest extends TestCase
     }
 
     /**
-     * Helper to create a test Order with lines
+     * Helper to create a test Order with lines.
      *
      * @param array<array{productId: ProductId, quantity: int}> $lines
      */

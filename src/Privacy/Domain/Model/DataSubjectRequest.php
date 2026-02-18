@@ -55,7 +55,7 @@ final class DataSubjectRequest extends AggregateRoot
         TenantId $tenantId,
         CustomerId $customerId,
         RequestType $requestType,
-        ?string $reason = null
+        ?string $reason = null,
     ): self {
         if (null !== $reason) {
             self::validateReason($reason);
@@ -112,7 +112,7 @@ final class DataSubjectRequest extends AggregateRoot
         \DateTimeImmutable $deadline,
         bool $isExtended,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         $request = new self();
         $request->id = $id;

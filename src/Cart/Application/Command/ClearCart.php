@@ -12,7 +12,7 @@ namespace App\Cart\Application\Command;
 final readonly class ClearCart
 {
     public function __construct(
-        public string $cartId
+        public string $cartId,
     ) {
     }
 }

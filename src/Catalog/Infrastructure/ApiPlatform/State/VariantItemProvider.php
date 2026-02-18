@@ -19,14 +19,14 @@ final readonly class VariantItemProvider implements ProviderInterface
 {
     public function __construct(
         private ConfigurableProductRepositoryInterface $configurableProductRepository,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 
     public function provide(
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
+        array $context = [],
     ): ?VariantEntity {
         // Get tenant ID from request header
         $request = $this->requestStack->getCurrentRequest();

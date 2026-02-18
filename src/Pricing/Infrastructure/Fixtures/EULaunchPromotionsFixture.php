@@ -35,7 +35,7 @@ final class EULaunchPromotionsFixture extends Fixture implements FixtureGroupInt
     }
 
     public function __construct(
-        private readonly MessageBusInterface $commandBus
+        private readonly MessageBusInterface $commandBus,
     ) {
     }
 
@@ -261,7 +261,7 @@ final class EULaunchPromotionsFixture extends Fixture implements FixtureGroupInt
         ?string $couponCode = null,
         array $conditions = [],
         ?\DateTimeImmutable $validFrom = null,
-        ?\DateTimeImmutable $validTo = null
+        ?\DateTimeImmutable $validTo = null,
     ): void {
         $command = new CreatePromotionCommand(
             promotionId: PromotionId::generate(),

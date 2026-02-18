@@ -12,7 +12,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class GetNotificationsByTenant
 {
     public function __construct(
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

@@ -12,7 +12,7 @@ use Symfony\Component\Uid\Uuid;
 final readonly class WishlistId
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (empty($value)) {
             throw new \InvalidArgumentException('Wishlist ID cannot be empty');

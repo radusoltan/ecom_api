@@ -59,10 +59,7 @@ final readonly class RetryNotificationProcessor implements ProcessorInterface
 
         // Check if notification can be retried (must be in failed status)
         if (!$notification->status()->canRetry()) {
-            throw new BadRequestHttpException(sprintf(
-                'Notification cannot be retried. Current status: %s',
-                $notification->status()->value
-            ));
+            throw new BadRequestHttpException(sprintf('Notification cannot be retried. Current status: %s', $notification->status()->value));
         }
 
         // Dispatch retry command

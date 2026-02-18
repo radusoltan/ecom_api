@@ -30,7 +30,7 @@ final readonly class CartAbandonedSubscriber implements EventSubscriberInterface
         private string $senderEmail = 'carts@ecommerce.local',
         private string $senderName = 'E-Commerce Platform',
         private string $defaultLocale = 'en',
-        private string $storefrontUrl = 'http://localhost:3000'
+        private string $storefrontUrl = 'http://localhost:3000',
     ) {
     }
 

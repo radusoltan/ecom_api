@@ -35,7 +35,7 @@ final class DashboardStatsDto
         /** @var array<string, mixed> */
         public readonly array $topProducts,
         public readonly string $period,
-        public readonly string $generatedAt
+        public readonly string $generatedAt,
     ) {
     }
 }

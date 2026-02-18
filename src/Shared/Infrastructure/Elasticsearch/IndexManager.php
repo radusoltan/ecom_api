@@ -14,7 +14,7 @@ final readonly class IndexManager
 {
     public function __construct(
         private Client $client,
-        private SynonymManager $synonymManager
+        private SynonymManager $synonymManager,
     ) {
     }
 

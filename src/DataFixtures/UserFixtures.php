@@ -22,7 +22,7 @@ class UserFixtures extends Fixture
 {
     public function __construct(
         private readonly UserRepositoryInterface $userRepository,
-        private readonly UserPasswordHasherInterface $passwordHasher
+        private readonly UserPasswordHasherInterface $passwordHasher,
     ) {
     }
 
@@ -80,7 +80,7 @@ class UserFixtures extends Fixture
         string $email,
         string $username,
         string $plainPassword,
-        array $roles
+        array $roles,
     ): void {
         // Create temporary user for password hashing
         $tempUser = new class implements PasswordAuthenticatedUserInterface {

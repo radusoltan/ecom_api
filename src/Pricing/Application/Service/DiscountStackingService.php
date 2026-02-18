@@ -34,7 +34,7 @@ final readonly class DiscountStackingService
     private const MAX_STACKABLE_PROMOTIONS = 3;
 
     public function __construct(
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -43,14 +43,14 @@ final readonly class DiscountStackingService
      *
      * @param Promotion[] $applicablePromotions All applicable promotions (active, valid date, conditions met)
      * @param Money       $originalPrice        Original product/cart price
-     * @param TenantId    $tenantId            Tenant context for event
+     * @param TenantId    $tenantId             Tenant context for event
      *
      * @return StackedDiscount Rich value object with complete stacking result
      */
     public function calculateStackedDiscount(
         array $applicablePromotions,
         Money $originalPrice,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): StackedDiscount {
         if (empty($applicablePromotions)) {
             return new StackedDiscount(
@@ -63,11 +63,7 @@ final readonly class DiscountStackingService
 
         // Validate stackability
         if (!$this->validateStackability($applicablePromotions)) {
-            throw new \DomainException(sprintf(
-                'Cannot stack %d promotions. Maximum allowed: %d',
-                count($applicablePromotions),
-                self::MAX_STACKABLE_PROMOTIONS
-            ));
+            throw new \DomainException(sprintf('Cannot stack %d promotions. Maximum allowed: %d', count($applicablePromotions), self::MAX_STACKABLE_PROMOTIONS));
         }
 
         // Sort promotions by stacking priority

@@ -7,7 +7,6 @@ namespace App\Tax\Infrastructure\ApiPlatform\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Shared\Application\Service\TenantContextInterface;
-use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Application\Command\CreateTaxRule;
 use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
 use App\Tax\Domain\ValueObject\TaxRuleId;
@@ -29,7 +28,7 @@ final readonly class CreateTaxRuleProcessor implements ProcessorInterface
     public function __construct(
         private MessageBusInterface $commandBus,
         private TaxRuleRepositoryInterface $repository,
-        private TenantContextInterface $tenantContext
+        private TenantContextInterface $tenantContext,
     ) {
     }
 

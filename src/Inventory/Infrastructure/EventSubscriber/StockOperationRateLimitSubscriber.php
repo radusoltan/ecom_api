@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 /**
  * Rate Limiter for Stock Operations.
@@ -23,10 +23,10 @@ use Symfony\Component\RateLimiter\RateLimiterFactory;
 final readonly class StockOperationRateLimitSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private RateLimiterFactory $stockOperationsLimiter,
-        private RateLimiterFactory $stockOperationsPerTenantLimiter,
-        private RateLimiterFactory $stockReservationsLimiter,
-        private RateLimiterFactory $bulkOperationsLimiter,
+        private RateLimiterFactoryInterface $stockOperationsLimiter,
+        private RateLimiterFactoryInterface $stockOperationsPerTenantLimiter,
+        private RateLimiterFactoryInterface $stockReservationsLimiter,
+        private RateLimiterFactoryInterface $bulkOperationsLimiter,
     ) {
     }
 

@@ -19,7 +19,7 @@ final readonly class GenerateVariants
         public ?Money $defaultPrice = null,
         public int $defaultStock = 0,
         public bool $activateByDefault = true,
-        public ?string $skuBase = null
+        public ?string $skuBase = null,
     ) {
     }
 }

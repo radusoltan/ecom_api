@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class MarkNotificationSentHandlerTest extends TestCase
 {
-    public function test_it_marks_notification_as_sent_and_saves(): void
+    public function testItMarksNotificationAsSentAndSaves(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();
@@ -44,8 +44,8 @@ final class MarkNotificationSentHandlerTest extends TestCase
         $repository->expects($this->once())
             ->method('save')
             ->with($this->callback(function (Notification $savedNotification) {
-                return $savedNotification->status() === NotificationStatus::SENT
-                    && $savedNotification->sentAt() !== null;
+                return NotificationStatus::SENT === $savedNotification->status()
+                    && null !== $savedNotification->sentAt();
             }));
 
         $handler = new MarkNotificationSentHandler($repository);
@@ -61,7 +61,7 @@ final class MarkNotificationSentHandlerTest extends TestCase
         // Assert: Verified by mock expectations
     }
 
-    public function test_it_throws_when_notification_not_found(): void
+    public function testItThrowsWhenNotificationNotFound(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();
@@ -90,7 +90,7 @@ final class MarkNotificationSentHandlerTest extends TestCase
         $handler($command);
     }
 
-    public function test_it_propagates_domain_exceptions(): void
+    public function testItPropagatesDomainExceptions(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();
@@ -131,7 +131,7 @@ final class MarkNotificationSentHandlerTest extends TestCase
         $handler($command);
     }
 
-    public function test_it_uses_correct_tenant_id_for_query(): void
+    public function testItUsesCorrectTenantIdForQuery(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();

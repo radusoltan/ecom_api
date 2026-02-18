@@ -27,7 +27,7 @@ final readonly class RegisterCustomerProcessor implements ProcessorInterface
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
         private EntityManagerInterface $entityManager,
-        private UserPasswordHasherInterface $passwordHasher
+        private UserPasswordHasherInterface $passwordHasher,
     ) {
     }
 

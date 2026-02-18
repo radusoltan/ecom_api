@@ -20,7 +20,7 @@ final readonly class CreateLoyaltyProgramCommand
         public int $minOrderValue,
         public string $minOrderCurrency,
         public int $redemptionRate,
-        public string $redemptionCurrency
+        public string $redemptionCurrency,
     ) {
     }
 }

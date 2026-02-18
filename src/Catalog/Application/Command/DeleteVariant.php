@@ -16,7 +16,7 @@ final readonly class DeleteVariant
     public function __construct(
         public VariantId $variantId,
         public ProductId $productId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

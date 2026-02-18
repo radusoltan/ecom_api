@@ -20,7 +20,7 @@ final readonly class OptionCode
     private const MAX_LENGTH = 32;
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         $this->validate($value);
     }

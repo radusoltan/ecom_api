@@ -62,7 +62,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class StockAvailabilityResource
 {
     /**
-     * @param array<StockAvailabilityItemResource>|null     $items    Items to check
+     * @param array<StockAvailabilityItemResource>|null       $items Items to check
      * @param array<StockAvailabilityItemResultResource>|null $items Response items with availability
      */
     public function __construct(

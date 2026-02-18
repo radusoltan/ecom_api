@@ -30,7 +30,7 @@ final readonly class PaymentRetryService
 
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
         $this->retryPolicy = RetryPolicy::default();
     }
@@ -170,7 +170,7 @@ final readonly class PaymentRetryService
                     'payment_id' => $payment->id()->toString(),
                     'total_attempts' => $payment->retryCount(),
                 ]);
-                // @phpstan-ignore-next-line booleanNot.alwaysTrue (placeholder until gateway integration)
+            // @phpstan-ignore-next-line booleanNot.alwaysTrue (placeholder until gateway integration)
             } elseif (!$wasSuccessful) {
                 // Schedule next retry
                 $this->scheduleRetry($payment);

@@ -31,7 +31,7 @@ final readonly class CustomerPreferences
         private bool $marketingEmailsAllowed,
         private bool $smsNotificationsAllowed,
         private bool $orderNotificationsEnabled,
-        private bool $promotionNotificationsEnabled
+        private bool $promotionNotificationsEnabled,
     ) {
         $this->validate();
     }
@@ -46,7 +46,7 @@ final readonly class CustomerPreferences
         bool $marketingEmailsAllowed = false,
         bool $smsNotificationsAllowed = false,
         bool $orderNotificationsEnabled = true,
-        bool $promotionNotificationsEnabled = false
+        bool $promotionNotificationsEnabled = false,
     ): self {
         return new self(
             $preferredLanguage ?? self::DEFAULT_LANGUAGE,

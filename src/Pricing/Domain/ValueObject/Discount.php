@@ -14,7 +14,7 @@ final readonly class Discount
 {
     private function __construct(
         private DiscountType $type,
-        private float $value
+        private float $value,
     ) {
         if ($this->type->isPercentage()) {
             if ($this->value < 0.01 || $this->value > 100) {

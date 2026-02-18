@@ -32,7 +32,7 @@ final readonly class PaymentIntentResult
         public ?string $customerId,
         public ?string $errorCode,
         public ?string $errorMessage,
-        public ?string $rawResponse
+        public ?string $rawResponse,
     ) {
     }
 
@@ -42,7 +42,7 @@ final readonly class PaymentIntentResult
         Money $amount,
         ?string $clientSecret = null,
         ?string $customerId = null,
-        ?string $rawResponse = null
+        ?string $rawResponse = null,
     ): self {
         return new self(
             success: true,
@@ -61,7 +61,7 @@ final readonly class PaymentIntentResult
         string $errorCode,
         string $errorMessage,
         ?string $gatewayPaymentIntentId = null,
-        ?string $rawResponse = null
+        ?string $rawResponse = null,
     ): self {
         return new self(
             success: false,
@@ -77,7 +77,7 @@ final readonly class PaymentIntentResult
     }
 
     /**
-     * Check if payment requires additional action (3D Secure, SCA, etc.)
+     * Check if payment requires additional action (3D Secure, SCA, etc.).
      */
     public function requiresAction(): bool
     {
@@ -85,7 +85,7 @@ final readonly class PaymentIntentResult
     }
 
     /**
-     * Check if payment has been authorized (funds reserved)
+     * Check if payment has been authorized (funds reserved).
      */
     public function isAuthorized(): bool
     {
@@ -93,7 +93,7 @@ final readonly class PaymentIntentResult
     }
 
     /**
-     * Check if payment has been captured (funds transferred)
+     * Check if payment has been captured (funds transferred).
      */
     public function isCaptured(): bool
     {
@@ -101,7 +101,7 @@ final readonly class PaymentIntentResult
     }
 
     /**
-     * Check if payment is in a final state (cannot be modified)
+     * Check if payment is in a final state (cannot be modified).
      */
     public function isFinal(): bool
     {
@@ -109,7 +109,7 @@ final readonly class PaymentIntentResult
     }
 
     /**
-     * Check if payment requires confirmation
+     * Check if payment requires confirmation.
      */
     public function requiresConfirmation(): bool
     {
@@ -117,7 +117,7 @@ final readonly class PaymentIntentResult
     }
 
     /**
-     * Check if payment is still processing
+     * Check if payment is still processing.
      */
     public function isProcessing(): bool
     {

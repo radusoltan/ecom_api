@@ -19,7 +19,7 @@ final readonly class RecordLoyaltyTransactionCommandHandler
 {
     public function __construct(
         private CustomerRepositoryInterface $customerRepository,
-        private LoyaltyPointTransactionRepositoryInterface $transactionRepository
+        private LoyaltyPointTransactionRepositoryInterface $transactionRepository,
     ) {
     }
 

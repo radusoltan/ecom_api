@@ -16,7 +16,7 @@ final readonly class DoctrineORMTenantRepository implements TenantRepositoryInte
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MessageBusInterface $eventBus
+        private MessageBusInterface $eventBus,
     ) {
     }
 

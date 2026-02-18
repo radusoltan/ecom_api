@@ -32,7 +32,7 @@ final class InventoryStatsDto
         public readonly array $topProducts,
         /** @var array<string, mixed> */
         public readonly array $stockMovement,
-        public readonly string $generatedAt
+        public readonly string $generatedAt,
     ) {
     }
 }

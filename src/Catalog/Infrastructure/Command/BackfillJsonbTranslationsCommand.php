@@ -22,7 +22,7 @@ final class BackfillJsonbTranslationsCommand extends Command
     private const BATCH_SIZE = 500;
 
     public function __construct(
-        private readonly Connection $connection
+        private readonly Connection $connection,
     ) {
         parent::__construct();
     }
@@ -90,7 +90,7 @@ final class BackfillJsonbTranslationsCommand extends Command
             'product' => ['catalog_products'],
             'category' => ['catalog_categories'],
             'all' => ['catalog_products', 'catalog_categories'],
-            default => []
+            default => [],
         };
 
         if (empty($entities)) {
@@ -151,13 +151,13 @@ final class BackfillJsonbTranslationsCommand extends Command
         string $tenantId,
         int $batchSize,
         bool $dryRun,
-        bool $resume
+        bool $resume,
     ): int {
         $entityType = str_replace('catalog_', '', $tableName);
         $className = match ($entityType) {
             'products' => 'App\\Catalog\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductEntity',
             'categories' => 'App\\Catalog\\Infrastructure\\Persistence\\Doctrine\\Entity\\CategoryEntity',
-            default => null
+            default => null,
         };
 
         if (!$className) {
@@ -265,7 +265,7 @@ final class BackfillJsonbTranslationsCommand extends Command
         foreach ($translations as $translation) {
             $field = match ($translation['field']) {
                 'shortDescription' => 'short_description',
-                default => $translation['field']
+                default => $translation['field'],
             };
 
             if (isset($jsonbData[$field])) {
@@ -281,7 +281,7 @@ final class BackfillJsonbTranslationsCommand extends Command
     private function updateEntityTranslations(
         string $tableName,
         string $entityId,
-        array $jsonbData
+        array $jsonbData,
     ): void {
         $sql = sprintf(
             'UPDATE %s SET
@@ -328,7 +328,7 @@ final class BackfillJsonbTranslationsCommand extends Command
         string $tenantId,
         int $batchSize,
         int $offset,
-        ?string $lastProcessedId
+        ?string $lastProcessedId,
     ): array {
         $sql = sprintf('SELECT id, tenant_id FROM %s WHERE 1=1', $tableName);
         $params = [];

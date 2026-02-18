@@ -18,7 +18,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class GetLowestPriceInLastDaysQueryHandler
 {
     public function __construct(
-        private PriceHistoryRepositoryInterface $priceHistoryRepository
+        private PriceHistoryRepositoryInterface $priceHistoryRepository,
     ) {
     }
 

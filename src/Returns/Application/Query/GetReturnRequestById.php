@@ -12,7 +12,7 @@ namespace App\Returns\Application\Query;
 final readonly class GetReturnRequestById
 {
     public function __construct(
-        public string $returnRequestId
+        public string $returnRequestId,
     ) {
     }
 }

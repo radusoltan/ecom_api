@@ -15,16 +15,16 @@ use App\Shared\Domain\ValueObject\Money;
 final readonly class StackedDiscount
 {
     /**
-     * @param Money                  $originalPrice      Price before any discounts
-     * @param Money                  $finalPrice         Price after all discounts applied
-     * @param Money                  $totalDiscount      Total amount discounted
-     * @param DiscountApplication[] $applications       Individual discount applications in order
+     * @param Money                 $originalPrice Price before any discounts
+     * @param Money                 $finalPrice    Price after all discounts applied
+     * @param Money                 $totalDiscount Total amount discounted
+     * @param DiscountApplication[] $applications  Individual discount applications in order
      */
     public function __construct(
         private Money $originalPrice,
         private Money $finalPrice,
         private Money $totalDiscount,
-        private array $applications
+        private array $applications,
     ) {
         if ($this->totalDiscount->isNegative()) {
             throw new \InvalidArgumentException('Total discount cannot be negative');
@@ -79,7 +79,7 @@ final readonly class StackedDiscount
      */
     public function effectiveDiscountPercentage(): float
     {
-        if ($this->originalPrice->getAmount() === 0) {
+        if (0 === $this->originalPrice->getAmount()) {
             return 0.0;
         }
 

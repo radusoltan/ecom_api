@@ -100,7 +100,7 @@ final class VariantApiTest extends ApiTestCase
             // Note: options and variants are cascade-deleted via foreign keys
             try {
                 $connection->executeStatement(
-                    "DELETE FROM catalog_configurable_products WHERE tenant_id = :tenant_id",
+                    'DELETE FROM catalog_configurable_products WHERE tenant_id = :tenant_id',
                     ['tenant_id' => $this->tenantId->toString()]
                 );
             } catch (\Exception $e) {
@@ -111,7 +111,7 @@ final class VariantApiTest extends ApiTestCase
             $em->clear();
         } catch (\Exception $e) {
             // Cleanup failed, but don't break tests
-            error_log('Cleanup failed: ' . $e->getMessage());
+            error_log('Cleanup failed: '.$e->getMessage());
         }
     }
 

@@ -21,7 +21,7 @@ final readonly class FlashSaleScheduled implements DomainEvent
         private array $productIds,
         private \DateTimeImmutable $startTime,
         private \DateTimeImmutable $endTime,
-        private \DateTimeImmutable $occurredAt
+        private \DateTimeImmutable $occurredAt,
     ) {
     }
 

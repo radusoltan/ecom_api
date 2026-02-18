@@ -17,7 +17,7 @@ final class ExportPriceListsHandler
 {
     public function __construct(
         private readonly PriceListRepositoryInterface $repository,
-        private readonly PricingExportService $exportService
+        private readonly PricingExportService $exportService,
     ) {
     }
 
@@ -50,6 +50,7 @@ final class ExportPriceListsHandler
 
     /**
      * @param array<\App\Pricing\Domain\Model\PriceList> $priceLists
+     *
      * @return array<\App\Pricing\Domain\Model\PriceList>
      */
     private function filterByDateRange(array $priceLists, \App\Pricing\Application\DTO\ExportFilter $filter): array

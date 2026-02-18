@@ -30,7 +30,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final class ReleaseExpiredReservationsCommand extends Command
 {
     public function __construct(
-        private readonly MessageBusInterface $messageBus
+        private readonly MessageBusInterface $messageBus,
     ) {
         parent::__construct();
     }

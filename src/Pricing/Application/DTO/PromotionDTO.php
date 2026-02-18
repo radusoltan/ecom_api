@@ -22,7 +22,7 @@ final readonly class PromotionDTO
         public ?string $validFrom,
         public ?string $validTo,
         public string $createdAt,
-        public string $updatedAt
+        public string $updatedAt,
     ) {
     }
 

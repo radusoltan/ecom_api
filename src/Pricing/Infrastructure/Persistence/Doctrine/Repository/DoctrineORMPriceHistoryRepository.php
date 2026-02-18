@@ -20,7 +20,7 @@ use Doctrine\ORM\EntityManagerInterface;
 final readonly class DoctrineORMPriceHistoryRepository implements PriceHistoryRepositoryInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -35,7 +35,7 @@ final readonly class DoctrineORMPriceHistoryRepository implements PriceHistoryRe
         ProductId $productId,
         TenantId $tenantId,
         int $limit = 50,
-        int $offset = 0
+        int $offset = 0,
     ): array {
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select('ph')
@@ -51,7 +51,7 @@ final readonly class DoctrineORMPriceHistoryRepository implements PriceHistoryRe
         $entities = $qb->getQuery()->getResult();
 
         return array_map(
-            fn(PriceHistoryEntity $entity) => $entity->toPriceChange(),
+            fn (PriceHistoryEntity $entity) => $entity->toPriceChange(),
             $entities
         );
     }
@@ -70,7 +70,7 @@ final readonly class DoctrineORMPriceHistoryRepository implements PriceHistoryRe
         $entities = $qb->getQuery()->getResult();
 
         return array_map(
-            fn(PriceHistoryEntity $entity) => $entity->toPriceChange(),
+            fn (PriceHistoryEntity $entity) => $entity->toPriceChange(),
             $entities
         );
     }
@@ -80,7 +80,7 @@ final readonly class DoctrineORMPriceHistoryRepository implements PriceHistoryRe
         \DateTimeImmutable $from,
         \DateTimeImmutable $to,
         int $limit = 50,
-        int $offset = 0
+        int $offset = 0,
     ): array {
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select('ph')
@@ -98,7 +98,7 @@ final readonly class DoctrineORMPriceHistoryRepository implements PriceHistoryRe
         $entities = $qb->getQuery()->getResult();
 
         return array_map(
-            fn(PriceHistoryEntity $entity) => $entity->toPriceChange(),
+            fn (PriceHistoryEntity $entity) => $entity->toPriceChange(),
             $entities
         );
     }

@@ -18,7 +18,7 @@ final readonly class CreateUser
         public string $email,
         public string $username,
         public string $plainPassword,
-        public array $roles = []
+        public array $roles = [],
     ) {
     }
 }

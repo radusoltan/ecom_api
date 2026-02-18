@@ -14,7 +14,7 @@ final readonly class PlaceOrderCommand
         public array $shippingAddress, // ['street', 'city', 'state', 'postalCode', 'country']
         public array $billingAddress, // ['street', 'city', 'state', 'postalCode', 'country']
         public ?string $couponCode = null, // Optional coupon code
-        public array $promotionContext = [] // Context for promotion evaluation (customer segment, categories, etc.)
+        public array $promotionContext = [], // Context for promotion evaluation (customer segment, categories, etc.)
     ) {
     }
 }

@@ -18,7 +18,7 @@ final class DoctrineProductRepository implements ProductRepositoryInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly MessageBusInterface $eventBus
+        private readonly MessageBusInterface $eventBus,
     ) {
     }
 

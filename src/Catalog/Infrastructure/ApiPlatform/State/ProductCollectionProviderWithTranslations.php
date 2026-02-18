@@ -24,7 +24,7 @@ final readonly class ProductCollectionProviderWithTranslations implements Provid
         private EntityManagerInterface $entityManager,
         private RequestStack $requestStack,
         private LocalizationPolicy $localizationPolicy,
-        private I18nCacheService $cacheService
+        private I18nCacheService $cacheService,
     ) {
     }
 
@@ -138,7 +138,7 @@ final readonly class ProductCollectionProviderWithTranslations implements Provid
     private function applyTranslations(
         ProductEntityWithTranslations $product,
         Locale $locale,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): array {
         // Convert to array representation with localized fields
         $productArray = [
@@ -189,7 +189,7 @@ final readonly class ProductCollectionProviderWithTranslations implements Provid
             'EUR' => '€'.number_format($amount, 2),
             'GBP' => '£'.number_format($amount, 2),
             'RON' => number_format($amount, 2).' RON',
-            default => $currencyCode.' '.number_format($amount, 2)
+            default => $currencyCode.' '.number_format($amount, 2),
         };
     }
 

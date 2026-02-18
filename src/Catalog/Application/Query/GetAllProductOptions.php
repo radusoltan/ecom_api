@@ -14,7 +14,7 @@ final readonly class GetAllProductOptions
 {
     public function __construct(
         public TenantId $tenantId,
-        public ?string $locale = null
+        public ?string $locale = null,
     ) {
     }
 }

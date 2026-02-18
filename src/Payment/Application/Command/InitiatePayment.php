@@ -23,7 +23,7 @@ final readonly class InitiatePayment
         public string $currency,
         public string $customerEmail,
         public PaymentMethod $method,
-        public PaymentGateway $gateway
+        public PaymentGateway $gateway,
     ) {
     }
 }

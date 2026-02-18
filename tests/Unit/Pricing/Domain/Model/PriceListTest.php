@@ -596,7 +596,7 @@ final class PriceListTest extends TestCase
 
     private function createPriceListWithDates(
         ?\DateTimeImmutable $validFrom,
-        ?\DateTimeImmutable $validTo
+        ?\DateTimeImmutable $validTo,
     ): PriceList {
         return PriceList::create(
             PriceListId::generate(),

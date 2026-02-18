@@ -8,7 +8,6 @@ use App\Payment\Application\Command\CapturePayment;
 use App\Payment\Application\Command\MarkPaymentAsFailed;
 use App\Payment\Application\Query\GetPaymentById;
 use App\Payment\Domain\Model\PaymentId;
-use App\Shared\Domain\ValueObject\TenantId;
 use Psr\Log\LoggerInterface;
 use Stripe\Event;
 use Stripe\Exception\SignatureVerificationException;
@@ -34,7 +33,7 @@ final readonly class StripeWebhookHandler
         private string $webhookSecret,
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

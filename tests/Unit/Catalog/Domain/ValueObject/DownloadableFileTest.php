@@ -123,7 +123,7 @@ final class DownloadableFileTest extends TestCase
 
         DownloadableFile::create(
             filename: 'file.pdf',
-            fileUrl: 'https://cdn.example.com/' . str_repeat('a', 500),
+            fileUrl: 'https://cdn.example.com/'.str_repeat('a', 500),
             fileSizeBytes: 1024
         );
     }

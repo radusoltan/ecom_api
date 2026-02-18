@@ -20,7 +20,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final readonly class UpdateUserProcessor implements ProcessorInterface
 {
     public function __construct(
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $messageBus,
     ) {
     }
 

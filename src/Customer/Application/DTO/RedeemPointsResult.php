@@ -13,7 +13,7 @@ final readonly class RedeemPointsResult
         public int $pointsRedeemed,
         public float $discountAmount,
         public string $discountCurrency,
-        public int $remainingBalance
+        public int $remainingBalance,
     ) {
     }
 

@@ -20,7 +20,7 @@ final readonly class UpdateSubscriptionCommand
         public SubscriptionInterval $interval,
         public int $billingCycles,
         public Money $setupFee,
-        public ?\DateTimeImmutable $trialPeriodEnd = null
+        public ?\DateTimeImmutable $trialPeriodEnd = null,
     ) {
     }
 }

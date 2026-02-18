@@ -49,7 +49,7 @@ final class ReturnRequest
         private ?string $inspectionNotes,
         private ?string $rejectionReason,
         private \DateTimeImmutable $createdAt,
-        private \DateTimeImmutable $updatedAt
+        private \DateTimeImmutable $updatedAt,
     ) {
     }
 
@@ -63,7 +63,7 @@ final class ReturnRequest
         ReturnRequestId $id,
         TenantId $tenantId,
         OrderId $orderId,
-        ReturnReason $reason
+        ReturnReason $reason,
     ): self {
         $now = new \DateTimeImmutable();
 
@@ -238,7 +238,7 @@ final class ReturnRequest
         ?string $inspectionNotes,
         ?string $rejectionReason,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             $id,

@@ -267,7 +267,7 @@ final class DiscountStackingServiceTest extends TestCase
         PromotionType $type,
         Discount $discount,
         int $priority = 100,
-        ?CouponCode $couponCode = null
+        ?CouponCode $couponCode = null,
     ): Promotion {
         $promotion = Promotion::create(
             id: PromotionId::generate(),

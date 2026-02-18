@@ -9,7 +9,7 @@ use ApiPlatform\Metadata\GetCollection;
 use App\Search\Infrastructure\ApiPlatform\State\SearchProvider;
 
 /**
- * SearchResultResource
+ * SearchResultResource.
  *
  * API Platform resource for product search.
  *
@@ -108,5 +108,6 @@ final class SearchResultResource
         public int $totalPages = 0,
         public array $facets = [],
         public float $took = 0.0,
-    ) {}
+    ) {
+    }
 }

@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Create Tax bounded context tables with Row-Level Security
+ * Create Tax bounded context tables with Row-Level Security.
  *
  * This migration creates the tax_rules and vat_validations tables for the Tax context.
  * Both tables are multi-tenant with RLS policies for complete tenant isolation.
@@ -34,8 +34,9 @@ final class Version20251128120000_CreateTaxTables extends AbstractMigration
     public function up(Schema $schema): void
     {
         // =========================================================
-        // Create tax_rules table
+        // Recreate tax_rules table with updated schema
         // =========================================================
+        $this->addSql('DROP TABLE IF EXISTS tax_rules CASCADE');
         $this->addSql('
             CREATE TABLE tax_rules (
                 id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -55,12 +56,6 @@ final class Version20251128120000_CreateTaxTables extends AbstractMigration
 
                 CONSTRAINT fk_tax_rules_tenant FOREIGN KEY (tenant_id)
                     REFERENCES tenants(id) ON DELETE CASCADE,
-
-                -- Business Rule: Only one active rule per jurisdiction + category per tenant
-                -- Ensures deterministic tax calculation
-                CONSTRAINT uq_tax_rules_jurisdiction_category
-                    UNIQUE NULLS NOT DISTINCT (tenant_id, country_code, region_code, category, is_active)
-                    WHERE is_active = true,
 
                 -- Business Rule: Rate must be between 0% and 100%
                 CONSTRAINT chk_tax_rules_rate_valid
@@ -84,28 +79,35 @@ final class Version20251128120000_CreateTaxTables extends AbstractMigration
         // Indexes for tax_rules
         // =========================================================
 
+        // Business Rule: Only one active rule per jurisdiction + category per tenant
+        $this->addSql('
+            CREATE UNIQUE INDEX IF NOT EXISTS uq_tax_rules_jurisdiction_category
+            ON tax_rules(tenant_id, country_code, region_code, category)
+            WHERE is_active = true
+        ');
+
         // Primary tenant isolation index (CRITICAL for RLS performance)
-        $this->addSql('CREATE INDEX idx_tax_rules_tenant ON tax_rules(tenant_id)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS idx_tax_rules_tenant ON tax_rules(tenant_id)');
 
         // Lookup index for tax calculation (most frequent query pattern)
         $this->addSql('
-            CREATE INDEX idx_tax_rules_jurisdiction_lookup
+            CREATE INDEX IF NOT EXISTS idx_tax_rules_jurisdiction_lookup
             ON tax_rules(tenant_id, country_code, region_code, category, is_active)
             WHERE is_active = true
         ');
 
         // Index for country-based queries
-        $this->addSql('CREATE INDEX idx_tax_rules_country ON tax_rules(country_code)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS idx_tax_rules_country ON tax_rules(country_code)');
 
         // Index for category filtering
-        $this->addSql('CREATE INDEX idx_tax_rules_category ON tax_rules(category)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS idx_tax_rules_category ON tax_rules(category)');
 
         // Index for active rules filtering
-        $this->addSql('CREATE INDEX idx_tax_rules_active ON tax_rules(is_active) WHERE is_active = true');
+        $this->addSql('CREATE INDEX IF NOT EXISTS idx_tax_rules_active ON tax_rules(is_active) WHERE is_active = true');
 
         // Index for validity period queries (find applicable rules for a given date)
         $this->addSql('
-            CREATE INDEX idx_tax_rules_validity
+            CREATE INDEX IF NOT EXISTS idx_tax_rules_validity
             ON tax_rules(valid_from, valid_until)
             WHERE is_active = true
         ');
@@ -114,7 +116,7 @@ final class Version20251128120000_CreateTaxTables extends AbstractMigration
         // Create vat_validations table
         // =========================================================
         $this->addSql('
-            CREATE TABLE vat_validations (
+            CREATE TABLE IF NOT EXISTS vat_validations (
                 id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                 tenant_id UUID NOT NULL,
                 vat_number VARCHAR(20) NOT NULL,
@@ -146,19 +148,19 @@ final class Version20251128120000_CreateTaxTables extends AbstractMigration
         // =========================================================
 
         // Primary tenant isolation index (CRITICAL for RLS performance)
-        $this->addSql('CREATE INDEX idx_vat_validations_tenant ON vat_validations(tenant_id)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS idx_vat_validations_tenant ON vat_validations(tenant_id)');
 
         // Cache lookup index (most frequent query pattern: check if validation exists and is not expired)
         $this->addSql('
-            CREATE INDEX idx_vat_validations_lookup
+            CREATE INDEX IF NOT EXISTS idx_vat_validations_lookup
             ON vat_validations(tenant_id, vat_number, expires_at)
         ');
 
         // Index for VAT number queries
-        $this->addSql('CREATE INDEX idx_vat_validations_number ON vat_validations(vat_number)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS idx_vat_validations_number ON vat_validations(vat_number)');
 
         // Index for cleanup of expired validations (background job)
-        $this->addSql('CREATE INDEX idx_vat_validations_expires ON vat_validations(expires_at)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS idx_vat_validations_expires ON vat_validations(expires_at)');
 
         // =========================================================
         // Enable Row-Level Security on tax_rules

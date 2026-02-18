@@ -27,7 +27,7 @@ final readonly class PromotionApplicationService
     public function __construct(
         private PromotionRepositoryInterface $promotionRepository,
         private PromotionStackingServiceInterface $stackingService,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -45,7 +45,7 @@ final readonly class PromotionApplicationService
         TenantId $tenantId,
         Money $subtotal,
         ?string $couponCode = null,
-        array $context = []
+        array $context = [],
     ): array {
         $applicablePromotions = [];
         $now = new \DateTimeImmutable();
@@ -98,7 +98,7 @@ final readonly class PromotionApplicationService
         string $couponCode,
         Money $subtotal,
         array $context,
-        \DateTimeImmutable $now
+        \DateTimeImmutable $now,
     ): ?Promotion {
         try {
             $code = CouponCode::fromString($couponCode);

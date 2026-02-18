@@ -21,7 +21,7 @@ final readonly class CreateTenantProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private MessageBusInterface $queryBus
+        private MessageBusInterface $queryBus,
     ) {
     }
 
@@ -29,7 +29,7 @@ final readonly class CreateTenantProcessor implements ProcessorInterface
         mixed $data,
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
+        array $context = [],
     ): TenantResource {
         if (!$data instanceof TenantResource) {
             throw new \InvalidArgumentException('Expected TenantResource');

@@ -375,7 +375,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
     // Helper methods
     private function createPayment(
         ?TenantId $tenantId = null,
-        ?string $orderId = null
+        ?string $orderId = null,
     ): Payment {
         return Payment::create(
             id: PaymentId::generate(),

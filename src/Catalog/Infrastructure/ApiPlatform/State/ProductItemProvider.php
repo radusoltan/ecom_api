@@ -18,7 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 final readonly class ProductItemProvider implements ProviderInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

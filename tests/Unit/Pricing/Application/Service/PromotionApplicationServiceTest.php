@@ -117,7 +117,7 @@ final class PromotionApplicationServiceTest extends TestCase
         Discount $discount,
         int $priority = 100,
         ?CouponCode $couponCode = null,
-        array $conditions = []
+        array $conditions = [],
     ): Promotion {
         $promotion = Promotion::create(
             id: PromotionId::generate(),

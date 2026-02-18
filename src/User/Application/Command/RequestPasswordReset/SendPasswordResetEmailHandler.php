@@ -24,7 +24,7 @@ final readonly class SendPasswordResetEmailHandler
         private TranslatorInterface $translator,
         private LoggerInterface $logger,
         private string $frontendUrl,
-        private string $fromEmail
+        private string $fromEmail,
     ) {
     }
 

@@ -23,16 +23,16 @@ use App\Tax\Domain\ValueObject\TaxRate;
 final readonly class TaxCalculationResult
 {
     /**
-     * @param int $netAmountInCents Net amount (before tax)
-     * @param int $taxAmountInCents Total tax amount
-     * @param int $grossAmountInCents Gross amount (net + tax)
-     * @param TaxRate $appliedRate Effective tax rate applied
-     * @param TaxJurisdiction $taxJurisdiction Jurisdiction where tax applies
-     * @param TaxCategory $category Tax category used
-     * @param string $taxType Type of tax ('vat', 'sales_tax', 'gst', etc.)
-     * @param bool $reverseCharge True if reverse charge applies (B2B VAT)
-     * @param string|null $exemptionReason Reason if tax exempt
-     * @param array<string, mixed> $breakdown Detailed breakdown for compound taxes
+     * @param int                  $netAmountInCents   Net amount (before tax)
+     * @param int                  $taxAmountInCents   Total tax amount
+     * @param int                  $grossAmountInCents Gross amount (net + tax)
+     * @param TaxRate              $appliedRate        Effective tax rate applied
+     * @param TaxJurisdiction      $taxJurisdiction    Jurisdiction where tax applies
+     * @param TaxCategory          $category           Tax category used
+     * @param string               $taxType            Type of tax ('vat', 'sales_tax', 'gst', etc.)
+     * @param bool                 $reverseCharge      True if reverse charge applies (B2B VAT)
+     * @param string|null          $exemptionReason    Reason if tax exempt
+     * @param array<string, mixed> $breakdown          Detailed breakdown for compound taxes
      */
     private function __construct(
         public int $netAmountInCents,
@@ -44,7 +44,7 @@ final readonly class TaxCalculationResult
         public string $taxType,
         public bool $reverseCharge,
         public ?string $exemptionReason,
-        public array $breakdown
+        public array $breakdown,
     ) {
     }
 
@@ -62,7 +62,7 @@ final readonly class TaxCalculationResult
         string $taxType,
         bool $reverseCharge = false,
         ?string $exemptionReason = null,
-        array $breakdown = []
+        array $breakdown = [],
     ): self {
         return new self(
             netAmountInCents: $netAmountInCents,
@@ -85,7 +85,7 @@ final readonly class TaxCalculationResult
         int $amountInCents,
         TaxJurisdiction $jurisdiction,
         TaxCategory $category,
-        string $reason
+        string $reason,
     ): self {
         return new self(
             netAmountInCents: $amountInCents,
@@ -108,7 +108,7 @@ final readonly class TaxCalculationResult
         int $amountInCents,
         TaxRate $theoreticalRate,
         TaxJurisdiction $jurisdiction,
-        TaxCategory $category
+        TaxCategory $category,
     ): self {
         return new self(
             netAmountInCents: $amountInCents,
@@ -134,7 +134,7 @@ final readonly class TaxCalculationResult
         TaxJurisdiction $jurisdiction,
         TaxCategory $category,
         string $taxType,
-        array $components
+        array $components,
     ): self {
         $totalTaxAmount = array_sum(array_column($components, 'amount'));
         $totalRate = array_sum(array_column($components, 'rate'));
@@ -155,7 +155,7 @@ final readonly class TaxCalculationResult
 
     public function isExempt(): bool
     {
-        return $this->exemptionReason !== null;
+        return null !== $this->exemptionReason;
     }
 
     public function isReverseCharge(): bool
@@ -168,7 +168,7 @@ final readonly class TaxCalculationResult
      */
     public function effectiveRate(): float
     {
-        if ($this->netAmountInCents === 0) {
+        if (0 === $this->netAmountInCents) {
             return 0.0;
         }
 

@@ -34,7 +34,7 @@ final class CartItem
         ProductId $productId,
         ?string $variantId,
         Quantity $quantity,
-        Money $unitPrice
+        Money $unitPrice,
     ): self {
         $item = new self();
         $item->id = $id;

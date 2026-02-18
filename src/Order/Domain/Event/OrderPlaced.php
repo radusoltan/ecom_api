@@ -14,7 +14,7 @@ final readonly class OrderPlaced
         public OrderId $orderId,
         public TenantId $tenantId,
         public string $customerEmail,
-        public Money $total
+        public Money $total,
     ) {
     }
 }

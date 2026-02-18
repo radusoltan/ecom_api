@@ -26,7 +26,7 @@ enum SubscriptionInterval: string
     public static function values(): array
     {
         return array_map(
-            static fn(self $interval): string => $interval->value,
+            static fn (self $interval): string => $interval->value,
             self::cases()
         );
     }
@@ -44,7 +44,7 @@ enum SubscriptionInterval: string
      */
     public function isDaily(): bool
     {
-        return $this === self::DAILY;
+        return self::DAILY === $this;
     }
 
     /**
@@ -52,7 +52,7 @@ enum SubscriptionInterval: string
      */
     public function isWeekly(): bool
     {
-        return $this === self::WEEKLY;
+        return self::WEEKLY === $this;
     }
 
     /**
@@ -60,7 +60,7 @@ enum SubscriptionInterval: string
      */
     public function isMonthly(): bool
     {
-        return $this === self::MONTHLY;
+        return self::MONTHLY === $this;
     }
 
     /**
@@ -68,7 +68,7 @@ enum SubscriptionInterval: string
      */
     public function isYearly(): bool
     {
-        return $this === self::YEARLY;
+        return self::YEARLY === $this;
     }
 
     /**

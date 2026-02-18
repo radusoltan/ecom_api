@@ -15,12 +15,12 @@ interface EmailSenderInterface
     /**
      * Send an email using HTML and text templates.
      *
-     * @param string $to Recipient email address
-     * @param string $subject Email subject
-     * @param string $templateName Template name without extension (e.g., 'order/order_placed')
-     * @param array<string, mixed> $context Template variables
-     * @param string|null $locale Optional locale for translations (default: 'en')
-     * @param string|null $fromEmail Optional custom sender email
+     * @param string               $to           Recipient email address
+     * @param string               $subject      Email subject
+     * @param string               $templateName Template name without extension (e.g., 'order/order_placed')
+     * @param array<string, mixed> $context      Template variables
+     * @param string|null          $locale       Optional locale for translations (default: 'en')
+     * @param string|null          $fromEmail    Optional custom sender email
      *
      * @throws \Throwable If email sending fails
      */

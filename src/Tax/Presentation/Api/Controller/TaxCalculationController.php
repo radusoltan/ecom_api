@@ -26,7 +26,7 @@ final class TaxCalculationController extends AbstractController
     public function __construct(
         private readonly MessageBusInterface $queryBus,
         private readonly TenantContextInterface $tenantContext,
-        private readonly ValidatorInterface $validator
+        private readonly ValidatorInterface $validator,
     ) {
     }
 
@@ -174,7 +174,7 @@ final class TaxCalculationController extends AbstractController
             );
         } catch (\Exception $e) {
             return new JsonResponse(
-                ['error' => 'Tax calculation failed: ' . $e->getMessage()],
+                ['error' => 'Tax calculation failed: '.$e->getMessage()],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }

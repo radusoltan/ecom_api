@@ -7,7 +7,7 @@ namespace App\Media\Domain\ValueObject;
 final readonly class FilePath
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
     }
 

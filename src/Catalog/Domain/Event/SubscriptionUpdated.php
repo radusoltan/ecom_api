@@ -21,7 +21,7 @@ final readonly class SubscriptionUpdated implements DomainEvent
         private TenantId $tenantId,
         private Subscription $oldSubscription,
         private Subscription $newSubscription,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

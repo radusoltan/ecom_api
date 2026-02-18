@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Payment\Application\Command;
 
 use App\Payment\Application\Command\CreatePaymentIntent\CreatePaymentIntentCommand;
 use App\Payment\Application\Command\CreatePaymentIntent\CreatePaymentIntentHandler;
-use App\Payment\Application\Command\CreatePaymentIntent\CreatePaymentIntentResult;
 use App\Payment\Domain\Model\Payment;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use App\Payment\Domain\Service\PaymentGatewayInterface;

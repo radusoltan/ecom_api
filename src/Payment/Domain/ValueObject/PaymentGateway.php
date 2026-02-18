@@ -22,7 +22,7 @@ final readonly class PaymentGateway
     ];
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!in_array($value, self::VALID_GATEWAYS, true)) {
             throw new \InvalidArgumentException(sprintf('Invalid payment gateway: "%s". Allowed: %s', $value, implode(', ', self::VALID_GATEWAYS)));

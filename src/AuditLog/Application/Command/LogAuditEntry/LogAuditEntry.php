@@ -21,7 +21,7 @@ final readonly class LogAuditEntry
         /** @var array<string, mixed> */
         public array $metadata = [],
         public ?string $ipAddress = null,
-        public ?string $userAgent = null
+        public ?string $userAgent = null,
     ) {
     }
 }

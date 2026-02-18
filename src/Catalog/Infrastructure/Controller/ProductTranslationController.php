@@ -22,7 +22,7 @@ final class ProductTranslationController extends AbstractController
 {
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
-        private readonly MessageBusInterface $messageBus
+        private readonly MessageBusInterface $messageBus,
     ) {
     }
 

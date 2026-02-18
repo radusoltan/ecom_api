@@ -22,7 +22,7 @@ final readonly class DoctrineNotificationRepository implements NotificationRepos
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MessageBusInterface $eventBus
+        private MessageBusInterface $eventBus,
     ) {
     }
 

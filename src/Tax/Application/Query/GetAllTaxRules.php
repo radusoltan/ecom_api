@@ -15,7 +15,7 @@ final readonly class GetAllTaxRules
         public TenantId $tenantId,
         public bool $activeOnly = false,
         public int $limit = 100,
-        public int $offset = 0
+        public int $offset = 0,
     ) {
     }
 }

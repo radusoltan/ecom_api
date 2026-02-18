@@ -26,7 +26,7 @@ final class ImportPriceListHandler
     public function __construct(
         private readonly PriceListRepositoryInterface $repository,
         private readonly ImportValidationService $validationService,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -72,11 +72,11 @@ final class ImportPriceListHandler
 
                     // Update existing
                     $priceList = $this->updatePriceList($existingPriceList, $rows);
-                    $updatedCount++;
+                    ++$updatedCount;
                 } else {
                     // Create new
                     $priceList = $this->createPriceList($command->tenantId, $rows);
-                    $createdCount++;
+                    ++$createdCount;
                 }
 
                 $this->repository->save($priceList);
@@ -123,6 +123,7 @@ final class ImportPriceListHandler
 
     /**
      * @param array<array<string, mixed>> $rawRows
+     *
      * @return array<string, array<ImportRow>>
      */
     private function groupRowsByPriceList(array $rawRows): array
@@ -157,7 +158,7 @@ final class ImportPriceListHandler
      */
     private function createPriceList(
         \App\Shared\Domain\ValueObject\TenantId $tenantId,
-        array $rows
+        array $rows,
     ): PriceList {
         $firstRow = $rows[0];
 
@@ -209,7 +210,7 @@ final class ImportPriceListHandler
 
         // Clear existing rules and add new ones
         $existingRulesCount = count($priceList->rules());
-        for ($i = 0; $i < $existingRulesCount; $i++) {
+        for ($i = 0; $i < $existingRulesCount; ++$i) {
             $priceList->removeRule(0); // Always remove first rule
         }
 

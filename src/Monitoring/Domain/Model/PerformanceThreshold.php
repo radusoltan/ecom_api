@@ -25,7 +25,7 @@ final readonly class PerformanceThreshold
         public float $warningThreshold,
         public float $criticalThreshold,
         public string $unit = 'ms',
-        public ?string $description = null
+        public ?string $description = null,
     ) {
     }
 

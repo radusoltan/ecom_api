@@ -43,7 +43,7 @@ final class TestPayPalIntegrationCommand extends Command
 
     public function __construct(
         private readonly MessageBusInterface $commandBus,
-        private readonly MessageBusInterface $queryBus
+        private readonly MessageBusInterface $queryBus,
     ) {
         parent::__construct();
     }

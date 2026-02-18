@@ -18,7 +18,7 @@ final readonly class ExportPromotionsQuery
 
     public function __construct(
         public ExportFilter $filter,
-        public string $format = self::FORMAT_CSV
+        public string $format = self::FORMAT_CSV,
     ) {
         $this->validateFormat();
     }
@@ -26,9 +26,7 @@ final readonly class ExportPromotionsQuery
     private function validateFormat(): void
     {
         if (!in_array($this->format, [self::FORMAT_CSV, self::FORMAT_JSON], true)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid export format: %s. Supported formats: csv, json', $this->format)
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid export format: %s. Supported formats: csv, json', $this->format));
         }
     }
 

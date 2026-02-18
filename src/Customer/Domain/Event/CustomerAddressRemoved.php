@@ -11,7 +11,7 @@ final readonly class CustomerAddressRemoved
 {
     public function __construct(
         private CustomerId $customerId,
-        private CustomerAddressId $addressId
+        private CustomerAddressId $addressId,
     ) {
     }
 

@@ -6,7 +6,6 @@ namespace App\Tests\Functional\User\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Tests\Support\TenantTestTrait;
-use Symfony\Component\Uid\Uuid;
 
 /**
  * Functional Tests for User Login API.
@@ -97,8 +96,8 @@ final class LoginApiTest extends ApiTestCase
         ]);
 
         // Ensure registration succeeded
-        if ($client->getResponse()->getStatusCode() !== 201) {
-            throw new \RuntimeException('Failed to create test user: ' . $client->getResponse()->getContent());
+        if (201 !== $client->getResponse()->getStatusCode()) {
+            throw new \RuntimeException('Failed to create test user: '.$client->getResponse()->getContent());
         }
 
         return [
@@ -176,7 +175,7 @@ final class LoginApiTest extends ApiTestCase
         $client->request('POST', '/api/login_check', [
             'headers' => $this->headers(),
             'json' => [
-                'username' => 'nonexistent-' . uniqid() . '@example.com',
+                'username' => 'nonexistent-'.uniqid().'@example.com',
                 'password' => 'SomePassword123!',
             ],
         ]);
@@ -216,7 +215,7 @@ final class LoginApiTest extends ApiTestCase
         $client->request('GET', '/api/v1/payments', [
             'headers' => array_merge(
                 $this->headers(),
-                ['Authorization' => 'Bearer ' . $token]
+                ['Authorization' => 'Bearer '.$token]
             ),
         ]);
 

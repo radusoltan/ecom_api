@@ -72,16 +72,7 @@ enum PaymentStatus: string
     public function transitionTo(PaymentStatus $newStatus): PaymentStatus
     {
         if (!$this->canTransitionTo($newStatus)) {
-            throw new \DomainException(
-                sprintf(
-                    'Cannot transition from %s to %s. Valid transitions: %s',
-                    $this->value,
-                    $newStatus->value,
-                    empty(self::VALID_TRANSITIONS[$this->value])
-                        ? 'none (terminal state)'
-                        : implode(', ', self::VALID_TRANSITIONS[$this->value])
-                )
-            );
+            throw new \DomainException(sprintf('Cannot transition from %s to %s. Valid transitions: %s', $this->value, $newStatus->value, empty(self::VALID_TRANSITIONS[$this->value]) ? 'none (terminal state)' : implode(', ', self::VALID_TRANSITIONS[$this->value])));
         }
 
         return $newStatus;

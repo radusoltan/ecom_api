@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Tenant\Infrastructure;
 
-use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Shared\Infrastructure\Tenant\TenantContext;
 use App\Tenant\Domain\Model\Tenant;
 use App\Tenant\Domain\Repository\TenantRepositoryInterface;
-use App\Tenant\Domain\ValueObject\TenantName;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

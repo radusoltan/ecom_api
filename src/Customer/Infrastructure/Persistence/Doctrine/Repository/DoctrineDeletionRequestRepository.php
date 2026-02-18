@@ -18,7 +18,7 @@ final readonly class DoctrineDeletionRequestRepository implements DeletionReques
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MessageBusInterface $eventBus
+        private MessageBusInterface $eventBus,
     ) {
     }
 

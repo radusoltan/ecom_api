@@ -15,7 +15,6 @@ use App\Pricing\Infrastructure\ApiPlatform\State\PriceHistoryProvider;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\User\Domain\ValueObject\UserId;
-use Brick\Money\Currency;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
@@ -108,18 +107,18 @@ class PriceHistoryEntity
     public static function fromPriceChange(
         PriceChange $priceChange,
         TenantId $tenantId,
-        ?UserId $changedBy = null
+        ?UserId $changedBy = null,
     ): self {
         $entity = new self();
         $entity->tenantId = $tenantId->toString();
         $entity->productId = $priceChange->productId()->toString();
 
-        if ($priceChange->oldPrice() !== null) {
+        if (null !== $priceChange->oldPrice()) {
             $entity->oldPriceAmount = (string) $priceChange->oldPrice()->amount();
             $entity->oldPriceCurrency = $priceChange->oldPrice()->currency()->getCurrencyCode();
         }
 
-        if ($priceChange->newPrice() !== null) {
+        if (null !== $priceChange->newPrice()) {
             $entity->newPriceAmount = (string) $priceChange->newPrice()->amount();
             $entity->newPriceCurrency = $priceChange->newPrice()->currency()->getCurrencyCode();
         }
@@ -138,7 +137,7 @@ class PriceHistoryEntity
     public function toPriceChange(): PriceChange
     {
         $oldPrice = null;
-        if ($this->oldPriceAmount !== null && $this->oldPriceCurrency !== null) {
+        if (null !== $this->oldPriceAmount && null !== $this->oldPriceCurrency) {
             $oldPrice = Money::of(
                 $this->oldPriceAmount,
                 $this->oldPriceCurrency
@@ -146,7 +145,7 @@ class PriceHistoryEntity
         }
 
         $newPrice = null;
-        if ($this->newPriceAmount !== null && $this->newPriceCurrency !== null) {
+        if (null !== $this->newPriceAmount && null !== $this->newPriceCurrency) {
             $newPrice = Money::of(
                 $this->newPriceAmount,
                 $this->newPriceCurrency
@@ -224,7 +223,7 @@ class PriceHistoryEntity
      */
     public function getOldPrice(): ?array
     {
-        if ($this->oldPriceAmount === null || $this->oldPriceCurrency === null) {
+        if (null === $this->oldPriceAmount || null === $this->oldPriceCurrency) {
             return null;
         }
 
@@ -236,7 +235,7 @@ class PriceHistoryEntity
 
     public function getNewPrice(): ?array
     {
-        if ($this->newPriceAmount === null || $this->newPriceCurrency === null) {
+        if (null === $this->newPriceAmount || null === $this->newPriceCurrency) {
             return null;
         }
 

@@ -17,7 +17,7 @@ final class ExportPromotionsHandler
 {
     public function __construct(
         private readonly PromotionRepositoryInterface $repository,
-        private readonly PricingExportService $exportService
+        private readonly PricingExportService $exportService,
     ) {
     }
 
@@ -55,6 +55,7 @@ final class ExportPromotionsHandler
 
     /**
      * @param array<\App\Pricing\Domain\Model\Promotion> $promotions
+     *
      * @return array<\App\Pricing\Domain\Model\Promotion>
      */
     private function filterByDateRange(array $promotions, \App\Pricing\Application\DTO\ExportFilter $filter): array

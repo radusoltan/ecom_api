@@ -23,7 +23,7 @@ use App\Tax\Domain\ValueObject\TaxJurisdiction;
 final readonly class TaxCalculationService
 {
     public function __construct(
-        private TaxRuleRepositoryInterface $taxRuleRepository
+        private TaxRuleRepositoryInterface $taxRuleRepository,
     ) {
     }
 
@@ -41,7 +41,7 @@ final readonly class TaxCalculationService
     public function calculateTax(
         int $amountInCents,
         TaxJurisdiction $jurisdiction,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): array {
         // Find applicable tax rule
         $taxRule = $this->taxRuleRepository->findByJurisdiction($jurisdiction, $tenantId);
@@ -87,7 +87,7 @@ final readonly class TaxCalculationService
     public function calculateOrderTax(
         array $lineItems,
         TaxJurisdiction $jurisdiction,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): array {
         // Calculate subtotal
         $subtotal = 0;

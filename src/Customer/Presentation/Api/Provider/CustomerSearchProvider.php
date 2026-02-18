@@ -21,7 +21,7 @@ final readonly class CustomerSearchProvider implements ProviderInterface
 {
     public function __construct(
         private SearchCustomersQueryHandler $handler,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

@@ -11,7 +11,7 @@ final readonly class OwnerReference
     private function __construct(
         private TenantId $tenantId,
         private OwnerType $type,
-        private string $ownerId
+        private string $ownerId,
     ) {
     }
 

@@ -23,7 +23,7 @@ final class NotificationTest extends TestCase
 {
     // ========== Creation Tests ==========
 
-    public function test_it_creates_email_notification(): void
+    public function testItCreatesEmailNotification(): void
     {
         // Arrange
         $id = NotificationId::generate();
@@ -57,7 +57,7 @@ final class NotificationTest extends TestCase
         $this->assertInstanceOf(\DateTimeImmutable::class, $notification->updatedAt());
     }
 
-    public function test_it_creates_sms_notification(): void
+    public function testItCreatesSmsNotification(): void
     {
         // Arrange
         $id = NotificationId::generate();
@@ -81,7 +81,7 @@ final class NotificationTest extends TestCase
         $this->assertSame(NotificationStatus::PENDING, $notification->status());
     }
 
-    public function test_it_records_notification_created_event(): void
+    public function testItRecordsNotificationCreatedEvent(): void
     {
         // Arrange
         $id = NotificationId::generate();
@@ -113,7 +113,7 @@ final class NotificationTest extends TestCase
 
     // ========== Validation Tests ==========
 
-    public function test_it_throws_when_email_notification_has_no_recipient_email(): void
+    public function testItThrowsWhenEmailNotificationHasNoRecipientEmail(): void
     {
         // Assert
         $this->expectException(\InvalidArgumentException::class);
@@ -131,7 +131,7 @@ final class NotificationTest extends TestCase
         );
     }
 
-    public function test_it_throws_when_email_notification_has_empty_recipient_email(): void
+    public function testItThrowsWhenEmailNotificationHasEmptyRecipientEmail(): void
     {
         // Assert
         $this->expectException(\InvalidArgumentException::class);
@@ -149,7 +149,7 @@ final class NotificationTest extends TestCase
         );
     }
 
-    public function test_it_throws_when_email_is_invalid(): void
+    public function testItThrowsWhenEmailIsInvalid(): void
     {
         // Assert
         $this->expectException(\InvalidArgumentException::class);
@@ -167,7 +167,7 @@ final class NotificationTest extends TestCase
         );
     }
 
-    public function test_it_throws_when_sms_notification_has_no_recipient_phone(): void
+    public function testItThrowsWhenSmsNotificationHasNoRecipientPhone(): void
     {
         // Assert
         $this->expectException(\InvalidArgumentException::class);
@@ -185,7 +185,7 @@ final class NotificationTest extends TestCase
         );
     }
 
-    public function test_it_throws_when_sms_notification_has_empty_recipient_phone(): void
+    public function testItThrowsWhenSmsNotificationHasEmptyRecipientPhone(): void
     {
         // Assert
         $this->expectException(\InvalidArgumentException::class);
@@ -203,7 +203,7 @@ final class NotificationTest extends TestCase
         );
     }
 
-    public function test_it_throws_when_subject_is_empty(): void
+    public function testItThrowsWhenSubjectIsEmpty(): void
     {
         // Assert
         $this->expectException(\InvalidArgumentException::class);
@@ -221,7 +221,7 @@ final class NotificationTest extends TestCase
         );
     }
 
-    public function test_it_throws_when_subject_is_only_whitespace(): void
+    public function testItThrowsWhenSubjectIsOnlyWhitespace(): void
     {
         // Assert
         $this->expectException(\InvalidArgumentException::class);
@@ -239,7 +239,7 @@ final class NotificationTest extends TestCase
         );
     }
 
-    public function test_it_throws_when_body_is_empty(): void
+    public function testItThrowsWhenBodyIsEmpty(): void
     {
         // Assert
         $this->expectException(\InvalidArgumentException::class);
@@ -257,7 +257,7 @@ final class NotificationTest extends TestCase
         );
     }
 
-    public function test_it_throws_when_body_is_only_whitespace(): void
+    public function testItThrowsWhenBodyIsOnlyWhitespace(): void
     {
         // Assert
         $this->expectException(\InvalidArgumentException::class);
@@ -277,7 +277,7 @@ final class NotificationTest extends TestCase
 
     // ========== Mark as Sent Tests ==========
 
-    public function test_it_marks_as_sent(): void
+    public function testItMarksAsSent(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -292,7 +292,7 @@ final class NotificationTest extends TestCase
         $this->assertNull($notification->failureReason());
     }
 
-    public function test_it_records_notification_sent_event(): void
+    public function testItRecordsNotificationSentEvent(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -312,7 +312,7 @@ final class NotificationTest extends TestCase
         $this->assertInstanceOf(\DateTimeImmutable::class, $event->sentAt);
     }
 
-    public function test_it_throws_when_marking_sent_notification_as_sent_again(): void
+    public function testItThrowsWhenMarkingSentNotificationAsSentAgain(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -326,7 +326,7 @@ final class NotificationTest extends TestCase
         $notification->markAsSent();
     }
 
-    public function test_it_throws_when_marking_cancelled_notification_as_sent(): void
+    public function testItThrowsWhenMarkingCancelledNotificationAsSent(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -342,7 +342,7 @@ final class NotificationTest extends TestCase
 
     // ========== Mark as Failed Tests ==========
 
-    public function test_it_marks_as_failed(): void
+    public function testItMarksAsFailed(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -358,7 +358,7 @@ final class NotificationTest extends TestCase
         $this->assertNull($notification->sentAt());
     }
 
-    public function test_it_increments_attempt_count_on_failure(): void
+    public function testItIncrementsAttemptCountOnFailure(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -378,7 +378,7 @@ final class NotificationTest extends TestCase
         $this->assertSame(3, $notification->attemptCount());
     }
 
-    public function test_it_records_notification_failed_event(): void
+    public function testItRecordsNotificationFailedEvent(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -398,7 +398,7 @@ final class NotificationTest extends TestCase
         $this->assertSame(1, $event->attemptCount);
     }
 
-    public function test_it_throws_when_marking_failed_with_empty_reason(): void
+    public function testItThrowsWhenMarkingFailedWithEmptyReason(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -411,7 +411,7 @@ final class NotificationTest extends TestCase
         $notification->markAsFailed('');
     }
 
-    public function test_it_throws_when_marking_sent_notification_as_failed(): void
+    public function testItThrowsWhenMarkingSentNotificationAsFailed(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -427,7 +427,7 @@ final class NotificationTest extends TestCase
 
     // ========== Retry Tests ==========
 
-    public function test_it_retries_failed_notification(): void
+    public function testItRetriesFailedNotification(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -443,7 +443,7 @@ final class NotificationTest extends TestCase
         $this->assertSame(1, $notification->attemptCount()); // Attempt count persists
     }
 
-    public function test_it_throws_when_retrying_pending_notification(): void
+    public function testItThrowsWhenRetryingPendingNotification(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -456,7 +456,7 @@ final class NotificationTest extends TestCase
         $notification->retry();
     }
 
-    public function test_it_throws_when_retrying_sent_notification(): void
+    public function testItThrowsWhenRetryingSentNotification(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -470,7 +470,7 @@ final class NotificationTest extends TestCase
         $notification->retry();
     }
 
-    public function test_it_throws_when_max_retry_attempts_reached(): void
+    public function testItThrowsWhenMaxRetryAttemptsReached(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -492,7 +492,7 @@ final class NotificationTest extends TestCase
 
     // ========== Cancel Tests ==========
 
-    public function test_it_cancels_pending_notification(): void
+    public function testItCancelsPendingNotification(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -504,7 +504,7 @@ final class NotificationTest extends TestCase
         $this->assertSame(NotificationStatus::CANCELLED, $notification->status());
     }
 
-    public function test_it_cancels_failed_notification(): void
+    public function testItCancelsFailedNotification(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -517,7 +517,7 @@ final class NotificationTest extends TestCase
         $this->assertSame(NotificationStatus::CANCELLED, $notification->status());
     }
 
-    public function test_it_throws_when_cancelling_sent_notification(): void
+    public function testItThrowsWhenCancellingSentNotification(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -531,7 +531,7 @@ final class NotificationTest extends TestCase
         $notification->cancel();
     }
 
-    public function test_it_throws_when_cancelling_already_cancelled_notification(): void
+    public function testItThrowsWhenCancellingAlreadyCancelledNotification(): void
     {
         // Arrange
         $notification = $this->createPendingNotification();
@@ -547,7 +547,7 @@ final class NotificationTest extends TestCase
 
     // ========== Reconstitution Tests ==========
 
-    public function test_it_reconstitutes_from_persistence(): void
+    public function testItReconstitutesFromPersistence(): void
     {
         // Arrange
         $id = NotificationId::generate();

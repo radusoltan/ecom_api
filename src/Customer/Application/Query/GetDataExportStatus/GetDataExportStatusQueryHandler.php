@@ -20,7 +20,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetDataExportStatusQueryHandler
 {
     public function __construct(
-        private DataExportRequestRepositoryInterface $exportRequestRepository
+        private DataExportRequestRepositoryInterface $exportRequestRepository,
     ) {
     }
 

@@ -30,7 +30,7 @@ final class LocalThumbnailGenerator implements ThumbnailGenerator
         private readonly string $publicPrefix,
         private readonly string $originalBasePath,
         private readonly string $originalPublicPrefix,
-        private readonly ThumbnailPolicy $thumbnailPolicy
+        private readonly ThumbnailPolicy $thumbnailPolicy,
     ) {
         $this->filesystem = new Filesystem();
     }

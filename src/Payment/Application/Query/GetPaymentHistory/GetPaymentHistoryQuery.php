@@ -20,7 +20,7 @@ final readonly class GetPaymentHistoryQuery
     public function __construct(
         public string $orderId,
         public int $page = 1,
-        public int $limit = 10
+        public int $limit = 10,
     ) {
         if ($page < 1) {
             throw new \InvalidArgumentException('Page must be >= 1');

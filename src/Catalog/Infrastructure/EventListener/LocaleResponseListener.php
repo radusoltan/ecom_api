@@ -22,7 +22,7 @@ final class LocaleResponseListener
     private ?Locale $resolvedLocale = null;
 
     public function __construct(
-        private readonly LocalizationPolicy $localizationPolicy
+        private readonly LocalizationPolicy $localizationPolicy,
     ) {
     }
 

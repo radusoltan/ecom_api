@@ -19,7 +19,7 @@ final readonly class ImportResult
         public int $imported,
         public int $updated,
         public int $skipped,
-        public array $errors
+        public array $errors,
     ) {
     }
 

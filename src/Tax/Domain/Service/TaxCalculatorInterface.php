@@ -43,12 +43,12 @@ interface TaxCalculatorInterface
     /**
      * Calculate tax for a given amount.
      *
-     * @param int $amountInCents Gross or net amount depending on implementation
+     * @param int             $amountInCents      Gross or net amount depending on implementation
      * @param TaxJurisdiction $sellerJurisdiction Where the seller is established
-     * @param TaxJurisdiction $buyerJurisdiction Where the buyer is located
-     * @param TaxCategory $category Product tax category
-     * @param bool $isB2B True if buyer is a business with valid VAT number
-     * @param string|null $buyerVatNumber Buyer's VAT number for B2B transactions
+     * @param TaxJurisdiction $buyerJurisdiction  Where the buyer is located
+     * @param TaxCategory     $category           Product tax category
+     * @param bool            $isB2B              True if buyer is a business with valid VAT number
+     * @param string|null     $buyerVatNumber     Buyer's VAT number for B2B transactions
      *
      * @return TaxCalculationResult Tax calculation with breakdown
      */
@@ -58,7 +58,7 @@ interface TaxCalculatorInterface
         TaxJurisdiction $buyerJurisdiction,
         TaxCategory $category,
         bool $isB2B = false,
-        ?string $buyerVatNumber = null
+        ?string $buyerVatNumber = null,
     ): TaxCalculationResult;
 
     /**

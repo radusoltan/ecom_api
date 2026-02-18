@@ -68,8 +68,8 @@ final class PaymentNotificationSubscriberTest extends TestCase
                 $this->callback(function (array $context) use ($paymentId, $orderId) {
                     return $context['paymentId'] === $paymentId->toString()
                         && $context['orderId'] === $orderId
-                        && $context['amount'] === '150.00'
-                        && $context['currency'] === 'USD';
+                        && '150.00' === $context['amount']
+                        && 'USD' === $context['currency'];
                 })
             );
 
@@ -109,7 +109,7 @@ final class PaymentNotificationSubscriberTest extends TestCase
                 $this->anything(),
                 $this->anything(),
                 $this->callback(function (array $context) {
-                    return $context['orderId'] === 'N/A';
+                    return 'N/A' === $context['orderId'];
                 })
             );
 
@@ -142,7 +142,7 @@ final class PaymentNotificationSubscriberTest extends TestCase
                 $this->equalTo('Failed to send payment captured email'),
                 $this->callback(function (array $context) use ($paymentId) {
                     return $context['paymentId'] === $paymentId->toString()
-                        && $context['error'] === 'Email service unavailable';
+                        && 'Email service unavailable' === $context['error'];
                 })
             );
 
@@ -215,7 +215,7 @@ final class PaymentNotificationSubscriberTest extends TestCase
                 $this->equalTo('Failed to send payment failed email'),
                 $this->callback(function (array $context) use ($paymentId) {
                     return $context['paymentId'] === $paymentId->toString()
-                        && $context['error'] === 'Email service unavailable';
+                        && 'Email service unavailable' === $context['error'];
                 })
             );
 
@@ -246,8 +246,8 @@ final class PaymentNotificationSubscriberTest extends TestCase
                 $this->equalTo('payment/payment_refunded'),
                 $this->callback(function (array $context) use ($paymentId) {
                     return $context['paymentId'] === $paymentId->toString()
-                        && $context['amount'] === '150.00'
-                        && $context['currency'] === 'USD';
+                        && '150.00' === $context['amount']
+                        && 'USD' === $context['currency'];
                 })
             );
 
@@ -293,7 +293,7 @@ final class PaymentNotificationSubscriberTest extends TestCase
                 $this->equalTo('Failed to send payment refunded email'),
                 $this->callback(function (array $context) use ($paymentId) {
                     return $context['paymentId'] === $paymentId->toString()
-                        && $context['error'] === 'Email service unavailable';
+                        && 'Email service unavailable' === $context['error'];
                 })
             );
 

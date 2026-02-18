@@ -31,7 +31,7 @@ final readonly class CapturePaymentHandler
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
         private PaymentGatewayInterface $gateway,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -41,18 +41,12 @@ final readonly class CapturePaymentHandler
         $payment = $this->paymentRepository->findById($command->id);
 
         if (null === $payment) {
-            throw new \InvalidArgumentException(sprintf(
-                'Payment not found: %s',
-                $command->id->toString()
-            ));
+            throw new \InvalidArgumentException(sprintf('Payment not found: %s', $command->id->toString()));
         }
 
         // Validate payment has gateway transaction ID
         if (null === $payment->gatewayTransactionId()) {
-            throw new \InvalidArgumentException(sprintf(
-                'Payment %s has not been authorized yet',
-                $command->id->toString()
-            ));
+            throw new \InvalidArgumentException(sprintf('Payment %s has not been authorized yet', $command->id->toString()));
         }
 
         // Prepare capture amount
@@ -107,7 +101,7 @@ final readonly class CapturePaymentHandler
                 'status' => $result->status,
             ]);
         } catch (\Throwable $e) {
-            if (!($e instanceof \RuntimeException)) {
+            if (!$e instanceof \RuntimeException) {
                 $payment->markAsFailed($e->getMessage());
                 $this->paymentRepository->save($payment);
             }

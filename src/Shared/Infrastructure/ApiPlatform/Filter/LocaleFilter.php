@@ -49,7 +49,7 @@ final class LocaleFilter extends AbstractFilter
         QueryNameGeneratorInterface $queryNameGenerator,
         string $resourceClass,
         ?Operation $operation = null,
-        array $context = []
+        array $context = [],
     ): void {
         // This filter doesn't filter properties directly
         // It's used to inject locale into the query context

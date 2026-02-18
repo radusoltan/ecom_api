@@ -34,7 +34,7 @@ final class CategoryWithTranslations extends AggregateRoot
         private \DateTimeImmutable $createdAt,
         private \DateTimeImmutable $updatedAt,
         ?LocalizedString $nameTranslations = null,
-        ?LocalizedString $descriptionTranslations = null
+        ?LocalizedString $descriptionTranslations = null,
     ) {
         $this->nameTranslations = $nameTranslations ?? LocalizedString::empty();
         $this->descriptionTranslations = $descriptionTranslations ?? LocalizedString::empty();
@@ -48,7 +48,7 @@ final class CategoryWithTranslations extends AggregateRoot
         ?CategoryId $parentId,
         int $position = 0,
         bool $showOnFront = false,
-        ?Locale $initialLocale = null
+        ?Locale $initialLocale = null,
     ): self {
         $nameTranslations = LocalizedString::empty();
         $descriptionTranslations = LocalizedString::empty();
@@ -102,7 +102,7 @@ final class CategoryWithTranslations extends AggregateRoot
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt,
         LocalizedString $nameTranslations,
-        LocalizedString $descriptionTranslations
+        LocalizedString $descriptionTranslations,
     ): self {
         return new self(
             $id,
@@ -127,7 +127,7 @@ final class CategoryWithTranslations extends AggregateRoot
     public function updateTranslations(
         Locale $locale,
         ?string $name,
-        ?string $description
+        ?string $description,
     ): void {
         $changed = false;
 
@@ -217,7 +217,7 @@ final class CategoryWithTranslations extends AggregateRoot
         ?string $description,
         ?CategoryId $parentId,
         int $position,
-        bool $showOnFront
+        bool $showOnFront,
     ): void {
         $this->defaultName = $name;
         $this->defaultDescription = $description;

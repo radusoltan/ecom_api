@@ -24,7 +24,7 @@ final readonly class VariantDTO
         public bool $allowBackorder,
         public bool $isActive,
         public bool $isAvailable,
-        public array $images = []
+        public array $images = [],
     ) {
     }
 }

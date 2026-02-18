@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class ActivatePromotionCommandHandler
 {
     public function __construct(
-        private PromotionRepositoryInterface $promotionRepository
+        private PromotionRepositoryInterface $promotionRepository,
     ) {
     }
 

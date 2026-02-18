@@ -18,7 +18,7 @@ final readonly class DataExportStatusDTO
         public \DateTimeImmutable $createdAt,
         public ?\DateTimeImmutable $completedAt,
         public bool $isDownloadable,
-        public ?string $errorMessage = null
+        public ?string $errorMessage = null,
     ) {
     }
 }

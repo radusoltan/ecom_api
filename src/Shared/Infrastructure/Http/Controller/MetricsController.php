@@ -24,7 +24,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class MetricsController extends AbstractController
 {
     public function __construct(
-        private readonly MetricsCollector $metricsCollector
+        private readonly MetricsCollector $metricsCollector,
     ) {
     }
 

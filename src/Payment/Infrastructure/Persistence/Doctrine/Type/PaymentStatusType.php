@@ -36,12 +36,7 @@ final class PaymentStatusType extends Type
         try {
             return PaymentStatus::from((string) $value);
         } catch (\ValueError $e) {
-            throw ConversionException::conversionFailedFormat(
-                $value,
-                $this->getName(),
-                'One of: ' . implode(', ', array_map(fn(PaymentStatus $case) => $case->value, PaymentStatus::cases())),
-                $e
-            );
+            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'One of: '.implode(', ', array_map(fn (PaymentStatus $case) => $case->value, PaymentStatus::cases())), $e);
         }
     }
 

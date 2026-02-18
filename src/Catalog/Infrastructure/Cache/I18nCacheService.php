@@ -21,7 +21,7 @@ final class I18nCacheService
     private const KEY_PREFIX = 'i18n';
 
     public function __construct(
-        private readonly TagAwareCacheInterface $cache
+        private readonly TagAwareCacheInterface $cache,
     ) {
     }
 
@@ -31,7 +31,7 @@ final class I18nCacheService
     public function getProductTranslations(
         TenantId $tenantId,
         ProductId $productId,
-        Locale $locale
+        Locale $locale,
     ): ?array {
         $key = $this->buildProductKey($tenantId, $productId, $locale);
 
@@ -55,7 +55,7 @@ final class I18nCacheService
         TenantId $tenantId,
         ProductId $productId,
         Locale $locale,
-        array $translations
+        array $translations,
     ): void {
         $key = $this->buildProductKey($tenantId, $productId, $locale);
 
@@ -73,7 +73,7 @@ final class I18nCacheService
     public function getCategoryTranslations(
         TenantId $tenantId,
         CategoryId $categoryId,
-        Locale $locale
+        Locale $locale,
     ): ?array {
         $key = $this->buildCategoryKey($tenantId, $categoryId, $locale);
 
@@ -97,7 +97,7 @@ final class I18nCacheService
         TenantId $tenantId,
         CategoryId $categoryId,
         Locale $locale,
-        array $translations
+        array $translations,
     ): void {
         $key = $this->buildCategoryKey($tenantId, $categoryId, $locale);
 
@@ -115,7 +115,7 @@ final class I18nCacheService
     public function invalidateProduct(
         TenantId $tenantId,
         ProductId $productId,
-        ?Locale $locale = null
+        ?Locale $locale = null,
     ): void {
         if (null !== $locale) {
             // Invalidate specific locale
@@ -134,7 +134,7 @@ final class I18nCacheService
     public function invalidateCategory(
         TenantId $tenantId,
         CategoryId $categoryId,
-        ?Locale $locale = null
+        ?Locale $locale = null,
     ): void {
         if (null !== $locale) {
             // Invalidate specific locale
@@ -162,7 +162,7 @@ final class I18nCacheService
     public function warmProductsCache(
         TenantId $tenantId,
         array $products,
-        array $locales
+        array $locales,
     ): void {
         foreach ($products as $product) {
             foreach ($locales as $locale) {
@@ -178,7 +178,7 @@ final class I18nCacheService
     public function warmCategoriesCache(
         TenantId $tenantId,
         array $categories,
-        array $locales
+        array $locales,
     ): void {
         foreach ($categories as $category) {
             foreach ($locales as $locale) {

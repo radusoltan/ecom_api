@@ -30,7 +30,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class CustomerImportController extends AbstractController
 {
     public function __construct(
-        private readonly MessageBusInterface $messageBus
+        private readonly MessageBusInterface $messageBus,
     ) {
     }
 

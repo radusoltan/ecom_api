@@ -34,7 +34,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class CartPriceCalculator
 {
     public function __construct(
-        private ProductRepositoryInterface $productRepository
+        private ProductRepositoryInterface $productRepository,
     ) {
     }
 
@@ -54,7 +54,7 @@ final readonly class CartPriceCalculator
         ProductId $productId,
         ?string $variantId,
         TenantId $tenantId,
-        ?CustomerId $customerId = null
+        ?CustomerId $customerId = null,
     ): Money {
         // Fetch product from catalog
         $product = $this->productRepository->findById($productId, $tenantId);
@@ -88,7 +88,7 @@ final readonly class CartPriceCalculator
         ProductId $productId,
         ?string $variantId,
         TenantId $tenantId,
-        Money $cartItemPrice
+        Money $cartItemPrice,
     ): bool {
         try {
             $currentPrice = $this->calculateItemPrice($productId, $variantId, $tenantId);
@@ -116,7 +116,7 @@ final readonly class CartPriceCalculator
         ProductId $productId,
         ?string $variantId,
         TenantId $tenantId,
-        Money $oldPrice
+        Money $oldPrice,
     ): array {
         try {
             $newPrice = $this->calculateItemPrice($productId, $variantId, $tenantId);

@@ -34,7 +34,7 @@ final readonly class OrderCompletedPointsSubscriber implements EventSubscriberIn
         private CustomerRepositoryInterface $customerRepository,
         private OrderRepositoryInterface $orderRepository,
         private LoyaltyProgramRepositoryInterface $loyaltyProgramRepository,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

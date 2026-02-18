@@ -14,7 +14,7 @@ use App\Catalog\Domain\Model\ProductId;
 final readonly class RemoveBundleCommand
 {
     public function __construct(
-        public ProductId $bundleProductId
+        public ProductId $bundleProductId,
     ) {
     }
 }

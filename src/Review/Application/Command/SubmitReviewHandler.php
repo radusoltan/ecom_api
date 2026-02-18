@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class SubmitReviewHandler
 {
     public function __construct(
-        private ProductReviewRepositoryInterface $reviewRepository
+        private ProductReviewRepositoryInterface $reviewRepository,
     ) {
     }
 

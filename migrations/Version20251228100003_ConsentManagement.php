@@ -30,9 +30,9 @@ final class Version20251228100003_ConsentManagement extends AbstractMigration
         // Create consent_history table for audit trail
         $this->addSql('
             CREATE TABLE consent_history (
-                id VARCHAR(36) NOT NULL PRIMARY KEY,
-                customer_id VARCHAR(36) NOT NULL,
-                tenant_id VARCHAR(36) NOT NULL,
+                id UUID NOT NULL PRIMARY KEY,
+                customer_id UUID NOT NULL,
+                tenant_id UUID NOT NULL,
                 consent_type VARCHAR(50) NOT NULL,
                 granted BOOLEAN NOT NULL,
                 ip_address VARCHAR(45) NULL,
@@ -59,7 +59,7 @@ final class Version20251228100003_ConsentManagement extends AbstractMigration
             CREATE POLICY consent_history_tenant_isolation_policy ON consent_history
             FOR ALL
             TO PUBLIC
-            USING (tenant_id = current_setting('app.tenant_id', TRUE)::uuid)
+            USING (tenant_id::text = current_setting('app.tenant_id', true))
         ");
 
         // Create RLS policy for super admin (bypass tenant isolation)

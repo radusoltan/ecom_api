@@ -187,7 +187,7 @@ class ProductEntity
         // Map subscription if present
         if ($product->hasSubscription()) {
             $subscription = $product->subscription();
-            if ($subscription !== null) {
+            if (null !== $subscription) {
                 $entity->subscriptionInterval = $subscription->interval()->value;
                 $entity->subscriptionBillingCycles = $subscription->billingCycles();
                 $entity->subscriptionSetupFeeAmount = $subscription->setupFee()->getAmount();
@@ -199,7 +199,7 @@ class ProductEntity
         // Map downloadable file if present
         if ($product->hasDownloadableFile()) {
             $file = $product->downloadableFile();
-            if ($file !== null) {
+            if (null !== $file) {
                 $entity->downloadableFilename = $file->filename();
                 $entity->downloadableUrl = $file->fileUrl();
                 $entity->downloadableSizeBytes = $file->fileSizeBytes();

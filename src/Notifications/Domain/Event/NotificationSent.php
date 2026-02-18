@@ -15,7 +15,7 @@ final readonly class NotificationSent
         public TenantId $tenantId,
         public NotificationType $type,
         public ?string $recipientEmail,
-        public \DateTimeImmutable $sentAt
+        public \DateTimeImmutable $sentAt,
     ) {
     }
 }

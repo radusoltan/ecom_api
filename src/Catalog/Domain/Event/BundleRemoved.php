@@ -20,7 +20,7 @@ final readonly class BundleRemoved implements DomainEvent
         private ProductId $productId,
         private TenantId $tenantId,
         private Bundle $removedBundle,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

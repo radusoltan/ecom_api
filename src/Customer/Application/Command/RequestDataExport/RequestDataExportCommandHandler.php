@@ -28,7 +28,7 @@ final readonly class RequestDataExportCommandHandler
         private DataExportRequestRepositoryInterface $exportRequestRepository,
         private CustomerRepositoryInterface $customerRepository,
         private MessageBusInterface $messageBus,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -54,10 +54,7 @@ final readonly class RequestDataExportCommandHandler
         $recentCount = $this->exportRequestRepository->countRecentByCustomerId($customerId, $since);
 
         if ($recentCount > 0) {
-            throw new \DomainException(sprintf(
-                'Rate limit exceeded. Only 1 export request allowed per %d hours',
-                self::RATE_LIMIT_HOURS
-            ));
+            throw new \DomainException(sprintf('Rate limit exceeded. Only 1 export request allowed per %d hours', self::RATE_LIMIT_HOURS));
         }
 
         // Create pending request

@@ -22,7 +22,7 @@ final readonly class PersonalDataInventory implements PersonalDataInventoryInter
         private CustomerRepositoryInterface $customerRepository,
         private ?UserRepositoryInterface $userRepository,
         private OrderRepositoryInterface $orderRepository,
-        private ConsentRepositoryInterface $consentRepository
+        private ConsentRepositoryInterface $consentRepository,
     ) {
     }
 

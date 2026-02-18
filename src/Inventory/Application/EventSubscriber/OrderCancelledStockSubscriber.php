@@ -26,7 +26,7 @@ final readonly class OrderCancelledStockSubscriber implements EventSubscriberInt
     public function __construct(
         private StockReservationRepositoryInterface $reservationRepository,
         private EventDispatcherInterface $eventDispatcher,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -43,7 +43,7 @@ final readonly class OrderCancelledStockSubscriber implements EventSubscriberInt
             $orderId = $event->orderId->toString();
             $reason = sprintf(
                 'Order cancelled%s',
-                $event->reason ? ': ' . $event->reason : ''
+                $event->reason ? ': '.$event->reason : ''
             );
 
             $this->logger->info('Processing stock release for cancelled order', [
@@ -92,7 +92,7 @@ final readonly class OrderCancelledStockSubscriber implements EventSubscriberInt
                     );
                     $this->eventDispatcher->dispatch($stockReleasedEvent);
 
-                    $releasedCount++;
+                    ++$releasedCount;
 
                     $this->logger->info('Stock reservation released for cancelled order', [
                         'orderId' => $orderId,
@@ -101,7 +101,7 @@ final readonly class OrderCancelledStockSubscriber implements EventSubscriberInt
                         'quantity' => $reservation->quantity()->value(),
                     ]);
                 } catch (\Throwable $exception) {
-                    $failedCount++;
+                    ++$failedCount;
 
                     // Log error but continue processing other reservations
                     $this->logger->error('Failed to release reservation for cancelled order', [

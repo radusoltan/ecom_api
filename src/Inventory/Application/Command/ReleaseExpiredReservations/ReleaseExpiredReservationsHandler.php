@@ -25,7 +25,7 @@ final readonly class ReleaseExpiredReservationsHandler
     public function __construct(
         private StockReservationRepositoryInterface $reservationRepository,
         private StockItemRepositoryInterface $stockItemRepository,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

@@ -16,7 +16,7 @@ final readonly class PromotionCreated implements DomainEvent
         private TenantId $tenantId,
         private string $name,
         private PromotionType $type,
-        private \DateTimeImmutable $occurredAt
+        private \DateTimeImmutable $occurredAt,
     ) {
     }
 

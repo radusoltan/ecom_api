@@ -63,7 +63,7 @@ final class Order extends AggregateRoot
         ?Money $taxAmount = null,
         ?string $taxJurisdiction = null,
         ?string $taxRuleId = null,
-        float $taxRate = 0.0
+        float $taxRate = 0.0,
     ): self {
         if (empty($lines)) {
             throw new \InvalidArgumentException('Order must have at least one line item');
@@ -127,7 +127,7 @@ final class Order extends AggregateRoot
         ?Money $taxAmount = null,
         ?string $taxJurisdiction = null,
         ?string $taxRuleId = null,
-        float $taxRate = 0.0
+        float $taxRate = 0.0,
     ): self {
         $order = new self();
         $order->id = $id;

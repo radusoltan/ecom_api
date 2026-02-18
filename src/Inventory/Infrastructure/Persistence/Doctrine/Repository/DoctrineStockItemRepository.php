@@ -67,7 +67,7 @@ final class DoctrineStockItemRepository extends ServiceEntityRepository implemen
     public function findByProductAndWarehouse(
         ProductId $productId,
         WarehouseId $warehouseId,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): ?StockItem {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.productId = :productId')

@@ -29,7 +29,7 @@ final class Locale
     ];
 
     private function __construct(
-        private readonly string $value
+        private readonly string $value,
     ) {
         $this->validate($value);
     }

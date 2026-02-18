@@ -22,7 +22,7 @@ final readonly class DoctrineLoyaltyProgramRepository implements LoyaltyProgramR
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 

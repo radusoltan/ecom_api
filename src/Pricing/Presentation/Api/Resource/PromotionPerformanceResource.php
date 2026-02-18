@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Pricing\Presentation\Api\Resource;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Pricing\Presentation\Api\Provider\PromotionPerformanceProvider;
 

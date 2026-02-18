@@ -18,7 +18,7 @@ final readonly class GetOrderByIdQueryHandler
     public function __construct(
         private OrderRepositoryInterface $orderRepository,
         private PerformanceProfiler $profiler,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

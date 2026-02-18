@@ -25,7 +25,7 @@ final class ApiLatencyMiddleware implements EventSubscriberInterface
 
     public function __construct(
         private readonly PrometheusMetricsCollector $metricsCollector,
-        private readonly TenantContext $tenantContext
+        private readonly TenantContext $tenantContext,
     ) {
     }
 
@@ -75,7 +75,7 @@ final class ApiLatencyMiddleware implements EventSubscriberInterface
         $tenantId = 'unknown';
         if ($this->tenantContext->hasCurrentTenant()) {
             $currentTenantId = $this->tenantContext->getCurrentTenantId();
-            if ($currentTenantId !== null) {
+            if (null !== $currentTenantId) {
                 $tenantId = $currentTenantId->toString();
             }
         }

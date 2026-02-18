@@ -13,9 +13,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Email;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -190,7 +190,7 @@ final class OrderPlacedSubscriberTest extends TestCase
                 self::assertInstanceOf(TemplatedEmail::class, $email);
 
                 // Check that template is set (HTML template will auto-generate text version)
-                /** @var TemplatedEmail $email */
+                /* @var TemplatedEmail $email */
                 self::assertEquals('emails/order/order_placed.html.twig', $email->getHtmlTemplate());
 
                 return true;

@@ -26,7 +26,7 @@ final readonly class UpdateVariant
         public ?bool $isActive = null,
         public ?bool $trackInventory = null,
         public ?bool $allowBackorder = null,
-        public ?array $images = null
+        public ?array $images = null,
     ) {
     }
 }

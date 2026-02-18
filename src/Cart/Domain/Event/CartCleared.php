@@ -11,7 +11,7 @@ final readonly class CartCleared
 {
     public function __construct(
         public CartId $cartId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

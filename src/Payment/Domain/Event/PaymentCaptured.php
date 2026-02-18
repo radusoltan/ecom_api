@@ -13,7 +13,7 @@ final readonly class PaymentCaptured
         public PaymentId $paymentId,
         public TenantId $tenantId,
         public int $capturedAmountInCents,
-        public ?string $orderId = null
+        public ?string $orderId = null,
     ) {
     }
 }

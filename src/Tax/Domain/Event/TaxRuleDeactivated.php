@@ -22,7 +22,7 @@ final readonly class TaxRuleDeactivated
         public TenantId $tenantId,
         public TaxJurisdiction $jurisdiction,
         public TaxCategory $category,
-        public \DateTimeImmutable $occurredAt = new \DateTimeImmutable()
+        public \DateTimeImmutable $occurredAt = new \DateTimeImmutable(),
     ) {
     }
 }

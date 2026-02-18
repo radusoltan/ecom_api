@@ -42,7 +42,7 @@ interface LoyaltyPointTransactionRepositoryInterface
         CustomerId $customerId,
         TenantId $tenantId,
         int $page,
-        int $limit
+        int $limit,
     ): array;
 
     /**

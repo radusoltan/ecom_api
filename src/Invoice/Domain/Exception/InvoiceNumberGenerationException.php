@@ -21,8 +21,7 @@ final class InvoiceNumberGenerationException extends \DomainException
      * Generic failure to generate invoice number.
      *
      * @param TenantId $tenantId The tenant for which generation failed
-     * @param string $reason Human-readable reason for failure
-     * @return self
+     * @param string   $reason   Human-readable reason for failure
      */
     public static function failedToGenerate(TenantId $tenantId, string $reason): self
     {
@@ -39,7 +38,6 @@ final class InvoiceNumberGenerationException extends \DomainException
      * This error is recoverable - the client should retry the operation.
      *
      * @param TenantId $tenantId The tenant for which concurrency error occurred
-     * @return self
      */
     public static function concurrencyError(TenantId $tenantId): self
     {
@@ -53,7 +51,6 @@ final class InvoiceNumberGenerationException extends \DomainException
      * Invalid year parameter.
      *
      * @param int $year The invalid year value
-     * @return self
      */
     public static function invalidYear(int $year): self
     {

@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class GetNotificationsByTenantHandlerTest extends TestCase
 {
-    public function test_it_returns_notifications_as_dtos(): void
+    public function testItReturnsNotificationsAsDtos(): void
     {
         // Arrange
         $tenantId = TenantId::generate();
@@ -77,7 +77,7 @@ final class GetNotificationsByTenantHandlerTest extends TestCase
         $this->assertSame('+40712345678', $result[1]->recipientPhone);
     }
 
-    public function test_it_returns_empty_array_when_no_notifications_found(): void
+    public function testItReturnsEmptyArrayWhenNoNotificationsFound(): void
     {
         // Arrange
         $tenantId = TenantId::generate();
@@ -100,7 +100,7 @@ final class GetNotificationsByTenantHandlerTest extends TestCase
         $this->assertEmpty($result);
     }
 
-    public function test_it_uses_correct_tenant_id_for_query(): void
+    public function testItUsesCorrectTenantIdForQuery(): void
     {
         // Arrange
         $tenantId = TenantId::generate();
@@ -123,7 +123,7 @@ final class GetNotificationsByTenantHandlerTest extends TestCase
         // Assert: Verified by mock expectations
     }
 
-    public function test_it_converts_all_notifications_to_dtos(): void
+    public function testItConvertsAllNotificationsToDtos(): void
     {
         // Arrange
         $tenantId = TenantId::generate();
@@ -160,7 +160,7 @@ final class GetNotificationsByTenantHandlerTest extends TestCase
 
         foreach ($result as $index => $dto) {
             $this->assertInstanceOf(NotificationDTO::class, $dto);
-            $this->assertSame("test" . ($index + 1) . "@example.com", $dto->recipientEmail);
+            $this->assertSame('test'.($index + 1).'@example.com', $dto->recipientEmail);
         }
     }
 }

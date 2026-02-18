@@ -13,7 +13,7 @@ final readonly class ActivateLoyaltyProgramCommand
 {
     public function __construct(
         public string $programId,
-        public string $tenantId
+        public string $tenantId,
     ) {
     }
 }

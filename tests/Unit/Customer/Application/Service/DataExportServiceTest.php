@@ -8,15 +8,9 @@ use App\Customer\Application\Service\DataExportService;
 use App\Customer\Domain\Model\Customer;
 use App\Customer\Domain\Repository\CustomerRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
-use App\Customer\Domain\ValueObject\CustomerPreferences;
-use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Customer\Domain\ValueObject\DataExportRequestId;
-use App\Order\Domain\Model\Order;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
-use App\Order\Domain\ValueObject\OrderId;
-use App\Order\Domain\ValueObject\OrderStatus;
 use App\Shared\Domain\ValueObject\Email;
-use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 
@@ -31,7 +25,7 @@ final class DataExportServiceTest extends TestCase
     {
         $this->customerRepository = $this->createMock(CustomerRepositoryInterface::class);
         $this->orderRepository = $this->createMock(OrderRepositoryInterface::class);
-        $this->exportDirectory = sys_get_temp_dir() . '/test_exports';
+        $this->exportDirectory = sys_get_temp_dir().'/test_exports';
 
         $this->service = new DataExportService(
             $this->customerRepository,
@@ -44,7 +38,7 @@ final class DataExportServiceTest extends TestCase
     {
         // Clean up test export directory
         if (is_dir($this->exportDirectory)) {
-            array_map('unlink', glob($this->exportDirectory . '/*'));
+            array_map('unlink', glob($this->exportDirectory.'/*'));
             rmdir($this->exportDirectory);
         }
     }
@@ -254,7 +248,7 @@ final class DataExportServiceTest extends TestCase
 
     public function testStoreExportFile(): void
     {
-        $filePath = $this->exportDirectory . '/test-export.json';
+        $filePath = $this->exportDirectory.'/test-export.json';
         $content = '{"test": "data"}';
 
         // Ensure directory exists

@@ -12,7 +12,7 @@ final readonly class UserAccountLocked implements DomainEvent
     public function __construct(
         private UserId $userId,
         private string $reason,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

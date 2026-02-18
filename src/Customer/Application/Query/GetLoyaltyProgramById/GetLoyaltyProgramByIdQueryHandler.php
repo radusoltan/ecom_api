@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetLoyaltyProgramByIdQueryHandler
 {
     public function __construct(
-        private LoyaltyProgramRepositoryInterface $loyaltyProgramRepository
+        private LoyaltyProgramRepositoryInterface $loyaltyProgramRepository,
     ) {
     }
 

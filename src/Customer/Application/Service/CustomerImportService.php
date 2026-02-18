@@ -40,7 +40,7 @@ final readonly class CustomerImportService
     public function __construct(
         private CustomerRepositoryInterface $customerRepository,
         private EntityManagerInterface $entityManager,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -182,7 +182,7 @@ final readonly class CustomerImportService
     {
         $lines = str_getcsv($content, "\n");
         // @phpstan-ignore empty.variable (PHPStan doesn't understand str_getcsv can return empty array from empty string)
-        if (count($lines) === 0) {
+        if (0 === count($lines)) {
             throw new \InvalidArgumentException('CSV file is empty');
         }
 

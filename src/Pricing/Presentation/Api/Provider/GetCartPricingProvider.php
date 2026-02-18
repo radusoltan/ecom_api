@@ -23,17 +23,11 @@ final readonly class GetCartPricingProvider implements ProviderInterface
 {
     public function __construct(
         private MessageBusInterface $queryBus,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 
     /**
-     * @param Operation $operation
-     * @param array     $uriVariables
-     * @param array     $context
-     *
-     * @return CartPricingResource
-     *
      * @throws \RuntimeException If required headers are missing
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): CartPricingResource

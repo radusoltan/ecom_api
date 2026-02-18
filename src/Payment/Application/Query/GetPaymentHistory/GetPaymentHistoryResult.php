@@ -14,18 +14,18 @@ use App\Payment\Domain\Model\Payment;
 final readonly class GetPaymentHistoryResult
 {
     /**
-     * @param Payment[] $payments     Array of payment aggregates
-     * @param int       $totalCount   Total number of payments for this order (across all pages)
-     * @param int       $currentPage  Current page number (1-indexed)
-     * @param int       $pageSize     Number of items per page
-     * @param int       $totalPages   Total number of pages
+     * @param Payment[] $payments    Array of payment aggregates
+     * @param int       $totalCount  Total number of payments for this order (across all pages)
+     * @param int       $currentPage Current page number (1-indexed)
+     * @param int       $pageSize    Number of items per page
+     * @param int       $totalPages  Total number of pages
      */
     public function __construct(
         public array $payments,
         public int $totalCount,
         public int $currentPage,
         public int $pageSize,
-        public int $totalPages
+        public int $totalPages,
     ) {
     }
 

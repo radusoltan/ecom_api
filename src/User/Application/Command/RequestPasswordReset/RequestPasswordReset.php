@@ -16,7 +16,7 @@ namespace App\User\Application\Command\RequestPasswordReset;
 final readonly class RequestPasswordReset
 {
     public function __construct(
-        public string $email
+        public string $email,
     ) {
     }
 }

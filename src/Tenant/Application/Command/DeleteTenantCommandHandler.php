@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class DeleteTenantCommandHandler
 {
     public function __construct(
-        private TenantRepositoryInterface $tenantRepository
+        private TenantRepositoryInterface $tenantRepository,
     ) {
     }
 

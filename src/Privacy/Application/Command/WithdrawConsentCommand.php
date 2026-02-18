@@ -9,7 +9,7 @@ use App\Privacy\Domain\ValueObject\ConsentId;
 final readonly class WithdrawConsentCommand
 {
     public function __construct(
-        public ConsentId $consentId
+        public ConsentId $consentId,
     ) {
     }
 }

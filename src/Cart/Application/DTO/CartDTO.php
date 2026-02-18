@@ -27,7 +27,7 @@ final readonly class CartDTO
         public string $totalCurrency,
         public int $itemCount,
         public string $createdAt,
-        public string $updatedAt
+        public string $updatedAt,
     ) {
     }
 

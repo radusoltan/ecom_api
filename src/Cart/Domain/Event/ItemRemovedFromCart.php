@@ -16,7 +16,7 @@ final readonly class ItemRemovedFromCart
         public TenantId $tenantId,
         public CartItemId $cartItemId,
         public ProductId $productId,
-        public ?string $variantId
+        public ?string $variantId,
     ) {
     }
 }

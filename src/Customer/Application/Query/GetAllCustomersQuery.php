@@ -8,7 +8,7 @@ final readonly class GetAllCustomersQuery
 {
     public function __construct(
         public string $tenantId,
-        public ?string $segment = null
+        public ?string $segment = null,
     ) {
     }
 }

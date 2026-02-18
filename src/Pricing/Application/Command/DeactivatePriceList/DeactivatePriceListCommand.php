@@ -9,7 +9,7 @@ use App\Pricing\Domain\Model\PriceListId;
 final readonly class DeactivatePriceListCommand
 {
     public function __construct(
-        public PriceListId $priceListId
+        public PriceListId $priceListId,
     ) {
     }
 }

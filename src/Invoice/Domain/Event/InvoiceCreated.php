@@ -20,7 +20,7 @@ final readonly class InvoiceCreated
         public InvoiceId $invoiceId,
         public TenantId $tenantId,
         public OrderId $orderId,
-        public CustomerId $customerId
+        public CustomerId $customerId,
     ) {
     }
 }

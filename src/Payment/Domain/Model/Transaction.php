@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Payment\Domain\Model;
 
 use App\Shared\Domain\ValueObject\Money;
-use DateTimeImmutable;
 
 /**
  * Transaction Entity - Immutable Audit Log for Payment Operations.
@@ -47,7 +46,7 @@ final readonly class Transaction
         private TransactionStatus $status,
         private ?string $errorCode,
         private ?string $errorMessage,
-        private DateTimeImmutable $createdAt
+        private \DateTimeImmutable $createdAt,
     ) {
     }
 
@@ -57,18 +56,18 @@ final readonly class Transaction
      * Authorization reserves funds on the customer's payment method
      * but does not actually charge them.
      *
-     * @param TransactionId $id Unique transaction identifier
-     * @param PaymentId $paymentId Parent payment identifier
-     * @param Money $amount Amount to authorize
-     * @param string $gatewayTransactionId Gateway's transaction reference
-     * @param string|null $gatewayResponse Raw gateway response (JSON)
+     * @param TransactionId $id                   Unique transaction identifier
+     * @param PaymentId     $paymentId            Parent payment identifier
+     * @param Money         $amount               Amount to authorize
+     * @param string        $gatewayTransactionId Gateway's transaction reference
+     * @param string|null   $gatewayResponse      Raw gateway response (JSON)
      */
     public static function createAuthorization(
         TransactionId $id,
         PaymentId $paymentId,
         Money $amount,
         string $gatewayTransactionId,
-        ?string $gatewayResponse = null
+        ?string $gatewayResponse = null,
     ): self {
         return new self(
             id: $id,
@@ -80,7 +79,7 @@ final readonly class Transaction
             status: TransactionStatus::SUCCESS,
             errorCode: null,
             errorMessage: null,
-            createdAt: new DateTimeImmutable()
+            createdAt: new \DateTimeImmutable()
         );
     }
 
@@ -89,18 +88,18 @@ final readonly class Transaction
      *
      * Capture actually charges the previously authorized funds.
      *
-     * @param TransactionId $id Unique transaction identifier
-     * @param PaymentId $paymentId Parent payment identifier
-     * @param Money $amount Amount to capture (can be less than authorized amount for partial capture)
-     * @param string $gatewayTransactionId Gateway's transaction reference
-     * @param string|null $gatewayResponse Raw gateway response (JSON)
+     * @param TransactionId $id                   Unique transaction identifier
+     * @param PaymentId     $paymentId            Parent payment identifier
+     * @param Money         $amount               Amount to capture (can be less than authorized amount for partial capture)
+     * @param string        $gatewayTransactionId Gateway's transaction reference
+     * @param string|null   $gatewayResponse      Raw gateway response (JSON)
      */
     public static function createCapture(
         TransactionId $id,
         PaymentId $paymentId,
         Money $amount,
         string $gatewayTransactionId,
-        ?string $gatewayResponse = null
+        ?string $gatewayResponse = null,
     ): self {
         return new self(
             id: $id,
@@ -112,7 +111,7 @@ final readonly class Transaction
             status: TransactionStatus::SUCCESS,
             errorCode: null,
             errorMessage: null,
-            createdAt: new DateTimeImmutable()
+            createdAt: new \DateTimeImmutable()
         );
     }
 
@@ -121,18 +120,18 @@ final readonly class Transaction
      *
      * Refund returns money to the customer's payment method.
      *
-     * @param TransactionId $id Unique transaction identifier
-     * @param PaymentId $paymentId Parent payment identifier
-     * @param Money $amount Amount to refund (can be less than captured amount for partial refund)
-     * @param string $gatewayTransactionId Gateway's transaction reference
-     * @param string|null $gatewayResponse Raw gateway response (JSON)
+     * @param TransactionId $id                   Unique transaction identifier
+     * @param PaymentId     $paymentId            Parent payment identifier
+     * @param Money         $amount               Amount to refund (can be less than captured amount for partial refund)
+     * @param string        $gatewayTransactionId Gateway's transaction reference
+     * @param string|null   $gatewayResponse      Raw gateway response (JSON)
      */
     public static function createRefund(
         TransactionId $id,
         PaymentId $paymentId,
         Money $amount,
         string $gatewayTransactionId,
-        ?string $gatewayResponse = null
+        ?string $gatewayResponse = null,
     ): self {
         return new self(
             id: $id,
@@ -144,7 +143,7 @@ final readonly class Transaction
             status: TransactionStatus::SUCCESS,
             errorCode: null,
             errorMessage: null,
-            createdAt: new DateTimeImmutable()
+            createdAt: new \DateTimeImmutable()
         );
     }
 
@@ -154,18 +153,18 @@ final readonly class Transaction
      * Void cancels a previously authorized transaction before it's captured.
      * Money was never actually charged, so no refund is needed.
      *
-     * @param TransactionId $id Unique transaction identifier
-     * @param PaymentId $paymentId Parent payment identifier
-     * @param Money $amount Amount voided (should match authorization amount)
-     * @param string $gatewayTransactionId Gateway's transaction reference
-     * @param string|null $gatewayResponse Raw gateway response (JSON)
+     * @param TransactionId $id                   Unique transaction identifier
+     * @param PaymentId     $paymentId            Parent payment identifier
+     * @param Money         $amount               Amount voided (should match authorization amount)
+     * @param string        $gatewayTransactionId Gateway's transaction reference
+     * @param string|null   $gatewayResponse      Raw gateway response (JSON)
      */
     public static function createVoid(
         TransactionId $id,
         PaymentId $paymentId,
         Money $amount,
         string $gatewayTransactionId,
-        ?string $gatewayResponse = null
+        ?string $gatewayResponse = null,
     ): self {
         return new self(
             id: $id,
@@ -177,7 +176,7 @@ final readonly class Transaction
             status: TransactionStatus::SUCCESS,
             errorCode: null,
             errorMessage: null,
-            createdAt: new DateTimeImmutable()
+            createdAt: new \DateTimeImmutable()
         );
     }
 
@@ -186,13 +185,13 @@ final readonly class Transaction
      *
      * Records when a transaction attempt failed at the gateway level.
      *
-     * @param TransactionId $id Unique transaction identifier
-     * @param PaymentId $paymentId Parent payment identifier
-     * @param TransactionType $type Type of transaction that failed
-     * @param Money $amount Amount that was attempted
-     * @param string $errorCode Gateway error code
-     * @param string $errorMessage Human-readable error message
-     * @param string|null $gatewayResponse Raw gateway response (JSON)
+     * @param TransactionId   $id              Unique transaction identifier
+     * @param PaymentId       $paymentId       Parent payment identifier
+     * @param TransactionType $type            Type of transaction that failed
+     * @param Money           $amount          Amount that was attempted
+     * @param string          $errorCode       Gateway error code
+     * @param string          $errorMessage    Human-readable error message
+     * @param string|null     $gatewayResponse Raw gateway response (JSON)
      */
     public static function createFailed(
         TransactionId $id,
@@ -201,7 +200,7 @@ final readonly class Transaction
         Money $amount,
         string $errorCode,
         string $errorMessage,
-        ?string $gatewayResponse = null
+        ?string $gatewayResponse = null,
     ): self {
         return new self(
             id: $id,
@@ -213,7 +212,7 @@ final readonly class Transaction
             status: TransactionStatus::FAILED,
             errorCode: $errorCode,
             errorMessage: $errorMessage,
-            createdAt: new DateTimeImmutable()
+            createdAt: new \DateTimeImmutable()
         );
     }
 
@@ -235,7 +234,7 @@ final readonly class Transaction
         TransactionStatus $status,
         ?string $errorCode,
         ?string $errorMessage,
-        DateTimeImmutable $createdAt
+        \DateTimeImmutable $createdAt,
     ): self {
         return new self(
             id: $id,
@@ -298,7 +297,7 @@ final readonly class Transaction
         return $this->errorMessage;
     }
 
-    public function createdAt(): DateTimeImmutable
+    public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }

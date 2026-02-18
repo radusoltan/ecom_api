@@ -23,7 +23,7 @@ final class UpdateProductTranslationsProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly MessageBusInterface $messageBus,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
     ) {
     }
 

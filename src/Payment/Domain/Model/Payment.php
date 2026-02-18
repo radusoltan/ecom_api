@@ -75,7 +75,7 @@ final class Payment extends AggregateRoot
         int $amountInCents,
         string $currency,
         PaymentMethod $method,
-        PaymentGateway $gateway
+        PaymentGateway $gateway,
     ): self {
         self::validateAmount($amountInCents);
         self::validateCurrency($currency);
@@ -127,7 +127,7 @@ final class Payment extends AggregateRoot
         // New retry-related fields with defaults for backwards compatibility
         ?string $errorCode = null,
         int $retryCount = 0,
-        ?\DateTimeImmutable $nextRetryAt = null
+        ?\DateTimeImmutable $nextRetryAt = null,
     ): self {
         $payment = new self();
         $payment->id = $id;

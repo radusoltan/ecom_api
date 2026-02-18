@@ -9,7 +9,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class GetOverdueRequestsQuery
 {
     public function __construct(
-        public ?TenantId $tenantId = null
+        public ?TenantId $tenantId = null,
     ) {
     }
 }

@@ -11,7 +11,6 @@ use App\Invoice\Domain\Model\InvoiceId;
 use App\Invoice\Domain\Repository\InvoiceRepositoryInterface;
 use App\Invoice\Infrastructure\ApiPlatform\Dto\IssueInvoiceRequest;
 use App\Invoice\Infrastructure\Persistence\Doctrine\Entity\InvoiceEntity;
-use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;

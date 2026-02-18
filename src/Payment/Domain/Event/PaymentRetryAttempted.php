@@ -23,7 +23,7 @@ final readonly class PaymentRetryAttempted
         public int $attemptNumber,
         public bool $wasSuccessful,
         public ?string $errorCode = null,
-        public ?string $errorMessage = null
+        public ?string $errorMessage = null,
     ) {
     }
 }

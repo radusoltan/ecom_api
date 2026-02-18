@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Sprint 1 - Day 1-2: Create tables for Cart bounded context
+ * Sprint 1 - Day 1-2: Create tables for Cart bounded context.
  */
 final class Version20251101100000 extends AbstractMigration
 {
@@ -23,9 +23,9 @@ final class Version20251101100000 extends AbstractMigration
         $this->addSql('
             CREATE TABLE carts (
                 id VARCHAR(26) NOT NULL,
-                tenant_id VARCHAR(36) NOT NULL,
-                customer_id VARCHAR(36) DEFAULT NULL,
-                session_id VARCHAR(36) DEFAULT NULL,
+                tenant_id UUID NOT NULL,
+                customer_id UUID DEFAULT NULL,
+                session_id UUID DEFAULT NULL,
                 status VARCHAR(20) NOT NULL,
                 created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
                 updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
@@ -51,8 +51,8 @@ final class Version20251101100000 extends AbstractMigration
             CREATE TABLE cart_items (
                 id VARCHAR(26) NOT NULL,
                 cart_id VARCHAR(26) NOT NULL,
-                product_id VARCHAR(36) NOT NULL,
-                variant_id VARCHAR(36) DEFAULT NULL,
+                product_id UUID NOT NULL,
+                variant_id UUID DEFAULT NULL,
                 quantity INT NOT NULL,
                 unit_price_amount DOUBLE PRECISION NOT NULL,
                 unit_price_currency VARCHAR(3) NOT NULL,

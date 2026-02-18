@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Loyalty Program Database Migration
+ * Loyalty Program Database Migration.
  *
  * Creates tables for the Customer Loyalty Program bounded context:
  * - loyalty_programs: Tenant-wide loyalty program configuration
@@ -36,8 +36,8 @@ final class Version20251228000003_LoyaltyProgram extends AbstractMigration
         // ============================================
         $this->addSql('
             CREATE TABLE IF NOT EXISTS loyalty_programs (
-                id VARCHAR(36) PRIMARY KEY,
-                tenant_id VARCHAR(36) NOT NULL,
+                id UUID PRIMARY KEY,
+                tenant_id UUID NOT NULL,
                 name VARCHAR(100) NOT NULL,
                 description TEXT,
                 earning_rate DECIMAL(10,4) NOT NULL DEFAULT 1.0,
@@ -63,9 +63,9 @@ final class Version20251228000003_LoyaltyProgram extends AbstractMigration
         // ============================================
         $this->addSql('
             CREATE TABLE IF NOT EXISTS loyalty_tiers (
-                id VARCHAR(36) PRIMARY KEY,
-                program_id VARCHAR(36) NOT NULL,
-                tenant_id VARCHAR(36) NOT NULL,
+                id UUID PRIMARY KEY,
+                program_id UUID NOT NULL,
+                tenant_id UUID NOT NULL,
                 name VARCHAR(50) NOT NULL,
                 threshold INTEGER NOT NULL DEFAULT 0,
                 discount_percentage INTEGER NOT NULL DEFAULT 0,
@@ -92,14 +92,14 @@ final class Version20251228000003_LoyaltyProgram extends AbstractMigration
         // ============================================
         $this->addSql('
             CREATE TABLE IF NOT EXISTS loyalty_point_transactions (
-                id VARCHAR(36) PRIMARY KEY,
-                customer_id VARCHAR(36) NOT NULL,
-                tenant_id VARCHAR(36) NOT NULL,
+                id UUID PRIMARY KEY,
+                customer_id UUID NOT NULL,
+                tenant_id UUID NOT NULL,
                 type VARCHAR(20) NOT NULL,
                 points INTEGER NOT NULL,
                 balance_after INTEGER NOT NULL,
                 reason VARCHAR(255) NOT NULL,
-                order_id VARCHAR(36),
+                order_id UUID,
                 expires_at TIMESTAMP,
                 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -115,7 +115,7 @@ final class Version20251228000003_LoyaltyProgram extends AbstractMigration
         // ============================================
         // 4. ALTER customers TABLE
         // ============================================
-        $this->addSql('ALTER TABLE customers ADD COLUMN IF NOT EXISTS current_tier_id VARCHAR(36)');
+        $this->addSql('ALTER TABLE customers ADD COLUMN IF NOT EXISTS current_tier_id UUID');
         $this->addSql('ALTER TABLE customers ADD COLUMN IF NOT EXISTS loyalty_points_balance INTEGER NOT NULL DEFAULT 0');
 
         // Add foreign key constraint (only if column was just created)

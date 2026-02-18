@@ -22,7 +22,7 @@ final class CategoryTranslationController extends AbstractController
 {
     public function __construct(
         private readonly CategoryRepositoryInterface $categoryRepository,
-        private readonly MessageBusInterface $messageBus
+        private readonly MessageBusInterface $messageBus,
     ) {
     }
 

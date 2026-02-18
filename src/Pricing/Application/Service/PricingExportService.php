@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Pricing\Application\Service;
 
-use App\Pricing\Application\DTO\ExportFilter;
 use App\Pricing\Application\DTO\PriceListDTO;
 use App\Pricing\Application\DTO\PromotionDTO;
 

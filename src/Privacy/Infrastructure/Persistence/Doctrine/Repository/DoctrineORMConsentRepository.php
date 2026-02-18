@@ -22,7 +22,7 @@ final class DoctrineORMConsentRepository extends ServiceEntityRepository impleme
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly EventDispatcherInterface $eventDispatcher
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
         parent::__construct($registry, ConsentEntity::class);
     }
@@ -58,7 +58,7 @@ final class DoctrineORMConsentRepository extends ServiceEntityRepository impleme
 
     public function findActiveByCustomerAndPurpose(
         CustomerId $customerId,
-        ConsentPurpose $purpose
+        ConsentPurpose $purpose,
     ): ?Consent {
         $entity = $this->createQueryBuilder('c')
             ->where('c.customerId = :customerId')

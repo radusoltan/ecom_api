@@ -13,7 +13,7 @@ final readonly class DataSubjectRequestCompleted implements DomainEvent
     public function __construct(
         public DataSubjectRequestId $requestId,
         public RequestType $requestType,
-        public \DateTimeImmutable $occurredOn
+        public \DateTimeImmutable $occurredOn,
     ) {
     }
 

@@ -21,7 +21,7 @@ final readonly class CustomerLoyaltyStatusDTO
         public int $lifetimePointsRedeemed,
         public ?int $currentTierDiscount,
         public ?string $programName,
-        public bool $programIsActive
+        public bool $programIsActive,
     ) {
     }
 

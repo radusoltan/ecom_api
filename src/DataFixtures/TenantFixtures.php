@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class TenantFixtures extends Fixture
 {
     public function __construct(
-        private readonly MessageBusInterface $commandBus
+        private readonly MessageBusInterface $commandBus,
     ) {
     }
 

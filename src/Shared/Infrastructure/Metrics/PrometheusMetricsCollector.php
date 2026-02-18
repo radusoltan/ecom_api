@@ -31,7 +31,7 @@ final class PrometheusMetricsCollector
     private ?Gauge $cacheHitRatioGauge = null;
 
     public function __construct(
-        private readonly CollectorRegistry $collectorRegistry
+        private readonly CollectorRegistry $collectorRegistry,
     ) {
     }
 

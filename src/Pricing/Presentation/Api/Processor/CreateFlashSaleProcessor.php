@@ -21,7 +21,7 @@ final readonly class CreateFlashSaleProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $messageBus,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

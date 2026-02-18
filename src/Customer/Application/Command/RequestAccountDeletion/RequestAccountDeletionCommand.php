@@ -12,7 +12,7 @@ final readonly class RequestAccountDeletionCommand
     public function __construct(
         public CustomerId $customerId,
         public TenantId $tenantId,
-        public ?string $reason = null
+        public ?string $reason = null,
     ) {
     }
 }

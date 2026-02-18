@@ -22,12 +22,12 @@ final class Version20251011212530 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
             CREATE TABLE catalog_categories (
-              id VARCHAR(36) NOT NULL,
-              tenant_id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
+              tenant_id UUID NOT NULL,
               name VARCHAR(255) NOT NULL,
               description TEXT DEFAULT NULL,
               slug VARCHAR(255) NOT NULL,
-              parent_id VARCHAR(36) DEFAULT NULL,
+              parent_id UUID DEFAULT NULL,
               position INT NOT NULL,
               active BOOLEAN NOT NULL,
               created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
@@ -44,8 +44,8 @@ final class Version20251011212530 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN catalog_categories.updated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql(<<<'SQL'
             CREATE TABLE catalog_products (
-              id VARCHAR(36) NOT NULL,
-              tenant_id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
+              tenant_id UUID NOT NULL,
               sku VARCHAR(50) NOT NULL,
               name VARCHAR(255) NOT NULL,
               description TEXT DEFAULT NULL,
@@ -53,7 +53,7 @@ final class Version20251011212530 extends AbstractMigration
               slug VARCHAR(255) NOT NULL,
               price_amount INT NOT NULL,
               price_currency VARCHAR(3) NOT NULL,
-              category_id VARCHAR(36) DEFAULT NULL,
+              category_id UUID DEFAULT NULL,
               stock_quantity INT NOT NULL,
               track_inventory BOOLEAN NOT NULL,
               allow_backorder BOOLEAN NOT NULL,
@@ -79,8 +79,8 @@ final class Version20251011212530 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN catalog_products.updated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql(<<<'SQL'
             CREATE TABLE customers (
-              id VARCHAR(36) NOT NULL,
-              tenant_id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
+              tenant_id UUID NOT NULL,
               email VARCHAR(255) NOT NULL,
               first_name VARCHAR(50) NOT NULL,
               last_name VARCHAR(50) NOT NULL,
@@ -119,8 +119,8 @@ final class Version20251011212530 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             CREATE TABLE orders (
-              id VARCHAR(36) NOT NULL,
-              tenant_id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
+              tenant_id UUID NOT NULL,
               customer_email VARCHAR(255) NOT NULL,
               status VARCHAR(20) NOT NULL,
               lines JSON NOT NULL,
@@ -133,7 +133,7 @@ final class Version20251011212530 extends AbstractMigration
               tax_amount DOUBLE PRECISION DEFAULT NULL,
               tax_currency VARCHAR(3) DEFAULT NULL,
               tax_jurisdiction VARCHAR(10) DEFAULT NULL,
-              tax_rule_id VARCHAR(36) DEFAULT NULL,
+              tax_rule_id UUID DEFAULT NULL,
               tax_rate DOUBLE PRECISION DEFAULT NULL,
               created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
               updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
@@ -150,9 +150,9 @@ final class Version20251011212530 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN orders.updated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql(<<<'SQL'
             CREATE TABLE payments (
-              id VARCHAR(36) NOT NULL,
-              tenant_id VARCHAR(36) NOT NULL,
-              order_id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
+              tenant_id UUID NOT NULL,
+              order_id UUID NOT NULL,
               amount_in_cents INT NOT NULL,
               currency VARCHAR(3) NOT NULL,
               method VARCHAR(20) NOT NULL,
@@ -176,8 +176,8 @@ final class Version20251011212530 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN payments.updated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql(<<<'SQL'
             CREATE TABLE price_lists (
-              id VARCHAR(36) NOT NULL,
-              tenant_id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
+              tenant_id UUID NOT NULL,
               name VARCHAR(100) NOT NULL,
               priority INT NOT NULL,
               rules JSON NOT NULL,
@@ -198,8 +198,8 @@ final class Version20251011212530 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN price_lists.updated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql(<<<'SQL'
             CREATE TABLE promotions (
-              id VARCHAR(36) NOT NULL,
-              tenant_id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
+              tenant_id UUID NOT NULL,
               name VARCHAR(100) NOT NULL,
               type VARCHAR(20) NOT NULL,
               discount_type VARCHAR(20) NOT NULL,
@@ -240,12 +240,12 @@ final class Version20251011212530 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX UNIQ_9BACE7E1C74F2195 ON refresh_tokens (refresh_token)');
         $this->addSql(<<<'SQL'
             CREATE TABLE return_requests (
-              id VARCHAR(36) NOT NULL,
-              tenant_id VARCHAR(36) NOT NULL,
-              order_id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
+              tenant_id UUID NOT NULL,
+              order_id UUID NOT NULL,
               reason VARCHAR(500) NOT NULL,
               status VARCHAR(20) NOT NULL,
-              warehouse_id VARCHAR(36) DEFAULT NULL,
+              warehouse_id UUID DEFAULT NULL,
               refund_amount DOUBLE PRECISION DEFAULT NULL,
               refund_currency VARCHAR(3) DEFAULT NULL,
               is_resellable BOOLEAN DEFAULT NULL,
@@ -265,10 +265,10 @@ final class Version20251011212530 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN return_requests.updated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql(<<<'SQL'
             CREATE TABLE stock_items (
-              id VARCHAR(36) NOT NULL,
-              tenant_id VARCHAR(36) NOT NULL,
-              product_id VARCHAR(36) NOT NULL,
-              warehouse_id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
+              tenant_id UUID NOT NULL,
+              product_id UUID NOT NULL,
+              warehouse_id UUID NOT NULL,
               on_hand INT NOT NULL,
               reserved INT NOT NULL,
               allocated INT NOT NULL,
@@ -289,9 +289,9 @@ final class Version20251011212530 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN stock_items.updated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql(<<<'SQL'
             CREATE TABLE stock_reservations (
-              id VARCHAR(36) NOT NULL,
-              stock_item_id VARCHAR(36) NOT NULL,
-              tenant_id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
+              stock_item_id UUID NOT NULL,
+              tenant_id UUID NOT NULL,
               quantity INT NOT NULL,
               reserved_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
               expires_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
@@ -307,8 +307,8 @@ final class Version20251011212530 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN stock_reservations.released_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql(<<<'SQL'
             CREATE TABLE tax_rules (
-              id VARCHAR(36) NOT NULL,
-              tenant_id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
+              tenant_id UUID NOT NULL,
               name VARCHAR(100) NOT NULL,
               country_code VARCHAR(2) NOT NULL,
               region_code VARCHAR(3) DEFAULT NULL,
@@ -333,7 +333,7 @@ final class Version20251011212530 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN tax_rules.updated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql(<<<'SQL'
             CREATE TABLE tenants (
-              id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
               name VARCHAR(100) NOT NULL,
               owner_email VARCHAR(255) NOT NULL,
               status VARCHAR(20) NOT NULL,
@@ -360,7 +360,7 @@ final class Version20251011212530 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX UNIQ_E1BF56D8989D9B62 ON test_translatable (slug)');
         $this->addSql(<<<'SQL'
             CREATE TABLE users (
-              id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
               email VARCHAR(255) NOT NULL,
               username VARCHAR(50) NOT NULL,
               password VARCHAR(255) NOT NULL,
@@ -374,8 +374,8 @@ final class Version20251011212530 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN users.created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql(<<<'SQL'
             CREATE TABLE warehouses (
-              id VARCHAR(36) NOT NULL,
-              tenant_id VARCHAR(36) NOT NULL,
+              id UUID NOT NULL,
+              tenant_id UUID NOT NULL,
               code VARCHAR(10) NOT NULL,
               name VARCHAR(100) NOT NULL,
               address JSON NOT NULL,

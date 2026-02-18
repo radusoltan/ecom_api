@@ -38,7 +38,7 @@ final class ProcessPaymentRetriesCommand extends Command
 {
     public function __construct(
         private readonly PaymentRetryService $retryService,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct();
     }

@@ -20,7 +20,7 @@ final readonly class MergeCarts
     public function __construct(
         public string $sourceCartId,  // Guest cart to merge from
         public string $targetCartId,  // Customer cart to merge into
-        public bool $deleteSourceAfterMerge = true
+        public bool $deleteSourceAfterMerge = true,
     ) {
     }
 }

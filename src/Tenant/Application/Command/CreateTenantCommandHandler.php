@@ -21,7 +21,7 @@ final readonly class CreateTenantCommandHandler
         private TenantRepositoryInterface $tenantRepository,
         private PerformanceProfiler $profiler,
         private LoggerInterface $logger,
-        private TenantContextInterface $tenantContext
+        private TenantContextInterface $tenantContext,
     ) {
     }
 

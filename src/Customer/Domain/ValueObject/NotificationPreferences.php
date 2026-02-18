@@ -32,7 +32,7 @@ final readonly class NotificationPreferences
         private bool $backInStockAlerts,
         private bool $securityAlerts,
         private bool $newsletterWeekly,
-        private bool $preferSms
+        private bool $preferSms,
     ) {
         $this->validate();
     }
@@ -65,7 +65,7 @@ final readonly class NotificationPreferences
         bool $backInStockAlerts,
         bool $securityAlerts,
         bool $newsletterWeekly,
-        bool $preferSms
+        bool $preferSms,
     ): self {
         return new self(
             $orderUpdates,

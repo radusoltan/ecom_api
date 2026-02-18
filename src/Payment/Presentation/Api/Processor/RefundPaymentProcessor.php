@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final readonly class RefundPaymentProcessor implements ProcessorInterface
 {
     public function __construct(
-        private MessageBusInterface $commandBus
+        private MessageBusInterface $commandBus,
     ) {
     }
 

@@ -25,7 +25,7 @@ final readonly class ResetPasswordHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private UserRepositoryInterface $userRepository
+        private UserRepositoryInterface $userRepository,
     ) {
     }
 

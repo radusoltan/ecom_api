@@ -7,7 +7,7 @@ namespace App\Tenant\Application\Command;
 final readonly class DeleteTenantCommand
 {
     public function __construct(
-        public string $id
+        public string $id,
     ) {
     }
 }

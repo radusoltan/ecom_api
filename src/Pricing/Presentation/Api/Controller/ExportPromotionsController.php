@@ -25,7 +25,7 @@ final class ExportPromotionsController extends AbstractController
 {
     public function __construct(
         private readonly MessageBusInterface $messageBus,
-        private readonly PricingExportService $exportService
+        private readonly PricingExportService $exportService,
     ) {
     }
 
@@ -69,10 +69,10 @@ final class ExportPromotionsController extends AbstractController
             // Determine content type and filename
             if ($query->isCsvFormat()) {
                 $contentType = 'text/csv';
-                $filename = 'promotions-export-' . date('Y-m-d-His') . '.csv';
+                $filename = 'promotions-export-'.date('Y-m-d-His').'.csv';
             } else {
                 $contentType = 'application/json';
-                $filename = 'promotions-export-' . date('Y-m-d-His') . '.json';
+                $filename = 'promotions-export-'.date('Y-m-d-His').'.json';
             }
 
             // Return file download response
@@ -84,7 +84,7 @@ final class ExportPromotionsController extends AbstractController
             return $response;
         } catch (\Exception $e) {
             return new Response(
-                'Export failed: ' . $e->getMessage(),
+                'Export failed: '.$e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -104,7 +104,7 @@ final class ExportPromotionsController extends AbstractController
             return $response;
         } catch (\Exception $e) {
             return new Response(
-                'Template generation failed: ' . $e->getMessage(),
+                'Template generation failed: '.$e->getMessage(),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }

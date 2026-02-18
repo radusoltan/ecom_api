@@ -29,7 +29,7 @@ final class CardDeclinedException extends PaymentGatewayException
     public static function create(
         string $declineCode,
         ?string $gatewayErrorMessage = null,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         $message = self::getMessageForDeclineCode($declineCode);
 
@@ -61,7 +61,7 @@ final class CardDeclinedException extends PaymentGatewayException
     }
 
     /**
-     * Check if the decline is due to insufficient funds
+     * Check if the decline is due to insufficient funds.
      */
     public function isInsufficientFunds(): bool
     {
@@ -69,7 +69,7 @@ final class CardDeclinedException extends PaymentGatewayException
     }
 
     /**
-     * Check if the decline is due to fraud detection
+     * Check if the decline is due to fraud detection.
      */
     public function isFraudulent(): bool
     {
@@ -77,7 +77,7 @@ final class CardDeclinedException extends PaymentGatewayException
     }
 
     /**
-     * Check if the decline is due to lost or stolen card
+     * Check if the decline is due to lost or stolen card.
      */
     public function isLostOrStolen(): bool
     {
@@ -85,7 +85,7 @@ final class CardDeclinedException extends PaymentGatewayException
     }
 
     /**
-     * Check if the decline is due to expired card
+     * Check if the decline is due to expired card.
      */
     public function isExpired(): bool
     {
@@ -93,7 +93,7 @@ final class CardDeclinedException extends PaymentGatewayException
     }
 
     /**
-     * Check if retry with same card might succeed (temporary issue)
+     * Check if retry with same card might succeed (temporary issue).
      */
     public function canRetryWithSameCard(): bool
     {
@@ -106,7 +106,7 @@ final class CardDeclinedException extends PaymentGatewayException
     }
 
     /**
-     * Check if customer must use different payment method
+     * Check if customer must use different payment method.
      */
     public function requiresDifferentPaymentMethod(): bool
     {

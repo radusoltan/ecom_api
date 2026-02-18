@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Payment\Domain\Repository;
 
+use App\Payment\Domain\Model\PaymentId;
 use App\Payment\Domain\Model\Transaction;
 use App\Payment\Domain\Model\TransactionId;
-use App\Payment\Domain\Model\PaymentId;
 
 /**
  * Transaction Repository Interface (Port).

@@ -20,7 +20,7 @@ final readonly class SendNotification
         public ?string $recipientEmail,
         public ?string $recipientPhone,
         public string $subject,
-        public string $body
+        public string $body,
     ) {
     }
 }

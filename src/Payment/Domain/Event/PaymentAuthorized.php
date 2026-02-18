@@ -12,7 +12,7 @@ final readonly class PaymentAuthorized
     public function __construct(
         public PaymentId $paymentId,
         public TenantId $tenantId,
-        public string $gatewayTransactionId
+        public string $gatewayTransactionId,
     ) {
     }
 }

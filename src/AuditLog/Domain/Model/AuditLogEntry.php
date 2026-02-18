@@ -49,7 +49,7 @@ final class AuditLogEntry extends AggregateRoot
         array $metadata,
         ?string $ipAddress,
         ?string $userAgent,
-        \DateTimeImmutable $occurredAt
+        \DateTimeImmutable $occurredAt,
     ) {
         $this->id = $id;
         $this->tenantId = $tenantId;
@@ -76,7 +76,7 @@ final class AuditLogEntry extends AggregateRoot
         string $resourceId,
         array $metadata = [],
         ?string $ipAddress = null,
-        ?string $userAgent = null
+        ?string $userAgent = null,
     ): self {
         $id = AuditLogId::generate();
         $occurredAt = new \DateTimeImmutable();
@@ -110,7 +110,7 @@ final class AuditLogEntry extends AggregateRoot
         array $metadata,
         ?string $ipAddress,
         ?string $userAgent,
-        \DateTimeImmutable $occurredAt
+        \DateTimeImmutable $occurredAt,
     ): self {
         return new self(
             $id,

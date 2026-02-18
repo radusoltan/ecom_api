@@ -35,9 +35,9 @@ final class Version20251207120000 extends AbstractMigration
 
         $this->addSql('
             CREATE TABLE bundle_items (
-                id VARCHAR(36) PRIMARY KEY,
-                bundle_product_id VARCHAR(36) NOT NULL,
-                product_id VARCHAR(36) NOT NULL,
+                id UUID PRIMARY KEY,
+                bundle_product_id UUID NOT NULL,
+                product_id UUID NOT NULL,
                 quantity INT NOT NULL CHECK (quantity >= 1),
                 price_amount INT NOT NULL CHECK (price_amount >= 0),
                 price_currency VARCHAR(3) NOT NULL DEFAULT \'USD\',

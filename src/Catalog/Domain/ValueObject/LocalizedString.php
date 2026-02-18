@@ -14,7 +14,7 @@ final class LocalizedString
      * @param array<string, string> $translations Map of locale code to translation
      */
     private function __construct(
-        private readonly array $translations
+        private readonly array $translations,
     ) {
         $this->validate($translations);
     }

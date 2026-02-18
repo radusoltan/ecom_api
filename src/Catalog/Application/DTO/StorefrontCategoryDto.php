@@ -25,7 +25,7 @@ final class StorefrontCategoryDto
         #[Groups(['storefront:read'])]
         public readonly int $childrenCount = 0,
         #[Groups(['storefront:read'])]
-        public readonly ?string $description = null
+        public readonly ?string $description = null,
     ) {
     }
 

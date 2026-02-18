@@ -14,7 +14,7 @@ use Symfony\Component\Uid\Uuid;
 final readonly class DataExportRequestId
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!Uuid::isValid($value)) {
             throw new \InvalidArgumentException(sprintf('Invalid data export request ID: "%s"', $value));

@@ -9,7 +9,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 /**
@@ -37,12 +36,12 @@ final readonly class SymfonyEmailSender implements EmailSenderInterface
     /**
      * Send an email using HTML and text templates.
      *
-     * @param string $to Recipient email address
-     * @param string $subject Email subject
-     * @param string $templateName Template name without extension (e.g., 'order/order_placed')
-     * @param array<string, mixed> $context Template variables
-     * @param string|null $locale Optional locale for translations (default: 'en')
-     * @param string|null $fromEmail Optional custom sender email
+     * @param string               $to           Recipient email address
+     * @param string               $subject      Email subject
+     * @param string               $templateName Template name without extension (e.g., 'order/order_placed')
+     * @param array<string, mixed> $context      Template variables
+     * @param string|null          $locale       Optional locale for translations (default: 'en')
+     * @param string|null          $fromEmail    Optional custom sender email
      *
      * @throws TransportExceptionInterface If email sending fails
      */
@@ -106,11 +105,11 @@ final readonly class SymfonyEmailSender implements EmailSenderInterface
      *
      * Useful for bulk notifications (e.g., newsletter, promotional emails).
      *
-     * @param array<string> $recipients Array of recipient email addresses
-     * @param string $subject Email subject
-     * @param string $templateName Template name without extension
-     * @param array<string, mixed> $context Template variables
-     * @param string|null $locale Optional locale for translations
+     * @param array<string>        $recipients   Array of recipient email addresses
+     * @param string               $subject      Email subject
+     * @param string               $templateName Template name without extension
+     * @param array<string, mixed> $context      Template variables
+     * @param string|null          $locale       Optional locale for translations
      *
      * @return array{sent: int, failed: int, errors: array<string, string>}
      */

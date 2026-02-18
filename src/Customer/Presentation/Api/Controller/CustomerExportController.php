@@ -31,7 +31,7 @@ final class CustomerExportController extends AbstractController
 {
     public function __construct(
         private readonly MessageBusInterface $messageBus,
-        private readonly CustomerExportService $exportService
+        private readonly CustomerExportService $exportService,
     ) {
     }
 

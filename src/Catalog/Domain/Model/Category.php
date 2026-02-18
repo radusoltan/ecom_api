@@ -23,7 +23,7 @@ final class Category extends AggregateRoot
         private bool $showOnFront,
         private ?string $coverImage,
         private \DateTimeImmutable $createdAt,
-        private \DateTimeImmutable $updatedAt
+        private \DateTimeImmutable $updatedAt,
     ) {
     }
 
@@ -38,7 +38,7 @@ final class Category extends AggregateRoot
         ?CategoryId $parentId,
         int $position = 0,
         bool $showOnFront = false,
-        ?string $coverImage = null
+        ?string $coverImage = null,
     ): self {
         $category = new self(
             id: $id,
@@ -75,7 +75,7 @@ final class Category extends AggregateRoot
         bool $showOnFront,
         ?string $coverImage,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             $id,
@@ -98,7 +98,7 @@ final class Category extends AggregateRoot
         ?string $description,
         ?CategoryId $parentId,
         int $position,
-        bool $showOnFront
+        bool $showOnFront,
     ): void {
         $this->name = $name;
         $this->description = $description;

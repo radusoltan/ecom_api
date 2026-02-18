@@ -28,7 +28,7 @@ final readonly class OrderPaid
         public TenantId $tenantId,
         public string $paymentId,
         public int $paidAmountInCents,
-        public \DateTimeImmutable $occurredOn
+        public \DateTimeImmutable $occurredOn,
     ) {
     }
 }

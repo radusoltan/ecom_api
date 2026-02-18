@@ -46,36 +46,36 @@ enum DeletionStatus: string
 
     public function isPending(): bool
     {
-        return $this === self::PENDING;
+        return self::PENDING === $this;
     }
 
     public function isConfirmed(): bool
     {
-        return $this === self::CONFIRMED;
+        return self::CONFIRMED === $this;
     }
 
     public function isProcessing(): bool
     {
-        return $this === self::PROCESSING;
+        return self::PROCESSING === $this;
     }
 
     public function isCompleted(): bool
     {
-        return $this === self::COMPLETED;
+        return self::COMPLETED === $this;
     }
 
     public function isCancelled(): bool
     {
-        return $this === self::CANCELLED;
+        return self::CANCELLED === $this;
     }
 
     public function isOnHold(): bool
     {
-        return $this === self::ON_HOLD;
+        return self::ON_HOLD === $this;
     }
 
     public function isTerminal(): bool
     {
-        return $this === self::COMPLETED || $this === self::CANCELLED;
+        return self::COMPLETED === $this || self::CANCELLED === $this;
     }
 }

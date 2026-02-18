@@ -32,13 +32,13 @@ final readonly class PricingSummaryDTO
     /**
      * Create from query results.
      *
-     * @param array<string, mixed> $summary
+     * @param array<string, mixed>                $summary
      * @param array<int, PromotionPerformanceDTO> $topPromotions
      */
     public static function create(
         array $summary,
         array $topPromotions,
-        DateRangeFilter $period
+        DateRangeFilter $period,
     ): self {
         return new self(
             totalOrdersCount: (int) $summary['total_orders_count'],
@@ -74,15 +74,15 @@ final readonly class PricingSummaryDTO
                 'totalRevenue' => [
                     'amount' => $this->totalRevenueAmount,
                     'currency' => $this->totalRevenueCurrency,
-                    'formatted' => number_format($this->totalRevenueAmount / 100, 2) . ' ' . $this->totalRevenueCurrency,
+                    'formatted' => number_format($this->totalRevenueAmount / 100, 2).' '.$this->totalRevenueCurrency,
                 ],
                 'totalDiscount' => [
                     'amount' => $this->totalDiscountAmount,
                     'currency' => $this->totalDiscountCurrency,
-                    'formatted' => number_format($this->totalDiscountAmount / 100, 2) . ' ' . $this->totalDiscountCurrency,
+                    'formatted' => number_format($this->totalDiscountAmount / 100, 2).' '.$this->totalDiscountCurrency,
                 ],
                 'averageOrderValue' => round($this->averageOrderValue, 2),
-                'discountRate' => round($this->discountRate, 2) . '%',
+                'discountRate' => round($this->discountRate, 2).'%',
                 'promotionsActive' => $this->promotionsActiveCount,
                 'couponsUsed' => $this->couponsUsedCount,
             ],

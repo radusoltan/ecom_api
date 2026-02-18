@@ -27,7 +27,7 @@ final readonly class NotificationPreferencesUpdated
         public TenantId $tenantId,
         public array $oldPreferences,
         public array $newPreferences,
-        public \DateTimeImmutable $occurredAt
+        public \DateTimeImmutable $occurredAt,
     ) {
     }
 }

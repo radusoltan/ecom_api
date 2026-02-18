@@ -7,6 +7,7 @@ namespace App\Catalog\Infrastructure\Security;
 use App\Catalog\Domain\Model\Product;
 use App\Shared\Infrastructure\Security\Voter\AbstractResourceVoter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 
 /**
  * Voter for Product resource permissions.
@@ -42,7 +43,7 @@ final class ProductVoter extends AbstractResourceVoter
         ];
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         // Require authentication
         if (!$this->isAuthenticated($token)) {

@@ -20,7 +20,7 @@ final readonly class AddItemToCart
         public ?string $variantId,
         public int $quantity,
         public ?float $unitPriceAmount = null,    // Optional: will fetch from catalog if null
-        public ?string $unitPriceCurrency = null  // Optional: will fetch from catalog if null
+        public ?string $unitPriceCurrency = null,  // Optional: will fetch from catalog if null
     ) {
     }
 }

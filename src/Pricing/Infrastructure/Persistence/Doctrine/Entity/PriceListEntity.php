@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Pricing\Infrastructure\Persistence\Doctrine\Entity;
 
 use App\Catalog\Domain\Model\ProductId;
-use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Pricing\Domain\Model\Discount;
 use App\Pricing\Domain\Model\PriceList;
 use App\Pricing\Domain\Model\PriceListId;

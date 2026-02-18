@@ -33,7 +33,7 @@ final readonly class FulfillmentShippedSubscriber implements EventSubscriberInte
         private LoggerInterface $logger,
         private string $senderEmail = 'orders@ecommerce.local',
         private string $senderName = 'E-Commerce Platform',
-        private string $defaultLocale = 'en'
+        private string $defaultLocale = 'en',
     ) {
     }
 

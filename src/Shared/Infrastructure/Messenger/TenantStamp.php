@@ -17,7 +17,7 @@ use Symfony\Component\Messenger\Stamp\StampInterface;
 final readonly class TenantStamp implements StampInterface
 {
     public function __construct(
-        private string $tenantId
+        private string $tenantId,
     ) {
     }
 

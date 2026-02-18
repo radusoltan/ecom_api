@@ -28,7 +28,7 @@ final readonly class CreateVariant
         public int $stockQuantity,
         public bool $trackInventory = true,
         public bool $allowBackorder = false,
-        public bool $isActive = true
+        public bool $isActive = true,
     ) {
     }
 }

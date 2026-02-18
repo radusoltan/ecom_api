@@ -45,7 +45,7 @@ final class DataExportRequest
      */
     public static function create(
         CustomerId $customerId,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): self {
         $request = new self();
         $request->id = DataExportRequestId::generate();
@@ -70,7 +70,7 @@ final class DataExportRequest
         ?\DateTimeImmutable $expiresAt,
         \DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $completedAt,
-        ?string $errorMessage
+        ?string $errorMessage,
     ): self {
         $request = new self();
         $request->id = $id;
@@ -93,10 +93,7 @@ final class DataExportRequest
     public function markProcessing(): void
     {
         if (!$this->status->canTransitionTo(ExportStatus::PROCESSING)) {
-            throw new \DomainException(sprintf(
-                'Cannot transition from %s to PROCESSING',
-                $this->status->label()
-            ));
+            throw new \DomainException(sprintf('Cannot transition from %s to PROCESSING', $this->status->label()));
         }
 
         $this->status = ExportStatus::PROCESSING;
@@ -108,10 +105,7 @@ final class DataExportRequest
     public function markReady(string $filePath, string $downloadToken, \DateTimeImmutable $expiresAt): void
     {
         if (!$this->status->canTransitionTo(ExportStatus::READY)) {
-            throw new \DomainException(sprintf(
-                'Cannot transition from %s to READY',
-                $this->status->label()
-            ));
+            throw new \DomainException(sprintf('Cannot transition from %s to READY', $this->status->label()));
         }
 
         if ('' === trim($filePath)) {
@@ -140,10 +134,7 @@ final class DataExportRequest
     public function markExpired(): void
     {
         if (!$this->status->canTransitionTo(ExportStatus::EXPIRED)) {
-            throw new \DomainException(sprintf(
-                'Cannot transition from %s to EXPIRED',
-                $this->status->label()
-            ));
+            throw new \DomainException(sprintf('Cannot transition from %s to EXPIRED', $this->status->label()));
         }
 
         $this->status = ExportStatus::EXPIRED;
@@ -155,10 +146,7 @@ final class DataExportRequest
     public function markFailed(string $errorMessage): void
     {
         if (!$this->status->canTransitionTo(ExportStatus::FAILED)) {
-            throw new \DomainException(sprintf(
-                'Cannot transition from %s to FAILED',
-                $this->status->label()
-            ));
+            throw new \DomainException(sprintf('Cannot transition from %s to FAILED', $this->status->label()));
         }
 
         if ('' === trim($errorMessage)) {

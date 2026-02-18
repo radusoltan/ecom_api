@@ -26,7 +26,7 @@ final readonly class CustomerSearchCriteria
         public string $sortBy = 'createdAt',
         public string $sortOrder = 'DESC',
         public int $page = 1,
-        public int $limit = 20
+        public int $limit = 20,
     ) {
         $this->validatePagination();
         $this->validateSorting();

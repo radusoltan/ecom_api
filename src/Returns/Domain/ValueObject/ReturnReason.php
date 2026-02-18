@@ -18,7 +18,7 @@ final readonly class ReturnReason
     private const MAX_LENGTH = 500;
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         $trimmed = trim($this->value);
 

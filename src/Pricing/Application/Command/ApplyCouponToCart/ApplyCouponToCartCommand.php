@@ -17,7 +17,7 @@ final readonly class ApplyCouponToCartCommand
     public function __construct(
         public CartId $cartId,
         public TenantId $tenantId,
-        public string $couponCode
+        public string $couponCode,
     ) {
     }
 }

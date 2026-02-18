@@ -23,7 +23,7 @@ final readonly class ImportPriceListCommand
     public function __construct(
         public TenantId $tenantId,
         public array $rows,
-        public bool $updateExisting = true
+        public bool $updateExisting = true,
     ) {
     }
 }

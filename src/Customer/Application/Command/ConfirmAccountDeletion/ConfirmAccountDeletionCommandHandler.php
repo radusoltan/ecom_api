@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class ConfirmAccountDeletionCommandHandler
 {
     public function __construct(
-        private DeletionRequestRepositoryInterface $deletionRequestRepository
+        private DeletionRequestRepositoryInterface $deletionRequestRepository,
     ) {
     }
 

@@ -9,7 +9,7 @@ use App\Payment\Domain\Model\PaymentId;
 final readonly class GetPaymentById
 {
     public function __construct(
-        public PaymentId $id
+        public PaymentId $id,
     ) {
     }
 }

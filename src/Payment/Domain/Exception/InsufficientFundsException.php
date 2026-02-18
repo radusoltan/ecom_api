@@ -18,7 +18,7 @@ final class InsufficientFundsException extends PaymentGatewayException
         string $message,
         private readonly ?Money $attemptedAmount = null,
         ?string $gatewayErrorMessage = null,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ) {
         parent::__construct(
             message: $message,
@@ -32,7 +32,7 @@ final class InsufficientFundsException extends PaymentGatewayException
     public static function create(
         ?Money $attemptedAmount = null,
         ?string $gatewayErrorMessage = null,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         $message = self::buildMessage($attemptedAmount);
 
@@ -57,7 +57,7 @@ final class InsufficientFundsException extends PaymentGatewayException
     }
 
     /**
-     * Get the amount that was attempted to charge
+     * Get the amount that was attempted to charge.
      */
     public function getAttemptedAmount(): ?Money
     {
@@ -65,7 +65,7 @@ final class InsufficientFundsException extends PaymentGatewayException
     }
 
     /**
-     * Get user-friendly error message
+     * Get user-friendly error message.
      */
     public function getUserMessage(): string
     {
@@ -80,7 +80,7 @@ final class InsufficientFundsException extends PaymentGatewayException
     }
 
     /**
-     * This error is not retryable with the same payment method
+     * This error is not retryable with the same payment method.
      */
     public function isRetryable(): bool
     {
@@ -88,7 +88,7 @@ final class InsufficientFundsException extends PaymentGatewayException
     }
 
     /**
-     * Customer must provide different payment method
+     * Customer must provide different payment method.
      */
     public function requiresCustomerAction(): bool
     {

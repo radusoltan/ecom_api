@@ -44,7 +44,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
         private MessageBusInterface $commandBus,
         private TokenStorageInterface $tokenStorage,
         private RequestStack $requestStack,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -301,7 +301,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
         string $actionType,
         string $resourceType,
         string $resourceId,
-        array $metadata = []
+        array $metadata = [],
     ): void {
         try {
             // Get current user from security context

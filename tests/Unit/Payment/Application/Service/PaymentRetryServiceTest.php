@@ -11,7 +11,6 @@ use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
 use App\Payment\Domain\ValueObject\PaymentStatus;
-use App\Payment\Domain\ValueObject\RetryPolicy;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -118,7 +117,7 @@ final class PaymentRetryServiceTest extends TestCase
                 'Payment retry scheduled',
                 $this->callback(function (array $context) use ($payment) {
                     return $context['payment_id'] === $payment->id()->toString()
-                        && $context['retry_count'] === 1
+                        && 1 === $context['retry_count']
                         && isset($context['next_retry_at']);
                 })
             );
@@ -215,8 +214,8 @@ final class PaymentRetryServiceTest extends TestCase
             ->with(
                 'Max retry attempts reached',
                 $this->callback(function (array $context) {
-                    return $context['retry_count'] === 3
-                        && $context['max_attempts'] === 3;
+                    return 3 === $context['retry_count']
+                        && 3 === $context['max_attempts'];
                 })
             );
 
@@ -252,7 +251,7 @@ final class PaymentRetryServiceTest extends TestCase
                 'Error not retryable',
                 $this->callback(function (array $context) use ($payment) {
                     return $context['payment_id'] === $payment->id()->toString()
-                        && $context['error_code'] === 'expired_card';
+                        && 'expired_card' === $context['error_code'];
                 })
             );
 
@@ -347,7 +346,7 @@ final class PaymentRetryServiceTest extends TestCase
             ->with(
                 'Payment retry exhausted',
                 $this->callback(function (array $context) {
-                    return $context['total_attempts'] === 3;
+                    return 3 === $context['total_attempts'];
                 })
             );
 
@@ -474,7 +473,7 @@ final class PaymentRetryServiceTest extends TestCase
     private function createPayment(
         ?string $errorCode = null,
         int $retryCount = 0,
-        ?\DateTimeImmutable $nextRetryAt = null
+        ?\DateTimeImmutable $nextRetryAt = null,
     ): Payment {
         $payment = Payment::create(
             id: PaymentId::generate(),
@@ -487,12 +486,12 @@ final class PaymentRetryServiceTest extends TestCase
         );
 
         // If we need a failed payment, mark it as failed
-        if ($errorCode !== null) {
+        if (null !== $errorCode) {
             $payment->markAsFailed('Payment failed', $errorCode);
         }
 
         // If retry count > 0, we need to reconstitute with retry data
-        if ($retryCount > 0 || $nextRetryAt !== null) {
+        if ($retryCount > 0 || null !== $nextRetryAt) {
             $payment = Payment::reconstituteFromPersistence(
                 id: $payment->id(),
                 tenantId: $payment->tenantId(),
@@ -501,9 +500,9 @@ final class PaymentRetryServiceTest extends TestCase
                 currency: $payment->currency(),
                 method: $payment->method(),
                 gateway: $payment->gateway(),
-                status: $errorCode !== null ? PaymentStatus::failed() : $payment->status(),
+                status: null !== $errorCode ? PaymentStatus::failed() : $payment->status(),
                 gatewayTransactionId: null,
-                errorMessage: $errorCode !== null ? 'Payment failed' : null,
+                errorMessage: null !== $errorCode ? 'Payment failed' : null,
                 refundedAmountInCents: 0,
                 createdAt: new \DateTimeImmutable('-1 hour'),
                 updatedAt: new \DateTimeImmutable(),

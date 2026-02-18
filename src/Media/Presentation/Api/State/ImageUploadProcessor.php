@@ -42,7 +42,7 @@ final class ImageUploadProcessor implements ProcessorInterface
         private readonly ProductRepositoryInterface $productRepository,
         private readonly CategoryRepositoryInterface $categoryRepository,
         private readonly MessageBusInterface $messageBus,
-        private readonly bool $asyncThumbnails = true
+        private readonly bool $asyncThumbnails = true,
     ) {
     }
 

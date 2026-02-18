@@ -24,7 +24,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class CreateTaxRuleHandler
 {
     public function __construct(
-        private TaxRuleRepositoryInterface $taxRuleRepository
+        private TaxRuleRepositoryInterface $taxRuleRepository,
     ) {
     }
 

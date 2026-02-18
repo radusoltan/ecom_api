@@ -10,7 +10,7 @@ use Brick\Money\Money as BrickMoney;
 final readonly class Money
 {
     private function __construct(
-        private BrickMoney $money
+        private BrickMoney $money,
     ) {
     }
 

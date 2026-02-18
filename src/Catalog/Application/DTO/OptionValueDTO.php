@@ -16,7 +16,7 @@ final readonly class OptionValueDTO
         public string $id,
         public string $code,
         public array $nameTranslations,
-        public int $position
+        public int $position,
     ) {
     }
 }

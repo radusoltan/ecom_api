@@ -13,7 +13,7 @@ final readonly class GetCustomerOrdersQueryHandler
 {
     public function __construct(
         private CustomerRepositoryInterface $customerRepository,
-        private OrderRepositoryInterface $orderRepository
+        private OrderRepositoryInterface $orderRepository,
     ) {
     }
 

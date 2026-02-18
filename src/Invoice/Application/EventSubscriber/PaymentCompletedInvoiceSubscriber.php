@@ -41,7 +41,7 @@ final readonly class PaymentCompletedInvoiceSubscriber implements EventSubscribe
         private MessageBusInterface $commandBus,
         private InvoiceRepositoryInterface $invoiceRepository,
         private OrderRepositoryInterface $orderRepository,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

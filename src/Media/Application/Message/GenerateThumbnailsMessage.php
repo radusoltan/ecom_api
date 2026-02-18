@@ -17,7 +17,7 @@ final readonly class GenerateThumbnailsMessage
     public function __construct(
         public ImageId $imageId,
         public array $crops = [],
-        public ?array $sizes = null
+        public ?array $sizes = null,
     ) {
     }
 }

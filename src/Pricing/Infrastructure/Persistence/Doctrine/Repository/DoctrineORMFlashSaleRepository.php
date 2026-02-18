@@ -17,7 +17,7 @@ final readonly class DoctrineORMFlashSaleRepository implements FlashSaleReposito
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -104,7 +104,7 @@ final readonly class DoctrineORMFlashSaleRepository implements FlashSaleReposito
             ->andWhere($qb->expr()->like('f.productIds', ':productId'))
             ->setParameter('tenantId', $tenantId->toString())
             ->setParameter('status', 'active')
-            ->setParameter('productId', '%"' . $productId->toString() . '"%')
+            ->setParameter('productId', '%"'.$productId->toString().'"%')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

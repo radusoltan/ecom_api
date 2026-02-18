@@ -146,7 +146,7 @@ final readonly class StockLevelChangeNotificationSubscriber implements EventSubs
         string $eventType,
         \App\Inventory\Domain\Model\Quantity $quantity,
         string $referenceId,
-        string $message
+        string $message,
     ): void {
         if (class_exists('App\\Tests\\Stub\\NullMercureHub') && $this->hub instanceof \App\Tests\Stub\NullMercureHub) {
             return;

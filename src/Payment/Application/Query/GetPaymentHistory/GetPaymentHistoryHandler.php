@@ -21,7 +21,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetPaymentHistoryHandler
 {
     public function __construct(
-        private PaymentRepositoryInterface $paymentRepository
+        private PaymentRepositoryInterface $paymentRepository,
     ) {
     }
 

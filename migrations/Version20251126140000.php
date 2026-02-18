@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Migration: Add payment retry fields
+ * Migration: Add payment retry fields.
  *
  * Adds columns for automatic payment retry functionality:
  * - error_code: Normalized error code for retry decision logic

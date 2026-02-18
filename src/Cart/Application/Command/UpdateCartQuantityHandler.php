@@ -17,7 +17,7 @@ final readonly class UpdateCartQuantityHandler
 {
     public function __construct(
         private CartRepositoryInterface $cartRepository,
-        private StockValidator $stockValidator
+        private StockValidator $stockValidator,
     ) {
     }
 

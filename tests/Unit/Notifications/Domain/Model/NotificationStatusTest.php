@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class NotificationStatusTest extends TestCase
 {
-    public function test_it_has_pending_case(): void
+    public function testItHasPendingCase(): void
     {
         // Act
         $status = NotificationStatus::PENDING;
@@ -27,7 +27,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertFalse($status->isCancelled());
     }
 
-    public function test_it_has_sent_case(): void
+    public function testItHasSentCase(): void
     {
         // Act
         $status = NotificationStatus::SENT;
@@ -40,7 +40,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertFalse($status->isCancelled());
     }
 
-    public function test_it_has_failed_case(): void
+    public function testItHasFailedCase(): void
     {
         // Act
         $status = NotificationStatus::FAILED;
@@ -53,7 +53,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertFalse($status->isCancelled());
     }
 
-    public function test_it_has_cancelled_case(): void
+    public function testItHasCancelledCase(): void
     {
         // Act
         $status = NotificationStatus::CANCELLED;
@@ -66,7 +66,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertFalse($status->isFailed());
     }
 
-    public function test_sent_is_terminal_state(): void
+    public function testSentIsTerminalState(): void
     {
         // Arrange
         $status = NotificationStatus::SENT;
@@ -75,7 +75,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertTrue($status->isTerminal());
     }
 
-    public function test_cancelled_is_terminal_state(): void
+    public function testCancelledIsTerminalState(): void
     {
         // Arrange
         $status = NotificationStatus::CANCELLED;
@@ -84,7 +84,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertTrue($status->isTerminal());
     }
 
-    public function test_pending_is_not_terminal_state(): void
+    public function testPendingIsNotTerminalState(): void
     {
         // Arrange
         $status = NotificationStatus::PENDING;
@@ -93,7 +93,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertFalse($status->isTerminal());
     }
 
-    public function test_failed_is_not_terminal_state(): void
+    public function testFailedIsNotTerminalState(): void
     {
         // Arrange
         $status = NotificationStatus::FAILED;
@@ -102,7 +102,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertFalse($status->isTerminal());
     }
 
-    public function test_failed_can_retry(): void
+    public function testFailedCanRetry(): void
     {
         // Arrange
         $status = NotificationStatus::FAILED;
@@ -111,7 +111,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertTrue($status->canRetry());
     }
 
-    public function test_pending_cannot_retry(): void
+    public function testPendingCannotRetry(): void
     {
         // Arrange
         $status = NotificationStatus::PENDING;
@@ -120,7 +120,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertFalse($status->canRetry());
     }
 
-    public function test_sent_cannot_retry(): void
+    public function testSentCannotRetry(): void
     {
         // Arrange
         $status = NotificationStatus::SENT;
@@ -129,7 +129,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertFalse($status->canRetry());
     }
 
-    public function test_cancelled_cannot_retry(): void
+    public function testCancelledCannotRetry(): void
     {
         // Arrange
         $status = NotificationStatus::CANCELLED;
@@ -138,7 +138,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertFalse($status->canRetry());
     }
 
-    public function test_it_supports_all_cases(): void
+    public function testItSupportsAllCases(): void
     {
         // Arrange & Act
         $cases = NotificationStatus::cases();
@@ -151,7 +151,7 @@ final class NotificationStatusTest extends TestCase
         $this->assertContains(NotificationStatus::CANCELLED, $cases);
     }
 
-    public function test_it_creates_from_string_value(): void
+    public function testItCreatesFromStringValue(): void
     {
         // Act
         $pending = NotificationStatus::from('pending');

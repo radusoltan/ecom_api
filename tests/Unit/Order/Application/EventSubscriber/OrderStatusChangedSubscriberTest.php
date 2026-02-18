@@ -123,5 +123,4 @@ final class OrderStatusChangedSubscriberTest extends TestCase
             'cancelled' => [OrderStatus::cancelled()],
         ];
     }
-
 }

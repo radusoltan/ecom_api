@@ -33,7 +33,7 @@ final readonly class InvoiceLine
         private float $taxRate,
         private Money $taxAmount,
         private Money $lineTotal,
-        private int $position
+        private int $position,
     ) {
     }
 
@@ -45,7 +45,7 @@ final readonly class InvoiceLine
         float $taxRate,
         ?ProductId $productId = null,
         ?string $sku = null,
-        int $position = 0
+        int $position = 0,
     ): self {
         // Validate inputs
         if (mb_strlen(trim($description)) < 3) {
@@ -99,7 +99,7 @@ final readonly class InvoiceLine
         float $taxRate,
         Money $taxAmount,
         Money $lineTotal,
-        int $position
+        int $position,
     ): self {
         return new self(
             id: $id,

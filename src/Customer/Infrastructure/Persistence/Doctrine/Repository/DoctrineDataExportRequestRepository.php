@@ -19,7 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 final readonly class DoctrineDataExportRequestRepository implements DataExportRequestRepositoryInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

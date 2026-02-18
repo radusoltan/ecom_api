@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class NotificationTypeTest extends TestCase
 {
-    public function test_it_has_email_case(): void
+    public function testItHasEmailCase(): void
     {
         // Act
         $type = NotificationType::EMAIL;
@@ -27,7 +27,7 @@ final class NotificationTypeTest extends TestCase
         $this->assertFalse($type->isPush());
     }
 
-    public function test_it_has_sms_case(): void
+    public function testItHasSmsCase(): void
     {
         // Act
         $type = NotificationType::SMS;
@@ -40,7 +40,7 @@ final class NotificationTypeTest extends TestCase
         $this->assertFalse($type->isPush());
     }
 
-    public function test_it_has_webhook_case(): void
+    public function testItHasWebhookCase(): void
     {
         // Act
         $type = NotificationType::WEBHOOK;
@@ -53,7 +53,7 @@ final class NotificationTypeTest extends TestCase
         $this->assertFalse($type->isPush());
     }
 
-    public function test_it_has_push_case(): void
+    public function testItHasPushCase(): void
     {
         // Act
         $type = NotificationType::PUSH;
@@ -66,7 +66,7 @@ final class NotificationTypeTest extends TestCase
         $this->assertFalse($type->isWebhook());
     }
 
-    public function test_it_supports_all_cases(): void
+    public function testItSupportsAllCases(): void
     {
         // Arrange & Act
         $cases = NotificationType::cases();
@@ -79,7 +79,7 @@ final class NotificationTypeTest extends TestCase
         $this->assertContains(NotificationType::PUSH, $cases);
     }
 
-    public function test_it_creates_from_string_value(): void
+    public function testItCreatesFromStringValue(): void
     {
         // Act
         $email = NotificationType::from('email');
@@ -94,7 +94,7 @@ final class NotificationTypeTest extends TestCase
         $this->assertSame(NotificationType::PUSH, $push);
     }
 
-    public function test_it_throws_on_invalid_string_value(): void
+    public function testItThrowsOnInvalidStringValue(): void
     {
         // Assert
         $this->expectException(\ValueError::class);
@@ -103,7 +103,7 @@ final class NotificationTypeTest extends TestCase
         NotificationType::from('invalid');
     }
 
-    public function test_it_returns_null_for_invalid_try_from(): void
+    public function testItReturnsNullForInvalidTryFrom(): void
     {
         // Act
         $result = NotificationType::tryFrom('invalid');

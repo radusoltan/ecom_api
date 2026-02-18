@@ -18,7 +18,7 @@ final readonly class VariantRemoved implements DomainEvent
         private ConfigurableProductId $configurableProductId,
         private ProductId $productId,
         private VariantId $variantId,
-        private \DateTimeImmutable $occurredOn = new \DateTimeImmutable()
+        private \DateTimeImmutable $occurredOn = new \DateTimeImmutable(),
     ) {
     }
 

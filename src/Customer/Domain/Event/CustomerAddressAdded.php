@@ -11,7 +11,7 @@ final readonly class CustomerAddressAdded
 {
     public function __construct(
         private CustomerId $customerId,
-        private CustomerAddress $address
+        private CustomerAddress $address,
     ) {
     }
 

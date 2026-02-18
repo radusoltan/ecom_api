@@ -15,7 +15,7 @@ final readonly class CartCreated
         public CartId $cartId,
         public TenantId $tenantId,
         public ?CustomerId $customerId,
-        public ?SessionId $sessionId
+        public ?SessionId $sessionId,
     ) {
     }
 }

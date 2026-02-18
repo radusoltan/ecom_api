@@ -91,7 +91,7 @@ final readonly class WarehouseRoutingService
     public function canWarehouseFulfillOrder(
         WarehouseId $warehouseId,
         Order $order,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): bool {
         $lines = $order->lines();
 

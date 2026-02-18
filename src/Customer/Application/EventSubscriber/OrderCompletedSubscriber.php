@@ -29,7 +29,7 @@ final readonly class OrderCompletedSubscriber implements EventSubscriberInterfac
         private OrderRepositoryInterface $orderRepository,
         private CustomerSegmentationService $segmentationService,
         private MessageBusInterface $commandBus,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

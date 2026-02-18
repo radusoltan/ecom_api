@@ -68,8 +68,6 @@ final class BundleItemRepository extends ServiceEntityRepository
 
     /**
      * Load bundle for a product.
-     *
-     * @return Bundle|null
      */
     public function findBundleByProductId(ProductId $bundleProductId, float $discountPercentage): ?Bundle
     {

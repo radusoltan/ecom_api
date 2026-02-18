@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Pricing\Application\Service;
 
-use App\Pricing\Application\DTO\ImportResult;
 use App\Pricing\Application\DTO\ImportRow;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -24,7 +23,7 @@ final class PricingImportService
     private const LARGE_FILE_THRESHOLD = 1000;
 
     public function __construct(
-        private readonly ImportValidationService $validationService
+        private readonly ImportValidationService $validationService,
     ) {
     }
 
@@ -32,6 +31,7 @@ final class PricingImportService
      * Parse and validate uploaded file.
      *
      * @return array<ImportRow>
+     *
      * @throws \InvalidArgumentException if file is invalid
      */
     public function parseFile(UploadedFile $file): array
@@ -47,7 +47,7 @@ final class PricingImportService
         return match ($extension) {
             'csv' => $this->parseCsvFile($file),
             'json' => $this->parseJsonFile($file),
-            default => throw new \InvalidArgumentException(sprintf('Unsupported file format: %s. Only CSV and JSON are supported.', $extension))
+            default => throw new \InvalidArgumentException(sprintf('Unsupported file format: %s. Only CSV and JSON are supported.', $extension)),
         };
     }
 
@@ -55,6 +55,7 @@ final class PricingImportService
      * Validate import rows for PriceList.
      *
      * @param array<ImportRow> $rows
+     *
      * @return array<int, array<string>> Map of row number to validation errors
      */
     public function validatePriceListRows(array $rows): array
@@ -75,6 +76,7 @@ final class PricingImportService
      * Validate import rows for Promotion.
      *
      * @param array<ImportRow> $rows
+     *
      * @return array<int, array<string>> Map of row number to validation errors
      */
     public function validatePromotionRows(array $rows): array
@@ -125,7 +127,7 @@ final class PricingImportService
                     throw new \InvalidArgumentException(sprintf('Import file exceeds maximum of %d rows', self::MAX_ROWS));
                 }
 
-                $rowNumber++;
+                ++$rowNumber;
 
                 // Skip empty rows
                 if (empty(array_filter($data))) {
@@ -141,7 +143,7 @@ final class PricingImportService
                 /** @var array<string> $cleanHeaders */
                 $cleanHeaders = array_map('strval', $headers);
                 /** @var array<string> $cleanData */
-                $cleanData = array_map(fn($v) => false === $v ? '' : (string) $v, $data);
+                $cleanData = array_map(fn ($v) => false === $v ? '' : (string) $v, $data);
 
                 $rowData = array_combine($cleanHeaders, $cleanData);
                 if (!is_array($rowData) || empty($rowData)) {

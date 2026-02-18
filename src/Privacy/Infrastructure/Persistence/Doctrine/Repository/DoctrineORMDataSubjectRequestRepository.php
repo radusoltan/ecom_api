@@ -23,7 +23,7 @@ final class DoctrineORMDataSubjectRequestRepository extends ServiceEntityReposit
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly EventDispatcherInterface $eventDispatcher
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
         parent::__construct($registry, DataSubjectRequestEntity::class);
     }

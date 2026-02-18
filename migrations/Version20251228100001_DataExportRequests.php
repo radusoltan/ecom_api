@@ -41,9 +41,9 @@ final class Version20251228100001_DataExportRequests extends AbstractMigration
         // Create data_export_requests table
         $this->addSql("
             CREATE TABLE IF NOT EXISTS data_export_requests (
-                id VARCHAR(36) PRIMARY KEY,
-                customer_id VARCHAR(36) NOT NULL,
-                tenant_id VARCHAR(36) NOT NULL,
+                id UUID PRIMARY KEY,
+                customer_id UUID NOT NULL,
+                tenant_id UUID NOT NULL,
                 status VARCHAR(20) NOT NULL,
                 file_path VARCHAR(500),
                 download_token VARCHAR(100),
@@ -94,7 +94,7 @@ final class Version20251228100001_DataExportRequests extends AbstractMigration
                 IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'data_export_requests' AND policyname = 'tenant_isolation') THEN
                     CREATE POLICY tenant_isolation ON data_export_requests
                         FOR ALL
-                        USING (tenant_id = current_setting('app.tenant_id', true)::uuid);
+                        USING (tenant_id::text = current_setting('app.tenant_id', true));
                 END IF;
 
                 -- Grant necessary permissions

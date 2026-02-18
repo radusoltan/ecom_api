@@ -25,7 +25,7 @@ final class DoctrineORMReturnRequestRepository implements ReturnRequestRepositor
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MessageBusInterface $eventBus
+        private MessageBusInterface $eventBus,
     ) {
     }
 

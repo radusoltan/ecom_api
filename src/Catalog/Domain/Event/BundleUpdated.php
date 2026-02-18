@@ -21,7 +21,7 @@ final readonly class BundleUpdated implements DomainEvent
         private TenantId $tenantId,
         private Bundle $oldBundle,
         private Bundle $newBundle,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

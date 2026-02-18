@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class WithdrawConsentCommandHandler
 {
     public function __construct(
-        private ConsentRepositoryInterface $consentRepository
+        private ConsentRepositoryInterface $consentRepository,
     ) {
     }
 

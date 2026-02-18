@@ -27,7 +27,7 @@ final class ApiMetricsListener implements EventSubscriberInterface
     private const REQUEST_START_TIME_ATTRIBUTE = '_request_start_time';
 
     public function __construct(
-        private readonly MetricsCollector $metricsCollector
+        private readonly MetricsCollector $metricsCollector,
     ) {
     }
 

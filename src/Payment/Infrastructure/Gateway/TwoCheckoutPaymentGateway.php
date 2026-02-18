@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Payment\Infrastructure\Gateway;
 
-use App\Payment\Domain\Exception\PaymentGatewayException;
 use App\Payment\Domain\Model\PaymentId;
 use App\Payment\Domain\Model\PaymentMethod;
 use App\Payment\Domain\Service\PaymentGatewayInterface;
@@ -18,6 +17,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  * 2Checkout Payment Gateway Adapter.
  *
  * Implements payment operations using 2Checkout API (now Verifone).
+ *
  * @todo Implement full support for new PaymentGatewayInterface
  */
 final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterface
@@ -30,7 +30,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
         private string $secretKey,
         private HttpClientInterface $httpClient,
         private LoggerInterface $logger,
-        private bool $sandbox = true
+        private bool $sandbox = true,
     ) {
     }
 
@@ -40,21 +40,21 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
         string $currency,
         string $idempotencyKey,
         ?string $customerId = null,
-        array $metadata = []
+        array $metadata = [],
     ): PaymentIntentResult {
         throw new \RuntimeException('2Checkout createPaymentIntent not implemented yet.');
     }
 
     public function confirmPaymentIntent(
         string $gatewayPaymentIntentId,
-        string $paymentMethodId
+        string $paymentMethodId,
     ): PaymentIntentResult {
         throw new \RuntimeException('2Checkout confirmPaymentIntent not implemented yet.');
     }
 
     public function capturePaymentIntent(
         string $gatewayPaymentIntentId,
-        ?Money $amount = null
+        ?Money $amount = null,
     ): PaymentIntentResult {
         throw new \RuntimeException('2Checkout capturePaymentIntent not implemented yet.');
     }
@@ -68,7 +68,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
         string $gatewayPaymentIntentId,
         Money $amount,
         string $reason,
-        string $idempotencyKey
+        string $idempotencyKey,
     ): RefundResult {
         throw new \RuntimeException('2Checkout createRefund not implemented yet.');
     }
@@ -76,7 +76,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
     public function verifyWebhookSignature(
         string $payload,
         string $signature,
-        string $secret
+        string $secret,
     ): bool {
         return false;
     }
@@ -85,11 +85,11 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
     {
         // Assuming there is a 2Checkout case, or we fallback to card.
         // Checking PaymentMethod Enum again would be good, but for now assuming CARD or similar is not quite right.
-        // It's likely PaymentMethod::BANK_TRANSFER or just missing from Enum. 
+        // It's likely PaymentMethod::BANK_TRANSFER or just missing from Enum.
         // I'll return a placeholder or STRIPE if forced, but really should be its own.
         // I will attempt PaymentMethod::BANK_TRANSFER as closest valid one or just fail if strict.
         // Actually, previous code didn't use getGatewayId.
-        // I will use `PaymentMethod::STRIPE` temporarily to satisfy return type if 2CO is not in Enum, 
+        // I will use `PaymentMethod::STRIPE` temporarily to satisfy return type if 2CO is not in Enum,
         // but given the previous file had manual mapping, it implies it was supported.
         // Let's assume `PaymentMethod::STRIPE` is NOT safe.
         // I'll leave it as throwing exception or `PaymentMethod::STRIPE` with a comment.

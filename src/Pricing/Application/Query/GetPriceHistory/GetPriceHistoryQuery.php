@@ -13,7 +13,7 @@ final readonly class GetPriceHistoryQuery
         public string $productId,
         public string $tenantId,
         public int $limit = 50,
-        public int $offset = 0
+        public int $offset = 0,
     ) {
     }
 }

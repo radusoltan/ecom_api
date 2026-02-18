@@ -24,7 +24,7 @@ final class CalculateTaxProcessor implements ProcessorInterface
     use HandleTrait;
 
     public function __construct(
-        MessageBusInterface $queryBus
+        MessageBusInterface $queryBus,
     ) {
         $this->messageBus = $queryBus;
     }
@@ -49,7 +49,7 @@ final class CalculateTaxProcessor implements ProcessorInterface
         }
 
         // Validate country code format (should be 2-letter ISO code)
-        if (strlen($data->countryCode) !== 2 || !ctype_alpha($data->countryCode)) {
+        if (2 !== strlen($data->countryCode) || !ctype_alpha($data->countryCode)) {
             throw new BadRequestHttpException('countryCode must be a valid 2-letter ISO country code');
         }
 

@@ -30,7 +30,7 @@ final readonly class CartAbandonmentService
         private CartRepositoryInterface $cartRepository,
         private CustomerRepositoryInterface $customerRepository,
         private EventDispatcherInterface $eventDispatcher,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

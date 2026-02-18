@@ -45,7 +45,7 @@ final class ConfigurableProduct extends AggregateRoot
         private array $options,
         private array $variants,
         private \DateTimeImmutable $createdAt,
-        private \DateTimeImmutable $updatedAt
+        private \DateTimeImmutable $updatedAt,
     ) {
         $this->validateOptions($options);
         $this->validateVariants($variants);
@@ -57,7 +57,7 @@ final class ConfigurableProduct extends AggregateRoot
     public static function create(
         ConfigurableProductId $id,
         ProductId $productId,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): self {
         return new self(
             id: $id,
@@ -83,7 +83,7 @@ final class ConfigurableProduct extends AggregateRoot
         array $options,
         array $variants,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             $id,
@@ -398,7 +398,7 @@ final class ConfigurableProduct extends AggregateRoot
 final readonly class ConfigurableProductId
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (empty($value)) {
             throw new \InvalidArgumentException('ConfigurableProduct ID cannot be empty');

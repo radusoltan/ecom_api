@@ -19,7 +19,7 @@ final readonly class RedeemPointsCommand
         public string $customerId,
         public string $tenantId,
         public int $pointsToRedeem,
-        public ?string $orderId = null
+        public ?string $orderId = null,
     ) {
     }
 }

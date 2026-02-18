@@ -10,7 +10,7 @@ final readonly class CompleteDataSubjectRequestCommand
 {
     public function __construct(
         public DataSubjectRequestId $requestId,
-        public ?array $exportData = null
+        public ?array $exportData = null,
     ) {
     }
 }

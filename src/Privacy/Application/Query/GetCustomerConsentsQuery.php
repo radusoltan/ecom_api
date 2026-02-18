@@ -10,7 +10,7 @@ final readonly class GetCustomerConsentsQuery
 {
     public function __construct(
         public CustomerId $customerId,
-        public bool $activeOnly = false
+        public bool $activeOnly = false,
     ) {
     }
 }

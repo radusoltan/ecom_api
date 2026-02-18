@@ -19,7 +19,7 @@ namespace App\Invoice\Application\Query\GetInvoicesByOrder;
 final readonly class GetInvoicesByOrderQuery
 {
     public function __construct(
-        public string $orderId
+        public string $orderId,
     ) {
     }
 }

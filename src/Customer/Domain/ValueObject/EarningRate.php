@@ -19,7 +19,7 @@ use App\Shared\Domain\ValueObject\Money;
 final readonly class EarningRate
 {
     private function __construct(
-        private float $value
+        private float $value,
     ) {
         if ($value <= 0) {
             throw new \InvalidArgumentException('Earning rate must be greater than 0');

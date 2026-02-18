@@ -17,7 +17,7 @@ use Symfony\Component\Uid\Ulid;
 final readonly class ReturnRequestId
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
     }
 

@@ -44,7 +44,7 @@ final class ApplicationPerformanceMonitor
         private readonly MetricsCollector $metricsCollector,
         private readonly PerformanceProfiler $performanceProfiler,
         private readonly CacheInterface $cache,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
         $this->initializeThresholds();
     }
@@ -70,7 +70,7 @@ final class ApplicationPerformanceMonitor
         string $method,
         float $durationMs,
         int $statusCode,
-        ?string $tenantId = null
+        ?string $tenantId = null,
     ): void {
         // Record metrics
         $labels = [
@@ -277,7 +277,7 @@ final class ApplicationPerformanceMonitor
         float $value,
         AlertSeverity $severity,
         string $message,
-        array $context = []
+        array $context = [],
     ): void {
         $alertKey = $metric.'_'.$severity->value();
 

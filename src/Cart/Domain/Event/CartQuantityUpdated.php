@@ -18,7 +18,7 @@ final readonly class CartQuantityUpdated
         public CartItemId $cartItemId,
         public ProductId $productId,
         public ?string $variantId,
-        public Quantity $newQuantity
+        public Quantity $newQuantity,
     ) {
     }
 }

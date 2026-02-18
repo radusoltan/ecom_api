@@ -17,7 +17,7 @@ final readonly class GetAddressById
     public function __construct(
         public string $addressId,
         public CustomerId $customerId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

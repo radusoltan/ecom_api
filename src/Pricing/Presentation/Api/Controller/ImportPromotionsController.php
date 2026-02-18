@@ -26,7 +26,7 @@ final class ImportPromotionsController extends AbstractController
 {
     public function __construct(
         private readonly PricingImportService $importService,
-        private readonly MessageBusInterface $messageBus
+        private readonly MessageBusInterface $messageBus,
     ) {
     }
 
@@ -121,7 +121,7 @@ final class ImportPromotionsController extends AbstractController
             );
         } catch (\Exception $e) {
             return new JsonResponse(
-                ['error' => 'Internal server error: ' . $e->getMessage()],
+                ['error' => 'Internal server error: '.$e->getMessage()],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }

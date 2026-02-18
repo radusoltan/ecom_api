@@ -43,7 +43,7 @@ final class StripeGateway implements PaymentGatewayInterface
 {
     public function __construct(
         private readonly StripeClientFactory $clientFactory,
-        private readonly string $webhookSecret
+        private readonly string $webhookSecret,
     ) {
     }
 
@@ -53,7 +53,7 @@ final class StripeGateway implements PaymentGatewayInterface
         string $currency,
         string $idempotencyKey,
         ?string $customerId = null,
-        array $metadata = []
+        array $metadata = [],
     ): PaymentIntentResult {
         try {
             $client = $this->clientFactory->create();
@@ -92,7 +92,7 @@ final class StripeGateway implements PaymentGatewayInterface
 
     public function confirmPaymentIntent(
         string $gatewayPaymentIntentId,
-        string $paymentMethodId
+        string $paymentMethodId,
     ): PaymentIntentResult {
         try {
             $client = $this->clientFactory->create();
@@ -119,7 +119,7 @@ final class StripeGateway implements PaymentGatewayInterface
 
     public function capturePaymentIntent(
         string $gatewayPaymentIntentId,
-        ?Money $amount = null
+        ?Money $amount = null,
     ): PaymentIntentResult {
         try {
             $client = $this->clientFactory->create();
@@ -149,7 +149,7 @@ final class StripeGateway implements PaymentGatewayInterface
     }
 
     public function cancelPaymentIntent(
-        string $gatewayPaymentIntentId
+        string $gatewayPaymentIntentId,
     ): PaymentIntentResult {
         try {
             $client = $this->clientFactory->create();
@@ -175,7 +175,7 @@ final class StripeGateway implements PaymentGatewayInterface
         string $gatewayPaymentIntentId,
         Money $amount,
         string $reason,
-        string $idempotencyKey
+        string $idempotencyKey,
     ): RefundResult {
         try {
             $client = $this->clientFactory->create();
@@ -208,7 +208,7 @@ final class StripeGateway implements PaymentGatewayInterface
     public function verifyWebhookSignature(
         string $payload,
         string $signature,
-        string $secret
+        string $secret,
     ): bool {
         try {
             // Stripe will throw exception if signature is invalid

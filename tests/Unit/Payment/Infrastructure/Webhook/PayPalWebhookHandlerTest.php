@@ -64,7 +64,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     // Test: Missing Signature Header
     // =============================================
 
-    public function test_it_returns_400_when_signature_header_missing(): void
+    public function testItReturns400WhenSignatureHeaderMissing(): void
     {
         // Arrange
         $request = new Request();
@@ -87,7 +87,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     // Test: Invalid JSON Payload
     // =============================================
 
-    public function test_it_returns_400_when_payload_is_invalid_json(): void
+    public function testItReturns400WhenPayloadIsInvalidJson(): void
     {
         // Arrange
         $request = new Request();
@@ -119,7 +119,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     // Test: Invalid Signature Verification Fails
     // =============================================
 
-    public function test_it_returns_400_when_signature_verification_fails(): void
+    public function testItReturns400WhenSignatureVerificationFails(): void
     {
         // Arrange
         $payload = json_encode([
@@ -155,7 +155,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             ->method('error')
             ->with(
                 'PayPal webhook: Invalid signature',
-                $this->callback(fn ($context) => $context['event_id'] === 'evt_test_123')
+                $this->callback(fn ($context) => 'evt_test_123' === $context['event_id'])
             );
 
         // Act
@@ -170,7 +170,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     // Test: OAuth Token Retrieval Failure
     // =============================================
 
-    public function test_it_returns_400_when_oauth_token_retrieval_fails(): void
+    public function testItReturns400WhenOauthTokenRetrievalFails(): void
     {
         // Arrange
         $payload = json_encode([
@@ -214,7 +214,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     // Test: Empty Payload
     // =============================================
 
-    public function test_it_handles_empty_payload_gracefully(): void
+    public function testItHandlesEmptyPayloadGracefully(): void
     {
         // Arrange
         $request = new Request();
@@ -236,7 +236,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     // Test: Malformed JSON Graceful Handling
     // =============================================
 
-    public function test_it_handles_malformed_json_gracefully(): void
+    public function testItHandlesMalformedJsonGracefully(): void
     {
         // Arrange
         $request = new Request();
@@ -264,7 +264,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     // Test: Handler Configuration
     // =============================================
 
-    public function test_it_validates_handler_configuration(): void
+    public function testItValidatesHandlerConfiguration(): void
     {
         // Arrange & Act
         $handler = new PayPalWebhookHandler(
@@ -286,7 +286,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     // Test: Production Mode Configuration
     // =============================================
 
-    public function test_it_configures_production_mode(): void
+    public function testItConfiguresProductionMode(): void
     {
         // Arrange & Act
         $handler = new PayPalWebhookHandler(
@@ -308,7 +308,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     // Test: Sandbox Mode Configuration (Default)
     // =============================================
 
-    public function test_it_defaults_to_sandbox_mode(): void
+    public function testItDefaultsToSandboxMode(): void
     {
         // Arrange & Act
         $handler = new PayPalWebhookHandler(
@@ -330,7 +330,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     // Test: Exception Handling During Processing
     // =============================================
 
-    public function test_it_handles_processing_exceptions_gracefully(): void
+    public function testItHandlesProcessingExceptionsGracefully(): void
     {
         // Arrange
         $payload = json_encode([
@@ -390,7 +390,7 @@ final class PayPalWebhookHandlerTest extends TestCase
         $this->assertSame('Webhook processing failed', $response->getContent());
     }
 
-    /**
+    /*
      * Note: The following test scenarios are covered in functional tests:
      *
      * 1. test_it_handles_payment_capture_completed_event

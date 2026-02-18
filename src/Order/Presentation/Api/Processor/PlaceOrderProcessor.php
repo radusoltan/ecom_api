@@ -24,7 +24,7 @@ final readonly class PlaceOrderProcessor implements ProcessorInterface
         private MessageBusInterface $queryBus,
         private FraudCheckService $fraudCheckService,
         private RequestStack $requestStack,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

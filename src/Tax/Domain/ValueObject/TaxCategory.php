@@ -23,16 +23,10 @@ final readonly class TaxCategory
     public const EXEMPT = 'exempt';
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!in_array($value, self::allowedCategories(), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid tax category "%s". Allowed: %s',
-                    $value,
-                    implode(', ', self::allowedCategories())
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid tax category "%s". Allowed: %s', $value, implode(', ', self::allowedCategories())));
         }
     }
 

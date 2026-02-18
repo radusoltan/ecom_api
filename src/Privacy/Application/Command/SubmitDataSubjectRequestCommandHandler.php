@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class SubmitDataSubjectRequestCommandHandler
 {
     public function __construct(
-        private DataSubjectRequestRepositoryInterface $requestRepository
+        private DataSubjectRequestRepositoryInterface $requestRepository,
     ) {
     }
 

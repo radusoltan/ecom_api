@@ -38,7 +38,7 @@ final readonly class CachedCollectionProvider implements ProviderInterface
         private ProviderInterface $decorated,
         private CacheService $cacheService,
         private RequestStack $requestStack,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -113,7 +113,7 @@ final readonly class CachedCollectionProvider implements ProviderInterface
         Operation $operation,
         string $tenantId,
         string $locale,
-        string $queryString
+        string $queryString,
     ): string {
         $baseKey = sprintf(
             'api:%s:%s:%s',

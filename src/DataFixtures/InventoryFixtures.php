@@ -153,7 +153,7 @@ class InventoryFixtures extends Fixture
         TenantId $tenantId,
         ProductId $productId,
         WarehouseId $warehouseId,
-        int $quantity
+        int $quantity,
     ): void {
         $stockItemId = StockItemId::fromString((string) new Ulid());
 

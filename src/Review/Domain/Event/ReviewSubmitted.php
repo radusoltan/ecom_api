@@ -18,7 +18,7 @@ final readonly class ReviewSubmitted implements DomainEvent
         public Rating $rating,
         public ?string $title,
         public ?string $content,
-        public \DateTimeImmutable $occurredAt
+        public \DateTimeImmutable $occurredAt,
     ) {
     }
 

@@ -22,7 +22,7 @@ final readonly class CreatePriceListProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private MessageBusInterface $queryBus
+        private MessageBusInterface $queryBus,
     ) {
     }
 

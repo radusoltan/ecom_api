@@ -14,7 +14,7 @@ final readonly class RetryNotification
 {
     public function __construct(
         public NotificationId $id,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

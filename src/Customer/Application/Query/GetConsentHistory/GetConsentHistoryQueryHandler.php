@@ -17,7 +17,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetConsentHistoryQueryHandler
 {
     public function __construct(
-        private ConsentHistoryRepositoryInterface $consentHistoryRepository
+        private ConsentHistoryRepositoryInterface $consentHistoryRepository,
     ) {
     }
 

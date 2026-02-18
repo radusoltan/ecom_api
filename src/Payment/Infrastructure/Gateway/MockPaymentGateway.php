@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Payment\Infrastructure\Gateway;
 
-use App\Payment\Domain\Exception\PaymentGatewayException;
 use App\Payment\Domain\Model\PaymentId;
 use App\Payment\Domain\Model\PaymentMethod;
 use App\Payment\Domain\Service\PaymentGatewayInterface;
@@ -26,11 +25,11 @@ final class MockPaymentGateway implements PaymentGatewayInterface
         string $currency,
         string $idempotencyKey,
         ?string $customerId = null,
-        array $metadata = []
+        array $metadata = [],
     ): PaymentIntentResult {
         return new PaymentIntentResult(
-            gatewayPaymentIntentId: 'mock_pi_' . bin2hex(random_bytes(12)),
-            clientSecret: 'mock_secret_' . bin2hex(random_bytes(10)),
+            gatewayPaymentIntentId: 'mock_pi_'.bin2hex(random_bytes(12)),
+            clientSecret: 'mock_secret_'.bin2hex(random_bytes(10)),
             status: 'requires_payment_method',
             amount: $amount->amount(),
             currency: $currency,
@@ -40,7 +39,7 @@ final class MockPaymentGateway implements PaymentGatewayInterface
 
     public function confirmPaymentIntent(
         string $gatewayPaymentIntentId,
-        string $paymentMethodId
+        string $paymentMethodId,
     ): PaymentIntentResult {
         return new PaymentIntentResult(
             gatewayPaymentIntentId: $gatewayPaymentIntentId,
@@ -54,7 +53,7 @@ final class MockPaymentGateway implements PaymentGatewayInterface
 
     public function capturePaymentIntent(
         string $gatewayPaymentIntentId,
-        ?Money $amount = null
+        ?Money $amount = null,
     ): PaymentIntentResult {
         return new PaymentIntentResult(
             gatewayPaymentIntentId: $gatewayPaymentIntentId,
@@ -82,10 +81,10 @@ final class MockPaymentGateway implements PaymentGatewayInterface
         string $gatewayPaymentIntentId,
         Money $amount,
         string $reason,
-        string $idempotencyKey
+        string $idempotencyKey,
     ): RefundResult {
         return new RefundResult(
-            gatewayRefundId: 'mock_re_' . bin2hex(random_bytes(12)),
+            gatewayRefundId: 'mock_re_'.bin2hex(random_bytes(12)),
             status: 'succeeded',
             amount: $amount->amount(),
             currency: 'USD',
@@ -96,7 +95,7 @@ final class MockPaymentGateway implements PaymentGatewayInterface
     public function verifyWebhookSignature(
         string $payload,
         string $signature,
-        string $secret
+        string $secret,
     ): bool {
         return true;
     }

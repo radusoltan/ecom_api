@@ -21,7 +21,7 @@ final readonly class UpdateAllConsentsCommandHandler
 {
     public function __construct(
         private CustomerRepositoryInterface $customerRepository,
-        private ConsentHistoryRepositoryInterface $consentHistoryRepository
+        private ConsentHistoryRepositoryInterface $consentHistoryRepository,
     ) {
     }
 

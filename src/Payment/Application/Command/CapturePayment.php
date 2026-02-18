@@ -21,7 +21,7 @@ final readonly class CapturePayment
 {
     public function __construct(
         public PaymentId $id,
-        public ?int $amountInCents = null  // null = capture full authorized amount
+        public ?int $amountInCents = null,  // null = capture full authorized amount
     ) {
     }
 }

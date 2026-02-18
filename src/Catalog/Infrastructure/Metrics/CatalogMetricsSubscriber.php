@@ -21,7 +21,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final readonly class CatalogMetricsSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private PrometheusMetricsCollector $metricsCollector
+        private PrometheusMetricsCollector $metricsCollector,
     ) {
     }
 

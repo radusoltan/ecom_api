@@ -35,7 +35,7 @@ final class PriceList extends AggregateRoot
     private const MAX_SEGMENT_RULES = 20;
 
     /**
-     * @param array<PricingRule> $rules
+     * @param array<PricingRule>        $rules
      * @param array<SegmentPricingRule> $segmentRules
      */
     private function __construct(
@@ -49,7 +49,7 @@ final class PriceList extends AggregateRoot
         private ?\DateTimeImmutable $validTo,
         private bool $isActive,
         private readonly \DateTimeImmutable $createdAt,
-        private \DateTimeImmutable $updatedAt
+        private \DateTimeImmutable $updatedAt,
     ) {
         $this->validatePriority();
         $this->validateDateRange();
@@ -66,7 +66,7 @@ final class PriceList extends AggregateRoot
         PriceListName $name,
         int $priority = 100,
         ?\DateTimeImmutable $validFrom = null,
-        ?\DateTimeImmutable $validTo = null
+        ?\DateTimeImmutable $validTo = null,
     ): self {
         $now = new \DateTimeImmutable();
 
@@ -98,7 +98,7 @@ final class PriceList extends AggregateRoot
     /**
      * Reconstitute from persistence.
      *
-     * @param array<PricingRule> $rules
+     * @param array<PricingRule>        $rules
      * @param array<SegmentPricingRule> $segmentRules
      */
     public static function reconstituteFromPersistence(
@@ -112,7 +112,7 @@ final class PriceList extends AggregateRoot
         ?\DateTimeImmutable $validTo,
         bool $isActive,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             $id,
@@ -182,17 +182,13 @@ final class PriceList extends AggregateRoot
     public function addSegmentRule(SegmentPricingRule $rule): void
     {
         if (count($this->segmentRules) >= self::MAX_SEGMENT_RULES) {
-            throw new \InvalidArgumentException(
-                sprintf('Cannot add more than %d segment rules to a price list', self::MAX_SEGMENT_RULES)
-            );
+            throw new \InvalidArgumentException(sprintf('Cannot add more than %d segment rules to a price list', self::MAX_SEGMENT_RULES));
         }
 
         // Check for duplicate segment rules (same segment)
         foreach ($this->segmentRules as $existingRule) {
             if ($existingRule->segment()->equals($rule->segment())) {
-                throw new \InvalidArgumentException(
-                    sprintf('Segment rule for %s already exists', $rule->segment()->value())
-                );
+                throw new \InvalidArgumentException(sprintf('Segment rule for %s already exists', $rule->segment()->value()));
             }
         }
 
@@ -215,9 +211,7 @@ final class PriceList extends AggregateRoot
         }
 
         if (!$found) {
-            throw new \InvalidArgumentException(
-                sprintf('Segment rule for %s does not exist', $segment->value())
-            );
+            throw new \InvalidArgumentException(sprintf('Segment rule for %s does not exist', $segment->value()));
         }
 
         $this->segmentRules = array_values($this->segmentRules); // Re-index
@@ -283,7 +277,7 @@ final class PriceList extends AggregateRoot
         PriceListName $name,
         int $priority,
         ?\DateTimeImmutable $validFrom,
-        ?\DateTimeImmutable $validTo
+        ?\DateTimeImmutable $validTo,
     ): void {
         $this->name = $name;
         $this->priority = $priority;
@@ -304,7 +298,7 @@ final class PriceList extends AggregateRoot
         Money $basePrice,
         ProductId $productId,
         ?string $categoryId,
-        int $quantity = 1
+        int $quantity = 1,
     ): Money {
         if (!$this->isValidNow()) {
             return $basePrice;
@@ -400,9 +394,7 @@ final class PriceList extends AggregateRoot
     private function validateSegmentRulesCount(): void
     {
         if (count($this->segmentRules) > self::MAX_SEGMENT_RULES) {
-            throw new \InvalidArgumentException(
-                sprintf('PriceList cannot have more than %d segment rules', self::MAX_SEGMENT_RULES)
-            );
+            throw new \InvalidArgumentException(sprintf('PriceList cannot have more than %d segment rules', self::MAX_SEGMENT_RULES));
         }
     }
 

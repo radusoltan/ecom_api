@@ -17,7 +17,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class CalculateTaxHandler
 {
     public function __construct(
-        private TaxCalculationService $taxCalculationService
+        private TaxCalculationService $taxCalculationService,
     ) {
     }
 

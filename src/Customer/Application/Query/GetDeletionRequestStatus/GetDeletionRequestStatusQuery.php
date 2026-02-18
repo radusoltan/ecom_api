@@ -11,7 +11,7 @@ final readonly class GetDeletionRequestStatusQuery
 {
     public function __construct(
         public CustomerId $customerId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

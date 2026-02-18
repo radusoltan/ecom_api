@@ -17,7 +17,7 @@ final class DoctrineCategoryRepository implements CategoryRepositoryInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly MessageBusInterface $eventBus
+        private readonly MessageBusInterface $eventBus,
     ) {
     }
 

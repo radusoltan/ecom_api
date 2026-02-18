@@ -43,9 +43,6 @@ final readonly class InvoicePdfProvider implements ProviderInterface
     ) {
     }
 
-    /**
-     * @return StreamedResponse
-     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): StreamedResponse
     {
         $id = $uriVariables['id'] ?? null;

@@ -24,7 +24,7 @@ final readonly class RequestPasswordResetHandler
     public function __construct(
         private UserRepositoryInterface $userRepository,
         private EntityManagerInterface $entityManager,
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $messageBus,
     ) {
     }
 

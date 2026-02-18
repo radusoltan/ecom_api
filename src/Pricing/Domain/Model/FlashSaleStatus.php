@@ -22,36 +22,36 @@ enum FlashSaleStatus: string
 
     public function isScheduled(): bool
     {
-        return $this === self::SCHEDULED;
+        return self::SCHEDULED === $this;
     }
 
     public function isActive(): bool
     {
-        return $this === self::ACTIVE;
+        return self::ACTIVE === $this;
     }
 
     public function isEnded(): bool
     {
-        return $this === self::ENDED;
+        return self::ENDED === $this;
     }
 
     public function isCancelled(): bool
     {
-        return $this === self::CANCELLED;
+        return self::CANCELLED === $this;
     }
 
     public function canBeCancelled(): bool
     {
-        return $this === self::SCHEDULED;
+        return self::SCHEDULED === $this;
     }
 
     public function canBeActivated(): bool
     {
-        return $this === self::SCHEDULED;
+        return self::SCHEDULED === $this;
     }
 
     public function canBeEnded(): bool
     {
-        return $this === self::ACTIVE;
+        return self::ACTIVE === $this;
     }
 }

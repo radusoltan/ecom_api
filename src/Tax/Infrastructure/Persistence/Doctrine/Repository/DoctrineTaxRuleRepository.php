@@ -31,7 +31,7 @@ final class DoctrineTaxRuleRepository implements TaxRuleRepositoryInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly MessageBusInterface $eventBus
+        private readonly MessageBusInterface $eventBus,
     ) {
     }
 
@@ -88,7 +88,7 @@ final class DoctrineTaxRuleRepository implements TaxRuleRepositoryInterface
         TenantId $tenantId,
         TaxJurisdiction $jurisdiction,
         TaxCategory $category,
-        \DateTimeImmutable $asOfDate
+        \DateTimeImmutable $asOfDate,
     ): array {
         $qb = $this->entityManager->createQueryBuilder();
 
@@ -131,7 +131,7 @@ final class DoctrineTaxRuleRepository implements TaxRuleRepositoryInterface
         TenantId $tenantId,
         TaxJurisdiction $jurisdiction,
         TaxCategory $category,
-        \DateTimeImmutable $asOfDate
+        \DateTimeImmutable $asOfDate,
     ): ?TaxRule {
         $qb = $this->entityManager->createQueryBuilder();
 

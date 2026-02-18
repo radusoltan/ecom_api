@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final readonly class AuthorizePaymentProcessor implements ProcessorInterface
 {
     public function __construct(
-        private MessageBusInterface $commandBus
+        private MessageBusInterface $commandBus,
     ) {
     }
 

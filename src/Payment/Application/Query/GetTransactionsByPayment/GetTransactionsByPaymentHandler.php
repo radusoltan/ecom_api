@@ -20,7 +20,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetTransactionsByPaymentHandler
 {
     public function __construct(
-        private TransactionRepositoryInterface $transactionRepository
+        private TransactionRepositoryInterface $transactionRepository,
     ) {
     }
 

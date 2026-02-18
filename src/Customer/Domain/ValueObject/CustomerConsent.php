@@ -22,7 +22,7 @@ final readonly class CustomerConsent
         private bool $marketingEmail,
         private bool $marketingSms,
         private bool $thirdPartySharing,
-        private bool $analyticsTracking
+        private bool $analyticsTracking,
     ) {
     }
 
@@ -33,7 +33,7 @@ final readonly class CustomerConsent
         bool $marketingEmail,
         bool $marketingSms,
         bool $thirdPartySharing,
-        bool $analyticsTracking
+        bool $analyticsTracking,
     ): self {
         return new self(
             $marketingEmail,

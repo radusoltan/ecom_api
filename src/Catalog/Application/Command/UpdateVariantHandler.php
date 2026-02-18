@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class UpdateVariantHandler
 {
     public function __construct(
-        private ConfigurableProductRepositoryInterface $configurableProductRepository
+        private ConfigurableProductRepositoryInterface $configurableProductRepository,
     ) {
     }
 

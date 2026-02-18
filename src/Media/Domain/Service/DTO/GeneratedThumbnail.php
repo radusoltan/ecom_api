@@ -15,7 +15,7 @@ final readonly class GeneratedThumbnail
         public SizeLabel $sizeLabel,
         public int $width,
         public int $height,
-        public CropArea $cropArea
+        public CropArea $cropArea,
     ) {
         if ($width <= 0 || $height <= 0) {
             throw new \InvalidArgumentException('Generated thumbnail dimensions must be greater than zero.');

@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class UpdateOrderStatusCommandHandler
 {
     public function __construct(
-        private OrderRepositoryInterface $orderRepository
+        private OrderRepositoryInterface $orderRepository,
     ) {
     }
 
@@ -34,7 +34,7 @@ final readonly class UpdateOrderStatusCommandHandler
             OrderStatus::PROCESSING => $order->startProcessing(),
             OrderStatus::SHIPPED => $order->markAsShipped(),
             OrderStatus::DELIVERED => $order->markAsDelivered(),
-            default => throw new \RuntimeException(sprintf('Invalid order status: "%s"', $command->newStatus))
+            default => throw new \RuntimeException(sprintf('Invalid order status: "%s"', $command->newStatus)),
         };
 
         $this->orderRepository->save($order);

@@ -18,7 +18,7 @@ final readonly class DoctrineCartRepository implements CartRepositoryInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 

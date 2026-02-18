@@ -26,7 +26,7 @@ final readonly class DataExportService
     public function __construct(
         private CustomerRepositoryInterface $customerRepository,
         private OrderRepositoryInterface $orderRepository,
-        private string $exportDirectory
+        private string $exportDirectory,
     ) {
     }
 

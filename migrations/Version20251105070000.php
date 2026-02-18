@@ -9,7 +9,7 @@ use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Migration for Wishlist feature
- * Creates wishlists table with multi-tenant support
+ * Creates wishlists table with multi-tenant support.
  */
 final class Version20251105070000 extends AbstractMigration
 {

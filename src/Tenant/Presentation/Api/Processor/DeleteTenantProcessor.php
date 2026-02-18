@@ -16,7 +16,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final readonly class DeleteTenantProcessor implements ProcessorInterface
 {
     public function __construct(
-        private MessageBusInterface $commandBus
+        private MessageBusInterface $commandBus,
     ) {
     }
 
@@ -24,7 +24,7 @@ final readonly class DeleteTenantProcessor implements ProcessorInterface
         mixed $data,
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
+        array $context = [],
     ): void {
         if (!isset($uriVariables['id'])) {
             throw new \InvalidArgumentException('Tenant ID is required in URI');

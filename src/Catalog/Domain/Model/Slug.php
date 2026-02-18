@@ -7,7 +7,7 @@ namespace App\Catalog\Domain\Model;
 final readonly class Slug
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $value)) {
             throw new \InvalidArgumentException('Invalid slug format');

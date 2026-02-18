@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Price History Table Migration
+ * Price History Table Migration.
  *
  * Creates the price_history table for tracking all price changes.
  * Required for:
@@ -28,15 +28,15 @@ final class Version20251128000000 extends AbstractMigration
         // Create price_history table
         $this->addSql('
             CREATE TABLE IF NOT EXISTS price_history (
-                id VARCHAR(36) NOT NULL,
-                tenant_id VARCHAR(36) NOT NULL,
-                product_id VARCHAR(36) NOT NULL,
+                id UUID NOT NULL,
+                tenant_id UUID NOT NULL,
+                product_id UUID NOT NULL,
                 old_price_amount NUMERIC(19, 4) DEFAULT NULL,
                 old_price_currency VARCHAR(3) DEFAULT NULL,
                 new_price_amount NUMERIC(19, 4) DEFAULT NULL,
                 new_price_currency VARCHAR(3) DEFAULT NULL,
                 change_reason TEXT DEFAULT NULL,
-                changed_by VARCHAR(36) DEFAULT NULL,
+                changed_by UUID DEFAULT NULL,
                 changed_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
                 source VARCHAR(20) NOT NULL,
                 PRIMARY KEY(id)

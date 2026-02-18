@@ -102,13 +102,13 @@ final readonly class GetPromotionPerformanceQueryHandler
         }
 
         // Specific promotion filter
-        if ($query->promotionId !== null) {
+        if (null !== $query->promotionId) {
             $conditions[] = 'p.id = :promotionId';
             $params['promotionId'] = $query->promotionId;
             $types['promotionId'] = \PDO::PARAM_STR;
         }
 
-        $sql .= ' WHERE ' . implode(' AND ', $conditions);
+        $sql .= ' WHERE '.implode(' AND ', $conditions);
         $sql .= ' GROUP BY p.id, p.name, p.type, p.valid_from, p.valid_to, o.discount_currency';
         $sql .= ' ORDER BY orders_count DESC, total_revenue_amount DESC';
         $sql .= ' LIMIT :limit';

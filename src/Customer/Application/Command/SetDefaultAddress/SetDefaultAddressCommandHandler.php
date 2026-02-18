@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class SetDefaultAddressCommandHandler
 {
     public function __construct(
-        private CustomerRepositoryInterface $customerRepository
+        private CustomerRepositoryInterface $customerRepository,
     ) {
     }
 

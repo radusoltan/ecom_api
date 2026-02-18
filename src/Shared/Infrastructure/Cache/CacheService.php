@@ -28,7 +28,7 @@ final readonly class CacheService
 {
     public function __construct(
         private CacheInterface $cache,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

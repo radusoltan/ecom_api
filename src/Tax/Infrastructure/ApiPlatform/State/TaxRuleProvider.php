@@ -25,7 +25,7 @@ final readonly class TaxRuleProvider implements ProviderInterface
 {
     public function __construct(
         private TaxRuleRepositoryInterface $repository,
-        private TenantContextInterface $tenantContext
+        private TenantContextInterface $tenantContext,
     ) {
     }
 

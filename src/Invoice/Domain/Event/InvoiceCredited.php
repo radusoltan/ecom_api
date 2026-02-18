@@ -34,6 +34,7 @@ final readonly class InvoiceCredited
         public TenantId $tenantId,
         public InvoiceNumber $creditNoteNumber,
         public Money $creditAmount,
-        public \DateTimeImmutable $occurredAt = new \DateTimeImmutable()
-    ) {}
+        public \DateTimeImmutable $occurredAt = new \DateTimeImmutable(),
+    ) {
+    }
 }

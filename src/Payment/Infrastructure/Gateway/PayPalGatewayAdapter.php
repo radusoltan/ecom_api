@@ -44,7 +44,7 @@ final class PayPalGatewayAdapter implements PaymentGatewayInterface
 {
     public function __construct(
         private readonly PayPalClient $client,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -54,7 +54,7 @@ final class PayPalGatewayAdapter implements PaymentGatewayInterface
         string $currency,
         string $idempotencyKey,
         ?string $customerId = null,
-        array $metadata = []
+        array $metadata = [],
     ): PaymentIntentResult {
         try {
             // Convert domain Money to PayPal format (dollars with 2 decimals)
@@ -136,7 +136,7 @@ final class PayPalGatewayAdapter implements PaymentGatewayInterface
 
     public function confirmPaymentIntent(
         string $gatewayPaymentIntentId,
-        string $paymentMethodId
+        string $paymentMethodId,
     ): PaymentIntentResult {
         try {
             // For PayPal, confirmation happens client-side (customer redirects to PayPal)
@@ -183,7 +183,7 @@ final class PayPalGatewayAdapter implements PaymentGatewayInterface
 
     public function capturePaymentIntent(
         string $gatewayPaymentIntentId,
-        ?Money $amount = null
+        ?Money $amount = null,
     ): PaymentIntentResult {
         try {
             $this->logger->info('Capturing PayPal order', [
@@ -227,7 +227,7 @@ final class PayPalGatewayAdapter implements PaymentGatewayInterface
     }
 
     public function cancelPaymentIntent(
-        string $gatewayPaymentIntentId
+        string $gatewayPaymentIntentId,
     ): PaymentIntentResult {
         try {
             // PayPal doesn't have a direct cancel endpoint for Orders API v2
@@ -269,7 +269,7 @@ final class PayPalGatewayAdapter implements PaymentGatewayInterface
         string $gatewayPaymentIntentId,
         Money $amount,
         string $reason,
-        string $idempotencyKey
+        string $idempotencyKey,
     ): RefundResult {
         try {
             // Convert domain Money to PayPal format
@@ -334,7 +334,7 @@ final class PayPalGatewayAdapter implements PaymentGatewayInterface
     public function verifyWebhookSignature(
         string $payload,
         string $signature,
-        string $secret
+        string $secret,
     ): bool {
         try {
             // PayPal webhook verification requires headers

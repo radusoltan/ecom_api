@@ -26,7 +26,7 @@ final readonly class AddressesProvider implements ProviderInterface
 {
     public function __construct(
         private Security $security,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

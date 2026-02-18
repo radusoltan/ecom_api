@@ -10,7 +10,7 @@ final readonly class GetWishlistItemCount
 {
     public function __construct(
         public string $customerId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

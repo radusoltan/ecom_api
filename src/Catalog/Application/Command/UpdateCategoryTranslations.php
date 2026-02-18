@@ -18,7 +18,7 @@ final readonly class UpdateCategoryTranslations
         public TenantId $tenantId,
         public Locale $locale,
         public ?string $name = null,
-        public ?string $description = null
+        public ?string $description = null,
     ) {
     }
 }

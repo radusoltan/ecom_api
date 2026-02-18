@@ -106,7 +106,7 @@ final class OrderApiTest extends ApiTestCase
         ?string $customerEmail = null,
         ?array $lines = null,
         ?array $shippingAddress = null,
-        ?array $billingAddress = null
+        ?array $billingAddress = null,
     ): array {
         $tenantId = $tenantId ?? $this->createTenant();
         $customerEmail = $customerEmail ?? $this->generateUniqueEmail();

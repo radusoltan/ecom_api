@@ -28,7 +28,7 @@ class WarehouseFixtures extends Fixture implements DependentFixtureInterface
     public const WAREHOUSE_SOUTH = 'warehouse_south';
 
     public function __construct(
-        private readonly MessageBusInterface $commandBus
+        private readonly MessageBusInterface $commandBus,
     ) {
     }
 
@@ -123,7 +123,7 @@ class WarehouseFixtures extends Fixture implements DependentFixtureInterface
         string $state,
         string $postalCode,
         string $country,
-        int $priority
+        int $priority,
     ): void {
         $warehouseId = WarehouseId::generate();
 

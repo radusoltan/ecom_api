@@ -25,7 +25,7 @@ final readonly class Address
         public string $country,
         public ?string $state,
         public string $type,
-        public ?string $label
+        public ?string $label,
     ) {
         $this->validate();
     }
@@ -37,7 +37,7 @@ final readonly class Address
         string $country,
         ?string $state = null,
         string $type = self::TYPE_SHIPPING,
-        ?string $label = null
+        ?string $label = null,
     ): self {
         return new self($street, $city, $postalCode, $country, $state, $type, $label);
     }

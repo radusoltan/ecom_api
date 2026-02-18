@@ -88,7 +88,7 @@ class CustomerAddressEntity
     public static function fromDomainModel(
         array $addressData,
         string $customerId,
-        string $tenantId
+        string $tenantId,
     ): self {
         $entity = new self();
         $entity->id = $addressData['id'] ?? '';

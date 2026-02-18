@@ -21,7 +21,7 @@ final readonly class DeletionRequestStatusDTO
         public string $createdAt,
         public bool $canBeCancelled,
         public bool $isOnHold,
-        public bool $canBeExecuted
+        public bool $canBeExecuted,
     ) {
     }
 

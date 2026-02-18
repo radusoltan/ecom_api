@@ -18,7 +18,7 @@ final readonly class UpdatePromotionCommand
         public int $priority,
         public array $conditions,
         public ?string $validFrom,
-        public ?string $validTo
+        public ?string $validTo,
     ) {
     }
 }

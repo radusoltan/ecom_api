@@ -29,7 +29,7 @@ final readonly class GetApplicableTaxRules
         public string $countryCode,
         public ?string $regionCode,
         public string $category,
-        public \DateTimeImmutable $asOfDate
+        public \DateTimeImmutable $asOfDate,
     ) {
     }
 }

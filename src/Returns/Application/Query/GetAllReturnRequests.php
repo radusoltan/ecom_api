@@ -14,7 +14,7 @@ final readonly class GetAllReturnRequests
 {
     public function __construct(
         public string $tenantId,
-        public ?string $status = null
+        public ?string $status = null,
     ) {
     }
 }

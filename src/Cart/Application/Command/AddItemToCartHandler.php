@@ -20,7 +20,7 @@ final readonly class AddItemToCartHandler
     public function __construct(
         private CartRepositoryInterface $cartRepository,
         private CartPriceCalculator $priceCalculator,
-        private StockValidator $stockValidator
+        private StockValidator $stockValidator,
     ) {
     }
 

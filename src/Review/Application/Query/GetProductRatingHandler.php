@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetProductRatingHandler
 {
     public function __construct(
-        private ProductReviewRepositoryInterface $reviewRepository
+        private ProductReviewRepositoryInterface $reviewRepository,
     ) {
     }
 
@@ -36,7 +36,7 @@ final readonly class RatingDTO
     public function __construct(
         public string $productId,
         public float $averageRating,
-        public int $reviewCount
+        public int $reviewCount,
     ) {
     }
 }

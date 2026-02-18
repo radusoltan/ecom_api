@@ -10,7 +10,7 @@ final readonly class AwardLoyaltyPointsCommand
         public string $customerId,
         public string $tenantId,
         public int $points,
-        public string $reason
+        public string $reason,
     ) {
     }
 }

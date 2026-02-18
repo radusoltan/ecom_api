@@ -42,7 +42,7 @@ final readonly class PayPalWebhookHandler
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
         private LoggerInterface $logger,
-        private bool $sandbox = true
+        private bool $sandbox = true,
     ) {
         $this->webhookVerifyUrl = $sandbox ? self::WEBHOOK_VERIFY_URL_SANDBOX : self::WEBHOOK_VERIFY_URL_PRODUCTION;
     }

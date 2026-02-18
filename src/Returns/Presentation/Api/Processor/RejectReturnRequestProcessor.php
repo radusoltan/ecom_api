@@ -22,7 +22,7 @@ final class RejectReturnRequestProcessor implements ProcessorInterface
 
     public function __construct(
         private readonly MessageBusInterface $commandBus,
-        private readonly MessageBusInterface $queryBus
+        private readonly MessageBusInterface $queryBus,
     ) {
         $this->messageBus = $commandBus;
     }

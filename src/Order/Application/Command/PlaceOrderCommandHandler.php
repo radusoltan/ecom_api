@@ -29,7 +29,7 @@ final readonly class PlaceOrderCommandHandler
         private PromotionApplicationService $promotionService,
         private TaxCalculationService $taxCalculationService,
         private PerformanceProfiler $profiler,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -121,7 +121,7 @@ final readonly class PlaceOrderCommandHandler
             $taxRate = 0.0;
 
             // Create jurisdiction from shipping address (destination-based taxation)
-            $jurisdiction = $shippingAddress->state !== null && $shippingAddress->state !== ''
+            $jurisdiction = null !== $shippingAddress->state && '' !== $shippingAddress->state
                 ? TaxJurisdiction::fromCountryAndRegion($shippingAddress->country, $shippingAddress->state)
                 : TaxJurisdiction::fromCountry($shippingAddress->country);
 

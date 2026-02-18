@@ -15,7 +15,7 @@ final readonly class TenantConnectionSubscriber
 {
     public function __construct(
         private TenantContext $tenantContext,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

@@ -17,7 +17,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class GetPriceHistoryQueryHandler
 {
     public function __construct(
-        private PriceHistoryRepositoryInterface $priceHistoryRepository
+        private PriceHistoryRepositoryInterface $priceHistoryRepository,
     ) {
     }
 
@@ -37,7 +37,7 @@ final readonly class GetPriceHistoryQueryHandler
         );
 
         return array_map(
-            fn($priceChange) => PriceHistoryDTO::fromPriceChange($priceChange),
+            fn ($priceChange) => PriceHistoryDTO::fromPriceChange($priceChange),
             $priceChanges
         );
     }

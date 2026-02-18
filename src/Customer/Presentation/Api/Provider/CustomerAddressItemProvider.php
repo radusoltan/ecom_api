@@ -28,7 +28,7 @@ final readonly class CustomerAddressItemProvider implements ProviderInterface
 {
     public function __construct(
         private MessageBusInterface $queryBus,
-        private TenantContextInterface $tenantContext
+        private TenantContextInterface $tenantContext,
     ) {
     }
 

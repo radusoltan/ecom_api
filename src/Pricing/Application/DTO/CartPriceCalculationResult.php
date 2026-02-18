@@ -24,7 +24,7 @@ final readonly class CartPriceCalculationResult
         public Money $totalDiscounts,
         public Money $grandTotal,
         public array $cartLevelDiscounts = [],
-        public int $totalItemsCount = 0
+        public int $totalItemsCount = 0,
     ) {
     }
 

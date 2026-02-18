@@ -14,7 +14,7 @@ final readonly class SubmitDataSubjectRequestCommand
         public TenantId $tenantId,
         public CustomerId $customerId,
         public RequestType $requestType,
-        public ?string $reason = null
+        public ?string $reason = null,
     ) {
     }
 }

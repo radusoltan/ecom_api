@@ -13,7 +13,7 @@ final readonly class ConfirmAccountDeletionCommand
     public function __construct(
         public DeletionRequestId $requestId,
         public CustomerId $customerId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

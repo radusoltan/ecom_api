@@ -13,7 +13,7 @@ final readonly class AutocompleteProductsQueryHandler
 {
     public function __construct(
         private Client $client,
-        private IndexManager $indexManager
+        private IndexManager $indexManager,
     ) {
     }
 

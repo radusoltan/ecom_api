@@ -19,7 +19,7 @@ final readonly class UpdateLoyaltyProgramCommand
         public float $earningRate,
         public int $minOrderValue,
         public string $minOrderCurrency,
-        public ?int $validityDays
+        public ?int $validityDays,
     ) {
     }
 }

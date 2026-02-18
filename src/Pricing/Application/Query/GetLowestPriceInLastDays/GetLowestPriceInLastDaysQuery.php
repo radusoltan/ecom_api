@@ -13,7 +13,7 @@ final readonly class GetLowestPriceInLastDaysQuery
     public function __construct(
         public string $productId,
         public string $tenantId,
-        public int $days = 30
+        public int $days = 30,
     ) {
     }
 }

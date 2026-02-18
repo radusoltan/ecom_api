@@ -19,7 +19,7 @@ final readonly class PriceListName
     private const MAX_LENGTH = 100;
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         $trimmed = trim($this->value);
 

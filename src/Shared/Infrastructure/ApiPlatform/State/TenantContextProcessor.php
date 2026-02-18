@@ -21,7 +21,7 @@ final readonly class TenantContextProcessor implements ProcessorInterface
 {
     public function __construct(
         private ProcessorInterface $decorated,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

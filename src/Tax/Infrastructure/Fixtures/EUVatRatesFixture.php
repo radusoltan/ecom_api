@@ -73,7 +73,7 @@ final class EUVatRatesFixture extends Fixture implements FixtureGroupInterface
     ];
 
     public function __construct(
-        private readonly MessageBusInterface $commandBus
+        private readonly MessageBusInterface $commandBus,
     ) {
     }
 
@@ -102,7 +102,7 @@ final class EUVatRatesFixture extends Fixture implements FixtureGroupInterface
         TenantId $tenantId,
         string $countryCode,
         string $name,
-        float $rate
+        float $rate,
     ): void {
         $command = new CreateTaxRule(
             id: TaxRuleId::generate(),

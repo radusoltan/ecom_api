@@ -9,7 +9,7 @@ final readonly class ChangeSegmentCommand
     public function __construct(
         public string $customerId,
         public string $tenantId,
-        public string $newSegment
+        public string $newSegment,
     ) {
     }
 }

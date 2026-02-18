@@ -22,7 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class CacheWarmCommand extends Command
 {
     public function __construct(
-        private readonly CacheWarmingService $cacheWarmingService
+        private readonly CacheWarmingService $cacheWarmingService,
     ) {
         parent::__construct();
     }

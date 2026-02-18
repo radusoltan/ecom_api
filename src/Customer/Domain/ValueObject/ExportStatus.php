@@ -50,7 +50,7 @@ enum ExportStatus: string
         return match ($this) {
             self::PENDING => in_array($next, [self::PROCESSING, self::FAILED], true),
             self::PROCESSING => in_array($next, [self::READY, self::FAILED], true),
-            self::READY => $next === self::EXPIRED,
+            self::READY => self::EXPIRED === $next,
             self::EXPIRED => false, // Terminal state
             self::FAILED => false, // Terminal state
         };
@@ -63,6 +63,6 @@ enum ExportStatus: string
 
     public function isDownloadable(): bool
     {
-        return $this === self::READY;
+        return self::READY === $this;
     }
 }

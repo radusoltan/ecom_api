@@ -18,7 +18,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetAddressByIdHandler
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

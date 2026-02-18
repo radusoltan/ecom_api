@@ -48,7 +48,7 @@ final class FlashSale extends AggregateRoot
         private \DateTimeImmutable $endTime,
         private FlashSaleStatus $status,
         private readonly \DateTimeImmutable $createdAt,
-        private \DateTimeImmutable $updatedAt
+        private \DateTimeImmutable $updatedAt,
     ) {
         $this->validateName($this->name);
         $this->validateProductIds($this->productIds);
@@ -65,7 +65,7 @@ final class FlashSale extends AggregateRoot
         array $productIds,
         Discount $discount,
         \DateTimeImmutable $startTime,
-        \DateTimeImmutable $endTime
+        \DateTimeImmutable $endTime,
     ): self {
         $now = new \DateTimeImmutable();
 
@@ -108,7 +108,7 @@ final class FlashSale extends AggregateRoot
         \DateTimeImmutable $endTime,
         FlashSaleStatus $status,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             id: $id,

@@ -86,7 +86,7 @@ final class CheckoutApiTest extends ApiTestCase
      */
     protected function createAuthenticatedClient(
         string $email = 'checkout-test@admin.com',
-        array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER']
+        array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'],
     ) {
         $tempClient = static::createClient();
         $container = $tempClient->getContainer();
@@ -100,7 +100,7 @@ final class CheckoutApiTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0] . '-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash');
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -120,7 +120,7 @@ final class CheckoutApiTest extends ApiTestCase
 
         return static::createClient([], [
             'headers' => [
-                'authorization' => 'Bearer ' . $token,
+                'authorization' => 'Bearer '.$token,
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
             ],
         ]);
@@ -163,13 +163,13 @@ final class CheckoutApiTest extends ApiTestCase
         $tenantIdProp->setValue($productEntity, self::DEFAULT_TENANT_ID);
 
         $skuProp = $reflection->getProperty('sku');
-        $skuProp->setValue($productEntity, 'PRD-' . sprintf('%06d', random_int(100000, 999999)));
+        $skuProp->setValue($productEntity, 'PRD-'.sprintf('%06d', random_int(100000, 999999)));
 
         $nameProp = $reflection->getProperty('name');
-        $nameProp->setValue($productEntity, 'Test Product ' . ++self::$counter);
+        $nameProp->setValue($productEntity, 'Test Product '.++self::$counter);
 
         $slugProp = $reflection->getProperty('slug');
-        $slugProp->setValue($productEntity, 'test-product-' . uniqid());
+        $slugProp->setValue($productEntity, 'test-product-'.uniqid());
 
         $priceProp = $reflection->getProperty('priceAmount');
         $priceProp->setValue($productEntity, $price);
@@ -195,8 +195,8 @@ final class CheckoutApiTest extends ApiTestCase
         // Create stock item for this product (needed for cart stock validation)
         $stockItemId = Uuid::v4()->toString();
         $connection->executeStatement(
-            "INSERT INTO stock_items (id, tenant_id, product_id, warehouse_id, on_hand, reserved, allocated, low_stock_threshold, created_at, updated_at)
-             VALUES (:id, :tenantId, :productId, :warehouseId, :stock, 0, 0, 10, NOW(), NOW())",
+            'INSERT INTO stock_items (id, tenant_id, product_id, warehouse_id, on_hand, reserved, allocated, low_stock_threshold, created_at, updated_at)
+             VALUES (:id, :tenantId, :productId, :warehouseId, :stock, 0, 0, 10, NOW(), NOW())',
             [
                 'id' => $stockItemId,
                 'tenantId' => self::DEFAULT_TENANT_ID,

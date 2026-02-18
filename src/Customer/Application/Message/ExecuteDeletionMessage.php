@@ -14,7 +14,7 @@ use App\Customer\Domain\ValueObject\DeletionRequestId;
 final readonly class ExecuteDeletionMessage
 {
     public function __construct(
-        public DeletionRequestId $requestId
+        public DeletionRequestId $requestId,
     ) {
     }
 }

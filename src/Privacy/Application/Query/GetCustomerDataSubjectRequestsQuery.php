@@ -9,7 +9,7 @@ use App\Customer\Domain\ValueObject\CustomerId;
 final readonly class GetCustomerDataSubjectRequestsQuery
 {
     public function __construct(
-        public CustomerId $customerId
+        public CustomerId $customerId,
     ) {
     }
 }

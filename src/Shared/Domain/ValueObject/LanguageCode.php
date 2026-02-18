@@ -12,7 +12,7 @@ final readonly class LanguageCode
     private const DEFAULT_LANGUAGE = 'en';
 
     private function __construct(
-        private string $code
+        private string $code,
     ) {
         $this->validate();
     }

@@ -27,7 +27,7 @@ final class InvoicePdfGenerator implements InvoicePdfGeneratorInterface
         private readonly string $companyName,
         private readonly string $companyAddress,
         private readonly string $companyVatNumber,
-        private readonly ?string $logoPath = null
+        private readonly ?string $logoPath = null,
     ) {
     }
 
@@ -68,11 +68,7 @@ final class InvoicePdfGenerator implements InvoicePdfGeneratorInterface
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('Failed to generate PDF for invoice %s: %s', $invoiceNumber, $e->getMessage()),
-                0,
-                $e
-            );
+            throw new \RuntimeException(sprintf('Failed to generate PDF for invoice %s: %s', $invoiceNumber, $e->getMessage()), 0, $e);
         }
     }
 
@@ -95,7 +91,7 @@ final class InvoicePdfGenerator implements InvoicePdfGeneratorInterface
         // 4. Save to filesystem
         $bytesWritten = file_put_contents($filePath, $pdfContent);
 
-        if ($bytesWritten === false) {
+        if (false === $bytesWritten) {
             throw new \RuntimeException(sprintf('Failed to write PDF to: %s', $filePath));
         }
 
@@ -133,7 +129,7 @@ final class InvoicePdfGenerator implements InvoicePdfGeneratorInterface
 
     /**
      * Build file path for invoice PDF.
-     * Pattern: var/invoices/{tenant_id}/{year}/{invoice_number}.pdf
+     * Pattern: var/invoices/{tenant_id}/{year}/{invoice_number}.pdf.
      */
     private function buildFilePath(Invoice $invoice): string
     {

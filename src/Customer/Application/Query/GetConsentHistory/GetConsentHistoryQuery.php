@@ -18,7 +18,7 @@ final readonly class GetConsentHistoryQuery
         public CustomerId $customerId,
         public TenantId $tenantId,
         public int $page = 1,
-        public int $limit = 20
+        public int $limit = 20,
     ) {
     }
 }

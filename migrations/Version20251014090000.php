@@ -29,7 +29,7 @@ final class Version20251014090000 extends AbstractMigration
 
         $this->addSql(<<<'SQL'
             CREATE TABLE catalog_sku_sequences (
-                tenant_id VARCHAR(36) NOT NULL,
+                tenant_id UUID NOT NULL,
                 last_value BIGINT NOT NULL,
                 created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
                 updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,

@@ -26,7 +26,7 @@ final readonly class LoyaltyPointTransactionDTO
         public ?string $expiresAt,
         public string $createdAt,
         public bool $isDebit,
-        public bool $isCredit
+        public bool $isCredit,
     ) {
     }
 

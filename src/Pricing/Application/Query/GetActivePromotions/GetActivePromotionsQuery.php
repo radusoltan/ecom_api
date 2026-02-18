@@ -9,7 +9,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class GetActivePromotionsQuery
 {
     public function __construct(
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

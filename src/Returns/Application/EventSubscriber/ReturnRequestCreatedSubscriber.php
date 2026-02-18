@@ -29,7 +29,7 @@ final readonly class ReturnRequestCreatedSubscriber implements EventSubscriberIn
         private MailerInterface $mailer,
         private LoggerInterface $logger,
         private string $senderEmail,
-        private string $senderName
+        private string $senderName,
     ) {
     }
 

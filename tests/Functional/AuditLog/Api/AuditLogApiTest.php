@@ -257,7 +257,7 @@ final class AuditLogApiTest extends ApiTestCase
         ActionType $actionType,
         ResourceType $resourceType,
         string $resourceId,
-        ?UserId $userId = null
+        ?UserId $userId = null,
     ): AuditLogEntry {
         $entry = AuditLogEntry::log(
             $this->tenantId,

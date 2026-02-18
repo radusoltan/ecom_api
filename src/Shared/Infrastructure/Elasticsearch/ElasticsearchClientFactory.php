@@ -13,7 +13,7 @@ final class ElasticsearchClientFactory
         string $host,
         string $user,
         string $password,
-        bool $verifySsl = true
+        bool $verifySsl = true,
     ): Client {
         $builder = ClientBuilder::create()
             ->setHosts([rtrim($host, '/')])

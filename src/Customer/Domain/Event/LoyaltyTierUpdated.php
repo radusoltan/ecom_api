@@ -16,7 +16,7 @@ final readonly class LoyaltyTierUpdated
         private LoyaltyProgramId $programId,
         private LoyaltyTierId $tierId,
         private array $changes,
-        private \DateTimeImmutable $occurredAt
+        private \DateTimeImmutable $occurredAt,
     ) {
     }
 

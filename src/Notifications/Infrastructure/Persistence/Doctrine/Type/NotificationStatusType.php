@@ -20,9 +20,6 @@ final class NotificationStatusType extends Type
         return $platform->getStringTypeDeclarationSQL(['length' => 20]);
     }
 
-    /**
-     * @param mixed $value
-     */
     public function convertToPHPValue($value, AbstractPlatform $platform): ?NotificationStatus
     {
         if (null === $value || '' === $value) {
@@ -36,9 +33,6 @@ final class NotificationStatusType extends Type
         return NotificationStatus::from((string) $value);
     }
 
-    /**
-     * @param mixed $value
-     */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (null === $value) {

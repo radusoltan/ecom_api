@@ -26,7 +26,7 @@ final readonly class NotificationPreferencesProvider implements ProviderInterfac
 {
     public function __construct(
         private MessageBusInterface $queryBus,
-        private TenantContextInterface $tenantContext
+        private TenantContextInterface $tenantContext,
     ) {
     }
 

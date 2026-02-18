@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class CreateCategoryHandler
 {
     public function __construct(
-        private CategoryRepositoryInterface $categoryRepository
+        private CategoryRepositoryInterface $categoryRepository,
     ) {
     }
 

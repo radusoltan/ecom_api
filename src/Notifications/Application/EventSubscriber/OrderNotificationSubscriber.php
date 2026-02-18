@@ -86,11 +86,12 @@ final readonly class OrderNotificationSubscriber implements EventSubscriberInter
         $template = $templateMap[$newStatus] ?? null;
 
         // Skip if no template for this status
-        if ($template === null) {
+        if (null === $template) {
             $this->logger->debug('No email template for order status change', [
                 'orderId' => $event->orderId->toString(),
                 'newStatus' => $newStatus,
             ]);
+
             return;
         }
 

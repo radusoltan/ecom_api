@@ -10,7 +10,7 @@ final readonly class Username implements \Stringable
     private const MAX_LENGTH = 50;
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         $trimmed = trim($value);
 

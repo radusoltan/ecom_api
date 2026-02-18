@@ -14,7 +14,7 @@ final readonly class TenantCreated
         public TenantId $tenantId,
         public TenantName $name,
         public Email $ownerEmail,
-        public \DateTimeImmutable $occurredAt = new \DateTimeImmutable()
+        public \DateTimeImmutable $occurredAt = new \DateTimeImmutable(),
     ) {
     }
 

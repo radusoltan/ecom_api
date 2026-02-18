@@ -12,7 +12,7 @@ final readonly class GetProductReviews
     public function __construct(
         public ProductId $productId,
         public TenantId $tenantId,
-        public bool $onlyApproved = true
+        public bool $onlyApproved = true,
     ) {
     }
 }

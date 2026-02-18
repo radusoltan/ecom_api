@@ -12,7 +12,7 @@ final readonly class RemoveItemFromWishlist
     public function __construct(
         public string $customerId,
         public ProductId $productId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

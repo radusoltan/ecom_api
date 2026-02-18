@@ -19,7 +19,7 @@ final readonly class UpdateProductTranslations
         public Locale $locale,
         public ?string $name = null,
         public ?string $description = null,
-        public ?string $shortDescription = null
+        public ?string $shortDescription = null,
     ) {
     }
 }

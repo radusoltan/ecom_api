@@ -36,7 +36,7 @@ final readonly class CreatePaymentIntentHandler
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
         private PaymentGatewayInterface $gateway,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

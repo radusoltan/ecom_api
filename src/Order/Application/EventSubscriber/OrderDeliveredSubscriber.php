@@ -27,7 +27,7 @@ final readonly class OrderDeliveredSubscriber implements EventSubscriberInterfac
         private LoggerInterface $logger,
         private string $senderEmail = 'orders@ecommerce.local',
         private string $senderName = 'E-Commerce Platform',
-        private string $defaultLocale = 'en'
+        private string $defaultLocale = 'en',
     ) {
     }
 

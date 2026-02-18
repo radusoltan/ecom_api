@@ -60,12 +60,12 @@ interface PaymentGatewayInterface
         string $currency,
         string $idempotencyKey,
         ?string $customerId = null,
-        array $metadata = []
+        array $metadata = [],
     ): PaymentIntentResult;
 
     /**
      * Confirm a payment intent (complete authorization).
-     * Called after customer provides payment details (card, 3DS, etc.)
+     * Called after customer provides payment details (card, 3DS, etc.).
      *
      * Use Case: Customer submitted payment form, complete authorization
      *
@@ -78,7 +78,7 @@ interface PaymentGatewayInterface
      */
     public function confirmPaymentIntent(
         string $gatewayPaymentIntentId,
-        string $paymentMethodId
+        string $paymentMethodId,
     ): PaymentIntentResult;
 
     /**
@@ -96,7 +96,7 @@ interface PaymentGatewayInterface
      */
     public function capturePaymentIntent(
         string $gatewayPaymentIntentId,
-        ?Money $amount = null
+        ?Money $amount = null,
     ): PaymentIntentResult;
 
     /**
@@ -112,7 +112,7 @@ interface PaymentGatewayInterface
      * @throws PaymentGatewayException If cancellation fails
      */
     public function cancelPaymentIntent(
-        string $gatewayPaymentIntentId
+        string $gatewayPaymentIntentId,
     ): PaymentIntentResult;
 
     /**
@@ -134,7 +134,7 @@ interface PaymentGatewayInterface
         string $gatewayPaymentIntentId,
         Money $amount,
         string $reason,
-        string $idempotencyKey
+        string $idempotencyKey,
     ): RefundResult;
 
     /**
@@ -154,11 +154,11 @@ interface PaymentGatewayInterface
     public function verifyWebhookSignature(
         string $payload,
         string $signature,
-        string $secret
+        string $secret,
     ): bool;
 
     /**
-     * Get the gateway identifier (stripe, paypal, etc.)
+     * Get the gateway identifier (stripe, paypal, etc.).
      *
      * @return PaymentMethod Gateway identifier as domain value object
      */

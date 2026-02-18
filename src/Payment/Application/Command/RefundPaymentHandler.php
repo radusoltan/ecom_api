@@ -35,7 +35,7 @@ final readonly class RefundPaymentHandler
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
         private PaymentGatewayInterface $gateway,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -45,18 +45,12 @@ final readonly class RefundPaymentHandler
         $payment = $this->paymentRepository->findById($command->id);
 
         if (null === $payment) {
-            throw new \InvalidArgumentException(sprintf(
-                'Payment not found: %s',
-                $command->id->toString()
-            ));
+            throw new \InvalidArgumentException(sprintf('Payment not found: %s', $command->id->toString()));
         }
 
         // Validate payment has been captured
         if (null === $payment->gatewayTransactionId()) {
-            throw new \InvalidArgumentException(sprintf(
-                'Payment %s has not been captured yet',
-                $command->id->toString()
-            ));
+            throw new \InvalidArgumentException(sprintf('Payment %s has not been captured yet', $command->id->toString()));
         }
 
         // Generate idempotency key for refund

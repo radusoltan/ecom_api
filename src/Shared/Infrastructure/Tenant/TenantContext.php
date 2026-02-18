@@ -19,7 +19,7 @@ final class TenantContext implements TenantContextInterface
     private ?TenantId $currentTenantId = null;
 
     public function __construct(
-        private readonly Connection $connection
+        private readonly Connection $connection,
     ) {
     }
 

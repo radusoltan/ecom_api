@@ -44,7 +44,7 @@ final class User extends AggregateRoot
         ?\DateTimeImmutable $emailVerifiedAt = null,
         bool $isLocked = false,
         ?string $lockReason = null,
-        ?\DateTimeImmutable $lockedAt = null
+        ?\DateTimeImmutable $lockedAt = null,
     ) {
         $this->id = $id;
         $this->email = $email;
@@ -63,7 +63,7 @@ final class User extends AggregateRoot
         Email $email,
         Username $username,
         HashedPassword $password,
-        array $roles = []
+        array $roles = [],
     ): self {
         $userId = UserId::generate();
         $createdAt = new \DateTimeImmutable();
@@ -103,7 +103,7 @@ final class User extends AggregateRoot
         ?\DateTimeImmutable $emailVerifiedAt = null,
         bool $isLocked = false,
         ?string $lockReason = null,
-        ?\DateTimeImmutable $lockedAt = null
+        ?\DateTimeImmutable $lockedAt = null,
     ): self {
         return new self(
             $id,

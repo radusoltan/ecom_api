@@ -28,7 +28,7 @@ final readonly class SequentialInvoiceNumberGenerator implements InvoiceNumberGe
 {
     public function __construct(
         private Connection $connection,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

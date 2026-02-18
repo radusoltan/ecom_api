@@ -16,7 +16,7 @@ final readonly class DownloadableFileUpdated implements DomainEvent
         private TenantId $tenantId,
         private DownloadableFile $oldFile,
         private DownloadableFile $newFile,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

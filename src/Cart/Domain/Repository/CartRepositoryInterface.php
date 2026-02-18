@@ -68,7 +68,8 @@ interface CartRepositoryInterface
      * - Have at least one item
      *
      * @param \DateTimeImmutable $abandonedBefore Carts not updated since this time
-     * @param int $limit Maximum number of carts to return
+     * @param int                $limit           Maximum number of carts to return
+     *
      * @return CartId[] Array of cart IDs
      */
     public function findAbandonedCartsForEmail(\DateTimeImmutable $abandonedBefore, int $limit = 100): array;

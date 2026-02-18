@@ -21,7 +21,7 @@ final readonly class CreatePaymentIntentResult
         public ?string $gatewayPaymentId,
         public ?string $errorCode,
         public ?string $errorMessage,
-        public bool $alreadyExists = false
+        public bool $alreadyExists = false,
     ) {
     }
 
@@ -31,7 +31,7 @@ final readonly class CreatePaymentIntentResult
     public static function success(
         PaymentId $paymentId,
         string $clientSecret,
-        string $gatewayPaymentId
+        string $gatewayPaymentId,
     ): self {
         return new self(
             success: true,
@@ -49,7 +49,7 @@ final readonly class CreatePaymentIntentResult
      */
     public static function alreadyExists(
         PaymentId $paymentId,
-        ?string $gatewayPaymentId
+        ?string $gatewayPaymentId,
     ): self {
         return new self(
             success: true,
@@ -67,7 +67,7 @@ final readonly class CreatePaymentIntentResult
      */
     public static function failed(
         ?string $errorCode,
-        ?string $errorMessage
+        ?string $errorMessage,
     ): self {
         return new self(
             success: false,

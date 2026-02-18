@@ -28,7 +28,7 @@ final readonly class UpdateSingleConsentProcessor implements ProcessorInterface
     public function __construct(
         private MessageBusInterface $commandBus,
         private TenantContextInterface $tenantContext,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

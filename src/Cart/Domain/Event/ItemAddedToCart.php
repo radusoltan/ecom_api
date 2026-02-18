@@ -20,7 +20,7 @@ final readonly class ItemAddedToCart
         public ProductId $productId,
         public ?string $variantId,
         public Quantity $quantity,
-        public Money $unitPrice
+        public Money $unitPrice,
     ) {
     }
 }

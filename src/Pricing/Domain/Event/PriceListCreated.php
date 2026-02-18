@@ -16,7 +16,7 @@ final readonly class PriceListCreated implements DomainEvent
         private string $tenantId,
         private string $name,
         private int $priority,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

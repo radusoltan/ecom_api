@@ -35,7 +35,7 @@ final readonly class ProductType
     ];
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!in_array($value, self::VALID_TYPES, true)) {
             throw new \InvalidArgumentException(sprintf('Invalid product type "%s". Valid types are: %s', $value, implode(', ', self::VALID_TYPES)));

@@ -8,9 +8,9 @@ use App\Pricing\Application\DTO\ImportResult;
 use App\Pricing\Application\DTO\ImportRow;
 use App\Pricing\Application\Service\ImportValidationService;
 use App\Pricing\Domain\Model\Promotion;
-use App\Pricing\Domain\ValueObject\Discount;
 use App\Pricing\Domain\Repository\PromotionRepositoryInterface;
 use App\Pricing\Domain\ValueObject\CouponCode;
+use App\Pricing\Domain\ValueObject\Discount;
 use App\Pricing\Domain\ValueObject\PromotionId;
 use App\Pricing\Domain\ValueObject\PromotionType;
 use Psr\Log\LoggerInterface;
@@ -25,7 +25,7 @@ final class ImportPromotionsHandler
     public function __construct(
         private readonly PromotionRepositoryInterface $repository,
         private readonly ImportValidationService $validationService,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -50,7 +50,7 @@ final class ImportPromotionsHandler
                 // Validate row
                 $validationErrors = $this->validationService->validatePromotionRow($row);
                 if (!empty($validationErrors)) {
-                    $errorCount++;
+                    ++$errorCount;
                     $errors[$row->rowNumber] = $validationErrors;
                     continue;
                 }
@@ -63,7 +63,7 @@ final class ImportPromotionsHandler
 
                 if (null !== $existingPromotion) {
                     if (!$command->updateExisting) {
-                        $errorCount++;
+                        ++$errorCount;
                         $errors[$row->rowNumber] = ['Promotion already exists and updateExisting is false'];
                         continue;
                     }
@@ -71,21 +71,21 @@ final class ImportPromotionsHandler
                     // Update existing
                     $this->updatePromotion($existingPromotion, $row);
                     $this->repository->save($existingPromotion);
-                    $updatedCount++;
+                    ++$updatedCount;
 
                     $this->logger->info('Updated Promotion', ['name' => $name]);
                 } else {
                     // Create new
                     $promotion = $this->createPromotion($command->tenantId, $row);
                     $this->repository->save($promotion);
-                    $createdCount++;
+                    ++$createdCount;
 
                     $this->logger->info('Created Promotion', ['name' => $name]);
                 }
 
-                $successCount++;
+                ++$successCount;
             } catch (\Exception $e) {
-                $errorCount++;
+                ++$errorCount;
                 $errors[$row->rowNumber] = [$e->getMessage()];
 
                 $this->logger->error('Failed to import Promotion', [
@@ -135,7 +135,7 @@ final class ImportPromotionsHandler
 
     private function createPromotion(
         \App\Shared\Domain\ValueObject\TenantId $tenantId,
-        ImportRow $row
+        ImportRow $row,
     ): Promotion {
         $type = PromotionType::fromString($row->getString('type') ?? 'automatic');
         $discountType = $row->getString('discount_type') ?? 'percentage';

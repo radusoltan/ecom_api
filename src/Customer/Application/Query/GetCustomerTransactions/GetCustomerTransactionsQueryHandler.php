@@ -17,7 +17,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetCustomerTransactionsQueryHandler
 {
     public function __construct(
-        private LoyaltyPointTransactionRepositoryInterface $repository
+        private LoyaltyPointTransactionRepositoryInterface $repository,
     ) {
     }
 

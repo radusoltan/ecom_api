@@ -16,7 +16,7 @@ final readonly class InvoiceCancelled
 {
     public function __construct(
         public InvoiceId $invoiceId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

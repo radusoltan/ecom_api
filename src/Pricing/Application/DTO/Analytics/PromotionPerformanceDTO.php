@@ -69,12 +69,12 @@ final readonly class PromotionPerformanceDTO
             'totalRevenue' => [
                 'amount' => $this->totalRevenueAmount,
                 'currency' => $this->totalRevenueCurrency,
-                'formatted' => number_format($this->totalRevenueAmount / 100, 2) . ' ' . $this->totalRevenueCurrency,
+                'formatted' => number_format($this->totalRevenueAmount / 100, 2).' '.$this->totalRevenueCurrency,
             ],
             'totalDiscount' => [
                 'amount' => $this->totalDiscountAmount,
                 'currency' => $this->totalDiscountCurrency,
-                'formatted' => number_format($this->totalDiscountAmount / 100, 2) . ' ' . $this->totalDiscountCurrency,
+                'formatted' => number_format($this->totalDiscountAmount / 100, 2).' '.$this->totalDiscountCurrency,
             ],
             'averageDiscountAmount' => round($this->averageDiscountAmount, 2),
             'conversionRate' => round($this->conversionRate, 2),

@@ -25,7 +25,7 @@ final class ReturnRequestCollectionProvider implements ProviderInterface
     use HandleTrait;
 
     public function __construct(
-        private readonly MessageBusInterface $queryBus
+        private readonly MessageBusInterface $queryBus,
     ) {
         $this->messageBus = $queryBus;
     }

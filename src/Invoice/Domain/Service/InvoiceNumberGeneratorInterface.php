@@ -29,8 +29,10 @@ interface InvoiceNumberGeneratorInterface
      * In multi-instance deployments, use database locks or distributed locks.
      *
      * @param TenantId $tenantId The tenant for which to generate the number
-     * @param int|null $year Optional year override (defaults to current year)
+     * @param int|null $year     Optional year override (defaults to current year)
+     *
      * @return InvoiceNumber The next sequential invoice number
+     *
      * @throws InvoiceNumberGenerationException If generation fails (e.g., concurrency error, database error)
      */
     public function generate(TenantId $tenantId, ?int $year = null): InvoiceNumber;
@@ -40,7 +42,8 @@ interface InvoiceNumberGeneratorInterface
      * Useful for preview/display purposes.
      *
      * @param TenantId $tenantId The tenant
-     * @param int|null $year Optional year (defaults to current year)
+     * @param int|null $year     Optional year (defaults to current year)
+     *
      * @return int The current sequence number (0 if no invoices yet for this tenant/year)
      */
     public function getCurrentSequence(TenantId $tenantId, ?int $year = null): int;
@@ -52,7 +55,8 @@ interface InvoiceNumberGeneratorInterface
      * without actually incrementing the sequence. Useful for UI display.
      *
      * @param TenantId $tenantId The tenant
-     * @param int|null $year Optional year (defaults to current year)
+     * @param int|null $year     Optional year (defaults to current year)
+     *
      * @return InvoiceNumber The preview of next number (not reserved)
      */
     public function previewNext(TenantId $tenantId, ?int $year = null): InvoiceNumber;

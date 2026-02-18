@@ -9,7 +9,6 @@ use App\Customer\Application\Command\UpdateNotificationPreferences\UpdateNotific
 use App\Customer\Domain\Model\Customer;
 use App\Customer\Domain\Repository\CustomerRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
-use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;

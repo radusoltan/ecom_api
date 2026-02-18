@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\Stamp\StampInterface;
 final readonly class TenantCollectionProvider implements ProviderInterface
 {
     public function __construct(
-        private MessageBusInterface $queryBus
+        private MessageBusInterface $queryBus,
     ) {
     }
 
@@ -29,7 +29,7 @@ final readonly class TenantCollectionProvider implements ProviderInterface
     public function provide(
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
+        array $context = [],
     ): array {
         // Dispatch query to get all tenants
         $query = new GetAllTenantsQuery();

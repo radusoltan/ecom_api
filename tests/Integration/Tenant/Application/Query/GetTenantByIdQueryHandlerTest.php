@@ -41,11 +41,11 @@ final class GetTenantByIdQueryHandlerTest extends KernelTestCase
         $em = $this->getEntityManager();
         try {
             $em->getConnection()->executeStatement(
-                "DELETE FROM ext_translations WHERE foreign_key = :tenantId",
+                'DELETE FROM ext_translations WHERE foreign_key = :tenantId',
                 ['tenantId' => $this->tenantId->toString()]
             );
             $em->getConnection()->executeStatement(
-                "DELETE FROM tenants WHERE id = :tenantId",
+                'DELETE FROM tenants WHERE id = :tenantId',
                 ['tenantId' => $this->tenantId->toString()]
             );
         } catch (\Exception $e) {

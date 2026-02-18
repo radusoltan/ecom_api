@@ -59,7 +59,7 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
         string $tenantId,
         string $categoryId,
         string $categoryName,
-        int $index
+        int $index,
     ): void {
         $productId = Uuid::v4()->toString();
         // Generate SKU in format AAA-BBB-000000 (e.g., PRD-CAT-000001)

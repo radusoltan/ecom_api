@@ -20,7 +20,7 @@ final readonly class CreatePromotionCommand
         public ?string $couponCode,
         public array $conditions,
         public ?string $validFrom,
-        public ?string $validTo
+        public ?string $validTo,
     ) {
     }
 }

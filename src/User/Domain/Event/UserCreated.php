@@ -13,7 +13,7 @@ final readonly class UserCreated implements DomainEvent
         private UserId $userId,
         private string $email,
         private string $username,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

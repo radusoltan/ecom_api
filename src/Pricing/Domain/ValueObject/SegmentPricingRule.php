@@ -24,7 +24,7 @@ final readonly class SegmentPricingRule
     private function __construct(
         private CustomerSegment $segment,
         private Discount $discount,
-        private int $priority = 100
+        private int $priority = 100,
     ) {
         $this->validatePriority();
     }
@@ -32,7 +32,7 @@ final readonly class SegmentPricingRule
     public static function create(
         CustomerSegment $segment,
         Discount $discount,
-        int $priority = 100
+        int $priority = 100,
     ): self {
         return new self($segment, $discount, $priority);
     }
@@ -59,9 +59,7 @@ final readonly class SegmentPricingRule
     private function validatePriority(): void
     {
         if ($this->priority < 0 || $this->priority > 1000) {
-            throw new \InvalidArgumentException(
-                sprintf('Priority must be between 0 and 1000, got %d', $this->priority)
-            );
+            throw new \InvalidArgumentException(sprintf('Priority must be between 0 and 1000, got %d', $this->priority));
         }
     }
 

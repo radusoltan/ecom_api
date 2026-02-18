@@ -11,7 +11,7 @@ final readonly class GetCustomerOrdersQuery
 {
     public function __construct(
         private CustomerId $customerId,
-        private TenantId $tenantId
+        private TenantId $tenantId,
     ) {
     }
 

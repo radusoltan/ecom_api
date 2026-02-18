@@ -34,11 +34,11 @@ final class StripeWebhookApiTest extends ApiTestCase
     private function generatePaymentId(): string
     {
         return sprintf('%08x-%04x-%04x-%04x-%012x',
-            mt_rand(0, 0xffffffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0x0fff) | 0x4000,
-            mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffffffffffff)
+            mt_rand(0, 0xFFFFFFFF),
+            mt_rand(0, 0xFFFF),
+            mt_rand(0, 0x0FFF) | 0x4000,
+            mt_rand(0, 0x3FFF) | 0x8000,
+            mt_rand(0, 0xFFFFFFFFFFFF)
         );
     }
 
@@ -51,10 +51,10 @@ final class StripeWebhookApiTest extends ApiTestCase
      */
     private function createWebhookPayload(string $eventType, array $metadata = []): array
     {
-        $paymentIntentId = 'pi_test_' . uniqid();
+        $paymentIntentId = 'pi_test_'.uniqid();
 
         return [
-            'id' => 'evt_test_' . uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'object' => 'event',
             'type' => $eventType,
             'data' => [
@@ -63,9 +63,9 @@ final class StripeWebhookApiTest extends ApiTestCase
                     'object' => 'payment_intent',
                     'amount' => 9999,
                     'currency' => 'usd',
-                    'status' => $eventType === 'payment_intent.succeeded' ? 'succeeded' : 'failed',
+                    'status' => 'payment_intent.succeeded' === $eventType ? 'succeeded' : 'failed',
                     'metadata' => $metadata,
-                    'last_payment_error' => $eventType === 'payment_intent.payment_failed' ? [
+                    'last_payment_error' => 'payment_intent.payment_failed' === $eventType ? [
                         'code' => 'card_declined',
                         'message' => 'Your card was declined',
                     ] : null,
@@ -141,7 +141,7 @@ final class StripeWebhookApiTest extends ApiTestCase
      * Note: This test requires a real payment to exist in the database.
      * In a real scenario, you would:
      * 1. Create a payment first via the create-intent endpoint
-     * 2. Then send the webhook event for that payment
+     * 2. Then send the webhook event for that payment.
      *
      * For this test, we're testing the webhook endpoint's handling
      * of the event structure, even if the payment doesn't exist.
@@ -150,8 +150,8 @@ final class StripeWebhookApiTest extends ApiTestCase
     {
         // @phpstan-ignore-next-line
         $this->markTestSkipped(
-            'This test requires valid Stripe webhook signature. ' .
-            'In production, use Stripe CLI to forward webhooks. ' .
+            'This test requires valid Stripe webhook signature. '.
+            'In production, use Stripe CLI to forward webhooks. '.
             'Test validates event structure and signature verification.'
         );
 
@@ -187,8 +187,8 @@ final class StripeWebhookApiTest extends ApiTestCase
     {
         // @phpstan-ignore-next-line
         $this->markTestSkipped(
-            'This test requires valid Stripe webhook signature. ' .
-            'In production, use Stripe CLI to forward webhooks. ' .
+            'This test requires valid Stripe webhook signature. '.
+            'In production, use Stripe CLI to forward webhooks. '.
             'Test validates event structure and signature verification.'
         );
 
@@ -223,7 +223,7 @@ final class StripeWebhookApiTest extends ApiTestCase
     {
         // @phpstan-ignore-next-line
         $this->markTestSkipped(
-            'This test requires valid Stripe webhook signature. ' .
+            'This test requires valid Stripe webhook signature. '.
             'In production, use Stripe CLI to forward webhooks.'
         );
 
@@ -232,11 +232,11 @@ final class StripeWebhookApiTest extends ApiTestCase
         $paymentId = $this->generatePaymentId();
 
         $payload = [
-            'id' => 'evt_test_' . uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'type' => 'payment_intent.canceled',
             'data' => [
                 'object' => [
-                    'id' => 'pi_test_' . uniqid(),
+                    'id' => 'pi_test_'.uniqid(),
                     'status' => 'canceled',
                     'cancellation_reason' => 'requested_by_customer',
                     'metadata' => [
@@ -267,18 +267,18 @@ final class StripeWebhookApiTest extends ApiTestCase
     {
         // @phpstan-ignore-next-line
         $this->markTestSkipped(
-            'This test requires valid Stripe webhook signature. ' .
+            'This test requires valid Stripe webhook signature. '.
             'In production, use Stripe CLI to forward webhooks.'
         );
 
         $client = static::createClient();
 
         $payload = [
-            'id' => 'evt_test_' . uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'type' => 'some.unknown.event',
             'data' => [
                 'object' => [
-                    'id' => 'obj_test_' . uniqid(),
+                    'id' => 'obj_test_'.uniqid(),
                 ],
             ],
         ];
@@ -303,7 +303,7 @@ final class StripeWebhookApiTest extends ApiTestCase
     {
         // @phpstan-ignore-next-line
         $this->markTestSkipped(
-            'This test requires valid Stripe webhook signature. ' .
+            'This test requires valid Stripe webhook signature. '.
             'In production, use Stripe CLI to forward webhooks.'
         );
 

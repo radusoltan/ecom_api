@@ -12,7 +12,7 @@ final readonly class LoyaltyTierRemoved
     public function __construct(
         private LoyaltyProgramId $programId,
         private LoyaltyTierId $tierId,
-        private \DateTimeImmutable $occurredAt
+        private \DateTimeImmutable $occurredAt,
     ) {
     }
 

@@ -22,7 +22,7 @@ final readonly class UpdateConsentCommand
         public ConsentType $consentType,
         public bool $granted,
         public ?string $ipAddress = null,
-        public ?string $userAgent = null
+        public ?string $userAgent = null,
     ) {
     }
 }

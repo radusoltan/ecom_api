@@ -30,14 +30,14 @@ final readonly class PromotionApplicator implements PromotionApplicatorInterface
 {
     public function __construct(
         private PromotionRepositoryInterface $promotionRepository,
-        private PromotionStackingServiceInterface $promotionStackingService
+        private PromotionStackingServiceInterface $promotionStackingService,
     ) {
     }
 
     /**
      * Validate and retrieve promotion by coupon code.
      *
-     * @param string                 $couponCode Coupon code to validate
+     * @param string                                  $couponCode Coupon code to validate
      * @param \App\Shared\Domain\ValueObject\TenantId $tenantId   Tenant context
      *
      * @return Promotion The validated promotion
@@ -46,7 +46,7 @@ final readonly class PromotionApplicator implements PromotionApplicatorInterface
      */
     public function validateCoupon(
         string $couponCode,
-        \App\Shared\Domain\ValueObject\TenantId $tenantId
+        \App\Shared\Domain\ValueObject\TenantId $tenantId,
     ): Promotion {
         // Find promotion by coupon code
         $promotion = $this->promotionRepository->findByCouponCode(
@@ -84,7 +84,7 @@ final readonly class PromotionApplicator implements PromotionApplicatorInterface
     public function canApplyToCart(
         Promotion $promotion,
         Cart $cart,
-        Money $subtotal
+        Money $subtotal,
     ): bool {
         // Check if promotion is applicable (active + valid dates)
         $now = new \DateTimeImmutable();
@@ -110,12 +110,10 @@ final readonly class PromotionApplicator implements PromotionApplicatorInterface
     public function applyPromotion(
         Promotion $promotion,
         Cart $cart,
-        Money $subtotal
+        Money $subtotal,
     ): AppliedDiscountDTO {
         if (!$this->canApplyToCart($promotion, $cart, $subtotal)) {
-            throw new \InvalidArgumentException(
-                sprintf('Promotion "%s" cannot be applied to this cart', $promotion->name())
-            );
+            throw new \InvalidArgumentException(sprintf('Promotion "%s" cannot be applied to this cart', $promotion->name()));
         }
 
         // Calculate discount amount
@@ -143,7 +141,7 @@ final readonly class PromotionApplicator implements PromotionApplicatorInterface
      */
     public function calculateDiscount(
         Promotion $promotion,
-        Money $amount
+        Money $amount,
     ): Money {
         return $promotion->discount()->applyTo($amount);
     }
@@ -160,7 +158,7 @@ final readonly class PromotionApplicator implements PromotionApplicatorInterface
     private function checkPromotionConditions(
         Promotion $promotion,
         Cart $cart,
-        Money $subtotal
+        Money $subtotal,
     ): bool {
         $conditions = $promotion->conditions();
 
@@ -211,7 +209,7 @@ final readonly class PromotionApplicator implements PromotionApplicatorInterface
     /**
      * Validate multiple coupons for stacking.
      *
-     * @param array<string> $couponCodes Array of coupon codes
+     * @param array<string>                           $couponCodes Array of coupon codes
      * @param \App\Shared\Domain\ValueObject\TenantId $tenantId    Tenant context
      *
      * @return array<Promotion> Array of validated promotions
@@ -220,7 +218,7 @@ final readonly class PromotionApplicator implements PromotionApplicatorInterface
      */
     public function validateCouponStack(
         array $couponCodes,
-        \App\Shared\Domain\ValueObject\TenantId $tenantId
+        \App\Shared\Domain\ValueObject\TenantId $tenantId,
     ): array {
         if (empty($couponCodes)) {
             return [];

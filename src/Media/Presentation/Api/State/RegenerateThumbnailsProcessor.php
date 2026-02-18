@@ -33,7 +33,7 @@ final class RegenerateThumbnailsProcessor implements ProcessorInterface
         private readonly ImageResourceTransformer $transformer,
         private readonly MessageBusInterface $messageBus,
         private readonly ValidatorInterface $validator,
-        private readonly bool $asyncThumbnails = true
+        private readonly bool $asyncThumbnails = true,
     ) {
     }
 
@@ -128,35 +128,34 @@ final class RegenerateThumbnailsProcessor implements ProcessorInterface
 
             // Return current state (thumbnails will be regenerated in background)
             return $this->transformer->transform($image);
-        } else {
-            // Regenerate thumbnails synchronously
-            foreach ($sizesToRegenerate as $sizeLabel) {
-                $dimensions = $this->thumbnailPolicy->dimensionsFor($sizeLabel);
-                $cropArea = $crops[$sizeLabel->value] ?? null;
-
-                $generated = $this->thumbnailGenerator->generate(
-                    $image,
-                    $sizeLabel,
-                    $cropArea ?? CropArea::fromDimensions(0, 0, $dimensions['width'], $dimensions['height'])
-                );
-
-                $thumbnail = $image->newThumbnail(
-                    $sizeLabel,
-                    $generated->path,
-                    $generated->width,
-                    $generated->height,
-                    $generated->cropArea
-                );
-
-                $image->addOrUpdateThumbnail($thumbnail);
-            }
-
-            $this->imageRepository->save($image);
-
-            // Reload image from database to get fresh thumbnails
-            $reloadedImage = $this->imageRepository->findById($imageId);
-
-            return $this->transformer->transform($reloadedImage ?? $image);
         }
+        // Regenerate thumbnails synchronously
+        foreach ($sizesToRegenerate as $sizeLabel) {
+            $dimensions = $this->thumbnailPolicy->dimensionsFor($sizeLabel);
+            $cropArea = $crops[$sizeLabel->value] ?? null;
+
+            $generated = $this->thumbnailGenerator->generate(
+                $image,
+                $sizeLabel,
+                $cropArea ?? CropArea::fromDimensions(0, 0, $dimensions['width'], $dimensions['height'])
+            );
+
+            $thumbnail = $image->newThumbnail(
+                $sizeLabel,
+                $generated->path,
+                $generated->width,
+                $generated->height,
+                $generated->cropArea
+            );
+
+            $image->addOrUpdateThumbnail($thumbnail);
+        }
+
+        $this->imageRepository->save($image);
+
+        // Reload image from database to get fresh thumbnails
+        $reloadedImage = $this->imageRepository->findById($imageId);
+
+        return $this->transformer->transform($reloadedImage ?? $image);
     }
 }

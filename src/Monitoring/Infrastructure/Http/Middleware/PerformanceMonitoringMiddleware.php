@@ -31,7 +31,7 @@ final class PerformanceMonitoringMiddleware implements EventSubscriberInterface
     private const REQUEST_START_MEMORY_ATTR = '_perf_start_memory';
 
     public function __construct(
-        private readonly ApplicationPerformanceMonitor $apm
+        private readonly ApplicationPerformanceMonitor $apm,
     ) {
     }
 

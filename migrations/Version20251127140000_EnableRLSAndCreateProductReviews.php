@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Enable RLS on fulfillments table and create product_reviews table
+ * Enable RLS on fulfillments table and create product_reviews table.
  *
  * This migration:
  * 1. Enables Row-Level Security on the existing fulfillments table
@@ -33,9 +33,9 @@ final class Version20251127140000_EnableRLSAndCreateProductReviews extends Abstr
                 IF NOT EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'fulfillments') THEN
                     CREATE TABLE fulfillments (
                         id VARCHAR(26) PRIMARY KEY,
-                        order_id VARCHAR(36) NOT NULL,
+                        order_id UUID NOT NULL,
                         warehouse_id VARCHAR(26) NOT NULL,
-                        tenant_id VARCHAR(36) NOT NULL,
+                        tenant_id UUID NOT NULL,
                         status VARCHAR(20) NOT NULL,
                         tracking_number VARCHAR(50),
                         carrier VARCHAR(50),
@@ -89,15 +89,16 @@ final class Version20251127140000_EnableRLSAndCreateProductReviews extends Abstr
         ");
 
         // 2. Create product_reviews table (only if it doesn't exist)
+        $this->addSql('DROP TABLE IF EXISTS product_reviews CASCADE');
         $this->addSql("
             DO $$
             BEGIN
                 IF NOT EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'product_reviews') THEN
                     CREATE TABLE product_reviews (
-                        id VARCHAR(36) PRIMARY KEY,
-                        tenant_id VARCHAR(36) NOT NULL,
-                        product_id VARCHAR(36) NOT NULL,
-                        customer_id VARCHAR(36),
+                        id UUID PRIMARY KEY,
+                        tenant_id UUID NOT NULL,
+                        product_id UUID NOT NULL,
+                        customer_id UUID,
                         rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
                         title VARCHAR(255),
                         content TEXT,

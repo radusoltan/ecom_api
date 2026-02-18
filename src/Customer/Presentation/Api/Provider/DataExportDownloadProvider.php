@@ -8,7 +8,6 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Customer\Application\DTO\DataExportStatusDTO;
 use App\Customer\Application\Query\GetDataExportStatus\GetDataExportStatusQuery;
-use App\Customer\Presentation\Api\Resource\DataExportResource;
 use App\Shared\Application\Service\TenantContextInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +30,7 @@ final readonly class DataExportDownloadProvider implements ProviderInterface
     public function __construct(
         private MessageBusInterface $queryBus,
         private TenantContextInterface $tenantContext,
-        private string $exportStoragePath = '/var/www/new_ecom/backend/var/exports'
+        private string $exportStoragePath = '/var/www/new_ecom/backend/var/exports',
     ) {
     }
 

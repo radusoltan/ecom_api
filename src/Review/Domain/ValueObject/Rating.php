@@ -13,7 +13,7 @@ final readonly class Rating
     private const MAX_RATING = 5;
 
     private function __construct(
-        private int $value
+        private int $value,
     ) {
         $this->validate($value);
     }

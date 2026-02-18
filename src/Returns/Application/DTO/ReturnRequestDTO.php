@@ -26,7 +26,7 @@ final readonly class ReturnRequestDTO
         public ?string $inspectionNotes,
         public ?string $rejectionReason,
         public string $createdAt,
-        public string $updatedAt
+        public string $updatedAt,
     ) {
     }
 

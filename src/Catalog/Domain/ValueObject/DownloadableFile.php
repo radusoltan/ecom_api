@@ -26,7 +26,7 @@ final readonly class DownloadableFile
         private string $fileUrl,
         private int $fileSizeBytes,
         private int $downloadLimit = 5,
-        private ?\DateTimeImmutable $expiresAt = null
+        private ?\DateTimeImmutable $expiresAt = null,
     ) {
         Assert::stringNotEmpty($this->filename, 'Filename cannot be empty');
         Assert::maxLength($this->filename, 255, 'Filename cannot exceed 255 characters');
@@ -51,7 +51,7 @@ final readonly class DownloadableFile
             sprintf('Download limit cannot exceed %d', self::MAX_DOWNLOAD_LIMIT)
         );
 
-        if ($this->expiresAt !== null) {
+        if (null !== $this->expiresAt) {
             Assert::greaterThan(
                 $this->expiresAt,
                 new \DateTimeImmutable(),
@@ -64,7 +64,7 @@ final readonly class DownloadableFile
         string $filename,
         string $fileUrl,
         int $fileSizeBytes,
-        int $downloadLimit = 5
+        int $downloadLimit = 5,
     ): self {
         return new self($filename, $fileUrl, $fileSizeBytes, $downloadLimit, null);
     }
@@ -74,7 +74,7 @@ final readonly class DownloadableFile
         string $fileUrl,
         int $fileSizeBytes,
         int $downloadLimit,
-        \DateTimeImmutable $expiresAt
+        \DateTimeImmutable $expiresAt,
     ): self {
         return new self($filename, $fileUrl, $fileSizeBytes, $downloadLimit, $expiresAt);
     }
@@ -82,7 +82,7 @@ final readonly class DownloadableFile
     public static function createUnlimited(
         string $filename,
         string $fileUrl,
-        int $fileSizeBytes
+        int $fileSizeBytes,
     ): self {
         return new self($filename, $fileUrl, $fileSizeBytes, 0, null);
     }
@@ -114,17 +114,17 @@ final readonly class DownloadableFile
 
     public function isUnlimited(): bool
     {
-        return $this->downloadLimit === 0;
+        return 0 === $this->downloadLimit;
     }
 
     public function hasExpiration(): bool
     {
-        return $this->expiresAt !== null;
+        return null !== $this->expiresAt;
     }
 
     public function isExpired(): bool
     {
-        if ($this->expiresAt === null) {
+        if (null === $this->expiresAt) {
             return false;
         }
 
@@ -144,6 +144,7 @@ final readonly class DownloadableFile
     public function getFileExtension(): string
     {
         $parts = explode('.', $this->filename);
+
         return count($parts) > 1 ? strtolower(end($parts)) : '';
     }
 

@@ -24,7 +24,7 @@ final readonly class VariantAdded implements DomainEvent
         private VariantId $variantId,
         private VariantSKU $sku,
         private array $optionValueMap,
-        private \DateTimeImmutable $occurredOn = new \DateTimeImmutable()
+        private \DateTimeImmutable $occurredOn = new \DateTimeImmutable(),
     ) {
     }
 

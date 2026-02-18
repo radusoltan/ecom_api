@@ -20,7 +20,7 @@ final readonly class DeleteVariantProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 
@@ -28,7 +28,7 @@ final readonly class DeleteVariantProcessor implements ProcessorInterface
         mixed $data,
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
+        array $context = [],
     ): void {
         // Get tenant ID from request header
         $request = $this->requestStack->getCurrentRequest();

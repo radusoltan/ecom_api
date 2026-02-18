@@ -26,7 +26,7 @@ final readonly class RefundResult
         public Money $amount,
         public ?string $errorCode,
         public ?string $errorMessage,
-        public ?string $rawResponse
+        public ?string $rawResponse,
     ) {
     }
 
@@ -34,7 +34,7 @@ final readonly class RefundResult
         string $gatewayRefundId,
         string $status,
         Money $amount,
-        ?string $rawResponse = null
+        ?string $rawResponse = null,
     ): self {
         return new self(
             success: true,
@@ -50,7 +50,7 @@ final readonly class RefundResult
     public static function failure(
         string $errorCode,
         string $errorMessage,
-        ?string $rawResponse = null
+        ?string $rawResponse = null,
     ): self {
         return new self(
             success: false,
@@ -64,7 +64,7 @@ final readonly class RefundResult
     }
 
     /**
-     * Check if refund is pending processing
+     * Check if refund is pending processing.
      */
     public function isPending(): bool
     {
@@ -72,7 +72,7 @@ final readonly class RefundResult
     }
 
     /**
-     * Check if refund succeeded
+     * Check if refund succeeded.
      */
     public function isSucceeded(): bool
     {
@@ -80,7 +80,7 @@ final readonly class RefundResult
     }
 
     /**
-     * Check if refund failed
+     * Check if refund failed.
      */
     public function isFailed(): bool
     {
@@ -88,7 +88,7 @@ final readonly class RefundResult
     }
 
     /**
-     * Check if refund was cancelled
+     * Check if refund was cancelled.
      */
     public function isCanceled(): bool
     {
@@ -96,7 +96,7 @@ final readonly class RefundResult
     }
 
     /**
-     * Check if refund is in a final state (cannot be modified)
+     * Check if refund is in a final state (cannot be modified).
      */
     public function isFinal(): bool
     {

@@ -14,7 +14,7 @@ final readonly class LoyaltyTierAdded
         private LoyaltyTierId $tierId,
         private string $tierName,
         private int $threshold,
-        private \DateTimeImmutable $occurredAt
+        private \DateTimeImmutable $occurredAt,
     ) {
     }
 

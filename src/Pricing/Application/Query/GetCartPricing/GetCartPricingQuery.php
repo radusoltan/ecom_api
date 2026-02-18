@@ -15,14 +15,14 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class GetCartPricingQuery
 {
     /**
-     * @param CartId        $cartId            The cart to get pricing for
-     * @param TenantId      $tenantId          Tenant context
+     * @param CartId        $cartId             The cart to get pricing for
+     * @param TenantId      $tenantId           Tenant context
      * @param array<string> $appliedCouponCodes Coupon codes applied to cart
      */
     public function __construct(
         public CartId $cartId,
         public TenantId $tenantId,
-        public array $appliedCouponCodes = []
+        public array $appliedCouponCodes = [],
     ) {
     }
 }

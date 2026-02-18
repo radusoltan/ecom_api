@@ -282,7 +282,7 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
         array $descriptions,
         ?string $parentId,
         int $position,
-        string $coverImage
+        string $coverImage,
     ): string {
         $categoryId = Uuid::v4()->toString();
 

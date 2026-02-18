@@ -380,7 +380,7 @@ final class CustomerAddressManagementTest extends TestCase
 
     private function createAddress(
         ?CustomerAddressId $id = null,
-        string $street = '123 Main St'
+        string $street = '123 Main St',
     ): CustomerAddress {
         return CustomerAddress::create(
             id: $id ?? CustomerAddressId::generate(),

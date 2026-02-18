@@ -12,7 +12,6 @@ use App\Tax\Application\Query\GetTaxRuleById;
 use App\Tax\Domain\ValueObject\TaxRuleId;
 use App\Tax\Presentation\Api\Resource\TaxRuleResource;
 use App\Tax\Presentation\Api\Transformer\TaxRuleResourceTransformer;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -26,7 +25,7 @@ final class CreateTaxRuleProcessor implements ProcessorInterface
     public function __construct(
         private readonly MessageBusInterface $commandBus,
         MessageBusInterface $queryBus,
-        private readonly TaxRuleResourceTransformer $transformer
+        private readonly TaxRuleResourceTransformer $transformer,
     ) {
         $this->messageBus = $queryBus;
     }

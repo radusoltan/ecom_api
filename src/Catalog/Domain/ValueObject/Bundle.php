@@ -30,32 +30,21 @@ final readonly class Bundle
      */
     private function __construct(
         private array $items,
-        private float $discountPercentage
+        private float $discountPercentage,
     ) {
         // Validate items count
         $itemCount = count($items);
         if ($itemCount < self::MIN_ITEMS) {
-            throw new \InvalidArgumentException(
-                sprintf('Bundle must contain at least %d item', self::MIN_ITEMS)
-            );
+            throw new \InvalidArgumentException(sprintf('Bundle must contain at least %d item', self::MIN_ITEMS));
         }
 
         if ($itemCount > self::MAX_ITEMS) {
-            throw new \InvalidArgumentException(
-                sprintf('Bundle cannot contain more than %d items (got %d)', self::MAX_ITEMS, $itemCount)
-            );
+            throw new \InvalidArgumentException(sprintf('Bundle cannot contain more than %d items (got %d)', self::MAX_ITEMS, $itemCount));
         }
 
         // Validate discount
         if ($discountPercentage < self::MIN_DISCOUNT || $discountPercentage > self::MAX_DISCOUNT) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Bundle discount must be between %.1f%% and %.1f%% (got %.1f%%)',
-                    self::MIN_DISCOUNT,
-                    self::MAX_DISCOUNT,
-                    $discountPercentage
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Bundle discount must be between %.1f%% and %.1f%% (got %.1f%%)', self::MIN_DISCOUNT, self::MAX_DISCOUNT, $discountPercentage));
         }
     }
 
@@ -64,7 +53,7 @@ final readonly class Bundle
      */
     public static function create(
         array $items,
-        float $discountPercentage = 0.0
+        float $discountPercentage = 0.0,
     ): self {
         return new self($items, $discountPercentage);
     }
@@ -114,7 +103,7 @@ final readonly class Bundle
      */
     public function calculateSavings(): Money
     {
-        if ($this->discountPercentage === 0.0) {
+        if (0.0 === $this->discountPercentage) {
             return Money::fromScalars(0, 'USD');
         }
 

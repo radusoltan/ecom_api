@@ -34,9 +34,9 @@ final class Version20251128085910 extends AbstractMigration
         // Create customer_addresses table
         $this->addSql("
             CREATE TABLE IF NOT EXISTS customer_addresses (
-                id VARCHAR(36) NOT NULL,
-                customer_id VARCHAR(36) NOT NULL,
-                tenant_id VARCHAR(36) NOT NULL,
+                id UUID NOT NULL,
+                customer_id UUID NOT NULL,
+                tenant_id UUID NOT NULL,
                 street VARCHAR(255) NOT NULL,
                 street2 VARCHAR(255) DEFAULT NULL,
                 city VARCHAR(100) NOT NULL,
@@ -103,7 +103,7 @@ final class Version20251128085910 extends AbstractMigration
                 ) THEN
                     CREATE POLICY tenant_isolation ON customer_addresses
                         FOR ALL
-                        USING (tenant_id = current_setting('app.tenant_id', true));
+                        USING (tenant_id::text = current_setting('app.tenant_id', true));
                 END IF;
             END $$;
         ");

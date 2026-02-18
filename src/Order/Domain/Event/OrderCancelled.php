@@ -14,7 +14,7 @@ final readonly class OrderCancelled
         public OrderId $orderId,
         public TenantId $tenantId,
         public OrderStatus $previousStatus,
-        public ?string $reason = null
+        public ?string $reason = null,
     ) {
     }
 }

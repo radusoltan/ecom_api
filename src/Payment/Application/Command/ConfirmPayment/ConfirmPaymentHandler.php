@@ -32,7 +32,7 @@ final readonly class ConfirmPaymentHandler
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
         private PaymentGatewayInterface $gateway,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -42,18 +42,12 @@ final readonly class ConfirmPaymentHandler
         $payment = $this->paymentRepository->findById($command->paymentId);
 
         if (null === $payment) {
-            throw new \InvalidArgumentException(sprintf(
-                'Payment not found: %s',
-                $command->paymentId->toString()
-            ));
+            throw new \InvalidArgumentException(sprintf('Payment not found: %s', $command->paymentId->toString()));
         }
 
         // Check if payment has gateway transaction ID
         if (null === $payment->gatewayTransactionId()) {
-            throw new \InvalidArgumentException(sprintf(
-                'Payment %s has no gateway transaction ID',
-                $command->paymentId->toString()
-            ));
+            throw new \InvalidArgumentException(sprintf('Payment %s has no gateway transaction ID', $command->paymentId->toString()));
         }
 
         try {

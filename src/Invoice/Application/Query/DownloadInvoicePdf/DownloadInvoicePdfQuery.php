@@ -21,7 +21,7 @@ final readonly class DownloadInvoicePdfQuery
 {
     public function __construct(
         public string $invoiceId,
-        public string $locale = 'en'
+        public string $locale = 'en',
     ) {
     }
 }

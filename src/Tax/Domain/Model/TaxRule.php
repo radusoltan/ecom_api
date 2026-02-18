@@ -68,7 +68,7 @@ final class TaxRule extends AggregateRoot
         bool $isActive = true,
         ?\DateTimeImmutable $validFrom = null,
         ?\DateTimeImmutable $validTo = null,
-        bool $isReverseCharge = false
+        bool $isReverseCharge = false,
     ): self {
         // Validate name
         $trimmedName = trim($name);
@@ -78,34 +78,22 @@ final class TaxRule extends AggregateRoot
 
         // Validate priority
         if ($priority < 0) {
-            throw new \InvalidArgumentException(
-                sprintf('Priority must be >= 0, got %d', $priority)
-            );
+            throw new \InvalidArgumentException(sprintf('Priority must be >= 0, got %d', $priority));
         }
 
         // Validate date range
         $from = $validFrom ?? new \DateTimeImmutable();
-        if ($validTo !== null && $from > $validTo) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'validFrom (%s) must be <= validTo (%s)',
-                    $from->format('Y-m-d H:i:s'),
-                    $validTo->format('Y-m-d H:i:s')
-                )
-            );
+        if (null !== $validTo && $from > $validTo) {
+            throw new \InvalidArgumentException(sprintf('validFrom (%s) must be <= validTo (%s)', $from->format('Y-m-d H:i:s'), $validTo->format('Y-m-d H:i:s')));
         }
 
         // Validate reverse charge logic
         if ($isReverseCharge && !$jurisdiction->isEu()) {
-            throw new \InvalidArgumentException(
-                'Reverse charge mechanism is only applicable to EU jurisdictions'
-            );
+            throw new \InvalidArgumentException('Reverse charge mechanism is only applicable to EU jurisdictions');
         }
 
-        if ($isReverseCharge && $category === TaxCategory::EXEMPT) {
-            throw new \InvalidArgumentException(
-                'Reverse charge cannot be applied to exempt category'
-            );
+        if ($isReverseCharge && TaxCategory::EXEMPT === $category) {
+            throw new \InvalidArgumentException('Reverse charge cannot be applied to exempt category');
         }
 
         $rule = new self();
@@ -152,7 +140,7 @@ final class TaxRule extends AggregateRoot
         ?\DateTimeImmutable $validTo,
         bool $isReverseCharge,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         $rule = new self();
         $rule->id = $id;
@@ -210,9 +198,7 @@ final class TaxRule extends AggregateRoot
     public function updateRate(TaxRate $rate): void
     {
         if (!$this->isActive) {
-            throw new \InvalidArgumentException(
-                'Cannot change tax rate on inactive rule. Activate the rule first.'
-            );
+            throw new \InvalidArgumentException('Cannot change tax rate on inactive rule. Activate the rule first.');
         }
 
         if ($this->rate->equals($rate)) {
@@ -235,16 +221,10 @@ final class TaxRule extends AggregateRoot
 
     public function updateValidity(
         \DateTimeImmutable $from,
-        ?\DateTimeImmutable $to = null
+        ?\DateTimeImmutable $to = null,
     ): void {
-        if ($to !== null && $from > $to) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'validFrom (%s) must be <= validTo (%s)',
-                    $from->format('Y-m-d H:i:s'),
-                    $to->format('Y-m-d H:i:s')
-                )
-            );
+        if (null !== $to && $from > $to) {
+            throw new \InvalidArgumentException(sprintf('validFrom (%s) must be <= validTo (%s)', $from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s')));
         }
 
         $this->validFrom = $from;
@@ -264,7 +244,7 @@ final class TaxRule extends AggregateRoot
         }
 
         // Check if date is before validTo (if set)
-        if ($this->validTo !== null && $date > $this->validTo) {
+        if (null !== $this->validTo && $date > $this->validTo) {
             return false;
         }
 
@@ -273,7 +253,7 @@ final class TaxRule extends AggregateRoot
 
     public function appliesTo(
         TaxJurisdiction $jurisdiction,
-        TaxCategory $category
+        TaxCategory $category,
     ): bool {
         return $this->jurisdiction->equals($jurisdiction)
             && $this->category === $category;

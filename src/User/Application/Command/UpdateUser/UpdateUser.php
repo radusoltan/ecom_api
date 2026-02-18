@@ -18,7 +18,7 @@ final readonly class UpdateUser
     public function __construct(
         public string $userId,
         public string $username,
-        public array $roles
+        public array $roles,
     ) {
     }
 }

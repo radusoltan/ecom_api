@@ -20,7 +20,7 @@ use Symfony\Component\Messenger\Stamp\HandledStamp;
 final readonly class ValidateCouponProcessor implements ProcessorInterface
 {
     public function __construct(
-        private MessageBusInterface $queryBus
+        private MessageBusInterface $queryBus,
     ) {
     }
 

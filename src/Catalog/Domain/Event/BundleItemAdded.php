@@ -20,7 +20,7 @@ final readonly class BundleItemAdded implements DomainEvent
         private ProductId $productId,
         private TenantId $tenantId,
         private BundleItem $item,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

@@ -9,7 +9,7 @@ use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Migration for audit_log table
- * Implements comprehensive audit trail for all user actions in the system
+ * Implements comprehensive audit trail for all user actions in the system.
  */
 final class Version20251103065200 extends AbstractMigration
 {
@@ -22,9 +22,9 @@ final class Version20251103065200 extends AbstractMigration
     {
         // Create audit_log table
         $this->addSql('CREATE TABLE audit_log (
-            id VARCHAR(36) NOT NULL,
-            tenant_id VARCHAR(36) NOT NULL,
-            user_id VARCHAR(36) DEFAULT NULL,
+            id UUID NOT NULL,
+            tenant_id UUID NOT NULL,
+            user_id UUID DEFAULT NULL,
             action_type VARCHAR(50) NOT NULL,
             resource_type VARCHAR(50) NOT NULL,
             resource_id VARCHAR(255) NOT NULL,

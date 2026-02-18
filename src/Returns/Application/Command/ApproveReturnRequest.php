@@ -12,7 +12,7 @@ namespace App\Returns\Application\Command;
 final readonly class ApproveReturnRequest
 {
     public function __construct(
-        public string $returnRequestId
+        public string $returnRequestId,
     ) {
     }
 }

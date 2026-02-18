@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Add JSONB columns for translations to products and categories
+ * Add JSONB columns for translations to products and categories.
  */
 final class Version20251116100000 extends AbstractMigration
 {
@@ -35,12 +35,13 @@ final class Version20251116100000 extends AbstractMigration
         $this->addSql('CREATE INDEX idx_categories_desc_tr_gin ON catalog_categories USING GIN (description_translations jsonb_path_ops)');
 
         // Create tracking table for backfill progress
+        $this->addSql('DROP TABLE IF EXISTS i18n_backfill_tracking CASCADE');
         $this->addSql(<<<'SQL'
             CREATE TABLE IF NOT EXISTS i18n_backfill_tracking (
                 id SERIAL PRIMARY KEY,
                 entity_type VARCHAR(50) NOT NULL,
-                tenant_id VARCHAR(36) NOT NULL,
-                last_processed_id VARCHAR(36),
+                tenant_id UUID NOT NULL,
+                last_processed_id UUID,
                 total_count INT DEFAULT 0,
                 processed_count INT DEFAULT 0,
                 status VARCHAR(20) DEFAULT 'pending',

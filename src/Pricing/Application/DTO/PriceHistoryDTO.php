@@ -29,7 +29,7 @@ final readonly class PriceHistoryDTO
         public ?array $priceChangeDifference,
         public ?float $priceChangePercentage,
         public bool $isPriceIncrease,
-        public bool $isPriceDecrease
+        public bool $isPriceDecrease,
     ) {
     }
 

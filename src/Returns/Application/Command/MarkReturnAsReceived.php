@@ -13,7 +13,7 @@ final readonly class MarkReturnAsReceived
 {
     public function __construct(
         public string $returnRequestId,
-        public string $warehouseId
+        public string $warehouseId,
     ) {
     }
 }

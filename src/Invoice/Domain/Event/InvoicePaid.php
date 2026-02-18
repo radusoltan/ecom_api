@@ -19,7 +19,7 @@ final readonly class InvoicePaid
         public InvoiceId $invoiceId,
         public TenantId $tenantId,
         public \DateTimeImmutable $paidDate,
-        public Money $total
+        public Money $total,
     ) {
     }
 }

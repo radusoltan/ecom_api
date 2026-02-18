@@ -29,7 +29,7 @@ final readonly class WarehouseCollectionProvider implements ProviderInterface
     public function provide(
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
+        array $context = [],
     ): array {
         // Get tenant ID from context (set by TenantContextProvider)
         $tenantId = $context['tenant_id'] ?? null;

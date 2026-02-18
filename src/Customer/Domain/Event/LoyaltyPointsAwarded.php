@@ -12,7 +12,7 @@ final readonly class LoyaltyPointsAwarded
         private CustomerId $customerId,
         private int $pointsAwarded,
         private int $newTotalPoints,
-        private string $reason
+        private string $reason,
     ) {
     }
 

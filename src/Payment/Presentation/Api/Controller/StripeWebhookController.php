@@ -30,7 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
 final class StripeWebhookController extends AbstractController
 {
     public function __construct(
-        private readonly StripeWebhookHandler $webhookHandler
+        private readonly StripeWebhookHandler $webhookHandler,
     ) {
     }
 

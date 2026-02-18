@@ -13,7 +13,7 @@ namespace App\Customer\Application\Query\GetLoyaltyProgram;
 final readonly class GetLoyaltyProgramQuery
 {
     public function __construct(
-        public string $tenantId
+        public string $tenantId,
     ) {
     }
 }

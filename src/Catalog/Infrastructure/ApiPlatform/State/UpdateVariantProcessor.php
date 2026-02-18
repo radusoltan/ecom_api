@@ -22,7 +22,7 @@ final readonly class UpdateVariantProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 
@@ -30,7 +30,7 @@ final readonly class UpdateVariantProcessor implements ProcessorInterface
         mixed $data,
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
+        array $context = [],
     ): VariantEntity {
         if (!$data instanceof VariantEntity) {
             throw new \InvalidArgumentException('Expected VariantEntity');

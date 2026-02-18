@@ -36,12 +36,7 @@ final class TransactionTypeType extends Type
         try {
             return TransactionType::from((string) $value);
         } catch (\ValueError $e) {
-            throw ConversionException::conversionFailedFormat(
-                $value,
-                $this->getName(),
-                'One of: ' . implode(', ', array_map(fn(TransactionType $case) => $case->value, TransactionType::cases())),
-                $e
-            );
+            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'One of: '.implode(', ', array_map(fn (TransactionType $case) => $case->value, TransactionType::cases())), $e);
         }
     }
 

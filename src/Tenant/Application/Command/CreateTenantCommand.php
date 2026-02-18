@@ -8,7 +8,7 @@ final readonly class CreateTenantCommand
 {
     public function __construct(
         public string $name,
-        public string $ownerEmail
+        public string $ownerEmail,
     ) {
     }
 }

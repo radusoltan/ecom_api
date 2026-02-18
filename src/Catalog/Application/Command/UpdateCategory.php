@@ -17,7 +17,7 @@ final readonly class UpdateCategory
         public ?string $description,
         public ?CategoryId $parentId,
         public int $position,
-        public bool $showOnFront
+        public bool $showOnFront,
     ) {
     }
 }

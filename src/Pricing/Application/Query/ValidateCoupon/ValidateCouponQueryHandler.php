@@ -13,7 +13,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class ValidateCouponQueryHandler
 {
     public function __construct(
-        private PromotionRepositoryInterface $promotionRepository
+        private PromotionRepositoryInterface $promotionRepository,
     ) {
     }
 

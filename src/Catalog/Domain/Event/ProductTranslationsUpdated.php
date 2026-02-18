@@ -16,7 +16,7 @@ final class ProductTranslationsUpdated implements DomainEvent
     public function __construct(
         private readonly ProductId $productId,
         private readonly TenantId $tenantId,
-        private readonly Locale $locale
+        private readonly Locale $locale,
     ) {
         $this->occurredOn = new \DateTimeImmutable();
     }

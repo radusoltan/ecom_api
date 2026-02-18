@@ -56,8 +56,9 @@ final readonly class VatNumber
 
     private function __construct(
         private string $value,
-        private string $countryCode
-    ) {}
+        private string $countryCode,
+    ) {
+    }
 
     public static function fromString(string $vatNumber): self
     {
@@ -67,22 +68,18 @@ final readonly class VatNumber
         $countryCode = substr($normalized, 0, 2);
 
         // Greece uses EL instead of GR
-        if ($countryCode === 'EL') {
+        if ('EL' === $countryCode) {
             $countryCode = 'GR';
         }
 
         // Validate format
         $pattern = self::PATTERNS[$countryCode] ?? null;
-        if ($pattern === null) {
-            throw new \InvalidArgumentException(
-                sprintf('Unknown VAT number country code: %s', $countryCode)
-            );
+        if (null === $pattern) {
+            throw new \InvalidArgumentException(sprintf('Unknown VAT number country code: %s', $countryCode));
         }
 
         if (!preg_match($pattern, $normalized)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid VAT number format for %s: %s', $countryCode, $vatNumber)
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid VAT number format for %s: %s', $countryCode, $vatNumber));
         }
 
         return new self($normalized, $countryCode);

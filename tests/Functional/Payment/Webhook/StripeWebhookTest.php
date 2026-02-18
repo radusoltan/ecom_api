@@ -17,7 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 final class StripeWebhookTest extends WebTestCase
 {
-    public function test_webhook_endpoint_exists_and_accepts_post(): void
+    public function testWebhookEndpointExistsAndAcceptsPost(): void
     {
         // Arrange
         $client = static::createClient();
@@ -40,7 +40,7 @@ final class StripeWebhookTest extends WebTestCase
         $this->assertNotSame(404, $client->getResponse()->getStatusCode());
     }
 
-    public function test_it_returns_400_when_signature_header_missing(): void
+    public function testItReturns400WhenSignatureHeaderMissing(): void
     {
         // Arrange
         $client = static::createClient();
@@ -63,7 +63,7 @@ final class StripeWebhookTest extends WebTestCase
         $this->assertStringContainsString('Missing signature', $client->getResponse()->getContent());
     }
 
-    public function test_it_returns_400_for_invalid_signature(): void
+    public function testItReturns400ForInvalidSignature(): void
     {
         // Arrange
         $client = static::createClient();
@@ -87,7 +87,7 @@ final class StripeWebhookTest extends WebTestCase
         $this->assertStringContainsString('Invalid signature', $client->getResponse()->getContent());
     }
 
-    public function test_it_handles_empty_payload_gracefully(): void
+    public function testItHandlesEmptyPayloadGracefully(): void
     {
         // Arrange
         $client = static::createClient();
@@ -105,7 +105,7 @@ final class StripeWebhookTest extends WebTestCase
         $this->assertContains($client->getResponse()->getStatusCode(), [400, 500]);
     }
 
-    public function test_it_handles_malformed_json_gracefully(): void
+    public function testItHandlesMalformedJsonGracefully(): void
     {
         // Arrange
         $client = static::createClient();
@@ -123,7 +123,7 @@ final class StripeWebhookTest extends WebTestCase
         $this->assertContains($client->getResponse()->getStatusCode(), [400, 500]);
     }
 
-    public function test_webhook_does_not_require_jwt_authentication(): void
+    public function testWebhookDoesNotRequireJwtAuthentication(): void
     {
         // Arrange
         $client = static::createClient();
@@ -148,7 +148,7 @@ final class StripeWebhookTest extends WebTestCase
         $this->assertNotSame(403, $client->getResponse()->getStatusCode());
     }
 
-    public function test_it_only_accepts_post_method(): void
+    public function testItOnlyAcceptsPostMethod(): void
     {
         // Arrange
         $client = static::createClient();
@@ -168,7 +168,7 @@ final class StripeWebhookTest extends WebTestCase
         $this->assertSame(405, $client->getResponse()->getStatusCode());
     }
 
-    public function test_webhook_accepts_various_event_types(): void
+    public function testWebhookAcceptsVariousEventTypes(): void
     {
         // Arrange
         $client = static::createClient();
@@ -189,7 +189,7 @@ final class StripeWebhookTest extends WebTestCase
                     'stripe-signature' => 'test_signature',
                 ],
                 'json' => [
-                    'id' => 'evt_test_' . bin2hex(random_bytes(4)),
+                    'id' => 'evt_test_'.bin2hex(random_bytes(4)),
                     'type' => $eventType,
                     'data' => ['object' => ['id' => 'obj_test']],
                 ],
@@ -201,14 +201,14 @@ final class StripeWebhookTest extends WebTestCase
         }
     }
 
-    public function test_webhook_handles_large_payload_gracefully(): void
+    public function testWebhookHandlesLargePayloadGracefully(): void
     {
         // Arrange
         $client = static::createClient();
 
         // Create a large but valid webhook payload
         $largeMetadata = [];
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             $largeMetadata["key_{$i}"] = str_repeat('x', 100);
         }
 
@@ -236,7 +236,7 @@ final class StripeWebhookTest extends WebTestCase
         $this->assertNotSame(500, $client->getResponse()->getStatusCode());
     }
 
-    public function test_webhook_response_contains_appropriate_headers(): void
+    public function testWebhookResponseContainsAppropriateHeaders(): void
     {
         // Arrange
         $client = static::createClient();
@@ -261,7 +261,7 @@ final class StripeWebhookTest extends WebTestCase
         $this->assertNotEmpty($response->headers->get('Date'));
     }
 
-    /**
+    /*
      * Note: The following scenarios require valid Stripe signatures and cannot be
      * fully tested in automated tests:
      *

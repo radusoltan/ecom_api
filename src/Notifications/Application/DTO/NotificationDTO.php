@@ -27,7 +27,7 @@ final readonly class NotificationDTO
         public ?string $failedAt,
         public ?string $failureReason,
         public string $createdAt,
-        public string $updatedAt
+        public string $updatedAt,
     ) {
     }
 

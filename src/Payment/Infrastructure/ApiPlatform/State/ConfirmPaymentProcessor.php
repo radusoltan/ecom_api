@@ -29,7 +29,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final readonly class ConfirmPaymentProcessor implements ProcessorInterface
 {
     public function __construct(
-        private MessageBusInterface $commandBus
+        private MessageBusInterface $commandBus,
     ) {
     }
 

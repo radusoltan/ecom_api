@@ -6,9 +6,6 @@ namespace App\Tests\Unit\Pricing\Application\Service;
 
 use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Model\CartId;
-use App\Cart\Domain\Model\CartItem;
-use App\Cart\Domain\Model\CartItemId;
-use App\Cart\Domain\Model\CartStatus;
 use App\Cart\Domain\Model\Quantity;
 use App\Cart\Domain\Model\SessionId;
 use App\Catalog\Domain\Model\ProductId;
@@ -21,7 +18,6 @@ use App\Pricing\Domain\Model\Promotion;
 use App\Pricing\Domain\Repository\PriceListRepositoryInterface;
 use App\Pricing\Domain\Repository\PromotionRepositoryInterface;
 use App\Pricing\Domain\ValueObject\Discount;
-use App\Pricing\Domain\ValueObject\DiscountType;
 use App\Pricing\Domain\ValueObject\PromotionId;
 use App\Pricing\Domain\ValueObject\PromotionType;
 use App\Shared\Domain\ValueObject\Money;

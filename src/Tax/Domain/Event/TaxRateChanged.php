@@ -28,7 +28,7 @@ final readonly class TaxRateChanged
         public TaxCategory $category,
         public TaxRate $oldRate,
         public TaxRate $newRate,
-        public \DateTimeImmutable $occurredAt = new \DateTimeImmutable()
+        public \DateTimeImmutable $occurredAt = new \DateTimeImmutable(),
     ) {
     }
 }

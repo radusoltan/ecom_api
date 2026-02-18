@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class NotificationFailedTest extends TestCase
 {
-    public function test_it_creates_event_with_all_properties(): void
+    public function testItCreatesEventWithAllProperties(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();
@@ -44,7 +44,7 @@ final class NotificationFailedTest extends TestCase
         $this->assertSame($attemptCount, $event->attemptCount);
     }
 
-    public function test_it_is_readonly(): void
+    public function testItIsReadonly(): void
     {
         // Arrange
         $event = new NotificationFailed(
@@ -61,7 +61,7 @@ final class NotificationFailedTest extends TestCase
         $this->assertTrue($reflection->isReadOnly());
     }
 
-    public function test_it_supports_null_recipient_email(): void
+    public function testItSupportsNullRecipientEmail(): void
     {
         // Arrange & Act
         $event = new NotificationFailed(
@@ -77,7 +77,7 @@ final class NotificationFailedTest extends TestCase
         $this->assertNull($event->recipientEmail);
     }
 
-    public function test_it_tracks_attempt_count(): void
+    public function testItTracksAttemptCount(): void
     {
         // Act
         $event1 = new NotificationFailed(
@@ -103,7 +103,7 @@ final class NotificationFailedTest extends TestCase
         $this->assertSame(2, $event2->attemptCount);
     }
 
-    public function test_it_preserves_failure_reason(): void
+    public function testItPreservesFailureReason(): void
     {
         // Arrange
         $reason = 'SMTP server returned error 550: Mailbox not found';

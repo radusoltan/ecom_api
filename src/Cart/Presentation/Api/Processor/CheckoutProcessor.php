@@ -7,7 +7,6 @@ namespace App\Cart\Presentation\Api\Processor;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Cart\Application\Service\CartToOrderConverter;
-use App\Cart\Domain\Exception\CartNotFoundException;
 use App\Cart\Domain\Model\CartId;
 use App\Cart\Domain\Repository\CartRepositoryInterface;
 use App\Cart\Presentation\Api\Resource\CheckoutResource;
@@ -42,7 +41,7 @@ final readonly class CheckoutProcessor implements ProcessorInterface
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
         private TenantContext $tenantContext,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

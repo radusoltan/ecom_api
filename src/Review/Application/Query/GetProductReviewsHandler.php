@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetProductReviewsHandler
 {
     public function __construct(
-        private ProductReviewRepositoryInterface $reviewRepository
+        private ProductReviewRepositoryInterface $reviewRepository,
     ) {
     }
 
@@ -57,7 +57,7 @@ final readonly class ReviewDTO
         public ?string $content,
         public string $status,
         public bool $isVerifiedPurchase,
-        public \DateTimeImmutable $createdAt
+        public \DateTimeImmutable $createdAt,
     ) {
     }
 }

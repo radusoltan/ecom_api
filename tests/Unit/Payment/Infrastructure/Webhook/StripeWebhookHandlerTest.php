@@ -44,7 +44,7 @@ final class StripeWebhookHandlerTest extends TestCase
         );
     }
 
-    public function test_it_returns_400_when_signature_header_missing(): void
+    public function testItReturns400WhenSignatureHeaderMissing(): void
     {
         // Arrange
         $request = new Request();
@@ -63,7 +63,7 @@ final class StripeWebhookHandlerTest extends TestCase
         $this->assertSame('Missing signature', $response->getContent());
     }
 
-    public function test_it_returns_400_when_signature_invalid(): void
+    public function testItReturns400WhenSignatureInvalid(): void
     {
         // Arrange
         $payload = json_encode([
@@ -93,14 +93,14 @@ final class StripeWebhookHandlerTest extends TestCase
         $this->assertSame('Invalid signature', $response->getContent());
     }
 
-    public function test_it_accepts_valid_webhook_structure(): void
+    public function testItAcceptsValidWebhookStructure(): void
     {
         // This test validates the handler accepts properly formatted webhook payloads
         // For actual event processing, see functional tests
 
         // Arrange
         $payload = json_encode([
-            'id' => 'evt_test_' . bin2hex(random_bytes(12)),
+            'id' => 'evt_test_'.bin2hex(random_bytes(12)),
             'type' => 'payment_intent.succeeded',
             'data' => [
                 'object' => [
@@ -136,7 +136,7 @@ final class StripeWebhookHandlerTest extends TestCase
         ]);
     }
 
-    public function test_it_handles_empty_payload_gracefully(): void
+    public function testItHandlesEmptyPayloadGracefully(): void
     {
         // Arrange
         $request = new Request();
@@ -154,7 +154,7 @@ final class StripeWebhookHandlerTest extends TestCase
         ]);
     }
 
-    public function test_it_handles_malformed_json_gracefully(): void
+    public function testItHandlesMalformedJsonGracefully(): void
     {
         // Arrange
         $request = new Request();
@@ -172,7 +172,7 @@ final class StripeWebhookHandlerTest extends TestCase
         ]);
     }
 
-    public function test_it_validates_webhook_secret_configuration(): void
+    public function testItValidatesWebhookSecretConfiguration(): void
     {
         // Arrange & Act
         $handler = new StripeWebhookHandler(
@@ -186,7 +186,7 @@ final class StripeWebhookHandlerTest extends TestCase
         $this->assertInstanceOf(StripeWebhookHandler::class, $handler);
     }
 
-    /**
+    /*
      * Note: The following test scenarios are covered in functional tests:
      *
      * 1. test_it_handles_payment_intent_succeeded_event

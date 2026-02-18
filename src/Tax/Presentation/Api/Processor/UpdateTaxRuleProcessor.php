@@ -10,7 +10,6 @@ use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Application\Command\UpdateTaxRule;
 use App\Tax\Domain\ValueObject\TaxRuleId;
 use App\Tax\Presentation\Api\Resource\TaxRuleResource;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -19,7 +18,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final readonly class UpdateTaxRuleProcessor implements ProcessorInterface
 {
     public function __construct(
-        private MessageBusInterface $commandBus
+        private MessageBusInterface $commandBus,
     ) {
     }
 

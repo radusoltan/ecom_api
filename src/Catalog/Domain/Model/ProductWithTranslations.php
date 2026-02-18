@@ -45,7 +45,7 @@ final class ProductWithTranslations extends AggregateRoot
         private \DateTimeImmutable $updatedAt,
         ?LocalizedString $nameTranslations = null,
         ?LocalizedString $descriptionTranslations = null,
-        ?LocalizedString $shortDescriptionTranslations = null
+        ?LocalizedString $shortDescriptionTranslations = null,
     ) {
         $this->nameTranslations = $nameTranslations ?? LocalizedString::empty();
         $this->descriptionTranslations = $descriptionTranslations ?? LocalizedString::empty();
@@ -63,7 +63,7 @@ final class ProductWithTranslations extends AggregateRoot
         ?CategoryId $categoryId,
         Stock $stock,
         bool $isFeatured = false,
-        ?Locale $initialLocale = null
+        ?Locale $initialLocale = null,
     ): self {
         $nameTranslations = LocalizedString::empty();
         $descriptionTranslations = LocalizedString::empty();
@@ -138,7 +138,7 @@ final class ProductWithTranslations extends AggregateRoot
         \DateTimeImmutable $updatedAt,
         LocalizedString $nameTranslations,
         LocalizedString $descriptionTranslations,
-        LocalizedString $shortDescriptionTranslations
+        LocalizedString $shortDescriptionTranslations,
     ): self {
         return new self(
             $id,
@@ -169,7 +169,7 @@ final class ProductWithTranslations extends AggregateRoot
         Locale $locale,
         ?string $name,
         ?string $description,
-        ?string $shortDescription
+        ?string $shortDescription,
     ): void {
         $changed = false;
 
@@ -280,7 +280,7 @@ final class ProductWithTranslations extends AggregateRoot
         ?string $shortDescription,
         Money $price,
         ?CategoryId $categoryId,
-        bool $isFeatured
+        bool $isFeatured,
     ): void {
         $this->defaultName = $name;
         $this->defaultDescription = $description;

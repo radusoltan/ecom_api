@@ -9,7 +9,7 @@ use Symfony\Component\Uid\Uuid;
 final readonly class ThumbnailId
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
     }
 

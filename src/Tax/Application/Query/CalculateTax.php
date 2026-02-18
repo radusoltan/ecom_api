@@ -17,7 +17,7 @@ final readonly class CalculateTax
         public int $amountInCents,
         public string $countryCode,
         public ?string $regionCode,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

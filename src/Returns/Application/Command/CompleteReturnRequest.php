@@ -14,7 +14,7 @@ final readonly class CompleteReturnRequest
     public function __construct(
         public string $returnRequestId,
         public int $refundAmount,
-        public string $refundCurrency
+        public string $refundCurrency,
     ) {
     }
 }

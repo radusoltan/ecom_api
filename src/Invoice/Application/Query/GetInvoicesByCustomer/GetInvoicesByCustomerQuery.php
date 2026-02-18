@@ -20,7 +20,7 @@ namespace App\Invoice\Application\Query\GetInvoicesByCustomer;
 final readonly class GetInvoicesByCustomerQuery
 {
     public function __construct(
-        public string $customerId
+        public string $customerId,
     ) {
     }
 }

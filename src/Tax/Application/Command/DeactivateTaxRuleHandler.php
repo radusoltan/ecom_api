@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class DeactivateTaxRuleHandler
 {
     public function __construct(
-        private TaxRuleRepositoryInterface $taxRuleRepository
+        private TaxRuleRepositoryInterface $taxRuleRepository,
     ) {
     }
 

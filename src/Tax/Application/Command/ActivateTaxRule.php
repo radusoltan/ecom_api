@@ -20,7 +20,7 @@ final readonly class ActivateTaxRule
 {
     public function __construct(
         public TaxRuleId $id,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

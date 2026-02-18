@@ -36,12 +36,7 @@ final class PaymentMethodType extends Type
         try {
             return PaymentMethod::from((string) $value);
         } catch (\ValueError $e) {
-            throw ConversionException::conversionFailedFormat(
-                $value,
-                $this->getName(),
-                'One of: ' . implode(', ', array_map(fn(PaymentMethod $case) => $case->value, PaymentMethod::cases())),
-                $e
-            );
+            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'One of: '.implode(', ', array_map(fn (PaymentMethod $case) => $case->value, PaymentMethod::cases())), $e);
         }
     }
 

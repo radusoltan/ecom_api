@@ -18,7 +18,7 @@ final readonly class ActivateTenantCommandHandler
     public function __construct(
         private TenantRepositoryInterface $tenantRepository,
         private PerformanceProfiler $profiler,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

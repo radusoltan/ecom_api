@@ -17,7 +17,7 @@ final readonly class MarkPaymentAsFailed
     public function __construct(
         public PaymentId $id,
         public string $errorMessage,
-        public ?string $errorCode = null
+        public ?string $errorCode = null,
     ) {
     }
 }

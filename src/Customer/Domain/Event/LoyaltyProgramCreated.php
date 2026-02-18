@@ -15,7 +15,7 @@ final readonly class LoyaltyProgramCreated
         private TenantId $tenantId,
         private string $name,
         private EarningRate $earningRate,
-        private \DateTimeImmutable $occurredAt
+        private \DateTimeImmutable $occurredAt,
     ) {
     }
 

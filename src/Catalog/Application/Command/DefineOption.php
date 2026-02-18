@@ -22,7 +22,7 @@ final readonly class DefineOption
         public string $code,
         public array $nameTranslations,
         public int $position = 0,
-        public array $values = []
+        public array $values = [],
     ) {
     }
 }

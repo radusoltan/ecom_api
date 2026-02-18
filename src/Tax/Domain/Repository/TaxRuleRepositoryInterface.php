@@ -60,7 +60,7 @@ interface TaxRuleRepositoryInterface
         TenantId $tenantId,
         TaxJurisdiction $jurisdiction,
         TaxCategory $category,
-        \DateTimeImmutable $asOfDate
+        \DateTimeImmutable $asOfDate,
     ): array;
 
     /**
@@ -73,10 +73,10 @@ interface TaxRuleRepositoryInterface
      *
      * Used by tax calculation service to determine applicable rate.
      *
-     * @param TenantId $tenantId Tenant context
-     * @param TaxJurisdiction $jurisdiction Tax jurisdiction to match
-     * @param TaxCategory $category Tax category to match
-     * @param \DateTimeImmutable $asOfDate Date for validity check
+     * @param TenantId           $tenantId     Tenant context
+     * @param TaxJurisdiction    $jurisdiction Tax jurisdiction to match
+     * @param TaxCategory        $category     Tax category to match
+     * @param \DateTimeImmutable $asOfDate     Date for validity check
      *
      * @return TaxRule|null Best matching rule or null if no match
      */
@@ -84,7 +84,7 @@ interface TaxRuleRepositoryInterface
         TenantId $tenantId,
         TaxJurisdiction $jurisdiction,
         TaxCategory $category,
-        \DateTimeImmutable $asOfDate
+        \DateTimeImmutable $asOfDate,
     ): ?TaxRule;
 
     /**

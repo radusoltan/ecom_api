@@ -233,8 +233,8 @@ final class OrderCancelledStockSubscriberTest extends TestCase
             ->expects($this->exactly(2))
             ->method('save')
             ->willReturnCallback(function () use (&$saveCount) {
-                $saveCount++;
-                if ($saveCount === 2) {
+                ++$saveCount;
+                if (2 === $saveCount) {
                     throw new \RuntimeException('Database connection failed');
                 }
             });
@@ -291,7 +291,7 @@ final class OrderCancelledStockSubscriberTest extends TestCase
             ->expects($this->once())
             ->method('dispatch')
             ->with($this->callback(function (StockReleased $event) {
-                return $event->reason === 'Order cancelled: Customer changed mind';
+                return 'Order cancelled: Customer changed mind' === $event->reason;
             }));
 
         $this->logger
@@ -332,7 +332,7 @@ final class OrderCancelledStockSubscriberTest extends TestCase
             ->method('error')
             ->with('Failed to process stock release for cancelled order', $this->callback(function ($context) use ($orderId) {
                 return $context['orderId'] === $orderId->toString()
-                    && $context['error'] === 'Database error';
+                    && 'Database error' === $context['error'];
             }));
 
         // Act - should not throw

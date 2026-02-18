@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetUpcomingFlashSalesQueryHandler
 {
     public function __construct(
-        private FlashSaleRepositoryInterface $flashSaleRepository
+        private FlashSaleRepositoryInterface $flashSaleRepository,
     ) {
     }
 

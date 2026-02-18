@@ -15,7 +15,7 @@ final readonly class MimeType
     ];
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
     }
 

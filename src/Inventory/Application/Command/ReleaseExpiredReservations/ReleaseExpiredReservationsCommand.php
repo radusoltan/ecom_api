@@ -13,7 +13,7 @@ namespace App\Inventory\Application\Command\ReleaseExpiredReservations;
 final readonly class ReleaseExpiredReservationsCommand
 {
     public function __construct(
-        public ?\DateTimeImmutable $now = null
+        public ?\DateTimeImmutable $now = null,
     ) {
     }
 }

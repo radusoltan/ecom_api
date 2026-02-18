@@ -8,7 +8,7 @@ final readonly class ActivateCustomerCommand
 {
     public function __construct(
         public string $customerId,
-        public string $tenantId
+        public string $tenantId,
     ) {
     }
 }

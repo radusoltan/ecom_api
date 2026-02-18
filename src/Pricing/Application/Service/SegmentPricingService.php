@@ -33,7 +33,7 @@ final class SegmentPricingService
 {
     public function __construct(
         private readonly PriceListRepositoryInterface $priceListRepository,
-        private readonly PromotionRepositoryInterface $promotionRepository
+        private readonly PromotionRepositoryInterface $promotionRepository,
     ) {
     }
 
@@ -55,7 +55,7 @@ final class SegmentPricingService
         ProductId $productId,
         CustomerSegment $customerSegment,
         TenantId $tenantId,
-        int $quantity = 1
+        int $quantity = 1,
     ): Money {
         // Get all active price lists for this tenant, ordered by priority
         $priceLists = $this->priceListRepository->findValidForTenant($tenantId);
@@ -103,7 +103,7 @@ final class SegmentPricingService
      */
     public function getApplicablePromotions(
         CustomerSegment $customerSegment,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): array {
         // Get all active promotions for this tenant
         $allPromotions = $this->promotionRepository->findActivePromotions($tenantId);
@@ -137,7 +137,7 @@ final class SegmentPricingService
      */
     public function hasExclusivePromotions(
         CustomerSegment $customerSegment,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): bool {
         $promotions = $this->getApplicablePromotions($customerSegment, $tenantId);
 
@@ -163,7 +163,7 @@ final class SegmentPricingService
      */
     public function calculateTotalSegmentDiscount(
         CustomerSegment $customerSegment,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): float {
         $priceLists = $this->priceListRepository->findValidForTenant($tenantId);
 
@@ -187,16 +187,16 @@ final class SegmentPricingService
     /**
      * Apply a segment pricing rule to a base price.
      *
-     * @param Money               $basePrice    The base price
-     * @param SegmentPricingRule  $rule         The segment rule to apply
-     * @param int                 $quantity     Quantity
+     * @param Money              $basePrice The base price
+     * @param SegmentPricingRule $rule      The segment rule to apply
+     * @param int                $quantity  Quantity
      *
      * @return Money The price after applying the segment discount
      */
     private function applySegmentRule(
         Money $basePrice,
         SegmentPricingRule $rule,
-        int $quantity
+        int $quantity,
     ): Money {
         $totalPrice = $basePrice->multiplyBy($quantity);
         $discountAmount = $rule->discount()->applyTo($totalPrice);

@@ -24,7 +24,7 @@ final readonly class Discount
     private function __construct(
         private string $type,
         private ?float $percentage,
-        private ?Money $fixedAmount
+        private ?Money $fixedAmount,
     ) {
         if (!in_array($this->type, [self::TYPE_PERCENTAGE, self::TYPE_FIXED], true)) {
             throw new \InvalidArgumentException(sprintf('Invalid discount type "%s". Must be "%s" or "%s"', $this->type, self::TYPE_PERCENTAGE, self::TYPE_FIXED));

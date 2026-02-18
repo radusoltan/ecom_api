@@ -14,7 +14,7 @@ final readonly class SendPasswordResetEmail
     public function __construct(
         public string $email,
         public string $token,
-        public \DateTimeImmutable $expiresAt
+        public \DateTimeImmutable $expiresAt,
     ) {
     }
 }

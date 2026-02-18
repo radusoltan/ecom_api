@@ -17,7 +17,7 @@ final readonly class UpdatePreferencesCommand
     public function __construct(
         public string $customerId,
         public string $tenantId,
-        public array $preferences
+        public array $preferences,
     ) {
     }
 }

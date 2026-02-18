@@ -22,7 +22,7 @@ final class Option
         private OptionCode $code,
         private LocalizedString $nameTranslations,
         private int $position,
-        private array $values
+        private array $values,
     ) {
         $this->validateValues($values);
     }
@@ -37,7 +37,7 @@ final class Option
         OptionCode $code,
         LocalizedString $nameTranslations,
         int $position = 0,
-        array $values = []
+        array $values = [],
     ): self {
         return new self($id, $code, $nameTranslations, $position, $values);
     }
@@ -184,7 +184,7 @@ final class Option
 final class OptionId
 {
     private function __construct(
-        private readonly string $value
+        private readonly string $value,
     ) {
         if (empty($value)) {
             throw new \InvalidArgumentException('Option ID cannot be empty');

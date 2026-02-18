@@ -20,7 +20,7 @@ final readonly class OptionDefined implements DomainEvent
         private ProductId $productId,
         private OptionCode $optionCode,
         private LocalizedString $nameTranslations,
-        private \DateTimeImmutable $occurredOn = new \DateTimeImmutable()
+        private \DateTimeImmutable $occurredOn = new \DateTimeImmutable(),
     ) {
     }
 

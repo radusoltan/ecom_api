@@ -14,7 +14,7 @@ final class DashboardStatsProvider implements ProviderInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly TenantContext $tenantContext
+        private readonly TenantContext $tenantContext,
     ) {
     }
 

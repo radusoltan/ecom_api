@@ -8,14 +8,14 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Enable Row-Level Security (RLS) for Multi-Tenant Isolation
+ * Enable Row-Level Security (RLS) for Multi-Tenant Isolation.
  *
  * This migration implements PostgreSQL Row-Level Security on all multi-tenant tables
  * to ensure complete data isolation between tenants at the database level.
  *
  * Security Requirements (PRD Section 2.3):
  * - All multi-tenant tables must have RLS enabled
- * - Policies enforce tenant_id = current_setting('app.tenant_id')
+ * - Policies enforce tenant_id::text = current_setting('app.tenant_id')
  * - Provides defense-in-depth against SQL injection and application bugs
  * - Required for GDPR, SOC 2, and ISO 27001 compliance
  *
@@ -110,7 +110,7 @@ final class Version20251106143000_EnableRLS extends AbstractMigration
                         IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = '%s' AND policyname = 'tenant_isolation') THEN
                             CREATE POLICY tenant_isolation ON %s
                                 FOR ALL
-                                USING (tenant_id = current_setting('app.tenant_id', true));
+                                USING (tenant_id::text = current_setting('app.tenant_id', true));
                         END IF;
 
                         -- Grant necessary permissions to ecom_admin user
@@ -137,7 +137,7 @@ final class Version20251106143000_EnableRLS extends AbstractMigration
                     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'tenants' AND policyname = 'tenant_self_isolation') THEN
                         CREATE POLICY tenant_self_isolation ON tenants
                             FOR ALL
-                            USING (id = current_setting('app.tenant_id', true));
+                            USING (id::text = current_setting('app.tenant_id', true));
                     END IF;
 
                     GRANT ALL ON tenants TO ecom_admin;
@@ -156,7 +156,7 @@ final class Version20251106143000_EnableRLS extends AbstractMigration
         ");
 
         // Grant execute permission on helper function
-        $this->addSql("GRANT EXECUTE ON FUNCTION set_tenant_context(TEXT) TO ecom_admin;");
+        $this->addSql('GRANT EXECUTE ON FUNCTION set_tenant_context(TEXT) TO ecom_admin;');
     }
 
     public function down(Schema $schema): void
@@ -203,6 +203,6 @@ final class Version20251106143000_EnableRLS extends AbstractMigration
         }
 
         // Drop helper function
-        $this->addSql("DROP FUNCTION IF EXISTS set_tenant_context(TEXT);");
+        $this->addSql('DROP FUNCTION IF EXISTS set_tenant_context(TEXT);');
     }
 }

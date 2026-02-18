@@ -19,7 +19,7 @@ final readonly class ExportCustomersQuery
     public function __construct(
         public TenantId $tenantId,
         public string $format,
-        public array $filters = []
+        public array $filters = [],
     ) {
         if (!in_array($format, ['csv', 'json'], true)) {
             throw new \InvalidArgumentException('Format must be either "csv" or "json"');

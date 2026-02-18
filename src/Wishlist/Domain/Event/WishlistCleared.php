@@ -15,7 +15,7 @@ final readonly class WishlistCleared
         public WishlistId $wishlistId,
         public string $customerId,
         public int $itemCount,
-        public \DateTimeImmutable $occurredAt
+        public \DateTimeImmutable $occurredAt,
     ) {
     }
 }

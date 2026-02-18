@@ -22,7 +22,7 @@ final readonly class CancelPayment
 {
     public function __construct(
         public PaymentId $id,
-        public string $reason
+        public string $reason,
     ) {
     }
 }

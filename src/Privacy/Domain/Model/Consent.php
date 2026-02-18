@@ -52,7 +52,7 @@ final class Consent extends AggregateRoot
         string $ipAddress,
         string $userAgent,
         string $consentText,
-        string $consentVersion
+        string $consentVersion,
     ): self {
         self::validateIpAddress($ipAddress);
         self::validateUserAgent($userAgent);
@@ -97,7 +97,7 @@ final class Consent extends AggregateRoot
         ?\DateTimeImmutable $grantedAt,
         ?\DateTimeImmutable $withdrawnAt,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         $consent = new self();
         $consent->id = $id;

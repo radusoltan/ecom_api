@@ -19,7 +19,7 @@ final readonly class AwardLoyaltyPointsProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private DoctrineORMCustomerRepository $customerRepository
+        private DoctrineORMCustomerRepository $customerRepository,
     ) {
     }
 

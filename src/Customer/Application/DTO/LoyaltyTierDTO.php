@@ -22,7 +22,7 @@ final readonly class LoyaltyTierDTO
         public int $threshold,
         public int $discountPercentage,
         public ?array $freeShippingMinOrder,
-        public int $sortOrder
+        public int $sortOrder,
     ) {
     }
 

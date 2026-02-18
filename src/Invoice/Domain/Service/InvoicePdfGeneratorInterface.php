@@ -18,7 +18,8 @@ interface InvoicePdfGeneratorInterface
      * Generate PDF for an invoice.
      *
      * @param Invoice $invoice The invoice to generate PDF for
-     * @param string $locale The locale for the PDF (e.g., 'en', 'fr', 'de')
+     * @param string  $locale  The locale for the PDF (e.g., 'en', 'fr', 'de')
+     *
      * @return string The PDF content as binary string
      */
     public function generate(Invoice $invoice, string $locale = 'en'): string;
@@ -27,7 +28,8 @@ interface InvoicePdfGeneratorInterface
      * Generate and save PDF to filesystem.
      *
      * @param Invoice $invoice The invoice to generate PDF for
-     * @param string $locale The locale for the PDF (e.g., 'en', 'fr', 'de')
+     * @param string  $locale  The locale for the PDF (e.g., 'en', 'fr', 'de')
+     *
      * @return string The absolute path where PDF was saved
      */
     public function generateAndSave(Invoice $invoice, string $locale = 'en'): string;

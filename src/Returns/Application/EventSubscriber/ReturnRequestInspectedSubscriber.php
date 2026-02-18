@@ -40,7 +40,7 @@ final readonly class ReturnRequestInspectedSubscriber implements EventSubscriber
         private string $senderEmail,
         private string $senderName,
         private MessageBusInterface $commandBus,
-        private ReturnRequestRepositoryInterface $returnRequestRepository
+        private ReturnRequestRepositoryInterface $returnRequestRepository,
     ) {
     }
 

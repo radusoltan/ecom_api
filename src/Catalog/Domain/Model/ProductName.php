@@ -22,7 +22,7 @@ final readonly class ProductName implements \Stringable
     private const MAX_LENGTH = 255;
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
     }
 

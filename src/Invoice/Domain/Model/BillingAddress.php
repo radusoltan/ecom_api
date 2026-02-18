@@ -25,7 +25,7 @@ final readonly class BillingAddress
         private string $city,
         private string $postalCode,
         private string $country,
-        private ?string $vatNumber
+        private ?string $vatNumber,
     ) {
         $this->validate();
     }
@@ -37,7 +37,7 @@ final readonly class BillingAddress
         string $city,
         string $postalCode,
         string $country,
-        ?string $vatNumber = null
+        ?string $vatNumber = null,
     ): self {
         return new self(
             trim($name),

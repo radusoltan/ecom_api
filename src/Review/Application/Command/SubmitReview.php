@@ -20,7 +20,7 @@ final readonly class SubmitReview
         public Rating $rating,
         public ?string $title = null,
         public ?string $content = null,
-        public bool $isVerifiedPurchase = false
+        public bool $isVerifiedPurchase = false,
     ) {
     }
 }

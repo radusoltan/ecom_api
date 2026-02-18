@@ -15,7 +15,7 @@ final readonly class PaymentCreated
         public string $orderId,
         public int $amountInCents,
         public string $currency,
-        public string $gateway
+        public string $gateway,
     ) {
     }
 }

@@ -56,7 +56,7 @@ final class Invoice extends AggregateRoot
         private ?InvoiceId $creditedInvoiceId,
         private ?string $notes,
         private \DateTimeImmutable $createdAt,
-        private \DateTimeImmutable $updatedAt
+        private \DateTimeImmutable $updatedAt,
     ) {
     }
 
@@ -70,7 +70,7 @@ final class Invoice extends AggregateRoot
         CustomerId $customerId,
         BillingAddress $billingAddress,
         bool $isReverseCharge = false,
-        ?string $notes = null
+        ?string $notes = null,
     ): self {
         $now = new \DateTimeImmutable();
         $currency = 'USD'; // Default currency, should be retrieved from tenant/order
@@ -106,7 +106,7 @@ final class Invoice extends AggregateRoot
     /**
      * Reconstitute invoice from persistence.
      *
-     * @param InvoiceLine[] $lines
+     * @param InvoiceLine[]      $lines
      * @param array<string, int> $taxBreakdown
      */
     public static function reconstituteFromPersistence(
@@ -130,7 +130,7 @@ final class Invoice extends AggregateRoot
         ?InvoiceId $creditedInvoiceId,
         ?string $notes,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         $invoice = new self(
             id: $id,
@@ -185,7 +185,7 @@ final class Invoice extends AggregateRoot
 
         $this->lines = array_filter(
             $this->lines,
-            fn(InvoiceLine $line) => !$line->id()->equals($lineId)
+            fn (InvoiceLine $line) => !$line->id()->equals($lineId)
         );
 
         // Re-index array after removal
@@ -335,7 +335,7 @@ final class Invoice extends AggregateRoot
         // Sort by rate descending and ensure string keys
         krsort($breakdown);
 
-        /** @var array<string, int> */
+        /* @var array<string, int> */
         return $breakdown;
     }
 

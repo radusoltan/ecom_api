@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Payment\Infrastructure\Gateway;
 
-use App\Payment\Domain\Exception\PaymentGatewayException;
 use App\Payment\Domain\Model\PaymentId;
 use App\Payment\Domain\Model\PaymentMethod;
 use App\Payment\Domain\Service\PaymentGatewayInterface;
@@ -21,7 +20,7 @@ use Psr\Log\LoggerInterface;
 final readonly class FakePayPalGateway implements PaymentGatewayInterface
 {
     public function __construct(
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -31,7 +30,7 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
         string $currency,
         string $idempotencyKey,
         ?string $customerId = null,
-        array $metadata = []
+        array $metadata = [],
     ): PaymentIntentResult {
         $this->logger->info('[FAKE] PayPal: Creating payment intent', [
             'payment_id' => $paymentId->toString(),
@@ -40,8 +39,8 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
         ]);
 
         return new PaymentIntentResult(
-            gatewayPaymentIntentId: 'PAYID-' . strtoupper(bin2hex(random_bytes(16))),
-            clientSecret: 'secret_' . bin2hex(random_bytes(10)),
+            gatewayPaymentIntentId: 'PAYID-'.strtoupper(bin2hex(random_bytes(16))),
+            clientSecret: 'secret_'.bin2hex(random_bytes(10)),
             status: 'requires_payment_method',
             amount: $amount->amount(),
             currency: $currency,
@@ -51,7 +50,7 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
 
     public function confirmPaymentIntent(
         string $gatewayPaymentIntentId,
-        string $paymentMethodId
+        string $paymentMethodId,
     ): PaymentIntentResult {
         $this->logger->info('[FAKE] PayPal: Confirming payment intent', [
             'intent_id' => $gatewayPaymentIntentId,
@@ -70,7 +69,7 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
 
     public function capturePaymentIntent(
         string $gatewayPaymentIntentId,
-        ?Money $amount = null
+        ?Money $amount = null,
     ): PaymentIntentResult {
         $this->logger->info('[FAKE] PayPal: Capturing payment intent', [
             'intent_id' => $gatewayPaymentIntentId,
@@ -106,7 +105,7 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
         string $gatewayPaymentIntentId,
         Money $amount,
         string $reason,
-        string $idempotencyKey
+        string $idempotencyKey,
     ): RefundResult {
         $this->logger->info('[FAKE] PayPal: Creating refund', [
             'intent_id' => $gatewayPaymentIntentId,
@@ -115,7 +114,7 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
         ]);
 
         return new RefundResult(
-            gatewayRefundId: 'REFUND-' . strtoupper(bin2hex(random_bytes(12))),
+            gatewayRefundId: 'REFUND-'.strtoupper(bin2hex(random_bytes(12))),
             status: 'succeeded',
             amount: $amount->amount(),
             currency: 'USD',
@@ -126,9 +125,9 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
     public function verifyWebhookSignature(
         string $payload,
         string $signature,
-        string $secret
+        string $secret,
     ): bool {
-        return $signature === 'valid_signature';
+        return 'valid_signature' === $signature;
     }
 
     public function getGatewayId(): PaymentMethod

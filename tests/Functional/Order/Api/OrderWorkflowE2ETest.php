@@ -66,7 +66,7 @@ final class OrderWorkflowE2ETest extends WebTestCase
     }
 
     /**
-     * Create a test product with stock
+     * Create a test product with stock.
      */
     private function createTestProduct(int $price = 1999, int $stock = 100): string
     {
@@ -115,9 +115,9 @@ final class OrderWorkflowE2ETest extends WebTestCase
         $reflection = new \ReflectionClass($productEntity);
         $reflection->getProperty('id')->setValue($productEntity, $productId);
         $reflection->getProperty('tenantId')->setValue($productEntity, self::DEFAULT_TENANT_ID);
-        $reflection->getProperty('sku')->setValue($productEntity, 'TST-' . sprintf('%06d', random_int(100000, 999999)));
-        $reflection->getProperty('name')->setValue($productEntity, 'E2E Test Product ' . ++self::$counter);
-        $reflection->getProperty('slug')->setValue($productEntity, 'e2e-test-product-' . uniqid());
+        $reflection->getProperty('sku')->setValue($productEntity, 'TST-'.sprintf('%06d', random_int(100000, 999999)));
+        $reflection->getProperty('name')->setValue($productEntity, 'E2E Test Product '.++self::$counter);
+        $reflection->getProperty('slug')->setValue($productEntity, 'e2e-test-product-'.uniqid());
         $reflection->getProperty('priceAmount')->setValue($productEntity, $price);
         $reflection->getProperty('priceCurrency')->setValue($productEntity, 'USD');
         $reflection->getProperty('stockQuantity')->setValue($productEntity, $stock);
@@ -131,8 +131,8 @@ final class OrderWorkflowE2ETest extends WebTestCase
         // Create stock item
         $stockItemId = \Symfony\Component\Uid\Uuid::v4()->toString();
         $connection->executeStatement(
-            "INSERT INTO stock_items (id, tenant_id, product_id, warehouse_id, on_hand, reserved, allocated, low_stock_threshold, created_at, updated_at)
-             VALUES (:id, :tenantId, :productId, :warehouseId, :stock, 0, 0, 10, NOW(), NOW())",
+            'INSERT INTO stock_items (id, tenant_id, product_id, warehouse_id, on_hand, reserved, allocated, low_stock_threshold, created_at, updated_at)
+             VALUES (:id, :tenantId, :productId, :warehouseId, :stock, 0, 0, 10, NOW(), NOW())',
             [
                 'id' => $stockItemId,
                 'tenantId' => self::DEFAULT_TENANT_ID,

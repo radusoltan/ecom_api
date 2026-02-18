@@ -65,7 +65,7 @@ class LoyaltyTierEntity
     public static function fromDomainModel(
         LoyaltyTier $tier,
         string $programId,
-        string $tenantId
+        string $tenantId,
     ): self {
         $entity = new self();
         $entity->id = $tier->id()->toString();

@@ -21,7 +21,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class NotificationPreferenceService
 {
     public function __construct(
-        private CustomerRepositoryInterface $customerRepository
+        private CustomerRepositoryInterface $customerRepository,
     ) {
     }
 

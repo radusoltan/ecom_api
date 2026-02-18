@@ -28,7 +28,7 @@ final readonly class TenantContextProcessor
 {
     public function __construct(
         private TenantContext $tenantContext,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 
@@ -39,7 +39,7 @@ final readonly class TenantContextProcessor
         // Add tenant_id if available
         if ($this->tenantContext->hasCurrentTenant()) {
             $tenantId = $this->tenantContext->getCurrentTenantId();
-            $extra['tenant_id'] = $tenantId !== null ? $tenantId->toString() : null;
+            $extra['tenant_id'] = null !== $tenantId ? $tenantId->toString() : null;
         } else {
             $extra['tenant_id'] = null;
         }

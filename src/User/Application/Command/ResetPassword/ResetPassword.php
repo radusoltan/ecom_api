@@ -14,7 +14,7 @@ final readonly class ResetPassword
 {
     public function __construct(
         public string $token,
-        public string $newPassword
+        public string $newPassword,
     ) {
     }
 }

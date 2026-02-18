@@ -50,7 +50,7 @@ final class Product extends AggregateRoot
         private \DateTimeImmutable $updatedAt,
         private ?Bundle $bundle = null,
         private ?Subscription $subscription = null,
-        private ?\App\Catalog\Domain\ValueObject\DownloadableFile $downloadableFile = null
+        private ?\App\Catalog\Domain\ValueObject\DownloadableFile $downloadableFile = null,
     ) {
     }
 
@@ -65,7 +65,7 @@ final class Product extends AggregateRoot
         ?CategoryId $categoryId,
         Stock $stock,
         ?ProductType $type = null,
-        bool $isFeatured = false
+        bool $isFeatured = false,
     ): self {
         $product = new self(
             id: $id,
@@ -113,7 +113,7 @@ final class Product extends AggregateRoot
         \DateTimeImmutable $updatedAt,
         ?Bundle $bundle = null,
         ?Subscription $subscription = null,
-        ?\App\Catalog\Domain\ValueObject\DownloadableFile $downloadableFile = null
+        ?\App\Catalog\Domain\ValueObject\DownloadableFile $downloadableFile = null,
     ): self {
         return new self(
             $id,
@@ -144,7 +144,7 @@ final class Product extends AggregateRoot
         ?string $shortDescription,
         Money $price,
         ?CategoryId $categoryId,
-        bool $isFeatured
+        bool $isFeatured,
     ): void {
         $this->name = $name;
         $this->description = $description;
@@ -426,16 +426,11 @@ final class Product extends AggregateRoot
     {
         // Business Rule: Only bundle products can have bundle configuration
         if (!$this->type->isBundle()) {
-            throw new \DomainException(
-                sprintf(
-                    'Cannot create bundle for product type "%s". Only bundle products can have bundle items.',
-                    $this->type->value()
-                )
-            );
+            throw new \DomainException(sprintf('Cannot create bundle for product type "%s". Only bundle products can have bundle items.', $this->type->value()));
         }
 
         // Business Rule: Cannot create bundle if one already exists
-        if ($this->bundle !== null) {
+        if (null !== $this->bundle) {
             throw new \DomainException('Product already has a bundle configuration. Use updateBundle() to modify it.');
         }
 
@@ -542,9 +537,7 @@ final class Product extends AggregateRoot
 
         // Check if item was actually removed
         if (count($newItems) === count($currentItems)) {
-            throw new \DomainException(
-                sprintf('Bundle item with product ID "%s" not found', $productId->toString())
-            );
+            throw new \DomainException(sprintf('Bundle item with product ID "%s" not found', $productId->toString()));
         }
 
         // Re-index array (remove gaps)
@@ -595,7 +588,7 @@ final class Product extends AggregateRoot
      */
     public function hasBundle(): bool
     {
-        return $this->bundle !== null;
+        return null !== $this->bundle;
     }
 
     /**
@@ -615,25 +608,20 @@ final class Product extends AggregateRoot
         SubscriptionInterval $interval,
         int $billingCycles,
         Money $setupFee,
-        ?\DateTimeImmutable $trialPeriodEnd = null
+        ?\DateTimeImmutable $trialPeriodEnd = null,
     ): void {
         // Business Rule: Only subscription products can have subscription configuration
         if (!$this->type->isSubscription()) {
-            throw new \DomainException(
-                sprintf(
-                    'Cannot configure subscription for product type "%s". Only subscription products can have subscription configuration.',
-                    $this->type->value()
-                )
-            );
+            throw new \DomainException(sprintf('Cannot configure subscription for product type "%s". Only subscription products can have subscription configuration.', $this->type->value()));
         }
 
         // Business Rule: Cannot configure subscription if one already exists
-        if ($this->subscription !== null) {
+        if (null !== $this->subscription) {
             throw new \DomainException('Product already has a subscription configuration. Use updateSubscription() to modify it.');
         }
 
         // Create subscription (validates business rules)
-        $this->subscription = $trialPeriodEnd !== null
+        $this->subscription = null !== $trialPeriodEnd
             ? Subscription::createWithTrial($interval, $billingCycles, $setupFee, $trialPeriodEnd)
             : Subscription::create($interval, $billingCycles, $setupFee);
 
@@ -658,7 +646,7 @@ final class Product extends AggregateRoot
         SubscriptionInterval $interval,
         int $billingCycles,
         Money $setupFee,
-        ?\DateTimeImmutable $trialPeriodEnd = null
+        ?\DateTimeImmutable $trialPeriodEnd = null,
     ): void {
         $this->ensureIsSubscription();
         $this->ensureSubscriptionExists();
@@ -667,7 +655,7 @@ final class Product extends AggregateRoot
         $oldSubscription = $this->subscription;
 
         // Create new subscription (validates constraints)
-        $this->subscription = $trialPeriodEnd !== null
+        $this->subscription = null !== $trialPeriodEnd
             ? Subscription::createWithTrial($interval, $billingCycles, $setupFee, $trialPeriodEnd)
             : Subscription::create($interval, $billingCycles, $setupFee);
 
@@ -709,7 +697,7 @@ final class Product extends AggregateRoot
      */
     public function hasSubscription(): bool
     {
-        return $this->subscription !== null;
+        return null !== $this->subscription;
     }
 
     /**
@@ -728,24 +716,19 @@ final class Product extends AggregateRoot
         string $fileUrl,
         int $fileSizeBytes,
         int $downloadLimit = 5,
-        ?\DateTimeImmutable $expiresAt = null
+        ?\DateTimeImmutable $expiresAt = null,
     ): void {
         // Business Rule: Only virtual products can have downloadable files
         if (!$this->type->isVirtual()) {
-            throw new \DomainException(
-                sprintf(
-                    'Cannot attach downloadable file to product type "%s". Only virtual products can have downloadable files.',
-                    $this->type->value()
-                )
-            );
+            throw new \DomainException(sprintf('Cannot attach downloadable file to product type "%s". Only virtual products can have downloadable files.', $this->type->value()));
         }
 
         // Business Rule: Cannot attach file if one already exists
-        if ($this->downloadableFile !== null) {
+        if (null !== $this->downloadableFile) {
             throw new \DomainException('Product already has a downloadable file. Use updateDownloadableFile() to modify it.');
         }
 
-        $this->downloadableFile = $expiresAt !== null
+        $this->downloadableFile = null !== $expiresAt
             ? \App\Catalog\Domain\ValueObject\DownloadableFile::createWithExpiration(
                 $filename,
                 $fileUrl,
@@ -780,14 +763,14 @@ final class Product extends AggregateRoot
         string $fileUrl,
         int $fileSizeBytes,
         int $downloadLimit = 5,
-        ?\DateTimeImmutable $expiresAt = null
+        ?\DateTimeImmutable $expiresAt = null,
     ): void {
         $this->ensureIsVirtual();
         $this->ensureDownloadableFileExists();
 
         $oldFile = $this->downloadableFile;
 
-        $this->downloadableFile = $expiresAt !== null
+        $this->downloadableFile = null !== $expiresAt
             ? \App\Catalog\Domain\ValueObject\DownloadableFile::createWithExpiration(
                 $filename,
                 $fileUrl,
@@ -840,7 +823,7 @@ final class Product extends AggregateRoot
      */
     public function hasDownloadableFile(): bool
     {
-        return $this->downloadableFile !== null;
+        return null !== $this->downloadableFile;
     }
 
     /**
@@ -851,12 +834,7 @@ final class Product extends AggregateRoot
     private function ensureIsBundle(): void
     {
         if (!$this->type->isBundle()) {
-            throw new \DomainException(
-                sprintf(
-                    'Cannot perform bundle operation on product type "%s". Product must be of type "bundle".',
-                    $this->type->value()
-                )
-            );
+            throw new \DomainException(sprintf('Cannot perform bundle operation on product type "%s". Product must be of type "bundle".', $this->type->value()));
         }
     }
 
@@ -870,7 +848,7 @@ final class Product extends AggregateRoot
      */
     private function ensureBundleExists(): void
     {
-        if ($this->bundle === null) {
+        if (null === $this->bundle) {
             throw new \DomainException('Product does not have a bundle configuration. Use createBundle() first.');
         }
     }
@@ -883,12 +861,7 @@ final class Product extends AggregateRoot
     private function ensureIsSubscription(): void
     {
         if (!$this->type->isSubscription()) {
-            throw new \DomainException(
-                sprintf(
-                    'Cannot perform subscription operation on product type "%s". Product must be of type "subscription".',
-                    $this->type->value()
-                )
-            );
+            throw new \DomainException(sprintf('Cannot perform subscription operation on product type "%s". Product must be of type "subscription".', $this->type->value()));
         }
     }
 
@@ -902,7 +875,7 @@ final class Product extends AggregateRoot
      */
     private function ensureSubscriptionExists(): void
     {
-        if ($this->subscription === null) {
+        if (null === $this->subscription) {
             throw new \DomainException('Product does not have a subscription configuration. Use configureSubscription() first.');
         }
     }
@@ -915,12 +888,7 @@ final class Product extends AggregateRoot
     private function ensureIsVirtual(): void
     {
         if (!$this->type->isVirtual()) {
-            throw new \DomainException(
-                sprintf(
-                    'Cannot perform downloadable file operation on product type "%s". Product must be of type "virtual".',
-                    $this->type->value()
-                )
-            );
+            throw new \DomainException(sprintf('Cannot perform downloadable file operation on product type "%s". Product must be of type "virtual".', $this->type->value()));
         }
     }
 
@@ -934,7 +902,7 @@ final class Product extends AggregateRoot
      */
     private function ensureDownloadableFileExists(): void
     {
-        if ($this->downloadableFile === null) {
+        if (null === $this->downloadableFile) {
             throw new \DomainException('Product does not have a downloadable file. Use attachDownloadableFile() first.');
         }
     }

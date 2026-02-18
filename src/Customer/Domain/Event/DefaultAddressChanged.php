@@ -12,7 +12,7 @@ final readonly class DefaultAddressChanged
     public function __construct(
         private CustomerId $customerId,
         private CustomerAddressId $addressId,
-        private string $type // 'shipping' or 'billing'
+        private string $type, // 'shipping' or 'billing'
     ) {
     }
 

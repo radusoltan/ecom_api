@@ -30,7 +30,7 @@ final readonly class PricingSummaryProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PricingSummaryResource
     {
         $request = $this->requestStack->getCurrentRequest();
-        if ($request === null) {
+        if (null === $request) {
             return new PricingSummaryResource([], [], []);
         }
 
@@ -38,7 +38,7 @@ final readonly class PricingSummaryProvider implements ProviderInterface
         $dateRange = $this->parseDateRange($request);
 
         // Get top promotions limit from query parameters
-        $topPromotionsLimit = (int) ($request->query->get('top_promotions_limit', 5));
+        $topPromotionsLimit = (int) $request->query->get('top_promotions_limit', 5);
         $topPromotionsLimit = max(1, min($topPromotionsLimit, 20)); // Clamp between 1-20
 
         // Create and execute query
@@ -64,7 +64,7 @@ final readonly class PricingSummaryProvider implements ProviderInterface
         $startDate = $request->query->get('start_date');
         $endDate = $request->query->get('end_date');
 
-        if ($startDate !== null && $endDate !== null) {
+        if (null !== $startDate && null !== $endDate) {
             try {
                 return DateRangeFilter::fromDates(
                     new \DateTimeImmutable($startDate, new \DateTimeZone('UTC')),

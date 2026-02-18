@@ -109,7 +109,7 @@ final class ImportValidationService
         }
 
         // Validate coupon code for coupon type
-        if ($type === 'coupon' && !$row->getString('coupon_code')) {
+        if ('coupon' === $type && !$row->getString('coupon_code')) {
             $errors[] = 'Coupon code is required for coupon type promotions';
         }
 
@@ -166,6 +166,7 @@ final class ImportValidationService
     {
         try {
             new \DateTimeImmutable($date);
+
             return true;
         } catch (\Exception) {
             return false;

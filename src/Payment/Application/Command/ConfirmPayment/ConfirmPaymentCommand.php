@@ -21,7 +21,7 @@ final readonly class ConfirmPaymentCommand
 {
     public function __construct(
         public PaymentId $paymentId,
-        public string $paymentMethodId
+        public string $paymentMethodId,
     ) {
     }
 }

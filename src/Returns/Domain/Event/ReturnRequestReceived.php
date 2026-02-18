@@ -23,14 +23,14 @@ final readonly class ReturnRequestReceived
         public ReturnRequestId $returnRequestId,
         public TenantId $tenantId,
         public string $warehouseId,
-        public \DateTimeImmutable $occurredOn
+        public \DateTimeImmutable $occurredOn,
     ) {
     }
 
     public static function create(
         ReturnRequestId $returnRequestId,
         TenantId $tenantId,
-        string $warehouseId
+        string $warehouseId,
     ): self {
         return new self(
             $returnRequestId,

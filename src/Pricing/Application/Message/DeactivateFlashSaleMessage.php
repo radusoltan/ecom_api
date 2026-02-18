@@ -21,7 +21,7 @@ final readonly class DeactivateFlashSaleMessage
 {
     public function __construct(
         private string $flashSaleId,
-        private string $tenantId
+        private string $tenantId,
     ) {
     }
 

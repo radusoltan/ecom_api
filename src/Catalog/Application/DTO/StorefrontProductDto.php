@@ -31,7 +31,7 @@ final class StorefrontProductDto
         public readonly ?array $breadcrumbs = null, // [['name' => string, 'slug' => string], ...]
 
         #[Groups(['storefront:read'])]
-        public readonly ?string $description = null
+        public readonly ?string $description = null,
     ) {
     }
 

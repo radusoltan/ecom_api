@@ -12,7 +12,7 @@ final readonly class RegisterCustomerCommand
         public string $email,
         public string $firstName,
         public string $lastName,
-        public ?string $phoneNumber = null
+        public ?string $phoneNumber = null,
     ) {
     }
 }

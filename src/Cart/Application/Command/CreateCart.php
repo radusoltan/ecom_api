@@ -15,7 +15,7 @@ final readonly class CreateCart
         public string $cartId,
         public string $tenantId,
         public ?string $customerId = null, // Null for guest carts
-        public ?string $sessionId = null   // Required for guest carts
+        public ?string $sessionId = null,   // Required for guest carts
     ) {
     }
 }

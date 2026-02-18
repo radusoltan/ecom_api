@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class NotificationSentTest extends TestCase
 {
-    public function test_it_creates_event_with_all_properties(): void
+    public function testItCreatesEventWithAllProperties(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();
@@ -41,7 +41,7 @@ final class NotificationSentTest extends TestCase
         $this->assertSame($sentAt, $event->sentAt);
     }
 
-    public function test_it_is_readonly(): void
+    public function testItIsReadonly(): void
     {
         // Arrange
         $event = new NotificationSent(
@@ -57,7 +57,7 @@ final class NotificationSentTest extends TestCase
         $this->assertTrue($reflection->isReadOnly());
     }
 
-    public function test_it_supports_null_recipient_email(): void
+    public function testItSupportsNullRecipientEmail(): void
     {
         // Arrange & Act
         $event = new NotificationSent(
@@ -72,7 +72,7 @@ final class NotificationSentTest extends TestCase
         $this->assertNull($event->recipientEmail);
     }
 
-    public function test_it_preserves_sent_timestamp(): void
+    public function testItPreservesSentTimestamp(): void
     {
         // Arrange
         $sentAt = new \DateTimeImmutable('2025-01-15 10:30:00');

@@ -31,7 +31,7 @@ final readonly class CancelPaymentHandler
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
         private PaymentGatewayInterface $gateway,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -41,10 +41,7 @@ final readonly class CancelPaymentHandler
         $payment = $this->paymentRepository->findById($command->id);
 
         if (null === $payment) {
-            throw new \InvalidArgumentException(sprintf(
-                'Payment not found: %s',
-                $command->id->toString()
-            ));
+            throw new \InvalidArgumentException(sprintf('Payment not found: %s', $command->id->toString()));
         }
 
         // Only cancel via gateway if payment was authorized (has transaction ID)

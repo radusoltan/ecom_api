@@ -26,7 +26,7 @@ final readonly class CartItemPricing
         public Money $rowSubtotal,
         public Money $rowTotal,
         public Money $totalDiscount,
-        public array $appliedDiscounts = []
+        public array $appliedDiscounts = [],
     ) {
     }
 

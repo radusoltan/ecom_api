@@ -19,7 +19,7 @@ final readonly class FlashSaleActivated implements DomainEvent
         private TenantId $tenantId,
         private string $name,
         private array $productIds,
-        private \DateTimeImmutable $occurredAt
+        private \DateTimeImmutable $occurredAt,
     ) {
     }
 

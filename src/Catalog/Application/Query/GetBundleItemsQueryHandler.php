@@ -14,7 +14,7 @@ use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 final readonly class GetBundleItemsQueryHandler
 {
     public function __construct(
-        private ProductRepositoryInterface $productRepository
+        private ProductRepositoryInterface $productRepository,
     ) {
     }
 
@@ -26,10 +26,8 @@ final readonly class GetBundleItemsQueryHandler
         // Load the product
         $product = $this->productRepository->findById($query->bundleProductId);
 
-        if ($product === null) {
-            throw new \DomainException(
-                sprintf('Product with ID "%s" not found', $query->bundleProductId->toString())
-            );
+        if (null === $product) {
+            throw new \DomainException(sprintf('Product with ID "%s" not found', $query->bundleProductId->toString()));
         }
 
         // Check if product has bundle
@@ -39,7 +37,7 @@ final readonly class GetBundleItemsQueryHandler
 
         $bundle = $product->bundle();
 
-        if ($bundle === null) {
+        if (null === $bundle) {
             return null;
         }
 

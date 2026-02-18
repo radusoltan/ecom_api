@@ -27,7 +27,7 @@ final readonly class GenerateVariantsHandler
         private ConfigurableProductRepositoryInterface $configurableProductRepository,
         private ProductRepositoryInterface $productRepository,
         private VariantCombinator $variantCombinator,
-        private MessageBusInterface $eventBus
+        private MessageBusInterface $eventBus,
     ) {
     }
 

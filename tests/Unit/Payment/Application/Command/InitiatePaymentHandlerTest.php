@@ -77,7 +77,7 @@ final class InitiatePaymentHandlerTest extends TestCase
                     return $metadata['tenant_id'] === $command->tenantId->toString()
                         && $metadata['payment_id'] === $command->paymentId->toString()
                         && $metadata['order_id'] === $command->orderId
-                        && $metadata['customer_email'] === 'customer@example.com';
+                        && 'customer@example.com' === $metadata['customer_email'];
                 })
             )
             ->willReturn($gatewayResponse);
@@ -174,7 +174,7 @@ final class InitiatePaymentHandlerTest extends TestCase
                 $this->callback(function ($context) use ($command) {
                     return $context['payment_id'] === $command->paymentId->toString()
                         && $context['order_id'] === $command->orderId
-                        && $context['gateway_transaction_id'] === 'pi_success_456';
+                        && 'pi_success_456' === $context['gateway_transaction_id'];
                 })
             );
 

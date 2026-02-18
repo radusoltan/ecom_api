@@ -21,7 +21,7 @@ final readonly class AppliedDiscountDTO
         public string $discountType, // 'percentage', 'fixed_amount'
         public float $discountValue,
         public ?string $scope = null, // 'cart', 'item'
-        public ?string $targetItemId = null
+        public ?string $targetItemId = null,
     ) {
     }
 

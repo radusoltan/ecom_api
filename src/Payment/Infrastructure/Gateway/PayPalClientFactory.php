@@ -18,7 +18,7 @@ final class PayPalClientFactory
         private readonly string $clientId,
         private readonly string $clientSecret,
         private readonly string $environment,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 

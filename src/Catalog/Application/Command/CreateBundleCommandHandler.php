@@ -17,7 +17,7 @@ use App\Shared\Domain\ValueObject\Money;
 final readonly class CreateBundleCommandHandler
 {
     public function __construct(
-        private ProductRepositoryInterface $productRepository
+        private ProductRepositoryInterface $productRepository,
     ) {
     }
 
@@ -26,10 +26,8 @@ final readonly class CreateBundleCommandHandler
         // Load the bundle product
         $product = $this->productRepository->findById($command->bundleProductId);
 
-        if ($product === null) {
-            throw new \DomainException(
-                sprintf('Product with ID "%s" not found', $command->bundleProductId->toString())
-            );
+        if (null === $product) {
+            throw new \DomainException(sprintf('Product with ID "%s" not found', $command->bundleProductId->toString()));
         }
 
         // Validate that items don't contain bundle products (circular reference check)
@@ -37,20 +35,13 @@ final readonly class CreateBundleCommandHandler
             $itemProductId = ProductId::fromString($itemData['productId']);
             $itemProduct = $this->productRepository->findById($itemProductId);
 
-            if ($itemProduct === null) {
-                throw new \DomainException(
-                    sprintf('Bundle item product with ID "%s" not found', $itemData['productId'])
-                );
+            if (null === $itemProduct) {
+                throw new \DomainException(sprintf('Bundle item product with ID "%s" not found', $itemData['productId']));
             }
 
             // Business Rule: Cannot add bundle products to bundle
             if ($itemProduct->type()->isBundle()) {
-                throw new \DomainException(
-                    sprintf(
-                        'Cannot add bundle product "%s" to bundle. Circular references are not allowed.',
-                        $itemData['productId']
-                    )
-                );
+                throw new \DomainException(sprintf('Cannot add bundle product "%s" to bundle. Circular references are not allowed.', $itemData['productId']));
             }
         }
 

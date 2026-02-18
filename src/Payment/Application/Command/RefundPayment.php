@@ -29,7 +29,7 @@ final readonly class RefundPayment
     public function __construct(
         public PaymentId $id,
         public int $refundAmountInCents,
-        public string $reason
+        public string $reason,
     ) {
     }
 }

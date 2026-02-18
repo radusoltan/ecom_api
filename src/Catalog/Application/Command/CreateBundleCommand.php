@@ -25,7 +25,7 @@ final readonly class CreateBundleCommand
     public function __construct(
         public ProductId $bundleProductId,
         public array $items,
-        public float $discountPercentage = 0.0
+        public float $discountPercentage = 0.0,
     ) {
     }
 }

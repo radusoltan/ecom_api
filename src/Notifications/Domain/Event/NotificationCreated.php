@@ -15,7 +15,7 @@ final readonly class NotificationCreated
         public TenantId $tenantId,
         public NotificationType $type,
         public ?string $recipientEmail,
-        public string $subject
+        public string $subject,
     ) {
     }
 }

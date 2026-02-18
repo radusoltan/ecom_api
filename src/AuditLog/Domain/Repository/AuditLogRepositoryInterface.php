@@ -58,7 +58,7 @@ interface AuditLogRepositoryInterface
         string $resourceId,
         TenantId $tenantId,
         int $limit = 100,
-        int $offset = 0
+        int $offset = 0,
     ): array;
 
     /**

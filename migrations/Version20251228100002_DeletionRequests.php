@@ -24,9 +24,9 @@ final class Version20251228100002_DeletionRequests extends AbstractMigration
         // Create deletion_requests table
         $this->addSql('
             CREATE TABLE deletion_requests (
-                id VARCHAR(36) NOT NULL,
-                customer_id VARCHAR(36) NOT NULL,
-                tenant_id VARCHAR(36) NOT NULL,
+                id UUID NOT NULL,
+                customer_id UUID NOT NULL,
+                tenant_id UUID NOT NULL,
                 status VARCHAR(20) NOT NULL,
                 reason TEXT DEFAULT NULL,
                 hold_reason TEXT DEFAULT NULL,
@@ -55,7 +55,7 @@ final class Version20251228100002_DeletionRequests extends AbstractMigration
         // Create RLS policy for tenant isolation
         $this->addSql('
             CREATE POLICY deletion_requests_tenant_isolation ON deletion_requests
-            USING (tenant_id = current_setting(\'app.tenant_id\')::uuid)
+            USING (tenant_id::text = current_setting(\'app.tenant_id\', true))
         ');
 
         // Grant permissions

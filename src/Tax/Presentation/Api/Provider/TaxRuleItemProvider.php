@@ -25,7 +25,7 @@ final class TaxRuleItemProvider implements ProviderInterface
 
     public function __construct(
         MessageBusInterface $queryBus,
-        private readonly TaxRuleResourceTransformer $transformer
+        private readonly TaxRuleResourceTransformer $transformer,
     ) {
         $this->messageBus = $queryBus;
     }

@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Sprint 3: Create tables for configurable products and variants
+ * Sprint 3: Create tables for configurable products and variants.
  */
 final class Version20251117100000 extends AbstractMigration
 {
@@ -24,7 +24,7 @@ final class Version20251117100000 extends AbstractMigration
             CREATE TABLE catalog_configurable_products (
                 id UUID NOT NULL,
                 product_id UUID NOT NULL,
-                tenant_id VARCHAR(36) NOT NULL,
+                tenant_id UUID NOT NULL,
                 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY(id)

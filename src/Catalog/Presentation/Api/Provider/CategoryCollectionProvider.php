@@ -14,7 +14,7 @@ final class CategoryCollectionProvider implements ProviderInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
     ) {
     }
 

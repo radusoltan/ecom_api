@@ -7,6 +7,7 @@ namespace App\User\Infrastructure\Security;
 use App\Shared\Infrastructure\Security\Voter\AbstractResourceVoter;
 use App\User\Domain\Model\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 
 /**
  * Voter for User resource permissions.
@@ -44,7 +45,7 @@ final class UserVoter extends AbstractResourceVoter
         ];
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         // Require authentication
         if (!$this->isAuthenticated($token)) {

@@ -9,7 +9,7 @@ final readonly class ProductImage
     private function __construct(
         private string $url,
         private int $position,
-        private bool $isPrimary
+        private bool $isPrimary,
     ) {
     }
 

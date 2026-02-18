@@ -24,7 +24,7 @@ final readonly class ReturnRequestInspected
         public TenantId $tenantId,
         public bool $isResellable,
         public string $inspectionNotes,
-        public \DateTimeImmutable $occurredOn
+        public \DateTimeImmutable $occurredOn,
     ) {
     }
 
@@ -32,7 +32,7 @@ final readonly class ReturnRequestInspected
         ReturnRequestId $returnRequestId,
         TenantId $tenantId,
         bool $isResellable,
-        string $inspectionNotes
+        string $inspectionNotes,
     ): self {
         return new self(
             $returnRequestId,

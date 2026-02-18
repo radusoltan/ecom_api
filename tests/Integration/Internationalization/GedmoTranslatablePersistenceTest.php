@@ -34,11 +34,11 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
         // Delete existing test tenant to avoid conflicts
         try {
             $this->entityManager->getConnection()->executeStatement(
-                "DELETE FROM ext_translations WHERE foreign_key = :tenantId",
+                'DELETE FROM ext_translations WHERE foreign_key = :tenantId',
                 ['tenantId' => $this->tenantId->toString()]
             );
             $this->entityManager->getConnection()->executeStatement(
-                "DELETE FROM tenants WHERE id = :tenantId",
+                'DELETE FROM tenants WHERE id = :tenantId',
                 ['tenantId' => $this->tenantId->toString()]
             );
         } catch (\Exception $e) {
@@ -53,13 +53,13 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
             try {
                 // Delete translations for test tenant
                 $this->entityManager->getConnection()->executeStatement(
-                    "DELETE FROM ext_translations WHERE foreign_key = :tenantId",
+                    'DELETE FROM ext_translations WHERE foreign_key = :tenantId',
                     ['tenantId' => $this->tenantId->toString()]
                 );
 
                 // Delete test tenant if exists
                 $this->entityManager->getConnection()->executeStatement(
-                    "DELETE FROM tenants WHERE id = :tenantId",
+                    'DELETE FROM tenants WHERE id = :tenantId',
                     ['tenantId' => $this->tenantId->toString()]
                 );
             } catch (\Exception $e) {

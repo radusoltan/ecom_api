@@ -27,7 +27,7 @@ final readonly class TaxRuleCreated
         public string $name,
         public int $priority,
         public bool $isActive,
-        public \DateTimeImmutable $occurredAt = new \DateTimeImmutable()
+        public \DateTimeImmutable $occurredAt = new \DateTimeImmutable(),
     ) {
     }
 }

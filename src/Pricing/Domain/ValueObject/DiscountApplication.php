@@ -19,7 +19,7 @@ final readonly class DiscountApplication
         private string $promotionName,
         private PromotionType $promotionType,
         private Money $discountAmount,
-        private Money $priceAfterDiscount
+        private Money $priceAfterDiscount,
     ) {
         if ($this->discountAmount->isNegative()) {
             throw new \InvalidArgumentException('Discount amount cannot be negative');

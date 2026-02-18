@@ -6,7 +6,6 @@ namespace App\Tests\Functional\User\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Tests\Support\TenantTestTrait;
-use Symfony\Component\Uid\Uuid;
 
 /**
  * Functional Tests for Token Refresh API.
@@ -99,8 +98,8 @@ final class TokenRefreshApiTest extends ApiTestCase
         ]);
 
         // Ensure registration succeeded
-        if ($client->getResponse()->getStatusCode() !== 201) {
-            throw new \RuntimeException('Failed to create test user: ' . $client->getResponse()->getContent(false));
+        if (201 !== $client->getResponse()->getStatusCode()) {
+            throw new \RuntimeException('Failed to create test user: '.$client->getResponse()->getContent(false));
         }
 
         $registerData = json_decode($registerResponse->getContent(), true);
@@ -139,7 +138,7 @@ final class TokenRefreshApiTest extends ApiTestCase
         // API Platform returns 201 Created for new resources (even in processors)
         $this->assertResponseIsSuccessful();
         $statusCode = $client->getResponse()->getStatusCode();
-        $this->assertTrue(in_array($statusCode, [200, 201], true), 'Expected 200 or 201, got ' . $statusCode);
+        $this->assertTrue(in_array($statusCode, [200, 201], true), 'Expected 200 or 201, got '.$statusCode);
 
         $data = json_decode($response->getContent(), true);
 
@@ -165,7 +164,7 @@ final class TokenRefreshApiTest extends ApiTestCase
         $client->request('GET', '/api/v1/users', [
             'headers' => array_merge(
                 $this->headers(),
-                ['Authorization' => 'Bearer ' . $data['token']]
+                ['Authorization' => 'Bearer '.$data['token']]
             ),
         ]);
 
@@ -262,8 +261,8 @@ final class TokenRefreshApiTest extends ApiTestCase
     public function testOldRefreshTokenInvalidatedAfterUse(): void
     {
         $this->markTestSkipped(
-            'Skipped due to PHPUnit transaction isolation preventing refresh token deletion visibility. ' .
-            'The implementation is correct (see RefreshTokenProcessor line 75-87) but cannot be tested ' .
+            'Skipped due to PHPUnit transaction isolation preventing refresh token deletion visibility. '.
+            'The implementation is correct (see RefreshTokenProcessor line 75-87) but cannot be tested '.
             'in this context. Consider integration tests or unit tests with mocks.'
         );
 
@@ -284,7 +283,7 @@ final class TokenRefreshApiTest extends ApiTestCase
         // API Platform returns 201 Created for new resources
         $this->assertResponseIsSuccessful();
         $statusCode = $client->getResponse()->getStatusCode();
-        $this->assertTrue(in_array($statusCode, [200, 201], true), 'Expected 200 or 201, got ' . $statusCode);
+        $this->assertTrue(in_array($statusCode, [200, 201], true), 'Expected 200 or 201, got '.$statusCode);
         $data1 = json_decode($response1->getContent(), true);
         $newRefreshToken = $data1['refreshToken'];
 
@@ -315,7 +314,7 @@ final class TokenRefreshApiTest extends ApiTestCase
         // API Platform returns 201 Created for new resources
         $this->assertResponseIsSuccessful();
         $statusCode = $client->getResponse()->getStatusCode();
-        $this->assertTrue(in_array($statusCode, [200, 201], true), 'Expected 200 or 201, got ' . $statusCode);
+        $this->assertTrue(in_array($statusCode, [200, 201], true), 'Expected 200 or 201, got '.$statusCode);
     }
 
     // =============================================

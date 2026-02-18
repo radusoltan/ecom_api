@@ -17,7 +17,7 @@ final readonly class DoctrineORMPromotionRepository implements PromotionReposito
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 

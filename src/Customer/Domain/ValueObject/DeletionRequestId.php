@@ -14,7 +14,7 @@ use Symfony\Component\Uid\Uuid;
 final readonly class DeletionRequestId
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!Uuid::isValid($value)) {
             throw new \InvalidArgumentException(sprintf('Invalid deletion request ID: "%s"', $value));

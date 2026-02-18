@@ -14,7 +14,7 @@ final readonly class AssignCartToCustomer
 {
     public function __construct(
         public string $cartId,
-        public string $customerId
+        public string $customerId,
     ) {
     }
 }

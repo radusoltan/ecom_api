@@ -20,7 +20,7 @@ final readonly class LoyaltyPointsRedeemed
         public int $remainingBalance,
         public Money $discountAmount,
         public ?string $orderId,
-        public \DateTimeImmutable $occurredOn
+        public \DateTimeImmutable $occurredOn,
     ) {
     }
 }

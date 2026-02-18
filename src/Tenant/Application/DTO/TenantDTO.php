@@ -18,7 +18,7 @@ final readonly class TenantDTO
         public string $status,
         public string $createdAt,
         public string $defaultLocale,
-        public array $enabledLocales
+        public array $enabledLocales,
     ) {
     }
 

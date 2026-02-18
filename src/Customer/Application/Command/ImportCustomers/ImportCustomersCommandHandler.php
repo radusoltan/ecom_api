@@ -19,7 +19,7 @@ final readonly class ImportCustomersCommandHandler
 {
     public function __construct(
         private CustomerImportService $importService,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

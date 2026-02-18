@@ -22,7 +22,7 @@ final readonly class CategoryName implements \Stringable
     private const MAX_LENGTH = 100;
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
     }
 

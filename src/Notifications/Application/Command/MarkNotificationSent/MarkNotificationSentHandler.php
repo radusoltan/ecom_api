@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class MarkNotificationSentHandler
 {
     public function __construct(
-        private NotificationRepositoryInterface $notificationRepository
+        private NotificationRepositoryInterface $notificationRepository,
     ) {
     }
 
@@ -23,11 +23,7 @@ final readonly class MarkNotificationSentHandler
         $notification = $this->notificationRepository->findById($command->id, $command->tenantId);
 
         if (null === $notification) {
-            throw new \DomainException(sprintf(
-                'Notification with ID "%s" not found for tenant "%s"',
-                $command->id->toString(),
-                $command->tenantId->toString()
-            ));
+            throw new \DomainException(sprintf('Notification with ID "%s" not found for tenant "%s"', $command->id->toString(), $command->tenantId->toString()));
         }
 
         $notification->markAsSent();

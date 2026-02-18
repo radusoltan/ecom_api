@@ -25,7 +25,7 @@ final class ProductOptionsController extends AbstractController
 {
     public function __construct(
         private readonly MessageBusInterface $commandBus,
-        private readonly MessageBusInterface $queryBus
+        private readonly MessageBusInterface $queryBus,
     ) {
     }
 

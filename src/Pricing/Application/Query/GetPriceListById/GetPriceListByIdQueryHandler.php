@@ -16,7 +16,7 @@ final readonly class GetPriceListByIdQueryHandler
     public function __construct(
         private PriceListRepositoryInterface $priceListRepository,
         private PerformanceProfiler $profiler,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

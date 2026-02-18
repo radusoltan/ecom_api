@@ -24,7 +24,7 @@ final readonly class InvoiceNumber
     private function __construct(
         private string $value,
         private int $year,
-        private int $sequence
+        private int $sequence,
     ) {
         if (!preg_match(self::PATTERN, $value, $matches)) {
             throw new \InvalidArgumentException(sprintf('Invalid InvoiceNumber format: "%s". Expected format: INV-YYYY-NNNNNN (e.g., INV-2025-000001)', $value));

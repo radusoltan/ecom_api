@@ -12,7 +12,6 @@ use App\Catalog\Domain\Model\ProductId;
 use App\Catalog\Domain\Model\ProductName;
 use App\Catalog\Domain\Model\SKU;
 use App\Catalog\Domain\Model\Stock;
-use App\Catalog\Domain\ValueObject\DownloadableFile;
 use App\Catalog\Domain\ValueObject\ProductType;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;

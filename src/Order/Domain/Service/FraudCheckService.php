@@ -39,7 +39,7 @@ final class FraudCheckService
 
     public function __construct(
         private readonly CacheInterface $cache,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 

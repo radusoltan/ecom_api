@@ -28,7 +28,7 @@ final class TenantContextMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private readonly TenantContext $tenantContext,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -67,7 +67,7 @@ final class TenantContextMiddleware implements MiddlewareInterface
             if (null === $envelope->last(TenantStamp::class)) {
                 if ($this->tenantContext->hasCurrentTenant()) {
                     $tenantId = $this->tenantContext->getCurrentTenantId();
-                    if ($tenantId !== null) {
+                    if (null !== $tenantId) {
                         $envelope = $envelope->with(new TenantStamp($tenantId->toString()));
 
                         $this->logger->debug('TenantStamp added to outgoing message', [

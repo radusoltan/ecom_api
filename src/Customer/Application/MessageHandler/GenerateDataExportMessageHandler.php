@@ -32,7 +32,7 @@ final readonly class GenerateDataExportMessageHandler
     public function __construct(
         private DataExportRequestRepositoryInterface $exportRequestRepository,
         private DataExportService $dataExportService,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

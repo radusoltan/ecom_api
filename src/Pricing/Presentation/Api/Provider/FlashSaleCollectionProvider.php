@@ -23,7 +23,7 @@ final class FlashSaleCollectionProvider implements ProviderInterface
 
     public function __construct(
         MessageBusInterface $messageBus,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
         $this->messageBus = $messageBus;
     }

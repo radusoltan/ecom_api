@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Migration to align product_reviews table with ProductReviewEntity
+ * Migration to align product_reviews table with ProductReviewEntity.
  */
 final class Version20251105064800 extends AbstractMigration
 {

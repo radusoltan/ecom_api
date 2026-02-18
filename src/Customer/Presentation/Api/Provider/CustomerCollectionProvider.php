@@ -20,7 +20,7 @@ final readonly class CustomerCollectionProvider implements ProviderInterface
 {
     public function __construct(
         private SearchCustomersQueryHandler $searchHandler,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

@@ -38,6 +38,6 @@ interface ConsentHistoryRepositoryInterface
         CustomerId $customerId,
         TenantId $tenantId,
         int $page = 1,
-        int $limit = 20
+        int $limit = 20,
     ): array;
 }

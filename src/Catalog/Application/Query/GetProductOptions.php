@@ -14,7 +14,7 @@ final readonly class GetProductOptions
 {
     public function __construct(
         public ProductId $productId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

@@ -20,7 +20,7 @@ final readonly class NotificationPreferencesDTO
         public bool $securityAlerts,
         public bool $newsletterWeekly,
         public bool $preferSms,
-        public ?\DateTimeImmutable $lastUpdatedAt = null
+        public ?\DateTimeImmutable $lastUpdatedAt = null,
     ) {
     }
 
@@ -29,7 +29,7 @@ final readonly class NotificationPreferencesDTO
      */
     public static function fromDomainModel(
         NotificationPreferences $preferences,
-        ?\DateTimeImmutable $lastUpdatedAt = null
+        ?\DateTimeImmutable $lastUpdatedAt = null,
     ): self {
         return new self(
             orderUpdates: $preferences->orderUpdates(),

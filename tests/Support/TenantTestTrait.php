@@ -186,6 +186,7 @@ trait TenantTestTrait
             $client = static::createClient();
             /** @var EntityManagerInterface $em */
             $em = $client->getContainer()->get('doctrine.orm.entity_manager');
+
             return $em;
         }
 
@@ -193,6 +194,7 @@ trait TenantTestTrait
         if (method_exists($this, 'getContainer')) {
             /** @var EntityManagerInterface $em */
             $em = $this->getContainer()->get('doctrine.orm.entity_manager');
+
             return $em;
         }
 

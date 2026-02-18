@@ -36,12 +36,7 @@ final class RefundStatusType extends Type
         try {
             return RefundStatus::fromString((string) $value);
         } catch (\InvalidArgumentException $e) {
-            throw ConversionException::conversionFailedFormat(
-                $value,
-                $this->getName(),
-                'One of: pending, succeeded, failed',
-                $e
-            );
+            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'One of: pending, succeeded, failed', $e);
         }
     }
 

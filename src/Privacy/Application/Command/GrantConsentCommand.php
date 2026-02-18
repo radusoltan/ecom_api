@@ -17,7 +17,7 @@ final readonly class GrantConsentCommand
         public string $ipAddress,
         public string $userAgent,
         public string $consentText,
-        public string $consentVersion
+        public string $consentVersion,
     ) {
     }
 }

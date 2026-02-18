@@ -69,8 +69,8 @@ final class OrderNotificationSubscriberTest extends TestCase
                 $this->equalTo('order/order_placed'),
                 $this->callback(function (array $context) use ($orderId) {
                     return $context['orderId'] === $orderId->toString()
-                        && $context['total'] === '100.00'
-                        && $context['currency'] === 'USD';
+                        && '100.00' === $context['total']
+                        && 'USD' === $context['currency'];
                 })
             );
 
@@ -118,7 +118,7 @@ final class OrderNotificationSubscriberTest extends TestCase
                 $this->callback(function (array $context) use ($orderId, $customerEmail) {
                     return $context['orderId'] === $orderId->toString()
                         && $context['customerEmail'] === $customerEmail
-                        && $context['error'] === 'Email service unavailable';
+                        && 'Email service unavailable' === $context['error'];
                 })
             );
 
@@ -149,8 +149,8 @@ final class OrderNotificationSubscriberTest extends TestCase
                 $this->equalTo('order/order_paid'),
                 $this->callback(function (array $context) use ($orderId) {
                     return $context['orderId'] === $orderId->toString()
-                        && $context['status'] === 'paid'
-                        && $context['previousStatus'] === 'pending';
+                        && 'paid' === $context['status']
+                        && 'pending' === $context['previousStatus'];
                 })
             );
 
@@ -237,7 +237,7 @@ final class OrderNotificationSubscriberTest extends TestCase
             ->with(
                 $this->equalTo('No email template for order status change'),
                 $this->callback(function (array $context) {
-                    return $context['newStatus'] === 'pending';
+                    return 'pending' === $context['newStatus'];
                 })
             );
 
@@ -328,7 +328,7 @@ final class OrderNotificationSubscriberTest extends TestCase
                 $this->equalTo('Order Cancelled'),
                 $this->equalTo('order/order_cancelled'),
                 $this->callback(function (array $context) {
-                    return $context['reason'] === 'No reason provided';
+                    return 'No reason provided' === $context['reason'];
                 })
             );
 

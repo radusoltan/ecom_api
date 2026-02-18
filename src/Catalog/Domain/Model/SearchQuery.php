@@ -35,7 +35,7 @@ final class SearchQuery extends AggregateRoot
         private readonly int $responseTimeMs,
         private readonly ?array $filters,
         private readonly ?string $sortBy,
-        private readonly \DateTimeImmutable $executedAt
+        private readonly \DateTimeImmutable $executedAt,
     ) {
     }
 
@@ -47,7 +47,7 @@ final class SearchQuery extends AggregateRoot
         int $resultsCount,
         int $responseTimeMs,
         ?array $filters = null,
-        ?string $sortBy = null
+        ?string $sortBy = null,
     ): self {
         $searchQuery = new self(
             id: $id,

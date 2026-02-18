@@ -16,7 +16,7 @@ final class TenantRequestSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly RequestStack $requestStack,
-        private readonly TenantContext $tenantContext
+        private readonly TenantContext $tenantContext,
     ) {
     }
 

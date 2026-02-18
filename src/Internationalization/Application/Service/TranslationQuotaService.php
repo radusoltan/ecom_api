@@ -20,7 +20,7 @@ use App\Tenant\Domain\Repository\TenantRepositoryInterface;
 final readonly class TranslationQuotaService
 {
     public function __construct(
-        private TenantRepositoryInterface $tenantRepository
+        private TenantRepositoryInterface $tenantRepository,
     ) {
     }
 

@@ -90,7 +90,7 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
         ObjectManager $manager,
         string $configurableProductId,
         string $productId,
-        string $tenantId
+        string $tenantId,
     ): void {
         $sql = 'INSERT INTO catalog_configurable_products (id, product_id, tenant_id, created_at, updated_at)
                 VALUES (:id, :product_id, :tenant_id, NOW(), NOW())';
@@ -185,7 +185,7 @@ class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
         string $configurableProductId,
         array $product,
         string $colorOptionId,
-        string $sizeOptionId
+        string $sizeOptionId,
     ): array {
         $variants = [];
 

@@ -32,7 +32,7 @@ final readonly class CacheWarmingService
     public function __construct(
         private CacheService $cacheService,
         private Connection $connection,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

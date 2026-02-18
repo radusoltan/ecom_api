@@ -22,7 +22,7 @@ final readonly class InitiatePaymentHandler
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
         private PaymentGatewayInterface $paymentGateway,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

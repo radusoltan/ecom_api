@@ -21,7 +21,7 @@ interface ConsentRepositoryInterface
      */
     public function findActiveByCustomerAndPurpose(
         CustomerId $customerId,
-        ConsentPurpose $purpose
+        ConsentPurpose $purpose,
     ): ?Consent;
 
     /**

@@ -47,7 +47,7 @@ final class PromotionApplicatorTest extends TestCase
             ->expects($this->once())
             ->method('findByCouponCode')
             ->with(
-                $this->callback(fn ($code) => $code->toString() === 'TESTCOUPON'),
+                $this->callback(fn ($code) => 'TESTCOUPON' === $code->toString()),
                 $tenantId
             )
             ->willReturn($promotion);

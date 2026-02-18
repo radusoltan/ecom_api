@@ -15,7 +15,7 @@ final class ImageItemProvider implements ProviderInterface
 {
     public function __construct(
         private readonly ImageRepositoryInterface $imageRepository,
-        private readonly ImageResourceTransformer $transformer
+        private readonly ImageResourceTransformer $transformer,
     ) {
     }
 

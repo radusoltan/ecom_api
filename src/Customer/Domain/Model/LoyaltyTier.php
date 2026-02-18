@@ -27,7 +27,7 @@ final readonly class LoyaltyTier
         private int $threshold,
         private int $discountPercentage,
         private ?Money $freeShippingMinOrder,
-        private int $sortOrder
+        private int $sortOrder,
     ) {
         $this->validateName($name);
         $this->validateThreshold($threshold);
@@ -41,7 +41,7 @@ final readonly class LoyaltyTier
         int $threshold,
         int $discountPercentage,
         ?Money $freeShippingMinOrder = null,
-        int $sortOrder = 0
+        int $sortOrder = 0,
     ): self {
         return new self(
             $id,

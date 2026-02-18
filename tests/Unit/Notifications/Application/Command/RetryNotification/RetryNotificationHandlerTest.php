@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class RetryNotificationHandlerTest extends TestCase
 {
-    public function test_it_retries_failed_notification_and_saves(): void
+    public function testItRetriesFailedNotificationAndSaves(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();
@@ -47,10 +47,10 @@ final class RetryNotificationHandlerTest extends TestCase
         $repository->expects($this->once())
             ->method('save')
             ->with($this->callback(function (Notification $savedNotification) {
-                return $savedNotification->status() === NotificationStatus::PENDING
-                    && $savedNotification->failedAt() === null
-                    && $savedNotification->failureReason() === null
-                    && $savedNotification->attemptCount() === 1; // Persists from failure
+                return NotificationStatus::PENDING === $savedNotification->status()
+                    && null === $savedNotification->failedAt()
+                    && null === $savedNotification->failureReason()
+                    && 1 === $savedNotification->attemptCount(); // Persists from failure
             }));
 
         $handler = new RetryNotificationHandler($repository);
@@ -66,7 +66,7 @@ final class RetryNotificationHandlerTest extends TestCase
         // Assert: Verified by mock expectations
     }
 
-    public function test_it_throws_when_notification_not_found(): void
+    public function testItThrowsWhenNotificationNotFound(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();
@@ -95,7 +95,7 @@ final class RetryNotificationHandlerTest extends TestCase
         $handler($command);
     }
 
-    public function test_it_throws_when_notification_is_not_failed(): void
+    public function testItThrowsWhenNotificationIsNotFailed(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();
@@ -135,7 +135,7 @@ final class RetryNotificationHandlerTest extends TestCase
         $handler($command);
     }
 
-    public function test_it_throws_when_max_retries_exceeded(): void
+    public function testItThrowsWhenMaxRetriesExceeded(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();
@@ -180,7 +180,7 @@ final class RetryNotificationHandlerTest extends TestCase
         $handler($command);
     }
 
-    public function test_it_uses_correct_tenant_id_for_query(): void
+    public function testItUsesCorrectTenantIdForQuery(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();

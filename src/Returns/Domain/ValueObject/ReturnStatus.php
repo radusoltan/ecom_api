@@ -49,7 +49,7 @@ final readonly class ReturnStatus
     ];
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!in_array($this->value, self::VALID_STATUSES, true)) {
             throw new \InvalidArgumentException(sprintf('Invalid return status: "%s". Must be one of: %s', $value, implode(', ', self::VALID_STATUSES)));

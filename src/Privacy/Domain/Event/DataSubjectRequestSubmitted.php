@@ -15,7 +15,7 @@ final readonly class DataSubjectRequestSubmitted implements DomainEvent
         public DataSubjectRequestId $requestId,
         public CustomerId $customerId,
         public RequestType $requestType,
-        public \DateTimeImmutable $occurredOn
+        public \DateTimeImmutable $occurredOn,
     ) {
     }
 

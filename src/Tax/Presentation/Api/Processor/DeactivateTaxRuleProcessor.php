@@ -13,7 +13,6 @@ use App\Tax\Domain\ValueObject\TaxRuleId;
 use App\Tax\Presentation\Api\Resource\TaxRuleResource;
 use App\Tax\Presentation\Api\Transformer\TaxRuleResourceTransformer;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\HandleTrait;
@@ -30,7 +29,7 @@ final class DeactivateTaxRuleProcessor implements ProcessorInterface
         private readonly MessageBusInterface $commandBus,
         MessageBusInterface $queryBus,
         private readonly TaxRuleResourceTransformer $transformer,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
     ) {
         $this->messageBus = $queryBus;
     }
@@ -71,7 +70,7 @@ final class DeactivateTaxRuleProcessor implements ProcessorInterface
             }
             // DomainException for already inactive state is acceptable (idempotent)
             // Just continue and return the current state
-            if (!($previous instanceof \DomainException)) {
+            if (!$previous instanceof \DomainException) {
                 throw $e;
             }
         } catch (\InvalidArgumentException $e) {

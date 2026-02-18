@@ -34,7 +34,7 @@ final readonly class UserRole implements \Stringable
     ];
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!in_array($value, self::VALID_ROLES, true)) {
             throw new \InvalidArgumentException(sprintf('Invalid user role: "%s". Must be one of: %s', $value, implode(', ', self::VALID_ROLES)));

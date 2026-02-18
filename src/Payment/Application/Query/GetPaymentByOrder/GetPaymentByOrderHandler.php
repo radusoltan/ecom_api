@@ -18,7 +18,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetPaymentByOrderHandler
 {
     public function __construct(
-        private PaymentRepositoryInterface $paymentRepository
+        private PaymentRepositoryInterface $paymentRepository,
     ) {
     }
 

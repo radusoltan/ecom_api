@@ -16,7 +16,7 @@ final class StripeClientFactory
 {
     public function __construct(
         private readonly string $apiKey,
-        private readonly string $apiVersion
+        private readonly string $apiVersion,
     ) {
     }
 

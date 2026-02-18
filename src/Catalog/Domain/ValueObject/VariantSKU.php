@@ -29,7 +29,7 @@ final readonly class VariantSKU
     private const MAX_LENGTH = 64;
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         $this->validate($value);
     }

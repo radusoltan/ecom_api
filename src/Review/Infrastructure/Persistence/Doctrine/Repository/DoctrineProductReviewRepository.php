@@ -18,7 +18,7 @@ final readonly class DoctrineProductReviewRepository implements ProductReviewRep
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MessageBusInterface $eventBus
+        private MessageBusInterface $eventBus,
     ) {
     }
 

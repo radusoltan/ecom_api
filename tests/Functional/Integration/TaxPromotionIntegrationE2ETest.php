@@ -41,7 +41,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
     protected function createAuthenticatedClient(
         string $email = 'admin@admin.com',
         array $roles = ['ROLE_SUPER_ADMIN'],
-        ?string $tenantId = null
+        ?string $tenantId = null,
     ) {
         $tempClient = static::createClient();
         $container = $tempClient->getContainer();

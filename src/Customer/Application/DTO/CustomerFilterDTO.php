@@ -23,7 +23,7 @@ final readonly class CustomerFilterDTO
         public string $sortBy = 'createdAt',
         public string $sortOrder = 'DESC',
         public int $page = 1,
-        public int $limit = 20
+        public int $limit = 20,
     ) {
     }
 

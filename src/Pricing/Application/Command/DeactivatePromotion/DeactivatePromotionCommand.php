@@ -11,7 +11,7 @@ final readonly class DeactivatePromotionCommand
 {
     public function __construct(
         public PromotionId $promotionId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

@@ -20,9 +20,6 @@ final class ConsentHistoryIdType extends Type
         return $platform->getStringTypeDeclarationSQL(['length' => 36]);
     }
 
-    /**
-     * @param mixed $value
-     */
     public function convertToPHPValue($value, AbstractPlatform $platform): ?ConsentHistoryId
     {
         if (null === $value || '' === $value) {
@@ -36,9 +33,6 @@ final class ConsentHistoryIdType extends Type
         return ConsentHistoryId::fromString((string) $value);
     }
 
-    /**
-     * @param mixed $value
-     */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (null === $value) {

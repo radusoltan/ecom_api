@@ -24,7 +24,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final readonly class ResetPasswordProcessor implements ProcessorInterface
 {
     public function __construct(
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $messageBus,
     ) {
     }
 

@@ -23,7 +23,7 @@ final readonly class ReturnInspection
     private function __construct(
         private bool $isResellable,
         private string $notes,
-        private \DateTimeImmutable $inspectedAt
+        private \DateTimeImmutable $inspectedAt,
     ) {
     }
 
@@ -39,7 +39,7 @@ final readonly class ReturnInspection
     public static function create(
         bool $isResellable,
         string $notes,
-        ?\DateTimeImmutable $inspectedAt = null
+        ?\DateTimeImmutable $inspectedAt = null,
     ): self {
         $trimmedNotes = trim($notes);
 

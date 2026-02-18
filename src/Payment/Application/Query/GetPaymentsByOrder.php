@@ -10,7 +10,7 @@ final readonly class GetPaymentsByOrder
 {
     public function __construct(
         public string $orderId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

@@ -30,7 +30,7 @@ final readonly class LoyaltyProgramDTO
         public bool $isActive,
         public array $tiers,
         public string $createdAt,
-        public string $updatedAt
+        public string $updatedAt,
     ) {
     }
 

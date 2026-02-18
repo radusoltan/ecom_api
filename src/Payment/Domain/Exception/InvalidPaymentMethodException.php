@@ -31,7 +31,7 @@ final class InvalidPaymentMethodException extends PaymentGatewayException
         string $gatewayErrorCode,
         private readonly ?string $field = null,
         ?string $gatewayErrorMessage = null,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ) {
         parent::__construct(
             message: $message,
@@ -46,7 +46,7 @@ final class InvalidPaymentMethodException extends PaymentGatewayException
         ?string $reason = null,
         ?string $field = null,
         ?string $gatewayErrorMessage = null,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         $message = $reason
             ? sprintf('Invalid payment method: %s', $reason)
@@ -63,7 +63,7 @@ final class InvalidPaymentMethodException extends PaymentGatewayException
 
     public static function invalidCardNumber(
         ?string $gatewayErrorMessage = null,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         return new self(
             message: 'Invalid card number',
@@ -76,7 +76,7 @@ final class InvalidPaymentMethodException extends PaymentGatewayException
 
     public static function expiredCard(
         ?string $gatewayErrorMessage = null,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         return new self(
             message: 'Card has expired',
@@ -89,7 +89,7 @@ final class InvalidPaymentMethodException extends PaymentGatewayException
 
     public static function invalidExpiryDate(
         ?string $gatewayErrorMessage = null,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         return new self(
             message: 'Invalid card expiry date',
@@ -102,7 +102,7 @@ final class InvalidPaymentMethodException extends PaymentGatewayException
 
     public static function invalidCvc(
         ?string $gatewayErrorMessage = null,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         return new self(
             message: 'Invalid security code (CVC/CVV)',
@@ -116,7 +116,7 @@ final class InvalidPaymentMethodException extends PaymentGatewayException
     public static function cardNotSupported(
         ?string $cardType = null,
         ?string $gatewayErrorMessage = null,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         $message = $cardType
             ? sprintf('Card type not supported: %s', $cardType)
@@ -134,7 +134,7 @@ final class InvalidPaymentMethodException extends PaymentGatewayException
     public static function paymentMethodNotFound(
         string $paymentMethodId,
         ?string $gatewayErrorMessage = null,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         return new self(
             message: sprintf('Payment method not found: %s', $paymentMethodId),
@@ -146,7 +146,7 @@ final class InvalidPaymentMethodException extends PaymentGatewayException
     }
 
     /**
-     * Get the specific field that caused the validation error (if known)
+     * Get the specific field that caused the validation error (if known).
      */
     public function getField(): ?string
     {
@@ -154,7 +154,7 @@ final class InvalidPaymentMethodException extends PaymentGatewayException
     }
 
     /**
-     * Get user-friendly error message
+     * Get user-friendly error message.
      */
     public function getUserMessage(): string
     {
@@ -170,7 +170,7 @@ final class InvalidPaymentMethodException extends PaymentGatewayException
     }
 
     /**
-     * This error is not retryable - customer must fix payment method
+     * This error is not retryable - customer must fix payment method.
      */
     public function isRetryable(): bool
     {
@@ -178,7 +178,7 @@ final class InvalidPaymentMethodException extends PaymentGatewayException
     }
 
     /**
-     * Customer must update payment method
+     * Customer must update payment method.
      */
     public function requiresCustomerAction(): bool
     {

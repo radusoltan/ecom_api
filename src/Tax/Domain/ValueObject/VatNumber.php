@@ -30,31 +30,19 @@ final readonly class VatNumber
 
     private function __construct(
         private string $countryCode,
-        private string $number
+        private string $number,
     ) {
         if (!in_array($countryCode, self::EU_COUNTRY_CODES, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid VAT country code "%s". Must be an EU country code.',
-                    $countryCode
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid VAT country code "%s". Must be an EU country code.', $countryCode));
         }
 
         if (strlen($number) < 2 || strlen($number) > 15) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'VAT number must be between 2 and 15 characters, got %d',
-                    strlen($number)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('VAT number must be between 2 and 15 characters, got %d', strlen($number)));
         }
 
         // Only alphanumeric allowed
         if (!ctype_alnum($number)) {
-            throw new \InvalidArgumentException(
-                sprintf('VAT number must be alphanumeric, got "%s"', $number)
-            );
+            throw new \InvalidArgumentException(sprintf('VAT number must be alphanumeric, got "%s"', $number));
         }
     }
 
@@ -68,9 +56,7 @@ final readonly class VatNumber
         $cleaned = strtoupper($cleaned);
 
         if (strlen($cleaned) < 4) {
-            throw new \InvalidArgumentException(
-                sprintf('VAT number too short: "%s"', $vatNumber)
-            );
+            throw new \InvalidArgumentException(sprintf('VAT number too short: "%s"', $vatNumber));
         }
 
         // First 2 characters = country code
@@ -97,7 +83,7 @@ final readonly class VatNumber
 
     public function getFull(): string
     {
-        return $this->countryCode . $this->number;
+        return $this->countryCode.$this->number;
     }
 
     public function equals(self $other): bool

@@ -18,7 +18,7 @@ final class DoctrineImageRepository implements ImageRepositoryInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly MessageBusInterface $messageBus
+        private readonly MessageBusInterface $messageBus,
     ) {
     }
 

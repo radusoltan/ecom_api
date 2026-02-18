@@ -30,7 +30,7 @@ final readonly class CustomerAddress
         public string $country,
         public AddressType $type,
         public bool $isDefaultShipping,
-        public bool $isDefaultBilling
+        public bool $isDefaultBilling,
     ) {
         $this->validate();
     }
@@ -45,7 +45,7 @@ final readonly class CustomerAddress
         string $country,
         AddressType $type,
         bool $isDefaultShipping = false,
-        bool $isDefaultBilling = false
+        bool $isDefaultBilling = false,
     ): self {
         return new self(
             $id,

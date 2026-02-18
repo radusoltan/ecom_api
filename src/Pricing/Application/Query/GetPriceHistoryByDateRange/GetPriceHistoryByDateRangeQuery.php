@@ -15,7 +15,7 @@ final readonly class GetPriceHistoryByDateRangeQuery
         public \DateTimeImmutable $from,
         public \DateTimeImmutable $to,
         public int $limit = 100,
-        public int $offset = 0
+        public int $offset = 0,
     ) {
     }
 }

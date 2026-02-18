@@ -18,7 +18,7 @@ final readonly class ConsentHistoryDTO
         public bool $granted,
         public ?string $ipAddress,
         public ?string $userAgent,
-        public \DateTimeImmutable $createdAt
+        public \DateTimeImmutable $createdAt,
     ) {
     }
 }

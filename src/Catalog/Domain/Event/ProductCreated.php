@@ -14,7 +14,7 @@ final readonly class ProductCreated
         public ProductId $productId,
         public TenantId $tenantId,
         public SKU $sku,
-        public string $name
+        public string $name,
     ) {
     }
 }

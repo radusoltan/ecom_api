@@ -23,17 +23,12 @@ final readonly class ApplyCouponProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 
     /**
      * @param CartPricingResource $data
-     * @param Operation           $operation
-     * @param array               $uriVariables
-     * @param array               $context
-     *
-     * @return CartPricingResource
      *
      * @throws \RuntimeException         If required headers or data are missing
      * @throws \InvalidArgumentException If coupon is invalid

@@ -12,7 +12,7 @@ final class MultipartDecoder implements DecoderInterface
     public const FORMAT = 'multipart';
 
     public function __construct(
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
     ) {
     }
 

@@ -15,7 +15,7 @@ final readonly class CalculateRedemptionQuery
     public function __construct(
         public string $customerId,
         public string $tenantId,
-        public int $pointsToRedeem
+        public int $pointsToRedeem,
     ) {
     }
 }

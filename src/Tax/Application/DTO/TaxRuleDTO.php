@@ -29,7 +29,7 @@ final readonly class TaxRuleDTO
         public ?string $validTo,
         public bool $isReverseCharge,
         public string $createdAt,
-        public string $updatedAt
+        public string $updatedAt,
     ) {
     }
 

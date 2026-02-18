@@ -30,7 +30,7 @@ final readonly class OrderDelivered
         public \DateTimeImmutable $deliveryDate,
         public string $deliveryMethod,
         public string $customerEmail,
-        public \DateTimeImmutable $occurredOn
+        public \DateTimeImmutable $occurredOn,
     ) {
     }
 }

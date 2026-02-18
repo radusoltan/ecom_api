@@ -14,7 +14,7 @@ final readonly class ActivateFlashSaleMessageHandler
 {
     public function __construct(
         private FlashSaleRepositoryInterface $flashSaleRepository,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

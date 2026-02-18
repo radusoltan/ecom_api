@@ -33,7 +33,7 @@ final class MetricsCollector
 
     public function __construct(
         #[Autowire('%env(APP_ENV)%')]
-        private readonly string $environment
+        private readonly string $environment,
     ) {
         $this->initializeMetrics();
     }

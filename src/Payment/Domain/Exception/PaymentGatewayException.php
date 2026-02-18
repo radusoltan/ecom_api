@@ -22,20 +22,20 @@ use Exception;
  * - rate_limit: Too many requests to gateway
  * - gateway_timeout: Gateway request timed out
  */
-class PaymentGatewayException extends Exception
+class PaymentGatewayException extends \Exception
 {
     public function __construct(
         string $message,
         public readonly string $gatewayErrorCode,
         public readonly ?string $gatewayErrorMessage = null,
         public readonly ?string $declineCode = null,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ) {
         parent::__construct($message, 0, $previous);
     }
 
     /**
-     * Get the gateway-specific error code
+     * Get the gateway-specific error code.
      */
     public function getGatewayErrorCode(): string
     {
@@ -43,7 +43,7 @@ class PaymentGatewayException extends Exception
     }
 
     /**
-     * Get the raw gateway error message
+     * Get the raw gateway error message.
      */
     public function getGatewayErrorMessage(): ?string
     {
@@ -51,7 +51,7 @@ class PaymentGatewayException extends Exception
     }
 
     /**
-     * Get the decline code if card was declined
+     * Get the decline code if card was declined.
      */
     public function getDeclineCode(): ?string
     {
@@ -59,7 +59,7 @@ class PaymentGatewayException extends Exception
     }
 
     /**
-     * Check if this is a temporary error that can be retried
+     * Check if this is a temporary error that can be retried.
      */
     public function isRetryable(): bool
     {
@@ -72,7 +72,7 @@ class PaymentGatewayException extends Exception
     }
 
     /**
-     * Check if customer action is required (e.g., update payment method)
+     * Check if customer action is required (e.g., update payment method).
      */
     public function requiresCustomerAction(): bool
     {
@@ -86,7 +86,7 @@ class PaymentGatewayException extends Exception
     }
 
     /**
-     * Get user-friendly error message for display
+     * Get user-friendly error message for display.
      */
     public function getUserMessage(): string
     {

@@ -14,7 +14,7 @@ final readonly class WishlistItem
 {
     private function __construct(
         private ProductId $productId,
-        private \DateTimeImmutable $addedAt
+        private \DateTimeImmutable $addedAt,
     ) {
     }
 
@@ -25,7 +25,7 @@ final readonly class WishlistItem
 
     public static function reconstitute(
         ProductId $productId,
-        \DateTimeImmutable $addedAt
+        \DateTimeImmutable $addedAt,
     ): self {
         return new self($productId, $addedAt);
     }

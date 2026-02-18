@@ -26,7 +26,7 @@ final readonly class StockDepletedSubscriber implements EventSubscriberInterface
         private LoggerInterface $logger,
         private string $alertEmail = 'inventory@ecommerce.local',
         private string $senderEmail = 'alerts@ecommerce.local',
-        private string $senderName = 'Inventory Alert System'
+        private string $senderName = 'Inventory Alert System',
     ) {
     }
 

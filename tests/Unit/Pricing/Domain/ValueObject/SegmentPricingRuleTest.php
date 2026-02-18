@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 final class SegmentPricingRuleTest extends TestCase
 {
-    public function test_it_creates_segment_pricing_rule(): void
+    public function testItCreatesSegmentPricingRule(): void
     {
         $segment = CustomerSegment::vip();
         $discount = Discount::percentage(15.0);
@@ -23,7 +23,7 @@ final class SegmentPricingRuleTest extends TestCase
         $this->assertSame(200, $rule->priority());
     }
 
-    public function test_it_creates_with_default_priority(): void
+    public function testItCreatesWithDefaultPriority(): void
     {
         $segment = CustomerSegment::wholesale();
         $discount = Discount::percentage(20.0);
@@ -33,7 +33,7 @@ final class SegmentPricingRuleTest extends TestCase
         $this->assertSame(100, $rule->priority());
     }
 
-    public function test_it_throws_exception_for_invalid_priority_too_low(): void
+    public function testItThrowsExceptionForInvalidPriorityTooLow(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Priority must be between 0 and 1000, got -1');
@@ -45,7 +45,7 @@ final class SegmentPricingRuleTest extends TestCase
         );
     }
 
-    public function test_it_throws_exception_for_invalid_priority_too_high(): void
+    public function testItThrowsExceptionForInvalidPriorityTooHigh(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Priority must be between 0 and 1000, got 1001');
@@ -57,7 +57,7 @@ final class SegmentPricingRuleTest extends TestCase
         );
     }
 
-    public function test_it_converts_to_and_from_array(): void
+    public function testItConvertsToAndFromArray(): void
     {
         $rule = SegmentPricingRule::create(
             CustomerSegment::vip(),
@@ -77,7 +77,7 @@ final class SegmentPricingRuleTest extends TestCase
         $this->assertTrue($rule->equals($reconstructed));
     }
 
-    public function test_it_applies_to_matching_segment(): void
+    public function testItAppliesToMatchingSegment(): void
     {
         $rule = SegmentPricingRule::create(
             CustomerSegment::vip(),
@@ -89,7 +89,7 @@ final class SegmentPricingRuleTest extends TestCase
         $this->assertFalse($rule->appliesTo(CustomerSegment::wholesale()));
     }
 
-    public function test_it_checks_equality(): void
+    public function testItChecksEquality(): void
     {
         $rule1 = SegmentPricingRule::create(
             CustomerSegment::vip(),
@@ -113,7 +113,7 @@ final class SegmentPricingRuleTest extends TestCase
         $this->assertFalse($rule1->equals($rule3));
     }
 
-    public function test_it_works_with_fixed_amount_discount(): void
+    public function testItWorksWithFixedAmountDiscount(): void
     {
         $rule = SegmentPricingRule::create(
             CustomerSegment::wholesale(),

@@ -7,7 +7,7 @@ namespace App\Order\Application\Query;
 final readonly class GetAllOrdersQuery
 {
     public function __construct(
-        public string $tenantId
+        public string $tenantId,
     ) {
     }
 }

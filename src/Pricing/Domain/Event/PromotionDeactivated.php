@@ -13,7 +13,7 @@ final readonly class PromotionDeactivated implements DomainEvent
     public function __construct(
         private PromotionId $promotionId,
         private TenantId $tenantId,
-        private \DateTimeImmutable $occurredAt
+        private \DateTimeImmutable $occurredAt,
     ) {
     }
 

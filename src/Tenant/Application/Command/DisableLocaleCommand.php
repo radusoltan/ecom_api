@@ -8,7 +8,7 @@ final readonly class DisableLocaleCommand
 {
     public function __construct(
         public string $tenantId,
-        public string $localeCode
+        public string $localeCode,
     ) {
     }
 }

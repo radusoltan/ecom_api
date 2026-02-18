@@ -13,7 +13,7 @@ final readonly class RejectReturnRequest
 {
     public function __construct(
         public string $returnRequestId,
-        public string $rejectionReason
+        public string $rejectionReason,
     ) {
     }
 }

@@ -9,7 +9,7 @@ use App\Privacy\Domain\ValueObject\DataSubjectRequestId;
 final readonly class ExtendRequestDeadlineCommand
 {
     public function __construct(
-        public DataSubjectRequestId $requestId
+        public DataSubjectRequestId $requestId,
     ) {
     }
 }

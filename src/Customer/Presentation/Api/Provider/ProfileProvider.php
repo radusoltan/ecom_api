@@ -29,7 +29,7 @@ final readonly class ProfileProvider implements ProviderInterface
     public function __construct(
         private MessageBusInterface $queryBus,
         private Security $security,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

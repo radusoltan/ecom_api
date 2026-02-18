@@ -21,7 +21,7 @@ final readonly class PaymentDTO
         public ?string $errorMessage,
         public int $refundedAmountInCents,
         public \DateTimeImmutable $createdAt,
-        public \DateTimeImmutable $updatedAt
+        public \DateTimeImmutable $updatedAt,
     ) {
     }
 

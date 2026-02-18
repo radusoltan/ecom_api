@@ -17,7 +17,7 @@ final readonly class ImportCustomersCommand
         public TenantId $tenantId,
         public string $format,
         public string $content,
-        public bool $updateExisting = false
+        public bool $updateExisting = false,
     ) {
         if (!in_array($format, ['csv', 'json'], true)) {
             throw new \InvalidArgumentException('Format must be either "csv" or "json"');

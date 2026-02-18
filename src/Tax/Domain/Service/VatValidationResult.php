@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tax\Domain\Service;
 
 use App\Tax\Domain\ValueObject\VatNumber;
-use DateTimeImmutable;
 
 /**
  * VAT Validation Result DTO.
@@ -22,22 +21,22 @@ use DateTimeImmutable;
 final readonly class VatValidationResult
 {
     /**
-     * @param VatNumber $vatNumber VAT number that was validated
-     * @param bool $valid True if VAT number is valid
-     * @param string|null $businessName Registered business name (from VIES)
-     * @param string|null $businessAddress Registered business address (from VIES)
-     * @param DateTimeImmutable $validatedAt When validation was performed
-     * @param string|null $requestId VIES request identifier for audit
-     * @param string|null $errorMessage Error message if validation failed
+     * @param VatNumber          $vatNumber       VAT number that was validated
+     * @param bool               $valid           True if VAT number is valid
+     * @param string|null        $businessName    Registered business name (from VIES)
+     * @param string|null        $businessAddress Registered business address (from VIES)
+     * @param \DateTimeImmutable $validatedAt     When validation was performed
+     * @param string|null        $requestId       VIES request identifier for audit
+     * @param string|null        $errorMessage    Error message if validation failed
      */
     private function __construct(
         public VatNumber $vatNumber,
         public bool $valid,
         public ?string $businessName,
         public ?string $businessAddress,
-        public DateTimeImmutable $validatedAt,
+        public \DateTimeImmutable $validatedAt,
         public ?string $requestId,
-        public ?string $errorMessage
+        public ?string $errorMessage,
     ) {
     }
 
@@ -48,14 +47,14 @@ final readonly class VatValidationResult
         VatNumber $vatNumber,
         ?string $businessName,
         ?string $businessAddress,
-        ?string $requestId = null
+        ?string $requestId = null,
     ): self {
         return new self(
             vatNumber: $vatNumber,
             valid: true,
             businessName: $businessName,
             businessAddress: $businessAddress,
-            validatedAt: new DateTimeImmutable(),
+            validatedAt: new \DateTimeImmutable(),
             requestId: $requestId,
             errorMessage: null
         );
@@ -67,14 +66,14 @@ final readonly class VatValidationResult
     public static function invalid(
         VatNumber $vatNumber,
         string $errorMessage,
-        ?string $requestId = null
+        ?string $requestId = null,
     ): self {
         return new self(
             vatNumber: $vatNumber,
             valid: false,
             businessName: null,
             businessAddress: null,
-            validatedAt: new DateTimeImmutable(),
+            validatedAt: new \DateTimeImmutable(),
             requestId: $requestId,
             errorMessage: $errorMessage
         );
@@ -88,14 +87,14 @@ final readonly class VatValidationResult
      */
     public static function serviceUnavailable(
         VatNumber $vatNumber,
-        string $errorMessage
+        string $errorMessage,
     ): self {
         return new self(
             vatNumber: $vatNumber,
             valid: false,
             businessName: null,
             businessAddress: null,
-            validatedAt: new DateTimeImmutable(),
+            validatedAt: new \DateTimeImmutable(),
             requestId: null,
             errorMessage: $errorMessage
         );
@@ -108,12 +107,12 @@ final readonly class VatValidationResult
 
     public function hasBusinessDetails(): bool
     {
-        return $this->businessName !== null;
+        return null !== $this->businessName;
     }
 
     public function hasError(): bool
     {
-        return $this->errorMessage !== null;
+        return null !== $this->errorMessage;
     }
 
     /**
@@ -121,7 +120,7 @@ final readonly class VatValidationResult
      */
     public function getAge(): int
     {
-        $now = new DateTimeImmutable();
+        $now = new \DateTimeImmutable();
 
         return $now->getTimestamp() - $this->validatedAt->getTimestamp();
     }

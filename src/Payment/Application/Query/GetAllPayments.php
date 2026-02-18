@@ -9,7 +9,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class GetAllPayments
 {
     public function __construct(
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

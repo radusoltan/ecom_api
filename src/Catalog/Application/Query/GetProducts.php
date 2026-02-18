@@ -11,7 +11,7 @@ final readonly class GetProducts
     public function __construct(
         public TenantId $tenantId,
         public int $limit = 100,
-        public int $offset = 0
+        public int $offset = 0,
     ) {
     }
 }

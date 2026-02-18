@@ -31,7 +31,7 @@ final readonly class ProductStatus
     ];
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!in_array($value, self::VALID_STATUSES, true)) {
             throw new \InvalidArgumentException(sprintf('Invalid product status "%s". Valid statuses are: %s', $value, implode(', ', self::VALID_STATUSES)));

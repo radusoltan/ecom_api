@@ -14,7 +14,7 @@ final readonly class DownloadableFileAttached implements DomainEvent
         private ProductId $productId,
         private TenantId $tenantId,
         private string $filename,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

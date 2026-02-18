@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 /**
  * OrderRateLimitListener.
@@ -29,8 +29,8 @@ use Symfony\Component\RateLimiter\RateLimiterFactory;
 final readonly class OrderRateLimitListener
 {
     public function __construct(
-        private RateLimiterFactory $ordersPlaceLimiter,
-        private LoggerInterface $logger
+        private RateLimiterFactoryInterface $ordersPlaceLimiter,
+        private LoggerInterface $logger,
     ) {
     }
 

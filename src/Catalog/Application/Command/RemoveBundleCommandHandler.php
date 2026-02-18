@@ -14,7 +14,7 @@ use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 final readonly class RemoveBundleCommandHandler
 {
     public function __construct(
-        private ProductRepositoryInterface $productRepository
+        private ProductRepositoryInterface $productRepository,
     ) {
     }
 
@@ -23,10 +23,8 @@ final readonly class RemoveBundleCommandHandler
         // Load the bundle product
         $product = $this->productRepository->findById($command->bundleProductId);
 
-        if ($product === null) {
-            throw new \DomainException(
-                sprintf('Product with ID "%s" not found', $command->bundleProductId->toString())
-            );
+        if (null === $product) {
+            throw new \DomainException(sprintf('Product with ID "%s" not found', $command->bundleProductId->toString()));
         }
 
         // Remove bundle

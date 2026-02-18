@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Payment schema migration
+ * Payment schema migration.
  *
  * Creates three tables for payment processing:
  * - payments: Main payment records with gateway integration
@@ -37,6 +37,7 @@ final class Version20251128200000_CreatePaymentTables extends AbstractMigration
         // Main payment records linked to orders
         // Supports: authorization, capture, cancellation flows
         // Payment methods: card, paypal, bank_transfer, etc.
+        $this->addSql('DROP TABLE IF EXISTS payments CASCADE');
         $this->addSql('
             CREATE TABLE payments (
                 id UUID PRIMARY KEY,

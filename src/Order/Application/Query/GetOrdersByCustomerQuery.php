@@ -8,7 +8,7 @@ final readonly class GetOrdersByCustomerQuery
 {
     public function __construct(
         public string $customerEmail,
-        public string $tenantId
+        public string $tenantId,
     ) {
     }
 }

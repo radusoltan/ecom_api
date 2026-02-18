@@ -17,7 +17,7 @@ final readonly class Locale implements \Stringable
 
     private function __construct(
         private string $language,
-        private string $country
+        private string $country,
     ) {
         $this->validate();
     }

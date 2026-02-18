@@ -24,7 +24,7 @@ final readonly class BundleCreated implements DomainEvent
         private TenantId $tenantId,
         private array $items,
         private float $discountPercentage,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

@@ -14,7 +14,7 @@ final readonly class InspectReturnRequest
     public function __construct(
         public string $returnRequestId,
         public bool $isResellable,
-        public string $inspectionNotes
+        public string $inspectionNotes,
     ) {
     }
 }

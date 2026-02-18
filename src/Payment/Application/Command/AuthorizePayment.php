@@ -11,7 +11,7 @@ final readonly class AuthorizePayment
 {
     public function __construct(
         public PaymentId $id,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

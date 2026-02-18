@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class ReviewDataSubjectRequestCommandHandler
 {
     public function __construct(
-        private DataSubjectRequestRepositoryInterface $requestRepository
+        private DataSubjectRequestRepositoryInterface $requestRepository,
     ) {
     }
 

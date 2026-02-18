@@ -21,7 +21,7 @@ final readonly class GetVariantsByProduct
         public array $filters = [],
         public ?bool $activeOnly = null,
         public int $page = 1,
-        public int $limit = 50
+        public int $limit = 50,
     ) {
     }
 }

@@ -7,6 +7,7 @@ namespace App\Pricing\Infrastructure\Security;
 use App\Pricing\Domain\Model\Promotion;
 use App\Shared\Infrastructure\Security\Voter\AbstractResourceVoter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 
 /**
  * Voter for Promotion resource permissions.
@@ -44,7 +45,7 @@ final class PromotionVoter extends AbstractResourceVoter
         ];
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         // Require authentication
         if (!$this->isAuthenticated($token)) {

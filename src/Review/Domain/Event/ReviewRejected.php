@@ -12,7 +12,7 @@ final readonly class ReviewRejected implements DomainEvent
     public function __construct(
         public ReviewId $reviewId,
         public string $reason,
-        public \DateTimeImmutable $occurredAt
+        public \DateTimeImmutable $occurredAt,
     ) {
     }
 

@@ -9,7 +9,7 @@ use App\Review\Domain\Model\ReviewId;
 final readonly class ApproveReview
 {
     public function __construct(
-        public ReviewId $reviewId
+        public ReviewId $reviewId,
     ) {
     }
 }

@@ -24,7 +24,7 @@ final readonly class ReturnRequestCreated
         public TenantId $tenantId,
         public string $orderId,
         public string $reason,
-        public \DateTimeImmutable $occurredOn
+        public \DateTimeImmutable $occurredOn,
     ) {
     }
 
@@ -32,7 +32,7 @@ final readonly class ReturnRequestCreated
         ReturnRequestId $returnRequestId,
         TenantId $tenantId,
         string $orderId,
-        string $reason
+        string $reason,
     ): self {
         return new self(
             $returnRequestId,

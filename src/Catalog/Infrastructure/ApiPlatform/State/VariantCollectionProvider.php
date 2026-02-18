@@ -21,7 +21,7 @@ final readonly class VariantCollectionProvider implements ProviderInterface
 {
     public function __construct(
         private MessageBusInterface $queryBus,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 
@@ -31,8 +31,8 @@ final readonly class VariantCollectionProvider implements ProviderInterface
     public function provide(
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
-    ): array|null {
+        array $context = [],
+    ): ?array {
         // Get tenant ID from request header
         $request = $this->requestStack->getCurrentRequest();
         $tenantIdString = $request?->headers->get('X-Tenant-ID');

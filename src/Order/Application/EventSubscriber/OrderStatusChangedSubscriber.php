@@ -35,7 +35,7 @@ final readonly class OrderStatusChangedSubscriber implements EventSubscriberInte
         private NotificationPreferenceService $notificationPreferenceService,
         private string $senderEmail = 'orders@ecommerce.local',
         private string $senderName = 'E-Commerce Platform',
-        private string $defaultLocale = 'en'
+        private string $defaultLocale = 'en',
     ) {
     }
 

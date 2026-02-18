@@ -16,7 +16,7 @@ final readonly class DoctrineORMOrderRepository implements OrderRepositoryInterf
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 

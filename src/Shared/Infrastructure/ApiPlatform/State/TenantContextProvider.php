@@ -21,7 +21,7 @@ final readonly class TenantContextProvider implements ProviderInterface
 {
     public function __construct(
         private ProviderInterface $decorated,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

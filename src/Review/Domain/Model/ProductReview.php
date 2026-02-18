@@ -43,7 +43,7 @@ final class ProductReview extends AggregateRoot
         private ReviewStatus $status,
         private bool $isVerifiedPurchase,
         private \DateTimeImmutable $createdAt,
-        private \DateTimeImmutable $updatedAt
+        private \DateTimeImmutable $updatedAt,
     ) {
         $this->validateReview();
     }
@@ -60,7 +60,7 @@ final class ProductReview extends AggregateRoot
         Rating $rating,
         ?string $title = null,
         ?string $content = null,
-        bool $isVerifiedPurchase = false
+        bool $isVerifiedPurchase = false,
     ): self {
         $review = new self(
             id: $id,
@@ -105,7 +105,7 @@ final class ProductReview extends AggregateRoot
         ReviewStatus $status,
         bool $isVerifiedPurchase,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             $id,
@@ -255,7 +255,7 @@ final class ProductReview extends AggregateRoot
 final readonly class ReviewId
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (empty($value)) {
             throw new \InvalidArgumentException('Review ID cannot be empty');

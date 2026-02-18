@@ -44,7 +44,7 @@ class PasswordResetTokenEntity
         string $token,
         \DateTimeImmutable $expiresAt,
         \DateTimeImmutable $createdAt,
-        ?\DateTimeImmutable $usedAt = null
+        ?\DateTimeImmutable $usedAt = null,
     ) {
         $this->id = $id;
         $this->userId = $userId;

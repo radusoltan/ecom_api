@@ -13,7 +13,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetCartHandler
 {
     public function __construct(
-        private CartRepositoryInterface $cartRepository
+        private CartRepositoryInterface $cartRepository,
     ) {
     }
 

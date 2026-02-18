@@ -17,7 +17,7 @@ final readonly class SearchProductsQueryHandler
         private Client $client,
         private IndexManager $indexManager,
         private SearchBoostingService $boostingService,
-        private SearchQueryLogger $searchLogger
+        private SearchQueryLogger $searchLogger,
     ) {
     }
 

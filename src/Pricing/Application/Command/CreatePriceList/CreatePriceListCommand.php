@@ -19,7 +19,7 @@ final readonly class CreatePriceListCommand
         public PriceListName $name,
         public int $priority = 100,
         public ?\DateTimeImmutable $validFrom = null,
-        public ?\DateTimeImmutable $validTo = null
+        public ?\DateTimeImmutable $validTo = null,
     ) {
     }
 }

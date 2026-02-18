@@ -13,7 +13,7 @@ final readonly class GetCustomerLoyaltyStatusQuery
 {
     public function __construct(
         public string $customerId,
-        public string $tenantId
+        public string $tenantId,
     ) {
     }
 }

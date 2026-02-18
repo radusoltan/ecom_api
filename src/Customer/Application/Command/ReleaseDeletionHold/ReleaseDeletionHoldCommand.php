@@ -11,7 +11,7 @@ final readonly class ReleaseDeletionHoldCommand
 {
     public function __construct(
         public DeletionRequestId $requestId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

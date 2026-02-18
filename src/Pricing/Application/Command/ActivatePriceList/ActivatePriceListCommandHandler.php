@@ -15,7 +15,7 @@ final readonly class ActivatePriceListCommandHandler
     public function __construct(
         private PriceListRepositoryInterface $priceListRepository,
         private PerformanceProfiler $profiler,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

@@ -13,7 +13,7 @@ final readonly class PaymentRefunded
         public PaymentId $paymentId,
         public TenantId $tenantId,
         public int $refundedAmountInCents,
-        public string $reason
+        public string $reason,
     ) {
     }
 }

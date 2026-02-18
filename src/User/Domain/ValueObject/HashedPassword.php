@@ -7,7 +7,7 @@ namespace App\User\Domain\ValueObject;
 final readonly class HashedPassword implements \Stringable
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if ('' === trim($value) || '0' === trim($value)) {
             throw new \InvalidArgumentException('Hashed password cannot be empty');

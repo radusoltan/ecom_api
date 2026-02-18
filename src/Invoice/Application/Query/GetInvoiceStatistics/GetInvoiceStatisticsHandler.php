@@ -33,7 +33,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetInvoiceStatisticsHandler
 {
     public function __construct(
-        private InvoiceRepositoryInterface $repository
+        private InvoiceRepositoryInterface $repository,
     ) {
     }
 

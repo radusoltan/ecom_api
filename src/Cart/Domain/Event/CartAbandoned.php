@@ -27,7 +27,7 @@ final readonly class CartAbandoned
         public string $customerEmail,
         public Money $cartTotal,
         public int $itemCount,
-        public \DateTimeImmutable $abandonedAt
+        public \DateTimeImmutable $abandonedAt,
     ) {
     }
 }

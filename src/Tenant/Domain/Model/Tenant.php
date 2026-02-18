@@ -40,7 +40,7 @@ final class Tenant extends AggregateRoot
         private ?LanguageCode $defaultLocale = null,
         ?array $enabledLocales = null,
         private int $translationQuota = self::DEFAULT_TRANSLATION_QUOTA,
-        private int $translationUsage = 0
+        private int $translationUsage = 0,
     ) {
         $this->defaultLocale = $defaultLocale ?? LanguageCode::en();
         $this->enabledLocales = $enabledLocales ?? [LanguageCode::en()];
@@ -69,7 +69,7 @@ final class Tenant extends AggregateRoot
         ?LanguageCode $defaultLocale = null,
         ?array $enabledLocales = null,
         int $translationQuota = self::DEFAULT_TRANSLATION_QUOTA,
-        int $translationUsage = 0
+        int $translationUsage = 0,
     ): self {
         $instance = new self(
             $id,

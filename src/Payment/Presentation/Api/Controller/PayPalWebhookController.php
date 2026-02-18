@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 final class PayPalWebhookController extends AbstractController
 {
     public function __construct(
-        private readonly PayPalWebhookHandler $webhookHandler
+        private readonly PayPalWebhookHandler $webhookHandler,
     ) {
     }
 

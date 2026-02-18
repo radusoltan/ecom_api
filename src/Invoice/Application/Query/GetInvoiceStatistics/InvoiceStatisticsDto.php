@@ -51,7 +51,7 @@ final readonly class InvoiceStatisticsDto
         public int $totalRevenueAmount,      // Sum of paid invoices (minor units)
         public string $totalRevenueCurrency,
         public int $outstandingAmount,       // Sum of issued invoices (minor units)
-        public string $outstandingCurrency
+        public string $outstandingCurrency,
     ) {
     }
 }

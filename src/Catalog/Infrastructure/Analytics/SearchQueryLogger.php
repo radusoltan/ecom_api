@@ -22,14 +22,14 @@ use Psr\Log\LoggerInterface;
 final readonly class SearchQueryLogger
 {
     public function __construct(
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
     public function logSearch(
         SearchProductsQuery $query,
         SearchProductsResult $result,
-        int $responseTimeMs
+        int $responseTimeMs,
     ): SearchQuery {
         $searchQuery = SearchQuery::create(
             id: SearchQueryId::generate(),
@@ -104,7 +104,7 @@ final readonly class SearchQueryLogger
         string $locale,
         string $query,
         int $suggestionsCount,
-        int $responseTimeMs
+        int $responseTimeMs,
     ): void {
         $this->logger->info('Autocomplete query executed', [
             'tenant_id' => $tenantId,

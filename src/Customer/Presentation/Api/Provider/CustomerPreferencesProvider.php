@@ -25,7 +25,7 @@ final class CustomerPreferencesProvider implements ProviderInterface
 
     public function __construct(
         MessageBusInterface $messageBus,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
     ) {
         $this->messageBus = $messageBus;
     }

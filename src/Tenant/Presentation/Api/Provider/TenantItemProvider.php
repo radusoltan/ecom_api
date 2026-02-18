@@ -19,14 +19,14 @@ use Symfony\Component\Messenger\Stamp\StampInterface;
 final readonly class TenantItemProvider implements ProviderInterface
 {
     public function __construct(
-        private MessageBusInterface $queryBus
+        private MessageBusInterface $queryBus,
     ) {
     }
 
     public function provide(
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
+        array $context = [],
     ): ?TenantResource {
         $tenantId = $uriVariables['id'] ?? null;
 

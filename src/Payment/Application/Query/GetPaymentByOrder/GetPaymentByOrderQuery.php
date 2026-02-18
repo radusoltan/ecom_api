@@ -14,7 +14,7 @@ namespace App\Payment\Application\Query\GetPaymentByOrder;
 final readonly class GetPaymentByOrderQuery
 {
     public function __construct(
-        public string $orderId
+        public string $orderId,
     ) {
     }
 }

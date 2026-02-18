@@ -17,7 +17,7 @@ final readonly class CustomerConsentsDTO
         public bool $marketingSms,
         public bool $thirdPartySharing,
         public bool $analyticsTracking,
-        public \DateTimeImmutable $lastUpdatedAt
+        public \DateTimeImmutable $lastUpdatedAt,
     ) {
     }
 }

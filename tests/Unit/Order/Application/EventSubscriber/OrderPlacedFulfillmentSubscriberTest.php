@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Application\EventSubscriber;
 
+use App\Catalog\Domain\Model\ProductId;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Order\Application\Command\StartFulfillment;
 use App\Order\Application\EventSubscriber\OrderPlacedFulfillmentSubscriber;
@@ -14,7 +15,6 @@ use App\Order\Domain\Model\OrderLine;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
 use App\Order\Domain\Service\WarehouseRoutingService;
 use App\Order\Domain\ValueObject\FulfillmentId;
-use App\Catalog\Domain\Model\ProductId;
 use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
@@ -316,7 +316,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
     }
 
     /**
-     * Helper to create a test Order
+     * Helper to create a test Order.
      */
     private function createOrder(OrderId $orderId, TenantId $tenantId): Order
     {
@@ -345,7 +345,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
     }
 
     /**
-     * Helper to create a test Order with multiple lines
+     * Helper to create a test Order with multiple lines.
      */
     private function createOrderWithMultipleLines(OrderId $orderId, TenantId $tenantId, int $lineCount): Order
     {
@@ -357,7 +357,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
         );
 
         $lines = [];
-        for ($i = 0; $i < $lineCount; $i++) {
+        for ($i = 0; $i < $lineCount; ++$i) {
             $lines[] = OrderLine::create(
                 productId: ProductId::generate(),
                 productName: sprintf('Test Product %d', $i + 1),

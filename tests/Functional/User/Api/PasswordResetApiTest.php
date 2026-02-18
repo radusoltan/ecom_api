@@ -127,8 +127,8 @@ final class PasswordResetApiTest extends ApiTestCase
         ]);
 
         // Ensure registration succeeded
-        if ($client->getResponse()->getStatusCode() !== 201) {
-            throw new \RuntimeException('Failed to create test user: ' . $client->getResponse()->getContent(false));
+        if (201 !== $client->getResponse()->getStatusCode()) {
+            throw new \RuntimeException('Failed to create test user: '.$client->getResponse()->getContent(false));
         }
 
         return [
@@ -218,7 +218,7 @@ final class PasswordResetApiTest extends ApiTestCase
         $client = static::createClient();
 
         // Request password reset for NON-EXISTENT email
-        $nonExistentEmail = 'nonexistent-' . uniqid() . '@example.com';
+        $nonExistentEmail = 'nonexistent-'.uniqid().'@example.com';
 
         $response = $client->request('POST', '/api/v1/auth/password/reset-request', [
             'headers' => $this->headers(),
@@ -271,7 +271,7 @@ final class PasswordResetApiTest extends ApiTestCase
         $resetToken = $this->extractResetTokenFromDatabase($userData['email']);
 
         // If token extraction is not yet implemented, generate a mock token for testing
-        if ($resetToken === null) {
+        if (null === $resetToken) {
             // For now, we'll use a mock token that the implementation should accept
             $resetToken = bin2hex(random_bytes(32)); // 64-char hex token
         }
@@ -356,7 +356,7 @@ final class PasswordResetApiTest extends ApiTestCase
         }
 
         // Manually create an expired token in the database
-        $tokenId = \Symfony\Component\Uid\Uuid::v7()->toString();
+        $tokenId = Uuid::v7()->toString();
         $expiredToken = bin2hex(random_bytes(32));
         $expiredAt = new \DateTimeImmutable('-2 hours'); // Expired 2 hours ago
 
@@ -428,7 +428,7 @@ final class PasswordResetApiTest extends ApiTestCase
         // Extract reset token
         $resetToken = $this->extractResetTokenFromDatabase($userData['email']);
 
-        if ($resetToken === null) {
+        if (null === $resetToken) {
             $resetToken = bin2hex(random_bytes(32));
         }
 
@@ -499,7 +499,7 @@ final class PasswordResetApiTest extends ApiTestCase
         // Extract reset token
         $resetToken = $this->extractResetTokenFromDatabase($userData['email']);
 
-        if ($resetToken === null) {
+        if (null === $resetToken) {
             $resetToken = bin2hex(random_bytes(32));
         }
 
@@ -567,7 +567,7 @@ final class PasswordResetApiTest extends ApiTestCase
         $response = json_decode($client->getResponse()->getContent(false), true);
         $this->assertIsArray($response);
         $this->assertTrue(
-            isset($response['@type']) && $response['@type'] === 'Error',
+            isset($response['@type']) && 'Error' === $response['@type'],
             'Response should be an API Platform Error resource'
         );
     }
@@ -596,7 +596,7 @@ final class PasswordResetApiTest extends ApiTestCase
         $response = json_decode($client->getResponse()->getContent(false), true);
         $this->assertIsArray($response);
         $this->assertTrue(
-            isset($response['@type']) && $response['@type'] === 'Error',
+            isset($response['@type']) && 'Error' === $response['@type'],
             'Response should be an API Platform Error resource'
         );
     }

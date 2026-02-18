@@ -22,7 +22,7 @@ final readonly class CustomerConsentChanged
         private ConsentType $consentType,
         private bool $granted,
         private ?string $ipAddress,
-        private \DateTimeImmutable $occurredAt
+        private \DateTimeImmutable $occurredAt,
     ) {
     }
 

@@ -16,7 +16,7 @@ use Symfony\Component\Messenger\Stamp\HandledStamp;
 final readonly class PaymentItemProvider implements ProviderInterface
 {
     public function __construct(
-        private MessageBusInterface $queryBus
+        private MessageBusInterface $queryBus,
     ) {
     }
 

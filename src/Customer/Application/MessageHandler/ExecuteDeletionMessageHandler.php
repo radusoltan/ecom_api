@@ -31,7 +31,7 @@ final readonly class ExecuteDeletionMessageHandler
         private CustomerRepositoryInterface $customerRepository,
         private CustomerAnonymizationService $anonymizationService,
         private EntityManagerInterface $entityManager,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -46,6 +46,7 @@ final readonly class ExecuteDeletionMessageHandler
             $this->logger->warning('Deletion request not found', [
                 'requestId' => $message->requestId->toString(),
             ]);
+
             return;
         }
 
@@ -59,6 +60,7 @@ final readonly class ExecuteDeletionMessageHandler
                 'scheduledFor' => $request->scheduledFor()->format('Y-m-d H:i:s'),
                 'isOnHold' => $request->isOnHold(),
             ]);
+
             return;
         }
 

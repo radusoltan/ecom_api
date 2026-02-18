@@ -200,7 +200,6 @@ final class PaymentApiTest extends ApiTestCase
 
     public function testGetAllPayments(): void
     {
-
         // Arrange - Create two payments
         $orderId1 = '01JCEX'.bin2hex(random_bytes(10));
         $orderId2 = '01JCEX'.bin2hex(random_bytes(10));
@@ -441,7 +440,7 @@ final class PaymentApiTest extends ApiTestCase
     {
         // @phpstan-ignore-next-line
         $this->markTestSkipped(
-            'This test requires creating multiple tenants in the database. ' .
+            'This test requires creating multiple tenants in the database. '.
             'Multi-tenant isolation is verified by RLS policies at the database level.'
         );
 

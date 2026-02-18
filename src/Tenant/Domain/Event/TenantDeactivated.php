@@ -10,7 +10,7 @@ final readonly class TenantDeactivated
 {
     public function __construct(
         public TenantId $tenantId,
-        public \DateTimeImmutable $occurredAt = new \DateTimeImmutable()
+        public \DateTimeImmutable $occurredAt = new \DateTimeImmutable(),
     ) {
     }
 

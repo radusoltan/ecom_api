@@ -12,7 +12,7 @@ namespace App\User\Application\Command\DeleteUser;
 final readonly class DeleteUser
 {
     public function __construct(
-        public string $userId
+        public string $userId,
     ) {
     }
 }

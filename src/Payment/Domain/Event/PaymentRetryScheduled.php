@@ -23,7 +23,7 @@ final readonly class PaymentRetryScheduled
         public int $retryAttempt,
         public \DateTimeImmutable $scheduledFor,
         public string $errorCode,
-        public string $orderId
+        public string $orderId,
     ) {
     }
 }

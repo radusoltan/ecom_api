@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Invoice schema migration
+ * Invoice schema migration.
  *
  * Creates tables for the Invoice bounded context:
  * - invoices: Main invoice records with billing snapshots

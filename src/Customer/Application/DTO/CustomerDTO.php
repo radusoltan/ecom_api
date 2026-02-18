@@ -20,7 +20,7 @@ final readonly class CustomerDTO
         public int $loyaltyPoints,
         public bool $isActive,
         public string $createdAt,
-        public string $updatedAt
+        public string $updatedAt,
     ) {
     }
 

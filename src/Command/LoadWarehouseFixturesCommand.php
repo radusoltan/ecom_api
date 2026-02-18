@@ -21,7 +21,7 @@ final class LoadWarehouseFixturesCommand extends Command
 {
     public function __construct(
         private readonly ManagerRegistry $doctrine,
-        private readonly MessageBusInterface $commandBus
+        private readonly MessageBusInterface $commandBus,
     ) {
         parent::__construct();
     }

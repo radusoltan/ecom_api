@@ -19,7 +19,7 @@ final readonly class TaxRuleUpdated
         public TaxRuleId $taxRuleId,
         public TenantId $tenantId,
         public string $name,
-        public TaxRate $rate
+        public TaxRate $rate,
     ) {
     }
 }

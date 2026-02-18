@@ -10,7 +10,7 @@ namespace App\User\Application\Query\GetUser;
 final readonly class GetUser
 {
     public function __construct(
-        public string $userId
+        public string $userId,
     ) {
     }
 }

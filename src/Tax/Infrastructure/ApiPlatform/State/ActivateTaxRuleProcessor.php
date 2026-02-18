@@ -28,7 +28,7 @@ final readonly class ActivateTaxRuleProcessor implements ProcessorInterface
     public function __construct(
         private MessageBusInterface $commandBus,
         private TaxRuleRepositoryInterface $repository,
-        private TenantContextInterface $tenantContext
+        private TenantContextInterface $tenantContext,
     ) {
     }
 

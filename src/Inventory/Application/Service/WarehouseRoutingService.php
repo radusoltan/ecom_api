@@ -56,7 +56,7 @@ final readonly class WarehouseRoutingService
         ProductId $productId,
         Quantity $quantity,
         Address $shippingAddress,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): ?WarehouseId {
         // Validate quantity
         if ($quantity->value() <= 0) {
@@ -125,7 +125,7 @@ final readonly class WarehouseRoutingService
     public function getAvailableWarehouses(
         ProductId $productId,
         Quantity $quantity,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): array {
         $warehouses = $this->warehouseRepository->findActiveByTenant($tenantId);
         $availableWarehouses = [];
@@ -174,7 +174,7 @@ final readonly class WarehouseRoutingService
     public function canFulfill(
         ProductId $productId,
         Quantity $quantity,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): bool {
         $warehouses = $this->warehouseRepository->findActiveByTenant($tenantId);
 

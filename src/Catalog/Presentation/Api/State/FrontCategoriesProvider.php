@@ -22,7 +22,7 @@ final class FrontCategoriesProvider implements ProviderInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly TenantContext $tenantContext,
         private readonly RequestStack $requestStack,
-        private readonly ?CacheItemPoolInterface $cache = null
+        private readonly ?CacheItemPoolInterface $cache = null,
     ) {
     }
 

@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Sprint 6: Enable PostgreSQL Row-Level Security (RLS) for Multi-Tenancy Hardening
+ * Sprint 6: Enable PostgreSQL Row-Level Security (RLS) for Multi-Tenancy Hardening.
  *
  * This migration enables RLS on all catalog tables and creates policies that enforce
  * tenant isolation at the database level. Even if application logic fails, cross-tenant
@@ -40,8 +40,8 @@ final class Version20251203090000 extends AbstractMigration
         $this->addSql("
             CREATE POLICY p_catalog_products_rw ON catalog_products
             FOR ALL
-            USING (tenant_id = current_setting('app.tenant_id', true))
-            WITH CHECK (tenant_id = current_setting('app.tenant_id', true))
+            USING (tenant_id::text = current_setting('app.tenant_id', true))
+            WITH CHECK (tenant_id::text = current_setting('app.tenant_id', true))
         ");
 
         // Enable RLS on catalog_categories
@@ -52,8 +52,8 @@ final class Version20251203090000 extends AbstractMigration
         $this->addSql("
             CREATE POLICY p_catalog_categories_rw ON catalog_categories
             FOR ALL
-            USING (tenant_id = current_setting('app.tenant_id', true))
-            WITH CHECK (tenant_id = current_setting('app.tenant_id', true))
+            USING (tenant_id::text = current_setting('app.tenant_id', true))
+            WITH CHECK (tenant_id::text = current_setting('app.tenant_id', true))
         ");
 
         // Enable RLS on media_images
@@ -66,8 +66,8 @@ final class Version20251203090000 extends AbstractMigration
                 IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'media_images' AND policyname = 'p_media_images_rw') THEN
                     CREATE POLICY p_media_images_rw ON media_images
                     FOR ALL
-                    USING (tenant_id = current_setting('app.tenant_id', true))
-                    WITH CHECK (tenant_id = current_setting('app.tenant_id', true));
+                    USING (tenant_id::text = current_setting('app.tenant_id', true))
+                    WITH CHECK (tenant_id::text = current_setting('app.tenant_id', true));
                 END IF;
             END $$;
         ");
@@ -82,8 +82,8 @@ final class Version20251203090000 extends AbstractMigration
                 IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'media_thumbnails' AND policyname = 'p_media_thumbnails_rw') THEN
                     CREATE POLICY p_media_thumbnails_rw ON media_thumbnails
                     FOR ALL
-                    USING (tenant_id = current_setting('app.tenant_id', true))
-                    WITH CHECK (tenant_id = current_setting('app.tenant_id', true));
+                    USING (tenant_id::text = current_setting('app.tenant_id', true))
+                    WITH CHECK (tenant_id::text = current_setting('app.tenant_id', true));
                 END IF;
             END $$;
         ");

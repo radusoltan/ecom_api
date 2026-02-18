@@ -129,7 +129,7 @@ final class EuVatCalculator implements TaxCalculatorInterface
         TaxJurisdiction $buyerJurisdiction,
         TaxCategory $category,
         bool $isB2B = false,
-        ?string $buyerVatNumber = null
+        ?string $buyerVatNumber = null,
     ): TaxCalculationResult {
         // Ensure buyer jurisdiction is in EU
         if (!$this->isEu($buyerJurisdiction)) {
@@ -250,7 +250,7 @@ final class EuVatCalculator implements TaxCalculatorInterface
         TaxJurisdiction $sellerJurisdiction,
         TaxJurisdiction $buyerJurisdiction,
         bool $isB2B,
-        ?string $buyerVatNumber
+        ?string $buyerVatNumber,
     ): bool {
         // Reverse charge ONLY for B2B
         if (!$isB2B) {

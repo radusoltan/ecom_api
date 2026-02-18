@@ -31,7 +31,7 @@ final readonly class OrderPlacedSubscriber implements EventSubscriberInterface
         private NotificationPreferenceService $notificationPreferenceService,
         private string $senderEmail = 'orders@ecommerce.local',
         private string $senderName = 'E-Commerce Platform',
-        private string $defaultLocale = 'en'
+        private string $defaultLocale = 'en',
     ) {
     }
 

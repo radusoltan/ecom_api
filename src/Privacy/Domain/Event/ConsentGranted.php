@@ -15,7 +15,7 @@ final readonly class ConsentGranted implements DomainEvent
         public ConsentId $consentId,
         public CustomerId $customerId,
         public ConsentPurpose $purpose,
-        public \DateTimeImmutable $occurredOn
+        public \DateTimeImmutable $occurredOn,
     ) {
     }
 

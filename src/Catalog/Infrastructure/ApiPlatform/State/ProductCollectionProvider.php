@@ -21,7 +21,7 @@ final readonly class ProductCollectionProvider implements ProviderInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

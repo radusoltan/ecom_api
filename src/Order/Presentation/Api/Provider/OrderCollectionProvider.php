@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\Stamp\HandledStamp;
 final readonly class OrderCollectionProvider implements ProviderInterface
 {
     public function __construct(
-        private MessageBusInterface $queryBus
+        private MessageBusInterface $queryBus,
     ) {
     }
 

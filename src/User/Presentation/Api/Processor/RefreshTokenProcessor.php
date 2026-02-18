@@ -28,7 +28,7 @@ final readonly class RefreshTokenProcessor implements ProcessorInterface
         private RefreshTokenManagerInterface $refreshTokenManager,
         private JWTTokenManagerInterface $jwtManager,
         private RefreshTokenGeneratorInterface $refreshTokenGenerator,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

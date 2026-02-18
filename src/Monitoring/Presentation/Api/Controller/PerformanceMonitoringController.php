@@ -29,7 +29,7 @@ final class PerformanceMonitoringController extends AbstractController
 {
     public function __construct(
         private readonly ApplicationPerformanceMonitor $apm,
-        private readonly PerformanceProfiler $profiler
+        private readonly PerformanceProfiler $profiler,
     ) {
     }
 

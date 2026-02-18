@@ -46,16 +46,16 @@ final class ConfirmAccountDeletionCommandHandlerTest extends TestCase
         $this->repository->expects($this->once())
             ->method('findById')
             ->with(
-                $this->callback(fn($id) => $id->equals($requestId)),
-                $this->callback(fn($id) => $id->equals($tenantId))
+                $this->callback(fn ($id) => $id->equals($requestId)),
+                $this->callback(fn ($id) => $id->equals($tenantId))
             )
             ->willReturn($deletionRequest);
 
         $this->repository->expects($this->once())
             ->method('save')
             ->with($this->callback(function (DeletionRequest $request) {
-                return $request->status() === DeletionStatus::CONFIRMED
-                    && $request->confirmedAt() !== null;
+                return DeletionStatus::CONFIRMED === $request->status()
+                    && null !== $request->confirmedAt();
             }));
 
         ($this->handler)($command);

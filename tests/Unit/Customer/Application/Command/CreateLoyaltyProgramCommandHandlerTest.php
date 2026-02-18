@@ -229,6 +229,7 @@ final class CreateLoyaltyProgramCommandHandlerTest extends TestCase
             ->method('save')
             ->with(self::callback(function (LoyaltyProgram $program) use (&$savedProgram) {
                 $savedProgram = $program;
+
                 return true;
             }));
 

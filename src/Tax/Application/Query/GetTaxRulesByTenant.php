@@ -15,7 +15,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class GetTaxRulesByTenant
 {
     public function __construct(
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

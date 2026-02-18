@@ -23,7 +23,7 @@ final readonly class CreateProductProcessor implements ProcessorInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private RequestStack $requestStack,
-        private SkuGeneratorService $skuGenerator
+        private SkuGeneratorService $skuGenerator,
     ) {
     }
 

@@ -24,12 +24,10 @@ namespace App\Tax\Domain\Model;
 final readonly class TaxRate
 {
     private function __construct(
-        private float $rate
+        private float $rate,
     ) {
         if ($rate < 0 || $rate > 100) {
-            throw new \InvalidArgumentException(
-                sprintf('Tax rate must be between 0 and 100, got %s', $rate)
-            );
+            throw new \InvalidArgumentException(sprintf('Tax rate must be between 0 and 100, got %s', $rate));
         }
     }
 
@@ -65,7 +63,7 @@ final readonly class TaxRate
 
     public function isZero(): bool
     {
-        return $this->rate === 0.0;
+        return 0.0 === $this->rate;
     }
 
     public function equals(self $other): bool
@@ -75,6 +73,6 @@ final readonly class TaxRate
 
     public function toString(): string
     {
-        return number_format($this->rate, 2) . '%';
+        return number_format($this->rate, 2).'%';
     }
 }

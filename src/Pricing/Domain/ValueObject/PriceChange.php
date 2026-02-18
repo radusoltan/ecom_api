@@ -27,7 +27,7 @@ final readonly class PriceChange
         private ?Money $newPrice,
         private ?string $reason,
         private PriceChangeSource $source,
-        private \DateTimeImmutable $timestamp
+        private \DateTimeImmutable $timestamp,
     ) {
         $this->validate();
     }
@@ -38,7 +38,7 @@ final readonly class PriceChange
         ?Money $newPrice,
         ?string $reason,
         PriceChangeSource $source,
-        ?\DateTimeImmutable $timestamp = null
+        ?\DateTimeImmutable $timestamp = null,
     ): self {
         return new self(
             $productId,
@@ -54,7 +54,7 @@ final readonly class PriceChange
         ProductId $productId,
         ?Money $oldPrice,
         Money $newPrice,
-        ?string $reason = null
+        ?string $reason = null,
     ): self {
         return self::create(
             $productId,
@@ -69,7 +69,7 @@ final readonly class PriceChange
         ProductId $productId,
         Money $oldPrice,
         Money $newPrice,
-        string $promotionName
+        string $promotionName,
     ): self {
         return self::create(
             $productId,
@@ -84,7 +84,7 @@ final readonly class PriceChange
         ProductId $productId,
         Money $oldPrice,
         Money $newPrice,
-        string $flashSaleName
+        string $flashSaleName,
     ): self {
         return self::create(
             $productId,
@@ -99,7 +99,7 @@ final readonly class PriceChange
         ProductId $productId,
         ?Money $oldPrice,
         Money $newPrice,
-        string $importSource
+        string $importSource,
     ): self {
         return self::create(
             $productId,
@@ -113,7 +113,7 @@ final readonly class PriceChange
     private function validate(): void
     {
         // At least one price (old or new) must be present
-        if ($this->oldPrice === null && $this->newPrice === null) {
+        if (null === $this->oldPrice && null === $this->newPrice) {
             throw new \InvalidArgumentException('At least one price (old or new) must be specified');
         }
 
@@ -124,12 +124,12 @@ final readonly class PriceChange
         }
 
         // Reason cannot be empty string (null is OK)
-        if ($this->reason !== null && trim($this->reason) === '') {
+        if (null !== $this->reason && '' === trim($this->reason)) {
             throw new \InvalidArgumentException('Price change reason cannot be an empty string');
         }
 
         // If both prices exist, they must have the same currency
-        if ($this->oldPrice !== null && $this->newPrice !== null) {
+        if (null !== $this->oldPrice && null !== $this->newPrice) {
             if ($this->oldPrice->currency()->getCurrencyCode() !== $this->newPrice->currency()->getCurrencyCode()) {
                 throw new \InvalidArgumentException('Old and new prices must have the same currency');
             }
@@ -168,7 +168,7 @@ final readonly class PriceChange
 
     public function isPriceIncrease(): bool
     {
-        if ($this->oldPrice === null || $this->newPrice === null) {
+        if (null === $this->oldPrice || null === $this->newPrice) {
             return false;
         }
 
@@ -177,7 +177,7 @@ final readonly class PriceChange
 
     public function isPriceDecrease(): bool
     {
-        if ($this->oldPrice === null || $this->newPrice === null) {
+        if (null === $this->oldPrice || null === $this->newPrice) {
             return false;
         }
 
@@ -186,7 +186,7 @@ final readonly class PriceChange
 
     public function priceChangeDifference(): ?Money
     {
-        if ($this->oldPrice === null || $this->newPrice === null) {
+        if (null === $this->oldPrice || null === $this->newPrice) {
             return null;
         }
 
@@ -195,7 +195,7 @@ final readonly class PriceChange
 
     public function priceChangePercentage(): ?float
     {
-        if ($this->oldPrice === null || $this->newPrice === null) {
+        if (null === $this->oldPrice || null === $this->newPrice) {
             return null;
         }
 
@@ -215,8 +215,8 @@ final readonly class PriceChange
             && $this->timestamp->getTimestamp() === $other->timestamp->getTimestamp()
             && $this->source->equals($other->source)
             && $this->reason === $other->reason
-            && (($this->oldPrice === null && $other->oldPrice === null) || ($this->oldPrice?->equals($other->oldPrice) ?? false))
-            && (($this->newPrice === null && $other->newPrice === null) || ($this->newPrice?->equals($other->newPrice) ?? false));
+            && ((null === $this->oldPrice && null === $other->oldPrice) || ($this->oldPrice?->equals($other->oldPrice) ?? false))
+            && ((null === $this->newPrice && null === $other->newPrice) || ($this->newPrice?->equals($other->newPrice) ?? false));
     }
 
     /**

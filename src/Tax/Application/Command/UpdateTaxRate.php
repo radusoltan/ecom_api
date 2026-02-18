@@ -22,7 +22,7 @@ final readonly class UpdateTaxRate
     public function __construct(
         public TaxRuleId $id,
         public TenantId $tenantId,
-        public float $ratePercentage
+        public float $ratePercentage,
     ) {
     }
 }

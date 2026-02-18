@@ -65,7 +65,7 @@ final class DoctrineLoyaltyPointTransactionRepository extends ServiceEntityRepos
         CustomerId $customerId,
         TenantId $tenantId,
         int $page,
-        int $limit
+        int $limit,
     ): array {
         if ($page < 1) {
             throw new \InvalidArgumentException('Page must be greater than 0');

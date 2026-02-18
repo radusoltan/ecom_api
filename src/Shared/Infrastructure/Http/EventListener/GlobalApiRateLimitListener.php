@@ -9,7 +9,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -25,11 +25,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 final readonly class GlobalApiRateLimitListener implements EventSubscriberInterface
 {
     public function __construct(
-        private RateLimiterFactory $apiPublicLimiter,
-        private RateLimiterFactory $apiAuthenticatedLimiter,
-        private RateLimiterFactory $apiAdminLimiter,
-        private RateLimiterFactory $apiSearchLimiter,
-        private RateLimiterFactory $apiCheckoutLimiter,
+        private RateLimiterFactoryInterface $apiPublicLimiter,
+        private RateLimiterFactoryInterface $apiAuthenticatedLimiter,
+        private RateLimiterFactoryInterface $apiAdminLimiter,
+        private RateLimiterFactoryInterface $apiSearchLimiter,
+        private RateLimiterFactoryInterface $apiCheckoutLimiter,
         private ?TokenStorageInterface $tokenStorage = null,
         private ?LoggerInterface $logger = null,
     ) {
@@ -109,7 +109,7 @@ final readonly class GlobalApiRateLimitListener implements EventSubscriberInterf
     /**
      * Determine which rate limiter to use and the limiter key based on route and authentication.
      *
-     * @return array{RateLimiterFactory, string}|null
+     * @return array{RateLimiterFactoryInterface, string}|null
      */
     private function determineRateLimiter(string $path): ?array
     {

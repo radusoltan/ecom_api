@@ -27,7 +27,7 @@ final class NullMercureHub implements HubInterface
     public function __construct(
         ?TokenProviderInterface $provider = null,
         ?TokenFactoryInterface $factory = null,
-        ?string $url = null
+        ?string $url = null,
     ) {
         $this->provider = $provider ?? new StaticTokenProvider('test-mercure-token');
         $this->factory = $factory;

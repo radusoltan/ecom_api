@@ -21,7 +21,7 @@ final readonly class InvoiceIssued
         public TenantId $tenantId,
         public InvoiceNumber $invoiceNumber,
         public \DateTimeImmutable $issueDate,
-        public Money $total
+        public Money $total,
     ) {
     }
 }

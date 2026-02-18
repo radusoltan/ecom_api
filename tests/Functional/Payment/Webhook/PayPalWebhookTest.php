@@ -32,12 +32,12 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: Endpoint Exists and Accepts POST
     // =============================================
 
-    public function test_webhook_endpoint_exists_and_accepts_post(): void
+    public function testWebhookEndpointExistsAndAcceptsPost(): void
     {
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id' => 'evt_test_' . uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => ['id' => 'capture_test'],
         ];
@@ -63,12 +63,12 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: Missing Signature Header
     // =============================================
 
-    public function test_it_returns_400_when_signature_header_missing(): void
+    public function testItReturns400WhenSignatureHeaderMissing(): void
     {
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id' => 'evt_test_' . uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => ['id' => 'capture_test'],
         ];
@@ -90,12 +90,12 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: Invalid Signature
     // =============================================
 
-    public function test_it_returns_400_for_invalid_signature(): void
+    public function testItReturns400ForInvalidSignature(): void
     {
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id' => 'evt_test_' . uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => [
                 'id' => 'capture_test',
@@ -125,7 +125,7 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: Empty Payload
     // =============================================
 
-    public function test_it_handles_empty_payload_gracefully(): void
+    public function testItHandlesEmptyPayloadGracefully(): void
     {
         // Arrange
         $client = static::createClient();
@@ -151,7 +151,7 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: Malformed JSON
     // =============================================
 
-    public function test_it_handles_malformed_json_gracefully(): void
+    public function testItHandlesMalformedJsonGracefully(): void
     {
         // Arrange
         $client = static::createClient();
@@ -177,12 +177,12 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: No JWT Authentication Required
     // =============================================
 
-    public function test_webhook_does_not_require_jwt_authentication(): void
+    public function testWebhookDoesNotRequireJwtAuthentication(): void
     {
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id' => 'evt_test_' . uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => ['id' => 'capture_test'],
         ];
@@ -210,7 +210,7 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: Only POST Method Allowed
     // =============================================
 
-    public function test_it_only_accepts_post_method(): void
+    public function testItOnlyAcceptsPostMethod(): void
     {
         // Arrange
         $client = static::createClient();
@@ -240,7 +240,7 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: Various Event Types Accepted
     // =============================================
 
-    public function test_webhook_accepts_various_event_types(): void
+    public function testWebhookAcceptsVariousEventTypes(): void
     {
         // Arrange
         $client = static::createClient();
@@ -260,16 +260,16 @@ final class PayPalWebhookTest extends WebTestCase
             $client->request('POST', '/api/webhooks/paypal', [
                 'headers' => [
                     'Content-Type' => 'application/json',
-                    'paypal-transmission-sig' => 'test_signature_' . bin2hex(random_bytes(4)),
-                    'paypal-transmission-id' => 'test_id_' . uniqid(),
+                    'paypal-transmission-sig' => 'test_signature_'.bin2hex(random_bytes(4)),
+                    'paypal-transmission-id' => 'test_id_'.uniqid(),
                     'paypal-transmission-time' => '2025-01-01T00:00:00Z',
                     'paypal-cert-url' => 'https://api.paypal.com/cert',
                     'paypal-auth-algo' => 'SHA256withRSA',
                 ],
                 'json' => [
-                    'id' => 'evt_test_' . bin2hex(random_bytes(4)),
+                    'id' => 'evt_test_'.bin2hex(random_bytes(4)),
                     'event_type' => $eventType,
-                    'resource' => ['id' => 'obj_test_' . uniqid()],
+                    'resource' => ['id' => 'obj_test_'.uniqid()],
                 ],
             ]);
 
@@ -283,19 +283,19 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: Large Payload Handling
     // =============================================
 
-    public function test_webhook_handles_large_payload_gracefully(): void
+    public function testWebhookHandlesLargePayloadGracefully(): void
     {
         // Arrange
         $client = static::createClient();
 
         // Create a large but valid webhook payload
         $largeMetadata = [];
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 50; ++$i) {
             $largeMetadata["key_{$i}"] = str_repeat('x', 100);
         }
 
         $webhookPayload = [
-            'id' => 'evt_test_' . uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => [
                 'id' => 'capture_test',
@@ -326,12 +326,12 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: Response Headers
     // =============================================
 
-    public function test_webhook_response_contains_appropriate_headers(): void
+    public function testWebhookResponseContainsAppropriateHeaders(): void
     {
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id' => 'evt_test_' . uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => ['id' => 'capture_test'],
         ];
@@ -359,12 +359,12 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: Missing Required PayPal Headers
     // =============================================
 
-    public function test_it_handles_missing_paypal_headers(): void
+    public function testItHandlesMissingPaypalHeaders(): void
     {
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id' => 'evt_test_' . uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => ['id' => 'capture_test'],
         ];
@@ -390,11 +390,11 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: Duplicate Event IDs (Idempotency)
     // =============================================
 
-    public function test_it_handles_duplicate_event_ids(): void
+    public function testItHandlesDuplicateEventIds(): void
     {
         // Arrange
         $client = static::createClient();
-        $eventId = 'evt_duplicate_' . uniqid();
+        $eventId = 'evt_duplicate_'.uniqid();
 
         $webhookPayload = [
             'id' => $eventId,
@@ -406,12 +406,12 @@ final class PayPalWebhookTest extends WebTestCase
         ];
 
         // Act - Send same event twice
-        for ($i = 0; $i < 2; $i++) {
+        for ($i = 0; $i < 2; ++$i) {
             $client->request('POST', '/api/webhooks/paypal', [
                 'headers' => [
                     'Content-Type' => 'application/json',
-                    'paypal-transmission-sig' => 'test_signature_' . $i,
-                    'paypal-transmission-id' => 'test_id_' . $i,
+                    'paypal-transmission-sig' => 'test_signature_'.$i,
+                    'paypal-transmission-id' => 'test_id_'.$i,
                     'paypal-transmission-time' => '2025-01-01T00:00:00Z',
                     'paypal-cert-url' => 'https://api.paypal.com/cert',
                     'paypal-auth-algo' => 'SHA256withRSA',
@@ -428,12 +428,12 @@ final class PayPalWebhookTest extends WebTestCase
     // Test: Special Characters in Payload
     // =============================================
 
-    public function test_it_handles_special_characters_in_payload(): void
+    public function testItHandlesSpecialCharactersInPayload(): void
     {
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id' => 'evt_test_' . uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => [
                 'id' => 'capture_test',
@@ -459,7 +459,7 @@ final class PayPalWebhookTest extends WebTestCase
         $this->assertNotSame(500, $client->getResponse()->getStatusCode());
     }
 
-    /**
+    /*
      * Note: The following scenarios require valid PayPal signatures and cannot be
      * fully tested in automated tests:
      *

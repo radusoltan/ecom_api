@@ -20,7 +20,7 @@ final readonly class UpdateLoyaltyTierCommand
         public int $discountPercentage,
         public ?int $freeShippingMinOrder,
         public ?string $freeShippingCurrency,
-        public int $sortOrder
+        public int $sortOrder,
     ) {
     }
 }

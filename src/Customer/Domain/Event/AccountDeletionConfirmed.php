@@ -14,7 +14,7 @@ final readonly class AccountDeletionConfirmed
         private DeletionRequestId $requestId,
         private CustomerId $customerId,
         private TenantId $tenantId,
-        private \DateTimeImmutable $scheduledFor
+        private \DateTimeImmutable $scheduledFor,
     ) {
     }
 

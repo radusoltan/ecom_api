@@ -15,7 +15,7 @@ final readonly class ClearWishlistProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

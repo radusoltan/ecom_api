@@ -8,7 +8,6 @@ use App\Catalog\Domain\Model\ProductId;
 use App\Pricing\Domain\ValueObject\PriceChange;
 use App\Pricing\Domain\ValueObject\PriceChangeSource;
 use App\Shared\Domain\ValueObject\Money;
-use Brick\Money\Currency;
 use PHPUnit\Framework\TestCase;
 
 final class PriceChangeTest extends TestCase

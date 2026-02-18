@@ -21,7 +21,7 @@ final readonly class SearchCustomersResult
         public int $total,
         public int $page,
         public int $limit,
-        public int $totalPages
+        public int $totalPages,
     ) {
     }
 
@@ -32,7 +32,7 @@ final readonly class SearchCustomersResult
         array $items,
         int $total,
         int $page,
-        int $limit
+        int $limit,
     ): self {
         $totalPages = (int) ceil($total / $limit);
 

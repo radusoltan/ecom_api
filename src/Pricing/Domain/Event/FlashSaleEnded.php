@@ -13,7 +13,7 @@ final readonly class FlashSaleEnded implements DomainEvent
     public function __construct(
         private FlashSaleId $flashSaleId,
         private TenantId $tenantId,
-        private \DateTimeImmutable $occurredAt
+        private \DateTimeImmutable $occurredAt,
     ) {
     }
 

@@ -59,7 +59,7 @@ final class ViesVatValidationService implements VatValidationServiceInterface
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly CacheInterface $cache,
-        private readonly int $cacheTtl = self::CACHE_TTL
+        private readonly int $cacheTtl = self::CACHE_TTL,
     ) {
     }
 

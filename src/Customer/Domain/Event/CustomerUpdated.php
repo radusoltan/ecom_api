@@ -12,7 +12,7 @@ final readonly class CustomerUpdated
         private CustomerId $customerId,
         private string $firstName,
         private string $lastName,
-        private ?string $phoneNumber
+        private ?string $phoneNumber,
     ) {
     }
 

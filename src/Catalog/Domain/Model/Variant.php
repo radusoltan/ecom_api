@@ -37,7 +37,7 @@ final class Variant
         private array $images,
         private bool $isActive,
         private \DateTimeImmutable $createdAt,
-        private \DateTimeImmutable $updatedAt
+        private \DateTimeImmutable $updatedAt,
     ) {
         $this->validateOptionValueMap($optionValueMap);
     }
@@ -53,7 +53,7 @@ final class Variant
         array $optionValueMap,
         Money $price,
         Stock $stock,
-        bool $isActive = true
+        bool $isActive = true,
     ): self {
         return new self(
             id: $id,
@@ -83,7 +83,7 @@ final class Variant
         array $images,
         bool $isActive,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             $id,
@@ -104,7 +104,7 @@ final class Variant
     public function update(
         Money $price,
         Stock $stock,
-        bool $isActive
+        bool $isActive,
     ): void {
         $this->price = $price;
         $this->stock = $stock;
@@ -316,7 +316,7 @@ final class Variant
 final readonly class VariantId
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (empty($value)) {
             throw new \InvalidArgumentException('Variant ID cannot be empty');

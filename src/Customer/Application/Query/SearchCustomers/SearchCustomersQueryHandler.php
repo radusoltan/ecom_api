@@ -17,7 +17,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class SearchCustomersQueryHandler
 {
     public function __construct(
-        private CustomerSearchRepositoryInterface $searchRepository
+        private CustomerSearchRepositoryInterface $searchRepository,
     ) {
     }
 

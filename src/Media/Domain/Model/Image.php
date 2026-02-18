@@ -27,7 +27,7 @@ final class Image
         private FilePath $originalPath,
         private ?string $title,
         private ?string $altText,
-        private \DateTimeImmutable $uploadedAt
+        private \DateTimeImmutable $uploadedAt,
     ) {
     }
 
@@ -40,7 +40,7 @@ final class Image
         ?string $title = null,
         ?string $altText = null,
         ?\DateTimeImmutable $uploadedAt = null,
-        ?ImageId $id = null
+        ?ImageId $id = null,
     ): self {
         if ($fileSize <= 0) {
             throw new \InvalidArgumentException('File size must be greater than zero.');
@@ -159,7 +159,7 @@ final class Image
         ?string $title,
         ?string $altText,
         \DateTimeImmutable $uploadedAt,
-        array $thumbnails = []
+        array $thumbnails = [],
     ): self {
         $image = new self(
             $id,
@@ -189,7 +189,7 @@ final class Image
         FilePath $path,
         int $width,
         int $height,
-        CropArea $cropArea
+        CropArea $cropArea,
     ): Thumbnail {
         return Thumbnail::create(
             ThumbnailId::generate(),

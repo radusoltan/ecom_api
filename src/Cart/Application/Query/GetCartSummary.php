@@ -12,7 +12,7 @@ namespace App\Cart\Application\Query;
 final readonly class GetCartSummary
 {
     public function __construct(
-        public string $cartId
+        public string $cartId,
     ) {
     }
 }

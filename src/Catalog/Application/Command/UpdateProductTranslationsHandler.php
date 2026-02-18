@@ -14,7 +14,7 @@ final readonly class UpdateProductTranslationsHandler
 {
     public function __construct(
         private ProductRepositoryInterface $productRepository,
-        private I18nCacheService $cacheService
+        private I18nCacheService $cacheService,
     ) {
     }
 

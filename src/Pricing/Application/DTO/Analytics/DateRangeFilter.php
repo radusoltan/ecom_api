@@ -57,7 +57,7 @@ final readonly class DateRangeFilter
                 endDate: new \DateTimeImmutable('last day of last month 23:59:59', new \DateTimeZone('UTC')),
                 preset: $preset
             ),
-            default => throw new \InvalidArgumentException("Invalid preset: {$preset}. Valid presets: today, yesterday, last_7_days, last_30_days, this_month, last_month")
+            default => throw new \InvalidArgumentException("Invalid preset: {$preset}. Valid presets: today, yesterday, last_7_days, last_30_days, this_month, last_month"),
         };
     }
 
@@ -87,17 +87,17 @@ final readonly class DateRangeFilter
 
     public function hasStartDate(): bool
     {
-        return $this->startDate !== null;
+        return null !== $this->startDate;
     }
 
     public function hasEndDate(): bool
     {
-        return $this->endDate !== null;
+        return null !== $this->endDate;
     }
 
     public function isPreset(): bool
     {
-        return $this->preset !== null;
+        return null !== $this->preset;
     }
 
     public function getDays(): int

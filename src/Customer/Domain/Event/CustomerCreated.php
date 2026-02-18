@@ -15,7 +15,7 @@ final readonly class CustomerCreated
         private TenantId $tenantId,
         private Email $email,
         private string $firstName,
-        private string $lastName
+        private string $lastName,
     ) {
     }
 

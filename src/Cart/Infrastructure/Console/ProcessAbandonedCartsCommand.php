@@ -29,7 +29,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class ProcessAbandonedCartsCommand extends Command
 {
     public function __construct(
-        private readonly CartAbandonmentService $abandonmentService
+        private readonly CartAbandonmentService $abandonmentService,
     ) {
         parent::__construct();
     }

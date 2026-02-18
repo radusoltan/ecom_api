@@ -15,7 +15,7 @@ final readonly class DownloadableFileRemoved implements DomainEvent
         private ProductId $productId,
         private TenantId $tenantId,
         private DownloadableFile $file,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

@@ -12,7 +12,7 @@ final readonly class ExportResult
     public function __construct(
         public string $content,
         public string $filename,
-        public string $mimeType
+        public string $mimeType,
     ) {
     }
 

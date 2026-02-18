@@ -15,7 +15,7 @@ final readonly class AuthorizePaymentHandler
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
         private PaymentGatewayFactory $gatewayFactory,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

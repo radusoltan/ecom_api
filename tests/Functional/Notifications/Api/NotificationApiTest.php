@@ -6,10 +6,8 @@ namespace App\Tests\Functional\Notifications\Api;
 
 use App\Notifications\Domain\Model\Notification;
 use App\Notifications\Domain\Model\NotificationId;
-use App\Notifications\Domain\Model\NotificationStatus;
 use App\Notifications\Domain\Model\NotificationType;
 use App\Shared\Domain\ValueObject\TenantId;
-use App\Tests\Support\TenantTestTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;

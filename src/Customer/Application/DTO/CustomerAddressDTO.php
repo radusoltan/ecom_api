@@ -35,7 +35,7 @@ final readonly class CustomerAddressDTO
         string $customerId,
         string $tenantId,
         ?\DateTimeImmutable $createdAt = null,
-        ?\DateTimeImmutable $updatedAt = null
+        ?\DateTimeImmutable $updatedAt = null,
     ): self {
         return new self(
             id: $address->id->toString(),

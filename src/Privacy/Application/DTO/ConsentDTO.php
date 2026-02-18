@@ -21,7 +21,7 @@ final readonly class ConsentDTO
         public ?\DateTimeImmutable $grantedAt,
         public ?\DateTimeImmutable $withdrawnAt,
         public \DateTimeImmutable $createdAt,
-        public \DateTimeImmutable $updatedAt
+        public \DateTimeImmutable $updatedAt,
     ) {
     }
 

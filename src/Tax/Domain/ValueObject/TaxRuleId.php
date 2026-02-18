@@ -14,7 +14,7 @@ use Symfony\Component\Uid\Ulid;
 final readonly class TaxRuleId
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!Ulid::isValid($value)) {
             throw new \InvalidArgumentException(sprintf('Invalid TaxRuleId format: "%s". Must be a valid ULID', $value));

@@ -19,7 +19,7 @@ interface StockItemRepositoryInterface
     public function findByProductAndWarehouse(
         ProductId $productId,
         WarehouseId $warehouseId,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): ?StockItem;
 
     /**

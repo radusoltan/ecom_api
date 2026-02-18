@@ -31,7 +31,7 @@ final readonly class DownloadInvoicePdfHandler
 {
     public function __construct(
         private InvoiceRepositoryInterface $repository,
-        private InvoicePdfGeneratorInterface $pdfGenerator
+        private InvoicePdfGeneratorInterface $pdfGenerator,
     ) {
     }
 

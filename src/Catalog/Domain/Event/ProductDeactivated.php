@@ -12,7 +12,7 @@ final readonly class ProductDeactivated
     public function __construct(
         public ProductId $productId,
         public TenantId $tenantId,
-        public \DateTimeImmutable $occurredAt
+        public \DateTimeImmutable $occurredAt,
     ) {
     }
 }

@@ -21,7 +21,7 @@ final readonly class RedemptionRule
     private function __construct(
         private float $conversionRate,
         private int $minPointsToRedeem,
-        private ?int $maxPointsPerOrder
+        private ?int $maxPointsPerOrder,
     ) {
         if ($conversionRate <= 0) {
             throw new \InvalidArgumentException('Conversion rate must be greater than 0');
@@ -43,7 +43,7 @@ final readonly class RedemptionRule
     public static function create(
         float $conversionRate,
         int $minPointsToRedeem,
-        ?int $maxPointsPerOrder = null
+        ?int $maxPointsPerOrder = null,
     ): self {
         return new self($conversionRate, $minPointsToRedeem, $maxPointsPerOrder);
     }

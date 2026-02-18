@@ -10,7 +10,7 @@ final readonly class ReviewDataSubjectRequestCommand
 {
     public function __construct(
         public DataSubjectRequestId $requestId,
-        public string $reviewNotes
+        public string $reviewNotes,
     ) {
     }
 }

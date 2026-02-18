@@ -13,7 +13,7 @@ final readonly class ValidateCouponQuery
     public function __construct(
         public CouponCode $couponCode,
         public Money $cartTotal,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

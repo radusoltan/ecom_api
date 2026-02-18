@@ -27,7 +27,7 @@ namespace App\Invoice\Application\Query\GetInvoiceStatistics;
 final readonly class GetInvoiceStatisticsQuery
 {
     public function __construct(
-        public string $tenantId
+        public string $tenantId,
     ) {
     }
 }

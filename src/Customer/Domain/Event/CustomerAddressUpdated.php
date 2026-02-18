@@ -13,7 +13,7 @@ final readonly class CustomerAddressUpdated
     public function __construct(
         private CustomerId $customerId,
         private CustomerAddressId $addressId,
-        private CustomerAddress $newAddress
+        private CustomerAddress $newAddress,
     ) {
     }
 

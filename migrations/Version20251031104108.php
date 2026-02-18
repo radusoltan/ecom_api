@@ -27,8 +27,8 @@ final class Version20251031104108 extends AbstractMigration
         // (This table is created in Version20251117100000, but this migration runs before it)
         $this->addSql('DO $$ BEGIN
             IF EXISTS (SELECT FROM pg_tables WHERE schemaname = \'public\' AND tablename = \'catalog_configurable_products\') THEN
-                ALTER TABLE catalog_configurable_products ALTER id TYPE VARCHAR(36);
-                ALTER TABLE catalog_configurable_products ALTER product_id TYPE VARCHAR(36);
+                ALTER TABLE catalog_configurable_products ALTER id TYPE UUID;
+                ALTER TABLE catalog_configurable_products ALTER product_id TYPE UUID;
                 ALTER TABLE catalog_configurable_products ALTER created_at TYPE TIMESTAMP(0) WITHOUT TIME ZONE;
                 ALTER TABLE catalog_configurable_products ALTER created_at DROP DEFAULT;
                 ALTER TABLE catalog_configurable_products ALTER updated_at TYPE TIMESTAMP(0) WITHOUT TIME ZONE;
@@ -66,8 +66,8 @@ final class Version20251031104108 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
-        $this->addSql('CREATE TABLE catalog_sku_sequences (tenant_id VARCHAR(36) NOT NULL, last_value BIGINT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(tenant_id))');
-        $this->addSql('CREATE TABLE i18n_backfill_tracking (id INT NOT NULL, entity_type VARCHAR(50) NOT NULL, tenant_id VARCHAR(36) NOT NULL, last_processed_id VARCHAR(36) DEFAULT NULL, total_count INT DEFAULT 0, processed_count INT DEFAULT 0, status VARCHAR(20) DEFAULT \'pending\', started_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, completed_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, error_message TEXT DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE IF NOT EXISTS catalog_sku_sequences (tenant_id UUID NOT NULL, last_value BIGINT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(tenant_id))');
+        $this->addSql('CREATE TABLE i18n_backfill_tracking (id INT NOT NULL, entity_type VARCHAR(50) NOT NULL, tenant_id UUID NOT NULL, last_processed_id UUID DEFAULT NULL, total_count INT DEFAULT 0, processed_count INT DEFAULT 0, status VARCHAR(20) DEFAULT \'pending\', started_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, completed_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, error_message TEXT DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX i18n_backfill_tracking_entity_type_tenant_id_key ON i18n_backfill_tracking (entity_type, tenant_id)');
         $this->addSql('CREATE INDEX idx_backfill_entity_tenant ON i18n_backfill_tracking (entity_type, tenant_id)');
         $this->addSql('CREATE INDEX idx_backfill_status ON i18n_backfill_tracking (status)');

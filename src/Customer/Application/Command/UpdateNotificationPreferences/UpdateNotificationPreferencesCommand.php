@@ -22,7 +22,7 @@ final readonly class UpdateNotificationPreferencesCommand
         public bool $backInStockAlerts,
         public bool $securityAlerts,
         public bool $newsletterWeekly,
-        public bool $preferSms
+        public bool $preferSms,
     ) {
     }
 }

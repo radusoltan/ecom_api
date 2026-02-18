@@ -28,7 +28,7 @@ final readonly class InvoicePdfResult
     public function __construct(
         public string $content,    // Binary PDF content
         public string $fileName,   // e.g., "INV-2025-000001.pdf"
-        public string $mimeType    // "application/pdf"
+        public string $mimeType,    // "application/pdf"
     ) {
     }
 }

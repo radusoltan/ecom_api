@@ -11,7 +11,7 @@ final readonly class UpdateReview
     public function __construct(
         public ReviewId $reviewId,
         public string $title,
-        public string $content
+        public string $content,
     ) {
     }
 }

@@ -18,7 +18,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class DeactivateLoyaltyProgramCommandHandler
 {
     public function __construct(
-        private LoyaltyProgramRepositoryInterface $loyaltyProgramRepository
+        private LoyaltyProgramRepositoryInterface $loyaltyProgramRepository,
     ) {
     }
 

@@ -28,7 +28,7 @@ final readonly class MarkPaymentAsFailedHandler
 {
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -81,11 +81,7 @@ final readonly class MarkPaymentAsFailedHandler
                 'error' => $e->getMessage(),
             ]);
 
-            throw new \RuntimeException(
-                sprintf('Cannot mark payment %s as failed: %s', $command->id->toString(), $e->getMessage()),
-                0,
-                $e
-            );
+            throw new \RuntimeException(sprintf('Cannot mark payment %s as failed: %s', $command->id->toString(), $e->getMessage()), 0, $e);
         }
     }
 }

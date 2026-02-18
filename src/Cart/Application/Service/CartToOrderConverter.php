@@ -50,7 +50,7 @@ final readonly class CartToOrderConverter
         array $shippingAddress,
         array $billingAddress,
         ?string $couponCode = null,
-        array $promotionContext = []
+        array $promotionContext = [],
     ): PlaceOrderCommand {
         // Validate cart status
         if (!$cart->isActive()) {

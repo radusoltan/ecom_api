@@ -24,7 +24,7 @@ final readonly class PaymentRetryExhausted
         public int $totalAttempts,
         public string $lastErrorCode,
         public string $lastErrorMessage,
-        public string $orderId
+        public string $orderId,
     ) {
     }
 }

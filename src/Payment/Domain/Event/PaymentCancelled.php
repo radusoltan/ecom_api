@@ -12,7 +12,7 @@ final readonly class PaymentCancelled
     public function __construct(
         public PaymentId $paymentId,
         public TenantId $tenantId,
-        public string $reason
+        public string $reason,
     ) {
     }
 }

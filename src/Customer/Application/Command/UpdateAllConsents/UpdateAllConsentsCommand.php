@@ -23,7 +23,7 @@ final readonly class UpdateAllConsentsCommand
         public bool $thirdPartySharing,
         public bool $analyticsTracking,
         public ?string $ipAddress = null,
-        public ?string $userAgent = null
+        public ?string $userAgent = null,
     ) {
     }
 }

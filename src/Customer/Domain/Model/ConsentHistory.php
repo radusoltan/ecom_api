@@ -31,7 +31,7 @@ final readonly class ConsentHistory
         private bool $granted,
         private ?string $ipAddress,
         private ?string $userAgent,
-        private \DateTimeImmutable $createdAt
+        private \DateTimeImmutable $createdAt,
     ) {
     }
 
@@ -44,7 +44,7 @@ final readonly class ConsentHistory
         ConsentType $consentType,
         bool $granted,
         ?string $ipAddress = null,
-        ?string $userAgent = null
+        ?string $userAgent = null,
     ): self {
         return new self(
             id: ConsentHistoryId::generate(),
@@ -69,7 +69,7 @@ final readonly class ConsentHistory
         bool $granted,
         ?string $ipAddress,
         ?string $userAgent,
-        \DateTimeImmutable $createdAt
+        \DateTimeImmutable $createdAt,
     ): self {
         return new self(
             id: $id,

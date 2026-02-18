@@ -28,7 +28,7 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
     public function __construct(
         private readonly MessageBusInterface $commandBus,
         private readonly EntityManagerInterface $entityManager,
-        private readonly UserPasswordHasherInterface $passwordHasher
+        private readonly UserPasswordHasherInterface $passwordHasher,
     ) {
     }
 
@@ -75,7 +75,7 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
         string $lastName,
         ?string $phoneNumber,
         string $segment,
-        bool $isActive
+        bool $isActive,
     ): void {
         $customerId = CustomerId::generate();
 

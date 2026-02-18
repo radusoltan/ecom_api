@@ -21,7 +21,7 @@ final readonly class SubscriptionConfigured implements DomainEvent
         private TenantId $tenantId,
         private SubscriptionInterval $interval,
         private int $billingCycles,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 
@@ -65,7 +65,7 @@ final readonly class SubscriptionConfigured implements DomainEvent
             'tenantId' => $this->tenantId->toString(),
             'interval' => $this->interval->value,
             'billingCycles' => $this->billingCycles,
-            'isInfinite' => $this->billingCycles === 0,
+            'isInfinite' => 0 === $this->billingCycles,
             'occurredOn' => $this->occurredOn->format(\DateTimeInterface::ATOM),
         ];
     }

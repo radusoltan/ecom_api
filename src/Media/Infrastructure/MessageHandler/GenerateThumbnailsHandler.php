@@ -19,7 +19,7 @@ final class GenerateThumbnailsHandler
         private readonly ImageRepositoryInterface $imageRepository,
         private readonly ThumbnailGenerator $thumbnailGenerator,
         private readonly ThumbnailPolicy $thumbnailPolicy,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 

@@ -30,7 +30,7 @@ final class BundleController extends AbstractController
     public function __construct(
         /** @phpstan-ignore-next-line property.onlyWritten (used via HandleTrait) */
         private readonly MessageBusInterface $commandBus,
-        private readonly MessageBusInterface $queryBus
+        private readonly MessageBusInterface $queryBus,
     ) {
         $this->messageBus = $commandBus;
     }
@@ -49,7 +49,7 @@ final class BundleController extends AbstractController
             // Get the result from the query handler
             $bundle = $result->last(\Symfony\Component\Messenger\Stamp\HandledStamp::class)?->getResult();
 
-            if ($bundle === null) {
+            if (null === $bundle) {
                 return new JsonResponse(
                     ['error' => 'Bundle not found for this product'],
                     Response::HTTP_NOT_FOUND
@@ -117,7 +117,7 @@ final class BundleController extends AbstractController
             );
         } catch (\Exception $e) {
             return new JsonResponse(
-                ['error' => 'Internal server error: ' . $e->getMessage()],
+                ['error' => 'Internal server error: '.$e->getMessage()],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -163,7 +163,7 @@ final class BundleController extends AbstractController
             );
         } catch (\Exception $e) {
             return new JsonResponse(
-                ['error' => 'Internal server error: ' . $e->getMessage()],
+                ['error' => 'Internal server error: '.$e->getMessage()],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }

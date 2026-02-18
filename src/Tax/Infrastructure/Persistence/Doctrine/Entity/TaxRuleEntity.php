@@ -19,7 +19,7 @@ use App\Tax\Domain\Model\TaxRuleId;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * TaxRule Doctrine Entity
+ * TaxRule Doctrine Entity.
  *
  * Infrastructure adapter for TaxRule aggregate.
  * Provides persistence for tax rules with multi-tenant Row-Level Security.
@@ -42,7 +42,7 @@ use Doctrine\ORM\Mapping as ORM;
         new Post(),
         new Get(),
         new Patch(),
-        new Delete()
+        new Delete(),
     ]
 )]
 final class TaxRuleEntity
@@ -94,7 +94,7 @@ final class TaxRuleEntity
     private \DateTimeImmutable $updatedAt;
 
     /**
-     * Convert domain model to entity (for persistence)
+     * Convert domain model to entity (for persistence).
      */
     public static function fromDomainModel(TaxRule $taxRule): self
     {
@@ -119,11 +119,11 @@ final class TaxRuleEntity
     }
 
     /**
-     * Convert entity to domain model (for hydration)
+     * Convert entity to domain model (for hydration).
      */
     public function toDomainModel(): TaxRule
     {
-        $jurisdiction = $this->regionCode !== null
+        $jurisdiction = null !== $this->regionCode
             ? TaxJurisdiction::fromCountryAndRegion($this->countryCode, $this->regionCode)
             : TaxJurisdiction::fromCountryCode($this->countryCode);
 
@@ -146,7 +146,7 @@ final class TaxRuleEntity
     }
 
     /**
-     * Update entity from domain model (for updates)
+     * Update entity from domain model (for updates).
      *
      * This method updates only mutable fields from the domain model.
      * Immutable fields (id, tenantId, createdAt) are NOT updated.

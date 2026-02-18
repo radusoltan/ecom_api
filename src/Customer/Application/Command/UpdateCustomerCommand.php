@@ -11,7 +11,7 @@ final readonly class UpdateCustomerCommand
         public string $tenantId,
         public string $firstName,
         public string $lastName,
-        public ?string $phoneNumber = null
+        public ?string $phoneNumber = null,
     ) {
     }
 }

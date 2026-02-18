@@ -27,17 +27,15 @@ final readonly class TaxJurisdiction
     private const EU_COUNTRIES = [
         'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR',
         'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL',
-        'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE'
+        'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE',
     ];
 
     private function __construct(
         private string $countryCode,
-        private ?string $regionCode = null
+        private ?string $regionCode = null,
     ) {
         if (!preg_match('/^[A-Z]{2}$/', $countryCode)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid ISO country code: %s', $countryCode)
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid ISO country code: %s', $countryCode));
         }
     }
 
@@ -68,7 +66,7 @@ final readonly class TaxJurisdiction
 
     public function isUs(): bool
     {
-        return $this->countryCode === 'US';
+        return 'US' === $this->countryCode;
     }
 
     public function equals(self $other): bool
@@ -79,7 +77,7 @@ final readonly class TaxJurisdiction
 
     public function toString(): string
     {
-        return $this->regionCode !== null
+        return null !== $this->regionCode
             ? "{$this->countryCode}-{$this->regionCode}"
             : $this->countryCode;
     }

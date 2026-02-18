@@ -341,7 +341,7 @@ final class CartItemTest extends TestCase
 
     private function createSampleCartItem(
         Quantity $quantity,
-        ?Money $unitPrice = null
+        ?Money $unitPrice = null,
     ): CartItem {
         return CartItem::create(
             CartItemId::generate(),

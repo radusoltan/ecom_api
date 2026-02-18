@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class NotificationCreatedTest extends TestCase
 {
-    public function test_it_creates_event_with_all_properties(): void
+    public function testItCreatesEventWithAllProperties(): void
     {
         // Arrange
         $notificationId = NotificationId::generate();
@@ -41,7 +41,7 @@ final class NotificationCreatedTest extends TestCase
         $this->assertSame($subject, $event->subject);
     }
 
-    public function test_it_is_readonly(): void
+    public function testItIsReadonly(): void
     {
         // Arrange
         $event = new NotificationCreated(
@@ -57,7 +57,7 @@ final class NotificationCreatedTest extends TestCase
         $this->assertTrue($reflection->isReadOnly());
     }
 
-    public function test_it_supports_null_recipient_email(): void
+    public function testItSupportsNullRecipientEmail(): void
     {
         // Arrange & Act
         $event = new NotificationCreated(

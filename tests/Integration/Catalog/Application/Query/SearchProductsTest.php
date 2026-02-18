@@ -46,7 +46,7 @@ final class SearchProductsTest extends KernelTestCase
             $this->client = $container->get(Client::class);
             $this->client->info(); // Test connection
         } catch (\Exception $e) {
-            $this->markTestSkipped('Elasticsearch is not available: ' . $e->getMessage());
+            $this->markTestSkipped('Elasticsearch is not available: '.$e->getMessage());
         }
 
         // Set tenant context for RLS
@@ -68,7 +68,7 @@ final class SearchProductsTest extends KernelTestCase
         try {
             $this->indexManager->createProductIndex($this->tenantId, $this->locale);
         } catch (\Exception $e) {
-            $this->markTestSkipped('Cannot create Elasticsearch index: ' . $e->getMessage());
+            $this->markTestSkipped('Cannot create Elasticsearch index: '.$e->getMessage());
         }
 
         // Skip all tests if product_reviews table doesn't exist

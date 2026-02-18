@@ -18,10 +18,10 @@ final class Version20251201090000 extends AbstractMigration
     {
         $this->addSql(<<<'SQL'
 CREATE TABLE IF NOT EXISTS media_images (
-    id VARCHAR(36) NOT NULL,
-    tenant_id VARCHAR(36) NOT NULL,
+    id UUID NOT NULL,
+    tenant_id UUID NOT NULL,
     owner_type VARCHAR(16) NOT NULL CHECK (owner_type IN ('product', 'category', 'user')),
-    owner_id VARCHAR(36) NOT NULL,
+    owner_id UUID NOT NULL,
     original_path TEXT NOT NULL,
     mime_type VARCHAR(128) NOT NULL,
     file_size BIGINT NOT NULL,
@@ -37,9 +37,9 @@ SQL);
 
         $this->addSql(<<<'SQL'
 CREATE TABLE IF NOT EXISTS media_thumbnails (
-    id VARCHAR(36) NOT NULL,
-    tenant_id VARCHAR(36) NOT NULL,
-    image_id VARCHAR(36) NOT NULL,
+    id UUID NOT NULL,
+    tenant_id UUID NOT NULL,
+    image_id UUID NOT NULL,
     size_label VARCHAR(8) NOT NULL CHECK (size_label IN ('sm', 'md', 'lg', 'xl')),
     path TEXT NOT NULL,
     width INT NOT NULL,

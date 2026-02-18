@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetReviewStatsHandler
 {
     public function __construct(
-        private ProductReviewRepositoryInterface $reviewRepository
+        private ProductReviewRepositoryInterface $reviewRepository,
     ) {
     }
 

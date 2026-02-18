@@ -16,7 +16,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetAuditLogHandler
 {
     public function __construct(
-        private AuditLogRepositoryInterface $repository
+        private AuditLogRepositoryInterface $repository,
     ) {
     }
 

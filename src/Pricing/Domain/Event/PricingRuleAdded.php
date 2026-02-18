@@ -13,7 +13,7 @@ final readonly class PricingRuleAdded implements DomainEvent
      */
     public function __construct(
         private string $priceListId,
-        private array $ruleData
+        private array $ruleData,
     ) {
     }
 

@@ -16,7 +16,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class HoldDeletionCommandHandler
 {
     public function __construct(
-        private DeletionRequestRepositoryInterface $deletionRequestRepository
+        private DeletionRequestRepositoryInterface $deletionRequestRepository,
     ) {
     }
 

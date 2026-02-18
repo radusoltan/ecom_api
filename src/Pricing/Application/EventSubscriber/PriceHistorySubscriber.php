@@ -34,7 +34,7 @@ final readonly class PriceHistorySubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private PriceHistoryRepositoryInterface $priceHistoryRepository,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -64,6 +64,7 @@ final readonly class PriceHistorySubscriber implements EventSubscriberInterface
                 $this->logger->warning('PricingRuleAdded event missing required data', [
                     'event' => $event->toArray(),
                 ]);
+
                 return;
             }
 
@@ -113,6 +114,7 @@ final readonly class PriceHistorySubscriber implements EventSubscriberInterface
                 $this->logger->warning('PricingRuleRemoved event missing product_id', [
                     'event' => $event->toArray(),
                 ]);
+
                 return;
             }
 
@@ -263,9 +265,6 @@ final readonly class PriceHistorySubscriber implements EventSubscriberInterface
     /**
      * Extract tenant ID from price list ID.
      * This is a temporary implementation - you may need to fetch from repository.
-     *
-     * @param string $priceListId
-     * @return \App\Shared\Domain\ValueObject\TenantId
      */
     private function extractTenantIdFromPriceListId(string $priceListId): \App\Shared\Domain\ValueObject\TenantId
     {

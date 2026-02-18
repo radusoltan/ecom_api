@@ -26,7 +26,7 @@ final readonly class DefineOptionHandler
 {
     public function __construct(
         private ConfigurableProductRepositoryInterface $configurableProductRepository,
-        private MessageBusInterface $eventBus
+        private MessageBusInterface $eventBus,
     ) {
     }
 

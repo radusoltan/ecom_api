@@ -56,7 +56,7 @@ final readonly class PaymentStatus
     ];
 
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!in_array($value, self::VALID_STATUSES, true)) {
             throw new \InvalidArgumentException(sprintf('Invalid payment status: "%s". Allowed: %s', $value, implode(', ', self::VALID_STATUSES)));

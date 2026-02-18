@@ -11,7 +11,7 @@ final readonly class CategoryUpdated
 {
     public function __construct(
         public CategoryId $categoryId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

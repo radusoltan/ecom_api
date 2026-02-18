@@ -59,7 +59,7 @@ final class LoyaltyProgram extends AggregateRoot
         string $name,
         EarningRate $earningRate,
         Money $minOrderValue,
-        RedemptionRule $redemptionRule
+        RedemptionRule $redemptionRule,
     ): self {
         self::validateName($name);
 
@@ -102,7 +102,7 @@ final class LoyaltyProgram extends AggregateRoot
         bool $isActive,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt,
-        array $tiers = []
+        array $tiers = [],
     ): self {
         $program = new self();
         $program->id = $id;
@@ -130,7 +130,7 @@ final class LoyaltyProgram extends AggregateRoot
         ?string $description,
         EarningRate $earningRate,
         Money $minOrderValue,
-        ?int $validityDays
+        ?int $validityDays,
     ): void {
         self::validateName($name);
 
@@ -267,7 +267,7 @@ final class LoyaltyProgram extends AggregateRoot
         int $threshold,
         int $discountPercentage,
         ?Money $freeShippingMinOrder,
-        int $sortOrder
+        int $sortOrder,
     ): void {
         $tierId = $id->toString();
 

@@ -85,7 +85,7 @@ final class CartApiTest extends ApiTestCase
      */
     protected function createAuthenticatedClient(
         string $email = 'admin@admin.com',
-        array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER']
+        array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'],
     ) {
         $tempClient = static::createClient();
         $container = $tempClient->getContainer();
@@ -210,8 +210,8 @@ final class CartApiTest extends ApiTestCase
         // Create stock item for this product (needed for cart stock validation)
         $stockItemId = \Symfony\Component\Uid\Uuid::v4()->toString();
         $connection->executeStatement(
-            "INSERT INTO stock_items (id, tenant_id, product_id, warehouse_id, on_hand, reserved, allocated, low_stock_threshold, created_at, updated_at)
-             VALUES (:id, :tenantId, :productId, :warehouseId, :stock, 0, 0, 10, NOW(), NOW())",
+            'INSERT INTO stock_items (id, tenant_id, product_id, warehouse_id, on_hand, reserved, allocated, low_stock_threshold, created_at, updated_at)
+             VALUES (:id, :tenantId, :productId, :warehouseId, :stock, 0, 0, 10, NOW(), NOW())',
             [
                 'id' => $stockItemId,
                 'tenantId' => self::DEFAULT_TENANT_ID,

@@ -29,7 +29,7 @@ final class PayPalClient
         private readonly string $clientId,
         private readonly string $clientSecret,
         private readonly string $environment,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -123,7 +123,7 @@ final class PayPalClient
     public function verifyWebhookSignature(
         string $webhookId,
         array $headers,
-        string $body
+        string $body,
     ): bool {
         $verificationData = [
             'auth_algo' => $headers['PAYPAL-AUTH-ALGO'] ?? '',
@@ -161,7 +161,7 @@ final class PayPalClient
         string $path,
         array $data = [],
         array $headers = [],
-        bool $isTokenRequest = false
+        bool $isTokenRequest = false,
     ): array {
         // Use cURL for HTTP requests
         $ch = curl_init();

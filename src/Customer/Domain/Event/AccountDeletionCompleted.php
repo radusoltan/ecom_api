@@ -13,7 +13,7 @@ final readonly class AccountDeletionCompleted
     public function __construct(
         private DeletionRequestId $requestId,
         private CustomerId $customerId,
-        private TenantId $tenantId
+        private TenantId $tenantId,
     ) {
     }
 

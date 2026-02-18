@@ -62,7 +62,7 @@ final class DoctrineConsentHistoryRepository extends ServiceEntityRepository imp
         CustomerId $customerId,
         TenantId $tenantId,
         int $page = 1,
-        int $limit = 20
+        int $limit = 20,
     ): array {
         if ($page < 1) {
             $page = 1;

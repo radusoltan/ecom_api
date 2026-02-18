@@ -78,7 +78,7 @@ final class SymfonyEmailSenderTest extends KernelTestCase
             $this->emailSender->send($to, $subject, $templateName, $context);
             $this->assertTrue(true, 'Email sent successfully without exceptions');
         } catch (TransportExceptionInterface $e) {
-            $this->fail('Email sending failed: ' . $e->getMessage());
+            $this->fail('Email sending failed: '.$e->getMessage());
         }
     }
 
@@ -106,7 +106,7 @@ final class SymfonyEmailSenderTest extends KernelTestCase
             $this->emailSender->send($to, $subject, $templateName, $context);
             $this->assertTrue(true, 'Payment email sent successfully');
         } catch (TransportExceptionInterface $e) {
-            $this->fail('Payment email sending failed: ' . $e->getMessage());
+            $this->fail('Payment email sending failed: '.$e->getMessage());
         }
     }
 
@@ -135,7 +135,7 @@ final class SymfonyEmailSenderTest extends KernelTestCase
             $this->emailSender->send($to, $subject, $templateName, $context, $locale);
             $this->assertTrue(true, 'Email with French locale sent successfully');
         } catch (TransportExceptionInterface $e) {
-            $this->fail('Email with locale failed: ' . $e->getMessage());
+            $this->fail('Email with locale failed: '.$e->getMessage());
         }
     }
 
@@ -164,7 +164,7 @@ final class SymfonyEmailSenderTest extends KernelTestCase
             $this->emailSender->send($to, $subject, $templateName, $context, null, $customFrom);
             $this->assertTrue(true, 'Email with custom sender sent successfully');
         } catch (TransportExceptionInterface $e) {
-            $this->fail('Email with custom sender failed: ' . $e->getMessage());
+            $this->fail('Email with custom sender failed: '.$e->getMessage());
         }
     }
 
@@ -225,7 +225,7 @@ final class SymfonyEmailSenderTest extends KernelTestCase
             $this->emailSender->send($to, $subject, $templateName, $context);
             $this->assertTrue(true, 'Password reset email sent successfully');
         } catch (TransportExceptionInterface $e) {
-            $this->fail('Password reset email failed: ' . $e->getMessage());
+            $this->fail('Password reset email failed: '.$e->getMessage());
         }
     }
 
@@ -249,7 +249,7 @@ final class SymfonyEmailSenderTest extends KernelTestCase
             $this->emailSender->send($to, $subject, $templateName, $context);
             $this->assertTrue(true, 'Email with only HTML template sent successfully');
         } catch (TransportExceptionInterface $e) {
-            $this->fail('Email with only HTML template failed: ' . $e->getMessage());
+            $this->fail('Email with only HTML template failed: '.$e->getMessage());
         }
     }
 
@@ -281,7 +281,7 @@ final class SymfonyEmailSenderTest extends KernelTestCase
             $this->emailSender->send($to, $subject, $templateName, $context);
             $this->assertTrue(true, 'Cart abandoned email sent successfully');
         } catch (TransportExceptionInterface $e) {
-            $this->fail('Cart abandoned email failed: ' . $e->getMessage());
+            $this->fail('Cart abandoned email failed: '.$e->getMessage());
         }
     }
 }

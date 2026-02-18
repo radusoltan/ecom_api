@@ -33,7 +33,7 @@ final class TaxRuleApiTest extends ApiTestCase
     protected function createAuthenticatedClient(
         string $email = 'admin@admin.com',
         array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'],
-        ?string $tenantId = null
+        ?string $tenantId = null,
     ) {
         $tempClient = static::createClient();
         $container = $tempClient->getContainer();
@@ -113,7 +113,7 @@ final class TaxRuleApiTest extends ApiTestCase
         string $name = 'France VAT Standard',
         string $countryCode = 'FR',
         float $ratePercentage = 20.0,
-        ?string $regionCode = null
+        ?string $regionCode = null,
     ): array {
         $tenantId = $tenantId ?? $this->createTenant();
         $this->currentTenantId = $tenantId;

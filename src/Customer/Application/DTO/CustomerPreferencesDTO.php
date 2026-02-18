@@ -20,7 +20,7 @@ final readonly class CustomerPreferencesDTO
         public bool $marketingEmailsAllowed,
         public bool $smsNotificationsAllowed,
         public bool $orderNotificationsEnabled,
-        public bool $promotionNotificationsEnabled
+        public bool $promotionNotificationsEnabled,
     ) {
     }
 

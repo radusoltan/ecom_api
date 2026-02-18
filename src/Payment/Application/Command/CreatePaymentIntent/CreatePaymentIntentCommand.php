@@ -27,7 +27,7 @@ final readonly class CreatePaymentIntentCommand
         public string $paymentMethod,  // 'stripe', 'paypal', etc.
         public string $idempotencyKey,
         public ?string $customerId = null,
-        public ?string $customerEmail = null
+        public ?string $customerEmail = null,
     ) {
     }
 }

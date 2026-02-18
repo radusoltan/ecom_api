@@ -38,7 +38,7 @@ final readonly class OrderPlacedCartClearingSubscriber implements EventSubscribe
     public function __construct(
         private CartRepositoryInterface $cartRepository,
         private MessageBusInterface $messageBus,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

@@ -9,7 +9,7 @@ final readonly class UpdateTenantCommand
     public function __construct(
         public string $id,
         public string $name,
-        public string $ownerEmail
+        public string $ownerEmail,
     ) {
     }
 }

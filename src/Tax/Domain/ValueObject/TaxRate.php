@@ -13,7 +13,7 @@ namespace App\Tax\Domain\ValueObject;
 final readonly class TaxRate
 {
     private function __construct(
-        private float $value
+        private float $value,
     ) {
         if ($value < 0 || $value > 100) {
             throw new \InvalidArgumentException(sprintf('Tax rate must be between 0 and 100, got %.2f', $value));

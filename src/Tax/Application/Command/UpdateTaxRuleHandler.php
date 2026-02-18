@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class UpdateTaxRuleHandler
 {
     public function __construct(
-        private TaxRuleRepositoryInterface $taxRuleRepository
+        private TaxRuleRepositoryInterface $taxRuleRepository,
     ) {
     }
 

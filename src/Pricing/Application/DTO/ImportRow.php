@@ -16,7 +16,7 @@ final readonly class ImportRow
      */
     public function __construct(
         public int $rowNumber,
-        public array $data
+        public array $data,
     ) {
     }
 
@@ -91,6 +91,7 @@ final readonly class ImportRow
 
         // Handle string representations
         $stringValue = strtolower((string) $value);
+
         return in_array($stringValue, ['true', '1', 'yes', 'on'], true);
     }
 }

@@ -40,7 +40,7 @@ final readonly class AssignCartToCustomerProcessor implements ProcessorInterface
         private MessageBusInterface $queryBus,
         private RequestStack $requestStack,
         private CartRepositoryInterface $cartRepository,
-        private TenantContext $tenantContext
+        private TenantContext $tenantContext,
     ) {
     }
 

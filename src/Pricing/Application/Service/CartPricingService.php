@@ -47,14 +47,14 @@ final readonly class CartPricingService implements CartPricingServiceInterface
     /**
      * Calculate complete pricing for a cart.
      *
-     * @param Cart                 $cart              The cart to calculate pricing for
-     * @param array<string>        $appliedCouponCodes Coupon codes to apply
+     * @param Cart          $cart               The cart to calculate pricing for
+     * @param array<string> $appliedCouponCodes Coupon codes to apply
      *
      * @return CartPriceCalculationResult Complete pricing breakdown
      */
     public function calculateCartPricing(
         Cart $cart,
-        array $appliedCouponCodes = []
+        array $appliedCouponCodes = [],
     ): CartPriceCalculationResult {
         if ($cart->isEmpty()) {
             $currency = 'USD'; // Default currency for empty cart
@@ -136,16 +136,13 @@ final readonly class CartPricingService implements CartPricingServiceInterface
     /**
      * Calculate pricing for a single cart item.
      *
-     * @param CartItem      $cartItem
-     * @param PriceList[]   $priceLists
-     * @param Promotion[]   $promotions
-     *
-     * @return CartItemPricing
+     * @param PriceList[] $priceLists
+     * @param Promotion[] $promotions
      */
     private function calculateItemPricing(
         CartItem $cartItem,
         array $priceLists,
-        array $promotions
+        array $promotions,
     ): CartItemPricing {
         $baseUnitPrice = $cartItem->unitPrice();
         $quantity = $cartItem->quantity()->toInt();
@@ -233,16 +230,14 @@ final readonly class CartPricingService implements CartPricingServiceInterface
     /**
      * Apply cart-level promotions.
      *
-     * @param Money       $subtotal
      * @param Promotion[] $promotions
-     * @param Cart        $cart
      *
      * @return array{totalDiscount: Money, appliedDiscounts: AppliedDiscountDTO[]}
      */
     private function applyCartLevelPromotions(
         Money $subtotal,
         array $promotions,
-        Cart $cart
+        Cart $cart,
     ): array {
         $currency = $subtotal->getCurrency()->getCurrencyCode();
         $totalDiscount = Money::fromScalars(0, $currency);
@@ -290,7 +285,7 @@ final readonly class CartPricingService implements CartPricingServiceInterface
      */
     private function filterApplicablePromotions(
         array $promotions,
-        array $appliedCouponCodes
+        array $appliedCouponCodes,
     ): array {
         return array_filter($promotions, function (Promotion $promotion) use ($appliedCouponCodes) {
             // Auto-apply promotions (cart_rule, catalog_rule)
@@ -299,7 +294,7 @@ final readonly class CartPricingService implements CartPricingServiceInterface
             }
 
             // Coupon-based promotions (must match applied coupons)
-            if ($promotion->couponCode() !== null) {
+            if (null !== $promotion->couponCode()) {
                 return in_array($promotion->couponCode()->toString(), $appliedCouponCodes, true);
             }
 

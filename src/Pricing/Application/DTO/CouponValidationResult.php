@@ -20,7 +20,7 @@ final readonly class CouponValidationResult
         public bool $valid,
         public ?PromotionDTO $promotion,
         public ?array $discountAmount,
-        public string $message
+        public string $message,
     ) {
     }
 

@@ -18,7 +18,7 @@ final readonly class ExportFilter
         public ?\DateTimeImmutable $dateFrom = null,
         public ?\DateTimeImmutable $dateTo = null,
         public ?bool $isActive = null,
-        public ?string $status = null
+        public ?string $status = null,
     ) {
         $this->validateDateRange();
     }
@@ -37,7 +37,7 @@ final readonly class ExportFilter
      */
     public function onlyActive(): bool
     {
-        return $this->isActive === true;
+        return true === $this->isActive;
     }
 
     /**

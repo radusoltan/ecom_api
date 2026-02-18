@@ -12,7 +12,7 @@ final readonly class TranslatedString
      * @param array<string, string> $translations Key is language code, value is translated text
      */
     private function __construct(
-        private array $translations
+        private array $translations,
     ) {
         $this->validate();
     }

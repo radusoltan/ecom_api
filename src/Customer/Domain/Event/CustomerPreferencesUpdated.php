@@ -23,7 +23,7 @@ final readonly class CustomerPreferencesUpdated
         private TenantId $tenantId,
         private array $oldPreferences,
         private array $newPreferences,
-        private \DateTimeImmutable $occurredAt
+        private \DateTimeImmutable $occurredAt,
     ) {
     }
 

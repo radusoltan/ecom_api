@@ -53,7 +53,7 @@ final class Promotion extends AggregateRoot
         private ?\DateTimeImmutable $validFrom,
         private ?\DateTimeImmutable $validTo,
         private readonly \DateTimeImmutable $createdAt,
-        private \DateTimeImmutable $updatedAt
+        private \DateTimeImmutable $updatedAt,
     ) {
         $this->validateName($this->name);
         $this->validatePriority($this->priority);
@@ -75,7 +75,7 @@ final class Promotion extends AggregateRoot
         array $conditions = [],
         array $targetSegments = [],
         ?\DateTimeImmutable $validFrom = null,
-        ?\DateTimeImmutable $validTo = null
+        ?\DateTimeImmutable $validTo = null,
     ): self {
         $now = new \DateTimeImmutable();
 
@@ -124,7 +124,7 @@ final class Promotion extends AggregateRoot
         ?\DateTimeImmutable $validFrom,
         ?\DateTimeImmutable $validTo,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             id: $id,
@@ -150,7 +150,7 @@ final class Promotion extends AggregateRoot
         int $priority,
         array $conditions,
         ?\DateTimeImmutable $validFrom,
-        ?\DateTimeImmutable $validTo
+        ?\DateTimeImmutable $validTo,
     ): void {
         $this->validateName($name);
         $this->validatePriority($priority);
@@ -258,9 +258,7 @@ final class Promotion extends AggregateRoot
         // Check if segment already exists
         foreach ($this->targetSegments as $existing) {
             if ($existing->equals($segment)) {
-                throw new \InvalidArgumentException(
-                    sprintf('Segment %s is already a target for this promotion', $segment->value())
-                );
+                throw new \InvalidArgumentException(sprintf('Segment %s is already a target for this promotion', $segment->value()));
             }
         }
 
@@ -283,9 +281,7 @@ final class Promotion extends AggregateRoot
         }
 
         if (!$found) {
-            throw new \InvalidArgumentException(
-                sprintf('Segment %s is not a target for this promotion', $segment->value())
-            );
+            throw new \InvalidArgumentException(sprintf('Segment %s is not a target for this promotion', $segment->value()));
         }
 
         $this->targetSegments = array_values($this->targetSegments); // Re-index

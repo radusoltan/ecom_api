@@ -23,14 +23,14 @@ final readonly class ReturnRequestRejected
         public ReturnRequestId $returnRequestId,
         public TenantId $tenantId,
         public string $rejectionReason,
-        public \DateTimeImmutable $occurredOn
+        public \DateTimeImmutable $occurredOn,
     ) {
     }
 
     public static function create(
         ReturnRequestId $returnRequestId,
         TenantId $tenantId,
-        string $rejectionReason
+        string $rejectionReason,
     ): self {
         return new self(
             $returnRequestId,

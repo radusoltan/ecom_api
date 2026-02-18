@@ -14,7 +14,7 @@ final readonly class UpdateCartQuantity
     public function __construct(
         public string $cartId,
         public string $cartItemId,
-        public int $newQuantity
+        public int $newQuantity,
     ) {
     }
 }

@@ -26,7 +26,7 @@ final class ProductListingProvider implements ProviderInterface
         private readonly TenantContext $tenantContext,
         private readonly RequestStack $requestStack,
         private readonly Pagination $pagination,
-        private readonly ?CacheItemPoolInterface $cache = null
+        private readonly ?CacheItemPoolInterface $cache = null,
     ) {
     }
 

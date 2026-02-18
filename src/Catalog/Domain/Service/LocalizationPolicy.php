@@ -19,7 +19,7 @@ final class LocalizationPolicy
      * @param Locale[] $supportedLocales
      */
     public function __construct(
-        private readonly array $supportedLocales = []
+        private readonly array $supportedLocales = [],
     ) {
     }
 
@@ -31,7 +31,7 @@ final class LocalizationPolicy
      */
     public function buildFallbackChain(
         Locale $requestedLocale,
-        ?Locale $tenantDefaultLocale = null
+        ?Locale $tenantDefaultLocale = null,
     ): array {
         $chain = [];
         $seen = [];
@@ -82,7 +82,7 @@ final class LocalizationPolicy
     public function resolveString(
         LocalizedString $localizedString,
         Locale $requestedLocale,
-        ?Locale $tenantDefaultLocale = null
+        ?Locale $tenantDefaultLocale = null,
     ): ?string {
         if ($localizedString->isEmpty()) {
             return null;
@@ -103,7 +103,7 @@ final class LocalizationPolicy
     public function resolveMultiple(
         array $localizedStrings,
         Locale $requestedLocale,
-        ?Locale $tenantDefaultLocale = null
+        ?Locale $tenantDefaultLocale = null,
     ): array {
         $resolved = [];
         $fallbackChain = $this->buildFallbackChain($requestedLocale, $tenantDefaultLocale);
@@ -126,7 +126,7 @@ final class LocalizationPolicy
     public function getFallbackDepth(
         LocalizedString $localizedString,
         Locale $requestedLocale,
-        ?Locale $tenantDefaultLocale = null
+        ?Locale $tenantDefaultLocale = null,
     ): ?int {
         if ($localizedString->isEmpty()) {
             return null;
@@ -150,7 +150,7 @@ final class LocalizationPolicy
     public function getResolvedLocale(
         LocalizedString $localizedString,
         Locale $requestedLocale,
-        ?Locale $tenantDefaultLocale = null
+        ?Locale $tenantDefaultLocale = null,
     ): ?Locale {
         if ($localizedString->isEmpty()) {
             return null;
@@ -227,7 +227,7 @@ final class LocalizationPolicy
      */
     public function negotiateLocale(
         string $acceptLanguageHeader,
-        ?Locale $defaultLocale = null
+        ?Locale $defaultLocale = null,
     ): Locale {
         $requestedLocales = self::parseAcceptLanguageHeader($acceptLanguageHeader);
 

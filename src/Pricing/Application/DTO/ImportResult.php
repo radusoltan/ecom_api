@@ -20,13 +20,13 @@ final readonly class ImportResult
         public int $errorCount,
         public array $errors,
         public int $createdCount,
-        public int $updatedCount
+        public int $updatedCount,
     ) {
     }
 
     public function isSuccessful(): bool
     {
-        return $this->errorCount === 0;
+        return 0 === $this->errorCount;
     }
 
     public function hasPartialSuccess(): bool

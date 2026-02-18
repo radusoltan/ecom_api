@@ -25,7 +25,7 @@ final readonly class CustomerExportService
     private const BATCH_SIZE = 1000;
 
     public function __construct(
-        private CustomerRepositoryInterface $customerRepository
+        private CustomerRepositoryInterface $customerRepository,
     ) {
     }
 

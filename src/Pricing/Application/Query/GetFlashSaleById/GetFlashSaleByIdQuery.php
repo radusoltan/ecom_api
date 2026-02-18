@@ -11,7 +11,7 @@ final readonly class GetFlashSaleByIdQuery
 {
     public function __construct(
         public FlashSaleId $flashSaleId,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

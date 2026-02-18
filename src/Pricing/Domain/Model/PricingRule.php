@@ -28,7 +28,7 @@ final readonly class PricingRule
         private ?ProductId $productId,
         private ?string $categoryId,
         private int $minQuantity,
-        private ?Money $minPurchaseAmount
+        private ?Money $minPurchaseAmount,
     ) {
         if (!in_array($this->scope, [self::SCOPE_PRODUCT, self::SCOPE_CATEGORY, self::SCOPE_ALL], true)) {
             throw new \InvalidArgumentException(sprintf('Invalid pricing rule scope "%s"', $this->scope));
@@ -55,7 +55,7 @@ final readonly class PricingRule
         ProductId $productId,
         Discount $discount,
         int $minQuantity = 1,
-        ?Money $minPurchaseAmount = null
+        ?Money $minPurchaseAmount = null,
     ): self {
         return new self(
             self::SCOPE_PRODUCT,
@@ -71,7 +71,7 @@ final readonly class PricingRule
         string $categoryId,
         Discount $discount,
         int $minQuantity = 1,
-        ?Money $minPurchaseAmount = null
+        ?Money $minPurchaseAmount = null,
     ): self {
         return new self(
             self::SCOPE_CATEGORY,
@@ -86,7 +86,7 @@ final readonly class PricingRule
     public static function forAll(
         Discount $discount,
         int $minQuantity = 1,
-        ?Money $minPurchaseAmount = null
+        ?Money $minPurchaseAmount = null,
     ): self {
         return new self(
             self::SCOPE_ALL,
@@ -135,7 +135,7 @@ final readonly class PricingRule
         ProductId $productId,
         ?string $categoryId,
         int $quantity,
-        Money $amount
+        Money $amount,
     ): bool {
         // Check scope match
         if (self::SCOPE_PRODUCT === $this->scope && !$this->productId->equals($productId)) {

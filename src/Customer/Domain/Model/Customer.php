@@ -75,7 +75,7 @@ final class Customer extends AggregateRoot
         Email $email,
         string $firstName,
         string $lastName,
-        ?string $phoneNumber = null
+        ?string $phoneNumber = null,
     ): self {
         self::validateName($firstName, 'First name');
         self::validateName($lastName, 'Last name');
@@ -129,7 +129,7 @@ final class Customer extends AggregateRoot
         NotificationPreferences $notificationPreferences,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt,
-        array $addresses = []
+        array $addresses = [],
     ): self {
         $customer = new self();
         $customer->id = $id;
@@ -154,7 +154,7 @@ final class Customer extends AggregateRoot
     public function updateProfile(
         string $firstName,
         string $lastName,
-        ?string $phoneNumber = null
+        ?string $phoneNumber = null,
     ): void {
         self::validateName($firstName, 'First name');
         self::validateName($lastName, 'Last name');

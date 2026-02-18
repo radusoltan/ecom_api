@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 final class ApiRedirectController extends AbstractController
 {
     public function __construct(
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 

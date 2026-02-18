@@ -50,7 +50,7 @@ final class Cart extends AggregateRoot
         CartId $id,
         TenantId $tenantId,
         ?CustomerId $customerId,
-        SessionId $sessionId
+        SessionId $sessionId,
     ): self {
         $cart = new self();
         $cart->id = $id;
@@ -83,7 +83,7 @@ final class Cart extends AggregateRoot
         CartStatus $status,
         array $items,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         $cart = new self();
         $cart->id = $id;
@@ -102,7 +102,7 @@ final class Cart extends AggregateRoot
         ProductId $productId,
         ?string $variantId,
         Quantity $quantity,
-        Money $unitPrice
+        Money $unitPrice,
     ): void {
         if (CartStatus::ACTIVE !== $this->status) {
             throw new \InvalidArgumentException('Cannot add items to a non-active cart');

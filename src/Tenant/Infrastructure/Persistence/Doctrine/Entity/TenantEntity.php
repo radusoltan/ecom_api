@@ -41,7 +41,7 @@ class TenantEntity
         #[ORM\Column(type: 'integer', options: ['default' => 10000])]
         private int $translationQuota = 10000,
         #[ORM\Column(type: 'integer', options: ['default' => 0])]
-        private int $translationUsage = 0
+        private int $translationUsage = 0,
     ) {
     }
 

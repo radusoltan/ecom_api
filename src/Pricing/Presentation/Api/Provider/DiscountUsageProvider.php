@@ -30,7 +30,7 @@ final readonly class DiscountUsageProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): DiscountUsageResource
     {
         $request = $this->requestStack->getCurrentRequest();
-        if ($request === null) {
+        if (null === $request) {
             return new DiscountUsageResource([], [], []);
         }
 
@@ -38,7 +38,7 @@ final readonly class DiscountUsageProvider implements ProviderInterface
         $dateRange = $this->parseDateRange($request);
 
         // Get top limit from query parameters
-        $topLimit = (int) ($request->query->get('top_limit', 10));
+        $topLimit = (int) $request->query->get('top_limit', 10);
         $topLimit = max(1, min($topLimit, 50)); // Clamp between 1-50
 
         // Create and execute query
@@ -64,7 +64,7 @@ final readonly class DiscountUsageProvider implements ProviderInterface
         $startDate = $request->query->get('start_date');
         $endDate = $request->query->get('end_date');
 
-        if ($startDate !== null && $endDate !== null) {
+        if (null !== $startDate && null !== $endDate) {
             try {
                 return DateRangeFilter::fromDates(
                     new \DateTimeImmutable($startDate, new \DateTimeZone('UTC')),

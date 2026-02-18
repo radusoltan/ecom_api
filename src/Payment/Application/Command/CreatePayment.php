@@ -18,7 +18,7 @@ final readonly class CreatePayment
         public int $amountInCents,
         public string $currency,
         public PaymentMethod $method,
-        public PaymentGateway $gateway
+        public PaymentGateway $gateway,
     ) {
     }
 }

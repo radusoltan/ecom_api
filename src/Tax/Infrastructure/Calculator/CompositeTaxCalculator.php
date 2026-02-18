@@ -88,7 +88,7 @@ final class CompositeTaxCalculator implements TaxCalculatorInterface
         TaxCategory $category,
         bool $isB2B = false,
         ?string $buyerVatNumber = null,
-        ?TenantId $tenantId = null
+        ?TenantId $tenantId = null,
     ): TaxCalculationResult {
         // 1. Check for tenant-specific custom rules first (highest priority)
         if (null !== $tenantId) {
@@ -170,7 +170,7 @@ final class CompositeTaxCalculator implements TaxCalculatorInterface
         int $amountInCents,
         \App\Tax\Domain\Model\TaxRule $rule,
         TaxJurisdiction $jurisdiction,
-        TaxCategory $category
+        TaxCategory $category,
     ): TaxCalculationResult {
         // Convert Model TaxRate to ValueObject TaxRate
         $rateModel = $rule->rate();
@@ -221,7 +221,7 @@ final class CompositeTaxCalculator implements TaxCalculatorInterface
     private function createNoTaxResult(
         int $amountInCents,
         TaxJurisdiction $jurisdiction,
-        TaxCategory $category
+        TaxCategory $category,
     ): TaxCalculationResult {
         return TaxCalculationResult::exempt(
             amountInCents: $amountInCents,

@@ -14,7 +14,7 @@ final readonly class GetTaxRuleById
 {
     public function __construct(
         public TaxRuleId $id,
-        public TenantId $tenantId
+        public TenantId $tenantId,
     ) {
     }
 }

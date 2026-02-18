@@ -31,7 +31,7 @@ final readonly class UpdateWarehouseProcessor implements ProcessorInterface
         mixed $data,
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
+        array $context = [],
     ): WarehouseResource {
         if (!$data instanceof WarehouseResource) {
             throw new \InvalidArgumentException('Expected WarehouseResource');

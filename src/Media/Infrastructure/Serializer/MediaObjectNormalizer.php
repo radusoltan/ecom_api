@@ -16,7 +16,7 @@ class MediaObjectNormalizer implements NormalizerInterface
         #[Autowire(service: 'api_platform.jsonld.normalizer.item')]
         private readonly NormalizerInterface $normalizer,
         #[Autowire('%media.storage.local.public_prefix%')]
-        private readonly string $publicPrefix
+        private readonly string $publicPrefix,
     ) {
     }
 

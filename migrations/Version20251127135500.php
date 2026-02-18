@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Migration: Create notifications table with RLS policy for multi-tenancy
+ * Migration: Create notifications table with RLS policy for multi-tenancy.
  */
 final class Version20251127135500 extends AbstractMigration
 {
@@ -22,7 +22,7 @@ final class Version20251127135500 extends AbstractMigration
         // Create notifications table
         $this->addSql('CREATE TABLE notifications (
             id VARCHAR(26) NOT NULL,
-            tenant_id VARCHAR(36) NOT NULL,
+            tenant_id UUID NOT NULL,
             type VARCHAR(20) NOT NULL,
             recipient_email VARCHAR(255) DEFAULT NULL,
             recipient_phone VARCHAR(20) DEFAULT NULL,

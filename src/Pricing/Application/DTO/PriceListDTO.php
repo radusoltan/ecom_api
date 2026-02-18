@@ -26,7 +26,7 @@ final readonly class PriceListDTO
         public ?string $validTo,
         public bool $isActive,
         public string $createdAt,
-        public string $updatedAt
+        public string $updatedAt,
     ) {
     }
 

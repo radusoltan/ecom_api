@@ -15,7 +15,7 @@ final readonly class GetDataExportStatusQuery
     public function __construct(
         public string $requestId,
         public string $customerId,
-        public string $tenantId
+        public string $tenantId,
     ) {
     }
 }

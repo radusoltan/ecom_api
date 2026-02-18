@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class UpdateTenantCommandHandler
 {
     public function __construct(
-        private TenantRepositoryInterface $tenantRepository
+        private TenantRepositoryInterface $tenantRepository,
     ) {
     }
 

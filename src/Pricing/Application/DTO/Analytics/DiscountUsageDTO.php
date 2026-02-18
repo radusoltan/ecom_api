@@ -33,14 +33,14 @@ final readonly class DiscountUsageDTO
     /**
      * Create from query results.
      *
-     * @param array<string, mixed> $summary
+     * @param array<string, mixed>             $summary
      * @param array<int, array<string, mixed>> $topCoupons
      * @param array<int, array<string, mixed>> $unusedPromotions
      */
     public static function create(
         array $summary,
         array $topCoupons,
-        array $unusedPromotions
+        array $unusedPromotions,
     ): self {
         return new self(
             totalCouponsUsed: (int) $summary['total_coupons_used'],
@@ -67,7 +67,7 @@ final readonly class DiscountUsageDTO
                 'totalDiscount' => [
                     'amount' => $this->totalDiscountAmount,
                     'currency' => $this->totalDiscountCurrency,
-                    'formatted' => number_format($this->totalDiscountAmount / 100, 2) . ' ' . $this->totalDiscountCurrency,
+                    'formatted' => number_format($this->totalDiscountAmount / 100, 2).' '.$this->totalDiscountCurrency,
                 ],
                 'averageDiscountPerOrder' => round($this->averageDiscountPerOrder, 2),
                 'activeCouponsCount' => $this->activeCouponsCount,

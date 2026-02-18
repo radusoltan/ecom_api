@@ -31,7 +31,7 @@ final readonly class ProcessPaymentRetriesHandler
 {
     public function __construct(
         private PaymentRetryService $retryService,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 

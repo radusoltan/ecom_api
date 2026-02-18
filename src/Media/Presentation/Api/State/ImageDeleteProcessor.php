@@ -19,7 +19,7 @@ final class ImageDeleteProcessor implements ProcessorInterface
     public function __construct(
         private readonly ImageRepositoryInterface $imageRepository,
         private readonly ImageSecurityPolicy $securityPolicy,
-        private readonly MessageBusInterface $messageBus
+        private readonly MessageBusInterface $messageBus,
     ) {
     }
 

@@ -13,7 +13,7 @@ final readonly class ImportRowError
         public int $row,
         public string $field,
         public string $message,
-        public mixed $value
+        public mixed $value,
     ) {
     }
 

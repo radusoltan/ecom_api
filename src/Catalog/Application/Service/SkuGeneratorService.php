@@ -16,7 +16,7 @@ final class SkuGeneratorService
     public function __construct(
         private readonly Connection $connection,
         private readonly CategoryRepositoryInterface $categoryRepository,
-        private readonly TenantRepositoryInterface $tenantRepository
+        private readonly TenantRepositoryInterface $tenantRepository,
     ) {
     }
 

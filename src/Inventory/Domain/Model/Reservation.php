@@ -29,7 +29,7 @@ final readonly class Reservation
     public static function create(
         string $reservationId,
         Quantity $quantity,
-        ?\DateTimeImmutable $reservedAt = null
+        ?\DateTimeImmutable $reservedAt = null,
     ): self {
         $reservedAt = $reservedAt ?? new \DateTimeImmutable();
         $expiresAt = $reservedAt->modify(sprintf('+%d minutes', self::TIMEOUT_MINUTES));

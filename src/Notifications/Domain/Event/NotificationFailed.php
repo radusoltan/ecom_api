@@ -16,7 +16,7 @@ final readonly class NotificationFailed
         public NotificationType $type,
         public ?string $recipientEmail,
         public string $reason,
-        public int $attemptCount
+        public int $attemptCount,
     ) {
     }
 }

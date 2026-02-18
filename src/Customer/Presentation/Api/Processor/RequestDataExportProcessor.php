@@ -9,7 +9,6 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Customer\Application\Command\RequestDataExport\RequestDataExportCommand;
 use App\Customer\Presentation\Api\Resource\DataExportResource;
 use App\Shared\Application\Service\TenantContextInterface;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -24,7 +23,7 @@ final readonly class RequestDataExportProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private TenantContextInterface $tenantContext
+        private TenantContextInterface $tenantContext,
     ) {
     }
 

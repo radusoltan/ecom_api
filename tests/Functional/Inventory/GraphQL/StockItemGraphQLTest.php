@@ -69,7 +69,7 @@ final class StockItemGraphQLTest extends ApiTestCase
 
     protected function createAuthenticatedClient(
         string $email = 'admin@admin.com',
-        array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER']
+        array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'],
     ) {
         $container = static::getContainer();
         $encoder = $container->get('lexik_jwt_authentication.encoder');
@@ -187,13 +187,13 @@ GRAPHQL;
 
         // If there are errors, skip the test (GraphQL collection query might not be properly configured)
         if (isset($response['errors'])) {
-            $this->markTestSkipped('GraphQL collection query returned errors: ' . json_encode($response['errors']));
+            $this->markTestSkipped('GraphQL collection query returned errors: '.json_encode($response['errors']));
         }
 
         $this->assertArrayHasKey('stockItems', $response['data']);
         $this->assertIsArray($response['data']['stockItems']);
 
-        if ($response['data']['stockItems'] === null) {
+        if (null === $response['data']['stockItems']) {
             $this->markTestSkipped('GraphQL stockItems query returned null - may need collection configuration');
         }
 
@@ -290,10 +290,10 @@ GRAPHQL;
 
         // Check for GraphQL errors
         if (isset($response['errors'])) {
-            $this->fail('GraphQL errors: ' . json_encode($response['errors'], JSON_PRETTY_PRINT));
+            $this->fail('GraphQL errors: '.json_encode($response['errors'], JSON_PRETTY_PRINT));
         }
 
-        $this->assertArrayHasKey('data', $response, 'Response: ' . json_encode($response, JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('data', $response, 'Response: '.json_encode($response, JSON_PRETTY_PRINT));
         $this->assertArrayHasKey('reserveStock', $response['data']);
 
         $operation = $response['data']['reserveStock'];

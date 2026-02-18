@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Catalog\Domain\ValueObject;
 
 use App\Shared\Domain\ValueObject\Money;
-use DateTimeImmutable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -26,7 +25,7 @@ final readonly class Subscription
         private SubscriptionInterval $interval,
         private int $billingCycles,
         private Money $setupFee,
-        private ?DateTimeImmutable $trialPeriodEnd = null
+        private ?\DateTimeImmutable $trialPeriodEnd = null,
     ) {
         Assert::greaterThanEq(
             $this->billingCycles,
@@ -46,10 +45,10 @@ final readonly class Subscription
             'Setup fee must be positive or zero'
         );
 
-        if ($this->trialPeriodEnd !== null) {
+        if (null !== $this->trialPeriodEnd) {
             Assert::greaterThan(
                 $this->trialPeriodEnd,
-                new DateTimeImmutable(),
+                new \DateTimeImmutable(),
                 'Trial period end must be in the future'
             );
         }
@@ -61,7 +60,7 @@ final readonly class Subscription
     public static function create(
         SubscriptionInterval $interval,
         int $billingCycles,
-        Money $setupFee
+        Money $setupFee,
     ): self {
         return new self($interval, $billingCycles, $setupFee, null);
     }
@@ -73,7 +72,7 @@ final readonly class Subscription
         SubscriptionInterval $interval,
         int $billingCycles,
         Money $setupFee,
-        DateTimeImmutable $trialPeriodEnd
+        \DateTimeImmutable $trialPeriodEnd,
     ): self {
         return new self($interval, $billingCycles, $setupFee, $trialPeriodEnd);
     }
@@ -83,7 +82,7 @@ final readonly class Subscription
      */
     public static function createInfinite(
         SubscriptionInterval $interval,
-        Money $setupFee
+        Money $setupFee,
     ): self {
         return new self($interval, 0, $setupFee, null);
     }
@@ -103,7 +102,7 @@ final readonly class Subscription
         return $this->setupFee;
     }
 
-    public function trialPeriodEnd(): ?DateTimeImmutable
+    public function trialPeriodEnd(): ?\DateTimeImmutable
     {
         return $this->trialPeriodEnd;
     }
@@ -113,7 +112,7 @@ final readonly class Subscription
      */
     public function isInfinite(): bool
     {
-        return $this->billingCycles === 0;
+        return 0 === $this->billingCycles;
     }
 
     /**
@@ -121,7 +120,7 @@ final readonly class Subscription
      */
     public function hasTrial(): bool
     {
-        return $this->trialPeriodEnd !== null;
+        return null !== $this->trialPeriodEnd;
     }
 
     /**
@@ -129,11 +128,11 @@ final readonly class Subscription
      */
     public function isTrialActive(): bool
     {
-        if ($this->trialPeriodEnd === null) {
+        if (null === $this->trialPeriodEnd) {
             return false;
         }
 
-        return $this->trialPeriodEnd > new DateTimeImmutable();
+        return $this->trialPeriodEnd > new \DateTimeImmutable();
     }
 
     /**
@@ -147,7 +146,7 @@ final readonly class Subscription
     /**
      * Calculate next billing date from a given start date.
      */
-    public function calculateNextBillingDate(DateTimeImmutable $fromDate): DateTimeImmutable
+    public function calculateNextBillingDate(\DateTimeImmutable $fromDate): \DateTimeImmutable
     {
         return match ($this->interval) {
             SubscriptionInterval::DAILY => $fromDate->modify('+1 day'),
@@ -160,9 +159,9 @@ final readonly class Subscription
     /**
      * Preview next N billing dates.
      *
-     * @return array<DateTimeImmutable>
+     * @return array<\DateTimeImmutable>
      */
-    public function previewBillingDates(DateTimeImmutable $startDate, int $count = 12): array
+    public function previewBillingDates(\DateTimeImmutable $startDate, int $count = 12): array
     {
         Assert::greaterThan($count, 0, 'Count must be positive');
         Assert::lessThanEq($count, 100, 'Cannot preview more than 100 billing dates');
@@ -171,13 +170,13 @@ final readonly class Subscription
         $currentDate = $startDate;
 
         // If trial period exists, start billing after trial ends
-        if ($this->hasTrial() && $this->isTrialActive() && $this->trialPeriodEnd !== null) {
+        if ($this->hasTrial() && $this->isTrialActive() && null !== $this->trialPeriodEnd) {
             $currentDate = $this->trialPeriodEnd;
         }
 
         $maxDates = $this->isInfinite() ? $count : min($count, $this->billingCycles);
 
-        for ($i = 0; $i < $maxDates; $i++) {
+        for ($i = 0; $i < $maxDates; ++$i) {
             $currentDate = $this->calculateNextBillingDate($currentDate);
             $dates[] = $currentDate;
         }

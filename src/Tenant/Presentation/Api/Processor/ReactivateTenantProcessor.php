@@ -21,7 +21,7 @@ final readonly class ReactivateTenantProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private MessageBusInterface $queryBus
+        private MessageBusInterface $queryBus,
     ) {
     }
 
@@ -32,7 +32,7 @@ final readonly class ReactivateTenantProcessor implements ProcessorInterface
         mixed $data,
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
+        array $context = [],
     ): TenantResource {
         $tenantId = $uriVariables['id'] ?? null;
 

@@ -30,7 +30,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 final readonly class StockValidator
 {
     public function __construct(
-        private StockItemRepositoryInterface $stockItemRepository
+        private StockItemRepositoryInterface $stockItemRepository,
     ) {
     }
 
@@ -48,7 +48,7 @@ final readonly class StockValidator
         ProductId $productId,
         ?string $variantId,
         TenantId $tenantId,
-        int $requestedQuantity
+        int $requestedQuantity,
     ): void {
         $availableQuantity = $this->getAvailableQuantity($productId, $variantId, $tenantId);
 
@@ -72,7 +72,7 @@ final readonly class StockValidator
     public function getAvailableQuantity(
         ProductId $productId,
         ?string $variantId,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): int {
         // Query all stock items for this product across all warehouses
         $stockItems = $this->stockItemRepository->findByProduct($productId, $tenantId);
@@ -106,7 +106,7 @@ final readonly class StockValidator
     public function isInStock(
         ProductId $productId,
         ?string $variantId,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): bool {
         return $this->getAvailableQuantity($productId, $variantId, $tenantId) > 0;
     }
@@ -123,7 +123,7 @@ final readonly class StockValidator
     public function getStockDetails(
         ProductId $productId,
         ?string $variantId,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): array {
         $available = $this->getAvailableQuantity($productId, $variantId, $tenantId);
 

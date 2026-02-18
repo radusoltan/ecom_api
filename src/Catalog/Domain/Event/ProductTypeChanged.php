@@ -15,7 +15,7 @@ final readonly class ProductTypeChanged
         public TenantId $tenantId,
         public ProductType $oldType,
         public ProductType $newType,
-        public \DateTimeImmutable $occurredAt
+        public \DateTimeImmutable $occurredAt,
     ) {
     }
 }

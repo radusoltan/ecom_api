@@ -14,7 +14,7 @@ final readonly class OrderStatusChanged
         public OrderId $orderId,
         public TenantId $tenantId,
         public OrderStatus $oldStatus,
-        public OrderStatus $newStatus
+        public OrderStatus $newStatus,
     ) {
     }
 }

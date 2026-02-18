@@ -49,7 +49,7 @@ final class LoyaltyPointTransaction
         int $balanceAfter,
         string $reason,
         ?string $orderId = null,
-        ?\DateTimeImmutable $expiresAt = null
+        ?\DateTimeImmutable $expiresAt = null,
     ): self {
         self::validatePoints($points);
         self::validateBalanceAfter($balanceAfter);
@@ -80,7 +80,7 @@ final class LoyaltyPointTransaction
         string $reason,
         ?string $orderId,
         ?\DateTimeImmutable $expiresAt,
-        \DateTimeImmutable $createdAt
+        \DateTimeImmutable $createdAt,
     ): self {
         $transaction = new self();
         $transaction->id = $id;

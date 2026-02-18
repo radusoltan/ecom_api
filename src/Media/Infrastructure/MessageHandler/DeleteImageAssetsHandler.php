@@ -17,7 +17,7 @@ final class DeleteImageAssetsHandler
         private readonly string $originalBasePath,
         private readonly string $originalPublicPrefix,
         private readonly string $thumbnailBasePath,
-        private readonly string $thumbnailPublicPrefix
+        private readonly string $thumbnailPublicPrefix,
     ) {
         $this->filesystem = new Filesystem();
     }

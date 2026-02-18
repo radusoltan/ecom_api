@@ -17,7 +17,7 @@ final class LocalImageStorage implements ImageStorage
 
     public function __construct(
         private readonly string $basePath,
-        private readonly string $publicPrefix = '/media/originals'
+        private readonly string $publicPrefix = '/media/originals',
     ) {
         $this->filesystem = new Filesystem();
     }

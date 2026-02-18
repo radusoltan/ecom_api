@@ -14,7 +14,7 @@ use Symfony\Component\Uid\Uuid;
 final readonly class FlashSaleId
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!Uuid::isValid($this->value)) {
             throw new \InvalidArgumentException(sprintf('Invalid FlashSaleId: "%s" is not a valid UUID', $this->value));

@@ -11,7 +11,7 @@ final readonly class UserPasswordChanged implements DomainEvent
 {
     public function __construct(
         private UserId $userId,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

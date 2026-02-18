@@ -21,7 +21,7 @@ final readonly class DataExportCompleted
         private TenantId $tenantId,
         private string $filePath,
         private \DateTimeImmutable $expiresAt,
-        private \DateTimeImmutable $completedAt
+        private \DateTimeImmutable $completedAt,
     ) {
     }
 

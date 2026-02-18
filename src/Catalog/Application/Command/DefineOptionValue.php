@@ -21,7 +21,7 @@ final readonly class DefineOptionValue
         public string $optionCode,
         public string $valueCode,
         public array $nameTranslations,
-        public int $position = 0
+        public int $position = 0,
     ) {
     }
 }

@@ -66,7 +66,7 @@ final class StripeGatewayTest extends TestCase
     // PaymentIntent Creation Tests (5 tests)
     // ========================================
 
-    public function test_it_creates_payment_intent_successfully(): void
+    public function testItCreatesPaymentIntentSuccessfully(): void
     {
         // Arrange
         $paymentId = PaymentId::generate();
@@ -86,8 +86,8 @@ final class StripeGatewayTest extends TestCase
             ->with(
                 $this->callback(function ($params) use ($paymentId, $amount) {
                     return $params['amount'] === $amount->getAmount()
-                        && $params['currency'] === 'eur'
-                        && $params['capture_method'] === 'manual'
+                        && 'eur' === $params['currency']
+                        && 'manual' === $params['capture_method']
                         && $params['metadata']['payment_id'] === $paymentId->toString();
                 }),
                 $this->callback(function ($options) {
@@ -112,7 +112,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertTrue($result->amount->equals(Money::fromScalars(10000, 'EUR')));
     }
 
-    public function test_it_creates_payment_intent_with_customer_id(): void
+    public function testItCreatesPaymentIntentWithCustomerId(): void
     {
         // Arrange
         $paymentId = PaymentId::generate();
@@ -152,7 +152,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertSame($customerId, $result->customerId);
     }
 
-    public function test_it_handles_card_declined_error_on_create(): void
+    public function testItHandlesCardDeclinedErrorOnCreate(): void
     {
         // Arrange
         $paymentId = PaymentId::generate();
@@ -181,7 +181,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertNotNull($result->errorMessage);
     }
 
-    public function test_it_handles_insufficient_funds_error_on_create(): void
+    public function testItHandlesInsufficientFundsErrorOnCreate(): void
     {
         // Arrange
         $paymentId = PaymentId::generate();
@@ -209,7 +209,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertSame('insufficient_funds', $result->errorCode);
     }
 
-    public function test_it_handles_invalid_request_error_on_create(): void
+    public function testItHandlesInvalidRequestErrorOnCreate(): void
     {
         // Arrange
         $paymentId = PaymentId::generate();
@@ -240,7 +240,7 @@ final class StripeGatewayTest extends TestCase
     // PaymentIntent Confirmation Tests (3 tests)
     // ========================================
 
-    public function test_it_confirms_payment_intent_successfully(): void
+    public function testItConfirmsPaymentIntentSuccessfully(): void
     {
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_789';
@@ -276,7 +276,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertTrue($result->isAuthorized());
     }
 
-    public function test_it_confirms_payment_intent_requiring_3ds_action(): void
+    public function testItConfirmsPaymentIntentRequiring3dsAction(): void
     {
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_3ds';
@@ -307,7 +307,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertNotNull($result->clientSecret);
     }
 
-    public function test_it_handles_error_on_confirm(): void
+    public function testItHandlesErrorOnConfirm(): void
     {
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_invalid';
@@ -336,7 +336,7 @@ final class StripeGatewayTest extends TestCase
     // PaymentIntent Capture Tests (3 tests)
     // ========================================
 
-    public function test_it_captures_payment_intent_full_amount(): void
+    public function testItCapturesPaymentIntentFullAmount(): void
     {
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_capture';
@@ -369,7 +369,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertTrue($result->isCaptured());
     }
 
-    public function test_it_captures_payment_intent_partial_amount(): void
+    public function testItCapturesPaymentIntentPartialAmount(): void
     {
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_partial_capture';
@@ -404,7 +404,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertTrue($result->isCaptured());
     }
 
-    public function test_it_handles_error_on_capture(): void
+    public function testItHandlesErrorOnCapture(): void
     {
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_capture_failed';
@@ -431,7 +431,7 @@ final class StripeGatewayTest extends TestCase
     // PaymentIntent Cancellation Tests (2 tests)
     // ========================================
 
-    public function test_it_cancels_payment_intent_successfully(): void
+    public function testItCancelsPaymentIntentSuccessfully(): void
     {
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_cancel';
@@ -460,7 +460,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertTrue($result->isFinal());
     }
 
-    public function test_it_handles_error_on_cancel(): void
+    public function testItHandlesErrorOnCancel(): void
     {
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_cancel_failed';
@@ -487,7 +487,7 @@ final class StripeGatewayTest extends TestCase
     // Refund Tests (3 tests)
     // ========================================
 
-    public function test_it_creates_refund_successfully(): void
+    public function testItCreatesRefundSuccessfully(): void
     {
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_refund';
@@ -507,7 +507,7 @@ final class StripeGatewayTest extends TestCase
                 $this->callback(function ($params) use ($gatewayPaymentIntentId, $refundAmount) {
                     return $params['payment_intent'] === $gatewayPaymentIntentId
                         && $params['amount'] === $refundAmount->getAmount()
-                        && $params['reason'] === 'requested_by_customer';
+                        && 'requested_by_customer' === $params['reason'];
                 }),
                 $this->callback(function ($options) {
                     return isset($options['idempotency_key']);
@@ -530,7 +530,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertTrue($result->amount->equals(Money::fromScalars(8000, 'EUR')));
     }
 
-    public function test_it_creates_refund_with_reason_mapping(): void
+    public function testItCreatesRefundWithReasonMapping(): void
     {
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_refund_fraud';
@@ -548,7 +548,7 @@ final class StripeGatewayTest extends TestCase
             ->method('create')
             ->with(
                 $this->callback(function ($params) {
-                    return $params['reason'] === 'fraudulent';
+                    return 'fraudulent' === $params['reason'];
                 }),
                 $this->anything()
             )
@@ -567,7 +567,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertTrue($result->isPending());
     }
 
-    public function test_it_handles_error_on_refund(): void
+    public function testItHandlesErrorOnRefund(): void
     {
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_refund_failed';
@@ -598,7 +598,7 @@ final class StripeGatewayTest extends TestCase
     // Error Handling Tests (3 tests)
     // ========================================
 
-    public function test_it_maps_api_error_with_rate_limit(): void
+    public function testItMapsApiErrorWithRateLimit(): void
     {
         // Arrange
         $paymentId = PaymentId::generate();
@@ -626,7 +626,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertSame('rate_limit', $result->errorCode);
     }
 
-    public function test_it_maps_api_error_with_gateway_timeout(): void
+    public function testItMapsApiErrorWithGatewayTimeout(): void
     {
         // Arrange
         $paymentId = PaymentId::generate();
@@ -654,7 +654,7 @@ final class StripeGatewayTest extends TestCase
         $this->assertSame('gateway_timeout', $result->errorCode);
     }
 
-    public function test_it_maps_api_error_with_processing_error(): void
+    public function testItMapsApiErrorWithProcessingError(): void
     {
         // Arrange
         $paymentId = PaymentId::generate();
@@ -686,19 +686,19 @@ final class StripeGatewayTest extends TestCase
     // Gateway Identification Tests (3 tests)
     // ========================================
 
-    public function test_it_returns_correct_gateway_id(): void
+    public function testItReturnsCorrectGatewayId(): void
     {
         // Act & Assert
         $this->assertTrue($this->gateway->getGatewayId()->equals(PaymentMethod::STRIPE));
     }
 
-    public function test_it_returns_correct_gateway_name(): void
+    public function testItReturnsCorrectGatewayName(): void
     {
         // Act & Assert
         $this->assertSame('Stripe', $this->gateway->getName());
     }
 
-    public function test_it_returns_webhook_secret(): void
+    public function testItReturnsWebhookSecret(): void
     {
         // Act & Assert
         $this->assertSame('whsec_test_secret', $this->gateway->getWebhookSecret());
@@ -717,7 +717,7 @@ final class StripeGatewayTest extends TestCase
         int $amount,
         string $currency,
         ?string $clientSecret = null,
-        ?string $customerId = null
+        ?string $customerId = null,
     ): PaymentIntent {
         $mockPaymentIntent = $this->createMock(PaymentIntent::class);
         $mockPaymentIntent->id = $id;
@@ -746,7 +746,7 @@ final class StripeGatewayTest extends TestCase
         string $id,
         string $status,
         int $amount,
-        string $currency
+        string $currency,
     ): Refund {
         $mockRefund = $this->createMock(Refund::class);
         $mockRefund->id = $id;

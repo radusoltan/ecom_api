@@ -8,7 +8,7 @@ final readonly class GetOrderByIdQuery
 {
     public function __construct(
         public string $orderId,
-        public string $tenantId
+        public string $tenantId,
     ) {
     }
 }

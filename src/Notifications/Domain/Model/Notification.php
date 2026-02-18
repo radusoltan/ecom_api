@@ -51,7 +51,7 @@ final class Notification extends AggregateRoot
         ?string $recipientEmail,
         ?string $recipientPhone,
         string $subject,
-        string $body
+        string $body,
     ): self {
         // Validate recipient based on type
         if ($type->isEmail() && (null === $recipientEmail || '' === $recipientEmail)) {
@@ -104,10 +104,7 @@ final class Notification extends AggregateRoot
     public function markAsSent(): void
     {
         if ($this->status->isTerminal()) {
-            throw new \DomainException(sprintf(
-                'Cannot mark notification as sent. Current status: %s',
-                $this->status->value
-            ));
+            throw new \DomainException(sprintf('Cannot mark notification as sent. Current status: %s', $this->status->value));
         }
 
         $this->status = NotificationStatus::SENT;
@@ -126,10 +123,7 @@ final class Notification extends AggregateRoot
     public function markAsFailed(string $reason): void
     {
         if ($this->status->isTerminal()) {
-            throw new \DomainException(sprintf(
-                'Cannot mark notification as failed. Current status: %s',
-                $this->status->value
-            ));
+            throw new \DomainException(sprintf('Cannot mark notification as failed. Current status: %s', $this->status->value));
         }
 
         if ('' === trim($reason)) {
@@ -139,7 +133,7 @@ final class Notification extends AggregateRoot
         $this->status = NotificationStatus::FAILED;
         $this->failedAt = new \DateTimeImmutable();
         $this->failureReason = $reason;
-        $this->attemptCount++;
+        ++$this->attemptCount;
         $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new NotificationFailed(
@@ -155,17 +149,11 @@ final class Notification extends AggregateRoot
     public function retry(): void
     {
         if (!$this->status->canRetry()) {
-            throw new \DomainException(sprintf(
-                'Cannot retry notification. Current status: %s',
-                $this->status->value
-            ));
+            throw new \DomainException(sprintf('Cannot retry notification. Current status: %s', $this->status->value));
         }
 
         if ($this->attemptCount >= self::MAX_RETRY_ATTEMPTS) {
-            throw new \DomainException(sprintf(
-                'Maximum retry attempts (%d) reached',
-                self::MAX_RETRY_ATTEMPTS
-            ));
+            throw new \DomainException(sprintf('Maximum retry attempts (%d) reached', self::MAX_RETRY_ATTEMPTS));
         }
 
         $this->status = NotificationStatus::PENDING;
@@ -177,10 +165,7 @@ final class Notification extends AggregateRoot
     public function cancel(): void
     {
         if ($this->status->isTerminal()) {
-            throw new \DomainException(sprintf(
-                'Cannot cancel notification. Current status: %s',
-                $this->status->value
-            ));
+            throw new \DomainException(sprintf('Cannot cancel notification. Current status: %s', $this->status->value));
         }
 
         $this->status = NotificationStatus::CANCELLED;
@@ -201,7 +186,7 @@ final class Notification extends AggregateRoot
         ?\DateTimeImmutable $failedAt,
         ?string $failureReason,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         $notification = new self();
         $notification->id = $id;

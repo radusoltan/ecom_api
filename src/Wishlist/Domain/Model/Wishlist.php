@@ -35,7 +35,7 @@ final class Wishlist extends AggregateRoot
         private string $customerId,
         private TenantId $tenantId,
         private \DateTimeImmutable $createdAt,
-        private \DateTimeImmutable $updatedAt
+        private \DateTimeImmutable $updatedAt,
     ) {
     }
 
@@ -45,7 +45,7 @@ final class Wishlist extends AggregateRoot
     public static function create(
         WishlistId $id,
         string $customerId,
-        TenantId $tenantId
+        TenantId $tenantId,
     ): self {
         return new self(
             $id,
@@ -65,7 +65,7 @@ final class Wishlist extends AggregateRoot
         TenantId $tenantId,
         array $items,
         \DateTimeImmutable $createdAt,
-        \DateTimeImmutable $updatedAt
+        \DateTimeImmutable $updatedAt,
     ): self {
         $wishlist = new self($id, $customerId, $tenantId, $createdAt, $updatedAt);
         $wishlist->items = $items;

@@ -19,15 +19,11 @@ final readonly class GetCartPricingQueryHandler
 {
     public function __construct(
         private CartRepositoryInterface $cartRepository,
-        private CartPricingServiceInterface $cartPricingService
+        private CartPricingServiceInterface $cartPricingService,
     ) {
     }
 
     /**
-     * @param GetCartPricingQuery $query
-     *
-     * @return CartPriceCalculationResult
-     *
      * @throws \RuntimeException If cart not found
      */
     public function __invoke(GetCartPricingQuery $query): CartPriceCalculationResult

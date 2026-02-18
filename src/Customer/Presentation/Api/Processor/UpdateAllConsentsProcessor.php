@@ -12,7 +12,6 @@ use App\Customer\Application\Query\GetCustomerConsents\GetCustomerConsentsQuery;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Presentation\Api\Resource\CustomerConsentResource;
 use App\Shared\Application\Service\TenantContextInterface;
-use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -32,7 +31,7 @@ final readonly class UpdateAllConsentsProcessor implements ProcessorInterface
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
         private TenantContextInterface $tenantContext,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

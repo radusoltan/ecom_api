@@ -9,7 +9,7 @@ final class Stock
     private function __construct(
         private int $quantity,
         private bool $trackInventory,
-        private bool $allowBackorder
+        private bool $allowBackorder,
     ) {
         if ($quantity < 0) {
             throw new \InvalidArgumentException('Stock quantity cannot be negative');
@@ -19,7 +19,7 @@ final class Stock
     public static function create(
         int $quantity,
         bool $trackInventory = true,
-        bool $allowBackorder = false
+        bool $allowBackorder = false,
     ): self {
         return new self($quantity, $trackInventory, $allowBackorder);
     }

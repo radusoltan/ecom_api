@@ -25,7 +25,7 @@ final class CreateReturnRequestProcessor implements ProcessorInterface
     public function __construct(
         private readonly MessageBusInterface $commandBus,
         private readonly MessageBusInterface $queryBus,
-        private readonly TenantContext $tenantContext
+        private readonly TenantContext $tenantContext,
     ) {
         $this->messageBus = $commandBus;
     }

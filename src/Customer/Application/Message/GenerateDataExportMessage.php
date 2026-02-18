@@ -21,7 +21,7 @@ final readonly class GenerateDataExportMessage
     public function __construct(
         private string $requestId,
         private string $customerId,
-        private string $tenantId
+        private string $tenantId,
     ) {
     }
 

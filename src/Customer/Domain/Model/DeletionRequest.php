@@ -51,7 +51,7 @@ final class DeletionRequest extends AggregateRoot
         DeletionRequestId $id,
         CustomerId $customerId,
         TenantId $tenantId,
-        ?string $reason = null
+        ?string $reason = null,
     ): self {
         $request = new self();
         $request->id = $id;
@@ -65,7 +65,7 @@ final class DeletionRequest extends AggregateRoot
         $request->createdAt = new \DateTimeImmutable();
 
         // Set initial scheduled date (will be updated when confirmed)
-        $request->scheduledFor = $request->createdAt->modify('+' . self::RETENTION_DAYS . ' days');
+        $request->scheduledFor = $request->createdAt->modify('+'.self::RETENTION_DAYS.' days');
 
         $request->recordEvent(new AccountDeletionRequested(
             $request->id,
@@ -87,7 +87,7 @@ final class DeletionRequest extends AggregateRoot
         \DateTimeImmutable $scheduledFor,
         ?\DateTimeImmutable $confirmedAt,
         ?\DateTimeImmutable $completedAt,
-        \DateTimeImmutable $createdAt
+        \DateTimeImmutable $createdAt,
     ): self {
         $request = new self();
         $request->id = $id;
@@ -107,15 +107,12 @@ final class DeletionRequest extends AggregateRoot
     public function confirm(): void
     {
         if (!$this->status->canTransitionTo(DeletionStatus::CONFIRMED)) {
-            throw new \DomainException(sprintf(
-                'Cannot confirm deletion request in status: %s',
-                $this->status->value
-            ));
+            throw new \DomainException(sprintf('Cannot confirm deletion request in status: %s', $this->status->value));
         }
 
         $this->status = DeletionStatus::CONFIRMED;
         $this->confirmedAt = new \DateTimeImmutable();
-        $this->scheduledFor = $this->confirmedAt->modify('+' . self::RETENTION_DAYS . ' days');
+        $this->scheduledFor = $this->confirmedAt->modify('+'.self::RETENTION_DAYS.' days');
 
         $this->recordEvent(new AccountDeletionConfirmed(
             $this->id,
@@ -128,10 +125,7 @@ final class DeletionRequest extends AggregateRoot
     public function cancel(): void
     {
         if (!$this->canBeCancelled()) {
-            throw new \DomainException(sprintf(
-                'Cannot cancel deletion request in status: %s',
-                $this->status->value
-            ));
+            throw new \DomainException(sprintf('Cannot cancel deletion request in status: %s', $this->status->value));
         }
 
         $this->status = DeletionStatus::CANCELLED;
@@ -146,10 +140,7 @@ final class DeletionRequest extends AggregateRoot
     public function putOnHold(string $holdReason): void
     {
         if (!$this->status->canTransitionTo(DeletionStatus::ON_HOLD)) {
-            throw new \DomainException(sprintf(
-                'Cannot put deletion request on hold in status: %s',
-                $this->status->value
-            ));
+            throw new \DomainException(sprintf('Cannot put deletion request on hold in status: %s', $this->status->value));
         }
 
         if (empty(trim($holdReason))) {
@@ -180,19 +171,11 @@ final class DeletionRequest extends AggregateRoot
     public function process(): void
     {
         if (!$this->canBeExecuted()) {
-            throw new \DomainException(sprintf(
-                'Cannot process deletion request. Status: %s, Scheduled: %s, On Hold: %s',
-                $this->status->value,
-                $this->scheduledFor->format('Y-m-d H:i:s'),
-                $this->isOnHold() ? 'Yes' : 'No'
-            ));
+            throw new \DomainException(sprintf('Cannot process deletion request. Status: %s, Scheduled: %s, On Hold: %s', $this->status->value, $this->scheduledFor->format('Y-m-d H:i:s'), $this->isOnHold() ? 'Yes' : 'No'));
         }
 
         if (!$this->status->canTransitionTo(DeletionStatus::PROCESSING)) {
-            throw new \DomainException(sprintf(
-                'Cannot process deletion request in status: %s',
-                $this->status->value
-            ));
+            throw new \DomainException(sprintf('Cannot process deletion request in status: %s', $this->status->value));
         }
 
         $this->status = DeletionStatus::PROCESSING;
@@ -201,10 +184,7 @@ final class DeletionRequest extends AggregateRoot
     public function complete(): void
     {
         if (!$this->status->canTransitionTo(DeletionStatus::COMPLETED)) {
-            throw new \DomainException(sprintf(
-                'Cannot complete deletion request in status: %s',
-                $this->status->value
-            ));
+            throw new \DomainException(sprintf('Cannot complete deletion request in status: %s', $this->status->value));
         }
 
         $this->status = DeletionStatus::COMPLETED;
@@ -235,7 +215,7 @@ final class DeletionRequest extends AggregateRoot
     public function canBeExecuted(): bool
     {
         // Can execute if confirmed, past scheduled date, and not on hold
-        return $this->status === DeletionStatus::CONFIRMED
+        return DeletionStatus::CONFIRMED === $this->status
             && $this->scheduledFor <= new \DateTimeImmutable()
             && !$this->isOnHold();
     }

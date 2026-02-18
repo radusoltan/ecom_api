@@ -23,7 +23,7 @@ final readonly class BundleItem
     private function __construct(
         private ProductId $productId,
         private int $quantity,
-        private Money $price
+        private Money $price,
     ) {
         if ($quantity < 1) {
             throw new \InvalidArgumentException('Bundle item quantity must be at least 1');
@@ -33,7 +33,7 @@ final readonly class BundleItem
     public static function create(
         ProductId $productId,
         int $quantity,
-        Money $price
+        Money $price,
     ): self {
         return new self($productId, $quantity, $price);
     }
@@ -44,7 +44,7 @@ final readonly class BundleItem
     public static function fromPersistence(
         ProductId $productId,
         int $quantity,
-        Money $price
+        Money $price,
     ): self {
         return new self($productId, $quantity, $price);
     }

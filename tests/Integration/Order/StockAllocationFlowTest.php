@@ -14,18 +14,15 @@ use App\Inventory\Domain\Repository\WarehouseRepositoryInterface;
 use App\Order\Application\Command\PlaceOrder;
 use App\Order\Domain\Event\OrderPlaced;
 use App\Order\Domain\Model\OrderId;
-use App\Order\Domain\Model\OrderLine;
 use App\Order\Domain\Repository\FulfillmentRepositoryInterface;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
-use App\Shared\Domain\ValueObject\Address;
-use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tests\Support\TenantTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Integration Test: Stock Allocation Flow
+ * Integration Test: Stock Allocation Flow.
  *
  * Tests the complete flow:
  * 1. Order is placed
@@ -128,7 +125,7 @@ final class StockAllocationFlowTest extends KernelTestCase
         // In test environment, messenger should be synchronous
         $fulfillment = $this->fulfillmentRepository->findByOrderId($orderId);
 
-        if ($fulfillment !== null) {
+        if (null !== $fulfillment) {
             // If fulfillment exists, verify it's linked to correct warehouse
             $this->assertSame(
                 $warehouseId->toString(),
@@ -291,20 +288,20 @@ final class StockAllocationFlowTest extends KernelTestCase
 
         // Assert: Fulfillment may exist (depending on sync/async)
         $fulfillment = $this->fulfillmentRepository->findByOrderId($orderId);
-        if ($fulfillment !== null) {
+        if (null !== $fulfillment) {
             $this->assertSame($warehouseId->toString(), $fulfillment->warehouseId()->toString());
         }
     }
 
     /**
-     * Helper: Create a warehouse for testing
+     * Helper: Create a warehouse for testing.
      */
     private function createWarehouse(WarehouseId $warehouseId): void
     {
         $command = new CreateWarehouseCommand(
             id: $warehouseId,
             tenantId: $this->tenantId,
-            code: 'WH-' . substr($warehouseId->toString(), 0, 8),
+            code: 'WH-'.substr($warehouseId->toString(), 0, 8),
             name: 'Test Warehouse',
             isActive: true,
             priority: 1,
@@ -320,7 +317,7 @@ final class StockAllocationFlowTest extends KernelTestCase
     }
 
     /**
-     * Helper: Create stock item for testing
+     * Helper: Create stock item for testing.
      */
     private function createStockItem(WarehouseId $warehouseId, ProductId $productId, int $quantity): void
     {

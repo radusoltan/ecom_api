@@ -14,7 +14,7 @@ use Symfony\Component\Uid\Uuid;
 final readonly class CustomerAddressId
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!Uuid::isValid($value)) {
             throw new \InvalidArgumentException(sprintf('Invalid customer address ID: "%s"', $value));

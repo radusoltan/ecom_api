@@ -30,7 +30,7 @@ final readonly class PromotionPerformanceProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
         $request = $this->requestStack->getCurrentRequest();
-        if ($request === null) {
+        if (null === $request) {
             return [];
         }
 
@@ -38,7 +38,7 @@ final readonly class PromotionPerformanceProvider implements ProviderInterface
         $dateRange = $this->parseDateRange($request);
 
         // Get limit from query parameters
-        $limit = (int) ($request->query->get('limit', 10));
+        $limit = (int) $request->query->get('limit', 10);
         $limit = max(1, min($limit, 100)); // Clamp between 1-100
 
         // Create and execute query
@@ -75,7 +75,7 @@ final readonly class PromotionPerformanceProvider implements ProviderInterface
         $startDate = $request->query->get('start_date');
         $endDate = $request->query->get('end_date');
 
-        if ($startDate !== null && $endDate !== null) {
+        if (null !== $startDate && null !== $endDate) {
             try {
                 return DateRangeFilter::fromDates(
                     new \DateTimeImmutable($startDate, new \DateTimeZone('UTC')),

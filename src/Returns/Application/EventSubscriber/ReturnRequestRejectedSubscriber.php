@@ -32,7 +32,7 @@ final readonly class ReturnRequestRejectedSubscriber implements EventSubscriberI
         private MailerInterface $mailer,
         private LoggerInterface $logger,
         private string $senderEmail,
-        private string $senderName
+        private string $senderName,
     ) {
     }
 

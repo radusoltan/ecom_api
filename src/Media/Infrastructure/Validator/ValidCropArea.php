@@ -33,7 +33,7 @@ class ValidCropArea extends Constraint
         float $aspectRatioTolerance = 0.1,
         ?string $message = null,
         ?array $groups = null,
-        mixed $payload = null
+        mixed $payload = null,
     ) {
         parent::__construct([], $groups, $payload);
 

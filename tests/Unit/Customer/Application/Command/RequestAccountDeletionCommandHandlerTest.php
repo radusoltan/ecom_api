@@ -9,7 +9,6 @@ use App\Customer\Application\Command\RequestAccountDeletion\RequestAccountDeleti
 use App\Customer\Domain\Model\DeletionRequest;
 use App\Customer\Domain\Repository\DeletionRequestRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
-use App\Customer\Domain\ValueObject\DeletionStatus;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 

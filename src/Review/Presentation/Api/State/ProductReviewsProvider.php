@@ -20,7 +20,7 @@ final class ProductReviewsProvider implements ProviderInterface
 
     public function __construct(
         MessageBusInterface $queryBus,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
     ) {
         $this->messageBus = $queryBus;
     }

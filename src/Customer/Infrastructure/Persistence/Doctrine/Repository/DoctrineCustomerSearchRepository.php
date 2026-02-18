@@ -20,7 +20,7 @@ use Doctrine\ORM\QueryBuilder;
 final readonly class DoctrineCustomerSearchRepository implements CustomerSearchRepositoryInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

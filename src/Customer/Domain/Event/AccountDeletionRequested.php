@@ -14,7 +14,7 @@ final readonly class AccountDeletionRequested
         private DeletionRequestId $requestId,
         private CustomerId $customerId,
         private TenantId $tenantId,
-        private ?string $reason
+        private ?string $reason,
     ) {
     }
 

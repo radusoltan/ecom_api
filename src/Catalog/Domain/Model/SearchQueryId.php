@@ -12,7 +12,7 @@ use Symfony\Component\Uid\Ulid;
 final readonly class SearchQueryId
 {
     private function __construct(
-        private string $value
+        private string $value,
     ) {
         if (!Ulid::isValid($value)) {
             throw new \InvalidArgumentException(sprintf('Invalid SearchQueryId: %s', $value));

@@ -20,7 +20,7 @@ final readonly class SubscriptionRemoved implements DomainEvent
         private ProductId $productId,
         private TenantId $tenantId,
         private Subscription $subscription,
-        private \DateTimeImmutable $occurredOn
+        private \DateTimeImmutable $occurredOn,
     ) {
     }
 

@@ -14,7 +14,7 @@ use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 final readonly class UpdateSubscriptionCommandHandler
 {
     public function __construct(
-        private ProductRepositoryInterface $productRepository
+        private ProductRepositoryInterface $productRepository,
     ) {
     }
 
@@ -23,10 +23,8 @@ final readonly class UpdateSubscriptionCommandHandler
         // Load the product
         $product = $this->productRepository->findById($command->productId);
 
-        if ($product === null) {
-            throw new \DomainException(
-                sprintf('Product with ID "%s" not found', $command->productId->toString())
-            );
+        if (null === $product) {
+            throw new \DomainException(sprintf('Product with ID "%s" not found', $command->productId->toString()));
         }
 
         // Update subscription on product (validates business rules)

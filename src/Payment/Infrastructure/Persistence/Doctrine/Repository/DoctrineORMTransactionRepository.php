@@ -31,7 +31,7 @@ use Doctrine\ORM\EntityManagerInterface;
 final readonly class DoctrineORMTransactionRepository implements TransactionRepositoryInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

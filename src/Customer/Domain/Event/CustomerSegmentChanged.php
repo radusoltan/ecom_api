@@ -12,7 +12,7 @@ final readonly class CustomerSegmentChanged
     public function __construct(
         private CustomerId $customerId,
         private CustomerSegment $oldSegment,
-        private CustomerSegment $newSegment
+        private CustomerSegment $newSegment,
     ) {
     }
 

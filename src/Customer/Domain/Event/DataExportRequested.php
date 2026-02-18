@@ -19,7 +19,7 @@ final readonly class DataExportRequested
         private DataExportRequestId $requestId,
         private CustomerId $customerId,
         private TenantId $tenantId,
-        private \DateTimeImmutable $requestedAt
+        private \DateTimeImmutable $requestedAt,
     ) {
     }
 

@@ -29,7 +29,7 @@ final readonly class ActivateWarehouseProcessor implements ProcessorInterface
         mixed $data,
         Operation $operation,
         array $uriVariables = [],
-        array $context = []
+        array $context = [],
     ): WarehouseResource {
         if (!isset($uriVariables['id'])) {
             throw new \InvalidArgumentException('Warehouse ID is required');

@@ -21,7 +21,7 @@ final readonly class RecordLoyaltyTransactionCommand
         public TransactionType $type,
         public int $points,
         public string $reason,
-        public ?string $orderId = null
+        public ?string $orderId = null,
     ) {
     }
 }

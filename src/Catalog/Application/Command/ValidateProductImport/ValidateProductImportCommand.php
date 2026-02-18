@@ -13,7 +13,7 @@ final readonly class ValidateProductImportCommand
      * @param array<int, array<string, mixed>> $products Array of product data to validate
      */
     public function __construct(
-        public array $products
+        public array $products,
     ) {
     }
 }

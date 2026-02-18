@@ -20,7 +20,7 @@ final readonly class CreateFlashSaleCommand
         public string $discountType,
         public float $discountValue,
         public string $startTime,
-        public string $endTime
+        public string $endTime,
     ) {
     }
 }

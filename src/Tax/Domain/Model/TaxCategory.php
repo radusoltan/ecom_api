@@ -34,12 +34,12 @@ enum TaxCategory: string
 
     public function isExempt(): bool
     {
-        return $this === self::EXEMPT;
+        return self::EXEMPT === $this;
     }
 
     public function isZeroRate(): bool
     {
-        return $this === self::ZERO || $this === self::EXEMPT;
+        return self::ZERO === $this || self::EXEMPT === $this;
     }
 
     public function description(): string

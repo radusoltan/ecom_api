@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class ExportCustomersQueryHandler
 {
     public function __construct(
-        private CustomerExportService $exportService
+        private CustomerExportService $exportService,
     ) {
     }
 

@@ -20,7 +20,7 @@ final readonly class CreateFlashSaleCommandHandler
 {
     public function __construct(
         private FlashSaleRepositoryInterface $flashSaleRepository,
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $messageBus,
     ) {
     }
 

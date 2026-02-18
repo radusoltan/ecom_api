@@ -12,7 +12,6 @@ use App\Customer\Application\Query\GetDeletionRequestStatus\GetDeletionRequestSt
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Presentation\Api\Resource\DeletionRequestResource;
 use App\Shared\Application\Service\TenantContextInterface;
-use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
@@ -29,7 +28,7 @@ final readonly class RequestDeletionProcessor implements ProcessorInterface
     public function __construct(
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
-        private TenantContextInterface $tenantContext
+        private TenantContextInterface $tenantContext,
     ) {
     }
 

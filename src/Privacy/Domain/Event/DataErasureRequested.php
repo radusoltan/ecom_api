@@ -13,7 +13,7 @@ final readonly class DataErasureRequested implements DomainEvent
     public function __construct(
         public DataSubjectRequestId $requestId,
         public CustomerId $customerId,
-        public \DateTimeImmutable $occurredOn
+        public \DateTimeImmutable $occurredOn,
     ) {
     }
 

@@ -26,7 +26,7 @@ final readonly class OrderDTO
         public ?string $taxRuleId,
         public float $taxRate,
         public string $createdAt,
-        public string $updatedAt
+        public string $updatedAt,
     ) {
     }
 

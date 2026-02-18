@@ -10,7 +10,7 @@ final readonly class RejectDataSubjectRequestCommand
 {
     public function __construct(
         public DataSubjectRequestId $requestId,
-        public string $rejectionReason
+        public string $rejectionReason,
     ) {
     }
 }

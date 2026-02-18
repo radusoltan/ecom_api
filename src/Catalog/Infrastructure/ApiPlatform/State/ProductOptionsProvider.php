@@ -86,7 +86,7 @@ final readonly class ProductOptionsProvider implements ProviderInterface
      */
     private function convertToResource(
         \App\Catalog\Application\DTO\OptionDTO $optionDTO,
-        string $locale
+        string $locale,
     ): ProductOptionsResource {
         // Get localized option name
         $optionName = $this->getLocalizedValue($optionDTO->nameTranslations, $locale);

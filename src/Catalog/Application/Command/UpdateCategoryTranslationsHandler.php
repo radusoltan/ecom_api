@@ -14,7 +14,7 @@ final readonly class UpdateCategoryTranslationsHandler
 {
     public function __construct(
         private CategoryRepositoryInterface $categoryRepository,
-        private I18nCacheService $cacheService
+        private I18nCacheService $cacheService,
     ) {
     }
 

@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class NotificationIdTest extends TestCase
 {
-    public function test_it_generates_valid_notification_id(): void
+    public function testItGeneratesValidNotificationId(): void
     {
         // Act
         $id = NotificationId::generate();
@@ -25,7 +25,7 @@ final class NotificationIdTest extends TestCase
         $this->assertMatchesRegularExpression('/^[0-7][0-9A-HJKMNP-TV-Z]{25}$/i', $id->toString());
     }
 
-    public function test_it_creates_from_valid_string(): void
+    public function testItCreatesFromValidString(): void
     {
         // Arrange
         $ulid = '01HQ4VY5JZQZ5JZQZ5JZQZ5JZQ';
@@ -37,7 +37,7 @@ final class NotificationIdTest extends TestCase
         $this->assertSame($ulid, $id->toString());
     }
 
-    public function test_it_throws_when_string_is_empty(): void
+    public function testItThrowsWhenStringIsEmpty(): void
     {
         // Arrange
         $emptyString = '';
@@ -50,7 +50,7 @@ final class NotificationIdTest extends TestCase
         NotificationId::fromString($emptyString);
     }
 
-    public function test_it_throws_when_string_is_zero(): void
+    public function testItThrowsWhenStringIsZero(): void
     {
         // Arrange
         $zeroString = '0';
@@ -63,7 +63,7 @@ final class NotificationIdTest extends TestCase
         NotificationId::fromString($zeroString);
     }
 
-    public function test_it_throws_when_ulid_format_is_invalid(): void
+    public function testItThrowsWhenUlidFormatIsInvalid(): void
     {
         // Arrange
         $invalidUlid = 'invalid-ulid-format';
@@ -76,7 +76,7 @@ final class NotificationIdTest extends TestCase
         NotificationId::fromString($invalidUlid);
     }
 
-    public function test_it_equals_same_value(): void
+    public function testItEqualsSameValue(): void
     {
         // Arrange
         $ulid = '01HQ4VY5JZQZ5JZQZ5JZQZ5JZQ';
@@ -87,7 +87,7 @@ final class NotificationIdTest extends TestCase
         $this->assertTrue($id1->equals($id2));
     }
 
-    public function test_it_not_equals_different_value(): void
+    public function testItNotEqualsDifferentValue(): void
     {
         // Arrange
         $id1 = NotificationId::generate();
@@ -97,7 +97,7 @@ final class NotificationIdTest extends TestCase
         $this->assertFalse($id1->equals($id2));
     }
 
-    public function test_it_converts_to_string(): void
+    public function testItConvertsToString(): void
     {
         // Arrange
         $ulid = '01HQ4VY5JZQZ5JZQZ5JZQZ5JZQ';

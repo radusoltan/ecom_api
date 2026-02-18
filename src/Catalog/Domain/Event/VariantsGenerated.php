@@ -17,7 +17,7 @@ final readonly class VariantsGenerated implements DomainEvent
         private ConfigurableProductId $configurableProductId,
         private ProductId $productId,
         private int $variantsCount,
-        private \DateTimeImmutable $occurredOn = new \DateTimeImmutable()
+        private \DateTimeImmutable $occurredOn = new \DateTimeImmutable(),
     ) {
     }
 

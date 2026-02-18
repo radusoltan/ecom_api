@@ -23,7 +23,7 @@ final readonly class UpdateCartItemProcessor implements ProcessorInterface
     public function __construct(
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
     ) {
     }
 

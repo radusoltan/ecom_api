@@ -15,7 +15,7 @@ use App\Payment\Domain\ValueObject\PaymentId;
 final readonly class GetPaymentQuery
 {
     public function __construct(
-        public PaymentId $paymentId
+        public PaymentId $paymentId,
     ) {
     }
 }

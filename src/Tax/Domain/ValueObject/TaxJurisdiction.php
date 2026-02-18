@@ -14,7 +14,7 @@ final readonly class TaxJurisdiction
 {
     private function __construct(
         private string $countryCode,
-        private ?string $regionCode = null
+        private ?string $regionCode = null,
     ) {
         if (2 !== strlen($countryCode)) {
             throw new \InvalidArgumentException(sprintf('Country code must be 2 characters (ISO 3166-1 alpha-2), got "%s"', $countryCode));

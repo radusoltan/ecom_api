@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class GetAllProductOptionsHandler
 {
     public function __construct(
-        private Connection $connection
+        private Connection $connection,
     ) {
     }
 

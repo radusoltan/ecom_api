@@ -39,7 +39,7 @@ final readonly class ReturnRequestCompletedSubscriber implements EventSubscriber
         private LoggerInterface $logger,
         private string $senderEmail,
         private string $senderName,
-        private MessageBusInterface $commandBus
+        private MessageBusInterface $commandBus,
     ) {
     }
 

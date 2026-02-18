@@ -11,7 +11,7 @@ final readonly class Address
         public string $city,
         public string $state,
         public string $postalCode,
-        public string $country
+        public string $country,
     ) {
         if ('' === trim($street)) {
             throw new \InvalidArgumentException('Address street cannot be empty');
@@ -35,7 +35,7 @@ final readonly class Address
         string $city,
         string $state,
         string $postalCode,
-        string $country
+        string $country,
     ): self {
         return new self($street, $city, $state, $postalCode, $country);
     }
