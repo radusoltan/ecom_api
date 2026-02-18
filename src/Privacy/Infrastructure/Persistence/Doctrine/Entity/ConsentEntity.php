@@ -63,10 +63,10 @@ class ConsentEntity
     #[ORM\Column(type: 'boolean')]
     private bool $isGranted;
 
-    #[ORM\Column(type: 'string', length: 45)]
+    #[ORM\Column(type: 'encrypted_string')]
     private string $ipAddress;
 
-    #[ORM\Column(type: 'string', length: 500)]
+    #[ORM\Column(type: 'encrypted_string')]
     private string $userAgent;
 
     #[ORM\Column(type: 'text')]

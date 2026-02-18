@@ -18,10 +18,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'orders')]
 // Performance indexes for queries
 #[ORM\Index(name: 'idx_orders_tenant_id', columns: ['tenant_id'])]
-#[ORM\Index(name: 'idx_orders_tenant_customer', columns: ['tenant_id', 'customer_email'])]
+#[ORM\Index(name: 'idx_orders_tenant_customer', columns: ['tenant_id', 'customer_email_blind_index'])]
 #[ORM\Index(name: 'idx_orders_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_orders_created_at', columns: ['created_at'])]
-#[ORM\Index(name: 'idx_orders_customer_created', columns: ['customer_email', 'created_at'])]
+#[ORM\Index(name: 'idx_orders_customer_created', columns: ['customer_email_blind_index', 'created_at'])]
 #[ORM\Index(name: 'idx_orders_tenant_status_created', columns: ['tenant_id', 'status', 'created_at'])]
 class OrderEntity
 {
@@ -32,8 +32,11 @@ class OrderEntity
     #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
     private string $tenantId;
 
-    #[ORM\Column(type: 'string', length: 255, name: 'customer_email')]
+    #[ORM\Column(type: 'encrypted_string', name: 'customer_email')]
     private string $customerEmail;
+
+    #[ORM\Column(type: 'string', length: 64, nullable: true)]
+    private ?string $customerEmailBlindIndex = null;
 
     #[ORM\Column(type: 'string', length: 20)]
     private string $status;
@@ -42,10 +45,10 @@ class OrderEntity
     /** @var array<string, mixed> */
     private array $lines = [];
 
-    #[ORM\Column(type: 'json', name: 'shipping_address')]
+    #[ORM\Column(type: 'encrypted_json', name: 'shipping_address')]
     private array $shippingAddress;
 
-    #[ORM\Column(type: 'json', name: 'billing_address')]
+    #[ORM\Column(type: 'encrypted_json', name: 'billing_address')]
     private array $billingAddress;
 
     #[ORM\Column(type: 'json', nullable: true, name: 'applied_promotions')]
@@ -346,5 +349,15 @@ class OrderEntity
     public function getTaxRate(): ?float
     {
         return $this->taxRate;
+    }
+
+    public function getCustomerEmailBlindIndex(): ?string
+    {
+        return $this->customerEmailBlindIndex;
+    }
+
+    public function setCustomerEmailBlindIndex(?string $customerEmailBlindIndex): void
+    {
+        $this->customerEmailBlindIndex = $customerEmailBlindIndex;
     }
 }

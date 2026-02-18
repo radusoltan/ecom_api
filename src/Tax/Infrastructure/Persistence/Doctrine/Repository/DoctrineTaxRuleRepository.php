@@ -10,6 +10,7 @@ use App\Tax\Domain\Model\TaxJurisdiction;
 use App\Tax\Domain\Model\TaxRule;
 use App\Tax\Domain\Model\TaxRuleId;
 use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
+use App\Tax\Domain\ValueObject\TaxJurisdiction as TaxJurisdictionVO;
 use App\Tax\Infrastructure\Persistence\Doctrine\Entity\TaxRuleEntity;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -162,6 +163,39 @@ final class DoctrineTaxRuleRepository implements TaxRuleRepositoryInterface
                 ->addOrderBy('t.regionCode', 'DESC'); // NULL sorts first, region code sorts last
         } else {
             // Only country-level rules
+            $qb->andWhere('t.regionCode IS NULL');
+        }
+
+        $entity = $qb->getQuery()->getOneOrNullResult();
+
+        if (null === $entity) {
+            return null;
+        }
+
+        return $entity->toDomainModel();
+    }
+
+    public function findByJurisdiction(TaxJurisdictionVO $jurisdiction, TenantId $tenantId): ?TaxRule
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $qb->select('t')
+            ->from(TaxRuleEntity::class, 't')
+            ->where('t.tenantId = :tenantId')
+            ->andWhere('t.countryCode = :countryCode')
+            ->andWhere('t.isActive = :isActive')
+            ->orderBy('t.priority', 'DESC')
+            ->setMaxResults(1)
+            ->setParameter('tenantId', $tenantId->toString())
+            ->setParameter('countryCode', $jurisdiction->getCountryCode())
+            ->setParameter('isActive', true);
+
+        $regionCode = $jurisdiction->getRegionCode();
+        if (null !== $regionCode) {
+            $qb->andWhere('t.regionCode IS NULL OR t.regionCode = :regionCode')
+                ->setParameter('regionCode', $regionCode)
+                ->addOrderBy('t.regionCode', 'DESC');
+        } else {
             $qb->andWhere('t.regionCode IS NULL');
         }
 

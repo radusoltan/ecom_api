@@ -9,6 +9,7 @@ use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
 use App\Order\Infrastructure\Persistence\Doctrine\Entity\OrderEntity;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Encryption\BlindIndexService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -17,6 +18,7 @@ final readonly class DoctrineORMOrderRepository implements OrderRepositoryInterf
     public function __construct(
         private EntityManagerInterface $entityManager,
         private EventDispatcherInterface $eventDispatcher,
+        private BlindIndexService $blindIndexService,
     ) {
     }
 
@@ -32,6 +34,9 @@ final readonly class DoctrineORMOrderRepository implements OrderRepositoryInterf
             // Update existing entity by copying properties from domain model
             $entity->updateFromDomainModel($order);
         }
+
+        // Set blind index for customer email search
+        $entity->setCustomerEmailBlindIndex($this->blindIndexService->generate($order->customerEmail()));
 
         $this->entityManager->flush();
 
@@ -61,7 +66,7 @@ final readonly class DoctrineORMOrderRepository implements OrderRepositoryInterf
     public function findByCustomerEmail(string $email, TenantId $tenantId): array
     {
         $entities = $this->entityManager->getRepository(OrderEntity::class)->findBy([
-            'customerEmail' => $email,
+            'customerEmailBlindIndex' => $this->blindIndexService->generate($email),
             'tenantId' => $tenantId->toString(),
         ], ['createdAt' => 'DESC']);
 

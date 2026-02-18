@@ -6,6 +6,18 @@ use Symfony\Component\Dotenv\Dotenv;
 
 require dirname(__DIR__).'/vendor/autoload.php';
 
+// Enable bypass-finals so PHPUnit can mock/stub final classes in unit tests.
+// Must be called after autoload registration but before any final class is loaded.
+// Only bypass finals in src/ (production code) - not in tests/ or vendor/.
+\DG\BypassFinals::enable();
+\DG\BypassFinals::setWhitelist([
+    '*/src/Payment/Infrastructure/Gateway/*',
+    '*/src/Notifications/Domain/Service/*',
+    '*/src/Order/Domain/Service/*',
+    '*/src/Order/Domain/Model/*',
+    '*/src/Inventory/Domain/Model/*',
+]);
+
 if (method_exists(Dotenv::class, 'bootEnv')) {
     (new Dotenv())->bootEnv(dirname(__DIR__).'/.env');
 }

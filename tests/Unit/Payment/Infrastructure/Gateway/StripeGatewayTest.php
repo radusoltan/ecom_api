@@ -10,9 +10,9 @@ use App\Payment\Infrastructure\Gateway\StripeClientFactory;
 use App\Payment\Infrastructure\Gateway\StripeGateway;
 use App\Shared\Domain\ValueObject\Money;
 use PHPUnit\Framework\TestCase;
-use Stripe\Exception\ApiErrorException;
 use Stripe\Exception\CardException;
 use Stripe\Exception\InvalidRequestException;
+use Stripe\Exception\UnknownApiErrorException;
 use Stripe\PaymentIntent;
 use Stripe\Refund;
 use Stripe\Service\PaymentIntentService;
@@ -52,13 +52,11 @@ final class StripeGatewayTest extends TestCase
         $this->stripeClient->paymentIntents = $this->paymentIntentService;
         $this->stripeClient->refunds = $this->refundService;
 
-        // Create a test stub factory that returns our mocked client
-        // Note: TestStripeClientFactory is not the real StripeClientFactory (which is final)
-        // but a duck-typed stub for testing purposes
-        $clientFactory = new TestStripeClientFactory($this->stripeClient);
+        // StripeClientFactory is declared final. dg/bypass-finals (enabled in tests/bootstrap.php)
+        // strips the final keyword at load time, allowing PHPUnit to generate a mock for it.
+        $clientFactory = $this->createMock(StripeClientFactory::class);
+        $clientFactory->method('create')->willReturn($this->stripeClient);
 
-        // Create gateway instance - PHP will accept our stub due to duck typing
-        // @phpstan-ignore-next-line (TestStripeClientFactory is not the real type but works for testing)
         $this->gateway = new StripeGateway($clientFactory, 'whsec_test_secret');
     }
 
@@ -158,10 +156,14 @@ final class StripeGatewayTest extends TestCase
         $paymentId = PaymentId::generate();
         $amount = Money::fromScalars(10000, 'EUR');
 
-        $cardException = $this->createMock(CardException::class);
-        $cardException->method('getMessage')->willReturn('Your card was declined');
-        $cardException->method('getDeclineCode')->willReturn('generic_decline');
-        $cardException->method('getJsonBody')->willReturn(['error' => ['message' => 'Card declined']]);
+        // getMessage() is final on \Exception and cannot be mocked.
+        // Use ::factory() to construct a real CardException with the desired message and body.
+        $cardException = CardException::factory(
+            message: 'Your card was declined',
+            jsonBody: ['error' => ['message' => 'Card declined', 'decline_code' => 'generic_decline']],
+            stripeCode: 'card_declined',
+            declineCode: 'generic_decline'
+        );
 
         $this->paymentIntentService
             ->method('create')
@@ -187,10 +189,13 @@ final class StripeGatewayTest extends TestCase
         $paymentId = PaymentId::generate();
         $amount = Money::fromScalars(100000, 'EUR');
 
-        $cardException = $this->createMock(CardException::class);
-        $cardException->method('getMessage')->willReturn('Insufficient funds');
-        $cardException->method('getDeclineCode')->willReturn('insufficient_funds');
-        $cardException->method('getJsonBody')->willReturn(['error' => ['decline_code' => 'insufficient_funds']]);
+        // getMessage() is final on \Exception and cannot be mocked.
+        // Use ::factory() to construct a real CardException with the desired message and body.
+        $cardException = CardException::factory(
+            message: 'Insufficient funds',
+            jsonBody: ['error' => ['decline_code' => 'insufficient_funds']],
+            declineCode: 'insufficient_funds'
+        );
 
         $this->paymentIntentService
             ->method('create')
@@ -215,9 +220,12 @@ final class StripeGatewayTest extends TestCase
         $paymentId = PaymentId::generate();
         $amount = Money::fromScalars(-100, 'EUR'); // Invalid amount
 
-        $invalidRequestException = $this->createMock(InvalidRequestException::class);
-        $invalidRequestException->method('getMessage')->willReturn('Invalid amount: must be positive');
-        $invalidRequestException->method('getJsonBody')->willReturn(['error' => ['message' => 'Invalid amount']]);
+        // getMessage() is final on \Exception and cannot be mocked.
+        // Use ::factory() to construct a real InvalidRequestException.
+        $invalidRequestException = InvalidRequestException::factory(
+            message: 'Invalid amount: must be positive',
+            jsonBody: ['error' => ['message' => 'Invalid amount']]
+        );
 
         $this->paymentIntentService
             ->method('create')
@@ -311,11 +319,13 @@ final class StripeGatewayTest extends TestCase
     {
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_invalid';
-        $paymentMethodId = 'pm_invalid';
 
-        $invalidRequestException = $this->createMock(InvalidRequestException::class);
-        $invalidRequestException->method('getMessage')->willReturn('Payment intent not found');
-        $invalidRequestException->method('getJsonBody')->willReturn(['error' => ['message' => 'Not found']]);
+        // getMessage() is final on \Exception and cannot be mocked.
+        // Use ::factory() to construct a real InvalidRequestException.
+        $invalidRequestException = InvalidRequestException::factory(
+            message: 'Payment intent not found',
+            jsonBody: ['error' => ['message' => 'Not found']]
+        );
 
         $this->paymentIntentService
             ->method('confirm')
@@ -324,7 +334,7 @@ final class StripeGatewayTest extends TestCase
         // Act
         $result = $this->gateway->confirmPaymentIntent(
             gatewayPaymentIntentId: $gatewayPaymentIntentId,
-            paymentMethodId: $paymentMethodId
+            paymentMethodId: 'pm_invalid'
         );
 
         // Assert
@@ -409,9 +419,12 @@ final class StripeGatewayTest extends TestCase
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_capture_failed';
 
-        $invalidRequestException = $this->createMock(InvalidRequestException::class);
-        $invalidRequestException->method('getMessage')->willReturn('Cannot capture cancelled payment intent');
-        $invalidRequestException->method('getJsonBody')->willReturn(['error' => ['message' => 'Cannot capture']]);
+        // getMessage() is final on \Exception and cannot be mocked.
+        // Use ::factory() to construct a real InvalidRequestException.
+        $invalidRequestException = InvalidRequestException::factory(
+            message: 'Cannot capture cancelled payment intent',
+            jsonBody: ['error' => ['message' => 'Cannot capture']]
+        );
 
         $this->paymentIntentService
             ->method('capture')
@@ -465,9 +478,12 @@ final class StripeGatewayTest extends TestCase
         // Arrange
         $gatewayPaymentIntentId = 'pi_test_cancel_failed';
 
-        $invalidRequestException = $this->createMock(InvalidRequestException::class);
-        $invalidRequestException->method('getMessage')->willReturn('Cannot cancel succeeded payment intent');
-        $invalidRequestException->method('getJsonBody')->willReturn(['error' => ['message' => 'Cannot cancel']]);
+        // getMessage() is final on \Exception and cannot be mocked.
+        // Use ::factory() to construct a real InvalidRequestException.
+        $invalidRequestException = InvalidRequestException::factory(
+            message: 'Cannot cancel succeeded payment intent',
+            jsonBody: ['error' => ['message' => 'Cannot cancel']]
+        );
 
         $this->paymentIntentService
             ->method('cancel')
@@ -573,9 +589,12 @@ final class StripeGatewayTest extends TestCase
         $gatewayPaymentIntentId = 'pi_test_refund_failed';
         $refundAmount = Money::fromScalars(10000, 'EUR');
 
-        $invalidRequestException = $this->createMock(InvalidRequestException::class);
-        $invalidRequestException->method('getMessage')->willReturn('Charge already refunded');
-        $invalidRequestException->method('getJsonBody')->willReturn(['error' => ['message' => 'Already refunded']]);
+        // getMessage() is final on \Exception and cannot be mocked.
+        // Use ::factory() to construct a real InvalidRequestException.
+        $invalidRequestException = InvalidRequestException::factory(
+            message: 'Charge already refunded',
+            jsonBody: ['error' => ['message' => 'Already refunded']]
+        );
 
         $this->refundService
             ->method('create')
@@ -604,10 +623,15 @@ final class StripeGatewayTest extends TestCase
         $paymentId = PaymentId::generate();
         $amount = Money::fromScalars(10000, 'EUR');
 
-        $apiException = $this->createMock(ApiErrorException::class);
-        $apiException->method('getMessage')->willReturn('Rate limit exceeded');
-        $apiException->method('getHttpStatus')->willReturn(429);
-        $apiException->method('getJsonBody')->willReturn(['error' => ['message' => 'Rate limit']]);
+        // getMessage() is final on \Exception and cannot be mocked.
+        // UnknownApiErrorException is a concrete subclass of ApiErrorException;
+        // its ::factory() accepts httpStatus so the gateway's match() on getHttpStatus()
+        // returns the correct error code.
+        $apiException = UnknownApiErrorException::factory(
+            message: 'Rate limit exceeded',
+            httpStatus: 429,
+            jsonBody: ['error' => ['message' => 'Rate limit']]
+        );
 
         $this->paymentIntentService
             ->method('create')
@@ -632,10 +656,12 @@ final class StripeGatewayTest extends TestCase
         $paymentId = PaymentId::generate();
         $amount = Money::fromScalars(10000, 'EUR');
 
-        $apiException = $this->createMock(ApiErrorException::class);
-        $apiException->method('getMessage')->willReturn('Gateway timeout');
-        $apiException->method('getHttpStatus')->willReturn(503);
-        $apiException->method('getJsonBody')->willReturn(['error' => ['message' => 'Service unavailable']]);
+        // getMessage() is final on \Exception and cannot be mocked.
+        $apiException = UnknownApiErrorException::factory(
+            message: 'Gateway timeout',
+            httpStatus: 503,
+            jsonBody: ['error' => ['message' => 'Service unavailable']]
+        );
 
         $this->paymentIntentService
             ->method('create')
@@ -660,10 +686,12 @@ final class StripeGatewayTest extends TestCase
         $paymentId = PaymentId::generate();
         $amount = Money::fromScalars(10000, 'EUR');
 
-        $apiException = $this->createMock(ApiErrorException::class);
-        $apiException->method('getMessage')->willReturn('Processing error');
-        $apiException->method('getHttpStatus')->willReturn(400);
-        $apiException->method('getJsonBody')->willReturn(['error' => ['message' => 'Processing error']]);
+        // getMessage() is final on \Exception and cannot be mocked.
+        $apiException = UnknownApiErrorException::factory(
+            message: 'Processing error',
+            httpStatus: 400,
+            jsonBody: ['error' => ['message' => 'Processing error']]
+        );
 
         $this->paymentIntentService
             ->method('create')
@@ -688,8 +716,9 @@ final class StripeGatewayTest extends TestCase
 
     public function testItReturnsCorrectGatewayId(): void
     {
-        // Act & Assert
-        $this->assertTrue($this->gateway->getGatewayId()->equals(PaymentMethod::STRIPE));
+        // PaymentMethod is a PHP enum; enum cases are singletons compared with ===.
+        // There is no equals() method — use assertSame() directly.
+        $this->assertSame(PaymentMethod::STRIPE, $this->gateway->getGatewayId());
     }
 
     public function testItReturnsCorrectGatewayName(): void
@@ -709,7 +738,14 @@ final class StripeGatewayTest extends TestCase
     // ========================================
 
     /**
-     * Create a mock Stripe PaymentIntent with required properties.
+     * Create a Stripe PaymentIntent with required properties populated.
+     *
+     * PaymentIntent extends StripeObject which stores all properties in an
+     * internal $_values array accessed via __get/__set magic. PHPUnit mocks
+     * intercept __set and do NOT forward writes to $_values, so property
+     * assignments on mocks are silently lost and subsequent __get calls return
+     * null. Using constructFrom() builds a real StripeObject instance whose
+     * __get reads correctly from $_values.
      */
     private function createMockPaymentIntent(
         string $id,
@@ -719,15 +755,7 @@ final class StripeGatewayTest extends TestCase
         ?string $clientSecret = null,
         ?string $customerId = null,
     ): PaymentIntent {
-        $mockPaymentIntent = $this->createMock(PaymentIntent::class);
-        $mockPaymentIntent->id = $id;
-        $mockPaymentIntent->status = $status;
-        $mockPaymentIntent->amount = $amount;
-        $mockPaymentIntent->currency = $currency;
-        $mockPaymentIntent->client_secret = $clientSecret;
-        $mockPaymentIntent->customer = $customerId;
-
-        $mockPaymentIntent->method('toArray')->willReturn([
+        return PaymentIntent::constructFrom([
             'id' => $id,
             'status' => $status,
             'amount' => $amount,
@@ -735,12 +763,14 @@ final class StripeGatewayTest extends TestCase
             'client_secret' => $clientSecret,
             'customer' => $customerId,
         ]);
-
-        return $mockPaymentIntent;
     }
 
     /**
-     * Create a mock Stripe Refund with required properties.
+     * Create a Stripe Refund with required properties populated.
+     *
+     * Same rationale as createMockPaymentIntent(): use constructFrom() to build
+     * a real StripeObject instance so that __get returns correct values when
+     * production code reads $refund->currency, $refund->id, etc.
      */
     private function createMockRefund(
         string $id,
@@ -748,36 +778,11 @@ final class StripeGatewayTest extends TestCase
         int $amount,
         string $currency,
     ): Refund {
-        $mockRefund = $this->createMock(Refund::class);
-        $mockRefund->id = $id;
-        $mockRefund->status = $status;
-        $mockRefund->amount = $amount;
-        $mockRefund->currency = $currency;
-
-        $mockRefund->method('toArray')->willReturn([
+        return Refund::constructFrom([
             'id' => $id,
             'status' => $status,
             'amount' => $amount,
             'currency' => $currency,
         ]);
-
-        return $mockRefund;
-    }
-}
-
-/**
- * Test stub for StripeClientFactory that returns a mocked StripeClient.
- * This is necessary because StripeClientFactory is declared final and cannot be mocked or extended.
- * We create a simple stub that doesn't inherit from the final class.
- */
-final class TestStripeClientFactory
-{
-    public function __construct(private readonly StripeClient $mockClient)
-    {
-    }
-
-    public function create(): StripeClient
-    {
-        return $this->mockClient;
     }
 }

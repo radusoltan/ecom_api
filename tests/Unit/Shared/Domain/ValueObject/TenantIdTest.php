@@ -276,19 +276,8 @@ final class TenantIdTest extends TestCase
         $this->assertContains($variantChar, ['8', '9', 'a', 'b']);
     }
 
-    public function testIsReadonly(): void
-    {
-        $reflection = new \ReflectionClass(TenantId::class);
-
-        $this->assertTrue($reflection->isReadOnly());
-    }
-
-    public function testIsFinal(): void
-    {
-        $reflection = new \ReflectionClass(TenantId::class);
-
-        $this->assertTrue($reflection->isFinal());
-    }
+    // Note: isReadonly/isFinal reflection tests removed — BypassFinals in test bootstrap
+    // strips these modifiers, causing false negatives. The class IS final readonly in source.
 
     public function testImplementsStringable(): void
     {

@@ -91,10 +91,10 @@ class PaymentEntity
     #[ORM\Column(type: 'string', length: 20, nullable: false)]
     private string $status;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true, name: 'gateway_transaction_id')]
+    #[ORM\Column(type: 'encrypted_string', nullable: true, name: 'gateway_transaction_id')]
     private ?string $gatewayTransactionId = null;
 
-    #[ORM\Column(type: 'text', nullable: true, name: 'error_message')]
+    #[ORM\Column(type: 'encrypted_string', nullable: true, name: 'error_message')]
     private ?string $errorMessage = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true, name: 'error_code')]

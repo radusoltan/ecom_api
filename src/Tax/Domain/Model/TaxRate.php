@@ -51,6 +51,11 @@ final readonly class TaxRate
         return $this->rate;
     }
 
+    public function getPercentage(): float
+    {
+        return $this->rate;
+    }
+
     public function multiplier(): float
     {
         return $this->rate / 100;

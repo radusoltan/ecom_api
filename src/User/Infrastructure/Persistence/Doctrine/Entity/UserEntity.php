@@ -59,13 +59,19 @@ class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    #[ORM\Column(type: 'encrypted_string')]
     #[Groups(['user:read', 'user:create'])]
     private string $email;
 
-    #[ORM\Column(type: 'string', length: 50, unique: true)]
+    #[ORM\Column(type: 'string', length: 64, nullable: true)]
+    private ?string $emailBlindIndex = null;
+
+    #[ORM\Column(type: 'encrypted_string')]
     #[Groups(['user:read', 'user:create', 'user:update'])]
     private string $username;
+
+    #[ORM\Column(type: 'string', length: 64, nullable: true)]
+    private ?string $usernameBlindIndex = null;
 
     #[ORM\Column(type: 'string')]
     #[Groups(['user:create'])]
@@ -81,6 +87,20 @@ class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime_immutable')]
     #[Groups(['user:read'])]
     private \DateTimeImmutable $createdAt;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    #[Groups(['user:read'])]
+    private bool $mfaEnabled = false;
+
+    #[ORM\Column(type: 'encrypted_string', nullable: true)]
+    private ?string $totpSecret = null;
+
+    /** @var list<string>|null */
+    #[ORM\Column(type: 'encrypted_json', nullable: true)]
+    private ?array $backupCodes = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $mfaEnabledAt = null;
 
     public function getId(): string
     {
@@ -165,6 +185,84 @@ class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getEmailBlindIndex(): ?string
+    {
+        return $this->emailBlindIndex;
+    }
+
+    public function setEmailBlindIndex(?string $emailBlindIndex): self
+    {
+        $this->emailBlindIndex = $emailBlindIndex;
+
+        return $this;
+    }
+
+    public function getUsernameBlindIndex(): ?string
+    {
+        return $this->usernameBlindIndex;
+    }
+
+    public function setUsernameBlindIndex(?string $usernameBlindIndex): self
+    {
+        $this->usernameBlindIndex = $usernameBlindIndex;
+
+        return $this;
+    }
+
+    public function isMfaEnabled(): bool
+    {
+        return $this->mfaEnabled;
+    }
+
+    public function setMfaEnabled(bool $mfaEnabled): self
+    {
+        $this->mfaEnabled = $mfaEnabled;
+
+        return $this;
+    }
+
+    public function getTotpSecret(): ?string
+    {
+        return $this->totpSecret;
+    }
+
+    public function setTotpSecret(?string $totpSecret): self
+    {
+        $this->totpSecret = $totpSecret;
+
+        return $this;
+    }
+
+    /**
+     * @return list<string>|null
+     */
+    public function getBackupCodes(): ?array
+    {
+        return $this->backupCodes;
+    }
+
+    /**
+     * @param list<string>|null $backupCodes
+     */
+    public function setBackupCodes(?array $backupCodes): self
+    {
+        $this->backupCodes = $backupCodes;
+
+        return $this;
+    }
+
+    public function getMfaEnabledAt(): ?\DateTimeImmutable
+    {
+        return $this->mfaEnabledAt;
+    }
+
+    public function setMfaEnabledAt(?\DateTimeImmutable $mfaEnabledAt): self
+    {
+        $this->mfaEnabledAt = $mfaEnabledAt;
 
         return $this;
     }

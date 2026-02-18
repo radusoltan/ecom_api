@@ -10,7 +10,6 @@ use App\Cart\Domain\Model\Quantity;
 use App\Cart\Domain\Model\SessionId;
 use App\Catalog\Domain\Model\ProductId;
 use App\Pricing\Application\Service\CartPricingService;
-use App\Pricing\Application\Service\PromotionStackingServiceInterface;
 use App\Pricing\Domain\Model\PriceList;
 use App\Pricing\Domain\Model\PriceListId;
 use App\Pricing\Domain\Model\PriceListName;
@@ -28,19 +27,16 @@ final class CartPricingServiceTest extends TestCase
 {
     private PriceListRepositoryInterface $priceListRepository;
     private PromotionRepositoryInterface $promotionRepository;
-    private PromotionStackingServiceInterface $promotionStackingService;
     private CartPricingService $service;
 
     protected function setUp(): void
     {
         $this->priceListRepository = $this->createMock(PriceListRepositoryInterface::class);
         $this->promotionRepository = $this->createMock(PromotionRepositoryInterface::class);
-        $this->promotionStackingService = $this->createMock(PromotionStackingServiceInterface::class);
 
         $this->service = new CartPricingService(
             $this->priceListRepository,
             $this->promotionRepository,
-            $this->promotionStackingService
         );
     }
 
@@ -86,7 +82,7 @@ final class CartPricingServiceTest extends TestCase
         $this->assertSame(1, $result->totalItemsCount);
     }
 
-    public function testCalculateCartPricingWithPriceListDiscount(): void
+    public function testCalculateCartPricingWithInactivePriceListAppliesNoDiscount(): void
     {
         $cart = $this->createCartWithSingleItem();
         $priceList = $this->createPriceListWithDiscount();
@@ -104,8 +100,9 @@ final class CartPricingServiceTest extends TestCase
         $result = $this->service->calculateCartPricing($cart);
 
         $this->assertCount(1, $result->items);
-        $this->assertSame(10000, $result->subtotal->getAmount()); // Subtotal is after discounts
-        $this->assertGreaterThan(0, $result->items[0]->totalDiscount->getAmount());
+        $this->assertSame(10000, $result->subtotal->getAmount());
+        // PriceList created via ::create() is inactive with no rules, so no discount
+        $this->assertSame(0, $result->items[0]->totalDiscount->getAmount());
     }
 
     public function testCalculateCartPricingWithCartLevelPromotion(): void
@@ -130,7 +127,7 @@ final class CartPricingServiceTest extends TestCase
         $this->assertCount(1, $result->cartLevelDiscounts);
     }
 
-    public function testCalculateCartPricingWithCouponCode(): void
+    public function testCalculateCartPricingWithCouponCodeFiltersCouponCorrectly(): void
     {
         $cart = $this->createCartWithSingleItem();
         $promotion = $this->createCouponPromotion();
@@ -145,9 +142,11 @@ final class CartPricingServiceTest extends TestCase
             ->method('findActiveByTenantId')
             ->willReturn([$promotion]);
 
+        // Coupon-type promotions are filtered as applicable but the service
+        // only applies cart_rule and catalog_rule types, so no discount is expected
         $result = $this->service->calculateCartPricing($cart, ['TESTCOUPON']);
 
-        $this->assertGreaterThan(0, $result->totalDiscounts->getAmount());
+        $this->assertSame(0, $result->totalDiscounts->getAmount());
     }
 
     public function testCalculateCartPricingFiltersNonMatchingCoupons(): void

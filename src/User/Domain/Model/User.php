@@ -32,7 +32,15 @@ final class User extends AggregateRoot
     private bool $isLocked;
     private ?string $lockReason;
     private ?\DateTimeImmutable $lockedAt;
+    private bool $mfaEnabled;
+    private ?string $totpSecret;
+    /** @var list<string> Bcrypt-hashed backup codes */
+    private array $backupCodes;
+    private ?\DateTimeImmutable $mfaEnabledAt;
 
+    /**
+     * @param list<string> $backupCodes
+     */
     private function __construct(
         UserId $id,
         Email $email,
@@ -45,6 +53,10 @@ final class User extends AggregateRoot
         bool $isLocked = false,
         ?string $lockReason = null,
         ?\DateTimeImmutable $lockedAt = null,
+        bool $mfaEnabled = false,
+        ?string $totpSecret = null,
+        array $backupCodes = [],
+        ?\DateTimeImmutable $mfaEnabledAt = null,
     ) {
         $this->id = $id;
         $this->email = $email;
@@ -57,6 +69,10 @@ final class User extends AggregateRoot
         $this->isLocked = $isLocked;
         $this->lockReason = $lockReason;
         $this->lockedAt = $lockedAt;
+        $this->mfaEnabled = $mfaEnabled;
+        $this->totpSecret = $totpSecret;
+        $this->backupCodes = $backupCodes;
+        $this->mfaEnabledAt = $mfaEnabledAt;
     }
 
     public static function create(
@@ -92,6 +108,9 @@ final class User extends AggregateRoot
         return $user;
     }
 
+    /**
+     * @param list<string> $backupCodes
+     */
     public static function reconstitute(
         UserId $id,
         Email $email,
@@ -104,6 +123,10 @@ final class User extends AggregateRoot
         bool $isLocked = false,
         ?string $lockReason = null,
         ?\DateTimeImmutable $lockedAt = null,
+        bool $mfaEnabled = false,
+        ?string $totpSecret = null,
+        array $backupCodes = [],
+        ?\DateTimeImmutable $mfaEnabledAt = null,
     ): self {
         return new self(
             $id,
@@ -116,7 +139,11 @@ final class User extends AggregateRoot
             $emailVerifiedAt,
             $isLocked,
             $lockReason,
-            $lockedAt
+            $lockedAt,
+            $mfaEnabled,
+            $totpSecret,
+            $backupCodes,
+            $mfaEnabledAt
         );
     }
 
@@ -302,5 +329,85 @@ final class User extends AggregateRoot
             $this->id,
             new \DateTimeImmutable()
         ));
+    }
+
+    // MFA methods
+
+    public function mfaEnabled(): bool
+    {
+        return $this->mfaEnabled;
+    }
+
+    public function totpSecret(): ?string
+    {
+        return $this->totpSecret;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function backupCodes(): array
+    {
+        return $this->backupCodes;
+    }
+
+    public function mfaEnabledAt(): ?\DateTimeImmutable
+    {
+        return $this->mfaEnabledAt;
+    }
+
+    /**
+     * @param list<string> $hashedBackupCodes Bcrypt-hashed backup codes
+     */
+    public function enableMfa(string $totpSecret, array $hashedBackupCodes): void
+    {
+        if ($this->mfaEnabled) {
+            throw new \DomainException('MFA is already enabled');
+        }
+
+        $this->mfaEnabled = true;
+        $this->totpSecret = $totpSecret;
+        $this->backupCodes = $hashedBackupCodes;
+        $this->mfaEnabledAt = new \DateTimeImmutable();
+    }
+
+    public function disableMfa(): void
+    {
+        if (!$this->mfaEnabled) {
+            throw new \DomainException('MFA is not enabled');
+        }
+
+        $this->mfaEnabled = false;
+        $this->totpSecret = null;
+        $this->backupCodes = [];
+        $this->mfaEnabledAt = null;
+    }
+
+    /**
+     * Consume a backup code and return true if it was valid.
+     */
+    public function consumeBackupCode(string $hashedCode): bool
+    {
+        $index = array_search($hashedCode, $this->backupCodes, true);
+
+        if (false === $index) {
+            return false;
+        }
+
+        array_splice($this->backupCodes, $index, 1);
+
+        return true;
+    }
+
+    /**
+     * @param list<string> $hashedBackupCodes
+     */
+    public function regenerateBackupCodes(array $hashedBackupCodes): void
+    {
+        if (!$this->mfaEnabled) {
+            throw new \DomainException('Cannot regenerate backup codes when MFA is disabled');
+        }
+
+        $this->backupCodes = $hashedBackupCodes;
     }
 }

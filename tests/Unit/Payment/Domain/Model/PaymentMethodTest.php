@@ -15,10 +15,12 @@ final class PaymentMethodTest extends TestCase
     {
         $cases = PaymentMethod::cases();
 
-        $this->assertCount(3, $cases);
+        $this->assertCount(5, $cases);
         $this->assertContains(PaymentMethod::STRIPE, $cases);
         $this->assertContains(PaymentMethod::PAYPAL, $cases);
         $this->assertContains(PaymentMethod::BANK_TRANSFER, $cases);
+        $this->assertContains(PaymentMethod::APPLE_PAY, $cases);
+        $this->assertContains(PaymentMethod::GOOGLE_PAY, $cases);
     }
 
     // ==================== isCard Method ====================

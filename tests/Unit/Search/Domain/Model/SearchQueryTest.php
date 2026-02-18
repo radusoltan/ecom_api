@@ -16,7 +16,7 @@ final class SearchQueryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->tenantId = TenantId::fromString('018c6e60-e270-7e43-9f19-000000000001');
+        $this->tenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
         $this->locale = Locale::fromString('en_US');
     }
 

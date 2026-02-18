@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Application\EventSubscriber;
 
+use App\Customer\Application\Service\NotificationPreferenceService;
+use App\Customer\Domain\Repository\CustomerRepositoryInterface;
 use App\Order\Application\EventSubscriber\OrderStatusChangedSubscriber;
 use App\Order\Domain\Event\OrderStatusChanged;
 use App\Order\Domain\Model\OrderId;
@@ -26,6 +28,7 @@ final class OrderStatusChangedSubscriberTest extends TestCase
     private OrderRepositoryInterface $orderRepository;
     private TranslatorInterface $translator;
     private LoggerInterface $logger;
+    private NotificationPreferenceService $notificationPreferenceService;
     private OrderStatusChangedSubscriber $subscriber;
 
     protected function setUp(): void
@@ -35,11 +38,19 @@ final class OrderStatusChangedSubscriberTest extends TestCase
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
+        // NotificationPreferenceService is final and cannot be mocked directly.
+        // Use a real instance backed by a stub repository that returns null,
+        // which causes shouldSendEmailByEmail to allow transactional emails ('order_update').
+        $customerRepository = $this->createStub(CustomerRepositoryInterface::class);
+        $customerRepository->method('findByEmail')->willReturn(null);
+        $this->notificationPreferenceService = new NotificationPreferenceService($customerRepository);
+
         $this->subscriber = new OrderStatusChangedSubscriber(
             mailer: $this->mailer,
             orderRepository: $this->orderRepository,
             translator: $this->translator,
             logger: $this->logger,
+            notificationPreferenceService: $this->notificationPreferenceService,
             senderEmail: 'test@example.com',
             senderName: 'Test Platform'
         );

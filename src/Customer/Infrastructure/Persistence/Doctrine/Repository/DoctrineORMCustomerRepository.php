@@ -10,6 +10,7 @@ use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Encryption\BlindIndexService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -18,6 +19,7 @@ final readonly class DoctrineORMCustomerRepository implements CustomerRepository
     public function __construct(
         private EntityManagerInterface $entityManager,
         private EventDispatcherInterface $eventDispatcher,
+        private BlindIndexService $blindIndexService,
     ) {
     }
 
@@ -31,8 +33,10 @@ final readonly class DoctrineORMCustomerRepository implements CustomerRepository
 
         if ($existing instanceof CustomerEntity) {
             $existing->updateFromDomainModel($customer);
+            $existing->setEmailBlindIndex($this->blindIndexService->generate($customer->email()->toString()));
         } else {
             $entity = CustomerEntity::fromDomainModel($customer);
+            $entity->setEmailBlindIndex($this->blindIndexService->generate($customer->email()->toString()));
             $this->entityManager->persist($entity);
         }
 
@@ -68,7 +72,7 @@ final readonly class DoctrineORMCustomerRepository implements CustomerRepository
     {
         $repository = $this->entityManager->getRepository(CustomerEntity::class);
         $entity = $repository->findOneBy([
-            'email' => $email->toString(),
+            'emailBlindIndex' => $this->blindIndexService->generate($email->toString()),
             'tenantId' => $tenantId->toString(),
         ]);
 

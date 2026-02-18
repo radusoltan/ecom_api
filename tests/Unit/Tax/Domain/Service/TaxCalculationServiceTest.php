@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Tax\Domain\Service;
 
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Tax\Domain\Model\TaxCategory;
+use App\Tax\Domain\Model\TaxJurisdiction;
 use App\Tax\Domain\Model\TaxRule;
+use App\Tax\Domain\Model\TaxRuleId;
+use App\Tax\Domain\Model\TaxRate;
 use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
 use App\Tax\Domain\Service\TaxCalculationService;
-use App\Tax\Domain\ValueObject\TaxJurisdiction;
-use App\Tax\Domain\ValueObject\TaxRate;
-use App\Tax\Domain\ValueObject\TaxRuleId;
+use App\Tax\Domain\ValueObject\TaxJurisdiction as TaxJurisdictionVO;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -31,21 +33,30 @@ final class TaxCalculationServiceTest extends TestCase
         $this->tenantId = TenantId::generate();
     }
 
+    private function createTaxRule(
+        TaxJurisdictionVO $jurisdiction,
+        float $rate,
+        string $name,
+    ): TaxRule {
+        return TaxRule::create(
+            id: TaxRuleId::generate(),
+            tenantId: $this->tenantId,
+            jurisdiction: TaxJurisdiction::fromCountryCode($jurisdiction->getCountryCode()),
+            category: TaxCategory::STANDARD,
+            rate: TaxRate::fromPercentage($rate),
+            name: $name,
+        );
+    }
+
     public function testCalculateTaxForGermany(): void
     {
         // Given: Germany VAT rule (19%)
-        $jurisdiction = TaxJurisdiction::fromCountry('DE');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'MwSt (Germany)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(19.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('DE');
+        $taxRule = $this->createTaxRule($jurisdiction, 19.0, 'MwSt (Germany)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
-            ->with($jurisdiction, $this->tenantId)
+            ->with($this->anything(), $this->tenantId)
             ->willReturn($taxRule);
 
         // When: Calculate tax for €100.00
@@ -66,14 +77,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateTaxForFrance(): void
     {
         // Given: France VAT rule (20%)
-        $jurisdiction = TaxJurisdiction::fromCountry('FR');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'TVA (France)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(20.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('FR');
+        $taxRule = $this->createTaxRule($jurisdiction, 20.0, 'TVA (France)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -94,14 +99,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateTaxForHungary(): void
     {
         // Given: Hungary VAT rule (27% - highest in EU)
-        $jurisdiction = TaxJurisdiction::fromCountry('HU');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'ÁFA (Hungary)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(27.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('HU');
+        $taxRule = $this->createTaxRule($jurisdiction, 27.0, 'ÁFA (Hungary)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -122,14 +121,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateTaxForLuxembourg(): void
     {
         // Given: Luxembourg VAT rule (17% - lowest in EU)
-        $jurisdiction = TaxJurisdiction::fromCountry('LU');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'TVA (Luxembourg)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(17.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('LU');
+        $taxRule = $this->createTaxRule($jurisdiction, 17.0, 'TVA (Luxembourg)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -150,7 +143,7 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateTaxWithNoTaxRule(): void
     {
         // Given: No tax rule for jurisdiction
-        $jurisdiction = TaxJurisdiction::fromCountry('US');
+        $jurisdiction = TaxJurisdictionVO::fromCountry('US');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -174,14 +167,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateOrderTaxWithMultipleLineItems(): void
     {
         // Given: France VAT rule (20%)
-        $jurisdiction = TaxJurisdiction::fromCountry('FR');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'TVA (France)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(20.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('FR');
+        $taxRule = $this->createTaxRule($jurisdiction, 20.0, 'TVA (France)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -209,14 +196,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testIsTaxableForJurisdictionWithTaxRule(): void
     {
         // Given: Active tax rule exists
-        $jurisdiction = TaxJurisdiction::fromCountry('DE');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'MwSt (Germany)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(19.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('DE');
+        $taxRule = $this->createTaxRule($jurisdiction, 19.0, 'MwSt (Germany)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -231,7 +212,7 @@ final class TaxCalculationServiceTest extends TestCase
     public function testIsTaxableForJurisdictionWithoutTaxRule(): void
     {
         // Given: No tax rule exists
-        $jurisdiction = TaxJurisdiction::fromCountry('US');
+        $jurisdiction = TaxJurisdictionVO::fromCountry('US');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -246,14 +227,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testIsTaxableForInactiveRule(): void
     {
         // Given: Inactive tax rule exists
-        $jurisdiction = TaxJurisdiction::fromCountry('DE');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'MwSt (Germany)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(19.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('DE');
+        $taxRule = $this->createTaxRule($jurisdiction, 19.0, 'MwSt (Germany)');
         $taxRule->deactivate();
 
         $this->taxRuleRepository
@@ -269,14 +244,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testGetTaxRateReturnsCorrectRate(): void
     {
         // Given: Germany VAT rule (19%)
-        $jurisdiction = TaxJurisdiction::fromCountry('DE');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'MwSt (Germany)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(19.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('DE');
+        $taxRule = $this->createTaxRule($jurisdiction, 19.0, 'MwSt (Germany)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -290,7 +259,7 @@ final class TaxCalculationServiceTest extends TestCase
     public function testGetTaxRateReturnsZeroWhenNoRule(): void
     {
         // Given: No tax rule
-        $jurisdiction = TaxJurisdiction::fromCountry('US');
+        $jurisdiction = TaxJurisdictionVO::fromCountry('US');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -304,14 +273,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testRoundingForOddAmounts(): void
     {
         // Given: Germany VAT rule (19%)
-        $jurisdiction = TaxJurisdiction::fromCountry('DE');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'MwSt (Germany)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(19.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('DE');
+        $taxRule = $this->createTaxRule($jurisdiction, 19.0, 'MwSt (Germany)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -331,14 +294,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateTaxForSmallAmount(): void
     {
         // Given: Germany VAT rule (19%)
-        $jurisdiction = TaxJurisdiction::fromCountry('DE');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'MwSt (Germany)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(19.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('DE');
+        $taxRule = $this->createTaxRule($jurisdiction, 19.0, 'MwSt (Germany)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -358,14 +315,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateTaxForReducedVATRate(): void
     {
         // Given: Germany reduced VAT rule (7% for books, food)
-        $jurisdiction = TaxJurisdiction::fromCountry('DE');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'MwSt ermäßigt (Germany)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(7.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('DE');
+        $taxRule = $this->createTaxRule($jurisdiction, 7.0, 'MwSt ermäßigt (Germany)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -386,13 +337,14 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateTaxForRegionalJurisdiction(): void
     {
         // Given: US state tax rule (CA 7.25%)
-        $jurisdiction = TaxJurisdiction::fromCountryAndRegion('US', 'CA');
+        $jurisdiction = TaxJurisdictionVO::fromCountryAndRegion('US', 'CA');
         $taxRule = TaxRule::create(
             id: TaxRuleId::generate(),
             tenantId: $this->tenantId,
+            jurisdiction: TaxJurisdiction::fromCountryAndRegion('US', 'CA'),
+            category: TaxCategory::STANDARD,
+            rate: TaxRate::fromPercentage(7.25),
             name: 'California Sales Tax',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(7.25)
         );
 
         $this->taxRuleRepository
@@ -415,14 +367,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateOrderTaxWithEmptyLineItems(): void
     {
         // Given: France VAT rule (20%)
-        $jurisdiction = TaxJurisdiction::fromCountry('FR');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'TVA (France)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(20.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('FR');
+        $taxRule = $this->createTaxRule($jurisdiction, 20.0, 'TVA (France)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -444,14 +390,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateOrderTaxWithSingleLineItem(): void
     {
         // Given: Germany VAT rule (19%)
-        $jurisdiction = TaxJurisdiction::fromCountry('DE');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'MwSt (Germany)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(19.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('DE');
+        $taxRule = $this->createTaxRule($jurisdiction, 19.0, 'MwSt (Germany)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -477,14 +417,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateOrderTaxWithLargeQuantities(): void
     {
         // Given: France VAT rule (20%)
-        $jurisdiction = TaxJurisdiction::fromCountry('FR');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'TVA (France)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(20.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('FR');
+        $taxRule = $this->createTaxRule($jurisdiction, 20.0, 'TVA (France)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')
@@ -510,13 +444,14 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateTaxForZeroPercentRate(): void
     {
         // Given: Tax-exempt jurisdiction (0% rate)
-        $jurisdiction = TaxJurisdiction::fromCountry('AE');  // UAE (no VAT on certain goods)
+        $jurisdiction = TaxJurisdictionVO::fromCountry('AE');  // UAE (no VAT on certain goods)
         $taxRule = TaxRule::create(
             id: TaxRuleId::generate(),
             tenantId: $this->tenantId,
+            jurisdiction: TaxJurisdiction::fromCountryCode('AE'),
+            category: TaxCategory::ZERO,
+            rate: TaxRate::fromPercentage(0.0),
             name: 'Zero-rated (UAE)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::zero()
         );
 
         $this->taxRuleRepository
@@ -538,14 +473,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testGetTaxRateForInactiveRule(): void
     {
         // Given: Inactive tax rule
-        $jurisdiction = TaxJurisdiction::fromCountry('IT');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'IVA (Italy)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(22.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('IT');
+        $taxRule = $this->createTaxRule($jurisdiction, 22.0, 'IVA (Italy)');
         $taxRule->deactivate();
 
         $this->taxRuleRepository
@@ -560,14 +489,8 @@ final class TaxCalculationServiceTest extends TestCase
     public function testCalculateOrderTaxWithMixedPriceRanges(): void
     {
         // Given: Hungary VAT rule (27% - highest in EU)
-        $jurisdiction = TaxJurisdiction::fromCountry('HU');
-        $taxRule = TaxRule::create(
-            id: TaxRuleId::generate(),
-            tenantId: $this->tenantId,
-            name: 'ÁFA (Hungary)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(27.0)
-        );
+        $jurisdiction = TaxJurisdictionVO::fromCountry('HU');
+        $taxRule = $this->createTaxRule($jurisdiction, 27.0, 'ÁFA (Hungary)');
 
         $this->taxRuleRepository
             ->method('findByJurisdiction')

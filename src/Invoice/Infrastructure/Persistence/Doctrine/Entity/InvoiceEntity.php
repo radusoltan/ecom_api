@@ -111,7 +111,7 @@ class InvoiceEntity
     private string $status;
 
     /** @var array{name: string, addressLine1: string, addressLine2: string|null, city: string, postalCode: string, country: string, vatNumber: string|null} */
-    #[ORM\Column(type: 'json', name: 'billing_address')]
+    #[ORM\Column(type: 'encrypted_json', name: 'billing_address')]
     #[Groups(['invoice:read'])]
     private array $billingAddress;
 

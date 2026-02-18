@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Payment\Application\Command\CreatePaymentIntent;
 
-use App\Payment\Domain\Model\PaymentId;
+use App\Payment\Domain\ValueObject\PaymentId;
 
 /**
  * Result DTO for CreatePaymentIntent command.

@@ -81,16 +81,16 @@ class DataSubjectRequestEntity
     #[ORM\Column(type: 'request_status', length: 50)]
     private string $status;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'encrypted_string', nullable: true)]
     private ?string $reason;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'encrypted_string', nullable: true)]
     private ?string $reviewNotes;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'encrypted_string', nullable: true)]
     private ?string $rejectionReason;
 
-    #[ORM\Column(type: 'json', nullable: true)]
+    #[ORM\Column(type: 'encrypted_json', nullable: true)]
     private ?array $exportData;
 
     #[ORM\Column(type: 'datetime_immutable')]

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Payment\Application\Command\CreatePaymentIntent;
 
 use App\Payment\Domain\Model\Payment;
-use App\Payment\Domain\Model\PaymentId;
+use App\Payment\Domain\Model\PaymentId as ModelPaymentId;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use App\Payment\Domain\Service\PaymentGatewayInterface;
 use App\Payment\Domain\ValueObject\PaymentGateway;
-use App\Payment\Domain\ValueObject\PaymentId as PaymentValueObjectId;
+use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
 use App\Shared\Domain\ValueObject\Money;
 use Psr\Log\LoggerInterface;
@@ -55,18 +55,21 @@ final readonly class CreatePaymentIntentHandler
             ]);
 
             return CreatePaymentIntentResult::alreadyExists(
-                PaymentId::fromString($existing->id()->toString()),
+                $existing->id(),
                 $existing->gatewayTransactionId()
             );
         }
 
-        // Generate payment ID
-        $paymentId = PaymentId::generate();
+        // Generate two IDs:
+        // - domainPaymentId: ULID-based, used for the domain Payment aggregate
+        // - modelPaymentId: UUID-based, used for the gateway call and CreatePaymentIntentResult
+        $domainPaymentId = PaymentId::generate();
+        $modelPaymentId = ModelPaymentId::generate();
 
         try {
-            // Create payment intent at gateway first
+            // Create payment intent at gateway first (uses UUID-based ModelPaymentId for idempotency)
             $gatewayResult = $this->gateway->createPaymentIntent(
-                paymentId: $paymentId,
+                paymentId: $modelPaymentId,
                 amount: Money::fromScalars($command->amountInCents, $command->currency),
                 currency: $command->currency,
                 idempotencyKey: $command->idempotencyKey,
@@ -80,7 +83,7 @@ final readonly class CreatePaymentIntentHandler
 
             if (!$gatewayResult->success) {
                 $this->logger->error('Payment intent creation failed at gateway', [
-                    'payment_id' => $paymentId->toString(),
+                    'payment_id' => $domainPaymentId->toString(),
                     'error_code' => $gatewayResult->errorCode,
                     'error_message' => $gatewayResult->errorMessage,
                 ]);
@@ -91,9 +94,9 @@ final readonly class CreatePaymentIntentHandler
                 );
             }
 
-            // Create domain Payment aggregate (convert PaymentId to ValueObject)
+            // Create domain Payment aggregate using ULID-based PaymentId
             $payment = Payment::create(
-                id: PaymentValueObjectId::fromString($paymentId->toString()),
+                id: $domainPaymentId,
                 tenantId: $command->tenantId,
                 orderId: $command->orderId,
                 amountInCents: $command->amountInCents,
@@ -129,20 +132,20 @@ final readonly class CreatePaymentIntentHandler
             $this->paymentRepository->save($payment);
 
             $this->logger->info('Payment intent created successfully', [
-                'payment_id' => $paymentId->toString(),
+                'payment_id' => $domainPaymentId->toString(),
                 'gateway_payment_id' => $gatewayResult->gatewayPaymentIntentId,
                 'amount' => $command->amountInCents,
                 'currency' => $command->currency,
             ]);
 
             return CreatePaymentIntentResult::success(
-                paymentId: $paymentId,
+                paymentId: $domainPaymentId,
                 clientSecret: $gatewayResult->clientSecret ?? '',
                 gatewayPaymentId: $gatewayResult->gatewayPaymentIntentId
             );
         } catch (\Throwable $e) {
             $this->logger->error('Unexpected error creating payment intent', [
-                'payment_id' => $paymentId->toString(),
+                'payment_id' => $domainPaymentId->toString(),
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);

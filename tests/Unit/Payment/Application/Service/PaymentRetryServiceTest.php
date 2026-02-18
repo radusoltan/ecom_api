@@ -434,7 +434,7 @@ final class PaymentRetryServiceTest extends TestCase
         ];
 
         $this->repository->expects($this->once())
-            ->method('findPendingRetries')
+            ->method('findPaymentsForRetry')
             ->with($this->equalTo($now))
             ->willReturn($expectedPayments);
 
@@ -451,7 +451,7 @@ final class PaymentRetryServiceTest extends TestCase
     {
         // Arrange
         $this->repository->expects($this->once())
-            ->method('findPendingRetries')
+            ->method('findPaymentsForRetry')
             ->with($this->isInstanceOf(\DateTimeImmutable::class))
             ->willReturn([]);
 

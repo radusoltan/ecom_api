@@ -77,3 +77,9 @@ framework:
             rate:
                 interval: '1 minute'
                 amount: 50
+
+        # MFA verify - per user, strict to prevent brute force
+        mfa_verify:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '15 minutes'

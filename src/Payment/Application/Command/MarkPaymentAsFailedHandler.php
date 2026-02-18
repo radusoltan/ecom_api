@@ -36,18 +36,16 @@ final readonly class MarkPaymentAsFailedHandler
     {
         $this->logger->info('Marking payment as failed', [
             'payment_id' => $command->id->toString(),
-            'tenant_id' => $command->tenantId->toString(),
             'error_message' => $command->errorMessage,
             'error_code' => $command->errorCode,
         ]);
 
         // Find payment
-        $payment = $this->paymentRepository->findById($command->id, $command->tenantId);
+        $payment = $this->paymentRepository->findById($command->id);
 
         if (!$payment) {
             $this->logger->warning('Payment not found for marking as failed', [
                 'payment_id' => $command->id->toString(),
-                'tenant_id' => $command->tenantId->toString(),
             ]);
 
             throw new \RuntimeException(sprintf('Payment not found: %s', $command->id->toString()));

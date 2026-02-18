@@ -61,6 +61,8 @@ doctrine:
             invoice_number: App\Invoice\Infrastructure\Persistence\Doctrine\Type\InvoiceNumberType
             invoice_status: App\Invoice\Infrastructure\Persistence\Doctrine\Type\InvoiceStatusType
             invoice_line_id: App\Invoice\Infrastructure\Persistence\Doctrine\Type\InvoiceLineIdType
+            encrypted_string: App\Shared\Infrastructure\Doctrine\Type\EncryptedStringType
+            encrypted_json: App\Shared\Infrastructure\Doctrine\Type\EncryptedJsonType
     orm:
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware

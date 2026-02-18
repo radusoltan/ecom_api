@@ -36,10 +36,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 #[ORM\Table(name: 'customers')]
 #[ORM\Index(columns: ['tenant_id'])]
-#[ORM\Index(columns: ['email'])]
+#[ORM\Index(columns: ['email_blind_index'])]
 #[ORM\Index(columns: ['segment'])]
 #[ORM\Index(columns: ['is_active'])]
-#[ORM\UniqueConstraint(name: 'unique_email_per_tenant', columns: ['tenant_id', 'email'])]
+#[ORM\UniqueConstraint(name: 'unique_email_per_tenant_bi', columns: ['tenant_id', 'email_blind_index'])]
 #[ApiResource(
     shortName: 'Customer',
     operations: [
@@ -84,16 +84,19 @@ class CustomerEntity
     #[ORM\Column(type: 'string', length: 36, nullable: false)]
     private string $tenantId = '';
 
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(type: 'encrypted_string')]
     private string $email = '';
 
-    #[ORM\Column(type: 'string', length: 50, nullable: false)]
+    #[ORM\Column(type: 'string', length: 64, nullable: true)]
+    private ?string $emailBlindIndex = null;
+
+    #[ORM\Column(type: 'encrypted_string')]
     private string $firstName = '';
 
-    #[ORM\Column(type: 'string', length: 50, nullable: false)]
+    #[ORM\Column(type: 'encrypted_string')]
     private string $lastName = '';
 
-    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    #[ORM\Column(type: 'encrypted_string', nullable: true)]
     private ?string $phoneNumber = null;
 
     #[ORM\Column(type: 'string', length: 20, nullable: false)]
@@ -449,5 +452,15 @@ class CustomerEntity
     public function setPlainPassword(?string $plainPassword): void
     {
         $this->plainPassword = $plainPassword;
+    }
+
+    public function getEmailBlindIndex(): ?string
+    {
+        return $this->emailBlindIndex;
+    }
+
+    public function setEmailBlindIndex(?string $emailBlindIndex): void
+    {
+        $this->emailBlindIndex = $emailBlindIndex;
     }
 }

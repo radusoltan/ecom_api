@@ -216,6 +216,6 @@ final readonly class PaymentRetryService
         //   AND next_retry_at <= :now
         //   AND retry_count < :max_attempts
 
-        return $this->paymentRepository->findPendingRetries($now);
+        return $this->paymentRepository->findPaymentsForRetry($now);
     }
 }

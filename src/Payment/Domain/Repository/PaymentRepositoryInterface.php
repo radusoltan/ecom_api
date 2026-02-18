@@ -90,6 +90,18 @@ interface PaymentRepositoryInterface
     public function findAllByOrderId(string $orderId): array;
 
     /**
+     * Get all payments for the current tenant context.
+     *
+     * Returns all payments ordered by creation date descending.
+     * Tenant isolation is enforced via RLS / TenantId parameter.
+     *
+     * @param TenantId $tenantId Tenant context
+     *
+     * @return Payment[] Array of payment aggregates
+     */
+    public function findAll(TenantId $tenantId): array;
+
+    /**
      * Get payments requiring retry (for scheduled retry job).
      *
      * Finds payments in FAILED status with retry scheduled at or before the given time.

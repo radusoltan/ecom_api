@@ -9,6 +9,7 @@ use App\Tax\Domain\Model\TaxCategory;
 use App\Tax\Domain\Model\TaxJurisdiction;
 use App\Tax\Domain\Model\TaxRule;
 use App\Tax\Domain\Model\TaxRuleId;
+use App\Tax\Domain\ValueObject\TaxJurisdiction as TaxJurisdictionVO;
 
 /**
  * Tax Rule Repository Interface (Domain Port).
@@ -86,6 +87,13 @@ interface TaxRuleRepositoryInterface
         TaxCategory $category,
         \DateTimeImmutable $asOfDate,
     ): ?TaxRule;
+
+    /**
+     * Find the best matching rule for a jurisdiction (highest priority active rule).
+     *
+     * Used by TaxCalculationService for destination-based tax lookup.
+     */
+    public function findByJurisdiction(TaxJurisdictionVO $jurisdiction, TenantId $tenantId): ?TaxRule;
 
     /**
      * Delete a tax rule by ID.

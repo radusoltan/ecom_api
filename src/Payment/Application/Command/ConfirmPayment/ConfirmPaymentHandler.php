@@ -101,8 +101,10 @@ final readonly class ConfirmPaymentHandler
                 'status' => $result->status,
             ]);
         } catch (\Throwable $e) {
-            $payment->markAsFailed($e->getMessage());
-            $this->paymentRepository->save($payment);
+            if (!$payment->status()->isFailed()) {
+                $payment->markAsFailed($e->getMessage());
+                $this->paymentRepository->save($payment);
+            }
 
             $this->logger->error('Unexpected error confirming payment', [
                 'payment_id' => $command->paymentId->toString(),

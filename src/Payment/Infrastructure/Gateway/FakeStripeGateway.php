@@ -35,19 +35,19 @@ final readonly class FakeStripeGateway implements PaymentGatewayInterface
     ): PaymentIntentResult {
         $this->logger->info('[FAKE] Stripe: Creating payment intent', [
             'payment_id' => $paymentId->toString(),
-            'amount' => $amount->amount(),
+            'amount' => $amount->getAmount(),
             'currency' => $currency,
         ]);
 
         $status = $this->require3DS || ($metadata['force_3ds'] ?? false) ? 'requires_action' : 'requires_payment_method';
 
-        return new PaymentIntentResult(
+        return PaymentIntentResult::success(
             gatewayPaymentIntentId: 'pi_fake_'.bin2hex(random_bytes(12)),
-            clientSecret: 'secret_fake_'.bin2hex(random_bytes(10)),
             status: $status,
-            amount: $amount->amount(),
-            currency: $currency,
-            rawData: ['mock' => true, '3ds_required' => 'requires_action' === $status]
+            amount: $amount,
+            clientSecret: 'secret_fake_'.bin2hex(random_bytes(10)),
+            customerId: $customerId,
+            rawResponse: json_encode(['mock' => true, '3ds_required' => 'requires_action' === $status]) ?: null,
         );
     }
 
@@ -60,13 +60,12 @@ final readonly class FakeStripeGateway implements PaymentGatewayInterface
             'method_id' => $paymentMethodId,
         ]);
 
-        return new PaymentIntentResult(
+        return PaymentIntentResult::success(
             gatewayPaymentIntentId: $gatewayPaymentIntentId,
-            clientSecret: 'secret_confirmed',
             status: 'succeeded',
-            amount: 1000,
-            currency: 'USD',
-            rawData: ['mock' => true]
+            amount: Money::fromScalars(1000, 'USD'),
+            clientSecret: 'secret_confirmed',
+            rawResponse: json_encode(['mock' => true]) ?: null,
         );
     }
 
@@ -78,13 +77,11 @@ final readonly class FakeStripeGateway implements PaymentGatewayInterface
             'intent_id' => $gatewayPaymentIntentId,
         ]);
 
-        return new PaymentIntentResult(
+        return PaymentIntentResult::success(
             gatewayPaymentIntentId: $gatewayPaymentIntentId,
-            clientSecret: null,
             status: 'succeeded',
-            amount: $amount ? $amount->amount() : 1000,
-            currency: 'USD',
-            rawData: ['mock' => true, 'captured' => true]
+            amount: $amount ?? Money::fromScalars(1000, 'USD'),
+            rawResponse: json_encode(['mock' => true, 'captured' => true]) ?: null,
         );
     }
 
@@ -94,13 +91,11 @@ final readonly class FakeStripeGateway implements PaymentGatewayInterface
             'intent_id' => $gatewayPaymentIntentId,
         ]);
 
-        return new PaymentIntentResult(
+        return PaymentIntentResult::success(
             gatewayPaymentIntentId: $gatewayPaymentIntentId,
-            clientSecret: null,
             status: 'canceled',
-            amount: 0,
-            currency: 'USD',
-            rawData: ['mock' => true, 'canceled' => true]
+            amount: Money::fromScalars(0, 'USD'),
+            rawResponse: json_encode(['mock' => true, 'canceled' => true]) ?: null,
         );
     }
 
@@ -112,16 +107,15 @@ final readonly class FakeStripeGateway implements PaymentGatewayInterface
     ): RefundResult {
         $this->logger->info('[FAKE] Stripe: Creating refund', [
             'intent_id' => $gatewayPaymentIntentId,
-            'amount' => $amount->amount(),
+            'amount' => $amount->getAmount(),
             'reason' => $reason,
         ]);
 
-        return new RefundResult(
+        return RefundResult::success(
             gatewayRefundId: 're_fake_'.bin2hex(random_bytes(12)),
             status: 'succeeded',
-            amount: $amount->amount(),
-            currency: 'USD',
-            rawData: ['mock' => true]
+            amount: $amount,
+            rawResponse: json_encode(['mock' => true]) ?: null,
         );
     }
 

@@ -6,6 +6,8 @@ namespace App\Tests\Unit\Order\Application\EventSubscriber;
 
 use App\Catalog\Domain\Model\ProductId;
 use App\Inventory\Domain\Model\WarehouseId;
+use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
+use App\Inventory\Domain\Repository\WarehouseRepositoryInterface;
 use App\Order\Application\Command\StartFulfillment;
 use App\Order\Application\EventSubscriber\OrderPlacedFulfillmentSubscriber;
 use App\Order\Domain\Event\OrderPlaced;
@@ -22,6 +24,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -29,7 +32,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[CoversClass(OrderPlacedFulfillmentSubscriber::class)]
 final class OrderPlacedFulfillmentSubscriberTest extends TestCase
 {
-    private WarehouseRoutingService $routingService;
+    private WarehouseRepositoryInterface $warehouseRepository;
+    private StockItemRepositoryInterface $stockItemRepository;
     private OrderRepositoryInterface $orderRepository;
     private MessageBusInterface $commandBus;
     private LoggerInterface $logger;
@@ -37,13 +41,21 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->routingService = $this->createMock(WarehouseRoutingService::class);
+        $this->warehouseRepository = $this->createStub(WarehouseRepositoryInterface::class);
+        $this->stockItemRepository = $this->createStub(StockItemRepositoryInterface::class);
+
+        $routingService = new WarehouseRoutingService(
+            $this->warehouseRepository,
+            $this->stockItemRepository,
+            new NullLogger(),
+        );
+
         $this->orderRepository = $this->createMock(OrderRepositoryInterface::class);
         $this->commandBus = $this->createMock(MessageBusInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->subscriber = new OrderPlacedFulfillmentSubscriber(
-            routingService: $this->routingService,
+            routingService: $routingService,
             orderRepository: $this->orderRepository,
             commandBus: $this->commandBus,
             logger: $this->logger
@@ -88,11 +100,8 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
             ->with($orderId)
             ->willReturn($order);
 
-        $this->routingService
-            ->expects($this->once())
-            ->method('findBestWarehouse')
-            ->with($order)
-            ->willReturn($warehouseId);
+        // Configure routing service to find a warehouse via repository stubs
+        $this->configureWarehouseFound($tenantId, $warehouseId, $order);
 
         // Expect StartFulfillment command to be dispatched
         $this->commandBus
@@ -147,12 +156,8 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
             ->with($orderId)
             ->willReturn($order);
 
-        // No warehouse available
-        $this->routingService
-            ->expects($this->once())
-            ->method('findBestWarehouse')
-            ->with($order)
-            ->willReturn(null);
+        // No warehouse available (empty warehouse list)
+        $this->warehouseRepository->method('findActiveByTenant')->willReturn([]);
 
         // Should NOT dispatch StartFulfillment
         $this->commandBus
@@ -196,10 +201,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
             ->with($orderId)
             ->willReturn(null);
 
-        // Should NOT call routing service
-        $this->routingService
-            ->expects($this->never())
-            ->method('findBestWarehouse');
+        // Should NOT reach routing service since order not found
 
         // Should NOT dispatch StartFulfillment
         $this->commandBus
@@ -243,10 +245,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
             ->method('findById')
             ->willReturn($order);
 
-        $this->routingService
-            ->expects($this->once())
-            ->method('findBestWarehouse')
-            ->willReturn($warehouseId);
+        $this->configureWarehouseFound($tenantId, $warehouseId, $order);
 
         $this->commandBus
             ->expects($this->once())
@@ -295,10 +294,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
             ->method('findById')
             ->willReturn($order);
 
-        $this->routingService
-            ->expects($this->once())
-            ->method('findBestWarehouse')
-            ->willReturn($warehouseId);
+        $this->configureWarehouseFound($tenantId, $warehouseId, $order);
 
         $this->commandBus
             ->expects($this->once())
@@ -316,6 +312,43 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
     }
 
     /**
+     * Configure repository stubs so WarehouseRoutingService finds a warehouse.
+     */
+    private function configureWarehouseFound(TenantId $tenantId, WarehouseId $warehouseId, Order $order): void
+    {
+        $address = Address::create(
+            street: '1 Warehouse Way',
+            city: 'Warehouse City',
+            state: 'TX',
+            postalCode: '00000',
+            country: 'US'
+        );
+
+        $warehouse = \App\Inventory\Domain\Model\Warehouse::create(
+            id: $warehouseId,
+            tenantId: $tenantId,
+            code: \App\Inventory\Domain\Model\WarehouseCode::fromString('WH-TEST'),
+            name: \App\Inventory\Domain\Model\WarehouseName::fromString('Test Warehouse'),
+            address: $address,
+            priority: 1,
+        );
+
+        $this->warehouseRepository->method('findActiveByTenant')->willReturn([$warehouse]);
+
+        // For each order line, return a stock item with sufficient quantity
+        $this->stockItemRepository->method('findByProductAndWarehouse')
+            ->willReturnCallback(function () use ($warehouseId, $tenantId) {
+                return \App\Inventory\Domain\Model\StockItem::create(
+                    id: \App\Inventory\Domain\Model\StockItemId::generate(),
+                    tenantId: $tenantId,
+                    productId: \App\Catalog\Domain\Model\ProductId::generate(),
+                    warehouseId: $warehouseId,
+                    initialQuantity: \App\Inventory\Domain\Model\Quantity::fromInt(9999),
+                );
+            });
+    }
+
+    /**
      * Helper to create a test Order.
      */
     private function createOrder(OrderId $orderId, TenantId $tenantId): Order
@@ -323,6 +356,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
         $shippingAddress = Address::create(
             street: '123 Test St',
             city: 'Test City',
+            state: 'CA',
             postalCode: '12345',
             country: 'US'
         );
@@ -352,6 +386,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
         $shippingAddress = Address::create(
             street: '123 Test St',
             city: 'Test City',
+            state: 'CA',
             postalCode: '12345',
             country: 'US'
         );

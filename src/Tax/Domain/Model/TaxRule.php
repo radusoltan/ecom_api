@@ -251,6 +251,11 @@ final class TaxRule extends AggregateRoot
         return true;
     }
 
+    public function calculateTax(int $amountInCents): int
+    {
+        return $this->rate->calculateTax($amountInCents);
+    }
+
     public function appliesTo(
         TaxJurisdiction $jurisdiction,
         TaxCategory $category,

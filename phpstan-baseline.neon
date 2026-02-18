@@ -5131,12 +5131,6 @@ parameters:
 			path: src/Tax/Application/Query/GetTaxRulesByTenantHandler.php
 
 		-
-			message: '#^Call to an undefined method App\\Tax\\Domain\\Repository\\TaxRuleRepositoryInterface\:\:findByJurisdiction\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: src/Tax/Domain/Service/TaxCalculationService.php
-
-		-
 			message: '#^Parameter \#1 \$id of method App\\Tax\\Domain\\Repository\\TaxRuleRepositoryInterface\:\:findById\(\) expects App\\Tax\\Domain\\Model\\TaxRuleId, App\\Tax\\Domain\\ValueObject\\TaxRuleId given\.$#'
 			identifier: argument.type
 			count: 1

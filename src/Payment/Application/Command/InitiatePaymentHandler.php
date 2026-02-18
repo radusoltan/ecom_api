@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Payment\Application\Command;
 
 use App\Payment\Domain\Model\Payment;
+use App\Payment\Domain\Model\PaymentId as ModelPaymentId;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use App\Payment\Domain\Service\PaymentGatewayInterface;
+use App\Shared\Domain\ValueObject\Money;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -46,11 +48,12 @@ final readonly class InitiatePaymentHandler
         $this->paymentRepository->save($payment);
 
         try {
-            // Initiate payment with gateway (creates PaymentIntent for Stripe)
-            $gatewayResponse = $this->paymentGateway->authorize(
-                amountInCents: $command->amountInCents,
+            // Create payment intent at gateway
+            $gatewayResult = $this->paymentGateway->createPaymentIntent(
+                paymentId: ModelPaymentId::generate(),
+                amount: Money::fromScalars($command->amountInCents, $command->currency),
                 currency: $command->currency,
-                method: $command->method,
+                idempotencyKey: sprintf('initiate_%s', $command->paymentId->toString()),
                 metadata: [
                     'tenant_id' => $command->tenantId->toString(),
                     'payment_id' => $command->paymentId->toString(),
@@ -59,22 +62,26 @@ final readonly class InitiatePaymentHandler
                 ]
             );
 
+            if (!$gatewayResult->success) {
+                throw new \RuntimeException($gatewayResult->errorMessage ?? 'Payment gateway failed');
+            }
+
             // Authorize payment with the gateway transaction ID
-            $payment->authorize($gatewayResponse['transaction_id']);
+            $payment->authorize($gatewayResult->gatewayPaymentIntentId);
             $this->paymentRepository->save($payment);
 
             $this->logger->info('Payment initiated successfully', [
                 'payment_id' => $command->paymentId->toString(),
                 'order_id' => $command->orderId,
-                'gateway_transaction_id' => $gatewayResponse['transaction_id'],
+                'gateway_transaction_id' => $gatewayResult->gatewayPaymentIntentId,
             ]);
 
             // Return data needed for frontend
             return [
                 'paymentId' => $command->paymentId->toString(),
-                'paymentIntentId' => $gatewayResponse['transaction_id'],
-                'clientSecret' => $gatewayResponse['metadata']['client_secret'] ?? null,
-                'status' => $gatewayResponse['status'],
+                'paymentIntentId' => $gatewayResult->gatewayPaymentIntentId,
+                'clientSecret' => $gatewayResult->clientSecret,
+                'status' => $gatewayResult->status,
             ];
         } catch (\Exception $e) {
             // Mark payment as failed

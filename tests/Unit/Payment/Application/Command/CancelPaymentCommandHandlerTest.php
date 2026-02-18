@@ -8,53 +8,94 @@ use App\Payment\Application\Command\CancelPayment;
 use App\Payment\Application\Command\CancelPaymentHandler;
 use App\Payment\Domain\Model\Payment;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
+use App\Payment\Domain\Service\PaymentGatewayInterface;
+use App\Payment\Domain\Service\PaymentIntentResult;
 use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
-use App\Payment\Infrastructure\Gateway\PaymentGatewayFactory;
+use App\Payment\Domain\ValueObject\PaymentStatus;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Tests for CancelPaymentHandler.
+ */
 final class CancelPaymentCommandHandlerTest extends TestCase
 {
-    private PaymentRepositoryInterface $repository;
-    private PaymentGatewayFactory $gatewayFactory;
+    private PaymentGatewayInterface $gateway;
     private LoggerInterface $logger;
     private CancelPaymentHandler $handler;
-    private \App\Payment\Domain\Service\PaymentGatewayInterface $stripeGateway;
-    private \App\Payment\Domain\Service\PaymentGatewayInterface $paypalGateway;
 
     protected function setUp(): void
     {
-        $this->repository = $this->createMock(PaymentRepositoryInterface::class);
+        $this->gateway = $this->createMock(PaymentGatewayInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+    }
 
-        // Create mock gateways
-        $this->stripeGateway = $this->createMock(\App\Payment\Domain\Service\PaymentGatewayInterface::class);
-        $this->paypalGateway = $this->createMock(\App\Payment\Domain\Service\PaymentGatewayInterface::class);
+    private function createRepositoryStub(?Payment $returnValue): PaymentRepositoryInterface
+    {
+        return new class ($returnValue) implements PaymentRepositoryInterface {
+            private ?Payment $savedPayment = null;
 
-        // Create real factory instance with mock gateways
-        $this->gatewayFactory = new PaymentGatewayFactory([
-            'stripe' => $this->stripeGateway,
-            'paypal' => $this->paypalGateway,
-        ]);
+            public function __construct(private readonly ?Payment $findByIdResult) {}
 
-        $this->handler = new CancelPaymentHandler(
-            $this->repository,
-            $this->gatewayFactory,
-            $this->logger
-        );
+            public function save(Payment $payment): void
+            {
+                $this->savedPayment = $payment;
+            }
+
+            public function getSavedPayment(): ?Payment
+            {
+                return $this->savedPayment;
+            }
+
+            public function findById(PaymentId $id): ?Payment
+            {
+                return $this->findByIdResult;
+            }
+
+            public function findByOrderId(string $orderId): ?Payment
+            {
+                return null;
+            }
+
+            public function findByGatewayPaymentId(string $gatewayPaymentId): ?Payment
+            {
+                return null;
+            }
+
+            public function findByIdempotencyKey(string $idempotencyKey, TenantId $tenantId): ?Payment
+            {
+                return null;
+            }
+
+            public function findAll(TenantId $tenantId): array
+            {
+                return [];
+            }
+
+            public function findAllByOrderId(string $orderId): array
+            {
+                return [];
+            }
+
+            public function findPaymentsForRetry(\DateTimeImmutable $before): array
+            {
+                return [];
+            }
+        };
     }
 
     public function testHandleCancelsPendingPayment(): void
     {
-        // Arrange
+        // Arrange - pending payment has no gateway transaction ID
         $paymentId = PaymentId::generate();
         $tenantId = TenantId::generate();
 
         $payment = Payment::create(
-            id: $paymentId,
+            id: PaymentId::generate(),
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 9999,
@@ -63,87 +104,89 @@ final class CancelPaymentCommandHandlerTest extends TestCase
             gateway: PaymentGateway::stripe()
         );
 
+        $repository = $this->createRepositoryStub($payment);
+        $this->handler = new CancelPaymentHandler($repository, $this->gateway, $this->logger);
+
         $command = new CancelPayment(
             id: $paymentId,
-            tenantId: $tenantId,
             reason: 'Customer cancelled order'
         );
 
-        $this->repository->expects($this->once())
-            ->method('findById')
-            ->with($paymentId, $tenantId)
-            ->willReturn($payment);
-
-        $this->repository->expects($this->once())
-            ->method('save')
-            ->with($this->callback(fn (Payment $p) => $p->status()->isCancelled()));
+        // Gateway should NOT be called for pending payments (no transaction ID)
+        $this->gateway->expects($this->never())
+            ->method('cancelPaymentIntent');
 
         // Act
         ($this->handler)($command);
 
-        // Assert - expectations verified
+        // Assert - payment is now cancelled
+        $saved = $repository->getSavedPayment();
+        $this->assertNotNull($saved);
+        $this->assertTrue($saved->status()->isCancelled());
     }
 
     public function testHandleCancelsAuthorizedPayment(): void
     {
-        // Arrange
+        // Arrange - authorized payment has a gateway transaction ID
         $paymentId = PaymentId::generate();
         $tenantId = TenantId::generate();
 
-        $payment = Payment::create(
-            id: $paymentId,
+        $payment = Payment::reconstituteFromPersistence(
+            id: PaymentId::generate(),
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 5000,
             currency: 'EUR',
-            method: PaymentMethod::paypal(),
-            gateway: PaymentGateway::paypal()
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe(),
+            status: PaymentStatus::authorized(),
+            gatewayTransactionId: 'pi_stripe_authorized_123',
+            errorMessage: null,
+            refundedAmountInCents: 0,
+            createdAt: new \DateTimeImmutable(),
+            updatedAt: new \DateTimeImmutable()
         );
-        $payment->authorize('paypal_tx_123');
+
+        $repository = $this->createRepositoryStub($payment);
+        $this->handler = new CancelPaymentHandler($repository, $this->gateway, $this->logger);
 
         $command = new CancelPayment(
             id: $paymentId,
-            tenantId: $tenantId,
             reason: 'Timeout'
         );
 
-        // Set expectations on the paypal gateway
-        $this->paypalGateway->expects($this->once())
-            ->method('cancel')
-            ->with('paypal_tx_123', 'Timeout')
-            ->willReturn([
-                'status' => 'cancelled',
-            ]);
-
-        $this->repository->method('findById')->willReturn($payment);
-        $this->repository->expects($this->once())
-            ->method('save')
-            ->with($this->callback(fn (Payment $p) => $p->status()->isCancelled()));
+        // Gateway should be called for authorized payments (they have a transaction ID)
+        $this->gateway->expects($this->once())
+            ->method('cancelPaymentIntent')
+            ->with('pi_stripe_authorized_123')
+            ->willReturn(PaymentIntentResult::success(
+                gatewayPaymentIntentId: 'pi_stripe_authorized_123',
+                status: 'canceled',
+                amount: Money::fromScalars(5000, 'EUR')
+            ));
 
         // Act
         ($this->handler)($command);
 
-        // Assert - expectations verified
+        // Assert
+        $saved = $repository->getSavedPayment();
+        $this->assertNotNull($saved);
+        $this->assertTrue($saved->status()->isCancelled());
     }
 
     public function testHandleThrowsExceptionWhenPaymentNotFound(): void
     {
-        // Arrange
+        // Arrange - repository returns null (payment not found)
         $command = new CancelPayment(
             id: PaymentId::generate(),
-            tenantId: TenantId::generate(),
             reason: 'Cancel'
         );
 
-        $this->repository->expects($this->once())
-            ->method('findById')
-            ->willReturn(null);
+        $repository = $this->createRepositoryStub(null);
+        $this->handler = new CancelPaymentHandler($repository, $this->gateway, $this->logger);
 
-        $this->repository->expects($this->never())
-            ->method('save');
-
-        // Assert
-        $this->expectException(\RuntimeException::class);
+        // Assert - handler throws InvalidArgumentException when payment not found
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/Payment.*not found/');
 
         // Act

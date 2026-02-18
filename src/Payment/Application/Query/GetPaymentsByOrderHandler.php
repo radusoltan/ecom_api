@@ -21,7 +21,7 @@ final readonly class GetPaymentsByOrderHandler
      */
     public function __invoke(GetPaymentsByOrder $query): array
     {
-        $payments = $this->paymentRepository->findByOrderId($query->orderId, $query->tenantId);
+        $payments = $this->paymentRepository->findAllByOrderId($query->orderId);
 
         return array_map(
             fn ($payment) => PaymentDTO::fromDomainModel($payment),

@@ -39,19 +39,19 @@ class CustomerAddressEntity
     #[ORM\JoinColumn(name: 'customer_id', referencedColumnName: 'id', nullable: false)]
     private ?CustomerEntity $customer = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(type: 'encrypted_string', nullable: false)]
     private string $street = '';
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'encrypted_string', nullable: true)]
     private ?string $street2 = null;
 
-    #[ORM\Column(type: 'string', length: 100, nullable: false)]
+    #[ORM\Column(type: 'encrypted_string', nullable: false)]
     private string $city = '';
 
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(type: 'encrypted_string', nullable: true)]
     private ?string $state = null;
 
-    #[ORM\Column(type: 'string', length: 20, nullable: false)]
+    #[ORM\Column(type: 'encrypted_string', nullable: false)]
     private string $postalCode = '';
 
     #[ORM\Column(type: 'string', length: 2, nullable: false)]

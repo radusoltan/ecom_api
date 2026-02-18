@@ -59,8 +59,8 @@ final class GetPaymentsByOrderIdQueryHandlerTest extends TestCase
         );
 
         $this->repository->expects($this->once())
-            ->method('findByOrderId')
-            ->with($orderId, $tenantId)
+            ->method('findAllByOrderId')
+            ->with($orderId)
             ->willReturn([$payment1, $payment2]);
 
         // Act
@@ -83,7 +83,7 @@ final class GetPaymentsByOrderIdQueryHandlerTest extends TestCase
         );
 
         $this->repository->expects($this->once())
-            ->method('findByOrderId')
+            ->method('findAllByOrderId')
             ->willReturn([]);
 
         // Act
@@ -112,7 +112,7 @@ final class GetPaymentsByOrderIdQueryHandlerTest extends TestCase
 
         $query = new GetPaymentsByOrder(orderId: $orderId, tenantId: $tenantId);
 
-        $this->repository->method('findByOrderId')->willReturn([$payment]);
+        $this->repository->method('findAllByOrderId')->willReturn([$payment]);
 
         // Act
         $result = ($this->handler)($query);

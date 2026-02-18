@@ -18,7 +18,7 @@ final readonly class GetPaymentByIdHandler
 
     public function __invoke(GetPaymentById $query): ?PaymentDTO
     {
-        $payment = $this->paymentRepository->findById($query->id, $query->tenantId);
+        $payment = $this->paymentRepository->findById($query->id);
 
         if (null === $payment) {
             return null;

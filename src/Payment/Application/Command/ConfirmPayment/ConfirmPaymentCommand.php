@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Payment\Application\Command\ConfirmPayment;
 
-use App\Payment\Domain\Model\PaymentId;
+use App\Payment\Domain\ValueObject\PaymentId;
 
 /**
  * Command to confirm a payment intent.

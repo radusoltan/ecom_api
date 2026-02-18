@@ -12,6 +12,7 @@ use App\User\Domain\ValueObject\UserId;
 use App\User\Domain\ValueObject\Username;
 use App\User\Domain\ValueObject\UserRole;
 use App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
+use App\Shared\Infrastructure\Encryption\BlindIndexService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -20,8 +21,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 final class DoctrineORMUserRepository extends ServiceEntityRepository implements UserRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly BlindIndexService $blindIndexService,
+    ) {
         parent::__construct($registry, UserEntity::class);
     }
 
@@ -36,9 +39,15 @@ final class DoctrineORMUserRepository extends ServiceEntityRepository implements
         }
 
         $entity->setEmail($user->email()->toString());
+        $entity->setEmailBlindIndex($this->blindIndexService->generate($user->email()->toString()));
         $entity->setUsername($user->username()->toString());
+        $entity->setUsernameBlindIndex($this->blindIndexService->generate($user->username()->toString()));
         $entity->setPassword($user->password()->toString());
         $entity->setRoles($user->rolesAsStrings());
+        $entity->setMfaEnabled($user->mfaEnabled());
+        $entity->setTotpSecret($user->totpSecret());
+        $entity->setBackupCodes([] !== $user->backupCodes() ? $user->backupCodes() : null);
+        $entity->setMfaEnabledAt($user->mfaEnabledAt());
 
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
@@ -65,14 +74,14 @@ final class DoctrineORMUserRepository extends ServiceEntityRepository implements
 
     public function findByEmail(Email $email): ?User
     {
-        $entity = $this->findOneBy(['email' => $email->toString()]);
+        $entity = $this->findOneBy(['emailBlindIndex' => $this->blindIndexService->generate($email->toString())]);
 
         return $entity ? $this->toDomain($entity) : null;
     }
 
     public function findByUsername(Username $username): ?User
     {
-        $entity = $this->findOneBy(['username' => $username->toString()]);
+        $entity = $this->findOneBy(['usernameBlindIndex' => $this->blindIndexService->generate($username->toString())]);
 
         return $entity ? $this->toDomain($entity) : null;
     }
@@ -97,7 +106,11 @@ final class DoctrineORMUserRepository extends ServiceEntityRepository implements
             Username::fromString($entity->getUsername()),
             HashedPassword::fromHash($entity->getPassword()),
             $roles,
-            $entity->getCreatedAt()
+            $entity->getCreatedAt(),
+            mfaEnabled: $entity->isMfaEnabled(),
+            totpSecret: $entity->getTotpSecret(),
+            backupCodes: $entity->getBackupCodes() ?? [],
+            mfaEnabledAt: $entity->getMfaEnabledAt()
         );
     }
 }

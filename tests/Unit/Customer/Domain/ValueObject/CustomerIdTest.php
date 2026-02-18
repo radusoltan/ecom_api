@@ -46,7 +46,7 @@ final class CustomerIdTest extends TestCase
     public function testFromStringRejectsInvalidFormat(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid customer ID:');
+        $this->expectExceptionMessage('Invalid CustomerId format:');
 
         CustomerId::fromString('not-a-valid-uuid');
     }
@@ -54,7 +54,7 @@ final class CustomerIdTest extends TestCase
     public function testFromStringRejectsEmptyString(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid customer ID:');
+        $this->expectExceptionMessage('CustomerId cannot be empty');
 
         CustomerId::fromString('');
     }

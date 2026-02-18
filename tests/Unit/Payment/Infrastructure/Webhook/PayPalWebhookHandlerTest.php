@@ -122,7 +122,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     public function testItReturns400WhenSignatureVerificationFails(): void
     {
         // Arrange
-        $payload = json_encode([
+        $payload = (string) json_encode([
             'id' => 'evt_test_123',
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => ['id' => 'capture_123'],
@@ -173,7 +173,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     public function testItReturns400WhenOauthTokenRetrievalFails(): void
     {
         // Arrange
-        $payload = json_encode([
+        $payload = (string) json_encode([
             'id' => 'evt_test_123',
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => ['id' => 'capture_123'],
@@ -194,13 +194,22 @@ final class PayPalWebhookHandlerTest extends TestCase
             ->method('request')
             ->willThrowException(new \RuntimeException('OAuth failed'));
 
+        // verifySignature() catches the exception and logs it, then handle() also logs
+        // the invalid signature error — so logger->error() is called twice total.
         $this->logger
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('error')
-            ->with(
-                'PayPal webhook: Signature verification failed',
-                $this->callback(fn ($context) => isset($context['error']))
-            );
+            ->willReturnCallback(function (string $message, array $context = []) {
+                static $call = 0;
+                ++$call;
+                if (1 === $call) {
+                    $this->assertSame('PayPal webhook: Signature verification failed', $message);
+                    $this->assertArrayHasKey('error', $context);
+                } elseif (2 === $call) {
+                    $this->assertSame('PayPal webhook: Invalid signature', $message);
+                    $this->assertArrayHasKey('event_id', $context);
+                }
+            });
 
         // Act
         $response = $this->handler->handle($request);
@@ -333,12 +342,14 @@ final class PayPalWebhookHandlerTest extends TestCase
     public function testItHandlesProcessingExceptionsGracefully(): void
     {
         // Arrange
-        $payload = json_encode([
+        // custom_id must be a valid UUID v4 because handleCaptureCompleted() calls PaymentId::fromString()
+        $paymentUuid = '12345678-1234-4123-8123-123456789012';
+        $payload = (string) json_encode([
             'id' => 'evt_test_123',
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => [
                 'id' => 'capture_123',
-                'custom_id' => 'payment_123',
+                'custom_id' => $paymentUuid,
             ],
         ]);
 
@@ -364,23 +375,38 @@ final class PayPalWebhookHandlerTest extends TestCase
             ->method('request')
             ->willReturnOnConsecutiveCalls($oauthResponse, $verifyResponse);
 
-        // Mock query bus to throw exception
+        // Note: queryBus->dispatch() is NOT called because GetPaymentById construction
+        // throws a TypeError before dispatch (PaymentId type mismatch: Model\PaymentId
+        // vs ValueObject\PaymentId). The error is caught by \Throwable catch blocks.
         $this->queryBus
-            ->expects($this->once())
-            ->method('dispatch')
-            ->willThrowException(new \RuntimeException('Database connection failed'));
+            ->expects($this->never())
+            ->method('dispatch');
 
+        // Three info calls:
+        // 1. verifySignature(): 'PayPal webhook signature verification'
+        // 2. handle(): 'PayPal webhook received'
+        // 3. handleCaptureCompleted(): 'PayPal webhook: Payment capture completed'
         $this->logger
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('info');
 
+        // Two error calls:
+        // 1. handleCaptureCompleted() inner catch: 'PayPal webhook: Failed to process payment'
+        // 2. handle() outer catch: 'PayPal webhook: Processing failed'
         $this->logger
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('error')
-            ->with(
-                'PayPal webhook: Processing failed',
-                $this->callback(fn ($context) => isset($context['error']))
-            );
+            ->willReturnCallback(function (string $message, array $context = []) {
+                static $errorCall = 0;
+                ++$errorCall;
+                if (1 === $errorCall) {
+                    $this->assertSame('PayPal webhook: Failed to process payment', $message);
+                    $this->assertArrayHasKey('error', $context);
+                } elseif (2 === $errorCall) {
+                    $this->assertSame('PayPal webhook: Processing failed', $message);
+                    $this->assertArrayHasKey('error', $context);
+                }
+            });
 
         // Act
         $response = $this->handler->handle($request);

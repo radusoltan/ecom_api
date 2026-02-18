@@ -101,8 +101,8 @@ final class StartFulfillmentHandlerTest extends TestCase
                 }
 
                 // Verify command fields
-                return ($command->productId->equals($productId1) && 3 === $command->quantity->toInt())
-                    || ($command->productId->equals($productId2) && 5 === $command->quantity->toInt())
+                return ($command->productId->equals($productId1) && 3 === $command->quantity->value())
+                    || ($command->productId->equals($productId2) && 5 === $command->quantity->value())
                     && $command->warehouseId->equals($warehouseId)
                     && $command->orderId === $orderId->toString()
                     && $command->tenantId->equals($tenantId);
@@ -192,8 +192,13 @@ final class StartFulfillmentHandlerTest extends TestCase
             ->with($orderId)
             ->willReturn($order);
 
-        // Simulate existing fulfillment
-        $existingFulfillment = $this->createMock(\App\Order\Domain\Model\Fulfillment::class);
+        // Simulate existing fulfillment using a real Fulfillment instance (class is final)
+        $existingFulfillment = \App\Order\Domain\Model\Fulfillment::start(
+            \App\Order\Domain\ValueObject\FulfillmentId::generate(),
+            $orderId,
+            $warehouseId,
+            $tenantId,
+        );
         $this->fulfillmentRepository
             ->expects($this->once())
             ->method('findByOrderId')
@@ -403,6 +408,7 @@ final class StartFulfillmentHandlerTest extends TestCase
         $shippingAddress = Address::create(
             street: '123 Test St',
             city: 'Test City',
+            state: 'CA',
             postalCode: '12345',
             country: 'US'
         );

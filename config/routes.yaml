@@ -18,5 +18,12 @@ pricing_controllers:
         namespace: App\Pricing\Presentation\Api\Controller
     type: attribute
 
+# User controllers (MFA, etc.)
+user_controllers:
+    resource:
+        path: ../src/User/Presentation/Api/Controller/
+        namespace: App\User\Presentation\Api\Controller
+    type: attribute
+
 api_login_check:
     path: /api/login_check

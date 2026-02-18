@@ -7,7 +7,7 @@ namespace App\Payment\Infrastructure\Webhook;
 use App\Payment\Application\Command\CapturePayment;
 use App\Payment\Application\Command\MarkPaymentAsFailed;
 use App\Payment\Application\Query\GetPaymentById;
-use App\Payment\Domain\Model\PaymentId;
+use App\Payment\Domain\ValueObject\PaymentId;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -108,7 +108,7 @@ final readonly class PayPalWebhookHandler
             ]);
 
             return new Response('Invalid JSON', Response::HTTP_BAD_REQUEST);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('PayPal webhook: Processing failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -264,7 +264,7 @@ final readonly class PayPalWebhookHandler
             }
 
             return 'Payment processed';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('PayPal webhook: Failed to process payment', [
                 'payment_id' => $paymentId,
                 'error' => $e->getMessage(),
@@ -323,7 +323,7 @@ final readonly class PayPalWebhookHandler
             ]);
 
             return 'Payment failure recorded';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('PayPal webhook: Failed to mark payment as failed', [
                 'payment_id' => $paymentId,
                 'error' => $e->getMessage(),
@@ -418,7 +418,7 @@ final readonly class PayPalWebhookHandler
             ]);
 
             return 'Authorization void processed';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('PayPal webhook: Failed to process voided authorization', [
                 'payment_id' => $paymentId,
                 'error' => $e->getMessage(),

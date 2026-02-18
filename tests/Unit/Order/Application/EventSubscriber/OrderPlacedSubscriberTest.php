@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Application\EventSubscriber;
 
+use App\Customer\Application\Service\NotificationPreferenceService;
+use App\Customer\Domain\Repository\CustomerRepositoryInterface;
 use App\Order\Application\EventSubscriber\OrderPlacedSubscriber;
 use App\Order\Domain\Event\OrderPlaced;
 use App\Order\Domain\Model\OrderId;
@@ -25,6 +27,7 @@ final class OrderPlacedSubscriberTest extends TestCase
     private MailerInterface $mailer;
     private TranslatorInterface $translator;
     private LoggerInterface $logger;
+    private NotificationPreferenceService $notificationPreferenceService;
     private OrderPlacedSubscriber $subscriber;
 
     protected function setUp(): void
@@ -32,6 +35,13 @@ final class OrderPlacedSubscriberTest extends TestCase
         $this->mailer = $this->createMock(MailerInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+
+        // NotificationPreferenceService is final and cannot be mocked directly.
+        // Use a real instance backed by a stub repository that returns null,
+        // which causes shouldSendEmailByEmail to allow transactional emails ('order_update').
+        $customerRepository = $this->createStub(CustomerRepositoryInterface::class);
+        $customerRepository->method('findByEmail')->willReturn(null);
+        $this->notificationPreferenceService = new NotificationPreferenceService($customerRepository);
 
         // Mock translator to return a meaningful subject
         $this->translator
@@ -48,6 +58,7 @@ final class OrderPlacedSubscriberTest extends TestCase
             mailer: $this->mailer,
             translator: $this->translator,
             logger: $this->logger,
+            notificationPreferenceService: $this->notificationPreferenceService,
             senderEmail: 'test@example.com',
             senderName: 'Test Platform'
         );

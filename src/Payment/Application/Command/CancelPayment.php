@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Payment\Application\Command;
 
-use App\Payment\Domain\Model\PaymentId;
+use App\Payment\Domain\ValueObject\PaymentId;
 
 /**
  * Command to cancel/void an authorized payment.

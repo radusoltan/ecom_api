@@ -21,9 +21,7 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         app_user_provider:
-            entity:
-                class: App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity
-                property: email
+            id: App\User\Infrastructure\Security\BlindIndexUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -62,6 +60,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/api/mfa/verify, roles: ROLE_MFA_PENDING }  # MFA verification (partial JWT)
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/login_check, roles: PUBLIC_ACCESS }  # JWT login endpoint
         - { path: ^/api/docs, roles: PUBLIC_ACCESS }  # Allow access to API documentation

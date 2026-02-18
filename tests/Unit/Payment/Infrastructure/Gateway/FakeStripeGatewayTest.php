@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Payment\Infrastructure\Gateway;
 
+use App\Payment\Domain\Model\PaymentId;
+use App\Payment\Domain\Model\PaymentMethod;
 use App\Payment\Domain\Service\PaymentGatewayInterface;
-use App\Payment\Domain\ValueObject\PaymentMethod;
+use App\Payment\Domain\Service\PaymentIntentResult;
+use App\Payment\Domain\Service\RefundResult;
 use App\Payment\Infrastructure\Gateway\FakeStripeGateway;
+use App\Shared\Domain\ValueObject\Money;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -44,30 +48,39 @@ final class FakeStripeGatewayTest extends TestCase
     {
         $gateway = new FakeStripeGateway($this->logger);
 
-        $this->assertSame('stripe', $gateway->getName());
+        $this->assertSame('Stripe Sandbox', $gateway->getName());
     }
 
     #[Test]
-    public function itAuthorizesPaymentWithout3dsByDefault(): void
+    public function itReturnsStripeAsGatewayId(): void
+    {
+        $gateway = new FakeStripeGateway($this->logger);
+
+        $this->assertSame(PaymentMethod::STRIPE, $gateway->getGatewayId());
+    }
+
+    // -----------------------------------------------------------------------
+    // createPaymentIntent tests
+    // -----------------------------------------------------------------------
+
+    #[Test]
+    public function itCreatesPaymentIntentWithout3dsByDefault(): void
     {
         $gateway = new FakeStripeGateway($this->logger, require3DS: false);
 
-        $result = $gateway->authorize(
-            amountInCents: 5000,
+        $result = $gateway->createPaymentIntent(
+            paymentId: PaymentId::generate(),
+            amount: Money::fromScalars(5000, 'USD'),
             currency: 'USD',
-            method: PaymentMethod::card(),
+            idempotencyKey: 'idem-test-123',
             metadata: ['order_id' => 'ORD-123']
         );
 
-        $this->assertArrayHasKey('transaction_id', $result);
-        $this->assertArrayHasKey('status', $result);
-        $this->assertArrayHasKey('metadata', $result);
-
-        $this->assertSame('requires_capture', $result['status']);
-        $this->assertStringStartsWith('pi_fake_', $result['transaction_id']);
-        $this->assertSame(5000, $result['metadata']['amount']);
-        $this->assertSame('usd', $result['metadata']['currency']);
-        $this->assertArrayHasKey('payment_method_types', $result['metadata']);
+        $this->assertInstanceOf(PaymentIntentResult::class, $result);
+        $this->assertTrue($result->success);
+        $this->assertSame('requires_payment_method', $result->status);
+        $this->assertStringStartsWith('pi_fake_', $result->gatewayPaymentIntentId);
+        $this->assertStringStartsWith('secret_fake_', $result->clientSecret);
     }
 
     #[Test]
@@ -75,53 +88,17 @@ final class FakeStripeGatewayTest extends TestCase
     {
         $gateway = new FakeStripeGateway($this->logger, require3DS: true);
 
-        $result = $gateway->authorize(
-            amountInCents: 5000,
-            currency: 'EUR',
-            method: PaymentMethod::card(),
-            metadata: ['order_id' => 'ORD-456', 'return_url' => 'https://example.com/return']
+        $result = $gateway->createPaymentIntent(
+            paymentId: PaymentId::generate(),
+            amount: Money::fromScalars(5000, 'USD'),
+            currency: 'USD',
+            idempotencyKey: 'idem-test-456',
+            metadata: ['order_id' => 'ORD-456']
         );
 
-        $this->assertSame('requires_action', $result['status']);
-        $this->assertArrayHasKey('next_action', $result);
-        $this->assertArrayHasKey('type', $result['next_action']);
-        $this->assertSame('redirect_to_url', $result['next_action']['type']);
-    }
-
-    #[Test]
-    public function itIncludes3dsChallengeUrlWhenAuthenticationRequired(): void
-    {
-        $gateway = new FakeStripeGateway($this->logger, require3DS: true);
-
-        $result = $gateway->authorize(
-            amountInCents: 10000,
-            currency: 'GBP',
-            method: PaymentMethod::card(),
-            metadata: ['return_url' => 'https://example.com/payment/confirm']
-        );
-
-        $this->assertArrayHasKey('redirect_to_url', $result['next_action']);
-        $this->assertArrayHasKey('url', $result['next_action']['redirect_to_url']);
-        $this->assertArrayHasKey('return_url', $result['next_action']['redirect_to_url']);
-
-        $this->assertStringContainsString('3d_secure', $result['next_action']['redirect_to_url']['url']);
-        $this->assertSame('https://example.com/payment/confirm', $result['next_action']['redirect_to_url']['return_url']);
-    }
-
-    #[Test]
-    public function itMarks3dsRequiredInMetadata(): void
-    {
-        $gateway = new FakeStripeGateway($this->logger, require3DS: true);
-
-        $result = $gateway->authorize(
-            amountInCents: 7500,
-            currency: 'EUR',
-            method: PaymentMethod::card()
-        );
-
-        $this->assertArrayHasKey('metadata', $result);
-        $this->assertArrayHasKey('requires_3ds', $result['metadata']);
-        $this->assertTrue($result['metadata']['requires_3ds']);
+        $this->assertInstanceOf(PaymentIntentResult::class, $result);
+        $this->assertTrue($result->success);
+        $this->assertSame('requires_action', $result->status);
     }
 
     #[Test]
@@ -129,33 +106,15 @@ final class FakeStripeGatewayTest extends TestCase
     {
         $gateway = new FakeStripeGateway($this->logger, require3DS: false);
 
-        $result = $gateway->authorize(
-            amountInCents: 5000,
+        $result = $gateway->createPaymentIntent(
+            paymentId: PaymentId::generate(),
+            amount: Money::fromScalars(5000, 'USD'),
             currency: 'USD',
-            method: PaymentMethod::card(),
+            idempotencyKey: 'idem-test-789',
             metadata: ['force_3ds' => true]
         );
 
-        $this->assertSame('requires_action', $result['status']);
-        $this->assertArrayHasKey('next_action', $result);
-    }
-
-    #[Test]
-    public function itCapturesAuthorizedPayment(): void
-    {
-        $gateway = new FakeStripeGateway($this->logger);
-
-        $result = $gateway->capture(
-            transactionId: 'pi_fake_1234567890abcdef',
-            amountInCents: 5000
-        );
-
-        $this->assertArrayHasKey('transaction_id', $result);
-        $this->assertArrayHasKey('status', $result);
-        $this->assertArrayHasKey('captured_amount', $result);
-
-        $this->assertSame('succeeded', $result['status']);
-        $this->assertSame(5000, $result['captured_amount']);
+        $this->assertSame('requires_action', $result->status);
     }
 
     #[Test]
@@ -163,65 +122,145 @@ final class FakeStripeGatewayTest extends TestCase
     {
         $gateway = new FakeStripeGateway($this->logger, require3DS: true);
 
-        $result = $gateway->getStatus('pi_fake_1234567890abcdef');
+        $result = $gateway->createPaymentIntent(
+            paymentId: PaymentId::generate(),
+            amount: Money::fromScalars(5000, 'USD'),
+            currency: 'USD',
+            idempotencyKey: 'idem-3ds-test'
+        );
 
-        $this->assertArrayHasKey('status', $result);
-        $this->assertArrayHasKey('metadata', $result);
-
-        // After 3DS authentication, status should be 'requires_capture'
-        $this->assertSame('requires_capture', $result['status']);
-        $this->assertArrayHasKey('3ds_authenticated', $result['metadata']);
-        $this->assertTrue($result['metadata']['3ds_authenticated']);
+        // 3DS required -> result status is requires_action
+        $this->assertSame('requires_action', $result->status);
     }
 
+    // -----------------------------------------------------------------------
+    // confirmPaymentIntent tests
+    // -----------------------------------------------------------------------
+
     #[Test]
-    public function itRefundsCapturedPayment(): void
+    public function itConfirmsPaymentIntentSuccessfully(): void
     {
         $gateway = new FakeStripeGateway($this->logger);
 
-        $result = $gateway->refund(
-            transactionId: 'pi_fake_1234567890abcdef',
-            amountInCents: 2500,
-            reason: 'Customer request'
+        $result = $gateway->confirmPaymentIntent(
+            gatewayPaymentIntentId: 'pi_fake_1234567890abcdef',
+            paymentMethodId: 'pm_card_visa'
         );
 
-        $this->assertArrayHasKey('refund_id', $result);
-        $this->assertArrayHasKey('status', $result);
-        $this->assertArrayHasKey('refunded_amount', $result);
-
-        $this->assertSame('succeeded', $result['status']);
-        $this->assertSame(2500, $result['refunded_amount']);
-        $this->assertStringStartsWith('re_fake_', $result['refund_id']);
+        $this->assertInstanceOf(PaymentIntentResult::class, $result);
+        $this->assertTrue($result->success);
+        $this->assertSame('succeeded', $result->status);
+        $this->assertSame('pi_fake_1234567890abcdef', $result->gatewayPaymentIntentId);
     }
+
+    // -----------------------------------------------------------------------
+    // capturePaymentIntent tests
+    // -----------------------------------------------------------------------
+
+    #[Test]
+    public function itCapturesAuthorizedPayment(): void
+    {
+        $gateway = new FakeStripeGateway($this->logger);
+
+        $result = $gateway->capturePaymentIntent(
+            gatewayPaymentIntentId: 'pi_fake_1234567890abcdef',
+            amount: Money::fromScalars(5000, 'USD')
+        );
+
+        $this->assertInstanceOf(PaymentIntentResult::class, $result);
+        $this->assertTrue($result->success);
+        $this->assertSame('succeeded', $result->status);
+        $this->assertSame('pi_fake_1234567890abcdef', $result->gatewayPaymentIntentId);
+    }
+
+    // -----------------------------------------------------------------------
+    // cancelPaymentIntent tests
+    // -----------------------------------------------------------------------
 
     #[Test]
     public function itCancelsAuthorizedPayment(): void
     {
         $gateway = new FakeStripeGateway($this->logger);
 
-        $result = $gateway->cancel(
-            transactionId: 'pi_fake_1234567890abcdef',
-            reason: 'Timeout'
+        $result = $gateway->cancelPaymentIntent(
+            gatewayPaymentIntentId: 'pi_fake_1234567890abcdef'
         );
 
-        $this->assertArrayHasKey('status', $result);
-        $this->assertSame('canceled', $result['status']);
+        $this->assertInstanceOf(PaymentIntentResult::class, $result);
+        $this->assertTrue($result->success);
+        $this->assertSame('canceled', $result->status);
+    }
+
+    // -----------------------------------------------------------------------
+    // createRefund tests
+    // -----------------------------------------------------------------------
+
+    #[Test]
+    public function itRefundsCapturedPayment(): void
+    {
+        $gateway = new FakeStripeGateway($this->logger);
+
+        $result = $gateway->createRefund(
+            gatewayPaymentIntentId: 'pi_fake_1234567890abcdef',
+            amount: Money::fromScalars(2500, 'USD'),
+            reason: 'Customer request',
+            idempotencyKey: 'refund-idem-123'
+        );
+
+        $this->assertInstanceOf(RefundResult::class, $result);
+        $this->assertTrue($result->success);
+        $this->assertSame('succeeded', $result->status);
+        $this->assertStringStartsWith('re_fake_', $result->gatewayRefundId);
+    }
+
+    // -----------------------------------------------------------------------
+    // verifyWebhookSignature tests
+    // -----------------------------------------------------------------------
+
+    #[Test]
+    public function itVerifiesWebhookSignatureWithValidSignature(): void
+    {
+        $gateway = new FakeStripeGateway($this->logger);
+
+        $result = $gateway->verifyWebhookSignature(
+            payload: '{"type":"payment_intent.succeeded"}',
+            signature: 'valid_signature',
+            secret: 'whsec_test'
+        );
+
+        $this->assertTrue($result);
     }
 
     #[Test]
-    public function itLogsPaymentOperations(): void
+    public function itRejectsInvalidWebhookSignature(): void
+    {
+        $gateway = new FakeStripeGateway($this->logger);
+
+        $result = $gateway->verifyWebhookSignature(
+            payload: '{"type":"payment_intent.succeeded"}',
+            signature: 'invalid_signature',
+            secret: 'whsec_test'
+        );
+
+        $this->assertFalse($result);
+    }
+
+    // -----------------------------------------------------------------------
+    // Logging tests
+    // -----------------------------------------------------------------------
+
+    #[Test]
+    public function itLogsPaymentIntentCreation(): void
     {
         $this->logger
             ->expects($this->once())
             ->method('info')
             ->with(
-                $this->stringContains('[FAKE] Stripe: Authorizing payment'),
+                $this->stringContains('[FAKE] Stripe: Creating payment intent'),
                 $this->callback(function (array $context) {
+                    $this->assertArrayHasKey('payment_id', $context);
                     $this->assertArrayHasKey('amount', $context);
                     $this->assertArrayHasKey('currency', $context);
-                    $this->assertArrayHasKey('payment_method_types', $context);
-                    $this->assertSame(5000, $context['amount']);
-                    $this->assertSame('USD', $context['currency']);
 
                     return true;
                 })
@@ -229,10 +268,11 @@ final class FakeStripeGatewayTest extends TestCase
 
         $gateway = new FakeStripeGateway($this->logger);
 
-        $gateway->authorize(
-            amountInCents: 5000,
+        $gateway->createPaymentIntent(
+            paymentId: PaymentId::generate(),
+            amount: Money::fromScalars(5000, 'USD'),
             currency: 'USD',
-            method: PaymentMethod::card()
+            idempotencyKey: 'idem-log-test'
         );
     }
 }

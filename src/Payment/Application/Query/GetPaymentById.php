@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Payment\Application\Query;
 
-use App\Payment\Domain\Model\PaymentId;
+use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\TenantId;
 
 final readonly class GetPaymentById
 {
     public function __construct(
         public PaymentId $id,
+        public ?TenantId $tenantId = null,
     ) {
     }
 }

@@ -77,6 +77,20 @@ final readonly class DoctrineORMPaymentRepository implements PaymentRepositoryIn
         return $entity?->toDomainModel();
     }
 
+    public function findAll(TenantId $tenantId): array
+    {
+        $repository = $this->entityManager->getRepository(PaymentEntity::class);
+        $entities = $repository->findBy(
+            ['tenantId' => $tenantId->toString()],
+            ['createdAt' => 'DESC']
+        );
+
+        return array_map(
+            fn (PaymentEntity $entity) => $entity->toDomainModel(),
+            $entities
+        );
+    }
+
     public function findAllByOrderId(string $orderId): array
     {
         $repository = $this->entityManager->getRepository(PaymentEntity::class);

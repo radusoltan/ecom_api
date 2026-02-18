@@ -50,7 +50,7 @@ final class GetPaymentByIdQueryHandlerTest extends TestCase
 
         $this->repository->expects($this->once())
             ->method('findById')
-            ->with($paymentId, $tenantId)
+            ->with($paymentId)
             ->willReturn($payment);
 
         // Act

@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Payment\Application\Command;
 use App\Payment\Application\Command\ConfirmPayment\ConfirmPaymentCommand;
 use App\Payment\Application\Command\ConfirmPayment\ConfirmPaymentHandler;
 use App\Payment\Domain\Model\Payment;
-use App\Payment\Domain\Model\PaymentId;
+use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use App\Payment\Domain\Service\PaymentGatewayInterface;
 use App\Payment\Domain\Service\PaymentIntentResult;
@@ -46,7 +46,7 @@ final class ConfirmPaymentHandlerTest extends TestCase
 
         // Create payment with gateway transaction ID (from CreatePaymentIntent)
         $payment = Payment::reconstituteFromPersistence(
-            id: \App\Payment\Domain\ValueObject\PaymentId::fromString($paymentId->toString()),
+            id: \App\Payment\Domain\ValueObject\PaymentId::generate(),
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 10000,
@@ -122,7 +122,7 @@ final class ConfirmPaymentHandlerTest extends TestCase
 
         // Payment without gateway transaction ID
         $payment = Payment::create(
-            id: \App\Payment\Domain\ValueObject\PaymentId::fromString($paymentId->toString()),
+            id: \App\Payment\Domain\ValueObject\PaymentId::generate(),
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 10000,
@@ -157,7 +157,7 @@ final class ConfirmPaymentHandlerTest extends TestCase
         $tenantId = TenantId::generate();
 
         $payment = Payment::reconstituteFromPersistence(
-            id: \App\Payment\Domain\ValueObject\PaymentId::fromString($paymentId->toString()),
+            id: \App\Payment\Domain\ValueObject\PaymentId::generate(),
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 10000,
@@ -210,7 +210,7 @@ final class ConfirmPaymentHandlerTest extends TestCase
         $tenantId = TenantId::generate();
 
         $payment = Payment::reconstituteFromPersistence(
-            id: \App\Payment\Domain\ValueObject\PaymentId::fromString($paymentId->toString()),
+            id: \App\Payment\Domain\ValueObject\PaymentId::generate(),
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 10000,
@@ -265,7 +265,7 @@ final class ConfirmPaymentHandlerTest extends TestCase
         $tenantId = TenantId::generate();
 
         $payment = Payment::reconstituteFromPersistence(
-            id: \App\Payment\Domain\ValueObject\PaymentId::fromString($paymentId->toString()),
+            id: \App\Payment\Domain\ValueObject\PaymentId::generate(),
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 10000,
@@ -316,7 +316,7 @@ final class ConfirmPaymentHandlerTest extends TestCase
         $tenantId = TenantId::generate();
 
         $payment = Payment::reconstituteFromPersistence(
-            id: \App\Payment\Domain\ValueObject\PaymentId::fromString($paymentId->toString()),
+            id: \App\Payment\Domain\ValueObject\PaymentId::generate(),
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 10000,
@@ -364,7 +364,7 @@ final class ConfirmPaymentHandlerTest extends TestCase
         $tenantId = TenantId::generate();
 
         $payment = Payment::reconstituteFromPersistence(
-            id: \App\Payment\Domain\ValueObject\PaymentId::fromString($paymentId->toString()),
+            id: \App\Payment\Domain\ValueObject\PaymentId::generate(),
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 10000,
