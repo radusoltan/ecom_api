@@ -17,7 +17,7 @@ use App\Media\Presentation\Api\State\ImageItemProvider;
 use App\Media\Presentation\Api\State\ImageUploadProcessor;
 use App\Media\Presentation\Api\State\RegenerateThumbnailsProcessor;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(

@@ -45,13 +45,4 @@ final class TranslatedStringType extends Type
         return json_encode($value->toArray(), JSON_THROW_ON_ERROR);
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

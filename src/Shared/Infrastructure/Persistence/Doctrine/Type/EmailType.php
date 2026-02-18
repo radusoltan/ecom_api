@@ -11,8 +11,6 @@ use Doctrine\DBAL\Types\Type;
 
 final class EmailType extends Type
 {
-    private const TYPE_NAME = 'email';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 255]);
@@ -31,7 +29,7 @@ final class EmailType extends Type
         try {
             return Email::fromString((string) $value);
         } catch (\InvalidArgumentException $e) {
-            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'valid email address', $e);
+            throw new ConversionException('Could not convert value to email: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -45,16 +43,6 @@ final class EmailType extends Type
             return $value->value();
         }
 
-        throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', Email::class]);
-    }
-
-    public function getName(): string
-    {
-        return self::TYPE_NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
+        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to email');
     }
 }

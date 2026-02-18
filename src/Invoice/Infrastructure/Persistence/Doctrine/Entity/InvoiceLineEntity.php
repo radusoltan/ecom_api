@@ -9,7 +9,7 @@ use App\Invoice\Domain\Model\InvoiceLine;
 use App\Invoice\Domain\Model\InvoiceLineId;
 use App\Shared\Domain\ValueObject\Money;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'invoice_lines')]

@@ -48,13 +48,4 @@ final class TaxRateType extends Type
         throw new \InvalidArgumentException('Expected TaxRate instance');
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

@@ -17,7 +17,7 @@ use App\Notifications\Infrastructure\ApiPlatform\State\NotificationItemProvider;
 use App\Notifications\Infrastructure\ApiPlatform\State\RetryNotificationProcessor;
 use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
  * NotificationEntity - Doctrine ORM adapter for Notification aggregate.

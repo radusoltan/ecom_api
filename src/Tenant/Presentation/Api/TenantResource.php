@@ -23,7 +23,7 @@ use App\Tenant\Presentation\Api\Processor\SuspendTenantProcessor;
 use App\Tenant\Presentation\Api\Processor\UpdateTenantProcessor;
 use App\Tenant\Presentation\Api\Provider\TenantCollectionProvider;
 use App\Tenant\Presentation\Api\Provider\TenantItemProvider;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(

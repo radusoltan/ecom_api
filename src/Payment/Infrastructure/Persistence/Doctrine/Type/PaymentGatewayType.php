@@ -10,8 +10,6 @@ use Doctrine\DBAL\Types\Type;
 
 final class PaymentGatewayType extends Type
 {
-    private const TYPE_NAME = 'payment_gateway';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 20]);
@@ -39,13 +37,4 @@ final class PaymentGatewayType extends Type
         throw new \InvalidArgumentException(sprintf('Expected %s, got %s', PaymentGateway::class, get_debug_type($value)));
     }
 
-    public function getName(): string
-    {
-        return self::TYPE_NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

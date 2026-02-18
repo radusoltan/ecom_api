@@ -16,7 +16,7 @@ use App\Inventory\Presentation\Api\Processor\DeactivateWarehouseProcessor;
 use App\Inventory\Presentation\Api\Processor\UpdateWarehouseProcessor;
 use App\Inventory\Presentation\Api\Provider\WarehouseCollectionProvider;
 use App\Inventory\Presentation\Api\Provider\WarehouseItemProvider;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(

@@ -89,7 +89,7 @@ final class PerformanceQueryLogger implements MiddlewareInterface
                         return $result;
                     }
 
-                    public function exec(string $sql): int
+                    public function exec(string $sql): int|string
                     {
                         $startTime = microtime(true);
                         $result = parent::exec($sql);

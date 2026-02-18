@@ -49,13 +49,4 @@ final class TaxCategoryType extends Type
         throw new \InvalidArgumentException('Expected TaxCategory instance');
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

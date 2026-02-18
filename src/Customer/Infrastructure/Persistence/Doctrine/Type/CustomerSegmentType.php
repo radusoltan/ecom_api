@@ -10,8 +10,6 @@ use Doctrine\DBAL\Types\Type;
 
 final class CustomerSegmentType extends Type
 {
-    private const NAME = 'customer_segment';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 20]);
@@ -43,13 +41,4 @@ final class CustomerSegmentType extends Type
         throw new \InvalidArgumentException('Expected CustomerSegment instance');
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

@@ -10,6 +10,7 @@ use App\Catalog\Application\Query\SearchProducts\SearchProductsQuery;
 use App\Catalog\Infrastructure\ApiPlatform\Resource\ProductSearchResource;
 use App\Internationalization\Domain\Model\Locale;
 use App\Shared\Domain\ValueObject\TenantId;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -218,7 +219,7 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
         $results = $this->connection->executeQuery(
             $sql,
             [$productIds],
-            [Connection::PARAM_STR_ARRAY]
+            [ArrayParameterType::STRING]
         )->fetchAllAssociative();
 
         // Aggregate by product ID

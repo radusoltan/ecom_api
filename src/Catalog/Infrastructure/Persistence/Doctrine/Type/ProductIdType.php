@@ -10,8 +10,6 @@ use Doctrine\DBAL\Types\Type;
 
 final class ProductIdType extends Type
 {
-    private const NAME = 'product_id';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return 'CHAR(26)';
@@ -39,13 +37,4 @@ final class ProductIdType extends Type
         throw new \InvalidArgumentException('Expected ProductId instance');
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

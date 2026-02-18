@@ -11,8 +11,6 @@ use Doctrine\DBAL\Types\Type;
 
 final class TenantNameType extends Type
 {
-    private const TYPE_NAME = 'tenant_name';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 100]);
@@ -31,7 +29,7 @@ final class TenantNameType extends Type
         try {
             return TenantName::fromString((string) $value);
         } catch (\InvalidArgumentException $e) {
-            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'valid tenant name string', $e);
+            throw new ConversionException('Could not convert database value to type: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -45,16 +43,6 @@ final class TenantNameType extends Type
             return $value->value();
         }
 
-        throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', TenantName::class]);
-    }
-
-    public function getName(): string
-    {
-        return self::TYPE_NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
+        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to expected type');
     }
 }

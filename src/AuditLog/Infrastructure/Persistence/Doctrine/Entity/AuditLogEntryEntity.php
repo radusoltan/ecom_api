@@ -18,7 +18,7 @@ use App\AuditLog\Infrastructure\Persistence\Doctrine\Repository\DoctrineAuditLog
 use App\Shared\Domain\ValueObject\TenantId;
 use App\User\Domain\ValueObject\UserId;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: DoctrineAuditLogRepository::class)]
 #[ORM\Table(name: 'audit_log')]

@@ -11,8 +11,6 @@ use Doctrine\DBAL\Types\Type;
 
 final class RequestStatusType extends Type
 {
-    private const TYPE_NAME = 'request_status';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 50]);
@@ -31,7 +29,7 @@ final class RequestStatusType extends Type
         try {
             return RequestStatus::fromString($value);
         } catch (\InvalidArgumentException $e) {
-            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'valid request status');
+            throw new ConversionException('Could not convert value to request_status: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -45,16 +43,6 @@ final class RequestStatusType extends Type
             return $value->value();
         }
 
-        throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', RequestStatus::class]);
-    }
-
-    public function getName(): string
-    {
-        return self::TYPE_NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
+        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to request_status');
     }
 }

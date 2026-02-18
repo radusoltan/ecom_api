@@ -15,8 +15,6 @@ use Doctrine\DBAL\Types\Type;
  */
 final class LoyaltyProgramIdType extends Type
 {
-    private const NAME = 'loyalty_program_id';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 36]);
@@ -48,13 +46,4 @@ final class LoyaltyProgramIdType extends Type
         throw new \InvalidArgumentException('Expected LoyaltyProgramId instance');
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

@@ -10,8 +10,6 @@ use Doctrine\DBAL\Types\Type;
 
 final class CouponCodeType extends Type
 {
-    private const NAME = 'coupon_code';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 20]);
@@ -39,8 +37,4 @@ final class CouponCodeType extends Type
         throw new \InvalidArgumentException('Expected CouponCode instance');
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
 }

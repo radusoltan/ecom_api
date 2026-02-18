@@ -8,6 +8,7 @@ use App\Pricing\Application\DTO\Analytics\PricingSummaryDTO;
 use App\Pricing\Application\Query\GetPromotionPerformance\GetPromotionPerformanceQuery;
 use App\Pricing\Application\Query\GetPromotionPerformance\GetPromotionPerformanceQueryHandler;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -106,14 +107,14 @@ final readonly class GetPricingSummaryQueryHandler
         SQL;
 
         $params = ['tenantId' => $query->tenantId->toString()];
-        $types = ['tenantId' => \PDO::PARAM_STR];
+        $types = ['tenantId' => ParameterType::STRING];
 
         if ($query->dateRange->hasStartDate() && $query->dateRange->hasEndDate()) {
             $sql .= ' AND created_at BETWEEN :startDate AND :endDate';
             $params['startDate'] = $query->dateRange->startDate?->format('Y-m-d H:i:s') ?? '';
             $params['endDate'] = $query->dateRange->endDate?->format('Y-m-d H:i:s') ?? '';
-            $types['startDate'] = \PDO::PARAM_STR;
-            $types['endDate'] = \PDO::PARAM_STR;
+            $types['startDate'] = ParameterType::STRING;
+            $types['endDate'] = ParameterType::STRING;
         }
 
         try {

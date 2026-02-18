@@ -15,8 +15,6 @@ use Doctrine\DBAL\Types\Type;
  */
 final class EarningRateType extends Type
 {
-    private const NAME = 'earning_rate';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getDecimalTypeDeclarationSQL([
@@ -51,13 +49,4 @@ final class EarningRateType extends Type
         throw new \InvalidArgumentException('Expected EarningRate instance');
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

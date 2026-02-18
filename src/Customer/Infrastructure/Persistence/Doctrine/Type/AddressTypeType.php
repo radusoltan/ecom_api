@@ -19,11 +19,6 @@ final class AddressTypeType extends StringType
 
     private const VALID_TYPES = ['billing', 'shipping'];
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (null === $value) {
@@ -58,8 +53,4 @@ final class AddressTypeType extends StringType
         return $value;
     }
 
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

@@ -16,8 +16,6 @@ use Doctrine\DBAL\Types\Type;
  */
 final class TransactionStatusType extends Type
 {
-    private const TYPE_NAME = 'payment_transaction_status';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 10]);
@@ -36,7 +34,7 @@ final class TransactionStatusType extends Type
         try {
             return TransactionStatus::from((string) $value);
         } catch (\ValueError $e) {
-            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'One of: '.implode(', ', array_map(fn (TransactionStatus $case) => $case->value, TransactionStatus::cases())), $e);
+            throw new ConversionException('Could not convert database value to type: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -50,16 +48,6 @@ final class TransactionStatusType extends Type
             return $value->value;
         }
 
-        throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', TransactionStatus::class]);
-    }
-
-    public function getName(): string
-    {
-        return self::TYPE_NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
+        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to expected type');
     }
 }

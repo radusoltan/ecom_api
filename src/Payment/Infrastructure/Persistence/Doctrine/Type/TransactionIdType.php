@@ -16,8 +16,6 @@ use Doctrine\DBAL\Types\Type;
  */
 final class TransactionIdType extends Type
 {
-    private const TYPE_NAME = 'payment_transaction_id';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 36]);
@@ -36,7 +34,7 @@ final class TransactionIdType extends Type
         try {
             return TransactionId::fromString((string) $value);
         } catch (\InvalidArgumentException $e) {
-            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'UUID v4 string', $e);
+            throw new ConversionException('Could not convert database value to type: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -50,16 +48,6 @@ final class TransactionIdType extends Type
             return $value->toString();
         }
 
-        throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', TransactionId::class]);
-    }
-
-    public function getName(): string
-    {
-        return self::TYPE_NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
+        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to expected type');
     }
 }

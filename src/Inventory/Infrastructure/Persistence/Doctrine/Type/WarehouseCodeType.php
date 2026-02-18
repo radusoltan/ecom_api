@@ -10,8 +10,6 @@ use Doctrine\DBAL\Types\Type;
 
 final class WarehouseCodeType extends Type
 {
-    private const NAME = 'warehouse_code';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return 'VARCHAR(10)';
@@ -39,13 +37,4 @@ final class WarehouseCodeType extends Type
         throw new \InvalidArgumentException('Expected WarehouseCode instance');
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

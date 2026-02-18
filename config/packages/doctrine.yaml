@@ -7,14 +7,8 @@ doctrine:
         #server_version: '16'
 
         profiling_collect_backtrace: '%kernel.debug%'
-        use_savepoints: true
         logging: true  # Enable query logging
         profiling: true  # Enable profiling
-
-        # Connection pool optimization
-        options:
-            # Keep connections alive to avoid reconnection overhead
-            1002: true  # PDO::ATTR_PERSISTENT = true
         types:
             tenant_id: App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType
             tenant_name: App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantNameType
@@ -68,10 +62,6 @@ doctrine:
             invoice_status: App\Invoice\Infrastructure\Persistence\Doctrine\Type\InvoiceStatusType
             invoice_line_id: App\Invoice\Infrastructure\Persistence\Doctrine\Type\InvoiceLineIdType
     orm:
-        auto_generate_proxy_classes: true
-        enable_lazy_ghost_objects: true
-        enable_native_lazy_objects: true
-        report_fields_where_declared: true
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         identity_generation_preferences:
@@ -180,8 +170,6 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Invoice/Infrastructure/Persistence/Doctrine/Entity'
                 prefix: 'App\Invoice\Infrastructure\Persistence\Doctrine\Entity'
                 alias: Invoice
-        controller_resolver:
-            auto_mapping: false
 
 when@dev:
     framework:
@@ -201,8 +189,6 @@ when@test:
 when@prod:
     doctrine:
         orm:
-            auto_generate_proxy_classes: false
-            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
             query_cache_driver:
                 type: pool
                 pool: doctrine.system_cache_pool

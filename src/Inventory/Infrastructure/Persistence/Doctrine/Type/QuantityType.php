@@ -10,8 +10,6 @@ use Doctrine\DBAL\Types\Type;
 
 final class QuantityType extends Type
 {
-    private const NAME = 'quantity';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return 'INTEGER';
@@ -39,13 +37,4 @@ final class QuantityType extends Type
         throw new \InvalidArgumentException('Expected Quantity instance');
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

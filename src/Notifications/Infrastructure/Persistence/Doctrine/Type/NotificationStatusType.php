@@ -13,8 +13,6 @@ use Doctrine\DBAL\Types\Type;
  */
 final class NotificationStatusType extends Type
 {
-    private const NAME = 'notification_status';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 20]);
@@ -46,13 +44,4 @@ final class NotificationStatusType extends Type
         return (string) $value;
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

@@ -17,8 +17,8 @@ use App\Catalog\Domain\Model\VariantId;
 use App\Catalog\Domain\ValueObject\VariantSKU;
 use App\Shared\Domain\ValueObject\Money;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Ignore;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Serializer\Attribute\Ignore;
+use Symfony\Component\Serializer\Attribute\MaxDepth;
 
 /**
  * Doctrine entity for Variant.

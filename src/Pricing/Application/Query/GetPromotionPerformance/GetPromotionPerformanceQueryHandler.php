@@ -6,6 +6,7 @@ namespace App\Pricing\Application\Query\GetPromotionPerformance;
 
 use App\Pricing\Application\DTO\Analytics\PromotionPerformanceDTO;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -89,7 +90,7 @@ final readonly class GetPromotionPerformanceQueryHandler
             'tenantId' => $query->tenantId->toString(),
         ];
         $types = [
-            'tenantId' => \PDO::PARAM_STR,
+            'tenantId' => ParameterType::STRING,
         ];
 
         // Date range filter on orders
@@ -97,15 +98,15 @@ final readonly class GetPromotionPerformanceQueryHandler
             $conditions[] = '(o.created_at IS NULL OR o.created_at BETWEEN :startDate AND :endDate)';
             $params['startDate'] = $query->dateRange->startDate?->format('Y-m-d H:i:s') ?? '';
             $params['endDate'] = $query->dateRange->endDate?->format('Y-m-d H:i:s') ?? '';
-            $types['startDate'] = \PDO::PARAM_STR;
-            $types['endDate'] = \PDO::PARAM_STR;
+            $types['startDate'] = ParameterType::STRING;
+            $types['endDate'] = ParameterType::STRING;
         }
 
         // Specific promotion filter
         if (null !== $query->promotionId) {
             $conditions[] = 'p.id = :promotionId';
             $params['promotionId'] = $query->promotionId;
-            $types['promotionId'] = \PDO::PARAM_STR;
+            $types['promotionId'] = ParameterType::STRING;
         }
 
         $sql .= ' WHERE '.implode(' AND ', $conditions);
@@ -114,7 +115,7 @@ final readonly class GetPromotionPerformanceQueryHandler
         $sql .= ' LIMIT :limit';
 
         $params['limit'] = $query->limit;
-        $types['limit'] = \PDO::PARAM_INT;
+        $types['limit'] = ParameterType::INTEGER;
 
         try {
             $results = $this->connection->fetchAllAssociative($sql, $params, $types);

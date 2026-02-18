@@ -11,8 +11,6 @@ use Doctrine\DBAL\Types\Type;
 
 final class ConsentIdType extends Type
 {
-    private const TYPE_NAME = 'consent_id';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 26]);
@@ -31,7 +29,7 @@ final class ConsentIdType extends Type
         try {
             return ConsentId::fromString($value);
         } catch (\InvalidArgumentException $e) {
-            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'ULID string');
+            throw new ConversionException('Could not convert value to consent_id: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -45,16 +43,6 @@ final class ConsentIdType extends Type
             return $value->toString();
         }
 
-        throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', ConsentId::class]);
-    }
-
-    public function getName(): string
-    {
-        return self::TYPE_NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
+        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to consent_id');
     }
 }

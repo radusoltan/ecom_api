@@ -39,13 +39,4 @@ final class LanguageCodeType extends Type
         return $value->toString();
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

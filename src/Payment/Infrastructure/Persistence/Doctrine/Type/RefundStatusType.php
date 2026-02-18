@@ -16,8 +16,6 @@ use Doctrine\DBAL\Types\Type;
  */
 final class RefundStatusType extends Type
 {
-    private const TYPE_NAME = 'refund_status';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 20]);
@@ -36,7 +34,7 @@ final class RefundStatusType extends Type
         try {
             return RefundStatus::fromString((string) $value);
         } catch (\InvalidArgumentException $e) {
-            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'One of: pending, succeeded, failed', $e);
+            throw new ConversionException('Could not convert database value to type: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -50,16 +48,6 @@ final class RefundStatusType extends Type
             return $value->value();
         }
 
-        throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', RefundStatus::class]);
-    }
-
-    public function getName(): string
-    {
-        return self::TYPE_NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
+        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to expected type');
     }
 }

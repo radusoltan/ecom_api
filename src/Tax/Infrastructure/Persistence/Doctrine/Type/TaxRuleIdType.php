@@ -48,13 +48,4 @@ final class TaxRuleIdType extends Type
         throw new \InvalidArgumentException('Expected TaxRuleId instance');
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

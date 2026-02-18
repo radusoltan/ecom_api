@@ -6,6 +6,7 @@ namespace App\Pricing\Application\Query\GetDiscountUsage;
 
 use App\Pricing\Application\DTO\Analytics\DiscountUsageDTO;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -66,14 +67,14 @@ final readonly class GetDiscountUsageQueryHandler
         SQL;
 
         $params = ['tenantId' => $query->tenantId->toString()];
-        $types = ['tenantId' => \PDO::PARAM_STR];
+        $types = ['tenantId' => ParameterType::STRING];
 
         if ($query->dateRange->hasStartDate() && $query->dateRange->hasEndDate()) {
             $sql .= ' AND created_at BETWEEN :startDate AND :endDate';
             $params['startDate'] = $query->dateRange->startDate?->format('Y-m-d H:i:s') ?? '';
             $params['endDate'] = $query->dateRange->endDate?->format('Y-m-d H:i:s') ?? '';
-            $types['startDate'] = \PDO::PARAM_STR;
-            $types['endDate'] = \PDO::PARAM_STR;
+            $types['startDate'] = ParameterType::STRING;
+            $types['endDate'] = ParameterType::STRING;
         }
 
         try {
@@ -125,14 +126,14 @@ final readonly class GetDiscountUsageQueryHandler
         SQL;
 
         $params = ['tenantId' => $query->tenantId->toString()];
-        $types = ['tenantId' => \PDO::PARAM_STR];
+        $types = ['tenantId' => ParameterType::STRING];
 
         if ($query->dateRange->hasStartDate() && $query->dateRange->hasEndDate()) {
             $sql .= ' AND o.created_at BETWEEN :startDate AND :endDate';
             $params['startDate'] = $query->dateRange->startDate?->format('Y-m-d H:i:s') ?? '';
             $params['endDate'] = $query->dateRange->endDate?->format('Y-m-d H:i:s') ?? '';
-            $types['startDate'] = \PDO::PARAM_STR;
-            $types['endDate'] = \PDO::PARAM_STR;
+            $types['startDate'] = ParameterType::STRING;
+            $types['endDate'] = ParameterType::STRING;
         }
 
         $sql .= ' GROUP BY o.coupon_code, p.name, o.discount_currency';
@@ -140,7 +141,7 @@ final readonly class GetDiscountUsageQueryHandler
         $sql .= ' LIMIT :limit';
 
         $params['limit'] = $query->topCouponsLimit;
-        $types['limit'] = \PDO::PARAM_INT;
+        $types['limit'] = ParameterType::INTEGER;
 
         try {
             return $this->connection->fetchAllAssociative($sql, $params, $types);
@@ -186,7 +187,7 @@ final readonly class GetDiscountUsageQueryHandler
             return $this->connection->fetchAllAssociative($sql, [
                 'tenantId' => $query->tenantId->toString(),
             ], [
-                'tenantId' => \PDO::PARAM_STR,
+                'tenantId' => ParameterType::STRING,
             ]);
         } catch (\Exception $e) {
             $this->logger->error('Failed to fetch unused promotions', [

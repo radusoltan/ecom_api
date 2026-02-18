@@ -5,55 +5,72 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Doctrine;
 
 use App\Shared\Infrastructure\Tenant\TenantContext;
-use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\DBAL\Event\ConnectionEventArgs;
-use Doctrine\DBAL\Events;
+use Doctrine\DBAL\Driver as DriverInterface;
+use Doctrine\DBAL\Driver\Connection as ConnectionInterface;
+use Doctrine\DBAL\Driver\Middleware as MiddlewareInterface;
+use Doctrine\DBAL\Driver\Middleware\AbstractConnectionMiddleware;
+use Doctrine\DBAL\Driver\Middleware\AbstractDriverMiddleware;
 use Psr\Log\LoggerInterface;
 
-#[AsDoctrineListener(event: Events::postConnect)]
-final readonly class TenantConnectionSubscriber
+/**
+ * DBAL Middleware that sets the tenant context in PostgreSQL session
+ * on every new connection.
+ *
+ * Replaces the former DBAL Events::postConnect listener which was
+ * removed in DBAL 4.0.
+ */
+final class TenantConnectionSubscriber implements MiddlewareInterface
 {
     public function __construct(
-        private TenantContext $tenantContext,
-        private LoggerInterface $logger,
+        private readonly TenantContext $tenantContext,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
-    public function postConnect(ConnectionEventArgs $args): void
+    public function wrap(DriverInterface $driver): DriverInterface
     {
-        $connection = $args->getConnection();
+        return new class ($driver, $this->tenantContext, $this->logger) extends AbstractDriverMiddleware {
+            public function __construct(
+                DriverInterface $driver,
+                private readonly TenantContext $tenantContext,
+                private readonly LoggerInterface $logger,
+            ) {
+                parent::__construct($driver);
+            }
 
-        // If we have a current tenant, set it in PostgreSQL session
-        if (!$this->tenantContext->hasCurrentTenant()) {
-            return;
-        }
+            public function connect(array $params): ConnectionInterface
+            {
+                $connection = parent::connect($params);
 
-        $tenantId = $this->tenantContext->getCurrentTenantId();
+                if (!$this->tenantContext->hasCurrentTenant()) {
+                    return $connection;
+                }
 
-        if (null === $tenantId) {
-            return;
-        }
+                $tenantId = $this->tenantContext->getCurrentTenantId();
 
-        try {
-            // Execute PostgreSQL function to set current tenant
-            // NOTE: This function will be created in Sprint 6 (Multi-tenancy Hardening)
-            // For now, we use set_config() function because SET doesn't support prepared statements
-            $connection->executeStatement(
-                "SELECT set_config('app.tenant_id', ?, false)",
-                [$tenantId->toString()]
-            );
+                if (null === $tenantId) {
+                    return $connection;
+                }
 
-            $this->logger->info('Tenant context set in database', [
-                'tenant_id' => $tenantId->toString(),
-            ]);
-        } catch (\Throwable $e) {
-            // Log warning but don't fail - tenant isolation is handled at application level
-            $this->logger->warning('Could not set tenant context in database: '.$e->getMessage(), [
-                'tenant_id' => $tenantId->toString(),
-                'exception' => get_class($e),
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-        }
+                try {
+                    $connection->exec(
+                        "SELECT set_config('app.tenant_id', '".$tenantId->toString()."', false)"
+                    );
+
+                    $this->logger->info('Tenant context set in database', [
+                        'tenant_id' => $tenantId->toString(),
+                    ]);
+                } catch (\Throwable $e) {
+                    $this->logger->warning('Could not set tenant context in database: '.$e->getMessage(), [
+                        'tenant_id' => $tenantId->toString(),
+                        'exception' => get_class($e),
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+
+                return new class ($connection) extends AbstractConnectionMiddleware {
+                };
+            }
+        };
     }
 }

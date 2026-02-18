@@ -33,7 +33,7 @@ final class ReturnRequestIdType extends Type
         }
 
         if (!$value instanceof ReturnRequestId) {
-            throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', ReturnRequestId::class]);
+            throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to expected type');
         }
 
         return $value->toString();
@@ -52,17 +52,7 @@ final class ReturnRequestIdType extends Type
         try {
             return ReturnRequestId::fromString((string) $value);
         } catch (\InvalidArgumentException $e) {
-            throw ConversionException::conversionFailed($value, $this->getName());
+            throw new ConversionException('Could not convert database value to type: ' . $e->getMessage(), 0, $e);
         }
-    }
-
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
     }
 }

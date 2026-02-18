@@ -15,8 +15,6 @@ use Doctrine\DBAL\Types\Type;
  */
 final class CustomerPreferencesType extends Type
 {
-    private const NAME = 'customer_preferences';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getJsonTypeDeclarationSQL($column);
@@ -67,13 +65,4 @@ final class CustomerPreferencesType extends Type
         throw new \InvalidArgumentException('Expected CustomerPreferences instance or null');
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

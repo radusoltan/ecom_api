@@ -15,8 +15,6 @@ use Doctrine\DBAL\Types\Type;
  */
 final class DeletionRequestIdType extends Type
 {
-    private const NAME = 'deletion_request_id';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 36]);
@@ -48,13 +46,4 @@ final class DeletionRequestIdType extends Type
         return (string) $value;
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

@@ -46,13 +46,4 @@ final class ConsentTypeType extends Type
         return (string) $value;
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

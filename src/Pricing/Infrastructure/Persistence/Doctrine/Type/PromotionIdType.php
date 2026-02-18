@@ -10,8 +10,6 @@ use Doctrine\DBAL\Types\Type;
 
 final class PromotionIdType extends Type
 {
-    private const NAME = 'promotion_id';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 26]);
@@ -39,8 +37,4 @@ final class PromotionIdType extends Type
         throw new \InvalidArgumentException('Expected PromotionId instance');
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
 }

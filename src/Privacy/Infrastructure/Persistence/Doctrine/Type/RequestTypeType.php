@@ -11,8 +11,6 @@ use Doctrine\DBAL\Types\Type;
 
 final class RequestTypeType extends Type
 {
-    private const TYPE_NAME = 'request_type';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 50]);
@@ -31,7 +29,7 @@ final class RequestTypeType extends Type
         try {
             return RequestType::fromString($value);
         } catch (\InvalidArgumentException $e) {
-            throw ConversionException::conversionFailedFormat($value, $this->getName(), 'valid request type');
+            throw new ConversionException('Could not convert database value to type: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -45,16 +43,6 @@ final class RequestTypeType extends Type
             return $value->value();
         }
 
-        throw ConversionException::conversionFailedInvalidType($value, $this->getName(), ['null', RequestType::class]);
-    }
-
-    public function getName(): string
-    {
-        return self::TYPE_NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
+        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to expected type');
     }
 }

@@ -15,8 +15,6 @@ use Doctrine\DBAL\Types\Type;
  */
 final class LanguageCodeType extends Type
 {
-    private const NAME = 'language_code';
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 2]);
@@ -48,13 +46,4 @@ final class LanguageCodeType extends Type
         return (string) $value;
     }
 
-    public function getName(): string
-    {
-        return self::NAME;
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
 }

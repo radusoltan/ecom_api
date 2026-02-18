@@ -13,7 +13,7 @@ use App\Catalog\Domain\Model\OptionValueId;
 use App\Catalog\Domain\ValueObject\LocalizedString;
 use App\Catalog\Domain\ValueObject\OptionValueCode;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
  * Doctrine entity for OptionValue.

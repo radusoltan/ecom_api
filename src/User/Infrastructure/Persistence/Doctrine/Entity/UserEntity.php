@@ -17,7 +17,7 @@ use App\User\Presentation\Api\Processor\UpdateUserProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: DoctrineORMUserRepository::class)]
 #[ORM\Table(name: 'users')]
@@ -155,11 +155,6 @@ class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $password;
 
         return $this;
-    }
-
-    public function eraseCredentials(): void
-    {
-        // Nothing to erase
     }
 
     public function getCreatedAt(): \DateTimeImmutable

@@ -7,7 +7,7 @@ namespace App\Tax\Presentation\Api\Resource;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
 use App\Tax\Presentation\Api\Processor\CalculateTaxProcessor;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
  * Tax Calculation API Resource.

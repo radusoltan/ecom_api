@@ -481,24 +481,6 @@ parameters:
 			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductAutocompleteStateProvider.php
 
 		-
-			message: '#^Parameter \#1 \$locale of static method App\\Internationalization\\Domain\\Model\\Locale\:\:fromString\(\) expects string, bool\|float\|int\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductAutocompleteStateProvider.php
-
-		-
-			message: '#^Parameter \#1 \$string of function strlen expects string, bool\|float\|int\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductAutocompleteStateProvider.php
-
-		-
-			message: '#^Parameter \$query of class App\\Catalog\\Application\\Query\\AutocompleteProducts\\AutocompleteProductsQuery constructor expects string, bool\|float\|int\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductAutocompleteStateProvider.php
-
-		-
 			message: '#^Call to method getCategoryId\(\) on an unknown class App\\Catalog\\Infrastructure\\Persistence\\Doctrine\\Entity\\ProductEntityWithTranslations\.$#'
 			identifier: class.notFound
 			count: 1
@@ -655,13 +637,7 @@ parameters:
 			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductCollectionProviderWithTranslations.php
 
 		-
-			message: '#^Parameter \#1 \$string of function strtolower expects string, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductCollectionProviderWithTranslations.php
-
-		-
-			message: '#^Parameter \#2 \$order of method Doctrine\\ORM\\QueryBuilder\:\:orderBy\(\) expects string\|null, bool\|float\|int\|string\|null given\.$#'
+			message: '#^Parameter \#1 \$string of function strtolower expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductCollectionProviderWithTranslations.php
@@ -698,12 +674,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$code of static method App\\Shared\\Domain\\ValueObject\\LanguageCode\:\:fromString\(\) expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductOptionsProvider.php
-
-		-
-			message: '#^Parameter \#1 \$locale of method App\\Catalog\\Infrastructure\\ApiPlatform\\State\\ProductOptionsProvider\:\:validateLocale\(\) expects string, bool\|float\|int\|string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductOptionsProvider.php
@@ -747,36 +717,6 @@ parameters:
 		-
 			message: '#^Method App\\Catalog\\Infrastructure\\ApiPlatform\\State\\ProductSearchStateProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
 			identifier: return.unusedType
-			count: 1
-			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductSearchStateProvider.php
-
-		-
-			message: '#^Parameter \#1 \$categoryIdsString of method App\\Catalog\\Infrastructure\\ApiPlatform\\State\\ProductSearchStateProvider\:\:parseCategoryIds\(\) expects string\|null, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductSearchStateProvider.php
-
-		-
-			message: '#^Parameter \#1 \$locale of static method App\\Internationalization\\Domain\\Model\\Locale\:\:fromString\(\) expects string, bool\|float\|int\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductSearchStateProvider.php
-
-		-
-			message: '#^Parameter \$query of class App\\Catalog\\Application\\Query\\SearchProducts\\SearchProductsQuery constructor expects string\|null, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductSearchStateProvider.php
-
-		-
-			message: '#^Parameter \$sortBy of class App\\Catalog\\Application\\Query\\SearchProducts\\SearchProductsQuery constructor expects string, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductSearchStateProvider.php
-
-		-
-			message: '#^Parameter \$status of class App\\Catalog\\Application\\Query\\SearchProducts\\SearchProductsQuery constructor expects string\|null, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Catalog/Infrastructure/ApiPlatform/State/ProductSearchStateProvider.php
 
@@ -1381,6 +1321,120 @@ parameters:
 			path: src/Customer/Presentation/Api/Provider/ProfileProvider.php
 
 		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, list\<array\<string, bool\|string\>\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Customer/Presentation/Api/Resource/CustomerAddressResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, string\>\> given\.$#'
+			identifier: argument.type
+			count: 5
+			path: src/Customer/Presentation/Api/Resource/CustomerAddressResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, array\<string, bool\|string\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Customer/Presentation/Api/Resource/CustomerConsentResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, list\<array\<string, bool\|string\>\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Customer/Presentation/Api/Resource/CustomerConsentResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, array\<string, bool\|int\|string\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Customer/Presentation/Api/Resource/CustomerLoyaltyResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, array\<string, float\|int\|string\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Customer/Presentation/Api/Resource/CustomerLoyaltyResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, list\<array\<string, bool\|int\|string\|null\>\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Customer/Presentation/Api/Resource/CustomerLoyaltyResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, array\<string, bool\|string\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Customer/Presentation/Api/Resource/DataExportResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, array\<string, int\|string\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Customer/Presentation/Api/Resource/DataExportResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, array\<string, string\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Customer/Presentation/Api/Resource/DataExportResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, array\<string, bool\|string\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Customer/Presentation/Api/Resource/DeletionRequestResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, array\<string, bool\|string\|null\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Customer/Presentation/Api/Resource/DeletionRequestResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, array\<string, string\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Customer/Presentation/Api/Resource/DeletionRequestResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Customer/Presentation/Api/Resource/DeletionRequestResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, array\<string, array\<int\|string, array\<string, array\<string, int\|string\>\|int\|string\|null\>\|int\|string\>\|bool\|float\|int\|string\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Customer/Presentation/Api/Resource/LoyaltyProgramResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, string\>\> given\.$#'
+			identifier: argument.type
+			count: 4
+			path: src/Customer/Presentation/Api/Resource/LoyaltyProgramResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, list\<array\<string, array\<string, int\|string\>\|int\|string\|null\>\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Customer/Presentation/Api/Resource/LoyaltyTierResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, string\>\> given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Customer/Presentation/Api/Resource/LoyaltyTierResource.php
+
+		-
+			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, array\<string, array\<string, array\<string, bool\|string\>\>\>\|string\>\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Customer/Presentation/Api/Resource/NotificationPreferencesResource.php
+
+		-
 			message: '#^Class App\\Dashboard\\Presentation\\Api\\Provider\\DashboardStatsProvider implements generic interface ApiPlatform\\State\\ProviderInterface but does not specify its types\: T$#'
 			identifier: missingType.generics
 			count: 1
@@ -1609,24 +1663,6 @@ parameters:
 			path: src/Internationalization/Infrastructure/ApiPlatform/State/MissingTranslationsProvider.php
 
 		-
-			message: '#^Parameter \$domain of class App\\Internationalization\\Application\\Query\\GetMissingTranslations constructor expects string\|null, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Internationalization/Infrastructure/ApiPlatform/State/MissingTranslationsProvider.php
-
-		-
-			message: '#^Parameter \$sourceLocale of class App\\Internationalization\\Application\\Query\\GetMissingTranslations constructor expects string\|null, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Internationalization/Infrastructure/ApiPlatform/State/MissingTranslationsProvider.php
-
-		-
-			message: '#^Parameter \$targetLocale of class App\\Internationalization\\Application\\Query\\GetMissingTranslations constructor expects string, bool\|float\|int\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Internationalization/Infrastructure/ApiPlatform/State/MissingTranslationsProvider.php
-
-		-
 			message: '#^Return type \(array\<array\{key\: string, domain\: string\}\>\) of method App\\Internationalization\\Infrastructure\\ApiPlatform\\State\\MissingTranslationsProvider\:\:provide\(\) should be compatible with return type \(iterable\<object\>\|object\|null\) of method ApiPlatform\\State\\ProviderInterface\<object\>\:\:provide\(\)$#'
 			identifier: method.childReturnType
 			count: 1
@@ -1681,13 +1717,7 @@ parameters:
 			path: src/Internationalization/Infrastructure/ApiPlatform/State/TranslationsProvider.php
 
 		-
-			message: '#^Parameter \#1 \$domain of method App\\Internationalization\\Infrastructure\\ApiPlatform\\State\\TranslationsProvider\:\:validateDomain\(\) expects string, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Internationalization/Infrastructure/ApiPlatform/State/TranslationsProvider.php
-
-		-
-			message: '#^Parameter \#1 \$locale of method App\\Internationalization\\Infrastructure\\ApiPlatform\\State\\TranslationsProvider\:\:validateLocale\(\) expects string, bool\|float\|int\|string given\.$#'
+			message: '#^Parameter \#1 \$domain of method App\\Internationalization\\Infrastructure\\ApiPlatform\\State\\TranslationsProvider\:\:validateDomain\(\) expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Internationalization/Infrastructure/ApiPlatform/State/TranslationsProvider.php
@@ -2197,12 +2227,6 @@ parameters:
 			path: src/Media/Infrastructure/Security/ImageVoter.php
 
 		-
-			message: '#^Method App\\Media\\Infrastructure\\Serializer\\MediaObjectNormalizer\:\:normalize\(\) has parameter \$context with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Media/Infrastructure/Serializer/MediaObjectNormalizer.php
-
-		-
 			message: '#^Method App\\Media\\Infrastructure\\Serializer\\MediaObjectNormalizer\:\:normalize\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2211,12 +2235,6 @@ parameters:
 		-
 			message: '#^Method App\\Media\\Infrastructure\\Serializer\\MediaObjectNormalizer\:\:normalize\(\) return type with generic class ArrayObject does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
-			count: 1
-			path: src/Media/Infrastructure/Serializer/MediaObjectNormalizer.php
-
-		-
-			message: '#^Method App\\Media\\Infrastructure\\Serializer\\MediaObjectNormalizer\:\:supportsNormalization\(\) has parameter \$context with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: src/Media/Infrastructure/Serializer/MediaObjectNormalizer.php
 
@@ -2231,18 +2249,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Media/Infrastructure/Serializer/MultipartDecoder.php
-
-		-
-			message: '#^Method App\\Media\\Infrastructure\\Serializer\\UploadedFileDenormalizer\:\:denormalize\(\) has parameter \$context with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Media/Infrastructure/Serializer/UploadedFileDenormalizer.php
-
-		-
-			message: '#^Method App\\Media\\Infrastructure\\Serializer\\UploadedFileDenormalizer\:\:supportsDenormalization\(\) has parameter \$context with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Media/Infrastructure/Serializer/UploadedFileDenormalizer.php
 
 		-
 			message: '#^Match arm comparison between ''avif'' and ''avif'' is always true\.$#'
@@ -2637,24 +2643,6 @@ parameters:
 		-
 			message: '#^Method App\\Order\\Infrastructure\\ApiPlatform\\State\\FulfillmentCollectionProvider\:\:provide\(\) never returns null so it can be removed from the return type\.$#'
 			identifier: return.unusedType
-			count: 1
-			path: src/Order/Infrastructure/ApiPlatform/State/FulfillmentCollectionProvider.php
-
-		-
-			message: '#^Parameter \#1 \$id of static method App\\Inventory\\Domain\\Model\\WarehouseId\:\:fromString\(\) expects string, bool\|float\|int\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Order/Infrastructure/ApiPlatform/State/FulfillmentCollectionProvider.php
-
-		-
-			message: '#^Parameter \#1 \$value of static method App\\Order\\Domain\\Model\\OrderId\:\:fromString\(\) expects string, bool\|float\|int\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Order/Infrastructure/ApiPlatform/State/FulfillmentCollectionProvider.php
-
-		-
-			message: '#^Parameter \#1 \$value of static method App\\Order\\Domain\\ValueObject\\FulfillmentStatus\:\:fromString\(\) expects string, bool\|float\|int\|string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Order/Infrastructure/ApiPlatform/State/FulfillmentCollectionProvider.php
 
@@ -3865,12 +3853,6 @@ parameters:
 			path: src/Pricing/Infrastructure/ApiPlatform/State/PriceHistoryProvider.php
 
 		-
-			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, float\|int\<min, \-1\>\|int\<1, max\>\|string\|true given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Pricing/Infrastructure/ApiPlatform/State/PriceHistoryProvider.php
-
-		-
 			message: '#^Method App\\Pricing\\Infrastructure\\Fixtures\\EULaunchPromotionsFixture\:\:createPromotion\(\) has parameter \$conditions with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3965,42 +3947,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Pricing/Infrastructure/Persistence/Doctrine/Entity/PromotionEntity.php
-
-		-
-			message: '#^Parameter \#1 \$date of method App\\Pricing\\Presentation\\Api\\Controller\\ExportPriceListController\:\:parseDate\(\) expects string\|null, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Pricing/Presentation/Api/Controller/ExportPriceListController.php
-
-		-
-			message: '#^Parameter \#1 \$value of method App\\Pricing\\Presentation\\Api\\Controller\\ExportPriceListController\:\:parseBoolean\(\) expects string\|null, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Pricing/Presentation/Api/Controller/ExportPriceListController.php
-
-		-
-			message: '#^Parameter \#2 \$format of class App\\Pricing\\Application\\Query\\ExportPriceLists\\ExportPriceListsQuery constructor expects string, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Pricing/Presentation/Api/Controller/ExportPriceListController.php
-
-		-
-			message: '#^Parameter \#1 \$date of method App\\Pricing\\Presentation\\Api\\Controller\\ExportPromotionsController\:\:parseDate\(\) expects string\|null, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Pricing/Presentation/Api/Controller/ExportPromotionsController.php
-
-		-
-			message: '#^Parameter \#1 \$value of method App\\Pricing\\Presentation\\Api\\Controller\\ExportPromotionsController\:\:parseBoolean\(\) expects string\|null, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Pricing/Presentation/Api/Controller/ExportPromotionsController.php
-
-		-
-			message: '#^Parameter \#2 \$format of class App\\Pricing\\Application\\Query\\ExportPromotions\\ExportPromotionsQuery constructor expects string, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Pricing/Presentation/Api/Controller/ExportPromotionsController.php
 
 		-
 			message: '#^Class App\\Pricing\\Presentation\\Api\\Processor\\ActivatePriceListProcessor implements generic interface ApiPlatform\\State\\ProcessorInterface but does not specify its types\: T1, T2$#'
@@ -4099,18 +4045,6 @@ parameters:
 			path: src/Pricing/Presentation/Api/Provider/ActivePromotionsProvider.php
 
 		-
-			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, bool\|float\|int\|string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Pricing/Presentation/Api/Provider/DiscountUsageProvider.php
-
-		-
-			message: '#^Parameter \#1 \$preset of static method App\\Pricing\\Application\\DTO\\Analytics\\DateRangeFilter\:\:fromPreset\(\) expects string, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Pricing/Presentation/Api/Provider/DiscountUsageProvider.php
-
-		-
 			message: '#^Parameter \$tenantId of class App\\Pricing\\Application\\Query\\GetDiscountUsage\\GetDiscountUsageQuery constructor expects App\\Shared\\Domain\\ValueObject\\TenantId, App\\Shared\\Domain\\ValueObject\\TenantId\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -4125,12 +4059,6 @@ parameters:
 		-
 			message: '#^Class App\\Pricing\\Presentation\\Api\\Provider\\GetCartPricingProvider implements generic interface ApiPlatform\\State\\ProviderInterface but does not specify its types\: T$#'
 			identifier: missingType.generics
-			count: 1
-			path: src/Pricing/Presentation/Api/Provider/GetCartPricingProvider.php
-
-		-
-			message: '#^Parameter \#2 \$string of function explode expects string, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Pricing/Presentation/Api/Provider/GetCartPricingProvider.php
 
@@ -4151,18 +4079,6 @@ parameters:
 			identifier: missingType.generics
 			count: 1
 			path: src/Pricing/Presentation/Api/Provider/PriceListItemProvider.php
-
-		-
-			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, bool\|float\|int\|string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Pricing/Presentation/Api/Provider/PricingSummaryProvider.php
-
-		-
-			message: '#^Parameter \#1 \$preset of static method App\\Pricing\\Application\\DTO\\Analytics\\DateRangeFilter\:\:fromPreset\(\) expects string, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Pricing/Presentation/Api/Provider/PricingSummaryProvider.php
 
 		-
 			message: '#^Parameter \$tenantId of class App\\Pricing\\Application\\Query\\GetPricingSummary\\GetPricingSummaryQuery constructor expects App\\Shared\\Domain\\ValueObject\\TenantId, App\\Shared\\Domain\\ValueObject\\TenantId\|null given\.$#'
@@ -4191,24 +4107,6 @@ parameters:
 		-
 			message: '#^Method App\\Pricing\\Presentation\\Api\\Provider\\PromotionPerformanceProvider\:\:provide\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Pricing/Presentation/Api/Provider/PromotionPerformanceProvider.php
-
-		-
-			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, bool\|float\|int\|string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Pricing/Presentation/Api/Provider/PromotionPerformanceProvider.php
-
-		-
-			message: '#^Parameter \#1 \$preset of static method App\\Pricing\\Application\\DTO\\Analytics\\DateRangeFilter\:\:fromPreset\(\) expects string, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Pricing/Presentation/Api/Provider/PromotionPerformanceProvider.php
-
-		-
-			message: '#^Parameter \$promotionId of class App\\Pricing\\Application\\Query\\GetPromotionPerformance\\GetPromotionPerformanceQuery constructor expects string\|null, bool\|float\|int\|string\|null given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Pricing/Presentation/Api/Provider/PromotionPerformanceProvider.php
 
@@ -4957,13 +4855,19 @@ parameters:
 			path: src/Shared/Infrastructure/ApiPlatform/EventListener/LocaleResponseListener.php
 
 		-
+			message: '#^Access to constant BUILTIN_TYPE_STRING on an unknown class Symfony\\Component\\PropertyInfo\\Type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Shared/Infrastructure/ApiPlatform/Filter/LocaleFilter.php
+
+		-
 			message: '#^Method App\\Shared\\Infrastructure\\ApiPlatform\\Filter\\LocaleFilter\:\:filterProperty\(\) has parameter \$value with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: src/Shared/Infrastructure/ApiPlatform/Filter/LocaleFilter.php
 
 		-
-			message: '#^Method App\\Shared\\Infrastructure\\ApiPlatform\\Filter\\LocaleFilter\:\:getDescription\(\) should return array\<string, array\{property\?\: string, type\?\: string, required\?\: bool, description\?\: string, strategy\?\: string, is_collection\?\: bool, openapi\?\: ApiPlatform\\OpenApi\\Model\\Parameter, schema\?\: array\<string, mixed\>\}\> but returns array\{locale\: array\{property\: ''locale'', type\: ''string'', required\: false, description\: ''Filter results by…'', openapi\: array\{example\: ''fr'', enum\: array\<string\>\}\}\}\.$#'
+			message: '#^Method App\\Shared\\Infrastructure\\ApiPlatform\\Filter\\LocaleFilter\:\:getDescription\(\) should return array\<string, array\{property\?\: string, type\?\: string, required\?\: bool, description\?\: string, strategy\?\: string, is_collection\?\: bool, openapi\?\: ApiPlatform\\OpenApi\\Model\\Parameter, schema\?\: array\<string, mixed\>\}\> but returns array\{locale\: array\{property\: ''locale'', type\: mixed, required\: false, description\: ''Filter results by…'', openapi\: array\{example\: ''fr'', enum\: array\<string\>\}\}\}\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Shared/Infrastructure/ApiPlatform/Filter/LocaleFilter.php
@@ -5053,18 +4957,6 @@ parameters:
 			path: src/Shared/Infrastructure/Cache/CacheWarmingService.php
 
 		-
-			message: '#^Constant App\\Shared\\Infrastructure\\Doctrine\\PerformanceQueryLogger\:\:SLOW_QUERY_THRESHOLD_MS is unused\.$#'
-			identifier: classConstant.unused
-			count: 1
-			path: src/Shared/Infrastructure/Doctrine/PerformanceQueryLogger.php
-
-		-
-			message: '#^Method App\\Shared\\Infrastructure\\Doctrine\\PerformanceQueryLogger\:\:formatQuery\(\) has parameter \$params with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Shared/Infrastructure/Doctrine/PerformanceQueryLogger.php
-
-		-
 			message: '#^Call to an undefined method Elastic\\Elasticsearch\\Response\\Elasticsearch\|Http\\Promise\\Promise\:\:asBool\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -5095,7 +4987,7 @@ parameters:
 			path: src/Shared/Infrastructure/Http/EventListener/GlobalApiRateLimitListener.php
 
 		-
-			message: '#^Method App\\Shared\\Infrastructure\\Http\\EventListener\\GlobalApiRateLimitListener\:\:determineRateLimiter\(\) should return array\{Symfony\\Component\\RateLimiter\\RateLimiterFactory, string\}\|null but returns array\{Symfony\\Component\\RateLimiter\\RateLimiterFactory, string\|null\}\.$#'
+			message: '#^Method App\\Shared\\Infrastructure\\Http\\EventListener\\GlobalApiRateLimitListener\:\:determineRateLimiter\(\) should return array\{Symfony\\Component\\RateLimiter\\RateLimiterFactoryInterface, string\}\|null but returns array\{Symfony\\Component\\RateLimiter\\RateLimiterFactoryInterface, string\|null\}\.$#'
 			identifier: return.type
 			count: 2
 			path: src/Shared/Infrastructure/Http/EventListener/GlobalApiRateLimitListener.php
