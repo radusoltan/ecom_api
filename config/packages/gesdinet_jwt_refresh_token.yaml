@@ -1,7 +1,5 @@
 gesdinet_jwt_refresh_token:
     refresh_token_class: App\User\Infrastructure\Persistence\Doctrine\Entity\RefreshTokenEntity
     ttl: 2592000  # 30 days in seconds
-    user_identity_field: email
-    firewall: login
     token_parameter_name: refreshToken
     single_use: true  # Invalidate after use for security

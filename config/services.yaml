@@ -47,7 +47,6 @@ services:
         tags:
             - { name: doctrine.event_subscriber, connection: default }
         calls:
-            - [ setAnnotationReader, [ '@annotation_reader' ] ]
             - [ setDefaultLocale, [ 'en' ] ]
             - [ setTranslationFallback, [ true ] ]
 
@@ -55,25 +54,17 @@ services:
         class: Gedmo\Sluggable\SluggableListener
         tags:
             - { name: doctrine.event_subscriber, connection: default }
-        calls:
-            - [ setAnnotationReader, [ '@annotation_reader' ] ]
-
-    # Annotation Reader (required by Gedmo listeners)
-    # Symfony 7 uses attributes by default, but Gedmo still needs the annotation reader
-    annotation_reader:
-        class: Doctrine\Common\Annotations\AnnotationReader
-        public: false
 
     # Alias for autowiring TranslatableListener
     Gedmo\Translatable\TranslatableListener:
         alias: gedmo.listener.translatable
 
-    # Performance Query Logger - Doctrine DBAL query profiling
+    # Performance Query Logger - Doctrine DBAL Middleware for query profiling
     App\Shared\Infrastructure\Doctrine\PerformanceQueryLogger:
         arguments:
-            $profiler: '@App\Shared\Infrastructure\Performance\PerformanceProfiler'
+            $profiler: '@App\Shared\Application\Service\PerformanceProfiler'
         tags:
-            - { name: doctrine.dbal.logger, connection: default }
+            - { name: doctrine.middleware }
 
     # API Caching - Cached Collection Provider
     # Note: Decorates the default Doctrine ORM collection provider
@@ -890,7 +881,7 @@ services:
         arguments:
             $clientId: '%env(PAYPAL_CLIENT_ID)%'
             $clientSecret: '%env(PAYPAL_SECRET_KEY)%'
-            $environment: '%env(default::PAYPAL_ENVIRONMENT)%'
+            $environment: '%env(PAYPAL_ENVIRONMENT)%'
             $logger: '@logger'
 
     # PayPal Client (created via factory)
