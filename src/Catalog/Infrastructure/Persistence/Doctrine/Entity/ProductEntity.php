@@ -28,12 +28,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 #[Gedmo\TranslationEntity(class: Translation::class)]
 #[ORM\Entity]
-#[ORM\Table(
-    name: 'catalog_products',
-    uniqueConstraints: [
-        new ORM\UniqueConstraint(name: 'uniq_catalog_products_tenant_sku', columns: ['tenant_id', 'sku']),
-    ]
-)]
+#[ORM\Table(name: 'catalog_products')]
+#[ORM\UniqueConstraint(name: 'uniq_catalog_products_tenant_sku', columns: ['tenant_id', 'sku'])]
 // Performance indexes for queries
 #[ORM\Index(name: 'idx_products_tenant_id', columns: ['tenant_id'])]
 #[ORM\Index(name: 'idx_products_tenant_sku', columns: ['tenant_id', 'sku'])]
