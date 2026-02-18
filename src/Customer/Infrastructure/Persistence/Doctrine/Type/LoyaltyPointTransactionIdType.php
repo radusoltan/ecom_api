@@ -38,5 +38,4 @@ final class LoyaltyPointTransactionIdType extends Type
 
         return $value;
     }
-
 }

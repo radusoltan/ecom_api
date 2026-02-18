@@ -45,5 +45,4 @@ final class ConsentTypeType extends Type
 
         return (string) $value;
     }
-
 }

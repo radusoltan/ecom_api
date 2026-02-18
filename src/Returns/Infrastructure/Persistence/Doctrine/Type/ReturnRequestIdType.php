@@ -33,7 +33,7 @@ final class ReturnRequestIdType extends Type
         }
 
         if (!$value instanceof ReturnRequestId) {
-            throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to expected type');
+            throw new ConversionException('Could not convert PHP value of type '.get_debug_type($value).' to expected type');
         }
 
         return $value->toString();
@@ -52,7 +52,7 @@ final class ReturnRequestIdType extends Type
         try {
             return ReturnRequestId::fromString((string) $value);
         } catch (\InvalidArgumentException $e) {
-            throw new ConversionException('Could not convert database value to type: ' . $e->getMessage(), 0, $e);
+            throw new ConversionException('Could not convert database value to type: '.$e->getMessage(), 0, $e);
         }
     }
 }

@@ -52,5 +52,4 @@ final class AddressTypeType extends StringType
 
         return $value;
     }
-
 }

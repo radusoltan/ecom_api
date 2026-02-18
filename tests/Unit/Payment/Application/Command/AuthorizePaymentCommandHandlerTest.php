@@ -90,7 +90,7 @@ final class AuthorizePaymentCommandHandlerTest extends TestCase
         $payment = Payment::create(
             id: $paymentId,
             tenantId: $tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 9999,
             currency: 'USD',
             method: PaymentMethod::card(),
@@ -139,7 +139,7 @@ final class AuthorizePaymentCommandHandlerTest extends TestCase
         $payment = Payment::create(
             id: $paymentId,
             tenantId: $tenantId,
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 5000,
             currency: 'EUR',
             method: PaymentMethod::card(),

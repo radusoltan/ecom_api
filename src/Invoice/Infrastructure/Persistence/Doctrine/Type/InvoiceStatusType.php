@@ -38,5 +38,4 @@ final class InvoiceStatusType extends Type
 
         return $value;
     }
-
 }

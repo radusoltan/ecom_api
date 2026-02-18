@@ -29,7 +29,7 @@ final class EmailType extends Type
         try {
             return Email::fromString((string) $value);
         } catch (\InvalidArgumentException $e) {
-            throw new ConversionException('Could not convert value to email: ' . $e->getMessage(), 0, $e);
+            throw new ConversionException('Could not convert value to email: '.$e->getMessage(), 0, $e);
         }
     }
 
@@ -43,6 +43,6 @@ final class EmailType extends Type
             return $value->value();
         }
 
-        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to email');
+        throw new ConversionException('Could not convert PHP value of type '.get_debug_type($value).' to email');
     }
 }

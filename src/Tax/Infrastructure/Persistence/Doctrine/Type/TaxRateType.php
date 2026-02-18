@@ -47,5 +47,4 @@ final class TaxRateType extends Type
 
         throw new \InvalidArgumentException('Expected TaxRate instance');
     }
-
 }

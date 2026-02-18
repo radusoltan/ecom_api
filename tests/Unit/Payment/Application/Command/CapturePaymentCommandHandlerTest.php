@@ -215,9 +215,9 @@ final class CapturePaymentCommandHandlerTest extends TestCase
         string $currency,
     ): Payment {
         return Payment::reconstituteFromPersistence(
-            id: \App\Payment\Domain\ValueObject\PaymentId::generate(),
+            id: PaymentId::generate(),
             tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: $amountInCents,
             currency: $currency,
             method: PaymentMethod::card(),
@@ -234,9 +234,9 @@ final class CapturePaymentCommandHandlerTest extends TestCase
     private function buildPendingPayment(): Payment
     {
         return Payment::create(
-            id: \App\Payment\Domain\ValueObject\PaymentId::generate(),
+            id: PaymentId::generate(),
             tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 9999,
             currency: 'USD',
             method: PaymentMethod::card(),
@@ -262,7 +262,7 @@ final class CapturePaymentCommandHandlerTest extends TestCase
 
             public function save(Payment $payment): void
             {
-                if ($this->saveCb !== null) {
+                if (null !== $this->saveCb) {
                     ($this->saveCb)($payment);
                 }
             }
@@ -284,12 +284,12 @@ final class CapturePaymentCommandHandlerTest extends TestCase
 
             public function findByIdempotencyKey(
                 string $idempotencyKey,
-                \App\Shared\Domain\ValueObject\TenantId $tenantId,
+                TenantId $tenantId,
             ): ?Payment {
                 return null;
             }
 
-            public function findAll(\App\Shared\Domain\ValueObject\TenantId $tenantId): array
+            public function findAll(TenantId $tenantId): array
             {
                 return [];
             }

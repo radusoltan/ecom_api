@@ -41,5 +41,4 @@ final class DataExportRequestIdType extends Type
 
         return $value->toString();
     }
-
 }

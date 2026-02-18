@@ -41,5 +41,4 @@ final class ExportStatusType extends Type
 
         return $value->value;
     }
-
 }

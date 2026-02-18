@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\User\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Infrastructure\Encryption\BlindIndexService;
 use App\User\Domain\Model\User;
 use App\User\Domain\Repository\UserRepositoryInterface;
 use App\User\Domain\ValueObject\HashedPassword;
@@ -12,7 +13,6 @@ use App\User\Domain\ValueObject\UserId;
 use App\User\Domain\ValueObject\Username;
 use App\User\Domain\ValueObject\UserRole;
 use App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
-use App\Shared\Infrastructure\Encryption\BlindIndexService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

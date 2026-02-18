@@ -40,5 +40,4 @@ final class CustomerIdType extends Type
 
         throw new \InvalidArgumentException('Expected CustomerId instance');
     }
-
 }

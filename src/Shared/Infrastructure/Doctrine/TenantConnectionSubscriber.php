@@ -7,9 +7,9 @@ namespace App\Shared\Infrastructure\Doctrine;
 use App\Shared\Infrastructure\Tenant\TenantContext;
 use Doctrine\DBAL\Driver as DriverInterface;
 use Doctrine\DBAL\Driver\Connection as ConnectionInterface;
-use Doctrine\DBAL\Driver\Middleware as MiddlewareInterface;
 use Doctrine\DBAL\Driver\Middleware\AbstractConnectionMiddleware;
 use Doctrine\DBAL\Driver\Middleware\AbstractDriverMiddleware;
+use Doctrine\DBAL\Driver\Middleware as MiddlewareInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -29,7 +29,7 @@ final class TenantConnectionSubscriber implements MiddlewareInterface
 
     public function wrap(DriverInterface $driver): DriverInterface
     {
-        return new class ($driver, $this->tenantContext, $this->logger) extends AbstractDriverMiddleware {
+        return new class($driver, $this->tenantContext, $this->logger) extends AbstractDriverMiddleware {
             public function __construct(
                 DriverInterface $driver,
                 private readonly TenantContext $tenantContext,
@@ -68,7 +68,7 @@ final class TenantConnectionSubscriber implements MiddlewareInterface
                     ]);
                 }
 
-                return new class ($connection) extends AbstractConnectionMiddleware {
+                return new class($connection) extends AbstractConnectionMiddleware {
                 };
             }
         };

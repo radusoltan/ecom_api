@@ -36,5 +36,4 @@ final class WarehouseIdType extends Type
 
         throw new \InvalidArgumentException('Expected WarehouseId instance');
     }
-
 }

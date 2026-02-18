@@ -36,5 +36,4 @@ final class DiscountTypeType extends Type
 
         throw new \InvalidArgumentException('Expected DiscountType instance');
     }
-
 }

@@ -7,7 +7,6 @@ namespace App\Tests\Unit\User\Infrastructure\Security;
 use App\User\Infrastructure\Security\MfaAccessListener;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

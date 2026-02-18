@@ -341,7 +341,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
                 return \App\Inventory\Domain\Model\StockItem::create(
                     id: \App\Inventory\Domain\Model\StockItemId::generate(),
                     tenantId: $tenantId,
-                    productId: \App\Catalog\Domain\Model\ProductId::generate(),
+                    productId: ProductId::generate(),
                     warehouseId: $warehouseId,
                     initialQuantity: \App\Inventory\Domain\Model\Quantity::fromInt(9999),
                 );

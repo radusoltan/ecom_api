@@ -36,5 +36,4 @@ final class WarehouseCodeType extends Type
 
         throw new \InvalidArgumentException('Expected WarehouseCode instance');
     }
-
 }

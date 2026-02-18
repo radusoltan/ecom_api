@@ -36,5 +36,4 @@ final class PromotionTypeType extends Type
 
         throw new \InvalidArgumentException('Expected PromotionType instance');
     }
-
 }

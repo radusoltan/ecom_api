@@ -64,5 +64,4 @@ final class CustomerPreferencesType extends Type
 
         throw new \InvalidArgumentException('Expected CustomerPreferences instance or null');
     }
-
 }

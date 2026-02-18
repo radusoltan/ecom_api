@@ -48,5 +48,4 @@ final class TaxCategoryType extends Type
 
         throw new \InvalidArgumentException('Expected TaxCategory instance');
     }
-
 }

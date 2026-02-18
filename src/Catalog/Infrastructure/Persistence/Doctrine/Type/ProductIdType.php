@@ -36,5 +36,4 @@ final class ProductIdType extends Type
 
         throw new \InvalidArgumentException('Expected ProductId instance');
     }
-
 }

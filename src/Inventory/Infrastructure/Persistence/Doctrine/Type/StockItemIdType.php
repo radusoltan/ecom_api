@@ -36,5 +36,4 @@ final class StockItemIdType extends Type
 
         throw new \InvalidArgumentException('Expected StockItemId instance');
     }
-
 }

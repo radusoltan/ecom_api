@@ -38,5 +38,4 @@ final class FulfillmentIdType extends Type
 
         return $value;
     }
-
 }

@@ -36,5 +36,4 @@ final class CouponCodeType extends Type
 
         throw new \InvalidArgumentException('Expected CouponCode instance');
     }
-
 }

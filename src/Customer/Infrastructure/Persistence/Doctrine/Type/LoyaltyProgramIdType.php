@@ -45,5 +45,4 @@ final class LoyaltyProgramIdType extends Type
 
         throw new \InvalidArgumentException('Expected LoyaltyProgramId instance');
     }
-
 }

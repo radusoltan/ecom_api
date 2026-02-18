@@ -48,5 +48,4 @@ final class EarningRateType extends Type
 
         throw new \InvalidArgumentException('Expected EarningRate instance');
     }
-
 }

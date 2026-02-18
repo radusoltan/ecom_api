@@ -38,5 +38,4 @@ final class OrderIdType extends Type
 
         return $value;
     }
-
 }

@@ -43,5 +43,4 @@ final class NotificationTypeType extends Type
 
         return (string) $value;
     }
-
 }

@@ -34,7 +34,7 @@ final class PaymentMethodType extends Type
         try {
             return PaymentMethod::from((string) $value);
         } catch (\ValueError $e) {
-            throw new ConversionException('Could not convert database value to type: ' . $e->getMessage(), 0, $e);
+            throw new ConversionException('Could not convert database value to type: '.$e->getMessage(), 0, $e);
         }
     }
 
@@ -48,6 +48,6 @@ final class PaymentMethodType extends Type
             return $value->value;
         }
 
-        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to expected type');
+        throw new ConversionException('Could not convert PHP value of type '.get_debug_type($value).' to expected type');
     }
 }

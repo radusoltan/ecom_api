@@ -45,5 +45,4 @@ final class DeletionStatusType extends Type
 
         return (string) $value;
     }
-
 }

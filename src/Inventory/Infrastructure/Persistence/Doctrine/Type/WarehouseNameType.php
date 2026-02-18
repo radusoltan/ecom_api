@@ -36,5 +36,4 @@ final class WarehouseNameType extends Type
 
         throw new \InvalidArgumentException('Expected WarehouseName instance');
     }
-
 }

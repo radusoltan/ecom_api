@@ -38,5 +38,4 @@ final class TransactionTypeType extends Type
 
         return $value;
     }
-
 }

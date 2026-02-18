@@ -29,7 +29,7 @@ final class RequestStatusType extends Type
         try {
             return RequestStatus::fromString($value);
         } catch (\InvalidArgumentException $e) {
-            throw new ConversionException('Could not convert value to request_status: ' . $e->getMessage(), 0, $e);
+            throw new ConversionException('Could not convert value to request_status: '.$e->getMessage(), 0, $e);
         }
     }
 
@@ -43,6 +43,6 @@ final class RequestStatusType extends Type
             return $value->value();
         }
 
-        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to request_status');
+        throw new ConversionException('Could not convert PHP value of type '.get_debug_type($value).' to request_status');
     }
 }

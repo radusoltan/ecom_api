@@ -45,5 +45,4 @@ final class LoyaltyTierIdType extends Type
 
         throw new \InvalidArgumentException('Expected LoyaltyTierId instance');
     }
-
 }

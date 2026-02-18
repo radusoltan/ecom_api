@@ -29,7 +29,7 @@ final class ConsentPurposeType extends Type
         try {
             return ConsentPurpose::fromString($value);
         } catch (\InvalidArgumentException $e) {
-            throw new ConversionException('Could not convert value to consent_purpose: ' . $e->getMessage(), 0, $e);
+            throw new ConversionException('Could not convert value to consent_purpose: '.$e->getMessage(), 0, $e);
         }
     }
 
@@ -43,6 +43,6 @@ final class ConsentPurposeType extends Type
             return $value->value();
         }
 
-        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to consent_purpose');
+        throw new ConversionException('Could not convert PHP value of type '.get_debug_type($value).' to consent_purpose');
     }
 }

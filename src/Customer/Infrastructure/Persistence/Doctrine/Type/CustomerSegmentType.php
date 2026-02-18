@@ -40,5 +40,4 @@ final class CustomerSegmentType extends Type
 
         throw new \InvalidArgumentException('Expected CustomerSegment instance');
     }
-
 }

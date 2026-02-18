@@ -36,10 +36,12 @@ final class CancelPaymentCommandHandlerTest extends TestCase
 
     private function createRepositoryStub(?Payment $returnValue): PaymentRepositoryInterface
     {
-        return new class ($returnValue) implements PaymentRepositoryInterface {
+        return new class($returnValue) implements PaymentRepositoryInterface {
             private ?Payment $savedPayment = null;
 
-            public function __construct(private readonly ?Payment $findByIdResult) {}
+            public function __construct(private readonly ?Payment $findByIdResult)
+            {
+            }
 
             public function save(Payment $payment): void
             {

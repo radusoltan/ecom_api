@@ -47,5 +47,4 @@ final class TaxRuleIdType extends Type
 
         throw new \InvalidArgumentException('Expected TaxRuleId instance');
     }
-
 }

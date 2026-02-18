@@ -29,7 +29,7 @@ final class ConsentIdType extends Type
         try {
             return ConsentId::fromString($value);
         } catch (\InvalidArgumentException $e) {
-            throw new ConversionException('Could not convert value to consent_id: ' . $e->getMessage(), 0, $e);
+            throw new ConversionException('Could not convert value to consent_id: '.$e->getMessage(), 0, $e);
         }
     }
 
@@ -43,6 +43,6 @@ final class ConsentIdType extends Type
             return $value->toString();
         }
 
-        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to consent_id');
+        throw new ConversionException('Could not convert PHP value of type '.get_debug_type($value).' to consent_id');
     }
 }

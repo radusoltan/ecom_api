@@ -24,11 +24,7 @@ final readonly class EncryptionKeyProvider
         $this->blindIndexKeyBinary = sodium_hex2bin($blindIndexKey);
 
         if (\SODIUM_CRYPTO_SECRETBOX_KEYBYTES !== \strlen($this->encryptionKeyBinary)) {
-            throw new \InvalidArgumentException(sprintf(
-                'ENCRYPTION_KEY must be %d bytes (hex-encoded). Got %d bytes.',
-                \SODIUM_CRYPTO_SECRETBOX_KEYBYTES,
-                \strlen($this->encryptionKeyBinary)
-            ));
+            throw new \InvalidArgumentException(sprintf('ENCRYPTION_KEY must be %d bytes (hex-encoded). Got %d bytes.', \SODIUM_CRYPTO_SECRETBOX_KEYBYTES, \strlen($this->encryptionKeyBinary)));
         }
 
         if (32 !== \strlen($this->blindIndexKeyBinary)) {

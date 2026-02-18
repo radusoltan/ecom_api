@@ -7,10 +7,10 @@ namespace App\Shared\Infrastructure\Doctrine;
 use App\Shared\Application\Service\PerformanceProfiler;
 use Doctrine\DBAL\Driver as DriverInterface;
 use Doctrine\DBAL\Driver\Connection as ConnectionInterface;
-use Doctrine\DBAL\Driver\Middleware as MiddlewareInterface;
 use Doctrine\DBAL\Driver\Middleware\AbstractConnectionMiddleware;
 use Doctrine\DBAL\Driver\Middleware\AbstractDriverMiddleware;
 use Doctrine\DBAL\Driver\Middleware\AbstractStatementMiddleware;
+use Doctrine\DBAL\Driver\Middleware as MiddlewareInterface;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Driver\Statement;
 
@@ -36,7 +36,7 @@ final class PerformanceQueryLogger implements MiddlewareInterface
 
     public function wrap(DriverInterface $driver): DriverInterface
     {
-        return new class ($driver, $this->profiler) extends AbstractDriverMiddleware {
+        return new class($driver, $this->profiler) extends AbstractDriverMiddleware {
             public function __construct(
                 DriverInterface $driver,
                 private readonly PerformanceProfiler $profiler,
@@ -46,7 +46,7 @@ final class PerformanceQueryLogger implements MiddlewareInterface
 
             public function connect(array $params): ConnectionInterface
             {
-                return new class (parent::connect($params), $this->profiler) extends AbstractConnectionMiddleware {
+                return new class(parent::connect($params), $this->profiler) extends AbstractConnectionMiddleware {
                     public function __construct(
                         ConnectionInterface $connection,
                         private readonly PerformanceProfiler $profiler,
@@ -56,7 +56,7 @@ final class PerformanceQueryLogger implements MiddlewareInterface
 
                     public function prepare(string $sql): Statement
                     {
-                        return new class (parent::prepare($sql), $this->profiler, $sql) extends AbstractStatementMiddleware {
+                        return new class(parent::prepare($sql), $this->profiler, $sql) extends AbstractStatementMiddleware {
                             public function __construct(
                                 Statement $statement,
                                 private readonly PerformanceProfiler $profiler,

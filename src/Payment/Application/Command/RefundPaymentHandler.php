@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Payment\Application\Command;
 
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
-use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\Service\PaymentGatewayInterface;
+use App\Payment\Domain\ValueObject\PaymentId;
 use App\Shared\Domain\ValueObject\Money;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

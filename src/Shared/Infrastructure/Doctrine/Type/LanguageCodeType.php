@@ -45,5 +45,4 @@ final class LanguageCodeType extends Type
 
         return (string) $value;
     }
-
 }

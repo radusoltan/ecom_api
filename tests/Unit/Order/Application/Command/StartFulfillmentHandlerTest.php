@@ -194,7 +194,7 @@ final class StartFulfillmentHandlerTest extends TestCase
 
         // Simulate existing fulfillment using a real Fulfillment instance (class is final)
         $existingFulfillment = \App\Order\Domain\Model\Fulfillment::start(
-            \App\Order\Domain\ValueObject\FulfillmentId::generate(),
+            FulfillmentId::generate(),
             $orderId,
             $warehouseId,
             $tenantId,

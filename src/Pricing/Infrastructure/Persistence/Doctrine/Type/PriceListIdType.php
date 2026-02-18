@@ -28,13 +28,13 @@ final class PriceListIdType extends Type
         }
 
         if (!is_string($value)) {
-            throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to price_list_id');
+            throw new ConversionException('Could not convert PHP value of type '.get_debug_type($value).' to price_list_id');
         }
 
         try {
             return PriceListId::fromString($value);
         } catch (\InvalidArgumentException $e) {
-            throw new ConversionException('Could not convert value to price_list_id: ' . $e->getMessage(), 0, $e);
+            throw new ConversionException('Could not convert value to price_list_id: '.$e->getMessage(), 0, $e);
         }
     }
 
@@ -48,6 +48,6 @@ final class PriceListIdType extends Type
             return $value->toString();
         }
 
-        throw new ConversionException('Could not convert PHP value of type ' . get_debug_type($value) . ' to price_list_id');
+        throw new ConversionException('Could not convert PHP value of type '.get_debug_type($value).' to price_list_id');
     }
 }

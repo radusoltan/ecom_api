@@ -45,5 +45,4 @@ final class ConsentHistoryIdType extends Type
 
         return (string) $value;
     }
-
 }

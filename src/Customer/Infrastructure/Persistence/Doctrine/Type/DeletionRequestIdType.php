@@ -45,5 +45,4 @@ final class DeletionRequestIdType extends Type
 
         return (string) $value;
     }
-
 }

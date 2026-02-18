@@ -38,5 +38,4 @@ final class OrderStatusType extends Type
 
         return $value;
     }
-
 }

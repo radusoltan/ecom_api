@@ -53,7 +53,7 @@ final class InitiatePaymentHandlerTest extends TestCase
         $command = new InitiatePayment(
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 9999,
             currency: 'USD',
             customerEmail: 'customer@example.com',
@@ -120,7 +120,7 @@ final class InitiatePaymentHandlerTest extends TestCase
         $command = new InitiatePayment(
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 5000,
             currency: 'EUR',
             customerEmail: 'test@example.com',
@@ -172,7 +172,7 @@ final class InitiatePaymentHandlerTest extends TestCase
         $command = new InitiatePayment(
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 12000,
             currency: 'GBP',
             customerEmail: 'uk@example.com',
@@ -215,7 +215,7 @@ final class InitiatePaymentHandlerTest extends TestCase
         $command = new InitiatePayment(
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
             amountInCents: 7500,
             currency: 'USD',
             customerEmail: 'paypal@example.com',

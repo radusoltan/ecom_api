@@ -28,19 +28,19 @@ final class EncryptionServiceTest extends TestCase
 {
     /**
      * 32-byte encryption key, hex-encoded (64 hex chars).
-     * Generated once via: sodium_bin2hex(sodium_crypto_secretbox_keygen())
+     * Generated once via: sodium_bin2hex(sodium_crypto_secretbox_keygen()).
      */
     private const ENCRYPTION_KEY = 'bd3d5dbf5f588a8fb6ddaa55b6a71847ceb98b8832ee4aa59476f52e94c301a3';
 
     /**
      * 32-byte blind index key, hex-encoded (64 hex chars).
-     * Generated once via: sodium_bin2hex(random_bytes(32))
+     * Generated once via: sodium_bin2hex(random_bytes(32)).
      */
     private const BLIND_INDEX_KEY = '5ab73f0c32502e63cf86de6dc231c3f2e80267b647945689bd235d7dd758dd57';
 
     /**
      * A different 32-byte key used to verify decryption with the wrong key fails.
-     * Generated once via: sodium_bin2hex(sodium_crypto_secretbox_keygen())
+     * Generated once via: sodium_bin2hex(sodium_crypto_secretbox_keygen()).
      */
     private const WRONG_ENCRYPTION_KEY = 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2';
 

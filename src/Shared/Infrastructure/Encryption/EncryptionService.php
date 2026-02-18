@@ -24,7 +24,7 @@ final readonly class EncryptionService
         $nonce = random_bytes(\SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
         $ciphertext = sodium_crypto_secretbox($plaintext, $nonce, $this->key);
 
-        return base64_encode($nonce . $ciphertext);
+        return base64_encode($nonce.$ciphertext);
     }
 
     public function decrypt(string $encoded): string

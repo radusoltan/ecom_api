@@ -44,5 +44,4 @@ final class TranslatedStringType extends Type
 
         return json_encode($value->toArray(), JSON_THROW_ON_ERROR);
     }
-
 }

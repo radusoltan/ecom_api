@@ -38,5 +38,4 @@ final class FulfillmentStatusType extends Type
 
         return $value;
     }
-
 }

@@ -38,5 +38,4 @@ final class InvoiceIdType extends Type
 
         return $value;
     }
-
 }

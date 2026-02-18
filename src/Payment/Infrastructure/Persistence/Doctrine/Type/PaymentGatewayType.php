@@ -36,5 +36,4 @@ final class PaymentGatewayType extends Type
 
         throw new \InvalidArgumentException(sprintf('Expected %s, got %s', PaymentGateway::class, get_debug_type($value)));
     }
-
 }

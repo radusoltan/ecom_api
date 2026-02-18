@@ -36,5 +36,4 @@ final class QuantityType extends Type
 
         throw new \InvalidArgumentException('Expected Quantity instance');
     }
-
 }
