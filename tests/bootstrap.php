@@ -12,10 +12,12 @@ require dirname(__DIR__).'/vendor/autoload.php';
 DG\BypassFinals::enable();
 DG\BypassFinals::setWhitelist([
     '*/src/Payment/Infrastructure/Gateway/*',
+    '*/src/Payment/Application/Service/*',
     '*/src/Notifications/Domain/Service/*',
     '*/src/Order/Domain/Service/*',
     '*/src/Order/Domain/Model/*',
     '*/src/Inventory/Domain/Model/*',
+    '*/src/Tax/Domain/Service/*',
 ]);
 
 if (method_exists(Dotenv::class, 'bootEnv')) {
