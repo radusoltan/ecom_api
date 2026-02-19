@@ -15,6 +15,9 @@ use App\Payment\Domain\Event\PaymentCaptured;
 use App\Payment\Domain\Event\PaymentCreated;
 use App\Payment\Domain\Event\PaymentFailed;
 use App\Payment\Domain\Event\PaymentRefunded;
+use App\Payment\Domain\Event\PaymentRetryAttempted;
+use App\Payment\Domain\Event\PaymentRetryExhausted;
+use App\Payment\Domain\Event\PaymentRetryScheduled;
 use App\Review\Domain\Event\ReviewApproved;
 use App\Review\Domain\Event\ReviewRejected;
 use App\Review\Domain\Event\ReviewSubmitted;
@@ -70,6 +73,9 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
             PaymentRefunded::class => 'onPaymentRefunded',
             PaymentCancelled::class => 'onPaymentCancelled',
             PaymentFailed::class => 'onPaymentFailed',
+            PaymentRetryScheduled::class => 'onPaymentRetryScheduled',
+            PaymentRetryAttempted::class => 'onPaymentRetryAttempted',
+            PaymentRetryExhausted::class => 'onPaymentRetryExhausted',
 
             // Review events
             ReviewSubmitted::class => 'onReviewSubmitted',
@@ -241,6 +247,57 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
             metadata: [
                 'errorMessage' => $event->errorMessage,
                 'event' => 'PaymentFailed',
+            ]
+        );
+    }
+
+    public function onPaymentRetryScheduled(PaymentRetryScheduled $event): void
+    {
+        $this->logEvent(
+            tenantId: $event->tenantId->toString(),
+            actionType: 'retry',
+            resourceType: 'payment',
+            resourceId: $event->paymentId->toString(),
+            metadata: [
+                'orderId' => $event->orderId,
+                'retryAttempt' => $event->retryAttempt,
+                'scheduledFor' => $event->scheduledFor->format(\DateTimeInterface::ATOM),
+                'errorCode' => $event->errorCode,
+                'event' => 'PaymentRetryScheduled',
+            ]
+        );
+    }
+
+    public function onPaymentRetryAttempted(PaymentRetryAttempted $event): void
+    {
+        $this->logEvent(
+            tenantId: $event->tenantId->toString(),
+            actionType: 'retry',
+            resourceType: 'payment',
+            resourceId: $event->paymentId->toString(),
+            metadata: [
+                'attemptNumber' => $event->attemptNumber,
+                'wasSuccessful' => $event->wasSuccessful,
+                'errorCode' => $event->errorCode,
+                'errorMessage' => $event->errorMessage,
+                'event' => 'PaymentRetryAttempted',
+            ]
+        );
+    }
+
+    public function onPaymentRetryExhausted(PaymentRetryExhausted $event): void
+    {
+        $this->logEvent(
+            tenantId: $event->tenantId->toString(),
+            actionType: 'update',
+            resourceType: 'payment',
+            resourceId: $event->paymentId->toString(),
+            metadata: [
+                'orderId' => $event->orderId,
+                'totalAttempts' => $event->totalAttempts,
+                'lastErrorCode' => $event->lastErrorCode,
+                'lastErrorMessage' => $event->lastErrorMessage,
+                'event' => 'PaymentRetryExhausted',
             ]
         );
     }

@@ -127,6 +127,21 @@ final class ActionTypeTest extends TestCase
         $this->assertEquals('export', $actionType->toString());
     }
 
+    public function testRetryFactoryMethod(): void
+    {
+        $actionType = ActionType::retry();
+
+        $this->assertEquals('retry', $actionType->toString());
+        $this->assertTrue($actionType->isRetry());
+    }
+
+    public function testIsRetryReturnsFalseForOtherTypes(): void
+    {
+        $actionType = ActionType::create();
+
+        $this->assertFalse($actionType->isRetry());
+    }
+
     public function testEquals(): void
     {
         $actionType1 = ActionType::create();
@@ -174,7 +189,7 @@ final class ActionTypeTest extends TestCase
 
     public function testAllValidActionsCanBeCreated(): void
     {
-        $validActions = ['create', 'update', 'delete', 'login', 'logout', 'activate', 'deactivate', 'cancel', 'refund', 'place', 'capture', 'authorize', 'view', 'export'];
+        $validActions = ['create', 'update', 'delete', 'login', 'logout', 'activate', 'deactivate', 'cancel', 'refund', 'place', 'capture', 'authorize', 'view', 'export', 'retry'];
 
         foreach ($validActions as $action) {
             $actionType = ActionType::fromString($action);

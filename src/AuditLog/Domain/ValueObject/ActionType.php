@@ -23,6 +23,7 @@ final class ActionType
     private const AUTHORIZE = 'authorize';
     private const VIEW = 'view';
     private const EXPORT = 'export';
+    private const RETRY = 'retry';
 
     private const VALID_ACTIONS = [
         self::CREATE,
@@ -39,6 +40,7 @@ final class ActionType
         self::AUTHORIZE,
         self::VIEW,
         self::EXPORT,
+        self::RETRY,
     ];
 
     private string $value;
@@ -127,6 +129,11 @@ final class ActionType
         return new self(self::EXPORT);
     }
 
+    public static function retry(): self
+    {
+        return new self(self::RETRY);
+    }
+
     public function toString(): string
     {
         return $this->value;
@@ -160,5 +167,10 @@ final class ActionType
     public function isLogout(): bool
     {
         return self::LOGOUT === $this->value;
+    }
+
+    public function isRetry(): bool
+    {
+        return self::RETRY === $this->value;
     }
 }
