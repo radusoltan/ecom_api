@@ -4,98 +4,57 @@ declare(strict_types=1);
 
 namespace App\Privacy\Infrastructure\Service;
 
-use App\Customer\Domain\Repository\CustomerRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
-use App\Order\Domain\Repository\OrderRepositoryInterface;
+use App\Privacy\Domain\Port\PersonalDataContributorInterface;
 use App\Privacy\Domain\Repository\ConsentRepositoryInterface;
 use App\Privacy\Domain\Service\PersonalDataInventoryInterface;
-use App\User\Domain\Repository\UserRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Personal Data Inventory Service Implementation.
  *
- * Coordinates data export and anonymization across bounded contexts
+ * Coordinates data export and deletion checks across bounded contexts
+ * via the PersonalDataContributorInterface (no direct repository coupling).
  */
 final readonly class PersonalDataInventory implements PersonalDataInventoryInterface
 {
+    /**
+     * @param iterable<PersonalDataContributorInterface> $contributors
+     */
     public function __construct(
-        private CustomerRepositoryInterface $customerRepository,
-        private ?UserRepositoryInterface $userRepository,
-        private OrderRepositoryInterface $orderRepository,
         private ConsentRepositoryInterface $consentRepository,
+        private iterable $contributors,
+        private LoggerInterface $logger,
     ) {
     }
 
-    public function exportCustomerData(CustomerId $customerId): array
+    public function exportCustomerData(array $subjectContext): array
     {
-        $customer = $this->customerRepository->findById($customerId);
+        $customerId = $subjectContext['customerId'] ?? null;
 
-        if (null === $customer) {
-            return [
-                'error' => 'Customer not found',
-                'customerId' => $customerId->toString(),
-            ];
+        if (null === $customerId) {
+            return ['error' => 'Customer ID is required'];
         }
 
-        // Export customer profile
-        $customerData = [
-            'id' => $customer->id()->toString(),
-            'email' => $customer->email()->value(),
-            'firstName' => $customer->firstName(),
-            'lastName' => $customer->lastName(),
-            'phoneNumber' => $customer->phoneNumber(),
-            'segment' => $customer->segment()->value(),
-            'loyaltyPoints' => $customer->loyaltyPoints(),
-            'isActive' => $customer->isActive(),
-            'createdAt' => $customer->createdAt()->format('c'),
-            'updatedAt' => $customer->updatedAt()->format('c'),
-        ];
+        // Collect data from all contributing contexts
+        $contextData = [];
+        foreach ($this->contributors as $contributor) {
+            $data = $contributor->collectPersonalData($subjectContext);
 
-        // Export user authentication data (if exists)
-        $userData = null;
-        if (null !== $this->userRepository) {
-            $user = $this->userRepository->findByEmail($customer->email());
-            if (null !== $user) {
-                $userData = [
-                    'id' => $user->id()->toString(),
-                    'email' => $user->email()->value(),
-                    'username' => $user->username()->toString(),
-                    'roles' => $user->rolesAsStrings(),
-                    'createdAt' => $user->createdAt()->format('c'),
-                    // Password is hashed and not exportable (security)
-                ];
+            if ([] !== $data) {
+                $contextData[$contributor->contextName()] = $data;
+
+                // If customer contributor returned email, enrich context for other contributors
+                if ('customer' === $contributor->contextName() && isset($data['email'])) {
+                    $subjectContext['email'] = $data['email'];
+                }
             }
         }
 
-        // Export orders
-        $orders = $this->orderRepository->findByCustomerId($customerId);
-        $ordersData = array_map(function ($order) {
-            return [
-                'id' => $order->id()->toString(),
-                'status' => $order->status()->value(),
-                'customerEmail' => $order->customerEmail(),
-                'shippingAddress' => [
-                    'street' => $order->shippingAddress()->street(),
-                    'city' => $order->shippingAddress()->city(),
-                    'state' => $order->shippingAddress()->state(),
-                    'postalCode' => $order->shippingAddress()->postalCode(),
-                    'country' => $order->shippingAddress()->country(),
-                ],
-                'billingAddress' => [
-                    'street' => $order->billingAddress()->street(),
-                    'city' => $order->billingAddress()->city(),
-                    'state' => $order->billingAddress()->state(),
-                    'postalCode' => $order->billingAddress()->postalCode(),
-                    'country' => $order->billingAddress()->country(),
-                ],
-                'total' => $order->total()->toString(),
-                'createdAt' => $order->createdAt()->format('c'),
-                'updatedAt' => $order->updatedAt()->format('c'),
-            ];
-        }, $orders);
-
-        // Export consents
-        $consents = $this->consentRepository->findByCustomerId($customerId);
+        // Export consents from Privacy context (local data)
+        $consents = $this->consentRepository->findByCustomerId(
+            CustomerId::fromString($customerId)
+        );
         $consentsData = array_map(function ($consent) {
             return [
                 'id' => $consent->id()->toString(),
@@ -117,39 +76,21 @@ final readonly class PersonalDataInventory implements PersonalDataInventoryInter
             'version' => '1.0',
         ];
 
-        return [
-            'customer' => $customerData,
-            'user' => $userData,
-            'orders' => $ordersData,
+        return array_merge($contextData, [
             'consents' => $consentsData,
             'metadata' => $metadata,
-        ];
+        ]);
     }
 
-    public function anonymizeCustomerData(CustomerId $customerId): void
+    /**
+     * @deprecated Anonymization is now handled via the event-driven flow:
+     *             Privacy emits DataErasureRequested → Customer anonymizes data.
+     */
+    public function anonymizeCustomerData(array $subjectContext): void
     {
-        $customer = $this->customerRepository->findById($customerId);
-
-        if (null === $customer) {
-            throw new \InvalidArgumentException(sprintf('Customer not found: %s', $customerId->toString()));
-        }
-
-        // Anonymize customer profile
-        // Note: This would typically be done through a command that updates the customer
-        // For now, we document the strategy
-
-        // Strategy:
-        // 1. Customer: Replace name with "DELETED_USER", email with "deleted-{uuid}@anonymized.local"
-        // 2. User: Delete authentication record entirely
-        // 3. Orders: Keep for 7 years (legal requirement), but anonymize customerEmail
-        // 4. Consents: Withdraw all active consents, keep history for proof
-
-        // This would be implemented by dispatching commands to each context
-        // Example: UpdateCustomerCommand with anonymized data
-        // Example: DeleteUserCommand
-        // Example: AnonymizeOrderCustomerCommand
-
-        throw new \RuntimeException('Anonymization must be implemented by dispatching commands to each bounded context. See PersonalDataInventory::anonymizeCustomerData() for strategy.');
+        $this->logger->warning('PersonalDataInventory::anonymizeCustomerData() is deprecated. Anonymization is triggered via DataErasureRequested events.', [
+            'customerId' => $subjectContext['customerId'] ?? 'unknown',
+        ]);
     }
 
     public function getDataCategories(): array
@@ -242,26 +183,14 @@ final readonly class PersonalDataInventory implements PersonalDataInventoryInter
         ];
     }
 
-    public function canDeleteCustomerData(CustomerId $customerId): bool
+    public function canDeleteCustomerData(array $subjectContext): bool
     {
-        // Check if there are active orders (not delivered/cancelled)
-        $orders = $this->orderRepository->findByCustomerId($customerId);
-
-        foreach ($orders as $order) {
-            if (!$order->status()->isFinal()) {
-                // Has pending/processing orders
-                return false;
-            }
-
-            // Check if order is within retention period (7 years)
-            $retentionDate = $order->createdAt()->modify('+7 years');
-            if ($retentionDate > new \DateTimeImmutable()) {
-                // Order is within legal retention period
+        foreach ($this->contributors as $contributor) {
+            if (!$contributor->canDeleteData($subjectContext)) {
                 return false;
             }
         }
 
-        // Can safely anonymize if no blocking conditions
         return true;
     }
 

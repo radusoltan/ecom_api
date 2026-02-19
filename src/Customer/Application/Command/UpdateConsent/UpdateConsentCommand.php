@@ -13,6 +13,10 @@ use App\Shared\Domain\ValueObject\TenantId;
  *
  * Updates a single GDPR consent for a customer.
  * Captures IP address and user agent for audit trail compliance.
+ *
+ * @deprecated Use Privacy context GrantConsentCommand/WithdrawConsentCommand instead.
+ *             Privacy is the GDPR source of truth; PrivacyConsentSyncSubscriber
+ *             propagates consent decisions to Customer context automatically.
  */
 final readonly class UpdateConsentCommand
 {

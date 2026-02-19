@@ -82,6 +82,7 @@ final class DataSubjectRequest extends AggregateRoot
             $request->id,
             $request->customerId,
             $request->requestType,
+            $request->tenantId,
             $request->submittedAt
         ));
 
@@ -90,6 +91,7 @@ final class DataSubjectRequest extends AggregateRoot
             $request->recordEvent(new DataErasureRequested(
                 $request->id,
                 $request->customerId,
+                $request->tenantId,
                 $request->submittedAt
             ));
         }
@@ -162,6 +164,7 @@ final class DataSubjectRequest extends AggregateRoot
 
         $this->recordEvent(new DataSubjectRequestCompleted(
             $this->id,
+            $this->customerId,
             $this->requestType,
             $this->completedAt
         ));

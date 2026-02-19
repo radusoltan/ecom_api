@@ -6,6 +6,7 @@ namespace App\Customer\Domain\Event;
 
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Domain\ValueObject\DataExportRequestId;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
@@ -13,7 +14,7 @@ use App\Shared\Domain\ValueObject\TenantId;
  *
  * Triggered when a customer requests a GDPR data export.
  */
-final readonly class DataExportRequested
+final readonly class DataExportRequested implements DomainEvent
 {
     public function __construct(
         private DataExportRequestId $requestId,
@@ -21,6 +22,11 @@ final readonly class DataExportRequested
         private TenantId $tenantId,
         private \DateTimeImmutable $requestedAt,
     ) {
+    }
+
+    public function occurredOn(): \DateTimeImmutable
+    {
+        return $this->requestedAt;
     }
 
     public function requestId(): DataExportRequestId

@@ -35,6 +35,7 @@ final class DataExportRequest
     private \DateTimeImmutable $createdAt;
     private ?\DateTimeImmutable $completedAt = null;
     private ?string $errorMessage = null;
+    private ?string $privacyRequestId = null;
 
     private function __construct()
     {
@@ -46,12 +47,14 @@ final class DataExportRequest
     public static function create(
         CustomerId $customerId,
         TenantId $tenantId,
+        ?string $privacyRequestId = null,
     ): self {
         $request = new self();
         $request->id = DataExportRequestId::generate();
         $request->customerId = $customerId;
         $request->tenantId = $tenantId;
         $request->status = ExportStatus::PENDING;
+        $request->privacyRequestId = $privacyRequestId;
         $request->createdAt = new \DateTimeImmutable();
 
         return $request;
@@ -71,6 +74,7 @@ final class DataExportRequest
         \DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $completedAt,
         ?string $errorMessage,
+        ?string $privacyRequestId = null,
     ): self {
         $request = new self();
         $request->id = $id;
@@ -83,6 +87,7 @@ final class DataExportRequest
         $request->createdAt = $createdAt;
         $request->completedAt = $completedAt;
         $request->errorMessage = $errorMessage;
+        $request->privacyRequestId = $privacyRequestId;
 
         return $request;
     }
@@ -232,5 +237,10 @@ final class DataExportRequest
     public function errorMessage(): ?string
     {
         return $this->errorMessage;
+    }
+
+    public function privacyRequestId(): ?string
+    {
+        return $this->privacyRequestId;
     }
 }

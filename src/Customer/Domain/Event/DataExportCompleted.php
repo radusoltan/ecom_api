@@ -6,6 +6,7 @@ namespace App\Customer\Domain\Event;
 
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Domain\ValueObject\DataExportRequestId;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
@@ -13,7 +14,7 @@ use App\Shared\Domain\ValueObject\TenantId;
  *
  * Triggered when a data export has been successfully generated and is ready for download.
  */
-final readonly class DataExportCompleted
+final readonly class DataExportCompleted implements DomainEvent
 {
     public function __construct(
         private DataExportRequestId $requestId,
@@ -23,6 +24,11 @@ final readonly class DataExportCompleted
         private \DateTimeImmutable $expiresAt,
         private \DateTimeImmutable $completedAt,
     ) {
+    }
+
+    public function occurredOn(): \DateTimeImmutable
+    {
+        return $this->completedAt;
     }
 
     public function requestId(): DataExportRequestId

@@ -15,6 +15,10 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  *
  * Updates all customer consents at once and creates audit trail entries for each change.
  * Typically used when customer submits consent preferences via cookie/privacy banner.
+ *
+ * @deprecated Use Privacy context GrantConsentCommand/WithdrawConsentCommand instead.
+ *             Privacy is the GDPR source of truth; PrivacyConsentSyncSubscriber
+ *             propagates consent decisions to Customer context automatically.
  */
 #[AsMessageHandler]
 final readonly class UpdateAllConsentsCommandHandler

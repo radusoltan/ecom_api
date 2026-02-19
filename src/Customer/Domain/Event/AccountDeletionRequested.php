@@ -6,15 +6,17 @@ namespace App\Customer\Domain\Event;
 
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Domain\ValueObject\DeletionRequestId;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\ValueObject\TenantId;
 
-final readonly class AccountDeletionRequested
+final readonly class AccountDeletionRequested implements DomainEvent
 {
     public function __construct(
         private DeletionRequestId $requestId,
         private CustomerId $customerId,
         private TenantId $tenantId,
         private ?string $reason,
+        private \DateTimeImmutable $occurredAt = new \DateTimeImmutable(),
     ) {
     }
 
@@ -36,5 +38,10 @@ final readonly class AccountDeletionRequested
     public function reason(): ?string
     {
         return $this->reason;
+    }
+
+    public function occurredOn(): \DateTimeImmutable
+    {
+        return $this->occurredAt;
     }
 }

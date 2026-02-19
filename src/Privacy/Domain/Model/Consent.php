@@ -78,6 +78,7 @@ final class Consent extends AggregateRoot
             $consent->id,
             $consent->customerId,
             $consent->purpose,
+            $consent->tenantId,
             $consent->grantedAt
         ));
 
@@ -131,6 +132,7 @@ final class Consent extends AggregateRoot
             $this->id,
             $this->customerId,
             $this->purpose,
+            $this->tenantId,
             $this->withdrawnAt
         ));
     }

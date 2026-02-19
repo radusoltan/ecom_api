@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Privacy\Domain\Service;
 
-use App\Customer\Domain\ValueObject\CustomerId;
-
 /**
  * Personal Data Inventory Service.
  *
@@ -24,33 +22,20 @@ interface PersonalDataInventoryInterface
      *
      * Returns machine-readable JSON format (GDPR Article 20)
      *
-     * @return array{
-     *     customer: array,
-     *     user: ?array,
-     *     orders: array,
-     *     consents: array,
-     *     loyaltyProgram: ?array,
-     *     metadata: array
-     * }
+     * @param array{customerId: string, email?: string, tenantId?: string} $subjectContext
+     *
+     * @return array<string, mixed>
      */
-    public function exportCustomerData(CustomerId $customerId): array;
+    public function exportCustomerData(array $subjectContext): array;
 
     /**
-     * Anonymize customer data across all contexts.
+     * @deprecated Anonymization is now handled via the event-driven flow:
+     *             Privacy emits DataErasureRequested → Customer anonymizes data.
+     *             This method is a no-op.
      *
-     * GDPR Article 17 - Right to erasure
-     *
-     * Keeps data required for legal/contractual obligations:
-     * - Order history (7 years for tax compliance)
-     * - Transaction records (accounting)
-     * - Consent history (proof of compliance)
-     *
-     * Anonymizes:
-     * - Customer profile (name, email, phone)
-     * - User authentication data
-     * - Order customer details (replace with anonymized values)
+     * @param array{customerId: string, email?: string, tenantId?: string} $subjectContext
      */
-    public function anonymizeCustomerData(CustomerId $customerId): void;
+    public function anonymizeCustomerData(array $subjectContext): void;
 
     /**
      * List all data categories we process.
@@ -83,6 +68,8 @@ interface PersonalDataInventoryInterface
      * Check if customer data can be safely deleted.
      *
      * Returns false if there are active orders, pending transactions, etc.
+     *
+     * @param array{customerId: string, email?: string, tenantId?: string} $subjectContext
      */
-    public function canDeleteCustomerData(CustomerId $customerId): bool;
+    public function canDeleteCustomerData(array $subjectContext): bool;
 }

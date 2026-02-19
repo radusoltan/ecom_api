@@ -835,6 +835,20 @@ services:
         arguments:
             $exportDirectory: '%kernel.project_dir%/var/exports'
 
+    # Privacy Context - PersonalDataInventory with contributor pattern
+    App\Privacy\Infrastructure\Service\PersonalDataInventory:
+        arguments:
+            $contributors: !tagged_iterator app.personal_data_contributor
+
+    App\Customer\Infrastructure\ACL\CustomerPersonalDataContributor:
+        tags: ['app.personal_data_contributor']
+
+    App\Order\Infrastructure\ACL\OrderPersonalDataContributor:
+        tags: ['app.personal_data_contributor']
+
+    App\User\Infrastructure\ACL\UserPersonalDataContributor:
+        tags: ['app.personal_data_contributor']
+
     # Returns Context - Tenant decorators
     tenant_context_return_request_item_provider:
         class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider

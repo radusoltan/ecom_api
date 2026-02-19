@@ -13,6 +13,10 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * Update Consent Command Handler.
  *
  * Updates a customer's consent and creates an audit trail entry.
+ *
+ * @deprecated Use Privacy context GrantConsentCommand/WithdrawConsentCommand instead.
+ *             Privacy is the GDPR source of truth; PrivacyConsentSyncSubscriber
+ *             propagates consent decisions to Customer context automatically.
  */
 #[AsMessageHandler]
 final readonly class UpdateConsentCommandHandler

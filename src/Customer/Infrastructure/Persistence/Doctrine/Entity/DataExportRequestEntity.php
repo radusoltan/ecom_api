@@ -58,6 +58,9 @@ class DataExportRequestEntity
     #[ORM\Column(type: 'text', nullable: true, name: 'error_message')]
     private ?string $errorMessage = null;
 
+    #[ORM\Column(type: 'string', length: 36, nullable: true, name: 'privacy_request_id')]
+    private ?string $privacyRequestId = null;
+
     /**
      * Convert domain model to entity.
      */
@@ -74,6 +77,7 @@ class DataExportRequestEntity
         $entity->createdAt = $request->createdAt();
         $entity->completedAt = $request->completedAt();
         $entity->errorMessage = $request->errorMessage();
+        $entity->privacyRequestId = $request->privacyRequestId();
 
         return $entity;
     }
@@ -89,6 +93,7 @@ class DataExportRequestEntity
         $this->expiresAt = $request->expiresAt();
         $this->completedAt = $request->completedAt();
         $this->errorMessage = $request->errorMessage();
+        $this->privacyRequestId = $request->privacyRequestId();
     }
 
     /**
@@ -106,7 +111,8 @@ class DataExportRequestEntity
             expiresAt: $this->expiresAt,
             createdAt: $this->createdAt,
             completedAt: $this->completedAt,
-            errorMessage: $this->errorMessage
+            errorMessage: $this->errorMessage,
+            privacyRequestId: $this->privacyRequestId
         );
     }
 
@@ -160,5 +166,15 @@ class DataExportRequestEntity
     public function getErrorMessage(): ?string
     {
         return $this->errorMessage;
+    }
+
+    public function getPrivacyRequestId(): ?string
+    {
+        return $this->privacyRequestId;
+    }
+
+    public function setPrivacyRequestId(?string $privacyRequestId): void
+    {
+        $this->privacyRequestId = $privacyRequestId;
     }
 }

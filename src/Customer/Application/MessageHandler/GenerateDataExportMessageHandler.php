@@ -6,12 +6,14 @@ namespace App\Customer\Application\MessageHandler;
 
 use App\Customer\Application\Message\GenerateDataExportMessage;
 use App\Customer\Application\Service\DataExportService;
+use App\Customer\Domain\Event\DataExportCompleted;
 use App\Customer\Domain\Repository\DataExportRequestRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Domain\ValueObject\DataExportRequestId;
 use App\Shared\Domain\ValueObject\TenantId;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Generate Data Export Message Handler.
@@ -32,6 +34,7 @@ final readonly class GenerateDataExportMessageHandler
     public function __construct(
         private DataExportRequestRepositoryInterface $exportRequestRepository,
         private DataExportService $dataExportService,
+        private EventDispatcherInterface $eventDispatcher,
         private LoggerInterface $logger,
     ) {
     }
@@ -80,8 +83,19 @@ final readonly class GenerateDataExportMessageHandler
             $expiresAt = new \DateTimeImmutable(sprintf('+%d hours', self::EXPIRATION_HOURS));
 
             // Mark as ready
+            $completedAt = new \DateTimeImmutable();
             $request->markReady($filePath, $downloadToken, $expiresAt);
             $this->exportRequestRepository->save($request);
+
+            // Dispatch completion event for cross-context integration
+            $this->eventDispatcher->dispatch(new DataExportCompleted(
+                $requestId,
+                $customerId,
+                $tenantId,
+                $filePath,
+                $expiresAt,
+                $completedAt,
+            ));
 
             $this->logger->info('Data export completed successfully', [
                 'request_id' => $requestId->toString(),

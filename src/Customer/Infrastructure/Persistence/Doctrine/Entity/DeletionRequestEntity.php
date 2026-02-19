@@ -50,6 +50,9 @@ class DeletionRequestEntity
     #[ORM\Column(type: 'datetime_immutable', nullable: false)]
     private \DateTimeImmutable $createdAt;
 
+    #[ORM\Column(type: 'string', length: 36, nullable: true, name: 'privacy_request_id')]
+    private ?string $privacyRequestId = null;
+
     public static function fromDomainModel(DeletionRequest $request): self
     {
         $entity = new self();
@@ -63,6 +66,7 @@ class DeletionRequestEntity
         $entity->confirmedAt = $request->confirmedAt();
         $entity->completedAt = $request->completedAt();
         $entity->createdAt = $request->createdAt();
+        $entity->privacyRequestId = $request->privacyRequestId();
 
         return $entity;
     }
@@ -76,6 +80,7 @@ class DeletionRequestEntity
         $this->scheduledFor = $request->scheduledFor();
         $this->confirmedAt = $request->confirmedAt();
         $this->completedAt = $request->completedAt();
+        $this->privacyRequestId = $request->privacyRequestId();
     }
 
     public function toDomainModel(): DeletionRequest
@@ -90,7 +95,8 @@ class DeletionRequestEntity
             $this->scheduledFor,
             $this->confirmedAt,
             $this->completedAt,
-            $this->createdAt
+            $this->createdAt,
+            $this->privacyRequestId
         );
     }
 
@@ -194,5 +200,15 @@ class DeletionRequestEntity
     public function setCreatedAt(\DateTimeImmutable $createdAt): void
     {
         $this->createdAt = $createdAt;
+    }
+
+    public function getPrivacyRequestId(): ?string
+    {
+        return $this->privacyRequestId;
+    }
+
+    public function setPrivacyRequestId(?string $privacyRequestId): void
+    {
+        $this->privacyRequestId = $privacyRequestId;
     }
 }

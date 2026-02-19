@@ -42,6 +42,7 @@ final class DeletionRequest extends AggregateRoot
     private ?\DateTimeImmutable $confirmedAt;
     private ?\DateTimeImmutable $completedAt;
     private \DateTimeImmutable $createdAt;
+    private ?string $privacyRequestId;
 
     private function __construct()
     {
@@ -52,6 +53,7 @@ final class DeletionRequest extends AggregateRoot
         CustomerId $customerId,
         TenantId $tenantId,
         ?string $reason = null,
+        ?string $privacyRequestId = null,
     ): self {
         $request = new self();
         $request->id = $id;
@@ -62,6 +64,7 @@ final class DeletionRequest extends AggregateRoot
         $request->holdReason = null;
         $request->confirmedAt = null;
         $request->completedAt = null;
+        $request->privacyRequestId = $privacyRequestId;
         $request->createdAt = new \DateTimeImmutable();
 
         // Set initial scheduled date (will be updated when confirmed)
@@ -88,6 +91,7 @@ final class DeletionRequest extends AggregateRoot
         ?\DateTimeImmutable $confirmedAt,
         ?\DateTimeImmutable $completedAt,
         \DateTimeImmutable $createdAt,
+        ?string $privacyRequestId = null,
     ): self {
         $request = new self();
         $request->id = $id;
@@ -100,6 +104,7 @@ final class DeletionRequest extends AggregateRoot
         $request->confirmedAt = $confirmedAt;
         $request->completedAt = $completedAt;
         $request->createdAt = $createdAt;
+        $request->privacyRequestId = $privacyRequestId;
 
         return $request;
     }
@@ -269,5 +274,10 @@ final class DeletionRequest extends AggregateRoot
     public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function privacyRequestId(): ?string
+    {
+        return $this->privacyRequestId;
     }
 }

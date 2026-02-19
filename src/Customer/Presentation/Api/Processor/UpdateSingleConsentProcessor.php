@@ -21,6 +21,10 @@ use Symfony\Component\Messenger\MessageBusInterface;
  * Updates a single GDPR consent type.
  * Captures IP address and User-Agent for audit trail.
  *
+ * @deprecated Use Privacy context consent endpoints instead.
+ *             Privacy is the GDPR source of truth; PrivacyConsentSyncSubscriber
+ *             propagates consent decisions to Customer context automatically.
+ *
  * @implements ProcessorInterface<CustomerConsentResource, CustomerConsentResource>
  */
 final readonly class UpdateSingleConsentProcessor implements ProcessorInterface
