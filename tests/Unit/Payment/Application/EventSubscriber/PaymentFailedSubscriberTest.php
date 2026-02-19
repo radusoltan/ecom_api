@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Payment\Application\EventSubscriber;
 
 use App\Payment\Application\EventSubscriber\PaymentFailedSubscriber;
+use App\Payment\Application\Service\PaymentCustomerEmailResolver;
 use App\Payment\Domain\Event\PaymentFailed;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Shared\Domain\ValueObject\TenantId;
@@ -15,15 +16,19 @@ use Symfony\Component\Mime\Email;
 
 final class PaymentFailedSubscriberTest extends TestCase
 {
+    private PaymentCustomerEmailResolver $emailResolver;
     private MailerInterface $mailer;
     private LoggerInterface $logger;
     private PaymentFailedSubscriber $subscriber;
 
     protected function setUp(): void
     {
+        $this->emailResolver = $this->createMock(PaymentCustomerEmailResolver::class);
+        $this->emailResolver->method('resolveByPaymentId')->willReturn('john@example.com');
         $this->mailer = $this->createMock(MailerInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->subscriber = new PaymentFailedSubscriber(
+            emailResolver: $this->emailResolver,
             mailer: $this->mailer,
             logger: $this->logger,
             senderEmail: 'payments@test.com',
@@ -55,7 +60,8 @@ final class PaymentFailedSubscriberTest extends TestCase
             ->method('send')
             ->with($this->callback(function (Email $email) {
                 return str_contains($email->getSubject(), 'Payment Failed')
-                    && str_contains($email->getHtmlBody(), 'Payment ID:');
+                    && str_contains($email->getHtmlBody(), 'Payment ID:')
+                    && 'john@example.com' === $email->getTo()[0]->getAddress();
             }));
 
         $this->logger->expects($this->atLeastOnce())
@@ -211,5 +217,64 @@ final class PaymentFailedSubscriberTest extends TestCase
 
         // Assert
         $this->assertTrue(true);
+    }
+
+    public function testOnPaymentFailedSkipsEmailWhenCustomerEmailNotResolved(): void
+    {
+        // Arrange
+        $emailResolver = $this->createMock(PaymentCustomerEmailResolver::class);
+        $emailResolver->method('resolveByPaymentId')->willReturn(null);
+
+        $subscriber = new PaymentFailedSubscriber(
+            emailResolver: $emailResolver,
+            mailer: $this->mailer,
+            logger: $this->logger,
+            senderEmail: 'payments@test.com',
+            senderName: 'Test Platform'
+        );
+
+        $event = new PaymentFailed(
+            paymentId: PaymentId::generate(),
+            tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
+            errorMessage: 'card_declined'
+        );
+
+        $this->mailer->expects($this->never())->method('send');
+        $this->logger->expects($this->atLeastOnce())->method('warning');
+
+        // Act
+        $subscriber->onPaymentFailed($event);
+    }
+
+    public function testOnPaymentFailedUsesResolvedCustomerEmail(): void
+    {
+        // Arrange
+        $emailResolver = $this->createMock(PaymentCustomerEmailResolver::class);
+        $emailResolver->method('resolveByPaymentId')->willReturn('alice@store.com');
+
+        $subscriber = new PaymentFailedSubscriber(
+            emailResolver: $emailResolver,
+            mailer: $this->mailer,
+            logger: $this->logger,
+            senderEmail: 'payments@test.com',
+            senderName: 'Test Platform'
+        );
+
+        $event = new PaymentFailed(
+            paymentId: PaymentId::generate(),
+            tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
+            errorMessage: 'card_declined'
+        );
+
+        $this->mailer->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function (Email $email) {
+                return 'alice@store.com' === $email->getTo()[0]->getAddress();
+            }));
+
+        $this->logger->method('warning');
+
+        // Act
+        $subscriber->onPaymentFailed($event);
     }
 }

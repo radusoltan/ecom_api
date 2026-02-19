@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Payment\Application\EventSubscriber;
 
 use App\Payment\Application\EventSubscriber\PaymentRefundedSubscriber;
+use App\Payment\Application\Service\PaymentCustomerEmailResolver;
 use App\Payment\Domain\Event\PaymentRefunded;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Shared\Domain\ValueObject\TenantId;
@@ -19,6 +20,7 @@ use Symfony\Component\Mime\Email;
 #[CoversClass(PaymentRefundedSubscriber::class)]
 final class PaymentRefundedSubscriberTest extends TestCase
 {
+    private PaymentCustomerEmailResolver $emailResolver;
     private MailerInterface $mailer;
     private LoggerInterface $logger;
     private PaymentRefundedSubscriber $subscriber;
@@ -27,7 +29,10 @@ final class PaymentRefundedSubscriberTest extends TestCase
     {
         $this->mailer = $this->createMock(MailerInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->emailResolver = $this->createMock(PaymentCustomerEmailResolver::class);
+        $this->emailResolver->method('resolveByPaymentId')->willReturn('john@example.com');
         $this->subscriber = new PaymentRefundedSubscriber(
+            emailResolver: $this->emailResolver,
             mailer: $this->mailer,
             logger: $this->logger,
             senderEmail: 'payments@test.com',
@@ -70,7 +75,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
             ->with(self::callback(function (Email $email) use ($paymentId): bool {
                 self::assertSame('payments@test.com', $email->getFrom()[0]->getAddress());
                 self::assertSame('Test Platform', $email->getFrom()[0]->getName());
-                self::assertSame('customer@example.com', $email->getTo()[0]->getAddress());
+                self::assertSame('john@example.com', $email->getTo()[0]->getAddress());
                 self::assertStringContainsString('Refund Processed', $email->getSubject());
                 self::assertStringContainsString($paymentId->toString(), $email->getHtmlBody());
                 self::assertStringContainsString('$50.00', $email->getHtmlBody());
@@ -607,5 +612,67 @@ final class PaymentRefundedSubscriberTest extends TestCase
 
         // Assert - Exception was caught and logged
         self::assertTrue(true);
+    }
+
+    #[Test]
+    public function onPaymentRefundedSkipsEmailWhenCustomerEmailNotResolved(): void
+    {
+        $emailResolver = $this->createMock(PaymentCustomerEmailResolver::class);
+        $emailResolver->method('resolveByPaymentId')->willReturn(null);
+
+        $subscriber = new PaymentRefundedSubscriber(
+            emailResolver: $emailResolver,
+            mailer: $this->mailer,
+            logger: $this->logger,
+            senderEmail: 'payments@test.com',
+            senderName: 'Test Platform'
+        );
+
+        $event = new PaymentRefunded(
+            paymentId: PaymentId::generate(),
+            tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
+            refundedAmountInCents: 5000,
+            reason: 'Customer request'
+        );
+
+        $this->mailer->expects(self::never())->method('send');
+        $this->logger->method('info');
+        $this->logger->expects(self::atLeastOnce())->method('warning');
+
+        $subscriber->onPaymentRefunded($event);
+    }
+
+    #[Test]
+    public function onPaymentRefundedUsesResolvedCustomerEmail(): void
+    {
+        $emailResolver = $this->createMock(PaymentCustomerEmailResolver::class);
+        $emailResolver->method('resolveByPaymentId')->willReturn('alice@store.com');
+
+        $subscriber = new PaymentRefundedSubscriber(
+            emailResolver: $emailResolver,
+            mailer: $this->mailer,
+            logger: $this->logger,
+            senderEmail: 'payments@test.com',
+            senderName: 'Test Platform'
+        );
+
+        $event = new PaymentRefunded(
+            paymentId: PaymentId::generate(),
+            tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
+            refundedAmountInCents: 5000,
+            reason: 'Customer request'
+        );
+
+        $this->logger->method('info');
+
+        $this->mailer->expects(self::once())
+            ->method('send')
+            ->with(self::callback(function (Email $email): bool {
+                self::assertSame('alice@store.com', $email->getTo()[0]->getAddress());
+
+                return true;
+            }));
+
+        $subscriber->onPaymentRefunded($event);
     }
 }

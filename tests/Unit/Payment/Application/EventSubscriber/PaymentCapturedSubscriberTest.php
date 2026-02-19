@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Payment\Application\EventSubscriber;
 use App\Order\Application\Command\UpdateOrderStatusCommand;
 use App\Order\Domain\Event\OrderPaid;
 use App\Payment\Application\EventSubscriber\PaymentCapturedSubscriber;
+use App\Payment\Application\Service\PaymentCustomerEmailResolver;
 use App\Payment\Domain\Event\PaymentCaptured;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Shared\Domain\ValueObject\TenantId;
@@ -25,6 +26,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
 {
     private MessageBusInterface $commandBus;
     private EventDispatcherInterface $eventDispatcher;
+    private PaymentCustomerEmailResolver $emailResolver;
     private MailerInterface $mailer;
     private LoggerInterface $logger;
     private PaymentCapturedSubscriber $subscriber;
@@ -35,9 +37,13 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->mailer = $this->createMock(MailerInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->emailResolver = $this->createMock(PaymentCustomerEmailResolver::class);
+        $this->emailResolver->method('resolveByOrderId')->willReturn('john@example.com');
+        $this->emailResolver->method('resolveByPaymentId')->willReturn('john@example.com');
         $this->subscriber = new PaymentCapturedSubscriber(
             commandBus: $this->commandBus,
             eventDispatcher: $this->eventDispatcher,
+            emailResolver: $this->emailResolver,
             mailer: $this->mailer,
             logger: $this->logger,
             senderEmail: 'payments@test.com',
@@ -82,7 +88,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
             ->with(self::callback(function (Email $email) use ($paymentId): bool {
                 self::assertSame('payments@test.com', $email->getFrom()[0]->getAddress());
                 self::assertSame('Test Platform', $email->getFrom()[0]->getName());
-                self::assertSame('customer@example.com', $email->getTo()[0]->getAddress());
+                self::assertSame('john@example.com', $email->getTo()[0]->getAddress());
                 self::assertStringContainsString('Payment Confirmation', $email->getSubject());
                 self::assertStringContainsString($paymentId->toString(), $email->getHtmlBody());
                 self::assertStringContainsString('$99.99', $email->getHtmlBody());
@@ -563,5 +569,78 @@ final class PaymentCapturedSubscriberTest extends TestCase
 
         // Act
         $this->subscriber->onPaymentCaptured($event);
+    }
+
+    #[Test]
+    public function onPaymentCapturedSkipsEmailWhenCustomerEmailNotResolved(): void
+    {
+        $emailResolver = $this->createMock(PaymentCustomerEmailResolver::class);
+        $emailResolver->method('resolveByOrderId')->willReturn(null);
+        $emailResolver->method('resolveByPaymentId')->willReturn(null);
+
+        $subscriber = new PaymentCapturedSubscriber(
+            commandBus: $this->commandBus,
+            eventDispatcher: $this->eventDispatcher,
+            emailResolver: $emailResolver,
+            mailer: $this->mailer,
+            logger: $this->logger,
+            senderEmail: 'payments@test.com',
+            senderName: 'Test Platform'
+        );
+
+        $event = new PaymentCaptured(
+            paymentId: PaymentId::generate(),
+            tenantId: TenantId::generate(),
+            capturedAmountInCents: 5000,
+            orderId: 'order-123'
+        );
+
+        $this->commandBus->method('dispatch')
+            ->willReturn(new \Symfony\Component\Messenger\Envelope(new \stdClass()));
+        $this->eventDispatcher->method('dispatch');
+        $this->mailer->expects(self::never())->method('send');
+        $this->logger->method('info');
+        $this->logger->expects(self::atLeastOnce())->method('warning');
+
+        $subscriber->onPaymentCaptured($event);
+    }
+
+    #[Test]
+    public function onPaymentCapturedUsesResolvedCustomerEmail(): void
+    {
+        $emailResolver = $this->createMock(PaymentCustomerEmailResolver::class);
+        $emailResolver->method('resolveByOrderId')->willReturn('alice@store.com');
+
+        $subscriber = new PaymentCapturedSubscriber(
+            commandBus: $this->commandBus,
+            eventDispatcher: $this->eventDispatcher,
+            emailResolver: $emailResolver,
+            mailer: $this->mailer,
+            logger: $this->logger,
+            senderEmail: 'payments@test.com',
+            senderName: 'Test Platform'
+        );
+
+        $event = new PaymentCaptured(
+            paymentId: PaymentId::generate(),
+            tenantId: TenantId::generate(),
+            capturedAmountInCents: 5000,
+            orderId: 'order-abc'
+        );
+
+        $this->commandBus->method('dispatch')
+            ->willReturn(new \Symfony\Component\Messenger\Envelope(new \stdClass()));
+        $this->eventDispatcher->method('dispatch');
+        $this->logger->method('info');
+
+        $this->mailer->expects(self::once())
+            ->method('send')
+            ->with(self::callback(function (Email $email): bool {
+                self::assertSame('alice@store.com', $email->getTo()[0]->getAddress());
+
+                return true;
+            }));
+
+        $subscriber->onPaymentCaptured($event);
     }
 }

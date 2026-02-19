@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Payment\Application\EventSubscriber;
 
 use App\Order\Application\Command\UpdateOrderStatusCommand;
+use App\Payment\Application\Service\PaymentCustomerEmailResolver;
 use App\Payment\Domain\Event\PaymentCaptured;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -32,6 +33,7 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
     public function __construct(
         private MessageBusInterface $commandBus,
         private EventDispatcherInterface $eventDispatcher,
+        private PaymentCustomerEmailResolver $emailResolver,
         private MailerInterface $mailer,
         private LoggerInterface $logger,
         private string $senderEmail = 'payments@ecommerce.local',
@@ -111,6 +113,18 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
     private function sendConfirmationEmail(PaymentCaptured $event): void
     {
         try {
+            $customerEmail = $event->orderId
+                ? $this->emailResolver->resolveByOrderId($event->orderId, $event->tenantId->toString())
+                : $this->emailResolver->resolveByPaymentId($event->paymentId, $event->tenantId);
+
+            if (null === $customerEmail) {
+                $this->logger->warning('Cannot send payment confirmation email: customer email not found', [
+                    'payment_id' => $event->paymentId->toString(),
+                ]);
+
+                return;
+            }
+
             $amountFormatted = number_format($event->capturedAmountInCents / 100, 2);
 
             // Build HTML email
@@ -121,7 +135,7 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
 
             $email = (new Email())
                 ->from(sprintf('%s <%s>', $this->senderName, $this->senderEmail))
-                ->to('customer@example.com') // TODO: Get customer email from order
+                ->to($customerEmail)
                 ->subject('Payment Confirmation - Order Paid Successfully')
                 ->html($htmlBody)
                 ->text($textBody);
@@ -130,6 +144,7 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
 
             $this->logger->info('Payment confirmation email sent', [
                 'payment_id' => $event->paymentId->toString(),
+                'customer_email' => $customerEmail,
             ]);
         } catch (\Throwable $e) {
             // Log email failure but don't throw - email failures shouldn't block payment

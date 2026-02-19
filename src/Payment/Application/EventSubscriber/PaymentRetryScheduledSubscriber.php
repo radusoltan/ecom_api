@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Payment\Application\EventSubscriber;
 
+use App\Payment\Application\Service\PaymentCustomerEmailResolver;
 use App\Payment\Domain\Event\PaymentRetryScheduled;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -22,6 +23,7 @@ use Symfony\Component\Mime\Email;
 final readonly class PaymentRetryScheduledSubscriber implements EventSubscriberInterface
 {
     public function __construct(
+        private PaymentCustomerEmailResolver $emailResolver,
         private MailerInterface $mailer,
         private LoggerInterface $logger,
         private string $senderEmail = 'payments@ecommerce.local',
@@ -67,6 +69,17 @@ final readonly class PaymentRetryScheduledSubscriber implements EventSubscriberI
     private function sendRetryNotificationEmail(PaymentRetryScheduled $event): void
     {
         try {
+            $customerEmail = $this->emailResolver->resolveByOrderId($event->orderId, $event->tenantId->toString());
+
+            if (null === $customerEmail) {
+                $this->logger->warning('Cannot send retry notification email: customer email not found', [
+                    'payment_id' => $event->paymentId->toString(),
+                    'order_id' => $event->orderId,
+                ]);
+
+                return;
+            }
+
             // Build HTML email
             $htmlBody = $this->buildHtmlEmailBody($event);
 
@@ -75,7 +88,7 @@ final readonly class PaymentRetryScheduledSubscriber implements EventSubscriberI
 
             $email = (new Email())
                 ->from(sprintf('%s <%s>', $this->senderName, $this->senderEmail))
-                ->to('customer@example.com') // TODO: Get customer email from order
+                ->to($customerEmail)
                 ->subject('Payment Retry Scheduled - No Action Required')
                 ->html($htmlBody)
                 ->text($textBody);
@@ -84,6 +97,7 @@ final readonly class PaymentRetryScheduledSubscriber implements EventSubscriberI
 
             $this->logger->info('Payment retry notification email sent', [
                 'payment_id' => $event->paymentId->toString(),
+                'customer_email' => $customerEmail,
             ]);
         } catch (\Throwable $e) {
             // Log email failure but don't throw

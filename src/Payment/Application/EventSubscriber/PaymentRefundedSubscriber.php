@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Payment\Application\EventSubscriber;
 
+use App\Payment\Application\Service\PaymentCustomerEmailResolver;
 use App\Payment\Domain\Event\PaymentRefunded;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -22,6 +23,7 @@ use Symfony\Component\Mime\Email;
 final readonly class PaymentRefundedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
+        private PaymentCustomerEmailResolver $emailResolver,
         private MailerInterface $mailer,
         private LoggerInterface $logger,
         private string $senderEmail = 'payments@ecommerce.local',
@@ -72,6 +74,16 @@ final readonly class PaymentRefundedSubscriber implements EventSubscriberInterfa
     private function sendRefundNotificationEmail(PaymentRefunded $event): void
     {
         try {
+            $customerEmail = $this->emailResolver->resolveByPaymentId($event->paymentId, $event->tenantId);
+
+            if (null === $customerEmail) {
+                $this->logger->warning('Cannot send refund email: customer email not found', [
+                    'payment_id' => $event->paymentId->toString(),
+                ]);
+
+                return;
+            }
+
             $amountFormatted = number_format($event->refundedAmountInCents / 100, 2);
 
             // Build HTML email
@@ -82,7 +94,7 @@ final readonly class PaymentRefundedSubscriber implements EventSubscriberInterfa
 
             $email = (new Email())
                 ->from(sprintf('%s <%s>', $this->senderName, $this->senderEmail))
-                ->to('customer@example.com') // TODO: Get customer email from order
+                ->to($customerEmail)
                 ->subject('Refund Processed - Your Payment Has Been Refunded')
                 ->html($htmlBody)
                 ->text($textBody);
@@ -91,6 +103,7 @@ final readonly class PaymentRefundedSubscriber implements EventSubscriberInterfa
 
             $this->logger->info('Refund notification email sent', [
                 'payment_id' => $event->paymentId->toString(),
+                'customer_email' => $customerEmail,
             ]);
         } catch (\Throwable $e) {
             // Log email failure but don't throw
