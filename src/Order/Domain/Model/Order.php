@@ -43,6 +43,8 @@ final class Order extends AggregateRoot
     private ?string $taxJurisdiction = null;
     private ?string $taxRuleId = null;
     private float $taxRate = 0.0;
+    private bool $isReverseCharge = false;
+    private ?string $vatNumber = null;
     private \DateTimeImmutable $createdAt;
     private \DateTimeImmutable $updatedAt;
 
@@ -64,6 +66,8 @@ final class Order extends AggregateRoot
         ?string $taxJurisdiction = null,
         ?string $taxRuleId = null,
         float $taxRate = 0.0,
+        bool $isReverseCharge = false,
+        ?string $vatNumber = null,
     ): self {
         if (empty($lines)) {
             throw new \InvalidArgumentException('Order must have at least one line item');
@@ -98,6 +102,8 @@ final class Order extends AggregateRoot
         $order->taxJurisdiction = $taxJurisdiction;
         $order->taxRuleId = $taxRuleId;
         $order->taxRate = $taxRate;
+        $order->isReverseCharge = $isReverseCharge;
+        $order->vatNumber = $vatNumber;
         $order->createdAt = new \DateTimeImmutable();
         $order->updatedAt = new \DateTimeImmutable();
 
@@ -128,6 +134,8 @@ final class Order extends AggregateRoot
         ?string $taxJurisdiction = null,
         ?string $taxRuleId = null,
         float $taxRate = 0.0,
+        bool $isReverseCharge = false,
+        ?string $vatNumber = null,
     ): self {
         $order = new self();
         $order->id = $id;
@@ -144,6 +152,8 @@ final class Order extends AggregateRoot
         $order->taxJurisdiction = $taxJurisdiction;
         $order->taxRuleId = $taxRuleId;
         $order->taxRate = $taxRate;
+        $order->isReverseCharge = $isReverseCharge;
+        $order->vatNumber = $vatNumber;
         $order->createdAt = $createdAt;
         $order->updatedAt = $updatedAt;
 
@@ -275,6 +285,16 @@ final class Order extends AggregateRoot
     public function taxRate(): float
     {
         return $this->taxRate;
+    }
+
+    public function isReverseCharge(): bool
+    {
+        return $this->isReverseCharge;
+    }
+
+    public function vatNumber(): ?string
+    {
+        return $this->vatNumber;
     }
 
     public function id(): OrderId

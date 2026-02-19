@@ -78,6 +78,12 @@ class OrderEntity
     #[ORM\Column(type: 'float', nullable: true, name: 'tax_rate')]
     private ?float $taxRate = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false], name: 'is_reverse_charge')]
+    private bool $isReverseCharge = false;
+
+    #[ORM\Column(type: 'string', length: 20, nullable: true, name: 'vat_number')]
+    private ?string $vatNumber = null;
+
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
@@ -134,6 +140,8 @@ class OrderEntity
         $entity->taxJurisdiction = $order->taxJurisdiction();
         $entity->taxRuleId = $order->taxRuleId();
         $entity->taxRate = $order->taxRate();
+        $entity->isReverseCharge = $order->isReverseCharge();
+        $entity->vatNumber = $order->vatNumber();
 
         $entity->createdAt = $order->createdAt();
         $entity->updatedAt = $order->updatedAt();
@@ -199,6 +207,8 @@ class OrderEntity
         $this->taxJurisdiction = $order->taxJurisdiction();
         $this->taxRuleId = $order->taxRuleId();
         $this->taxRate = $order->taxRate();
+        $this->isReverseCharge = $order->isReverseCharge();
+        $this->vatNumber = $order->vatNumber();
 
         $this->updatedAt = $order->updatedAt();
     }
@@ -257,7 +267,9 @@ class OrderEntity
             $taxAmount,
             $this->taxJurisdiction,
             $this->taxRuleId,
-            $this->taxRate ?? 0.0
+            $this->taxRate ?? 0.0,
+            $this->isReverseCharge,
+            $this->vatNumber,
         );
     }
 
@@ -349,6 +361,16 @@ class OrderEntity
     public function getTaxRate(): ?float
     {
         return $this->taxRate;
+    }
+
+    public function isReverseCharge(): bool
+    {
+        return $this->isReverseCharge;
+    }
+
+    public function getVatNumber(): ?string
+    {
+        return $this->vatNumber;
     }
 
     public function getCustomerEmailBlindIndex(): ?string

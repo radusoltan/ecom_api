@@ -117,12 +117,11 @@ final readonly class PaymentCompletedInvoiceSubscriber implements EventSubscribe
                 'city' => $billingAddress->city(),
                 'postalCode' => $billingAddress->postalCode(),
                 'country' => $billingAddress->country(),
-                'vatNumber' => null, // VAT number not available in Order
+                'vatNumber' => $order->vatNumber(),
             ];
 
-            // Determine if reverse charge applies (B2B cross-border)
-            // For now, default to false as VAT number is not in Order model
-            $isReverseCharge = false;
+            // Determine if reverse charge applies (B2B cross-border EU)
+            $isReverseCharge = $order->isReverseCharge();
 
             // Generate invoice
             $generateCommand = new GenerateInvoiceCommand(
@@ -193,6 +192,13 @@ final readonly class PaymentCompletedInvoiceSubscriber implements EventSubscribe
     private function buildInvoiceNotes(\App\Order\Domain\Model\Order $order): ?string
     {
         $notes = [];
+
+        if ($order->isReverseCharge()) {
+            $notes[] = 'Reverse charge, Art. 196 Dir. 2006/112/EC';
+            if (null !== $order->vatNumber()) {
+                $notes[] = sprintf('Buyer VAT: %s', $order->vatNumber());
+            }
+        }
 
         if (null !== $order->couponCode()) {
             $notes[] = sprintf('Coupon code applied: %s', $order->couponCode());
