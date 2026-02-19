@@ -59,6 +59,7 @@ final class Payment extends AggregateRoot
     private ?string $errorMessage;
     private ?string $errorCode; // Normalized error code for retry logic
     private int $refundedAmountInCents;
+    private ?string $idempotencyKey; // Prevents duplicate payment processing
     private int $retryCount; // Number of retry attempts made (0-indexed)
     private ?\DateTimeImmutable $nextRetryAt; // Scheduled time for next retry
     private \DateTimeImmutable $createdAt;
@@ -76,6 +77,7 @@ final class Payment extends AggregateRoot
         string $currency,
         PaymentMethod $method,
         PaymentGateway $gateway,
+        ?string $idempotencyKey = null,
     ): self {
         self::validateAmount($amountInCents);
         self::validateCurrency($currency);
@@ -92,6 +94,7 @@ final class Payment extends AggregateRoot
         $payment->gatewayTransactionId = null;
         $payment->errorMessage = null;
         $payment->errorCode = null;
+        $payment->idempotencyKey = $idempotencyKey;
         $payment->refundedAmountInCents = 0;
         $payment->retryCount = 0;
         $payment->nextRetryAt = null;
@@ -124,10 +127,11 @@ final class Payment extends AggregateRoot
         int $refundedAmountInCents,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt,
-        // New retry-related fields with defaults for backwards compatibility
+        // Optional fields with defaults for backwards compatibility
         ?string $errorCode = null,
         int $retryCount = 0,
         ?\DateTimeImmutable $nextRetryAt = null,
+        ?string $idempotencyKey = null,
     ): self {
         $payment = new self();
         $payment->id = $id;
@@ -141,6 +145,7 @@ final class Payment extends AggregateRoot
         $payment->gatewayTransactionId = $gatewayTransactionId;
         $payment->errorMessage = $errorMessage;
         $payment->errorCode = $errorCode;
+        $payment->idempotencyKey = $idempotencyKey;
         $payment->refundedAmountInCents = $refundedAmountInCents;
         $payment->retryCount = $retryCount;
         $payment->nextRetryAt = $nextRetryAt;
@@ -441,6 +446,11 @@ final class Payment extends AggregateRoot
     public function errorCode(): ?string
     {
         return $this->errorCode;
+    }
+
+    public function idempotencyKey(): ?string
+    {
+        return $this->idempotencyKey;
     }
 
     public function refundedAmountInCents(): int

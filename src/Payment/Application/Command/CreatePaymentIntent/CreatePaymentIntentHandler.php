@@ -102,7 +102,8 @@ final readonly class CreatePaymentIntentHandler
                 amountInCents: $command->amountInCents,
                 currency: $command->currency,
                 method: PaymentMethod::fromString($command->paymentMethod),
-                gateway: $this->resolveGateway($command->paymentMethod)
+                gateway: $this->resolveGateway($command->paymentMethod),
+                idempotencyKey: $command->idempotencyKey
             );
 
             // Store gateway payment intent ID
@@ -124,7 +125,8 @@ final readonly class CreatePaymentIntentHandler
                     errorMessage: null,
                     refundedAmountInCents: 0,
                     createdAt: $payment->createdAt(),
-                    updatedAt: new \DateTimeImmutable()
+                    updatedAt: new \DateTimeImmutable(),
+                    idempotencyKey: $payment->idempotencyKey()
                 );
             }
 

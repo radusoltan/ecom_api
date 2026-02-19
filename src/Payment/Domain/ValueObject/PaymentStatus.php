@@ -51,7 +51,7 @@ final readonly class PaymentStatus
         self::SUCCEEDED => [self::REFUNDED, self::PARTIALLY_REFUNDED],
         self::REFUNDED => [],
         self::PARTIALLY_REFUNDED => [self::REFUNDED],
-        self::FAILED => [],
+        self::FAILED => [self::AUTHORIZED], // Retry can transition failed -> authorized
         self::CANCELLED => [],
     ];
 

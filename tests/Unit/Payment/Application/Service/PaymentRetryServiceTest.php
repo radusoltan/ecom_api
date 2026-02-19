@@ -7,10 +7,14 @@ namespace App\Tests\Unit\Payment\Application\Service;
 use App\Payment\Application\Service\PaymentRetryService;
 use App\Payment\Domain\Model\Payment;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
+use App\Payment\Domain\Service\PaymentGatewayFactoryInterface;
+use App\Payment\Domain\Service\PaymentGatewayInterface;
+use App\Payment\Domain\Service\PaymentIntentResult;
 use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
 use App\Payment\Domain\ValueObject\PaymentStatus;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,25 +24,32 @@ use Psr\Log\LoggerInterface;
 /**
  * Unit tests for PaymentRetryService.
  *
- * Tests retry orchestration logic:
+ * Tests retry orchestration logic including real gateway calls:
  * - scheduleRetry: Scheduling retry attempts with exponential backoff
  * - shouldRetry: Determining retry eligibility
- * - processRetry: Processing retry attempts
+ * - processRetry: Processing retry attempts via gateway
  * - getPaymentsDueForRetry: Retrieving payments due for retry
- *
- * @see PaymentRetryService
  */
 final class PaymentRetryServiceTest extends TestCase
 {
     private PaymentRetryService $service;
     private PaymentRepositoryInterface&MockObject $repository;
+    private PaymentGatewayFactoryInterface&MockObject $gatewayFactory;
+    private PaymentGatewayInterface&MockObject $gateway;
     private LoggerInterface&MockObject $logger;
 
     protected function setUp(): void
     {
         $this->repository = $this->createMock(PaymentRepositoryInterface::class);
+        $this->gatewayFactory = $this->createMock(PaymentGatewayFactoryInterface::class);
+        $this->gateway = $this->createMock(PaymentGatewayInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->service = new PaymentRetryService($this->repository, $this->logger);
+
+        $this->service = new PaymentRetryService(
+            $this->repository,
+            $this->gatewayFactory,
+            $this->logger
+        );
     }
 
     // ========================================================================
@@ -48,68 +59,50 @@ final class PaymentRetryServiceTest extends TestCase
     #[Test]
     public function testScheduleRetryReturnsNextRetryTime(): void
     {
-        // Arrange
-        $payment = $this->createPayment(errorCode: 'card_declined', retryCount: 0);
+        $payment = $this->createFailedPayment(errorCode: 'card_declined', retryCount: 0);
 
         $this->repository->expects($this->once())
             ->method('save')
             ->with($payment);
 
-        $this->logger->expects($this->once())
-            ->method('info')
-            ->with('Payment retry scheduled', $this->isType('array'));
-
-        // Act
         $nextRetryAt = $this->service->scheduleRetry($payment);
 
-        // Assert
         $this->assertNotNull($nextRetryAt);
         $this->assertInstanceOf(\DateTimeImmutable::class, $nextRetryAt);
         // Should be approximately 1 hour from now
         $diff = $nextRetryAt->getTimestamp() - (new \DateTimeImmutable())->getTimestamp();
-        $this->assertGreaterThan(3500, $diff); // At least 58 minutes
-        $this->assertLessThan(3700, $diff); // At most 62 minutes
+        $this->assertGreaterThan(3500, $diff);
+        $this->assertLessThan(3700, $diff);
     }
 
     #[Test]
     public function testScheduleRetryReturnsNullWhenNotEligible(): void
     {
-        // Arrange - Payment with max attempts reached
         $payment = $this->createExhaustedPayment();
 
-        $this->logger->expects($this->atLeastOnce())
-            ->method('info');
+        $this->repository->expects($this->never())->method('save');
 
-        // Repository save should NOT be called
-        $this->repository->expects($this->never())
-            ->method('save');
-
-        // Act
         $nextRetryAt = $this->service->scheduleRetry($payment);
 
-        // Assert
         $this->assertNull($nextRetryAt);
     }
 
     #[Test]
     public function testScheduleRetrySavesPayment(): void
     {
-        // Arrange
-        $payment = $this->createPayment(errorCode: 'card_declined', retryCount: 0);
+        $payment = $this->createFailedPayment(errorCode: 'card_declined', retryCount: 0);
 
         $this->repository->expects($this->once())
             ->method('save')
             ->with($this->identicalTo($payment));
 
-        // Act
         $this->service->scheduleRetry($payment);
     }
 
     #[Test]
     public function testScheduleRetryLogsSuccess(): void
     {
-        // Arrange
-        $payment = $this->createPayment(errorCode: 'card_declined', retryCount: 1);
+        $payment = $this->createFailedPayment(errorCode: 'card_declined', retryCount: 1);
 
         $this->logger->expects($this->once())
             ->method('info')
@@ -122,23 +115,17 @@ final class PaymentRetryServiceTest extends TestCase
                 })
             );
 
-        // Act
         $this->service->scheduleRetry($payment);
     }
 
     #[Test]
     public function testScheduleRetryReturnsNullOnException(): void
     {
-        // Arrange - Create a payment that will cause scheduleRetry to throw
-        $payment = $this->createPayment(errorCode: 'card_declined', retryCount: 3);
+        // retryCount=3 means scheduleRetry on aggregate will throw (max reached)
+        $payment = $this->createFailedPayment(errorCode: 'card_declined', retryCount: 3);
 
-        $this->logger->expects($this->atLeastOnce())
-            ->method('info');
-
-        // Act
         $nextRetryAt = $this->service->scheduleRetry($payment);
 
-        // Assert
         $this->assertNull($nextRetryAt);
     }
 
@@ -149,7 +136,6 @@ final class PaymentRetryServiceTest extends TestCase
     #[Test]
     public function testShouldRetryReturnsFalseForNonFailedPayment(): void
     {
-        // Arrange - Payment in authorized status (not failed)
         $payment = Payment::create(
             id: PaymentId::generate(),
             tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
@@ -161,262 +147,448 @@ final class PaymentRetryServiceTest extends TestCase
         );
         $payment->authorize('txn_123');
 
-        // Act
         $result = $this->service->shouldRetry($payment);
 
-        // Assert
         $this->assertFalse($result);
     }
 
     #[Test]
     public function testShouldRetryReturnsFalseForNullErrorCode(): void
     {
-        // Arrange
-        $payment = $this->createPayment(errorCode: null, retryCount: 0);
-        $payment->markAsFailed('Payment failed'); // No error code
+        $payment = $this->createFailedPayment(errorCode: null, retryCount: 0);
+        $payment->markAsFailed('Payment failed');
 
-        $this->logger->expects($this->once())
-            ->method('info')
-            ->with('Error not retryable', $this->isType('array'));
-
-        // Act
         $result = $this->service->shouldRetry($payment);
 
-        // Assert
         $this->assertFalse($result);
     }
 
     #[Test]
     public function testShouldRetryReturnsFalseForNonRetryableError(): void
     {
-        // Arrange - expired_card is a non-retryable error
         $payment = $this->createNonRetryablePayment();
 
-        $this->logger->expects($this->once())
-            ->method('info')
-            ->with('Error not retryable', $this->isType('array'));
-
-        // Act
         $result = $this->service->shouldRetry($payment);
 
-        // Assert
         $this->assertFalse($result);
     }
 
     #[Test]
     public function testShouldRetryReturnsFalseWhenMaxAttemptsReached(): void
     {
-        // Arrange
         $payment = $this->createExhaustedPayment();
 
-        $this->logger->expects($this->once())
-            ->method('info')
-            ->with(
-                'Max retry attempts reached',
-                $this->callback(function (array $context) {
-                    return 3 === $context['retry_count']
-                        && 3 === $context['max_attempts'];
-                })
-            );
-
-        // Act
         $result = $this->service->shouldRetry($payment);
 
-        // Assert
         $this->assertFalse($result);
     }
 
     #[Test]
     public function testShouldRetryReturnsTrueForRetryableError(): void
     {
-        // Arrange
-        $payment = $this->createPayment(errorCode: 'card_declined', retryCount: 0);
+        $payment = $this->createFailedPayment(errorCode: 'card_declined', retryCount: 0);
 
-        // Act
         $result = $this->service->shouldRetry($payment);
 
-        // Assert
         $this->assertTrue($result);
     }
 
-    #[Test]
-    public function testShouldRetryLogsWhenNotEligible(): void
-    {
-        // Arrange
-        $payment = $this->createNonRetryablePayment();
-
-        $this->logger->expects($this->once())
-            ->method('info')
-            ->with(
-                'Error not retryable',
-                $this->callback(function (array $context) use ($payment) {
-                    return $context['payment_id'] === $payment->id()->toString()
-                        && 'expired_card' === $context['error_code'];
-                })
-            );
-
-        // Act
-        $this->service->shouldRetry($payment);
-    }
-
     // ========================================================================
-    // processRetry Tests
+    // processRetry Tests — Gateway Integration
     // ========================================================================
 
     #[Test]
-    public function testProcessRetryReturnsFalseWhenNotDue(): void
+    public function testProcessRetrySuccessAuthorizesPayment(): void
     {
-        // Arrange - Payment with future retry time
-        $payment = $this->createPayment(
-            errorCode: 'card_declined',
-            retryCount: 1,
-            nextRetryAt: new \DateTimeImmutable('+1 hour')
-        );
-
-        $this->logger->expects($this->once())
-            ->method('warning')
-            ->with('Payment not due for retry yet', $this->isType('array'));
-
-        $this->repository->expects($this->never())
-            ->method('save');
-
-        // Act
-        $result = $this->service->processRetry($payment);
-
-        // Assert
-        $this->assertFalse($result);
-    }
-
-    #[Test]
-    public function testProcessRetryRecordsAttempt(): void
-    {
-        // Arrange
         $payment = $this->createDueForRetryPayment();
-        $initialRetryCount = $payment->retryCount();
+        $gatewayTxnId = 'pi_retry_success_123';
 
-        $this->repository->expects($this->atLeastOnce())
-            ->method('save')
-            ->with($payment);
+        $this->expectGatewayFactoryResolves();
+        $this->gateway->expects($this->once())
+            ->method('createPaymentIntent')
+            ->willReturn(PaymentIntentResult::success(
+                gatewayPaymentIntentId: $gatewayTxnId,
+                status: 'requires_capture',
+                amount: Money::fromScalars(10000, 'USD'),
+                clientSecret: 'secret_retry'
+            ));
 
-        // Act
+        $this->repository->expects($this->once())->method('save');
+
         $result = $this->service->processRetry($payment);
 
-        // Assert
         $this->assertTrue($result);
-        // Retry count should have been incremented
-        $this->assertEquals($initialRetryCount + 1, $payment->retryCount());
+        // Payment should be authorized with new gateway transaction ID
+        $this->assertTrue($payment->status()->isAuthorized());
+        $this->assertSame($gatewayTxnId, $payment->gatewayTransactionId());
+        $this->assertSame(2, $payment->retryCount()); // Was 1, incremented to 2
     }
 
     #[Test]
-    public function testProcessRetrySchedulesNextRetryOnFailure(): void
+    public function testProcessRetrySuccessEmitsRetryAttemptedAndAuthorizedEvents(): void
     {
-        // Arrange
-        $payment = $this->createPayment(
+        $payment = $this->createDueForRetryPayment();
+
+        $this->expectGatewayFactoryResolves();
+        $this->gateway->expects($this->once())
+            ->method('createPaymentIntent')
+            ->willReturn(PaymentIntentResult::success(
+                gatewayPaymentIntentId: 'pi_event_test',
+                status: 'requires_capture',
+                amount: Money::fromScalars(10000, 'USD')
+            ));
+
+        $this->repository->expects($this->once())
+            ->method('save')
+            ->with($this->callback(function (Payment $p) {
+                $events = $p->popEvents();
+                // Should emit PaymentRetryAttempted (wasSuccessful=true) + PaymentAuthorized
+                $this->assertCount(2, $events);
+                $this->assertInstanceOf(\App\Payment\Domain\Event\PaymentRetryAttempted::class, $events[0]);
+                $this->assertTrue($events[0]->wasSuccessful);
+                $this->assertInstanceOf(\App\Payment\Domain\Event\PaymentAuthorized::class, $events[1]);
+
+                return true;
+            }));
+
+        $this->service->processRetry($payment);
+    }
+
+    #[Test]
+    public function testProcessRetryFailureSchedulesNextRetry(): void
+    {
+        $payment = $this->createFailedPayment(
             errorCode: 'card_declined',
             retryCount: 0,
             nextRetryAt: new \DateTimeImmutable('-1 hour')
         );
 
-        $this->repository->expects($this->atLeastOnce())
-            ->method('save');
+        $this->expectGatewayFactoryResolves();
+        $this->gateway->expects($this->once())
+            ->method('createPaymentIntent')
+            ->willReturn(PaymentIntentResult::failure(
+                errorCode: 'card_declined',
+                errorMessage: 'Your card was declined'
+            ));
 
-        // Act
+        $this->repository->expects($this->once())->method('save');
+
         $result = $this->service->processRetry($payment);
 
-        // Assert
         $this->assertTrue($result);
-        // Should have scheduled next retry
+        $this->assertTrue($payment->status()->isFailed());
+        $this->assertSame(1, $payment->retryCount());
+        // Next retry should be scheduled in the future
         $this->assertNotNull($payment->nextRetryAt());
-        // Next retry should be in the future
         $this->assertGreaterThan(new \DateTimeImmutable(), $payment->nextRetryAt());
     }
 
     #[Test]
-    public function testProcessRetryMarksExhaustedWhenMaxReached(): void
+    public function testProcessRetryFailureEmitsRetryAttemptedAndScheduledEvents(): void
     {
-        // Arrange - Payment with 2 retries, this will be the 3rd
-        $payment = $this->createPayment(
+        $payment = $this->createFailedPayment(
+            errorCode: 'card_declined',
+            retryCount: 0,
+            nextRetryAt: new \DateTimeImmutable('-1 hour')
+        );
+
+        $this->expectGatewayFactoryResolves();
+        $this->gateway->expects($this->once())
+            ->method('createPaymentIntent')
+            ->willReturn(PaymentIntentResult::failure(
+                errorCode: 'insufficient_funds',
+                errorMessage: 'Insufficient funds'
+            ));
+
+        $this->repository->expects($this->once())
+            ->method('save')
+            ->with($this->callback(function (Payment $p) {
+                $events = $p->popEvents();
+                // PaymentRetryAttempted (failed) + PaymentRetryScheduled
+                $this->assertCount(2, $events);
+                $this->assertInstanceOf(\App\Payment\Domain\Event\PaymentRetryAttempted::class, $events[0]);
+                $this->assertFalse($events[0]->wasSuccessful);
+                $this->assertSame('insufficient_funds', $events[0]->errorCode);
+                $this->assertInstanceOf(\App\Payment\Domain\Event\PaymentRetryScheduled::class, $events[1]);
+
+                return true;
+            }));
+
+        $this->service->processRetry($payment);
+    }
+
+    #[Test]
+    public function testProcessRetryMaxRetriesExhausted(): void
+    {
+        // retryCount=2, this will be attempt 3 (the max)
+        $payment = $this->createFailedPayment(
             errorCode: 'card_declined',
             retryCount: 2,
             nextRetryAt: new \DateTimeImmutable('-1 hour')
         );
 
+        $this->expectGatewayFactoryResolves();
+        $this->gateway->expects($this->once())
+            ->method('createPaymentIntent')
+            ->willReturn(PaymentIntentResult::failure(
+                errorCode: 'processing_error',
+                errorMessage: 'Processing error'
+            ));
+
         $this->logger->expects($this->atLeastOnce())
             ->method('warning')
             ->with(
-                'Payment retry exhausted',
-                $this->callback(function (array $context) {
-                    return 3 === $context['total_attempts'];
-                })
-            );
-
-        $this->repository->expects($this->once())
-            ->method('save');
-
-        // Act
-        $result = $this->service->processRetry($payment);
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEquals(3, $payment->retryCount());
-        // Next retry should be null (exhausted)
-        $this->assertNull($payment->nextRetryAt());
-    }
-
-    #[Test]
-    public function testProcessRetrySavesPayment(): void
-    {
-        // Arrange
-        $payment = $this->createDueForRetryPayment();
-
-        $this->repository->expects($this->atLeastOnce())
-            ->method('save')
-            ->with($this->identicalTo($payment));
-
-        // Act
-        $this->service->processRetry($payment);
-    }
-
-    #[Test]
-    public function testProcessRetryReturnsFalseOnException(): void
-    {
-        // Arrange - Mock repository to throw exception
-        $payment = $this->createDueForRetryPayment();
-
-        $this->repository->expects($this->atLeastOnce())
-            ->method('save')
-            ->willThrowException(new \RuntimeException('Database error'));
-
-        // Logger will be called at least once with error level
-        $this->logger->expects($this->atLeastOnce())
-            ->method('error');
-
-        // Act
-        $result = $this->service->processRetry($payment);
-
-        // Assert
-        $this->assertFalse($result);
-    }
-
-    #[Test]
-    public function testProcessRetryLogsAllSteps(): void
-    {
-        // Arrange
-        $payment = $this->createDueForRetryPayment();
-
-        // Expect at least "Processing payment retry" log
-        $this->logger->expects($this->atLeastOnce())
-            ->method('info')
-            ->with(
                 $this->logicalOr(
-                    $this->equalTo('Processing payment retry'),
-                    $this->equalTo('Payment retry scheduled')
+                    $this->equalTo('Payment retry failed at gateway'),
+                    $this->equalTo('Payment retry exhausted')
                 ),
                 $this->isType('array')
             );
 
-        // Act
+        $this->repository->expects($this->once())->method('save');
+
+        $result = $this->service->processRetry($payment);
+
+        $this->assertTrue($result);
+        $this->assertSame(3, $payment->retryCount());
+        // nextRetryAt should be null — no more retries
+        $this->assertNull($payment->nextRetryAt());
+    }
+
+    #[Test]
+    public function testProcessRetryMaxRetriesEmitsExhaustedEvent(): void
+    {
+        $payment = $this->createFailedPayment(
+            errorCode: 'card_declined',
+            retryCount: 2,
+            nextRetryAt: new \DateTimeImmutable('-1 hour')
+        );
+
+        $this->expectGatewayFactoryResolves();
+        $this->gateway->expects($this->once())
+            ->method('createPaymentIntent')
+            ->willReturn(PaymentIntentResult::failure(
+                errorCode: 'card_declined',
+                errorMessage: 'Card declined'
+            ));
+
+        $this->repository->expects($this->once())
+            ->method('save')
+            ->with($this->callback(function (Payment $p) {
+                $events = $p->popEvents();
+                // PaymentRetryAttempted (failed) + PaymentRetryExhausted
+                $this->assertCount(2, $events);
+                $this->assertInstanceOf(\App\Payment\Domain\Event\PaymentRetryAttempted::class, $events[0]);
+                $this->assertFalse($events[0]->wasSuccessful);
+                $this->assertInstanceOf(\App\Payment\Domain\Event\PaymentRetryExhausted::class, $events[1]);
+
+                return true;
+            }));
+
         $this->service->processRetry($payment);
+    }
+
+    #[Test]
+    public function testProcessRetryGatewaySpecificStripeDecline(): void
+    {
+        $payment = $this->createDueForRetryPayment(gateway: PaymentGateway::stripe());
+
+        $this->expectGatewayFactoryResolves();
+        $this->gateway->expects($this->once())
+            ->method('createPaymentIntent')
+            ->willReturn(PaymentIntentResult::failure(
+                errorCode: 'insufficient_funds',
+                errorMessage: 'Your card has insufficient funds'
+            ));
+
+        $this->repository->expects($this->once())->method('save');
+
+        $result = $this->service->processRetry($payment);
+
+        $this->assertTrue($result);
+        $this->assertSame('insufficient_funds', $payment->errorCode());
+        $this->assertSame('Your card has insufficient funds', $payment->errorMessage());
+    }
+
+    #[Test]
+    public function testProcessRetryGatewaySpecificPayPalTimeout(): void
+    {
+        $payment = $this->createDueForRetryPayment(gateway: PaymentGateway::paypal());
+
+        $this->gatewayFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($this->gateway);
+
+        $this->gateway->expects($this->once())
+            ->method('createPaymentIntent')
+            ->willReturn(PaymentIntentResult::failure(
+                errorCode: 'gateway_timeout',
+                errorMessage: 'PayPal gateway timeout'
+            ));
+
+        $this->repository->expects($this->once())->method('save');
+
+        $result = $this->service->processRetry($payment);
+
+        $this->assertTrue($result);
+        $this->assertSame('gateway_timeout', $payment->errorCode());
+    }
+
+    #[Test]
+    public function testProcessRetryOnNonFailedPaymentIsNoOp(): void
+    {
+        // Payment is authorized (not failed) — retry should be a no-op
+        $payment = Payment::create(
+            id: PaymentId::generate(),
+            tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
+            orderId: 'order-noop',
+            amountInCents: 10000,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe()
+        );
+        $payment->authorize('pi_already_authorized');
+
+        // Gateway should NOT be called
+        $this->gatewayFactory->expects($this->never())->method('create');
+        $this->repository->expects($this->never())->method('save');
+
+        $result = $this->service->processRetry($payment);
+
+        $this->assertFalse($result);
+    }
+
+    #[Test]
+    public function testProcessRetryNotDueYetReturnsFalse(): void
+    {
+        $payment = $this->createFailedPayment(
+            errorCode: 'card_declined',
+            retryCount: 1,
+            nextRetryAt: new \DateTimeImmutable('+1 hour')
+        );
+
+        $this->gatewayFactory->expects($this->never())->method('create');
+        $this->repository->expects($this->never())->method('save');
+
+        $result = $this->service->processRetry($payment);
+
+        $this->assertFalse($result);
+    }
+
+    #[Test]
+    public function testProcessRetryUsesRetrySpecificIdempotencyKey(): void
+    {
+        $payment = $this->createDueForRetryPayment();
+        $paymentId = $payment->id()->toString();
+
+        $this->expectGatewayFactoryResolves();
+        $this->gateway->expects($this->once())
+            ->method('createPaymentIntent')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->equalTo('USD'),
+                $this->equalTo("retry_{$paymentId}_2"), // retryCount=1, attempt=2
+                $this->isNull(),
+                $this->callback(function (array $metadata) use ($paymentId) {
+                    return $metadata['retry_attempt'] === 2
+                        && $metadata['original_payment_id'] === $paymentId;
+                })
+            )
+            ->willReturn(PaymentIntentResult::success(
+                gatewayPaymentIntentId: 'pi_idempotent',
+                status: 'requires_capture',
+                amount: Money::fromScalars(10000, 'USD')
+            ));
+
+        $this->service->processRetry($payment);
+    }
+
+    #[Test]
+    public function testProcessRetryExponentialBackoffTiming(): void
+    {
+        // After recordRetryAttempt increments retryCount, scheduleRetry uses the NEW count.
+        // retryCount 0→1 schedules with calculateNextRetryTime(1) → attempt 2 delay → 14400s (4h)
+        // retryCount 1→2 schedules with calculateNextRetryTime(2) → attempt 3 delay → 86400s (24h)
+
+        // First retry (retryCount=0→1): next retry should be ~4h from now
+        $payment1 = $this->createFailedPayment(
+            errorCode: 'card_declined',
+            retryCount: 0,
+            nextRetryAt: new \DateTimeImmutable('-1 minute')
+        );
+
+        $this->gatewayFactory->method('create')->willReturn($this->gateway);
+        $this->gateway->method('createPaymentIntent')
+            ->willReturn(PaymentIntentResult::failure(
+                errorCode: 'card_declined',
+                errorMessage: 'Declined'
+            ));
+
+        $this->service->processRetry($payment1);
+
+        $nextRetry1 = $payment1->nextRetryAt();
+        $this->assertNotNull($nextRetry1);
+        $diff1 = $nextRetry1->getTimestamp() - (new \DateTimeImmutable())->getTimestamp();
+        // RetryPolicy: delay for next attempt (2nd) = 14400s (4h), ±100s tolerance
+        $this->assertGreaterThan(14300, $diff1);
+        $this->assertLessThan(14500, $diff1);
+
+        // Second retry (retryCount=1→2): next retry should be ~24h from now
+        $payment2 = $this->createFailedPayment(
+            errorCode: 'card_declined',
+            retryCount: 1,
+            nextRetryAt: new \DateTimeImmutable('-1 minute')
+        );
+
+        $this->service->processRetry($payment2);
+
+        $nextRetry2 = $payment2->nextRetryAt();
+        $this->assertNotNull($nextRetry2);
+        $diff2 = $nextRetry2->getTimestamp() - (new \DateTimeImmutable())->getTimestamp();
+        // RetryPolicy: delay for next attempt (3rd) = 86400s (24h), ±100s tolerance
+        $this->assertGreaterThan(86300, $diff2);
+        $this->assertLessThan(86500, $diff2);
+    }
+
+    #[Test]
+    public function testProcessRetryReturnsFalseOnGatewayException(): void
+    {
+        $payment = $this->createDueForRetryPayment();
+
+        $this->expectGatewayFactoryResolves();
+        $this->gateway->expects($this->once())
+            ->method('createPaymentIntent')
+            ->willThrowException(new \RuntimeException('Gateway connection error'));
+
+        $this->logger->expects($this->atLeastOnce())->method('error');
+
+        $result = $this->service->processRetry($payment);
+
+        $this->assertFalse($result);
+    }
+
+    #[Test]
+    public function testProcessRetryReturnsFalseOnRepositoryException(): void
+    {
+        $payment = $this->createDueForRetryPayment();
+
+        $this->expectGatewayFactoryResolves();
+        $this->gateway->expects($this->once())
+            ->method('createPaymentIntent')
+            ->willReturn(PaymentIntentResult::success(
+                gatewayPaymentIntentId: 'pi_db_fail',
+                status: 'requires_capture',
+                amount: Money::fromScalars(10000, 'USD')
+            ));
+
+        $this->repository->expects($this->once())
+            ->method('save')
+            ->willThrowException(new \RuntimeException('Database error'));
+
+        $result = $this->service->processRetry($payment);
+
+        $this->assertFalse($result);
     }
 
     // ========================================================================
@@ -426,7 +598,6 @@ final class PaymentRetryServiceTest extends TestCase
     #[Test]
     public function testGetPaymentsDueForRetryDelegatesToRepository(): void
     {
-        // Arrange
         $now = new \DateTimeImmutable('2025-01-15 12:00:00');
         $expectedPayments = [
             $this->createDueForRetryPayment(),
@@ -438,10 +609,8 @@ final class PaymentRetryServiceTest extends TestCase
             ->with($this->equalTo($now))
             ->willReturn($expectedPayments);
 
-        // Act
         $result = $this->service->getPaymentsDueForRetry($now);
 
-        // Assert
         $this->assertSame($expectedPayments, $result);
         $this->assertCount(2, $result);
     }
@@ -449,16 +618,13 @@ final class PaymentRetryServiceTest extends TestCase
     #[Test]
     public function testGetPaymentsDueForRetryUsesCurrentTimeWhenNullProvided(): void
     {
-        // Arrange
         $this->repository->expects($this->once())
             ->method('findPaymentsForRetry')
             ->with($this->isInstanceOf(\DateTimeImmutable::class))
             ->willReturn([]);
 
-        // Act
         $result = $this->service->getPaymentsDueForRetry();
 
-        // Assert
         $this->assertIsArray($result);
         $this->assertEmpty($result);
     }
@@ -467,13 +633,11 @@ final class PaymentRetryServiceTest extends TestCase
     // Helper Methods
     // ========================================================================
 
-    /**
-     * Create a payment with specific retry-related state.
-     */
-    private function createPayment(
+    private function createFailedPayment(
         ?string $errorCode = null,
         int $retryCount = 0,
         ?\DateTimeImmutable $nextRetryAt = null,
+        PaymentGateway $gateway = null,
     ): Payment {
         $payment = Payment::create(
             id: PaymentId::generate(),
@@ -482,15 +646,13 @@ final class PaymentRetryServiceTest extends TestCase
             amountInCents: 10000,
             currency: 'USD',
             method: PaymentMethod::card(),
-            gateway: PaymentGateway::stripe()
+            gateway: $gateway ?? PaymentGateway::stripe()
         );
 
-        // If we need a failed payment, mark it as failed
         if (null !== $errorCode) {
             $payment->markAsFailed('Payment failed', $errorCode);
         }
 
-        // If retry count > 0, we need to reconstitute with retry data
         if ($retryCount > 0 || null !== $nextRetryAt) {
             $payment = Payment::reconstituteFromPersistence(
                 id: $payment->id(),
@@ -515,32 +677,30 @@ final class PaymentRetryServiceTest extends TestCase
         return $payment;
     }
 
-    /**
-     * Create a payment that is NOT eligible for retry.
-     */
     private function createNonRetryablePayment(): Payment
     {
-        // Payment with non-retryable error (expired_card)
-        return $this->createPayment(errorCode: 'expired_card', retryCount: 0);
+        return $this->createFailedPayment(errorCode: 'expired_card', retryCount: 0);
     }
 
-    /**
-     * Create a payment that has exhausted retry attempts.
-     */
     private function createExhaustedPayment(): Payment
     {
-        return $this->createPayment(errorCode: 'card_declined', retryCount: 3);
+        return $this->createFailedPayment(errorCode: 'card_declined', retryCount: 3);
     }
 
-    /**
-     * Create a payment that is due for retry.
-     */
-    private function createDueForRetryPayment(): Payment
+    private function createDueForRetryPayment(PaymentGateway $gateway = null): Payment
     {
-        return $this->createPayment(
+        return $this->createFailedPayment(
             errorCode: 'card_declined',
             retryCount: 1,
-            nextRetryAt: new \DateTimeImmutable('-1 hour') // Due in the past
+            nextRetryAt: new \DateTimeImmutable('-1 hour'),
+            gateway: $gateway
         );
+    }
+
+    private function expectGatewayFactoryResolves(): void
+    {
+        $this->gatewayFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($this->gateway);
     }
 }

@@ -220,12 +220,12 @@ final class PaymentStatusTest extends TestCase
         $this->assertFalse($refunded->canTransitionTo(PaymentStatus::cancelled()));
     }
 
-    public function testFailedCannotTransitionToAnyStatus(): void
+    public function testFailedCanTransitionToAuthorizedOnly(): void
     {
         $failed = PaymentStatus::failed();
 
         $this->assertFalse($failed->canTransitionTo(PaymentStatus::pending()));
-        $this->assertFalse($failed->canTransitionTo(PaymentStatus::authorized()));
+        $this->assertTrue($failed->canTransitionTo(PaymentStatus::authorized())); // Retry flow
         $this->assertFalse($failed->canTransitionTo(PaymentStatus::captured()));
         $this->assertFalse($failed->canTransitionTo(PaymentStatus::refunded()));
         $this->assertFalse($failed->canTransitionTo(PaymentStatus::cancelled()));

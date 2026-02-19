@@ -71,13 +71,14 @@ final class CreatePaymentIntentHandlerTest extends TestCase
                 clientSecret: 'pi_123abc_secret_xyz'
             ));
 
-        // Payment should be saved
+        // Payment should be saved with idempotency key
         $this->paymentRepository->expects($this->once())
             ->method('save')
-            ->with($this->callback(function (Payment $payment) use ($orderId, $amountInCents, $currency) {
+            ->with($this->callback(function (Payment $payment) use ($orderId, $amountInCents, $currency, $idempotencyKey) {
                 return $payment->orderId() === $orderId
                     && $payment->amountInCents() === $amountInCents
-                    && $payment->currency() === $currency;
+                    && $payment->currency() === $currency
+                    && $payment->idempotencyKey() === $idempotencyKey;
             }));
 
         // Act

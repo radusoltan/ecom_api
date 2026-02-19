@@ -134,15 +134,21 @@ final class PaymentTest extends TestCase
         $payment->authorize('');
     }
 
-    public function testAuthorizeFailedPaymentThrowsException(): void
+    public function testAuthorizeFailedPaymentSucceedsForRetry(): void
     {
         $payment = $this->createPendingPayment();
         $payment->markAsFailed('Card declined');
+        $payment->popEvents(); // Clear failed event
 
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot authorize payment in status: failed');
+        // failed -> authorized is valid (enables retry flow)
+        $payment->authorize('pi_retry_abc123xyz');
 
-        $payment->authorize('pi_abc123xyz');
+        $this->assertTrue($payment->status()->isAuthorized());
+        $this->assertSame('pi_retry_abc123xyz', $payment->gatewayTransactionId());
+
+        $events = $payment->popEvents();
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf(PaymentAuthorized::class, $events[0]);
     }
 
     public function testCapturePayment(): void
@@ -593,6 +599,114 @@ final class PaymentTest extends TestCase
         $payment->markAsFailed('Card declined', 'card_declined');
 
         $this->assertFalse($payment->isDueForRetry());
+    }
+
+    // ========================================
+    // Idempotency Key Tests
+    // ========================================
+
+    public function testCreatePaymentWithIdempotencyKey(): void
+    {
+        $idempotencyKey = 'idem_' . bin2hex(random_bytes(16));
+
+        $payment = Payment::create(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe(),
+            idempotencyKey: $idempotencyKey
+        );
+
+        $this->assertSame($idempotencyKey, $payment->idempotencyKey());
+    }
+
+    public function testCreatePaymentWithoutIdempotencyKeyDefaultsToNull(): void
+    {
+        $payment = Payment::create(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe()
+        );
+
+        $this->assertNull($payment->idempotencyKey());
+    }
+
+    public function testReconstituteFromPersistencePreservesIdempotencyKey(): void
+    {
+        $idempotencyKey = 'idem_reconstitute_test';
+
+        $payment = Payment::reconstituteFromPersistence(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe(),
+            status: PaymentStatus::pending(),
+            gatewayTransactionId: null,
+            errorMessage: null,
+            refundedAmountInCents: 0,
+            createdAt: new \DateTimeImmutable(),
+            updatedAt: new \DateTimeImmutable(),
+            idempotencyKey: $idempotencyKey
+        );
+
+        $this->assertSame($idempotencyKey, $payment->idempotencyKey());
+    }
+
+    public function testReconstituteFromPersistenceWithNullIdempotencyKey(): void
+    {
+        $payment = Payment::reconstituteFromPersistence(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: 9999,
+            currency: 'USD',
+            method: PaymentMethod::card(),
+            gateway: PaymentGateway::stripe(),
+            status: PaymentStatus::pending(),
+            gatewayTransactionId: null,
+            errorMessage: null,
+            refundedAmountInCents: 0,
+            createdAt: new \DateTimeImmutable(),
+            updatedAt: new \DateTimeImmutable()
+        );
+
+        $this->assertNull($payment->idempotencyKey());
+    }
+
+    public function testReconstituteBackwardCompatibilityWithoutIdempotencyKey(): void
+    {
+        // Calling without the idempotencyKey parameter should work (backward compat)
+        $payment = Payment::reconstituteFromPersistence(
+            id: $this->paymentId,
+            tenantId: $this->tenantId,
+            orderId: $this->orderId,
+            amountInCents: 5000,
+            currency: 'EUR',
+            method: PaymentMethod::paypal(),
+            gateway: PaymentGateway::paypal(),
+            status: PaymentStatus::captured(),
+            gatewayTransactionId: 'pp_test_123',
+            errorMessage: null,
+            refundedAmountInCents: 0,
+            createdAt: new \DateTimeImmutable(),
+            updatedAt: new \DateTimeImmutable(),
+            errorCode: null,
+            retryCount: 0,
+            nextRetryAt: null
+        );
+
+        $this->assertNull($payment->idempotencyKey());
+        $this->assertTrue($payment->status()->isCaptured());
     }
 
     // ========================================

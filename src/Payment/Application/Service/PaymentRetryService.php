@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace App\Payment\Application\Service;
 
 use App\Payment\Domain\Model\Payment;
+use App\Payment\Domain\Model\PaymentId as ModelPaymentId;
+use App\Payment\Domain\Model\PaymentMethod as PaymentMethodEnum;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
+use App\Payment\Domain\Service\PaymentGatewayFactoryInterface;
 use App\Payment\Domain\ValueObject\RetryPolicy;
+use App\Shared\Domain\ValueObject\Money;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -15,14 +19,22 @@ use Psr\Log\LoggerInterface;
  * Orchestrates payment retry logic:
  * - Determines if a failed payment should be retried
  * - Schedules retry attempts with exponential backoff
+ * - Calls the actual payment gateway to retry authorization
  * - Tracks retry count and next retry time
  * - Marks retries as exhausted when max attempts reached
  *
  * Business Rules:
- * - Maximum 3 retry attempts
+ * - Maximum 3 retry attempts (configurable via RetryPolicy)
  * - Exponential backoff: 1h, 4h, 24h
- * - Only retry transient errors
- * - Stop retrying after max attempts
+ * - Only retry transient errors (card_declined, insufficient_funds, etc.)
+ * - Never retry permanent errors (expired_card, fraudulent, etc.)
+ * - Idempotency keys prevent duplicate charges on retry
+ *
+ * Domain Events Emitted:
+ * - PaymentRetryAttempted: On every retry attempt (success or failure)
+ * - PaymentRetryScheduled: When next retry is scheduled
+ * - PaymentRetryExhausted: When all retry attempts have been exhausted
+ * - PaymentAuthorized: When a retry succeeds and payment is authorized
  */
 final readonly class PaymentRetryService
 {
@@ -30,6 +42,7 @@ final readonly class PaymentRetryService
 
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
+        private PaymentGatewayFactoryInterface $gatewayFactory,
         private LoggerInterface $logger,
     ) {
         $this->retryPolicy = RetryPolicy::default();
@@ -121,8 +134,12 @@ final readonly class PaymentRetryService
     /**
      * Process a retry for a payment.
      *
-     * This method attempts to reprocess the payment through the gateway.
-     * It should be called by the console command when a retry is due.
+     * Calls the actual payment gateway to retry authorization:
+     * 1. Validates payment is due for retry and still in failed status
+     * 2. Resolves the correct gateway adapter (Stripe, PayPal)
+     * 3. Creates a new payment intent with retry-specific idempotency key
+     * 4. On success: authorizes payment with new gateway transaction ID
+     * 5. On failure: records error, schedules next retry or marks exhausted
      *
      * @param Payment $payment Payment to retry
      *
@@ -131,7 +148,17 @@ final readonly class PaymentRetryService
     public function processRetry(Payment $payment): bool
     {
         try {
-            // Check if payment is due for retry
+            // Guard: payment must still be in failed status
+            if (!$payment->status()->isFailed()) {
+                $this->logger->info('Payment no longer in failed status, skipping retry', [
+                    'payment_id' => $payment->id()->toString(),
+                    'current_status' => $payment->status()->value(),
+                ]);
+
+                return false;
+            }
+
+            // Guard: payment must be due for retry
             if (!$payment->isDueForRetry()) {
                 $this->logger->warning('Payment not due for retry yet', [
                     'payment_id' => $payment->id()->toString(),
@@ -141,46 +168,76 @@ final readonly class PaymentRetryService
                 return false;
             }
 
+            $attemptNumber = $payment->retryCount() + 1;
             $this->logger->info('Processing payment retry', [
                 'payment_id' => $payment->id()->toString(),
-                'attempt_number' => $payment->retryCount() + 1,
+                'attempt_number' => $attemptNumber,
+                'gateway' => $payment->gateway()->value(),
             ]);
 
-            // TODO: Actual payment gateway retry logic would go here
-            // For now, this is a placeholder that simulates retry
-            // In real implementation:
-            // 1. Call payment gateway to retry authorization/capture
-            // 2. Handle gateway response
-            // 3. Update payment based on result
+            // Resolve the correct gateway adapter
+            $gatewayMethod = PaymentMethodEnum::from($payment->gateway()->value());
+            $gateway = $this->gatewayFactory->create($gatewayMethod);
 
-            // Simulate retry result (for demonstration)
-            $wasSuccessful = false; // This would come from gateway response
-            $errorCode = $payment->errorCode(); // This would come from gateway
-            $errorMessage = $payment->errorMessage(); // This would come from gateway
+            // Build retry-specific idempotency key to prevent duplicate charges
+            $idempotencyKey = sprintf('retry_%s_%d', $payment->id()->toString(), $attemptNumber);
 
-            // Record the retry attempt
-            $payment->recordRetryAttempt($wasSuccessful, $errorCode, $errorMessage);
+            // Call the gateway to create a new payment intent
+            $gatewayResult = $gateway->createPaymentIntent(
+                paymentId: ModelPaymentId::generate(),
+                amount: Money::fromScalars($payment->amountInCents(), $payment->currency()),
+                currency: $payment->currency(),
+                idempotencyKey: $idempotencyKey,
+                metadata: [
+                    'tenant_id' => $payment->tenantId()->toString(),
+                    'order_id' => $payment->orderId(),
+                    'retry_attempt' => $attemptNumber,
+                    'original_payment_id' => $payment->id()->toString(),
+                ]
+            );
 
-            // If retry failed and max attempts reached, mark as exhausted
-            // @phpstan-ignore-next-line booleanNot.alwaysTrue (placeholder until gateway integration)
-            if (!$wasSuccessful && $payment->retryCount() >= $this->retryPolicy->maxAttempts()) {
-                $payment->markRetryExhausted($this->retryPolicy);
+            if ($gatewayResult->success) {
+                // Retry succeeded — record attempt and authorize payment
+                $payment->recordRetryAttempt(wasSuccessful: true);
+                $payment->authorize($gatewayResult->gatewayPaymentIntentId);
 
-                $this->logger->warning('Payment retry exhausted', [
-                    'payment_id' => $payment->id()->toString(),
-                    'total_attempts' => $payment->retryCount(),
-                ]);
-            // @phpstan-ignore-next-line booleanNot.alwaysTrue (placeholder until gateway integration)
-            } elseif (!$wasSuccessful) {
-                // Schedule next retry
-                $this->scheduleRetry($payment);
-            } else {
-                // Retry succeeded - update payment status
-                // TODO: Transition payment to authorized or captured based on gateway response
                 $this->logger->info('Payment retry successful', [
                     'payment_id' => $payment->id()->toString(),
                     'attempt_number' => $payment->retryCount(),
+                    'gateway_transaction_id' => $gatewayResult->gatewayPaymentIntentId,
                 ]);
+            } else {
+                // Retry failed — record the gateway error
+                $payment->recordRetryAttempt(
+                    wasSuccessful: false,
+                    errorCode: $gatewayResult->errorCode,
+                    errorMessage: $gatewayResult->errorMessage
+                );
+
+                $this->logger->warning('Payment retry failed at gateway', [
+                    'payment_id' => $payment->id()->toString(),
+                    'attempt_number' => $payment->retryCount(),
+                    'error_code' => $gatewayResult->errorCode,
+                    'error_message' => $gatewayResult->errorMessage,
+                ]);
+
+                if ($payment->retryCount() >= $this->retryPolicy->maxAttempts()) {
+                    // All retries exhausted
+                    $payment->markRetryExhausted($this->retryPolicy);
+
+                    $this->logger->warning('Payment retry exhausted', [
+                        'payment_id' => $payment->id()->toString(),
+                        'total_attempts' => $payment->retryCount(),
+                    ]);
+                } else {
+                    // Schedule next retry with exponential backoff
+                    $payment->scheduleRetry($this->retryPolicy);
+
+                    $this->logger->info('Next retry scheduled', [
+                        'payment_id' => $payment->id()->toString(),
+                        'next_retry_at' => $payment->nextRetryAt()?->format('Y-m-d H:i:s'),
+                    ]);
+                }
             }
 
             $this->paymentRepository->save($payment);
@@ -207,14 +264,6 @@ final readonly class PaymentRetryService
     public function getPaymentsDueForRetry(?\DateTimeImmutable $now = null): array
     {
         $now = $now ?? new \DateTimeImmutable();
-
-        // TODO: This should use a repository method to efficiently query payments
-        // For now, we'll document the expected query:
-        // SELECT * FROM payments
-        // WHERE status = 'failed'
-        //   AND next_retry_at IS NOT NULL
-        //   AND next_retry_at <= :now
-        //   AND retry_count < :max_attempts
 
         return $this->paymentRepository->findPaymentsForRetry($now);
     }

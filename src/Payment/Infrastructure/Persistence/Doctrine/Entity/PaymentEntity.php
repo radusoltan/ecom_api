@@ -100,6 +100,9 @@ class PaymentEntity
     #[ORM\Column(type: 'string', length: 100, nullable: true, name: 'error_code')]
     private ?string $errorCode = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true, name: 'idempotency_key')]
+    private ?string $idempotencyKey = null;
+
     #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0], name: 'refunded_amount_in_cents')]
     private int $refundedAmountInCents = 0;
 
@@ -129,6 +132,7 @@ class PaymentEntity
         $entity->gatewayTransactionId = $payment->gatewayTransactionId();
         $entity->errorMessage = $payment->errorMessage();
         $entity->errorCode = $payment->errorCode();
+        $entity->idempotencyKey = $payment->idempotencyKey();
         $entity->refundedAmountInCents = $payment->refundedAmountInCents();
         $entity->retryCount = $payment->retryCount();
         $entity->nextRetryAt = $payment->nextRetryAt();
@@ -176,7 +180,8 @@ class PaymentEntity
             updatedAt: $this->updatedAt,
             errorCode: $this->errorCode,
             retryCount: $this->retryCount,
-            nextRetryAt: $this->nextRetryAt
+            nextRetryAt: $this->nextRetryAt,
+            idempotencyKey: $this->idempotencyKey
         );
     }
 
@@ -191,6 +196,7 @@ class PaymentEntity
         $this->gatewayTransactionId = $payment->gatewayTransactionId();
         $this->errorMessage = $payment->errorMessage();
         $this->errorCode = $payment->errorCode();
+        $this->idempotencyKey = $payment->idempotencyKey();
         $this->refundedAmountInCents = $payment->refundedAmountInCents();
         $this->retryCount = $payment->retryCount();
         $this->nextRetryAt = $payment->nextRetryAt();
@@ -251,6 +257,11 @@ class PaymentEntity
     public function getErrorCode(): ?string
     {
         return $this->errorCode;
+    }
+
+    public function getIdempotencyKey(): ?string
+    {
+        return $this->idempotencyKey;
     }
 
     public function getRefundedAmountInCents(): int
@@ -332,6 +343,11 @@ class PaymentEntity
     public function setErrorCode(?string $errorCode): void
     {
         $this->errorCode = $errorCode;
+    }
+
+    public function setIdempotencyKey(?string $idempotencyKey): void
+    {
+        $this->idempotencyKey = $idempotencyKey;
     }
 
     public function setRefundedAmountInCents(int $refundedAmountInCents): void
