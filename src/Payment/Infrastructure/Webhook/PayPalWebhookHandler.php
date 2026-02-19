@@ -7,7 +7,9 @@ namespace App\Payment\Infrastructure\Webhook;
 use App\Payment\Application\Command\CapturePayment;
 use App\Payment\Application\Command\MarkPaymentAsFailed;
 use App\Payment\Application\Query\GetPaymentById;
+use App\Payment\Application\Service\WebhookDeduplicationService;
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\TenantId;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,6 +43,7 @@ final readonly class PayPalWebhookHandler
         private HttpClientInterface $httpClient,
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
+        private WebhookDeduplicationService $deduplicationService,
         private LoggerInterface $logger,
         private bool $sandbox = true,
     ) {
@@ -89,6 +92,14 @@ final readonly class PayPalWebhookHandler
                 'event_id' => $eventId,
                 'event_type' => $eventType,
             ]);
+
+            // Deduplication: check if this event was already processed
+            $tenantId = $this->extractTenantIdFromEventData($eventData);
+            if (null !== $tenantId) {
+                if ($this->deduplicationService->isDuplicate('paypal', $eventId, $eventType ?? 'unknown', $tenantId, $payload)) {
+                    return new Response('Already processed', Response::HTTP_OK);
+                }
+            }
 
             // Procesează evenimentul bazat pe tip
             $result = match ($eventType) {
@@ -461,5 +472,41 @@ final readonly class PayPalWebhookHandler
         ]);
 
         return 'Event received';
+    }
+
+    /**
+     * Extract tenant_id from PayPal event data.
+     *
+     * @param array<string, mixed> $eventData
+     */
+    private function extractTenantIdFromEventData(array $eventData): ?TenantId
+    {
+        try {
+            $resource = $eventData['resource'] ?? [];
+
+            // Try tenant_id from custom_id metadata
+            $tenantIdString = $resource['custom_id_tenant'] ?? null;
+
+            // Try supplementary_data
+            if (null === $tenantIdString) {
+                $tenantIdString = $resource['supplementary_data']['related_ids']['tenant_id'] ?? null;
+            }
+
+            // Try purchase_units metadata
+            if (null === $tenantIdString) {
+                $purchaseUnits = $resource['purchase_units'] ?? [];
+                if (!empty($purchaseUnits)) {
+                    $tenantIdString = $purchaseUnits[0]['custom_id_tenant'] ?? null;
+                }
+            }
+
+            if (null === $tenantIdString || '' === $tenantIdString) {
+                return null;
+            }
+
+            return TenantId::fromString($tenantIdString);
+        } catch (\InvalidArgumentException) {
+            return null;
+        }
     }
 }

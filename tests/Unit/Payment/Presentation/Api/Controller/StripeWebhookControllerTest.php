@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Payment\Presentation\Api\Controller;
 
+use App\Payment\Application\Service\WebhookDeduplicationService;
 use App\Payment\Infrastructure\Webhook\StripeWebhookHandler;
 use App\Payment\Presentation\Api\Controller\StripeWebhookController;
 use PHPUnit\Framework\TestCase;
@@ -36,6 +37,7 @@ final class StripeWebhookControllerTest extends TestCase
             webhookSecret: 'whsec_test_secret',
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
+            deduplicationService: $this->createMock(WebhookDeduplicationService::class),
             logger: new NullLogger()
         );
 
@@ -159,6 +161,7 @@ final class StripeWebhookControllerTest extends TestCase
             webhookSecret: 'whsec_test',
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
+            deduplicationService: $this->createMock(WebhookDeduplicationService::class),
             logger: new NullLogger()
         );
 

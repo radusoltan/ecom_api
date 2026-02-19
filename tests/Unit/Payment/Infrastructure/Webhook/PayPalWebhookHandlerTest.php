@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Payment\Infrastructure\Webhook;
 
+use App\Payment\Application\Service\WebhookDeduplicationService;
 use App\Payment\Infrastructure\Webhook\PayPalWebhookHandler;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -33,6 +34,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     private MockObject&HttpClientInterface $httpClient;
     private MockObject&MessageBusInterface $commandBus;
     private MockObject&MessageBusInterface $queryBus;
+    private MockObject&WebhookDeduplicationService $deduplicationService;
     private MockObject&LoggerInterface $logger;
     private string $webhookId;
     private string $clientId;
@@ -43,6 +45,7 @@ final class PayPalWebhookHandlerTest extends TestCase
         $this->httpClient = $this->createMock(HttpClientInterface::class);
         $this->commandBus = $this->createMock(MessageBusInterface::class);
         $this->queryBus = $this->createMock(MessageBusInterface::class);
+        $this->deduplicationService = $this->createMock(WebhookDeduplicationService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->webhookId = 'webhook_test_id';
         $this->clientId = 'test_client_id';
@@ -55,6 +58,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             httpClient: $this->httpClient,
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
+            deduplicationService: $this->deduplicationService,
             logger: $this->logger,
             sandbox: true
         );
@@ -283,6 +287,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             httpClient: $this->httpClient,
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
+            deduplicationService: $this->deduplicationService,
             logger: $this->logger,
             sandbox: true
         );
@@ -305,6 +310,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             httpClient: $this->httpClient,
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
+            deduplicationService: $this->deduplicationService,
             logger: $this->logger,
             sandbox: false // Production mode
         );
@@ -327,6 +333,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             httpClient: $this->httpClient,
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
+            deduplicationService: $this->deduplicationService,
             logger: $this->logger,
             sandbox: true // Explicit sandbox mode
         );

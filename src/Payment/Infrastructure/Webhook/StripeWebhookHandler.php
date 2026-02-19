@@ -7,7 +7,9 @@ namespace App\Payment\Infrastructure\Webhook;
 use App\Payment\Application\Command\CapturePayment;
 use App\Payment\Application\Command\MarkPaymentAsFailed;
 use App\Payment\Application\Query\GetPaymentById;
+use App\Payment\Application\Service\WebhookDeduplicationService;
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\TenantId;
 use Psr\Log\LoggerInterface;
 use Stripe\Event;
 use Stripe\Exception\SignatureVerificationException;
@@ -33,6 +35,7 @@ final readonly class StripeWebhookHandler
         private string $webhookSecret,
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
+        private WebhookDeduplicationService $deduplicationService,
         private LoggerInterface $logger,
     ) {
     }
@@ -65,6 +68,14 @@ final readonly class StripeWebhookHandler
                 'event_id' => $event->id,
                 'event_type' => $event->type,
             ]);
+
+            // Deduplication: check if this event was already processed
+            $tenantId = $this->extractTenantIdFromEvent($event);
+            if (null !== $tenantId) {
+                if ($this->deduplicationService->isDuplicate('stripe', $event->id, $event->type, $tenantId, $payload)) {
+                    return new Response('Already processed', Response::HTTP_OK);
+                }
+            }
 
             // Procesează evenimentul bazat pe tip
             $result = match ($event->type) {
@@ -298,5 +309,31 @@ final readonly class StripeWebhookHandler
         ]);
 
         return 'Event received';
+    }
+
+    /**
+     * Extract tenant_id from Stripe event metadata.
+     */
+    private function extractTenantIdFromEvent(Event $event): ?TenantId
+    {
+        try {
+            /** @var object $data */
+            $data = $event->data;
+            $object = $data->object ?? null;
+
+            if (null === $object) {
+                return null;
+            }
+
+            $tenantIdString = $object->metadata->tenant_id ?? null;
+
+            if (null === $tenantIdString || '' === $tenantIdString) {
+                return null;
+            }
+
+            return TenantId::fromString($tenantIdString);
+        } catch (\InvalidArgumentException) {
+            return null;
+        }
     }
 }

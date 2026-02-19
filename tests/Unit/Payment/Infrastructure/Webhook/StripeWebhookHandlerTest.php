@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Payment\Infrastructure\Webhook;
 
+use App\Payment\Application\Service\WebhookDeduplicationService;
 use App\Payment\Infrastructure\Webhook\StripeWebhookHandler;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -26,6 +27,7 @@ final class StripeWebhookHandlerTest extends TestCase
     private StripeWebhookHandler $handler;
     private MockObject&MessageBusInterface $commandBus;
     private MockObject&MessageBusInterface $queryBus;
+    private MockObject&WebhookDeduplicationService $deduplicationService;
     private MockObject&LoggerInterface $logger;
     private string $webhookSecret;
 
@@ -33,6 +35,7 @@ final class StripeWebhookHandlerTest extends TestCase
     {
         $this->commandBus = $this->createMock(MessageBusInterface::class);
         $this->queryBus = $this->createMock(MessageBusInterface::class);
+        $this->deduplicationService = $this->createMock(WebhookDeduplicationService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->webhookSecret = 'whsec_test_secret';
 
@@ -40,6 +43,7 @@ final class StripeWebhookHandlerTest extends TestCase
             webhookSecret: $this->webhookSecret,
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
+            deduplicationService: $this->deduplicationService,
             logger: $this->logger
         );
     }
@@ -179,6 +183,7 @@ final class StripeWebhookHandlerTest extends TestCase
             webhookSecret: 'whsec_test_secret',
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
+            deduplicationService: $this->deduplicationService,
             logger: $this->logger
         );
 
