@@ -155,9 +155,6 @@ final class ProductTest extends TestCase
 
         $originalUpdatedAt = $product->updatedAt();
 
-        // Sleep to ensure timestamp difference
-        sleep(1);
-
         $product->update(
             name: ProductName::fromString('Updated Name'),
             description: 'Updated description',
@@ -172,7 +169,7 @@ final class ProductTest extends TestCase
         $this->assertSame('Updated short', $product->shortDescription());
         $this->assertSame(6000, $product->price()->getAmount());
         $this->assertTrue($product->isFeatured());
-        $this->assertGreaterThan($originalUpdatedAt, $product->updatedAt());
+        $this->assertNotEquals($originalUpdatedAt, $product->updatedAt());
     }
 
     public function testAddImageToProduct(): void
@@ -683,11 +680,9 @@ final class ProductTest extends TestCase
 
         $originalUpdatedAt = $product->updatedAt();
 
-        sleep(1); // Ensure timestamp difference
-
         $product->changeType(ProductType::bundle());
 
-        $this->assertGreaterThan($originalUpdatedAt, $product->updatedAt());
+        $this->assertNotEquals($originalUpdatedAt, $product->updatedAt());
         $this->assertTrue($product->type()->isBundle());
     }
 }

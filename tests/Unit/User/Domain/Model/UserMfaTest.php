@@ -10,6 +10,7 @@ use App\User\Domain\ValueObject\HashedPassword;
 use App\User\Domain\ValueObject\UserId;
 use App\User\Domain\ValueObject\Username;
 use App\User\Domain\ValueObject\UserRole;
+use App\Tests\Support\BcryptFixtures;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -36,8 +37,8 @@ final class UserMfaTest extends TestCase
         $user->enableMfa(
             totpSecret: 'JBSWY3DPEHPK3PXP',
             hashedBackupCodes: [
-                password_hash('AABBCCDD', PASSWORD_BCRYPT),
-                password_hash('EEFF0011', PASSWORD_BCRYPT),
+                BcryptFixtures::HASH_AABBCCDD,
+                BcryptFixtures::HASH_EEFF0011,
             ]
         );
 
@@ -69,8 +70,8 @@ final class UserMfaTest extends TestCase
         $user = $this->createUser();
         $secret = 'JBSWY3DPEHPK3PXP';
         $hashedCodes = [
-            password_hash('AABBCCDD', PASSWORD_BCRYPT),
-            password_hash('EEFF0011', PASSWORD_BCRYPT),
+            BcryptFixtures::HASH_AABBCCDD,
+            BcryptFixtures::HASH_EEFF0011,
         ];
 
         $before = new \DateTimeImmutable();
@@ -131,7 +132,7 @@ final class UserMfaTest extends TestCase
     #[Test]
     public function itConsumesValidBackupCodeAndRemovesIt(): void
     {
-        $codeToConsume = password_hash('AABBCCDD', PASSWORD_BCRYPT);
+        $codeToConsume = BcryptFixtures::HASH_AABBCCDD;
         $user = User::reconstitute(
             id: UserId::generate(),
             email: Email::fromString('mfa@example.com'),
@@ -143,7 +144,7 @@ final class UserMfaTest extends TestCase
             totpSecret: 'JBSWY3DPEHPK3PXP',
             backupCodes: [
                 $codeToConsume,
-                password_hash('EEFF0011', PASSWORD_BCRYPT),
+                BcryptFixtures::HASH_EEFF0011,
             ],
             mfaEnabledAt: new \DateTimeImmutable(),
         );
@@ -168,7 +169,7 @@ final class UserMfaTest extends TestCase
             mfaEnabled: true,
             totpSecret: 'JBSWY3DPEHPK3PXP',
             backupCodes: [
-                password_hash('AABBCCDD', PASSWORD_BCRYPT),
+                BcryptFixtures::HASH_AABBCCDD,
             ],
             mfaEnabledAt: new \DateTimeImmutable(),
         );
@@ -182,8 +183,8 @@ final class UserMfaTest extends TestCase
     #[Test]
     public function itOnlyConsumesOneCodeWhenMultipleExist(): void
     {
-        $hash1 = password_hash('AABBCCDD', PASSWORD_BCRYPT);
-        $hash2 = password_hash('EEFF0011', PASSWORD_BCRYPT);
+        $hash1 = BcryptFixtures::HASH_AABBCCDD;
+        $hash2 = BcryptFixtures::HASH_EEFF0011;
         $user = User::reconstitute(
             id: UserId::generate(),
             email: Email::fromString('mfa@example.com'),
@@ -212,9 +213,9 @@ final class UserMfaTest extends TestCase
     {
         $user = $this->createUserWithMfaEnabled();
         $newHashedCodes = [
-            password_hash('NEWCODE1', PASSWORD_BCRYPT),
-            password_hash('NEWCODE2', PASSWORD_BCRYPT),
-            password_hash('NEWCODE3', PASSWORD_BCRYPT),
+            BcryptFixtures::HASH_NEWCODE1,
+            BcryptFixtures::HASH_NEWCODE2,
+            BcryptFixtures::HASH_NEWCODE3,
         ];
 
         $user->regenerateBackupCodes($newHashedCodes);
@@ -231,7 +232,7 @@ final class UserMfaTest extends TestCase
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Cannot regenerate backup codes when MFA is disabled');
 
-        $user->regenerateBackupCodes([password_hash('SOMECODE', PASSWORD_BCRYPT)]);
+        $user->regenerateBackupCodes([BcryptFixtures::HASH_SOMECODE]);
     }
 
     // -----------------------------------------------------------------------
@@ -243,7 +244,7 @@ final class UserMfaTest extends TestCase
     {
         $userId = UserId::generate();
         $secret = 'JBSWY3DPEHPK3PXP';
-        $codes = [password_hash('AABBCCDD', PASSWORD_BCRYPT)];
+        $codes = [BcryptFixtures::HASH_AABBCCDD];
         $enabledAt = new \DateTimeImmutable('2024-06-01 12:00:00');
 
         $user = User::reconstitute(

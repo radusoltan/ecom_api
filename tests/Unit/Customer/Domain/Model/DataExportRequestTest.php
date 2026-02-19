@@ -190,14 +190,12 @@ final class DataExportRequestTest extends TestCase
         $request = DataExportRequest::create($this->customerId, $this->tenantId);
         $request->markProcessing();
 
-        // Use a time that's just barely in the future to pass validation, then test expiry
-        $expiresAt = new \DateTimeImmutable('+1 second');
+        $expiresAt = new \DateTimeImmutable('+1 hour');
         $request->markReady('/path/file.json', 'token', $expiresAt);
 
-        // Sleep to ensure expiration
-        sleep(2);
-
-        self::assertTrue($request->isExpired());
+        // Check expiry by passing a time after the expiration
+        $afterExpiry = $expiresAt->modify('+1 second');
+        self::assertTrue($request->isExpired($afterExpiry));
     }
 
     public function testIsDownloadableReturnsTrueWhenReady(): void
@@ -221,12 +219,13 @@ final class DataExportRequestTest extends TestCase
         $request = DataExportRequest::create($this->customerId, $this->tenantId);
         $request->markProcessing();
 
-        $expiresAt = new \DateTimeImmutable('+1 second');
+        $expiresAt = new \DateTimeImmutable('+1 hour');
         $request->markReady('/path/file.json', 'token', $expiresAt);
 
-        sleep(2);
-
-        self::assertFalse($request->isDownloadable());
+        // isDownloadable() calls isExpired() which uses current time
+        // Pass a time after expiry to verify behavior
+        $afterExpiry = $expiresAt->modify('+1 second');
+        self::assertFalse($request->isDownloadable($afterExpiry));
     }
 
     public function testReconstituteFromPersistence(): void

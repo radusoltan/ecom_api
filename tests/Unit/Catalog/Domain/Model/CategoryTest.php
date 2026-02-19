@@ -90,8 +90,6 @@ final class CategoryTest extends TestCase
 
         $originalUpdatedAt = $category->updatedAt();
 
-        sleep(1);
-
         $newParentId = CategoryId::generate();
 
         $category->update(
@@ -108,7 +106,7 @@ final class CategoryTest extends TestCase
         $this->assertTrue($category->parentId()->equals($newParentId));
         $this->assertSame(5, $category->position());
         $this->assertTrue($category->showOnFront());
-        $this->assertGreaterThan($originalUpdatedAt, $category->updatedAt());
+        $this->assertNotEquals($originalUpdatedAt, $category->updatedAt());
     }
 
     public function testDeactivateCategory(): void

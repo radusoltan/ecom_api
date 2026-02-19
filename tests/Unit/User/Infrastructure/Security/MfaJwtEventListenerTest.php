@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\User\Infrastructure\Security;
 
 use App\Shared\Domain\ValueObject\Email;
+use App\Tests\Support\BcryptFixtures;
 use App\User\Domain\Model\User;
 use App\User\Domain\Repository\UserRepositoryInterface;
 use App\User\Domain\ValueObject\HashedPassword;
@@ -37,7 +38,7 @@ final class MfaJwtEventListenerTest extends TestCase
         $entity->setId($id);
         $entity->setEmail('user@example.com');
         $entity->setUsername('testuser');
-        $entity->setPassword(password_hash('secret', PASSWORD_BCRYPT));
+        $entity->setPassword(BcryptFixtures::HASH_SECRET);
         $entity->setCreatedAt(new \DateTimeImmutable());
         $entity->setRoles(['ROLE_USER']);
 
@@ -56,7 +57,7 @@ final class MfaJwtEventListenerTest extends TestCase
                 createdAt: new \DateTimeImmutable(),
                 mfaEnabled: true,
                 totpSecret: 'JBSWY3DPEHPK3PXP',
-                backupCodes: [password_hash('AABBCCDD', PASSWORD_BCRYPT)],
+                backupCodes: [BcryptFixtures::HASH_AABBCCDD],
                 mfaEnabledAt: new \DateTimeImmutable(),
             );
         }

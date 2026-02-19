@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\User\Infrastructure\Security;
 
+use App\Tests\Support\BcryptFixtures;
 use App\User\Infrastructure\Security\MfaTotpService;
 use OTPHP\TOTP;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -232,11 +233,11 @@ final class MfaTotpServiceTest extends TestCase
     #[Test]
     public function itMatchesCorrectBackupCode(): void
     {
-        $plainCode = 'AABBCCDD';
+        $plainCode = BcryptFixtures::PLAIN_AABBCCDD;
         $hashedCodes = [
-            password_hash('XXXXXX00', PASSWORD_BCRYPT),
-            password_hash($plainCode, PASSWORD_BCRYPT),
-            password_hash('ZZZZZZ99', PASSWORD_BCRYPT),
+            BcryptFixtures::HASH_XXXXXX00,
+            BcryptFixtures::HASH_AABBCCDD,
+            BcryptFixtures::HASH_ZZZZZZ99,
         ];
 
         $result = $this->service->verifyBackupCode($plainCode, $hashedCodes);
@@ -247,10 +248,10 @@ final class MfaTotpServiceTest extends TestCase
     #[Test]
     public function itReturnsIndexZeroWhenFirstCodeMatches(): void
     {
-        $plainCode = 'FIRSTCOD';
+        $plainCode = BcryptFixtures::PLAIN_FIRSTCOD;
         $hashedCodes = [
-            password_hash($plainCode, PASSWORD_BCRYPT),
-            password_hash('SECOND00', PASSWORD_BCRYPT),
+            BcryptFixtures::HASH_FIRSTCOD,
+            BcryptFixtures::HASH_SECOND00,
         ];
 
         $result = $this->service->verifyBackupCode($plainCode, $hashedCodes);
@@ -262,8 +263,8 @@ final class MfaTotpServiceTest extends TestCase
     public function itReturnsFalseForNonMatchingCode(): void
     {
         $hashedCodes = [
-            password_hash('AABBCCDD', PASSWORD_BCRYPT),
-            password_hash('EEFF0011', PASSWORD_BCRYPT),
+            BcryptFixtures::HASH_AABBCCDD,
+            BcryptFixtures::HASH_EEFF0011,
         ];
 
         $result = $this->service->verifyBackupCode('WRONGCOD', $hashedCodes);

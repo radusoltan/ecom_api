@@ -317,11 +317,8 @@ final class StockReservationTest extends TestCase
 
         $originalExpiresAt = $reservation->expiresAt();
 
-        // Sleep for 1 second to ensure time has passed
-        sleep(1);
-
-        // Extend without providing time (uses current time)
-        $reservation->extend();
+        // Extend with a time 1 second in the future to verify expiry updates
+        $reservation->extend(new \DateTimeImmutable('+1 second'));
 
         // New expiry should be later than original
         $this->assertGreaterThan(

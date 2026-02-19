@@ -161,7 +161,7 @@ final class DataExportRequest
     /**
      * Check if the export has expired.
      */
-    public function isExpired(): bool
+    public function isExpired(?\DateTimeImmutable $now = null): bool
     {
         if (ExportStatus::READY !== $this->status) {
             return false;
@@ -171,15 +171,15 @@ final class DataExportRequest
             return false;
         }
 
-        return $this->expiresAt <= new \DateTimeImmutable();
+        return $this->expiresAt <= ($now ?? new \DateTimeImmutable());
     }
 
     /**
      * Check if the export is downloadable.
      */
-    public function isDownloadable(): bool
+    public function isDownloadable(?\DateTimeImmutable $now = null): bool
     {
-        return ExportStatus::READY === $this->status && !$this->isExpired();
+        return ExportStatus::READY === $this->status && !$this->isExpired($now);
     }
 
     // Getters

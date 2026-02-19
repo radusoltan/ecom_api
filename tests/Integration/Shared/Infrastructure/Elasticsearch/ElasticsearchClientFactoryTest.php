@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Shared\Infrastructure\Elasticsearch;
+namespace App\Tests\Integration\Shared\Infrastructure\Elasticsearch;
 
 use App\Shared\Infrastructure\Elasticsearch\ElasticsearchClientFactory;
 use Elastic\Elasticsearch\Client;

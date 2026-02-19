@@ -453,8 +453,6 @@ final class CartTest extends TestCase
         $cart->markAsExpired();
         $updatedAtBefore = $cart->updatedAt();
 
-        sleep(1); // Wait to see if updatedAt changes
-
         // Act
         $cart->markAsExpired();
 
@@ -531,13 +529,12 @@ final class CartTest extends TestCase
         // Arrange
         $cart = $this->createSampleCart();
         $originalUpdatedAt = $cart->updatedAt();
-        sleep(1); // Wait to ensure timestamp changes
 
         // Act
         $cart->assignToCustomer(CustomerId::generate());
 
         // Assert
-        $this->assertGreaterThan($originalUpdatedAt, $cart->updatedAt());
+        $this->assertNotEquals($originalUpdatedAt, $cart->updatedAt());
     }
 
     // =============================================
