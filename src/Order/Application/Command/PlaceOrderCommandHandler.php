@@ -6,6 +6,7 @@ namespace App\Order\Application\Command;
 
 use App\Catalog\Domain\Model\ProductId;
 use App\Catalog\Domain\Repository\ProductRepositoryInterface;
+use App\Order\Application\Service\CheckoutValidationService;
 use App\Order\Domain\Model\Order;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderLine;
@@ -16,7 +17,11 @@ use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Domain\Service\TaxCalculationService;
+use App\Tax\Domain\Service\TaxCalculatorInterface;
+use App\Tax\Domain\Service\VatValidationServiceInterface;
+use App\Tax\Domain\ValueObject\TaxCategory;
 use App\Tax\Domain\ValueObject\TaxJurisdiction;
+use App\Tax\Domain\ValueObject\VatNumber;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -28,6 +33,9 @@ final readonly class PlaceOrderCommandHandler
         private ProductRepositoryInterface $productRepository,
         private PromotionApplicationService $promotionService,
         private TaxCalculationService $taxCalculationService,
+        private TaxCalculatorInterface $taxCalculator,
+        private VatValidationServiceInterface $vatValidationService,
+        private CheckoutValidationService $checkoutValidationService,
         private PerformanceProfiler $profiler,
         private LoggerInterface $logger,
     ) {
@@ -67,6 +75,9 @@ final readonly class PlaceOrderCommandHandler
                 },
                 $command->lines
             );
+
+            // Validate price freshness and stock availability before proceeding
+            $this->checkoutValidationService->validate($command->lines, $tenantId);
 
             $shippingAddress = Address::create(
                 $command->shippingAddress['street'],
@@ -119,25 +130,84 @@ final readonly class PlaceOrderCommandHandler
             $taxJurisdiction = null;
             $taxRuleId = null;
             $taxRate = 0.0;
+            $isReverseCharge = false;
+            $validatedVatNumber = null;
 
             // Create jurisdiction from shipping address (destination-based taxation)
             $jurisdiction = null !== $shippingAddress->state && '' !== $shippingAddress->state
                 ? TaxJurisdiction::fromCountryAndRegion($shippingAddress->country, $shippingAddress->state)
                 : TaxJurisdiction::fromCountry($shippingAddress->country);
 
-            // Calculate tax
-            $taxCalculation = $this->taxCalculationService->calculateTax(
-                amountInCents: $taxableAmount->getAmount(),
-                jurisdiction: $jurisdiction,
-                tenantId: $tenantId
-            );
+            $b2bTaxHandled = false;
 
-            // Extract tax information
-            if ($taxCalculation['taxAmount'] > 0) {
-                $taxAmount = Money::fromScalars($taxCalculation['taxAmount'], $taxableAmount->getCurrency());
-                $taxJurisdiction = $taxCalculation['jurisdiction'];
-                $taxRuleId = $taxCalculation['taxRuleId'];
-                $taxRate = $taxCalculation['taxRate'];
+            // B2B VAT reverse charge handling
+            if (null !== $command->vatNumber && '' !== $command->vatNumber) {
+                try {
+                    $vatNumber = VatNumber::fromString($command->vatNumber);
+                } catch (\InvalidArgumentException $e) {
+                    throw new \InvalidArgumentException(sprintf('Invalid VAT number format: %s', $command->vatNumber), 0, $e);
+                }
+
+                if ($this->vatValidationService->isAvailable()) {
+                    $vatValidation = $this->vatValidationService->validate($vatNumber);
+
+                    if ($vatValidation->isValid()) {
+                        // Determine seller jurisdiction
+                        $sellerJurisdiction = null !== $command->sellerCountryCode && '' !== $command->sellerCountryCode
+                            ? TaxJurisdiction::fromCountry($command->sellerCountryCode)
+                            : $jurisdiction;
+
+                        // Calculate tax with B2B flag (may result in reverse charge for cross-border EU)
+                        $taxResult = $this->taxCalculator->calculate(
+                            amountInCents: $taxableAmount->getAmount(),
+                            sellerJurisdiction: $sellerJurisdiction,
+                            buyerJurisdiction: $jurisdiction,
+                            category: TaxCategory::standard(),
+                            isB2B: true,
+                            buyerVatNumber: $vatNumber->getFull(),
+                        );
+
+                        $isReverseCharge = $taxResult->isReverseCharge();
+                        $validatedVatNumber = $vatNumber->getFull();
+                        $taxJurisdiction = $taxResult->taxJurisdiction->toString();
+                        $taxRate = $taxResult->percentage();
+
+                        if ($taxResult->taxAmountInCents > 0) {
+                            $taxAmount = Money::fromScalars($taxResult->taxAmountInCents, $taxableAmount->getCurrency()->getCurrencyCode());
+                        }
+
+                        $b2bTaxHandled = true;
+                    } else {
+                        throw new \InvalidArgumentException(sprintf(
+                            'VAT number validation failed for %s: %s',
+                            $command->vatNumber,
+                            $vatValidation->errorMessage ?? 'VIES validation failed'
+                        ));
+                    }
+                } else {
+                    // VIES service unavailable — graceful degradation, proceed with standard tax
+                    $this->logger->warning('VIES validation service unavailable, applying standard tax calculation', [
+                        'vatNumber' => $command->vatNumber,
+                        'orderId' => $command->orderId,
+                    ]);
+                    $validatedVatNumber = $vatNumber->getFull();
+                }
+            }
+
+            // Standard B2C tax calculation (if not handled by B2B flow)
+            if (!$b2bTaxHandled) {
+                $taxCalculation = $this->taxCalculationService->calculateTax(
+                    amountInCents: $taxableAmount->getAmount(),
+                    jurisdiction: $jurisdiction,
+                    tenantId: $tenantId
+                );
+
+                if ($taxCalculation['taxAmount'] > 0) {
+                    $taxAmount = Money::fromScalars($taxCalculation['taxAmount'], $taxableAmount->getCurrency()->getCurrencyCode());
+                    $taxJurisdiction = $taxCalculation['jurisdiction'];
+                    $taxRuleId = $taxCalculation['taxRuleId'];
+                    $taxRate = $taxCalculation['taxRate'];
+                }
             }
 
             $order = Order::place(
@@ -153,7 +223,9 @@ final readonly class PlaceOrderCommandHandler
                 $taxAmount,
                 $taxJurisdiction,
                 $taxRuleId,
-                $taxRate
+                $taxRate,
+                $isReverseCharge,
+                $validatedVatNumber,
             );
 
             $this->orderRepository->save($order);

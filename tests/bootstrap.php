@@ -14,10 +14,13 @@ DG\BypassFinals::setWhitelist([
     '*/src/Payment/Infrastructure/Gateway/*',
     '*/src/Payment/Application/Service/*',
     '*/src/Notifications/Domain/Service/*',
+    '*/src/Catalog/Domain/Model/Product.php',
     '*/src/Order/Domain/Service/*',
     '*/src/Order/Domain/Model/*',
+    '*/src/Order/Application/Service/*',
     '*/src/Inventory/Domain/Model/*',
     '*/src/Tax/Domain/Service/*',
+    '*/src/Pricing/Application/Service/*',
 ]);
 
 if (method_exists(Dotenv::class, 'bootEnv')) {

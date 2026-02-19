@@ -11,6 +11,7 @@ use App\Cart\Domain\Model\CartId;
 use App\Cart\Domain\Repository\CartRepositoryInterface;
 use App\Cart\Presentation\Api\Resource\CheckoutResource;
 use App\Order\Application\Query\GetOrderByIdQuery;
+use App\Order\Domain\Exception\CheckoutValidationException;
 use App\Shared\Infrastructure\Tenant\TenantContext;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -162,11 +163,22 @@ final readonly class CheckoutProcessor implements ProcessorInterface
             return $response;
         } catch (HandlerFailedException $e) {
             foreach ($e->getWrappedExceptions() as $nested) {
+                if ($nested instanceof CheckoutValidationException) {
+                    throw new ConflictHttpException(
+                        json_encode($nested->toArray(), JSON_THROW_ON_ERROR),
+                        $nested,
+                    );
+                }
                 if ($nested instanceof \InvalidArgumentException) {
                     throw new BadRequestHttpException($nested->getMessage(), $nested);
                 }
             }
             throw $e;
+        } catch (CheckoutValidationException $e) {
+            throw new ConflictHttpException(
+                json_encode($e->toArray(), JSON_THROW_ON_ERROR),
+                $e,
+            );
         } catch (\InvalidArgumentException $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
