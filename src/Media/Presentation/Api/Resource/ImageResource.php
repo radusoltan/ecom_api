@@ -16,6 +16,7 @@ use App\Media\Presentation\Api\State\ImageDeleteProcessor;
 use App\Media\Presentation\Api\State\ImageItemProvider;
 use App\Media\Presentation\Api\State\ImageUploadProcessor;
 use App\Media\Presentation\Api\State\RegenerateThumbnailsProcessor;
+use App\Media\Presentation\Api\State\UpdateImageMetadataProcessor;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -109,6 +110,14 @@ use Symfony\Component\Validator\Constraints as Assert;
                         ],
                     ])
                 )
+            )
+        ),
+        new Patch(
+            processor: UpdateImageMetadataProcessor::class,
+            denormalizationContext: ['groups' => ['media:image:write']],
+            normalizationContext: ['groups' => ['media:image:read']],
+            openapi: new OpenApiModel\Operation(
+                summary: 'Update image metadata (title, alt text)',
             )
         ),
         new Delete(

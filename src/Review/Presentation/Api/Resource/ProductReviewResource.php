@@ -10,6 +10,8 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Patch;
+use App\Review\Presentation\Api\State\ApproveReviewProcessor;
 use App\Review\Presentation\Api\State\DeleteReviewProcessor;
 use App\Review\Presentation\Api\State\ProductReviewProvider;
 use App\Review\Presentation\Api\State\ProductReviewsProvider;
@@ -58,6 +60,12 @@ use App\Review\Presentation\Api\State\UpdateReviewProcessor;
             denormalizationContext: ['groups' => ['review:update']],
             normalizationContext: ['groups' => ['review:read']],
             description: 'Update a pending review'
+        ),
+        new Patch(
+            uriTemplate: '/storefront/reviews/{id}/approve',
+            processor: ApproveReviewProcessor::class,
+            normalizationContext: ['groups' => ['review:read']],
+            description: 'Approve a pending review (admin)'
         ),
         new Delete(
             uriTemplate: '/storefront/reviews/{id}',
