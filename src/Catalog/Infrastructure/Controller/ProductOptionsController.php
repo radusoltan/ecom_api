@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 /**
  * Controller for product options management.
  */
-#[Route('/api/products/{id}/options')]
+#[Route('/api/v1/products/{id}/options')]
 final class ProductOptionsController extends AbstractController
 {
     public function __construct(

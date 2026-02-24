@@ -28,7 +28,7 @@ final class PayPalWebhookController extends AbstractController
      *
      * @Route("/api/webhooks/paypal", name="paypal_webhook", methods={"POST"})
      */
-    #[Route('/api/webhooks/paypal', name: 'paypal_webhook', methods: ['POST'])]
+    #[Route('/api/v1/webhooks/paypal', name: 'paypal_webhook', methods: ['POST'])]
     public function handleWebhook(Request $request): Response
     {
         return $this->webhookHandler->handle($request);

@@ -24,7 +24,7 @@ use Symfony\Component\Routing\Attribute\Route;
  *
  * @see PRD Section 9.1 - Performance Requirements
  */
-#[Route('/api/monitoring', name: 'monitoring_')]
+#[Route('/api/v1/monitoring', name: 'monitoring_')]
 final class PerformanceMonitoringController extends AbstractController
 {
     public function __construct(

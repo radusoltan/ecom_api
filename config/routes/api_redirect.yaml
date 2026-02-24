@@ -1,10 +1,11 @@
 # API Backward Compatibility Redirects
 # Redirect /api/* to /api/v1/* for backward compatibility
 # Exclude /api/v1/* to prevent double redirect
+# Exclude /api/webhooks/* — webhook routes are not versioned
 
 api_redirect:
     path: /api/{path}
     controller: App\Shared\Infrastructure\Http\Controller\ApiRedirectController
     requirements:
-        path: "(?!v1/).*"  # Exclude paths starting with v1/
+        path: "(?!v1/).*"  # Exclude paths already starting with v1/
     methods: [GET, POST, PUT, PATCH, DELETE]

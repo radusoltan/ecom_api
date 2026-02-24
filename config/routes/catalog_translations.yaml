@@ -3,14 +3,14 @@
 
 # Product translations
 product_translations_get:
-    path: /api/products/{id}/translations
+    path: /api/v1/products/{id}/translations
     controller: App\Catalog\Infrastructure\Controller\ProductTranslationController::getTranslations
     methods: GET
     requirements:
         id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 product_translations_update:
-    path: /api/products/{id}/translations
+    path: /api/v1/products/{id}/translations
     controller: App\Catalog\Infrastructure\Controller\ProductTranslationController::updateTranslations
     methods: PATCH
     requirements:
@@ -18,14 +18,14 @@ product_translations_update:
 
 # Category translations
 category_translations_get:
-    path: /api/categories/{id}/translations
+    path: /api/v1/categories/{id}/translations
     controller: App\Catalog\Infrastructure\Controller\CategoryTranslationController::getTranslations
     methods: GET
     requirements:
         id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 category_translations_update:
-    path: /api/categories/{id}/translations
+    path: /api/v1/categories/{id}/translations
     controller: App\Catalog\Infrastructure\Controller\CategoryTranslationController::updateTranslations
     methods: PATCH
     requirements:
@@ -33,6 +33,6 @@ category_translations_update:
 
 # Locales endpoint
 available_locales:
-    path: /api/locales
+    path: /api/v1/locales
     controller: App\Catalog\Infrastructure\Controller\LocaleController::getAvailableLocales
     methods: GET

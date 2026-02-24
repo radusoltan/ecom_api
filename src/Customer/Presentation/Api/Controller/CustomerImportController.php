@@ -25,7 +25,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * Security: Requires ROLE_ADMIN or ROLE_MANAGER
  * Rate Limit: Max 10 requests per minute
  */
-#[Route('/api/customers', name: 'api_customers_')]
+#[Route('/api/v1/customers', name: 'api_customers_')]
 #[IsGranted('ROLE_MANAGER')]
 final class CustomerImportController extends AbstractController
 {

@@ -24,7 +24,7 @@ final readonly class CartTaxEstimateController
     ) {
     }
 
-    #[Route('/api/carts/{cartId}/tax-estimate', name: 'api_cart_tax_estimate', methods: ['GET'])]
+    #[Route('/api/v1/carts/{cartId}/tax-estimate', name: 'api_cart_tax_estimate', methods: ['GET'])]
     public function __invoke(Request $request, string $cartId): JsonResponse
     {
         $tenantId = $this->tenantContext->getCurrentTenantId();

@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
  *
  * REST API endpoints for product bundle management.
  */
-#[Route('/api/products/{productId}/bundle', name: 'api_bundle_')]
+#[Route('/api/v1/products/{productId}/bundle', name: 'api_bundle_')]
 final class BundleController extends AbstractController
 {
     use HandleTrait;

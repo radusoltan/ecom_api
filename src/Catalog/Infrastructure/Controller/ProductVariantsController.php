@@ -34,7 +34,7 @@ final class ProductVariantsController extends AbstractController
      * Get variants for a product with optional filters
      * GET /api/products/{id}/variants.
      */
-    #[Route('/api/products/{id}/variants', methods: ['GET'])]
+    #[Route('/api/v1/products/{id}/variants', methods: ['GET'])]
     public function getVariants(string $id, Request $request): JsonResponse
     {
         $tenantId = $request->headers->get('X-Tenant-ID');
@@ -77,7 +77,7 @@ final class ProductVariantsController extends AbstractController
      * Generate variants for a product
      * POST /api/products/{id}/variants:generate.
      */
-    #[Route('/api/products/{id}/variants:generate', methods: ['POST'])]
+    #[Route('/api/v1/products/{id}/variants:generate', methods: ['POST'])]
     public function generateVariants(string $id, Request $request): JsonResponse
     {
         $tenantId = $request->headers->get('X-Tenant-ID');
@@ -124,7 +124,7 @@ final class ProductVariantsController extends AbstractController
      * Update a specific variant
      * PATCH /api/variants/{id}.
      */
-    #[Route('/api/variants/{id}', methods: ['PATCH'])]
+    #[Route('/api/v1/variants/{id}', methods: ['PATCH'])]
     public function updateVariant(string $id, Request $request): JsonResponse
     {
         $tenantId = $request->headers->get('X-Tenant-ID');

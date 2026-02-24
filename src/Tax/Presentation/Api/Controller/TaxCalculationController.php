@@ -58,7 +58,7 @@ final class TaxCalculationController extends AbstractController
      *   }
      * }
      */
-    #[Route('/api/tax/calculate', methods: ['POST'])]
+    #[Route('/api/v1/tax/calculate', methods: ['POST'])]
     public function __invoke(Request $request): JsonResponse
     {
         // Get tenant from context
