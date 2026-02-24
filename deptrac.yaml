@@ -4,9 +4,30 @@ deptrac:
 
   exclude_files:
     - '#.*test.*#'
+    - '#.*DataFixtures.*#'
 
   layers:
-    # Tenant Context Layers
+    # =========================================================================
+    # Shared Kernel
+    # =========================================================================
+    - name: Shared_Domain
+      collectors:
+        - type: directory
+          value: src/Shared/Domain/.*
+
+    - name: Shared_Application
+      collectors:
+        - type: directory
+          value: src/Shared/Application/.*
+
+    - name: Shared_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Shared/Infrastructure/.*
+
+    # =========================================================================
+    # Tenant Context
+    # =========================================================================
     - name: Tenant_Domain
       collectors:
         - type: directory
@@ -27,7 +48,257 @@ deptrac:
         - type: directory
           value: src/Tenant/Presentation/.*
 
-    # Notifications Context Layers
+    # =========================================================================
+    # User Context
+    # =========================================================================
+    - name: User_Domain
+      collectors:
+        - type: directory
+          value: src/User/Domain/.*
+
+    - name: User_Application
+      collectors:
+        - type: directory
+          value: src/User/Application/.*
+
+    - name: User_Infrastructure
+      collectors:
+        - type: directory
+          value: src/User/Infrastructure/.*
+
+    - name: User_Presentation
+      collectors:
+        - type: directory
+          value: src/User/Presentation/.*
+
+    # =========================================================================
+    # Catalog Context
+    # =========================================================================
+    - name: Catalog_Domain
+      collectors:
+        - type: directory
+          value: src/Catalog/Domain/.*
+
+    - name: Catalog_Application
+      collectors:
+        - type: directory
+          value: src/Catalog/Application/.*
+
+    - name: Catalog_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Catalog/Infrastructure/.*
+
+    - name: Catalog_Presentation
+      collectors:
+        - type: directory
+          value: src/Catalog/Presentation/.*
+
+    # =========================================================================
+    # Order Context
+    # =========================================================================
+    - name: Order_Domain
+      collectors:
+        - type: directory
+          value: src/Order/Domain/.*
+
+    - name: Order_Application
+      collectors:
+        - type: directory
+          value: src/Order/Application/.*
+
+    - name: Order_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Order/Infrastructure/.*
+
+    - name: Order_Presentation
+      collectors:
+        - type: directory
+          value: src/Order/Presentation/.*
+
+    # =========================================================================
+    # Inventory Context
+    # =========================================================================
+    - name: Inventory_Domain
+      collectors:
+        - type: directory
+          value: src/Inventory/Domain/.*
+
+    - name: Inventory_Application
+      collectors:
+        - type: directory
+          value: src/Inventory/Application/.*
+
+    - name: Inventory_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Inventory/Infrastructure/.*
+
+    - name: Inventory_Presentation
+      collectors:
+        - type: directory
+          value: src/Inventory/Presentation/.*
+
+    # =========================================================================
+    # Pricing Context
+    # =========================================================================
+    - name: Pricing_Domain
+      collectors:
+        - type: directory
+          value: src/Pricing/Domain/.*
+
+    - name: Pricing_Application
+      collectors:
+        - type: directory
+          value: src/Pricing/Application/.*
+
+    - name: Pricing_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Pricing/Infrastructure/.*
+
+    - name: Pricing_Presentation
+      collectors:
+        - type: directory
+          value: src/Pricing/Presentation/.*
+
+    # =========================================================================
+    # Customer Context
+    # =========================================================================
+    - name: Customer_Domain
+      collectors:
+        - type: directory
+          value: src/Customer/Domain/.*
+
+    - name: Customer_Application
+      collectors:
+        - type: directory
+          value: src/Customer/Application/.*
+
+    - name: Customer_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Customer/Infrastructure/.*
+
+    - name: Customer_Presentation
+      collectors:
+        - type: directory
+          value: src/Customer/Presentation/.*
+
+    # =========================================================================
+    # Payment Context
+    # =========================================================================
+    - name: Payment_Domain
+      collectors:
+        - type: directory
+          value: src/Payment/Domain/.*
+
+    - name: Payment_Application
+      collectors:
+        - type: directory
+          value: src/Payment/Application/.*
+
+    - name: Payment_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Payment/Infrastructure/.*
+
+    - name: Payment_Presentation
+      collectors:
+        - type: directory
+          value: src/Payment/Presentation/.*
+
+    # =========================================================================
+    # Tax Context
+    # =========================================================================
+    - name: Tax_Domain
+      collectors:
+        - type: directory
+          value: src/Tax/Domain/.*
+
+    - name: Tax_Application
+      collectors:
+        - type: directory
+          value: src/Tax/Application/.*
+
+    - name: Tax_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Tax/Infrastructure/.*
+
+    - name: Tax_Presentation
+      collectors:
+        - type: directory
+          value: src/Tax/Presentation/.*
+
+    # =========================================================================
+    # Invoice Context (no Presentation layer)
+    # =========================================================================
+    - name: Invoice_Domain
+      collectors:
+        - type: directory
+          value: src/Invoice/Domain/.*
+
+    - name: Invoice_Application
+      collectors:
+        - type: directory
+          value: src/Invoice/Application/.*
+
+    - name: Invoice_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Invoice/Infrastructure/.*
+
+    # =========================================================================
+    # Returns Context
+    # =========================================================================
+    - name: Returns_Domain
+      collectors:
+        - type: directory
+          value: src/Returns/Domain/.*
+
+    - name: Returns_Application
+      collectors:
+        - type: directory
+          value: src/Returns/Application/.*
+
+    - name: Returns_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Returns/Infrastructure/.*
+
+    - name: Returns_Presentation
+      collectors:
+        - type: directory
+          value: src/Returns/Presentation/.*
+
+    # =========================================================================
+    # Cart Context
+    # =========================================================================
+    - name: Cart_Domain
+      collectors:
+        - type: directory
+          value: src/Cart/Domain/.*
+
+    - name: Cart_Application
+      collectors:
+        - type: directory
+          value: src/Cart/Application/.*
+
+    - name: Cart_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Cart/Infrastructure/.*
+
+    - name: Cart_Presentation
+      collectors:
+        - type: directory
+          value: src/Cart/Presentation/.*
+
+    # =========================================================================
+    # Notifications Context (no Presentation layer)
+    # =========================================================================
     - name: Notifications_Domain
       collectors:
         - type: directory
@@ -43,24 +314,196 @@ deptrac:
         - type: directory
           value: src/Notifications/Infrastructure/.*
 
-    # Shared Layers
-    - name: Shared_Domain
+    # =========================================================================
+    # Search Context
+    # =========================================================================
+    - name: Search_Domain
       collectors:
         - type: directory
-          value: src/Shared/Domain/.*
+          value: src/Search/Domain/.*
 
-    - name: Shared_Application
+    - name: Search_Application
       collectors:
         - type: directory
-          value: src/Shared/Application/.*
+          value: src/Search/Application/.*
 
-    - name: Shared_Infrastructure
+    - name: Search_Infrastructure
       collectors:
         - type: directory
-          value: src/Shared/Infrastructure/.*
+          value: src/Search/Infrastructure/.*
 
+    - name: Search_Presentation
+      collectors:
+        - type: directory
+          value: src/Search/Presentation/.*
+
+    # =========================================================================
+    # AuditLog Context (no Presentation layer)
+    # =========================================================================
+    - name: AuditLog_Domain
+      collectors:
+        - type: directory
+          value: src/AuditLog/Domain/.*
+
+    - name: AuditLog_Application
+      collectors:
+        - type: directory
+          value: src/AuditLog/Application/.*
+
+    - name: AuditLog_Infrastructure
+      collectors:
+        - type: directory
+          value: src/AuditLog/Infrastructure/.*
+
+    # =========================================================================
+    # Privacy Context
+    # =========================================================================
+    - name: Privacy_Domain
+      collectors:
+        - type: directory
+          value: src/Privacy/Domain/.*
+
+    - name: Privacy_Application
+      collectors:
+        - type: directory
+          value: src/Privacy/Application/.*
+
+    - name: Privacy_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Privacy/Infrastructure/.*
+
+    - name: Privacy_Presentation
+      collectors:
+        - type: directory
+          value: src/Privacy/Presentation/.*
+
+    # =========================================================================
+    # Media Context
+    # =========================================================================
+    - name: Media_Domain
+      collectors:
+        - type: directory
+          value: src/Media/Domain/.*
+
+    - name: Media_Application
+      collectors:
+        - type: directory
+          value: src/Media/Application/.*
+
+    - name: Media_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Media/Infrastructure/.*
+
+    - name: Media_Presentation
+      collectors:
+        - type: directory
+          value: src/Media/Presentation/.*
+
+    # =========================================================================
+    # Wishlist Context
+    # =========================================================================
+    - name: Wishlist_Domain
+      collectors:
+        - type: directory
+          value: src/Wishlist/Domain/.*
+
+    - name: Wishlist_Application
+      collectors:
+        - type: directory
+          value: src/Wishlist/Application/.*
+
+    - name: Wishlist_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Wishlist/Infrastructure/.*
+
+    - name: Wishlist_Presentation
+      collectors:
+        - type: directory
+          value: src/Wishlist/Presentation/.*
+
+    # =========================================================================
+    # Review Context
+    # =========================================================================
+    - name: Review_Domain
+      collectors:
+        - type: directory
+          value: src/Review/Domain/.*
+
+    - name: Review_Application
+      collectors:
+        - type: directory
+          value: src/Review/Application/.*
+
+    - name: Review_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Review/Infrastructure/.*
+
+    - name: Review_Presentation
+      collectors:
+        - type: directory
+          value: src/Review/Presentation/.*
+
+    # =========================================================================
+    # Internationalization Context (no Presentation layer)
+    # =========================================================================
+    - name: Internationalization_Domain
+      collectors:
+        - type: directory
+          value: src/Internationalization/Domain/.*
+
+    - name: Internationalization_Application
+      collectors:
+        - type: directory
+          value: src/Internationalization/Application/.*
+
+    - name: Internationalization_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Internationalization/Infrastructure/.*
+
+    # =========================================================================
+    # Monitoring Context (no Application layer)
+    # =========================================================================
+    - name: Monitoring_Domain
+      collectors:
+        - type: directory
+          value: src/Monitoring/Domain/.*
+
+    - name: Monitoring_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Monitoring/Infrastructure/.*
+
+    - name: Monitoring_Presentation
+      collectors:
+        - type: directory
+          value: src/Monitoring/Presentation/.*
+
+  # ===========================================================================
+  # RULESET: Allowed dependencies per layer
+  # ===========================================================================
   ruleset:
-    # Tenant Context Rules
+    # -----------------------------------------------------------------------
+    # Shared Kernel — no external dependencies for Domain
+    # -----------------------------------------------------------------------
+    Shared_Domain: []
+
+    Shared_Application:
+      - Shared_Domain
+
+    Shared_Infrastructure:
+      - Shared_Domain
+      - Shared_Application
+      - Internationalization_Domain          # Locale in IndexManager, CacheWarmingService
+      - Internationalization_Infrastructure  # TranslatableHelper → Translation entity
+
+    # -----------------------------------------------------------------------
+    # Tenant Context
+    # -----------------------------------------------------------------------
     Tenant_Domain:
       - Shared_Domain
 
@@ -74,13 +517,382 @@ deptrac:
       - Tenant_Application
       - Shared_Domain
       - Shared_Infrastructure
+      - Internationalization_Infrastructure  # TenantEntity references Translation
 
     Tenant_Presentation:
       - Tenant_Application
       - Tenant_Domain
       - Shared_Domain
 
-    # Notifications Context Rules
+    # -----------------------------------------------------------------------
+    # User Context
+    # -----------------------------------------------------------------------
+    User_Domain:
+      - Shared_Domain
+
+    User_Application:
+      - User_Domain
+      - User_Infrastructure  # PasswordResetTokenEntity, RefreshTokenEntity
+      - Shared_Domain
+      - Shared_Application
+
+    User_Infrastructure:
+      - User_Domain
+      - User_Application
+      - User_Presentation    # API Platform entity → processor annotations
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Privacy_Domain  # UserPersonalDataContributor implements Privacy port
+
+    User_Presentation:
+      - User_Application
+      - User_Domain
+      - User_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Shared_Infrastructure  # BlindIndexService, TenantContext
+
+    # -----------------------------------------------------------------------
+    # Catalog Context
+    # -----------------------------------------------------------------------
+    Catalog_Domain:
+      - Shared_Domain
+      - Internationalization_Domain  # Locale value object
+
+    Catalog_Application:
+      - Catalog_Domain
+      - Catalog_Infrastructure   # Elasticsearch indexer, cache, analytics
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure    # IndexManager
+      - Internationalization_Domain
+      - Tenant_Domain            # TenantRepositoryInterface in SkuGenerator
+
+    Catalog_Infrastructure:
+      - Catalog_Domain
+      - Catalog_Application
+      - Catalog_Presentation     # API Platform entity → provider annotations
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure
+      - Internationalization_Domain
+      - Internationalization_Infrastructure  # Translation entity
+      - Tenant_Domain  # Tenant references in entity
+
+    Catalog_Presentation:
+      - Catalog_Application
+      - Catalog_Domain
+      - Catalog_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Shared_Infrastructure
+
+    # -----------------------------------------------------------------------
+    # Order Context
+    # Cross-context: Catalog (ProductId), Inventory (WarehouseId),
+    #                Tax (calculation), Customer (notifications)
+    # -----------------------------------------------------------------------
+    Order_Domain:
+      - Shared_Domain
+      - Catalog_Domain      # ProductId in OrderLine
+      - Inventory_Domain     # WarehouseId in Fulfillment
+      - Tax_Domain           # TaxCategory, TaxJurisdiction, VatNumber
+
+    Order_Application:
+      - Order_Domain
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure    # MetricsCollector
+      - Catalog_Domain
+      - Inventory_Domain
+      - Inventory_Application    # AllocateStockCommand
+      - Tax_Domain
+      - Customer_Application     # NotificationPreferenceService
+      - Notifications_Domain     # Notification event subscribers
+      - Notifications_Application # SendNotification command
+      - Privacy_Domain           # Data compliance
+      - Pricing_Application      # PromotionApplicationService
+
+    Order_Infrastructure:
+      - Order_Domain
+      - Order_Application
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Catalog_Domain
+      - Inventory_Domain
+      - Pricing_Domain          # Price references
+      - Privacy_Domain          # Data compliance
+
+    Order_Presentation:
+      - Order_Application
+      - Order_Domain
+      - Order_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Shared_Infrastructure
+
+    # -----------------------------------------------------------------------
+    # Inventory Context
+    # Cross-context: Catalog (ProductId)
+    # -----------------------------------------------------------------------
+    Inventory_Domain:
+      - Shared_Domain
+      - Catalog_Domain  # ProductId in StockItem
+
+    Inventory_Infrastructure:
+      - Inventory_Domain
+      - Inventory_Application
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Catalog_Domain
+
+    # Note: InventoryStatsDto uses Presentation provider reference
+    Inventory_Application:
+      - Inventory_Domain
+      - Inventory_Presentation   # DTO references
+      - Shared_Domain
+      - Shared_Application
+      - Catalog_Domain
+      - Order_Domain  # OrderCancelled event subscriber
+
+    Inventory_Presentation:
+      - Inventory_Application
+      - Inventory_Domain
+      - Inventory_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Shared_Infrastructure
+
+    # -----------------------------------------------------------------------
+    # Pricing Context
+    # Cross-context: Catalog (ProductId), Customer (CustomerSegment)
+    # -----------------------------------------------------------------------
+    Pricing_Domain:
+      - Shared_Domain
+      - Catalog_Domain    # ProductId
+      - Customer_Domain   # CustomerSegment
+      - User_Domain       # UserId in PriceHistory
+
+    Pricing_Application:
+      - Pricing_Domain
+      - Shared_Domain
+      - Shared_Application
+      - Catalog_Domain
+      - Customer_Domain
+      - Cart_Domain  # PromotionApplicator operates on Cart
+
+    Pricing_Infrastructure:
+      - Pricing_Domain
+      - Pricing_Application
+      - Pricing_Presentation  # API Platform entity → processor annotations
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Catalog_Domain
+      - Customer_Domain
+      - User_Domain  # UserId in PriceHistoryRepository
+
+    Pricing_Presentation:
+      - Pricing_Application
+      - Pricing_Domain
+      - Pricing_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Cart_Domain             # CartId in cart pricing providers
+
+    # -----------------------------------------------------------------------
+    # Customer Context — self-contained
+    # -----------------------------------------------------------------------
+    Customer_Domain:
+      - Shared_Domain
+
+    Customer_Application:
+      - Customer_Domain
+      - Customer_Infrastructure  # AddressEntity, DeletionRequestEntity
+      - Shared_Domain
+      - Shared_Application
+      - Order_Domain             # OrderPlaced/OrderPaid events, OrderRepositoryInterface
+      - Privacy_Domain           # Privacy event subscribers
+
+    Customer_Infrastructure:
+      - Customer_Domain
+      - Customer_Application
+      - Customer_Presentation    # API Platform entity → processor annotations
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Privacy_Domain           # GDPR consent integration
+      - Privacy_Infrastructure   # Consent repository references
+
+    Customer_Presentation:
+      - Customer_Application
+      - Customer_Domain
+      - Customer_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Shared_Application       # TenantContextInterface
+      - Shared_Infrastructure    # TenantContext, encryption
+      - Order_Domain             # Order references on customer
+      - Order_Application
+      - User_Domain              # User references
+      - User_Infrastructure      # UserEntity in RegisterCustomerProcessor
+      - Privacy_Domain           # Consent display
+
+    # -----------------------------------------------------------------------
+    # Payment Context
+    # Cross-context: Order (status updates, queries)
+    # -----------------------------------------------------------------------
+    Payment_Domain:
+      - Shared_Domain
+
+    Payment_Application:
+      - Payment_Domain
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure  # MetricsCollector
+      - Order_Application  # UpdateOrderStatusCommand, GetOrderByIdQuery
+      - Order_Domain
+
+    Payment_Infrastructure:
+      - Payment_Domain
+      - Payment_Application
+      - Payment_Presentation  # API Platform entity → processor annotations
+      - Shared_Domain
+      - Shared_Infrastructure
+
+    Payment_Presentation:
+      - Payment_Application
+      - Payment_Domain
+      - Payment_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Order_Application
+
+    # -----------------------------------------------------------------------
+    # Tax Context — self-contained
+    # -----------------------------------------------------------------------
+    Tax_Domain:
+      - Shared_Domain
+
+    Tax_Application:
+      - Tax_Domain
+      - Shared_Domain
+      - Shared_Application
+
+    Tax_Infrastructure:
+      - Tax_Domain
+      - Tax_Application
+      - Shared_Domain
+      - Shared_Application     # TenantContextInterface
+      - Shared_Infrastructure
+
+    Tax_Presentation:
+      - Tax_Application
+      - Tax_Domain
+      - Tax_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Shared_Application     # TenantContextInterface
+      - Shared_Infrastructure  # TenantContext
+
+    # -----------------------------------------------------------------------
+    # Invoice Context (no Presentation layer)
+    # Cross-context: Catalog (ProductId), Customer (CustomerId),
+    #                Order (OrderId), Payment (events)
+    # -----------------------------------------------------------------------
+    Invoice_Domain:
+      - Shared_Domain
+      - Catalog_Domain    # ProductId in InvoiceLine
+      - Customer_Domain   # CustomerId
+      - Order_Domain      # OrderId
+
+    Invoice_Application:
+      - Invoice_Domain
+      - Shared_Domain
+      - Shared_Application
+      - Catalog_Domain
+      - Customer_Domain
+      - Order_Domain
+      - Payment_Domain  # PaymentCompleted event subscriber
+
+    Invoice_Infrastructure:
+      - Invoice_Domain
+      - Invoice_Application
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Catalog_Domain
+      - Customer_Domain
+      - Order_Domain
+
+    # -----------------------------------------------------------------------
+    # Returns Context
+    # Cross-context: Order (OrderId), Payment (refund), Inventory (restock)
+    # -----------------------------------------------------------------------
+    Returns_Domain:
+      - Shared_Domain
+      - Order_Domain  # OrderId
+
+    Returns_Application:
+      - Returns_Domain
+      - Shared_Domain
+      - Shared_Application
+      - Order_Domain
+      - Payment_Application    # RefundPayment command
+      - Payment_Domain         # PaymentId value object
+      - Inventory_Application  # AdjustStock command
+
+    Returns_Infrastructure:
+      - Returns_Domain
+      - Returns_Application
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Order_Domain
+
+    Returns_Presentation:
+      - Returns_Application
+      - Returns_Domain
+      - Returns_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Payment_Domain
+
+    # -----------------------------------------------------------------------
+    # Cart Context
+    # Cross-context: Catalog (ProductId), Customer (CustomerId),
+    #                Inventory (stock check), Order (checkout), Tax
+    # -----------------------------------------------------------------------
+    Cart_Domain:
+      - Shared_Domain
+      - Catalog_Domain    # ProductId in CartItem
+      - Customer_Domain   # CustomerId
+
+    Cart_Application:
+      - Cart_Domain
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure  # CacheService
+      - Catalog_Domain
+      - Customer_Domain
+      - Inventory_Domain     # StockItemRepositoryInterface
+      - Order_Application    # PlaceOrderCommand
+      - Order_Domain
+      - Tax_Domain           # TaxCalculationService
+
+    Cart_Infrastructure:
+      - Cart_Domain
+      - Cart_Application
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Catalog_Domain
+      - Customer_Domain
+
+    Cart_Presentation:
+      - Cart_Application
+      - Cart_Domain
+      - Cart_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Shared_Application     # TenantContextInterface
+      - Shared_Infrastructure  # TenantContext
+      - Order_Application
+      - Order_Domain
+      - Customer_Domain
+
+    # -----------------------------------------------------------------------
+    # Notifications Context (no Presentation layer)
+    # Cross-context: subscribes to Order + Payment domain events
+    # -----------------------------------------------------------------------
     Notifications_Domain:
       - Shared_Domain
 
@@ -88,6 +900,8 @@ deptrac:
       - Notifications_Domain
       - Shared_Domain
       - Shared_Application
+      - Order_Domain    # OrderPlaced, OrderCancelled events
+      - Payment_Domain  # PaymentCaptured, PaymentFailed events
 
     Notifications_Infrastructure:
       - Notifications_Domain
@@ -95,12 +909,212 @@ deptrac:
       - Shared_Domain
       - Shared_Infrastructure
 
-    # Shared Rules
-    Shared_Domain: []
-
-    Shared_Application:
+    # -----------------------------------------------------------------------
+    # Search Context
+    # Cross-context: Catalog (ProductId), Internationalization (Locale)
+    # -----------------------------------------------------------------------
+    Search_Domain:
       - Shared_Domain
+      - Catalog_Domain              # ProductId
+      - Internationalization_Domain  # Locale
 
-    Shared_Infrastructure:
+    Search_Application:
+      - Search_Domain
       - Shared_Domain
       - Shared_Application
+      - Catalog_Domain
+      - Catalog_Infrastructure       # ProductIndexer
+      - Internationalization_Domain
+
+    Search_Infrastructure:
+      - Search_Domain
+      - Search_Application
+      - Search_Presentation    # API Platform bidirectional
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Catalog_Domain
+      - Internationalization_Domain
+
+    Search_Presentation:
+      - Search_Application
+      - Search_Domain
+      - Search_Infrastructure  # API Platform state providers
+      - Shared_Domain
+
+    # -----------------------------------------------------------------------
+    # AuditLog Context (no Presentation layer)
+    # Cross-context: User (UserId), subscribes to Order/Payment/Review events
+    # -----------------------------------------------------------------------
+    AuditLog_Domain:
+      - Shared_Domain
+      - User_Domain  # UserId
+
+    AuditLog_Application:
+      - AuditLog_Domain
+      - Shared_Domain
+      - Shared_Application
+      - User_Domain
+      - Order_Domain    # Order domain events
+      - Payment_Domain  # Payment domain events
+      - Review_Domain   # Review domain events
+
+    AuditLog_Infrastructure:
+      - AuditLog_Domain
+      - AuditLog_Application
+      - Shared_Domain
+      - Shared_Infrastructure
+      - User_Domain
+
+    # -----------------------------------------------------------------------
+    # Privacy Context
+    # Cross-context: Customer (CustomerId for consent/data requests)
+    # -----------------------------------------------------------------------
+    Privacy_Domain:
+      - Shared_Domain
+      - Customer_Domain  # CustomerId in Consent, DataSubjectRequest
+
+    Privacy_Application:
+      - Privacy_Domain
+      - Shared_Domain
+      - Shared_Application
+      - Customer_Domain
+
+    Privacy_Infrastructure:
+      - Privacy_Domain
+      - Privacy_Application
+      - Privacy_Presentation  # API Platform entity → processor annotations
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Customer_Domain
+
+    Privacy_Presentation:
+      - Privacy_Application
+      - Privacy_Domain
+      - Privacy_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Customer_Domain
+
+    # -----------------------------------------------------------------------
+    # Media Context
+    # Cross-context: Catalog (ProductId, CategoryId in upload processor)
+    # -----------------------------------------------------------------------
+    Media_Domain:
+      - Shared_Domain
+
+    Media_Application:
+      - Media_Domain
+      - Media_Infrastructure     # TenantContextInterface
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure    # TenantContext
+
+    Media_Infrastructure:
+      - Media_Domain
+      - Media_Application
+      - Media_Presentation  # API Platform bidirectional
+      - Shared_Domain
+      - Shared_Infrastructure
+
+    Media_Presentation:
+      - Media_Application
+      - Media_Domain
+      - Media_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Catalog_Domain        # ProductId, CategoryId references
+      - Catalog_Application   # ProductRepositoryInterface
+
+    # -----------------------------------------------------------------------
+    # Wishlist Context
+    # Cross-context: Catalog (ProductId)
+    # -----------------------------------------------------------------------
+    Wishlist_Domain:
+      - Shared_Domain
+      - Catalog_Domain  # ProductId
+
+    Wishlist_Application:
+      - Wishlist_Domain
+      - Shared_Domain
+      - Shared_Application
+      - Catalog_Domain
+
+    Wishlist_Infrastructure:
+      - Wishlist_Domain
+      - Wishlist_Application
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Catalog_Domain
+
+    Wishlist_Presentation:
+      - Wishlist_Application
+      - Wishlist_Domain
+      - Shared_Domain
+      - Catalog_Domain
+
+    # -----------------------------------------------------------------------
+    # Review Context
+    # Cross-context: Catalog (ProductId)
+    # -----------------------------------------------------------------------
+    Review_Domain:
+      - Shared_Domain
+      - Catalog_Domain  # ProductId
+
+    Review_Application:
+      - Review_Domain
+      - Review_Infrastructure  # ProductReviewEntity in query handler
+      - Shared_Domain
+      - Shared_Application
+      - Catalog_Domain
+
+    Review_Infrastructure:
+      - Review_Domain
+      - Review_Application
+      - Review_Presentation  # API Platform bidirectional
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Catalog_Domain
+
+    Review_Presentation:
+      - Review_Application
+      - Review_Domain
+      - Review_Infrastructure  # API Platform processors use Doctrine entities
+      - Shared_Domain
+      - Catalog_Domain
+
+    # -----------------------------------------------------------------------
+    # Internationalization Context (no Presentation layer)
+    # Cross-context: Tenant (quota management)
+    # -----------------------------------------------------------------------
+    Internationalization_Domain:
+      - Shared_Domain
+
+    Internationalization_Application:
+      - Internationalization_Domain
+      - Internationalization_Infrastructure  # Parser, CacheService
+      - Shared_Domain
+      - Shared_Application
+      - Tenant_Domain  # TranslationQuotaService uses Tenant
+
+    Internationalization_Infrastructure:
+      - Internationalization_Domain
+      - Internationalization_Application
+      - Shared_Domain
+      - Shared_Infrastructure
+
+    # -----------------------------------------------------------------------
+    # Monitoring Context (no Application layer)
+    # -----------------------------------------------------------------------
+    Monitoring_Domain:
+      - Shared_Domain
+
+    Monitoring_Infrastructure:
+      - Monitoring_Domain
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure
+
+    Monitoring_Presentation:
+      - Monitoring_Domain
+      - Monitoring_Infrastructure  # Uses ApplicationPerformanceMonitor
+      - Shared_Domain
+      - Shared_Application         # Uses PerformanceProfiler
