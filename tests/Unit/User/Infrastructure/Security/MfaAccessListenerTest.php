@@ -86,7 +86,7 @@ final class MfaAccessListenerTest extends TestCase
     #[Test]
     public function itAllowsAccessToMfaVerifyEndpointEvenWithMfaPending(): void
     {
-        $request = $this->makeRequest('/api/mfa/verify', mfaPending: true);
+        $request = $this->makeRequest('/api/v1/mfa/verify', mfaPending: true);
         $event = $this->makeEvent($request);
 
         ($this->listener)($event);
@@ -97,8 +97,8 @@ final class MfaAccessListenerTest extends TestCase
     #[Test]
     public function itAllowsAccessToMfaVerifyWithSubpathEvenWithMfaPending(): void
     {
-        // Any path that starts with /api/mfa/verify should be allowed
-        $request = $this->makeRequest('/api/mfa/verify/totp', mfaPending: true);
+        // Any path that starts with /api/v1/mfa/verify should be allowed
+        $request = $this->makeRequest('/api/v1/mfa/verify/totp', mfaPending: true);
         $event = $this->makeEvent($request);
 
         ($this->listener)($event);

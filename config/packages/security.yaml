@@ -60,7 +60,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api/mfa/verify, roles: ROLE_MFA_PENDING }  # MFA verification (partial JWT)
+        - { path: ^/api/v1/mfa/verify, roles: IS_AUTHENTICATED_FULLY }  # MFA verification (JWT required, mfa_pending check via listener)
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/login_check, roles: PUBLIC_ACCESS }  # JWT login endpoint
         - { path: ^/api/docs, roles: PUBLIC_ACCESS }  # Allow access to API documentation
@@ -75,6 +75,7 @@ security:
         - { path: ^/api/v1/category_entities, roles: PUBLIC_ACCESS }  # Allow public access to category entities for storefront filters
         - { path: ^/api/v1/product_entities, roles: PUBLIC_ACCESS }  # Allow public access to products for storefront
         - { path: ^/api/v1/search/products, roles: PUBLIC_ACCESS }  # Allow public access to products for storefront
+        - { path: ^/api/v1/search/autocomplete, roles: PUBLIC_ACCESS }  # Allow public access to autocomplete for storefront
         - { path: ^/api/product-options, roles: PUBLIC_ACCESS }  # Allow public access to product options for storefront filters
         - { path: ^/api/v1/product-options, roles: PUBLIC_ACCESS }  # Allow public access to product options for storefront filters (v1)
         - { path: ^/api/customers, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public customer registration

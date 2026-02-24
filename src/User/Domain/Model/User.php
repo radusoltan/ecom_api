@@ -8,6 +8,10 @@ use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\Email;
 use App\User\Domain\Event\UserAccountLocked;
 use App\User\Domain\Event\UserAccountUnlocked;
+use App\User\Domain\Event\MfaBackupCodeConsumed;
+use App\User\Domain\Event\MfaBackupCodesRegenerated;
+use App\User\Domain\Event\MfaDisabled;
+use App\User\Domain\Event\MfaEnabled;
 use App\User\Domain\Event\UserCreated;
 use App\User\Domain\Event\UserEmailVerified;
 use App\User\Domain\Event\UserPasswordChanged;
@@ -369,6 +373,11 @@ final class User extends AggregateRoot
         $this->totpSecret = $totpSecret;
         $this->backupCodes = $hashedBackupCodes;
         $this->mfaEnabledAt = new \DateTimeImmutable();
+
+        $this->recordEvent(new MfaEnabled(
+            $this->id,
+            $this->mfaEnabledAt
+        ));
     }
 
     public function disableMfa(): void
@@ -381,6 +390,11 @@ final class User extends AggregateRoot
         $this->totpSecret = null;
         $this->backupCodes = [];
         $this->mfaEnabledAt = null;
+
+        $this->recordEvent(new MfaDisabled(
+            $this->id,
+            new \DateTimeImmutable()
+        ));
     }
 
     /**
@@ -396,6 +410,12 @@ final class User extends AggregateRoot
 
         array_splice($this->backupCodes, $index, 1);
 
+        $this->recordEvent(new MfaBackupCodeConsumed(
+            $this->id,
+            count($this->backupCodes),
+            new \DateTimeImmutable()
+        ));
+
         return true;
     }
 
@@ -409,5 +429,10 @@ final class User extends AggregateRoot
         }
 
         $this->backupCodes = $hashedBackupCodes;
+
+        $this->recordEvent(new MfaBackupCodesRegenerated(
+            $this->id,
+            new \DateTimeImmutable()
+        ));
     }
 }

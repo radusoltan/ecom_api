@@ -22,13 +22,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * MFA Controller — handles TOTP setup, verification, and backup code management.
  *
  * Endpoints:
- * - POST /api/mfa/setup       — Generate TOTP secret and QR code
- * - POST /api/mfa/enable      — Verify code and enable MFA
- * - POST /api/mfa/verify      — Verify TOTP code during login (partial JWT)
- * - POST /api/mfa/disable     — Disable MFA
- * - POST /api/mfa/backup-codes — Regenerate backup codes
+ * - POST /api/v1/mfa/setup       — Generate TOTP secret and QR code
+ * - POST /api/v1/mfa/enable      — Verify code and enable MFA
+ * - POST /api/v1/mfa/verify      — Verify TOTP code during login (partial JWT)
+ * - POST /api/v1/mfa/disable     — Disable MFA
+ * - POST /api/v1/mfa/backup-codes — Regenerate backup codes
  */
-#[Route('/api/mfa')]
+#[Route('/api/v1/mfa')]
 final class MfaController extends AbstractController
 {
     public function __construct(
@@ -130,7 +130,7 @@ final class MfaController extends AbstractController
      * Rate limited to 5 attempts per 15 minutes per user.
      */
     #[Route('/verify', methods: ['POST'])]
-    #[IsGranted('ROLE_MFA_PENDING')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function verify(Request $request): JsonResponse
     {
         $userEntity = $this->getUser();

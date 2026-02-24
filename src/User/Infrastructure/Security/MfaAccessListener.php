@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Blocks MFA-pending users from accessing any endpoint except /api/mfa/verify.
+ * Blocks MFA-pending users from accessing any endpoint except /api/v1/mfa/verify.
  *
  * This listener runs after the firewall resolves authentication (priority -10)
  * and checks the _mfa_pending request attribute set by MfaJwtEventListener.
@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 #[AsEventListener(event: KernelEvents::REQUEST, priority: -10)]
 final class MfaAccessListener
 {
-    private const string MFA_VERIFY_PATH = '/api/mfa/verify';
+    private const string MFA_VERIFY_PATH = '/api/v1/mfa/verify';
 
     public function __invoke(RequestEvent $event): void
     {
@@ -39,7 +39,7 @@ final class MfaAccessListener
         }
 
         $event->setResponse(new JsonResponse(
-            ['error' => 'MFA verification required. Use POST /api/mfa/verify with your TOTP code.'],
+            ['error' => 'MFA verification required. Use POST /api/v1/mfa/verify with your TOTP code.'],
             Response::HTTP_FORBIDDEN
         ));
     }
