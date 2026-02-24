@@ -74,15 +74,18 @@ nelmio_security:
         hsts_preload: true
         redirect_status_code: 302
 
+    # X-XSS-Protection: Explicitly disabled (CSP is the modern replacement)
+    xss_protection:
+        enabled: false
+
     # Permissions-Policy (formerly Feature-Policy)
     # Controls which browser features can be used
-    # Commented out until needed - uncomment and configure per feature
-    # permissions_policy:
-    #     enabled: true
-    #     policies:
-    #         camera: []
-    #         microphone: []
-    #         geolocation: []
+    permissions_policy:
+        enabled: true
+        policies:
+            camera: []
+            microphone: []
+            geolocation: []
 
     # Signed cookies - not configured (optional feature)
     # signed_cookie:

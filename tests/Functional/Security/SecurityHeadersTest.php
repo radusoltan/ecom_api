@@ -169,15 +169,42 @@ final class SecurityHeadersTest extends WebTestCase
 
         $response = $client->getResponse();
 
-        // Permissions-Policy may or may not be present depending on config
-        if ($response->headers->has('Permissions-Policy')) {
-            $policy = $response->headers->get('Permissions-Policy');
+        $this->assertTrue(
+            $response->headers->has('Permissions-Policy'),
+            'Permissions-Policy header should be present'
+        );
 
-            // Verify dangerous features are disabled
-            $this->assertStringContainsString('camera=', $policy, 'Permissions-Policy should control camera');
-            $this->assertStringContainsString('microphone=', $policy, 'Permissions-Policy should control microphone');
+        $policy = $response->headers->get('Permissions-Policy');
+
+        // Verify dangerous features are disabled
+        $this->assertStringContainsString('camera=', $policy, 'Permissions-Policy should control camera');
+        $this->assertStringContainsString('microphone=', $policy, 'Permissions-Policy should control microphone');
+        $this->assertStringContainsString('geolocation=', $policy, 'Permissions-Policy should control geolocation');
+    }
+
+    /**
+     * Test that X-XSS-Protection header is disabled (CSP replaces it).
+     *
+     * Modern browsers should rely on CSP instead of the deprecated X-XSS-Protection.
+     * Setting to 0 avoids false-positive blocking in older browsers.
+     */
+    public function testXssProtectionHeaderIsDisabled(): void
+    {
+        $client = static::createClient();
+        $client->followRedirects();
+        $client->request('GET', '/api');
+
+        $response = $client->getResponse();
+
+        if ($response->headers->has('X-XSS-Protection')) {
+            $this->assertSame(
+                '0',
+                $response->headers->get('X-XSS-Protection'),
+                'X-XSS-Protection should be 0 (disabled, CSP is sufficient)'
+            );
         } else {
-            $this->markTestSkipped('Permissions-Policy header not present (optional)');
+            // Not having the header at all is also acceptable
+            $this->assertTrue(true, 'X-XSS-Protection header not present (acceptable)');
         }
     }
 
