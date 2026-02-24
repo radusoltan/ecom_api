@@ -81,7 +81,7 @@ class OrderEntity
     #[ORM\Column(type: 'boolean', options: ['default' => false], name: 'is_reverse_charge')]
     private bool $isReverseCharge = false;
 
-    #[ORM\Column(type: 'string', length: 20, nullable: true, name: 'vat_number')]
+    #[ORM\Column(type: 'encrypted_string', nullable: true, name: 'vat_number')]
     private ?string $vatNumber = null;
 
     #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]

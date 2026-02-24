@@ -83,3 +83,16 @@ framework:
             policy: 'fixed_window'
             limit: 5
             interval: '15 minutes'
+
+        # Authentication endpoints - strict to prevent brute force attacks
+        # Covers: login, registration, password reset
+        api_auth:
+            policy: 'sliding_window'
+            limit: 10
+            interval: '1 minute'
+
+        # Webhook endpoints - higher limit for incoming service-to-service calls
+        api_webhook:
+            policy: 'sliding_window'
+            limit: 500
+            interval: '1 minute'

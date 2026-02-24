@@ -30,7 +30,6 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Index(name: 'idx_notifications_tenant_id', columns: ['tenant_id'])]
 #[ORM\Index(name: 'idx_notifications_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_notifications_type', columns: ['type'])]
-#[ORM\Index(name: 'idx_notifications_recipient_email', columns: ['recipient_email'])]
 #[ORM\Index(name: 'idx_notifications_tenant_status', columns: ['tenant_id', 'status'])]
 #[ORM\Index(name: 'idx_notifications_created_at', columns: ['created_at'])]
 #[ApiResource(
@@ -74,11 +73,11 @@ class NotificationEntity
     #[Groups(['notification:read'])]
     private string $type;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true, name: 'recipient_email')]
+    #[ORM\Column(type: 'encrypted_string', nullable: true, name: 'recipient_email')]
     #[Groups(['notification:read'])]
     private ?string $recipientEmail = null;
 
-    #[ORM\Column(type: 'string', length: 20, nullable: true, name: 'recipient_phone')]
+    #[ORM\Column(type: 'encrypted_string', nullable: true, name: 'recipient_phone')]
     #[Groups(['notification:read'])]
     private ?string $recipientPhone = null;
 

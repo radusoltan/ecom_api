@@ -80,6 +80,12 @@ final class EncryptExistingDataCommand extends Command
         // 8. Data Subject Requests: reason, review_notes, rejection_reason, export_data
         $totalEncrypted += $this->encryptDataSubjectRequestsTable($io, $dryRun, $batchSize);
 
+        // 9. Notifications: recipient_email, recipient_phone
+        $totalEncrypted += $this->encryptNotificationsTable($io, $dryRun, $batchSize);
+
+        // 10. Orders: vat_number (added separately from email/address encryption)
+        $totalEncrypted += $this->encryptOrdersVatNumberTable($io, $dryRun, $batchSize);
+
         $io->success(sprintf('Total rows processed: %d', $totalEncrypted));
 
         return Command::SUCCESS;
@@ -363,6 +369,71 @@ final class EncryptExistingDataCommand extends Command
         }
 
         $io->writeln(sprintf('Encrypted %d data subject request rows', $count));
+
+        return $count;
+    }
+
+    /** @param positive-int $batchSize */
+    private function encryptNotificationsTable(SymfonyStyle $io, bool $dryRun, int $batchSize): int
+    {
+        $io->section('Notifications');
+        $rows = $this->connection->fetchAllAssociative(
+            'SELECT id, recipient_email, recipient_phone FROM notifications WHERE recipient_email IS NOT NULL AND LENGTH(recipient_email) < 500'
+        );
+
+        $io->writeln(sprintf('Found %d potentially unencrypted rows', \count($rows)));
+        if ($dryRun || 0 === \count($rows)) {
+            return \count($rows);
+        }
+
+        $count = 0;
+        foreach (array_chunk($rows, $batchSize) as $batch) {
+            foreach ($batch as $row) {
+                $this->connection->executeStatement(
+                    'UPDATE notifications SET recipient_email = ?, recipient_phone = ? WHERE id = ?',
+                    [
+                        null !== $row['recipient_email'] ? $this->encryptionService->encrypt($row['recipient_email']) : null,
+                        null !== $row['recipient_phone'] ? $this->encryptionService->encrypt($row['recipient_phone']) : null,
+                        $row['id'],
+                    ]
+                );
+                ++$count;
+            }
+        }
+
+        $io->writeln(sprintf('Encrypted %d notification rows', $count));
+
+        return $count;
+    }
+
+    /** @param positive-int $batchSize */
+    private function encryptOrdersVatNumberTable(SymfonyStyle $io, bool $dryRun, int $batchSize): int
+    {
+        $io->section('Orders (VAT Numbers)');
+        $rows = $this->connection->fetchAllAssociative(
+            'SELECT id, vat_number FROM orders WHERE vat_number IS NOT NULL AND LENGTH(vat_number) < 100'
+        );
+
+        $io->writeln(sprintf('Found %d potentially unencrypted rows', \count($rows)));
+        if ($dryRun || 0 === \count($rows)) {
+            return \count($rows);
+        }
+
+        $count = 0;
+        foreach (array_chunk($rows, $batchSize) as $batch) {
+            foreach ($batch as $row) {
+                $this->connection->executeStatement(
+                    'UPDATE orders SET vat_number = ? WHERE id = ?',
+                    [
+                        $this->encryptionService->encrypt($row['vat_number']),
+                        $row['id'],
+                    ]
+                );
+                ++$count;
+            }
+        }
+
+        $io->writeln(sprintf('Encrypted %d order VAT number rows', $count));
 
         return $count;
     }

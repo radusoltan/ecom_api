@@ -56,6 +56,14 @@ final readonly class GlobalApiRateLimitListener implements EventSubscriberInterf
             return;
         }
 
+        // Skip auth endpoints — handled by dedicated AuthRateLimitListener
+        if (str_starts_with($path, '/api/login')
+            || str_starts_with($path, '/api/v1/auth/register')
+            || str_starts_with($path, '/api/v1/auth/password')
+        ) {
+            return;
+        }
+
         // Determine which rate limiter to use based on route
         $limiterConfig = $this->determineRateLimiter($path);
         if (null === $limiterConfig) {

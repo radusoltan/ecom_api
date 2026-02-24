@@ -327,17 +327,14 @@ services:
     App\Order\Presentation\Api\Processor\PlaceOrderProcessor:
         arguments:
             $commandBus: '@command.bus'
-            $queryBus: '@query.bus'
 
     App\Order\Presentation\Api\Processor\UpdateOrderStatusProcessor:
         arguments:
             $commandBus: '@command.bus'
-            $queryBus: '@query.bus'
 
     App\Order\Presentation\Api\Processor\CancelOrderProcessor:
         arguments:
             $commandBus: '@command.bus'
-            $queryBus: '@query.bus'
 
     # Order API Platform State Providers
     # The actual providers (inner services)
@@ -552,6 +549,12 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    # Auth Endpoints Rate Limiting (login, register, password reset)
+    App\Shared\Infrastructure\Http\EventListener\AuthRateLimitListener:
+        arguments:
+            $apiAuthLimiter: '@limiter.api_auth'
+            $logger: '@logger'
+
     # Global API Rate Limiting
     App\Shared\Infrastructure\Http\EventListener\GlobalApiRateLimitListener:
         arguments:
@@ -680,6 +683,11 @@ services:
             $commandBus: '@command.bus'
             $queryBus: '@query.bus'
 
+    # ValidateCoupon Processor (inner service)
+    App\Pricing\Presentation\Api\Processor\ValidateCouponProcessor:
+        arguments:
+            $queryBus: '@query.bus'
+
     # Pricing Context - State Providers (inner services)
     App\Pricing\Presentation\Api\Provider\PriceListItemProvider: ~
     App\Pricing\Presentation\Api\Provider\PriceListCollectionProvider: ~
@@ -750,6 +758,14 @@ services:
     tenant_context_deactivate_promotion_processor:
         class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
         decorates: App\Pricing\Presentation\Api\Processor\DeactivatePromotionProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_validate_coupon_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Pricing\Presentation\Api\Processor\ValidateCouponProcessor
         decoration_priority: 100
         arguments:
             $decorated: '@.inner'
@@ -1294,6 +1310,37 @@ services:
     # Bind EmailSenderInterface to SymfonyEmailSender
     App\Notifications\Domain\Service\EmailSenderInterface:
         alias: App\Notifications\Infrastructure\Email\SymfonyEmailSender
+
+    # Notifications Context - State Providers and Processors
+    App\Notifications\Infrastructure\ApiPlatform\State\NotificationCollectionProvider: ~
+    App\Notifications\Infrastructure\ApiPlatform\State\NotificationItemProvider: ~
+    App\Notifications\Infrastructure\ApiPlatform\State\RetryNotificationProcessor: ~
+
+    # Decorate Notification providers with TenantContext
+    tenant_context_notification_collection_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Notifications\Infrastructure\ApiPlatform\State\NotificationCollectionProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_notification_item_provider:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider
+        decorates: App\Notifications\Infrastructure\ApiPlatform\State\NotificationItemProvider
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    # Decorate Notification processors with TenantContext
+    tenant_context_retry_notification_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Notifications\Infrastructure\ApiPlatform\State\RetryNotificationProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
 
     # Search bounded context services
     App\Search\Domain\Service\SearchServiceInterface:
