@@ -1416,3 +1416,15 @@ services:
         arguments:
             $decorated: '@.inner'
             $requestStack: '@request_stack'
+
+    # OpenTelemetry Tracing
+    App\Shared\Infrastructure\Telemetry\TracerFactory:
+        arguments:
+            $serviceName: '%env(default::OTEL_SERVICE_NAME)%'
+            $serviceVersion: '%env(default::OTEL_SERVICE_VERSION)%'
+            $environment: '%kernel.environment%'
+            $otlpEndpoint: '%env(default::OTEL_EXPORTER_OTLP_ENDPOINT)%'
+            $sampleRate: '%env(float:default::OTEL_TRACES_SAMPLE_RATE)%'
+
+    OpenTelemetry\API\Trace\TracerInterface:
+        factory: ['@App\Shared\Infrastructure\Telemetry\TracerFactory', 'createTracer']
