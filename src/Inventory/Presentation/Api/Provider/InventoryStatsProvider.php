@@ -25,6 +25,12 @@ final class InventoryStatsProvider implements ProviderInterface
             return $this->getEmptyStats();
         }
 
+        // Set RLS context once for all queries (parameterized to prevent SQL injection)
+        $this->entityManager->getConnection()->executeStatement(
+            "SELECT set_config('app.tenant_id', :tenantId, false)",
+            ['tenantId' => $tenantId]
+        );
+
         // Get warehouse stats
         $warehouseStats = $this->getWarehouseStats($tenantId);
 
@@ -152,7 +158,6 @@ final class InventoryStatsProvider implements ProviderInterface
     private function getLowStockAlerts(string $tenantId): array
     {
         $connection = $this->entityManager->getConnection();
-        $connection->executeStatement("SET app.tenant_id = '{$tenantId}'");
 
         $results = $connection->fetchAllAssociative(
             'SELECT
@@ -193,7 +198,6 @@ final class InventoryStatsProvider implements ProviderInterface
     private function getTopProducts(string $tenantId): array
     {
         $connection = $this->entityManager->getConnection();
-        $connection->executeStatement("SET app.tenant_id = '{$tenantId}'");
 
         $results = $connection->fetchAllAssociative(
             'SELECT
