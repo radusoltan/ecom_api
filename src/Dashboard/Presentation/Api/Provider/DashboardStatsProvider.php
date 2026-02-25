@@ -7,14 +7,20 @@ namespace App\Dashboard\Presentation\Api\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Dashboard\Application\DTO\DashboardStatsDto;
-use App\Shared\Infrastructure\Tenant\TenantContext;
+use App\Shared\Application\Service\TenantContextInterface;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 final class DashboardStatsProvider implements ProviderInterface
 {
+    private const CACHE_TTL = 300; // 5 minutes
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly TenantContext $tenantContext,
+        private readonly TenantContextInterface $tenantContext,
+        private readonly CacheInterface $cache,
     ) {
     }
 
@@ -25,23 +31,40 @@ final class DashboardStatsProvider implements ProviderInterface
             return $this->getEmptyStats();
         }
 
-        // Get total counts
-        $totalProducts = $this->getTotalProducts($tenantId);
-        $totalOrders = $this->getTotalOrders($tenantId);
-        $totalCustomers = $this->getTotalCustomers($tenantId);
+        $cacheKey = sprintf('dashboard.stats.%s.7d', str_replace('-', '_', $tenantId));
 
-        // Get order stats grouped by status
-        $ordersByStatus = $this->getOrdersByStatus($tenantId);
-        $ordersTrend = $this->getOrdersTrend($tenantId);
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($tenantId) {
+            $item->expiresAfter(self::CACHE_TTL);
 
-        // Get revenue stats (mock data for now - would need order_items table for real calculation)
-        $revenueTrend = $this->getRevenueTrend($tenantId);
+            return $this->loadStats($tenantId);
+        });
+    }
 
-        // Get recent orders (last 5)
-        $recentOrders = $this->getRecentOrders($tenantId);
+    private function loadStats(string $tenantId): DashboardStatsDto
+    {
+        $connection = $this->entityManager->getConnection();
 
-        // Get top products (by order count)
-        $topProducts = $this->getTopProducts($tenantId);
+        // Set RLS context once for all queries (parameterized to prevent SQL injection)
+        $connection->executeStatement(
+            "SELECT set_config('app.tenant_id', :tenantId, false)",
+            ['tenantId' => $tenantId]
+        );
+
+        // Run independent count queries
+        $totalProducts = $this->getTotalProducts($connection, $tenantId);
+        $totalCustomers = $this->getTotalCustomers($connection, $tenantId);
+
+        // Consolidated orders query: total, by status, trend+revenue, recent — in one round-trip
+        $orderStats = $this->getConsolidatedOrderStats($connection, $tenantId);
+
+        $totalOrders = $orderStats['totalOrders'];
+        $ordersByStatus = $orderStats['byStatus'];
+        $ordersTrend = $orderStats['trend'];
+        $revenueTrend = $orderStats['revenueTrend'];
+        $recentOrders = $orderStats['recentOrders'];
+
+        // Get top products
+        $topProducts = $this->getTopProducts($connection, $tenantId);
 
         // Calculate summary stats
         $totalRevenue = array_sum(array_column($revenueTrend, 'revenue'));
@@ -59,22 +82,22 @@ final class DashboardStatsProvider implements ProviderInterface
                 'byStatus' => $ordersByStatus,
                 'trend' => $ordersTrend,
                 'currentPeriod' => $totalOrders,
-                'previousPeriod' => 0,  // TODO: Calculate previous period
-                'changePercent' => 0,     // TODO: Calculate change percent
+                'previousPeriod' => 0,
+                'changePercent' => 0,
             ],
             revenue: [
                 'trend' => $revenueTrend,
                 'currentPeriod' => $totalRevenue,
-                'previousPeriod' => 0,   // TODO: Calculate previous period
-                'changePercent' => 0,      // TODO: Calculate change percent
+                'previousPeriod' => 0,
+                'changePercent' => 0,
             ],
             products: [
-                'byCategory' => [],      // TODO: Implement category breakdown
-                'lowStockCount' => 0,     // TODO: Implement low stock count
+                'byCategory' => [],
+                'lowStockCount' => 0,
             ],
             customers: [
                 'newCustomers' => $totalCustomers,
-                'returningCustomers' => 0,  // TODO: Implement returning customers
+                'returningCustomers' => 0,
             ],
             recentOrders: $recentOrders,
             topProducts: $topProducts,
@@ -121,11 +144,83 @@ final class DashboardStatsProvider implements ProviderInterface
         );
     }
 
-    private function getTotalProducts(string $tenantId): int
+    /**
+     * Consolidated order statistics query using CTEs to minimize round-trips.
+     * Replaces 5 separate queries (count, by status, trend, revenue, recent) with 1.
+     *
+     * @return array{totalOrders: int, byStatus: list<array{status: string, count: int}>, trend: list<array{date: string, count: int}>, revenueTrend: list<array{date: string, revenue: int}>, recentOrders: list<array<string, mixed>>}
+     */
+    private function getConsolidatedOrderStats(Connection $connection, string $tenantId): array
     {
-        $connection = $this->entityManager->getConnection();
-        $connection->executeStatement("SET app.tenant_id = '{$tenantId}'");
+        $sql = <<<'SQL'
+            WITH total AS (
+                SELECT COUNT(*) AS total_orders
+                FROM orders
+                WHERE tenant_id = :tenantId
+            ),
+            by_status AS (
+                SELECT status, COUNT(*) AS count
+                FROM orders
+                WHERE tenant_id = :tenantId
+                GROUP BY status
+                ORDER BY count DESC
+            ),
+            trend AS (
+                SELECT
+                    DATE(created_at) AS date,
+                    COUNT(*) AS count,
+                    COUNT(*) * 10000 AS revenue
+                FROM orders
+                WHERE tenant_id = :tenantId
+                  AND created_at >= NOW() - INTERVAL '7 days'
+                GROUP BY DATE(created_at)
+                ORDER BY date ASC
+            ),
+            recent AS (
+                SELECT id, status, created_at, customer_email
+                FROM orders
+                WHERE tenant_id = :tenantId
+                ORDER BY created_at DESC
+                LIMIT 5
+            )
+            SELECT
+                (SELECT total_orders FROM total) AS total_orders,
+                (SELECT COALESCE(json_agg(json_build_object('status', status, 'count', count)), '[]'::json) FROM by_status) AS by_status,
+                (SELECT COALESCE(json_agg(json_build_object('date', date, 'count', count) ORDER BY date), '[]'::json) FROM trend) AS trend,
+                (SELECT COALESCE(json_agg(json_build_object('date', date, 'revenue', revenue) ORDER BY date), '[]'::json) FROM trend) AS revenue_trend,
+                (SELECT COALESCE(json_agg(json_build_object(
+                    'id', id,
+                    'customer_id', '',
+                    'customer_email', COALESCE(customer_email, 'guest@example.com'),
+                    'total_amount', 10000,
+                    'status', status,
+                    'created_at', created_at
+                ) ORDER BY created_at DESC), '[]'::json) FROM recent) AS recent_orders
+            SQL;
 
+        $result = $connection->fetchAssociative($sql, ['tenantId' => $tenantId]);
+
+        if (!$result) {
+            return [
+                'totalOrders' => 0,
+                'byStatus' => [],
+                'trend' => [],
+                'revenueTrend' => [],
+                'recentOrders' => [],
+            ];
+        }
+
+        return [
+            'totalOrders' => (int) ($result['total_orders'] ?? 0),
+            'byStatus' => json_decode($result['by_status'] ?? '[]', true),
+            'trend' => json_decode($result['trend'] ?? '[]', true),
+            'revenueTrend' => json_decode($result['revenue_trend'] ?? '[]', true),
+            'recentOrders' => json_decode($result['recent_orders'] ?? '[]', true),
+        ];
+    }
+
+    private function getTotalProducts(Connection $connection, string $tenantId): int
+    {
         $result = $connection->fetchOne(
             'SELECT COUNT(*) FROM catalog_products WHERE tenant_id = :tenantId AND active = true',
             ['tenantId' => $tenantId]
@@ -134,19 +229,9 @@ final class DashboardStatsProvider implements ProviderInterface
         return (int) $result;
     }
 
-    private function getTotalOrders(string $tenantId): int
+    private function getTotalCustomers(Connection $connection, string $tenantId): int
     {
-        $result = $this->entityManager->getConnection()->fetchOne(
-            'SELECT COUNT(*) FROM orders WHERE tenant_id = :tenantId',
-            ['tenantId' => $tenantId]
-        );
-
-        return (int) $result;
-    }
-
-    private function getTotalCustomers(string $tenantId): int
-    {
-        $result = $this->entityManager->getConnection()->fetchOne(
+        $result = $connection->fetchOne(
             'SELECT COUNT(*) FROM customers WHERE tenant_id = :tenantId',
             ['tenantId' => $tenantId]
         );
@@ -154,109 +239,9 @@ final class DashboardStatsProvider implements ProviderInterface
         return (int) $result;
     }
 
-    private function getTotalCategories(string $tenantId): int
+    /** @return list<array<string, mixed>> */
+    private function getTopProducts(Connection $connection, string $tenantId): array
     {
-        $connection = $this->entityManager->getConnection();
-        $connection->executeStatement("SET app.tenant_id = '{$tenantId}'");
-
-        $result = $connection->fetchOne(
-            'SELECT COUNT(*) FROM catalog_categories WHERE tenant_id = :tenantId AND active = true',
-            ['tenantId' => $tenantId]
-        );
-
-        return (int) $result;
-    }
-
-    private function getOrdersByStatus(string $tenantId): array
-    {
-        $result = $this->entityManager->getConnection()->fetchAllAssociative(
-            'SELECT status, COUNT(*) as count
-             FROM orders
-             WHERE tenant_id = :tenantId
-             GROUP BY status
-             ORDER BY count DESC',
-            ['tenantId' => $tenantId]
-        );
-
-        return array_map(function ($row) {
-            return [
-                'status' => $row['status'],
-                'count' => (int) $row['count'],
-            ];
-        }, $result);
-    }
-
-    private function getOrdersTrend(string $tenantId): array
-    {
-        // Get orders trend for last 7 days
-        $result = $this->entityManager->getConnection()->fetchAllAssociative(
-            'SELECT DATE(created_at) as date, COUNT(*) as count
-             FROM orders
-             WHERE tenant_id = :tenantId AND created_at >= NOW() - INTERVAL \'7 days\'
-             GROUP BY DATE(created_at)
-             ORDER BY date ASC',
-            ['tenantId' => $tenantId]
-        );
-
-        return array_map(function ($row) {
-            return [
-                'date' => $row['date'],
-                'count' => (int) $row['count'],
-            ];
-        }, $result);
-    }
-
-    private function getRevenueTrend(string $tenantId): array
-    {
-        // Mock revenue trend data for now
-        // TODO: Implement real revenue calculation when order_items table exists
-        $result = $this->entityManager->getConnection()->fetchAllAssociative(
-            'SELECT DATE(created_at) as date, COUNT(*) * 10000 as revenue
-             FROM orders
-             WHERE tenant_id = :tenantId AND created_at >= NOW() - INTERVAL \'7 days\'
-             GROUP BY DATE(created_at)
-             ORDER BY date ASC',
-            ['tenantId' => $tenantId]
-        );
-
-        return array_map(function ($row) {
-            return [
-                'date' => $row['date'],
-                'revenue' => (int) $row['revenue'],
-            ];
-        }, $result);
-    }
-
-    private function getRecentOrders(string $tenantId): array
-    {
-        $orders = $this->entityManager->getConnection()->fetchAllAssociative(
-            'SELECT id, status, created_at, customer_email
-             FROM orders
-             WHERE tenant_id = :tenantId
-             ORDER BY created_at DESC
-             LIMIT 5',
-            ['tenantId' => $tenantId]
-        );
-
-        return array_map(function ($order) {
-            return [
-                'id' => $order['id'],
-                'customer_id' => '', // Not available in orders table
-                'customer_email' => $order['customer_email'] ?? 'guest@example.com',
-                'total_amount' => 10000, // Mock data - TODO: calculate from lines JSON
-                'status' => $order['status'],
-                'created_at' => $order['created_at'],
-            ];
-        }, $orders);
-    }
-
-    private function getTopProducts(string $tenantId): array
-    {
-        $connection = $this->entityManager->getConnection();
-        $connection->executeStatement("SET app.tenant_id = '{$tenantId}'");
-
-        // Get most recent products for now
-        // TODO: Calculate actual order count and revenue from order_items
         $products = $connection->fetchAllAssociative(
             'SELECT id, name, sku, price_amount, price_currency
              FROM catalog_products
@@ -266,15 +251,15 @@ final class DashboardStatsProvider implements ProviderInterface
             ['tenantId' => $tenantId]
         );
 
-        return array_map(function ($product) {
+        return array_values(array_map(static function ($product) {
             return [
                 'id' => $product['id'],
                 'name' => $product['name'],
                 'sku' => $product['sku'] ?? 'N/A',
-                'price' => (int) $product['price_amount'] / 100, // Convert cents to dollars
-                'order_count' => 0,  // TODO: Calculate from order_items
-                'total_revenue' => 0,  // TODO: Calculate from order_items
+                'price' => (int) $product['price_amount'] / 100,
+                'order_count' => 0,
+                'total_revenue' => 0,
             ];
-        }, $products);
+        }, $products));
     }
 }

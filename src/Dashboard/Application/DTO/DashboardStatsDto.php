@@ -30,9 +30,9 @@ final class DashboardStatsDto
         public readonly array $products,
         /** @var array<string, mixed> */
         public readonly array $customers,
-        /** @var array<string, mixed> */
+        /** @var list<array<string, mixed>> */
         public readonly array $recentOrders,
-        /** @var array<string, mixed> */
+        /** @var list<array<string, mixed>> */
         public readonly array $topProducts,
         public readonly string $period,
         public readonly string $generatedAt,
