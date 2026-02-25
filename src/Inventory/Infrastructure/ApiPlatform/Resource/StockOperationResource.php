@@ -69,7 +69,7 @@ final class StockOperationResource
         #[Assert\Uuid]
         public ?string $productId = null,
         #[Assert\NotBlank]
-        #[Assert\Ulid]
+        #[Assert\Uuid]
         public ?string $warehouseId = null,
         #[Assert\NotBlank]
         #[Assert\Positive]

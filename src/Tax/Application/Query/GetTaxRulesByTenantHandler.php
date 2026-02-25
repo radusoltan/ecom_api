@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tax\Application\Query;
 
-use App\Tax\Application\DTO\TaxRuleDto;
+use App\Tax\Application\DTO\TaxRuleDTO;
 use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -23,14 +23,14 @@ final readonly class GetTaxRulesByTenantHandler
     }
 
     /**
-     * @return TaxRuleDto[]
+     * @return TaxRuleDTO[]
      */
     public function __invoke(GetTaxRulesByTenant $query): array
     {
         $taxRules = $this->taxRuleRepository->findByTenantId($query->tenantId);
 
         return array_map(
-            fn ($taxRule) => TaxRuleDto::fromDomainModel($taxRule),
+            fn ($taxRule) => TaxRuleDTO::fromDomainModel($taxRule),
             $taxRules
         );
     }

@@ -8,7 +8,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Application\Query\GetTaxRuleById;
-use App\Tax\Domain\ValueObject\TaxRuleId;
+use App\Tax\Domain\Model\TaxRuleId;
 use App\Tax\Presentation\Api\Resource\TaxRuleResource;
 use App\Tax\Presentation\Api\Transformer\TaxRuleResourceTransformer;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -43,9 +43,15 @@ final class TaxRuleItemProvider implements ProviderInterface
             $context['tenant_id'] ?? throw new \InvalidArgumentException('Tenant ID is required')
         );
 
+        try {
+            $taxRuleId = TaxRuleId::fromString($id);
+        } catch (\InvalidArgumentException) {
+            throw new NotFoundHttpException('Tax rule not found');
+        }
+
         // Create query
         $query = new GetTaxRuleById(
-            id: TaxRuleId::fromString($id),
+            id: $taxRuleId,
             tenantId: $tenantId
         );
 

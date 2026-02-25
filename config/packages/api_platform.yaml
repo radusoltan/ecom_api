@@ -21,6 +21,8 @@ api_platform:
             public: true  # Allow caching by CDN/proxies for public endpoints
         extra_properties:
             standard_put: false
+    resource_class_directories:
+        - '%kernel.project_dir%/src/AuditLog/Infrastructure/Persistence/Doctrine/Entity'
     # GraphQL Support
     graphql:
         enabled: true

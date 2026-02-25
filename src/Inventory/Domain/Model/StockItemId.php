@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Inventory\Domain\Model;
 
-use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Uid\Uuid;
 
 final readonly class StockItemId implements \Stringable
@@ -16,13 +15,12 @@ final readonly class StockItemId implements \Stringable
 
     public static function generate(): self
     {
-        return new self((string) new Ulid());
+        return new self((string) Uuid::v7());
     }
 
     public static function fromString(string $id): self
     {
-        // Accept both UUID (for backward compatibility with existing data) and ULID
-        if (!Uuid::isValid($id) && !Ulid::isValid($id)) {
+        if (!Uuid::isValid($id)) {
             throw new \InvalidArgumentException(sprintf('Invalid StockItemId: %s', $id));
         }
 

@@ -41,6 +41,13 @@ final class TenantRLSTest extends KernelTestCase
         $this->connection->executeStatement("SELECT set_config('app.tenant_id', NULL, false)");
         $this->tenantContext->clearCurrentTenant();
 
+        // Enable bypass to clean up old test data
+        $this->connection->executeStatement("SET app.bypass_rls = 'true'");
+        $this->connection->executeStatement(
+            "DELETE FROM tenants WHERE slug LIKE 'tenant-%' OR slug LIKE 'admin-tenant-%' OR slug LIKE 'malicious-%'"
+        );
+        $this->connection->executeStatement("SET app.bypass_rls = ''");
+
         // Set default tenant context to allow tenant creation (can be cleared in specific tests)
         $defaultTenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
         $this->connection->executeStatement(

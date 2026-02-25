@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Tax\Application\Service;
 
+use App\Tax\Domain\Model\TaxCategory;
+use App\Tax\Domain\Model\TaxJurisdiction as ModelTaxJurisdiction;
+use App\Tax\Domain\Model\TaxRate;
 use App\Tax\Domain\Model\TaxRule;
+use App\Tax\Domain\Model\TaxRuleId;
 use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
 use App\Tax\Domain\Service\TaxCalculationService;
-use App\Tax\Domain\ValueObject\TaxJurisdiction;
-use App\Tax\Domain\ValueObject\TaxRate;
-use App\Tax\Domain\ValueObject\TaxRuleId;
+use App\Tax\Domain\ValueObject\TaxJurisdiction as VOTaxJurisdiction;
 use App\Tests\Support\TenantTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -66,21 +68,23 @@ final class TaxCalculationServiceIntegrationTest extends KernelTestCase
     public function testCalculateTaxWithPersistedTaxRule(): void
     {
         // Given: Persisted Germany VAT rule
-        $jurisdiction = TaxJurisdiction::fromCountry('DE');
+        $modelJurisdiction = ModelTaxJurisdiction::fromCountryCode('DE');
         $taxRule = TaxRule::create(
             id: TaxRuleId::generate(),
             tenantId: $this->tenantId,
+            jurisdiction: $modelJurisdiction,
+            category: TaxCategory::STANDARD,
+            rate: TaxRate::fromPercentage(19.0),
             name: 'MwSt (Germany)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(19.0)
         );
 
         $this->taxRuleRepository->save($taxRule);
 
         // When: Calculate tax using the service
+        $voJurisdiction = VOTaxJurisdiction::fromCountry('DE');
         $result = $this->taxCalculationService->calculateTax(
             amountInCents: 10000,  // €100.00
-            jurisdiction: $jurisdiction,
+            jurisdiction: $voJurisdiction,
             tenantId: $this->tenantId
         );
 
@@ -95,28 +99,30 @@ final class TaxCalculationServiceIntegrationTest extends KernelTestCase
     public function testCalculateTaxRespectsMultiTenancy(): void
     {
         // Given: Tax rule for different jurisdiction per tenant
-        $jurisdictionDE = TaxJurisdiction::fromCountry('DE');
+        $modelJurisdictionDE = ModelTaxJurisdiction::fromCountryCode('DE');
         $taxRuleDE = TaxRule::create(
             id: TaxRuleId::generate(),
             tenantId: $this->tenantId,
+            jurisdiction: $modelJurisdictionDE,
+            category: TaxCategory::STANDARD,
+            rate: TaxRate::fromPercentage(19.0),
             name: 'MwSt (Germany)',
-            jurisdiction: $jurisdictionDE,
-            rate: TaxRate::fromPercentage(19.0)
         );
         $this->taxRuleRepository->save($taxRuleDE);
 
         // When: Calculate tax for this tenant's jurisdiction
+        $voJurisdictionDE = VOTaxJurisdiction::fromCountry('DE');
         $resultDE = $this->taxCalculationService->calculateTax(
             amountInCents: 10000,
-            jurisdiction: $jurisdictionDE,
+            jurisdiction: $voJurisdictionDE,
             tenantId: $this->tenantId
         );
 
         // When: Try to calculate for different jurisdiction (no rule)
-        $jurisdictionFR = TaxJurisdiction::fromCountry('FR');
+        $voJurisdictionFR = VOTaxJurisdiction::fromCountry('FR');
         $resultFR = $this->taxCalculationService->calculateTax(
             amountInCents: 10000,
-            jurisdiction: $jurisdictionFR,
+            jurisdiction: $voJurisdictionFR,
             tenantId: $this->tenantId
         );
 
@@ -129,13 +135,14 @@ final class TaxCalculationServiceIntegrationTest extends KernelTestCase
     public function testCalculateOrderTaxWithPersistedRule(): void
     {
         // Given: Persisted France VAT rule
-        $jurisdiction = TaxJurisdiction::fromCountry('FR');
+        $modelJurisdiction = ModelTaxJurisdiction::fromCountryCode('FR');
         $taxRule = TaxRule::create(
             id: TaxRuleId::generate(),
             tenantId: $this->tenantId,
+            jurisdiction: $modelJurisdiction,
+            category: TaxCategory::STANDARD,
+            rate: TaxRate::fromPercentage(20.0),
             name: 'TVA (France)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(20.0)
         );
 
         $this->taxRuleRepository->save($taxRule);
@@ -146,9 +153,10 @@ final class TaxCalculationServiceIntegrationTest extends KernelTestCase
             ['amountInCents' => 3000, 'quantity' => 1],  // €30.00 × 1 = €30.00
         ];
 
+        $voJurisdiction = VOTaxJurisdiction::fromCountry('FR');
         $result = $this->taxCalculationService->calculateOrderTax(
             lineItems: $lineItems,
-            jurisdiction: $jurisdiction,
+            jurisdiction: $voJurisdiction,
             tenantId: $this->tenantId
         );
 
@@ -162,73 +170,81 @@ final class TaxCalculationServiceIntegrationTest extends KernelTestCase
     public function testIsTaxableWithPersistedActiveRule(): void
     {
         // Given: Persisted active tax rule
-        $jurisdiction = TaxJurisdiction::fromCountry('HU');
+        $modelJurisdiction = ModelTaxJurisdiction::fromCountryCode('HU');
         $taxRule = TaxRule::create(
             id: TaxRuleId::generate(),
             tenantId: $this->tenantId,
+            jurisdiction: $modelJurisdiction,
+            category: TaxCategory::STANDARD,
+            rate: TaxRate::fromPercentage(27.0),
             name: 'ÁFA (Hungary)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(27.0)
         );
 
         $this->taxRuleRepository->save($taxRule);
 
         // When/Then: Should be taxable
+        $voJurisdiction = VOTaxJurisdiction::fromCountry('HU');
         $this->assertTrue(
-            $this->taxCalculationService->isTaxable($jurisdiction, $this->tenantId)
+            $this->taxCalculationService->isTaxable($voJurisdiction, $this->tenantId)
         );
     }
 
     public function testIsTaxableWithDeactivatedRule(): void
     {
         // Given: Persisted but deactivated tax rule
-        $jurisdiction = TaxJurisdiction::fromCountry('IT');
+        $modelJurisdiction = ModelTaxJurisdiction::fromCountryCode('IT');
         $taxRule = TaxRule::create(
             id: TaxRuleId::generate(),
             tenantId: $this->tenantId,
+            jurisdiction: $modelJurisdiction,
+            category: TaxCategory::STANDARD,
+            rate: TaxRate::fromPercentage(22.0),
             name: 'IVA (Italy)',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(22.0)
         );
         $taxRule->deactivate();
 
         $this->taxRuleRepository->save($taxRule);
 
         // When/Then: Should not be taxable (inactive rule)
+        $voJurisdiction = VOTaxJurisdiction::fromCountry('IT');
         $this->assertFalse(
-            $this->taxCalculationService->isTaxable($jurisdiction, $this->tenantId)
+            $this->taxCalculationService->isTaxable($voJurisdiction, $this->tenantId)
         );
     }
 
     public function testGetTaxRateWithPersistedRule(): void
     {
         // Given: Multiple persisted tax rules with different rates
-        $jurisdictionStandard = TaxJurisdiction::fromCountry('DE');
+        $modelJurisdictionStandard = ModelTaxJurisdiction::fromCountryCode('DE');
         $taxRuleStandard = TaxRule::create(
             id: TaxRuleId::generate(),
             tenantId: $this->tenantId,
+            jurisdiction: $modelJurisdictionStandard,
+            category: TaxCategory::STANDARD,
+            rate: TaxRate::fromPercentage(19.0),
             name: 'MwSt Standard (Germany)',
-            jurisdiction: $jurisdictionStandard,
-            rate: TaxRate::fromPercentage(19.0)
         );
         $this->taxRuleRepository->save($taxRuleStandard);
 
         // Create another rule for same country but will be deactivated
-        $jurisdictionReduced = TaxJurisdiction::fromCountry('LU');
+        $modelJurisdictionReduced = ModelTaxJurisdiction::fromCountryCode('LU');
         $taxRuleReduced = TaxRule::create(
             id: TaxRuleId::generate(),
             tenantId: $this->tenantId,
+            jurisdiction: $modelJurisdictionReduced,
+            category: TaxCategory::STANDARD,
+            rate: TaxRate::fromPercentage(17.0),
             name: 'TVA (Luxembourg)',
-            jurisdiction: $jurisdictionReduced,
-            rate: TaxRate::fromPercentage(17.0)
         );
         $this->taxRuleRepository->save($taxRuleReduced);
 
         // When: Get tax rates
-        $rateDE = $this->taxCalculationService->getTaxRate($jurisdictionStandard, $this->tenantId);
-        $rateLU = $this->taxCalculationService->getTaxRate($jurisdictionReduced, $this->tenantId);
+        $voJurisdictionStandard = VOTaxJurisdiction::fromCountry('DE');
+        $voJurisdictionReduced = VOTaxJurisdiction::fromCountry('LU');
+        $rateDE = $this->taxCalculationService->getTaxRate($voJurisdictionStandard, $this->tenantId);
+        $rateLU = $this->taxCalculationService->getTaxRate($voJurisdictionReduced, $this->tenantId);
         $rateUS = $this->taxCalculationService->getTaxRate(
-            TaxJurisdiction::fromCountry('US'),
+            VOTaxJurisdiction::fromCountry('US'),
             $this->tenantId
         );
 
@@ -241,21 +257,23 @@ final class TaxCalculationServiceIntegrationTest extends KernelTestCase
     public function testCalculateTaxWithRegionalJurisdiction(): void
     {
         // Given: Persisted US California sales tax rule
-        $jurisdiction = TaxJurisdiction::fromCountryAndRegion('US', 'CA');
+        $modelJurisdiction = ModelTaxJurisdiction::fromCountryAndRegion('US', 'CA');
         $taxRule = TaxRule::create(
             id: TaxRuleId::generate(),
             tenantId: $this->tenantId,
+            jurisdiction: $modelJurisdiction,
+            category: TaxCategory::STANDARD,
+            rate: TaxRate::fromPercentage(7.25),
             name: 'California Sales Tax',
-            jurisdiction: $jurisdiction,
-            rate: TaxRate::fromPercentage(7.25)
         );
 
         $this->taxRuleRepository->save($taxRule);
 
         // When: Calculate tax for US-CA jurisdiction
+        $voJurisdiction = VOTaxJurisdiction::fromCountryAndRegion('US', 'CA');
         $result = $this->taxCalculationService->calculateTax(
             amountInCents: 10000,  // $100.00
-            jurisdiction: $jurisdiction,
+            jurisdiction: $voJurisdiction,
             tenantId: $this->tenantId
         );
 
@@ -276,23 +294,24 @@ final class TaxCalculationServiceIntegrationTest extends KernelTestCase
         ];
 
         foreach ($jurisdictions as $code => $data) {
-            $jurisdiction = TaxJurisdiction::fromCountry($code);
+            $modelJurisdiction = ModelTaxJurisdiction::fromCountryCode($code);
             $taxRule = TaxRule::create(
                 id: TaxRuleId::generate(),
                 tenantId: $this->tenantId,
+                jurisdiction: $modelJurisdiction,
+                category: TaxCategory::STANDARD,
+                rate: TaxRate::fromPercentage($data['rate']),
                 name: $data['name'],
-                jurisdiction: $jurisdiction,
-                rate: TaxRate::fromPercentage($data['rate'])
             );
             $this->taxRuleRepository->save($taxRule);
         }
 
         // When/Then: Calculate tax for each jurisdiction
         foreach ($jurisdictions as $code => $expected) {
-            $jurisdiction = TaxJurisdiction::fromCountry($code);
+            $voJurisdiction = VOTaxJurisdiction::fromCountry($code);
             $result = $this->taxCalculationService->calculateTax(
                 amountInCents: 10000,
-                jurisdiction: $jurisdiction,
+                jurisdiction: $voJurisdiction,
                 tenantId: $this->tenantId
             );
 

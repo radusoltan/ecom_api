@@ -2,7 +2,7 @@
 <html lang="{{ locale }}">
 <head>
     <meta charset="UTF-8">
-    <title>Invoice {{ invoice.number.value }}</title>
+    <title>Invoice {{ invoice.number ? invoice.number.toString : 'DRAFT' }}</title>
     <style>
         /* Professional invoice styling */
         body {

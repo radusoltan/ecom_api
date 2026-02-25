@@ -14,10 +14,27 @@ use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Inventory\Domain\Repository\StockReservationRepositoryInterface;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tests\Support\TenantTestTrait;
+use Doctrine\ORM\EntityManagerInterface;
 
 final class StockOperationApiTest extends ApiTestCase
 {
     use TenantTestTrait;
+
+    /**
+     * Do not reboot the kernel on each createClient() call.
+     *
+     * With the default (null), every static::createClient() call triggers
+     * static::bootKernel(), which creates a brand-new container and a brand-new
+     * database connection.  That means the SET app.tenant_id executed in
+     * setTenantContext() runs on connection A, while the Doctrine repository
+     * injected from static::getContainer() uses connection B — so RLS sees no
+     * tenant context and blocks every INSERT.
+     *
+     * Setting this to false keeps a single kernel/container/connection alive for
+     * the entire test method, so setTenantContext(), the repository and the HTTP
+     * client all share the same PostgreSQL session.
+     */
+    protected static ?bool $alwaysBootKernel = false;
 
     private TenantId $tenantId;
     private ProductId $productId;
@@ -29,36 +46,64 @@ final class StockOperationApiTest extends ApiTestCase
     {
         parent::setUp();
 
-        // Use default test tenant ID for RLS compatibility
+        // Ensure the kernel is fresh — previous test classes may have left it
+        // in a broken state (closed entity manager, stale connection, etc.).
+        static::ensureKernelShutdown();
+        static::createClient();
+
         $this->tenantId = $this->getDefaultTenantId();
         $this->productId = ProductId::generate();
         $this->warehouseId = WarehouseId::generate();
 
         $container = static::getContainer();
+
+        // Ensure entity manager is open before retrieving repositories.
+        $doctrine = $container->get('doctrine');
+        $em = $doctrine->getManager();
+        if (!$em->isOpen()) {
+            $doctrine->resetManager();
+        }
+
         $this->stockItemRepository = $container->get(StockItemRepositoryInterface::class);
         $this->reservationRepository = $container->get(StockReservationRepositoryInterface::class);
 
-        // Set tenant context for direct DB operations
+        // Set PostgreSQL session variable for RLS on the shared connection.
+        // Must happen before any repository save() or raw SQL against tenant tables.
         $this->setTenantContext($this->tenantId->toString());
 
-        // Clean up existing test data
         $this->cleanupTestData();
     }
 
     protected function tearDown(): void
     {
-        // Clean up after each test
         $this->cleanupTestData();
 
         parent::tearDown();
     }
 
+    /**
+     * Override TenantTestTrait::getEntityManager() to use the stable container
+     * instead of calling static::createClient() (which would reboot the kernel
+     * and open a new connection, losing the tenant context we just set).
+     */
+    private function getEntityManager(): EntityManagerInterface
+    {
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+
+        return $em;
+    }
+
     private function cleanupTestData(): void
     {
-        $em = $this->getEntityManager();
-        $connection = $em->getConnection();
+        $connection = $this->getEntityManager()->getConnection();
 
-        // Delete all test data
+        // Re-establish tenant context: the connection is shared but a previous
+        // test tearDown may have closed and reopened it.
+        $connection->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $this->tenantId->toString())
+        );
+
         $connection->executeStatement(
             sprintf(
                 "DELETE FROM stock_reservations WHERE tenant_id = '%s'",
@@ -75,11 +120,14 @@ final class StockOperationApiTest extends ApiTestCase
 
     /**
      * Create an authenticated client with JWT token.
+     *
+     * Uses static::getContainer() directly (safe because $alwaysBootKernel = false
+     * keeps a single kernel alive) to avoid rebooting the kernel and losing the
+     * RLS tenant context set on the shared connection.
      */
     protected function createAuthenticatedClient(string $email = 'admin@admin.com', array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'])
     {
-        $tempClient = static::createClient();
-        $container = $tempClient->getContainer();
+        $container = static::getContainer();
 
         $entityManager = $container->get('doctrine')->getManager();
         $userRepository = $entityManager->getRepository(\App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity::class);
@@ -145,9 +193,6 @@ final class StockOperationApiTest extends ApiTestCase
         $this->assertArrayHasKey('message', $data);
         $this->assertStringContainsString('Reserved', $data['message']);
         $this->assertEquals(90, $data['availableQuantity']); // 100 - 10 reserved
-
-        // Note: We cannot verify the reservation directly in the database because functional tests
-        // run in isolated transactions. The API response confirms the reservation was created.
     }
 
     public function testReserveInsufficientStock(): void
@@ -162,12 +207,12 @@ final class StockOperationApiTest extends ApiTestCase
             'json' => [
                 'productId' => $this->productId->toString(),
                 'warehouseId' => $this->warehouseId->toString(),
-                'quantity' => 20, // More than available
+                'quantity' => 20,
                 'referenceId' => 'cart-456',
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(400); // Business rule violation
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testReserveNonExistentProduct(): void
@@ -187,7 +232,7 @@ final class StockOperationApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(404); // NotFoundHttpException from processor
+        $this->assertResponseStatusCodeSame(404);
     }
 
     public function testAllocateStock(): void
@@ -229,9 +274,6 @@ final class StockOperationApiTest extends ApiTestCase
         $this->assertEquals($orderId, $data['referenceId']);
         $this->assertStringContainsString('Allocated', $data['message']);
         $this->assertEquals(90, $data['availableQuantity']); // 100 - 10 allocated
-
-        // Note: We cannot verify the reservation state in the database because functional tests
-        // run in isolated transactions. The API response confirms the allocation was successful.
     }
 
     public function testAllocateWithoutReservation(): void
@@ -239,7 +281,6 @@ final class StockOperationApiTest extends ApiTestCase
         $this->createStockItem(100);
         $orderId = 'order-456';
 
-        // Allocate directly without reservation
         $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/allocate', [
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -317,9 +358,6 @@ final class StockOperationApiTest extends ApiTestCase
         $data = $response->toArray();
         $this->assertStringContainsString('Released', $data['message']);
         $this->assertEquals(100, $data['availableQuantity']); // Back to original
-
-        // Note: We cannot verify the reservation state in the database because functional tests
-        // run in isolated transactions. The API response confirms the release was successful.
     }
 
     public function testReleaseAllocatedStock(): void
@@ -447,7 +485,7 @@ final class StockOperationApiTest extends ApiTestCase
             'json' => [
                 'productId' => $this->productId->toString(),
                 'warehouseId' => $this->warehouseId->toString(),
-                'quantity' => -10, // Invalid
+                'quantity' => -10,
                 'referenceId' => 'cart-999',
             ],
         ]);
@@ -466,6 +504,12 @@ final class StockOperationApiTest extends ApiTestCase
         );
 
         $this->stockItemRepository->save($stockItem);
+
+        // Flush and clear the identity map so the HTTP handler's queries
+        // always hit the database and find the freshly-persisted stock item.
+        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $em->flush();
+        $em->clear();
 
         return $stockItem;
     }

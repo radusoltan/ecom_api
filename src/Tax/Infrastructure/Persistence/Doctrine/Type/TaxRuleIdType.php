@@ -45,6 +45,10 @@ final class TaxRuleIdType extends Type
             return $value->toString();
         }
 
-        throw new \InvalidArgumentException('Expected TaxRuleId instance');
+        if (\is_string($value)) {
+            return $value;
+        }
+
+        throw new \InvalidArgumentException('Expected TaxRuleId instance or string');
     }
 }

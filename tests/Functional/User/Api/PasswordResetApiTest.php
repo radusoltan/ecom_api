@@ -36,41 +36,8 @@ final class PasswordResetApiTest extends ApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        // Clean up test users and tokens from previous runs
-        // We use a separate connection to avoid polluting the test transaction
-        $client = static::createClient();
-        $container = $client->getContainer();
-        $connection = $container->get('doctrine')->getManager()->getConnection();
-
-        // Ensure we're not in a transaction before cleanup
-        while ($connection->isTransactionActive()) {
-            $connection->rollBack();
-        }
-
-        // Start a fresh transaction for cleanup
-        $connection->beginTransaction();
-
-        try {
-            // Clean up password reset tokens first (foreign key dependency)
-            $connection->executeStatement(
-                "DELETE FROM password_reset_tokens WHERE user_id IN (SELECT id FROM users WHERE email LIKE 'test-reset-%@example.com')"
-            );
-
-            // Clean up test users (users table doesn't have RLS)
-            $connection->executeStatement(
-                "DELETE FROM users WHERE email LIKE 'test-reset-%@example.com'"
-            );
-
-            $connection->commit();
-        } catch (\Exception $e) {
-            // Rollback cleanup transaction if it fails
-            if ($connection->isTransactionActive()) {
-                $connection->rollBack();
-            }
-            // Start a fresh transaction for the test
-            $connection->beginTransaction();
-        }
+        // DAMA DoctrineTestBundle handles test isolation via savepoints.
+        // No manual cleanup needed - each test runs in its own transaction.
     }
 
     /**
@@ -144,34 +111,34 @@ final class PasswordResetApiTest extends ApiTestCase
      */
     private function extractResetTokenFromDatabase(string $email): ?string
     {
-        $client = static::createClient();
-        $container = $client->getContainer();
+        // Use getContainer() from existing client to stay within the same DAMA transaction
+        $container = static::getContainer();
         $connection = $container->get('doctrine')->getManager()->getConnection();
 
-        try {
-            // First get user_id from email, then get token
-            $userResult = $connection->executeQuery(
-                'SELECT id FROM users WHERE email = ?',
-                [$email]
-            );
-            $user = $userResult->fetchAssociative();
+        // Use blind index to find user (email column uses non-deterministic sodium encryption)
+        $blindIndexService = $container->get(\App\Shared\Infrastructure\Encryption\BlindIndexService::class);
+        $emailBlindIndex = $blindIndexService->generate($email);
 
-            if (!$user) {
-                return null;
-            }
+        // First find user by blind index
+        $userResult = $connection->executeQuery(
+            'SELECT id FROM users WHERE email_blind_index = ?',
+            [$emailBlindIndex]
+        );
+        $user = $userResult->fetchAssociative();
 
-            $result = $connection->executeQuery(
-                'SELECT token FROM password_reset_tokens WHERE user_id = ? ORDER BY created_at DESC LIMIT 1',
-                [$user['id']]
-            );
-
-            $row = $result->fetchAssociative();
-
-            return $row ? $row['token'] : null;
-        } catch (\Exception $e) {
-            // Table might not exist yet
+        if (!$user) {
             return null;
         }
+
+        // Then find token for this user
+        $result = $connection->executeQuery(
+            'SELECT token FROM password_reset_tokens WHERE user_id = ?::uuid ORDER BY created_at DESC LIMIT 1',
+            [$user['id']]
+        );
+
+        $row = $result->fetchAssociative();
+
+        return $row ? $row['token'] : null;
     }
 
     // =============================================
@@ -270,11 +237,11 @@ final class PasswordResetApiTest extends ApiTestCase
         // Extract reset token from database (in production, this would come from email)
         $resetToken = $this->extractResetTokenFromDatabase($userData['email']);
 
-        // If token extraction is not yet implemented, generate a mock token for testing
-        if (null === $resetToken) {
-            // For now, we'll use a mock token that the implementation should accept
-            $resetToken = bin2hex(random_bytes(32)); // 64-char hex token
-        }
+        // Token must be found in DB - the reset-request handler should have created it
+        $this->assertNotNull($resetToken, sprintf(
+            'Failed to extract reset token from DB for email: %s',
+            $userData['email']
+        ));
 
         // Reset password with valid token
         $newPassword = 'NewSecurePassword456!';
@@ -427,10 +394,7 @@ final class PasswordResetApiTest extends ApiTestCase
 
         // Extract reset token
         $resetToken = $this->extractResetTokenFromDatabase($userData['email']);
-
-        if (null === $resetToken) {
-            $resetToken = bin2hex(random_bytes(32));
-        }
+        $this->assertNotNull($resetToken, 'Failed to extract reset token from DB');
 
         // First reset - should succeed
         $newPassword1 = 'NewSecurePassword456!';
@@ -498,10 +462,7 @@ final class PasswordResetApiTest extends ApiTestCase
 
         // Extract reset token
         $resetToken = $this->extractResetTokenFromDatabase($userData['email']);
-
-        if (null === $resetToken) {
-            $resetToken = bin2hex(random_bytes(32));
-        }
+        $this->assertNotNull($resetToken, 'Failed to extract reset token from DB');
 
         // Reset password
         $newPassword = 'NewSecurePassword456!';

@@ -13,7 +13,7 @@ use App\Returns\Presentation\Api\Transformer\ReturnRequestResourceTransformer;
 use App\Shared\Infrastructure\Tenant\TenantContext;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * Processor for creating a return request (RMA).
@@ -34,7 +34,7 @@ final class CreateReturnRequestProcessor implements ProcessorInterface
     {
         assert($data instanceof ReturnRequestResource);
 
-        $returnRequestId = (string) new Ulid();
+        $returnRequestId = (string) Uuid::v7();
 
         // Get tenant ID from context (set by middleware from X-Tenant-ID header)
         $tenantId = $this->tenantContext->getTenantId();

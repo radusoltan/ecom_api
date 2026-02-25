@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Payment\Domain\ValueObject;
 
-use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * Payment ID Value Object.
  *
- * Unique identifier for payment transactions using ULID for:
+ * Unique identifier for payment transactions using UUID v7 for:
  * - Sortable by creation time
- * - URL-safe Base32 encoding
+ * - Native PostgreSQL uuid type support
  * - 128-bit unique identifier
  */
 final readonly class PaymentId
@@ -19,14 +19,14 @@ final readonly class PaymentId
     private function __construct(
         private string $value,
     ) {
-        if (!Ulid::isValid($value)) {
-            throw new \InvalidArgumentException(sprintf('Invalid Payment ID format: "%s". Must be a valid ULID.', $value));
+        if (!Uuid::isValid($value)) {
+            throw new \InvalidArgumentException(sprintf('Invalid Payment ID format: "%s". Must be a valid UUID.', $value));
         }
     }
 
     public static function generate(): self
     {
-        return new self((string) new Ulid());
+        return new self((string) Uuid::v7());
     }
 
     public static function fromString(string $value): self

@@ -6,16 +6,16 @@ namespace App\Tests\Unit\Returns\Domain\ValueObject;
 
 use App\Returns\Domain\ValueObject\ReturnRequestId;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Uid\Uuid;
 
 final class ReturnRequestIdTest extends TestCase
 {
-    public function testGenerateCreatesValidUlid(): void
+    public function testGenerateCreatesValidUuid(): void
     {
         $id = ReturnRequestId::generate();
 
         $this->assertInstanceOf(ReturnRequestId::class, $id);
-        $this->assertTrue(Ulid::isValid($id->toString()));
+        $this->assertTrue(Uuid::isValid($id->toString()));
     }
 
     public function testGenerateCreatesUniqueIds(): void
@@ -26,13 +26,13 @@ final class ReturnRequestIdTest extends TestCase
         $this->assertNotEquals($id1->toString(), $id2->toString());
     }
 
-    public function testFromStringWithValidUlid(): void
+    public function testFromStringWithValidUuid(): void
     {
-        $ulidString = (string) new Ulid();
-        $id = ReturnRequestId::fromString($ulidString);
+        $uuidString = (string) Uuid::v7();
+        $id = ReturnRequestId::fromString($uuidString);
 
         $this->assertInstanceOf(ReturnRequestId::class, $id);
-        $this->assertEquals($ulidString, $id->toString());
+        $this->assertEquals($uuidString, $id->toString());
     }
 
     public function testFromStringThrowsExceptionForInvalidFormat(): void
@@ -40,7 +40,7 @@ final class ReturnRequestIdTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid ReturnRequestId');
 
-        ReturnRequestId::fromString('invalid-ulid');
+        ReturnRequestId::fromString('invalid-uuid');
     }
 
     public function testFromStringThrowsExceptionForEmptyString(): void
@@ -51,28 +51,28 @@ final class ReturnRequestIdTest extends TestCase
         ReturnRequestId::fromString('');
     }
 
-    public function testFromStringThrowsExceptionForUuid(): void
+    public function testFromStringThrowsExceptionForUlid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid ReturnRequestId');
 
-        // UUID v4 is not a valid ULID
-        ReturnRequestId::fromString('550e8400-e29b-41d4-a716-446655440000');
+        // ULID is not a valid UUID
+        ReturnRequestId::fromString('01HQZT9P5KZGN9FW2C3X8Y5HZE');
     }
 
     public function testToStringReturnsOriginalValue(): void
     {
-        $ulidString = (string) new Ulid();
-        $id = ReturnRequestId::fromString($ulidString);
+        $uuidString = (string) Uuid::v7();
+        $id = ReturnRequestId::fromString($uuidString);
 
-        $this->assertEquals($ulidString, $id->toString());
+        $this->assertEquals($uuidString, $id->toString());
     }
 
     public function testEqualsReturnsTrueForSameValue(): void
     {
-        $ulidString = (string) new Ulid();
-        $id1 = ReturnRequestId::fromString($ulidString);
-        $id2 = ReturnRequestId::fromString($ulidString);
+        $uuidString = (string) Uuid::v7();
+        $id1 = ReturnRequestId::fromString($uuidString);
+        $id2 = ReturnRequestId::fromString($uuidString);
 
         $this->assertTrue($id1->equals($id2));
     }
@@ -85,33 +85,22 @@ final class ReturnRequestIdTest extends TestCase
         $this->assertFalse($id1->equals($id2));
     }
 
-    public function testUlidFormatPreservesTimestamp(): void
+    public function testUuidV7PreservesTimeOrdering(): void
     {
         $id1 = ReturnRequestId::generate();
         usleep(1000); // Wait 1ms to ensure different timestamp
         $id2 = ReturnRequestId::generate();
 
-        // ULIDs should be lexicographically sortable, so id1 < id2
+        // UUID v7 should be time-ordered, so id1 < id2
         $this->assertLessThan($id2->toString(), $id1->toString());
     }
 
-    public function testFromStringAcceptsUppercaseUlid(): void
+    public function testFromStringAcceptsLowercaseUuid(): void
     {
-        $ulid = new Ulid();
-        $uppercaseUlid = strtoupper($ulid->toBase32());
+        $uuid = Uuid::v7();
+        $lowercaseUuid = strtolower((string) $uuid);
 
-        $id = ReturnRequestId::fromString($uppercaseUlid);
-
-        $this->assertInstanceOf(ReturnRequestId::class, $id);
-        $this->assertEquals($uppercaseUlid, $id->toString());
-    }
-
-    public function testFromStringAcceptsLowercaseUlid(): void
-    {
-        $ulid = new Ulid();
-        $lowercaseUlid = strtolower($ulid->toBase32());
-
-        $id = ReturnRequestId::fromString($lowercaseUlid);
+        $id = ReturnRequestId::fromString($lowercaseUuid);
 
         $this->assertInstanceOf(ReturnRequestId::class, $id);
     }
@@ -132,13 +121,13 @@ final class ReturnRequestIdTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        ReturnRequestId::fromString('  01HQZT9P5KZGN9FW2C3X8Y5HZE  ');
+        ReturnRequestId::fromString('  550e8400-e29b-41d4-a716-446655440000  ');
     }
 
     public function testFromStringWithSpecialCharactersThrowsException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        ReturnRequestId::fromString('01HQZT9P5K-ZGN9FW2C3X8Y5HZE');
+        ReturnRequestId::fromString('not-a-valid-uuid-format!');
     }
 }

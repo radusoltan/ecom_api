@@ -14,6 +14,9 @@ use App\Invoice\Domain\Model\Invoice;
 use App\Invoice\Domain\Model\InvoiceId;
 use App\Invoice\Domain\Model\InvoiceNumber;
 use App\Invoice\Domain\Model\InvoiceStatus;
+use App\Invoice\Infrastructure\ApiPlatform\Dto\CreateInvoiceRequest;
+use App\Invoice\Infrastructure\ApiPlatform\Dto\IssueInvoiceRequest;
+use App\Invoice\Infrastructure\ApiPlatform\Dto\MarkInvoicePaidRequest;
 use App\Invoice\Infrastructure\ApiPlatform\State\CancelInvoiceProcessor;
 use App\Invoice\Infrastructure\ApiPlatform\State\CreateInvoiceProcessor;
 use App\Invoice\Infrastructure\ApiPlatform\State\InvoicePdfProvider;
@@ -39,24 +42,28 @@ use Symfony\Component\Serializer\Attribute\Groups;
         ),
         new Post(
             uriTemplate: '/invoices',
+            input: CreateInvoiceRequest::class,
             processor: CreateInvoiceProcessor::class,
             security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
             denormalizationContext: ['groups' => ['invoice:write']],
         ),
         new Post(
             uriTemplate: '/invoices/{id}/issue',
+            input: IssueInvoiceRequest::class,
             processor: IssueInvoiceProcessor::class,
             security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
             denormalizationContext: ['groups' => ['invoice:write']],
         ),
         new Post(
             uriTemplate: '/invoices/{id}/paid',
+            input: MarkInvoicePaidRequest::class,
             processor: MarkInvoicePaidProcessor::class,
             security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
             denormalizationContext: ['groups' => ['invoice:write']],
         ),
         new Post(
             uriTemplate: '/invoices/{id}/cancel',
+            input: false,
             processor: CancelInvoiceProcessor::class,
             security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
         ),
@@ -259,12 +266,33 @@ class InvoiceEntity
         $this->notes = $invoice->notes();
         $this->updatedAt = $invoice->updatedAt();
 
-        // Update lines: clear existing and add new ones
-        $this->lines->clear();
-        foreach ($invoice->lines() as $line) {
-            $lineEntity = InvoiceLineEntity::fromDomainModel($line, $this->id);
-            $lineEntity->setInvoice($this);
-            $this->lines->add($lineEntity);
+        // Sync lines collection (update existing, add new, remove deleted)
+        $domainLines = $invoice->lines();
+        $domainLineIds = array_map(fn ($line) => $line->id()->toString(), $domainLines);
+
+        // Create a map of existing line entities by ID
+        $existingLinesById = [];
+        foreach ($this->lines as $lineEntity) {
+            $existingLinesById[$lineEntity->getId()] = $lineEntity;
+        }
+
+        // Remove lines that no longer exist in domain model
+        foreach ($this->lines->toArray() as $lineEntity) {
+            if (!in_array($lineEntity->getId(), $domainLineIds, true)) {
+                $this->lines->removeElement($lineEntity);
+            }
+        }
+
+        // Update existing or add new lines
+        foreach ($domainLines as $domainLine) {
+            $lineId = $domainLine->id()->toString();
+            if (isset($existingLinesById[$lineId])) {
+                $existingLinesById[$lineId]->updateFromDomainModel($domainLine);
+            } else {
+                $lineEntity = InvoiceLineEntity::fromDomainModel($domainLine, $this->id);
+                $lineEntity->setInvoice($this);
+                $this->lines->add($lineEntity);
+            }
         }
     }
 

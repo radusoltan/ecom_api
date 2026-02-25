@@ -11,6 +11,9 @@ use App\Pricing\Application\Command\ApplyCouponToCart\ApplyCouponToCartCommand;
 use App\Pricing\Presentation\Api\Resource\CartPricingResource;
 use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -46,14 +49,14 @@ final readonly class ApplyCouponProcessor implements ProcessorInterface
         $tenantIdString = $request->headers->get('X-Tenant-ID');
 
         if (null === $cartIdString || null === $tenantIdString) {
-            throw new \RuntimeException('X-Cart-ID and X-Tenant-ID headers are required');
+            throw new BadRequestHttpException('X-Cart-ID and X-Tenant-ID headers are required');
         }
 
         // Extract coupon code from request body
         $requestData = json_decode($request->getContent(), true);
 
         if (!isset($requestData['coupon_code']) || empty($requestData['coupon_code'])) {
-            throw new \InvalidArgumentException('coupon_code is required in request body');
+            throw new BadRequestHttpException('coupon_code is required in request body');
         }
 
         $couponCode = trim($requestData['coupon_code']);
@@ -66,7 +69,20 @@ final readonly class ApplyCouponProcessor implements ProcessorInterface
         );
 
         // Dispatch command
-        $envelope = $this->commandBus->dispatch($command);
+        try {
+            $envelope = $this->commandBus->dispatch($command);
+        } catch (HandlerFailedException $e) {
+            foreach ($e->getWrappedExceptions() as $nested) {
+                if ($nested instanceof \RuntimeException && str_contains($nested->getMessage(), 'not found')) {
+                    throw new NotFoundHttpException($nested->getMessage(), $nested);
+                }
+                if ($nested instanceof \InvalidArgumentException) {
+                    throw new BadRequestHttpException($nested->getMessage(), $nested);
+                }
+            }
+            throw $e;
+        }
+
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {

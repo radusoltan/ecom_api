@@ -7,7 +7,8 @@ namespace App\Order\Presentation\Api\Processor;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Order\Application\Command\CancelOrderCommand;
-use App\Order\Application\Query\GetOrderByIdQuery;
+use App\Order\Application\DTO\OrderDTO;
+use App\Order\Domain\Model\Order;
 use App\Order\Presentation\Api\Resource\OrderResource;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
@@ -16,7 +17,6 @@ final readonly class CancelOrderProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private MessageBusInterface $queryBus,
     ) {
     }
 
@@ -34,21 +34,21 @@ final readonly class CancelOrderProcessor implements ProcessorInterface
             tenantId: $tenantId
         );
 
-        $this->commandBus->dispatch($command);
+        $envelope = $this->commandBus->dispatch($command);
 
-        // Retrieve cancelled order
-        $envelope = $this->queryBus->dispatch(new GetOrderByIdQuery($orderId, $tenantId));
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {
-            throw new \RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for CancelOrderCommand');
         }
 
-        $orderDTO = $handledStamp->getResult();
+        $order = $handledStamp->getResult();
 
-        if (null === $orderDTO) {
+        if (!$order instanceof Order) {
             throw new \RuntimeException('Order not found after cancellation');
         }
+
+        $orderDTO = OrderDTO::fromDomain($order);
 
         $resource = new OrderResource();
         $resource->id = $orderDTO->id;

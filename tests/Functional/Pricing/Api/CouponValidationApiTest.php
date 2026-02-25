@@ -109,7 +109,7 @@ final class CouponValidationApiTest extends ApiTestCase
 
         // When: Validating the coupon
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('POST', '/api/coupons/validate', [
+        $response = $client->request('POST', '/api/v1/coupons/validate', [
             'headers' => [
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
                 'Content-Type' => 'application/json',
@@ -140,7 +140,7 @@ final class CouponValidationApiTest extends ApiTestCase
     {
         // When: Validating a non-existent coupon
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('POST', '/api/coupons/validate', [
+        $response = $client->request('POST', '/api/v1/coupons/validate', [
             'headers' => [
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
                 'Content-Type' => 'application/json',
@@ -180,7 +180,7 @@ final class CouponValidationApiTest extends ApiTestCase
 
         // When: Validating the coupon
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('POST', '/api/coupons/validate', [
+        $response = $client->request('POST', '/api/v1/coupons/validate', [
             'headers' => [
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
                 'Content-Type' => 'application/json',
@@ -220,7 +220,7 @@ final class CouponValidationApiTest extends ApiTestCase
 
         // When: Validating the coupon
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('POST', '/api/coupons/validate', [
+        $response = $client->request('POST', '/api/v1/coupons/validate', [
             'headers' => [
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
                 'Content-Type' => 'application/json',
@@ -260,7 +260,7 @@ final class CouponValidationApiTest extends ApiTestCase
 
         // When: Validating the coupon
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('POST', '/api/coupons/validate', [
+        $response = $client->request('POST', '/api/v1/coupons/validate', [
             'headers' => [
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
                 'Content-Type' => 'application/json',
@@ -299,7 +299,7 @@ final class CouponValidationApiTest extends ApiTestCase
 
         // When: Validating with cart total below minimum
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('POST', '/api/coupons/validate', [
+        $response = $client->request('POST', '/api/v1/coupons/validate', [
             'headers' => [
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
                 'Content-Type' => 'application/json',
@@ -338,7 +338,7 @@ final class CouponValidationApiTest extends ApiTestCase
 
         // When: Validating with large cart (discount would be $50, but capped at $25)
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('POST', '/api/coupons/validate', [
+        $response = $client->request('POST', '/api/v1/coupons/validate', [
             'headers' => [
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
                 'Content-Type' => 'application/json',
@@ -376,7 +376,7 @@ final class CouponValidationApiTest extends ApiTestCase
 
         // When: Validating the coupon
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('POST', '/api/coupons/validate', [
+        $response = $client->request('POST', '/api/v1/coupons/validate', [
             'headers' => [
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
                 'Content-Type' => 'application/json',
@@ -402,7 +402,7 @@ final class CouponValidationApiTest extends ApiTestCase
     {
         // When: Sending request without code
         $client = $this->createAuthenticatedClient();
-        $client->request('POST', '/api/coupons/validate', [
+        $client->request('POST', '/api/v1/coupons/validate', [
             'headers' => [
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
                 'Content-Type' => 'application/json',
@@ -423,7 +423,7 @@ final class CouponValidationApiTest extends ApiTestCase
     {
         // When: Sending request without cart total
         $client = $this->createAuthenticatedClient();
-        $client->request('POST', '/api/coupons/validate', [
+        $client->request('POST', '/api/v1/coupons/validate', [
             'headers' => [
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
                 'Content-Type' => 'application/json',
@@ -441,7 +441,7 @@ final class CouponValidationApiTest extends ApiTestCase
     {
         // When: Sending request with invalid coupon code format
         $client = $this->createAuthenticatedClient();
-        $client->request('POST', '/api/coupons/validate', [
+        $client->request('POST', '/api/v1/coupons/validate', [
             'headers' => [
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
                 'Content-Type' => 'application/json',
@@ -479,7 +479,7 @@ final class CouponValidationApiTest extends ApiTestCase
 
         // When: Validating the coupon
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('POST', '/api/coupons/validate', [
+        $response = $client->request('POST', '/api/v1/coupons/validate', [
             'headers' => [
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
                 'Content-Type' => 'application/json',

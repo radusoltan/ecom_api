@@ -6,9 +6,10 @@ namespace App\Tax\Infrastructure\Fixtures;
 
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Application\Command\CreateTaxRule;
-use App\Tax\Domain\ValueObject\TaxRuleId;
+use App\Tax\Domain\Model\TaxRuleId;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -74,13 +75,23 @@ final class EUVatRatesFixture extends Fixture implements FixtureGroupInterface
 
     public function __construct(
         private readonly MessageBusInterface $commandBus,
+        private readonly Connection $connection,
     ) {
     }
 
     public function load(ObjectManager $manager): void
     {
-        // Get first tenant for seeding (in production, create rules per tenant via API)
-        $tenantId = TenantId::fromString('9efae4ea-94fc-4807-b1bc-5e495ee7858c'); // Default test tenant
+        // Get first tenant dynamically
+        $tenantIdString = $this->connection->fetchOne('SELECT id FROM tenants ORDER BY created_at LIMIT 1');
+        if (!$tenantIdString) {
+            echo "   ⚠️  No tenants found. Skipping tax fixtures.\n";
+
+            return;
+        }
+        $tenantId = TenantId::fromString($tenantIdString);
+
+        // Set RLS context
+        $this->connection->executeStatement("SET app.tenant_id = '{$tenantIdString}'");
 
         echo "🏛️  Creating EU VAT tax rules...\n";
 
@@ -104,15 +115,18 @@ final class EUVatRatesFixture extends Fixture implements FixtureGroupInterface
         string $name,
         float $rate,
     ): void {
-        $command = new CreateTaxRule(
-            id: TaxRuleId::generate(),
-            tenantId: $tenantId,
-            name: $name,
-            countryCode: $countryCode,
-            regionCode: null,
-            ratePercentage: $rate
+        // Insert directly to avoid entity/schema mismatch
+        $this->connection->executeStatement(
+            'INSERT INTO tax_rules (id, tenant_id, country_code, region_code, category, rate, name, is_active, priority, created_at, updated_at)
+             VALUES (:id, :tenant_id, :country_code, NULL, :category, :rate, :name, true, 0, NOW(), NOW())',
+            [
+                'id' => (string) \Symfony\Component\Uid\Uuid::v7(),
+                'tenant_id' => $tenantId->toString(),
+                'country_code' => $countryCode,
+                'category' => 'standard',
+                'rate' => $rate,
+                'name' => $name,
+            ]
         );
-
-        $this->commandBus->dispatch($command);
     }
 }

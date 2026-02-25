@@ -23,6 +23,9 @@ final class OrderApiTest extends ApiTestCase
     private static int $counter = 0;
     private ?string $currentTenantId = null;
 
+    /** @var array<string, string> Per-tenant warehouse IDs */
+    private array $warehouseIds = [];
+
     /**
      * Create an authenticated client with JWT token and optional X-Tenant-ID header.
      */
@@ -70,6 +73,106 @@ final class OrderApiTest extends ApiTestCase
     }
 
     /**
+     * Create a product with stock in the given tenant.
+     *
+     * Required because CheckoutValidationService validates that products exist
+     * with matching prices and have sufficient stock before placing an order.
+     *
+     * @return string The product UUID
+     */
+    private function createProductWithStock(
+        string $tenantId,
+        int $priceAmount = 1999,
+        string $currency = 'USD',
+        int $stock = 100,
+    ): string {
+        $container = static::getContainer();
+        $entityManager = $container->get('doctrine')->getManager();
+        $connection = $entityManager->getConnection();
+
+        // Set RLS tenant context for direct DB operations
+        $connection->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $tenantId)
+        );
+
+        // Create or reuse a warehouse for this tenant
+        // Warehouse code max length is varchar(10); use a short deterministic code
+        if (!isset($this->warehouseIds[$tenantId])) {
+            $warehouseCode = 'WH-'.strtoupper(substr(str_replace('-', '', $tenantId), 0, 6));
+            $existingWarehouseId = $connection->fetchOne(
+                'SELECT id FROM warehouses WHERE tenant_id = :tenantId AND code = :code LIMIT 1',
+                ['tenantId' => $tenantId, 'code' => $warehouseCode]
+            );
+
+            if ($existingWarehouseId) {
+                $this->warehouseIds[$tenantId] = $existingWarehouseId;
+            } else {
+                $warehouseId = \Symfony\Component\Uid\Uuid::v4()->toString();
+                $testAddress = json_encode([
+                    'street' => '123 Warehouse St',
+                    'city' => 'Test City',
+                    'state' => 'TS',
+                    'postalCode' => '12345',
+                    'country' => 'US',
+                ]);
+                $connection->executeStatement(
+                    "INSERT INTO warehouses (id, tenant_id, code, name, address, is_active, priority, created_at, updated_at)
+                     VALUES (:id, :tenantId, :code, 'Test Warehouse', :address, true, 1, NOW(), NOW())",
+                    [
+                        'id' => $warehouseId,
+                        'tenantId' => $tenantId,
+                        'code' => $warehouseCode,
+                        'address' => $testAddress,
+                    ]
+                );
+                $this->warehouseIds[$tenantId] = $warehouseId;
+            }
+        }
+
+        $warehouseId = $this->warehouseIds[$tenantId];
+
+        // Create product via Doctrine entity (handles ORM mapping correctly)
+        $productId = \Symfony\Component\Uid\Uuid::v7()->toString();
+        $productEntity = new \App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity();
+
+        $reflection = new \ReflectionClass($productEntity);
+        $reflection->getProperty('id')->setValue($productEntity, $productId);
+        $reflection->getProperty('tenantId')->setValue($productEntity, $tenantId);
+        $reflection->getProperty('sku')->setValue($productEntity, 'TST-'.sprintf('%06d', ++self::$counter));
+        $reflection->getProperty('name')->setValue($productEntity, 'Test Product '.self::$counter);
+        $reflection->getProperty('slug')->setValue($productEntity, 'test-product-'.self::$counter.'-'.uniqid());
+        $reflection->getProperty('priceAmount')->setValue($productEntity, $priceAmount);
+        $reflection->getProperty('priceCurrency')->setValue($productEntity, $currency);
+        $reflection->getProperty('stockQuantity')->setValue($productEntity, $stock);
+        $reflection->getProperty('active')->setValue($productEntity, true);
+        $reflection->getProperty('images')->setValue($productEntity, []);
+        $reflection->getProperty('trackInventory')->setValue($productEntity, true);
+        $reflection->getProperty('allowBackorder')->setValue($productEntity, false);
+        $reflection->getProperty('isFeatured')->setValue($productEntity, false);
+        $reflection->getProperty('createdAt')->setValue($productEntity, new \DateTimeImmutable());
+        $reflection->getProperty('updatedAt')->setValue($productEntity, new \DateTimeImmutable());
+
+        $entityManager->persist($productEntity);
+        $entityManager->flush();
+
+        // Create stock item record for inventory validation
+        $stockItemId = \Symfony\Component\Uid\Uuid::v4()->toString();
+        $connection->executeStatement(
+            'INSERT INTO stock_items (id, tenant_id, product_id, warehouse_id, on_hand, reserved, allocated, low_stock_threshold, created_at, updated_at)
+             VALUES (:id, :tenantId, :productId, :warehouseId, :stock, 0, 0, 10, NOW(), NOW())',
+            [
+                'id' => $stockItemId,
+                'tenantId' => $tenantId,
+                'productId' => $productId,
+                'warehouseId' => $warehouseId,
+                'stock' => $stock,
+            ]
+        );
+
+        return $productId;
+    }
+
+    /**
      * Generate a unique email address for testing.
      */
     private function generateUniqueEmail(string $prefix = 'customer'): string
@@ -99,6 +202,9 @@ final class OrderApiTest extends ApiTestCase
     /**
      * Helper method to create an order via the API.
      *
+     * Creates real products in the database before placing the order so that
+     * CheckoutValidationService can find them and verify prices and stock.
+     *
      * @return array<string, mixed> The created order data
      */
     private function placeOrder(
@@ -122,15 +228,19 @@ final class OrderApiTest extends ApiTestCase
             'country' => 'US',
         ];
 
-        $lines = $lines ?? [
-            [
-                'productId' => \Symfony\Component\Uid\Uuid::v4()->toString(),
-                'productName' => 'Test Product',
-                'quantity' => 2,
-                'unitPriceAmount' => 1999, // $19.99 in cents
-                'unitPriceCurrency' => 'USD',
-            ],
-        ];
+        // Create a real product in this tenant so CheckoutValidationService passes
+        if (null === $lines) {
+            $productId = $this->createProductWithStock($tenantId, 1999, 'USD', 100);
+            $lines = [
+                [
+                    'productId' => $productId,
+                    'productName' => 'Test Product',
+                    'quantity' => 2,
+                    'unitPriceAmount' => 1999,
+                    'unitPriceCurrency' => 'USD',
+                ],
+            ];
+        }
 
         $shippingAddress = $shippingAddress ?? $defaultAddress;
         $billingAddress = $billingAddress ?? $defaultAddress;
@@ -169,16 +279,18 @@ final class OrderApiTest extends ApiTestCase
     {
         // Arrange
         $tenantId = $this->createTenant();
+        $this->currentTenantId = $tenantId;
         $customerEmail = $this->generateUniqueEmail();
+        $productId = $this->createProductWithStock($tenantId, 2999, 'USD', 100);
 
         // Act
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/orders', [
+        $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN', 'ROLE_USER'], $tenantId)->request('POST', '/api/v1/orders', [
             'json' => [
                 'tenantId' => $tenantId,
                 'customerEmail' => $customerEmail,
                 'lines' => [
                     [
-                        'productId' => \Symfony\Component\Uid\Uuid::v4()->toString(),
+                        'productId' => $productId,
                         'productName' => 'Test Product',
                         'quantity' => 1,
                         'unitPriceAmount' => 2999,
@@ -221,22 +333,25 @@ final class OrderApiTest extends ApiTestCase
     {
         // Arrange
         $tenantId = $this->createTenant();
+        $this->currentTenantId = $tenantId;
+        $productIdA = $this->createProductWithStock($tenantId, 1000, 'USD', 100);
+        $productIdB = $this->createProductWithStock($tenantId, 1500, 'USD', 100);
 
         // Act
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/orders', [
+        $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN', 'ROLE_USER'], $tenantId)->request('POST', '/api/v1/orders', [
             'json' => [
                 'tenantId' => $tenantId,
                 'customerEmail' => $this->generateUniqueEmail(),
                 'lines' => [
                     [
-                        'productId' => \Symfony\Component\Uid\Uuid::v4()->toString(),
+                        'productId' => $productIdA,
                         'productName' => 'Product A',
                         'quantity' => 2,
                         'unitPriceAmount' => 1000, // $10.00
                         'unitPriceCurrency' => 'USD',
                     ],
                     [
-                        'productId' => \Symfony\Component\Uid\Uuid::v4()->toString(),
+                        'productId' => $productIdB,
                         'productName' => 'Product B',
                         'quantity' => 3,
                         'unitPriceAmount' => 1500, // $15.00
@@ -270,11 +385,11 @@ final class OrderApiTest extends ApiTestCase
 
     public function testPlaceOrderValidatesRequiredFields(): void
     {
-        // Arrange - Missing customerEmail
+        // Arrange - Missing customerEmail; processor validation fires before checkout validation
         $tenantId = $this->createTenant();
 
         // Act & Assert
-        $this->createAuthenticatedClient()->request('POST', '/api/v1/orders', [
+        $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN', 'ROLE_USER'], $tenantId)->request('POST', '/api/v1/orders', [
             'json' => [
                 'tenantId' => $tenantId,
                 'lines' => [
@@ -308,11 +423,11 @@ final class OrderApiTest extends ApiTestCase
 
     public function testPlaceOrderValidatesEmptyLines(): void
     {
-        // Arrange - Empty lines array
+        // Arrange - Empty lines array; processor validation fires before checkout validation
         $tenantId = $this->createTenant();
 
         // Act & Assert
-        $this->createAuthenticatedClient()->request('POST', '/api/v1/orders', [
+        $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN', 'ROLE_USER'], $tenantId)->request('POST', '/api/v1/orders', [
             'json' => [
                 'tenantId' => $tenantId,
                 'customerEmail' => $this->generateUniqueEmail(),
@@ -339,17 +454,20 @@ final class OrderApiTest extends ApiTestCase
 
     public function testPlaceOrderValidatesInvalidEmail(): void
     {
-        // Arrange
+        // Arrange - Invalid email; email validation in Order domain runs AFTER checkout validation,
+        // so we need a real product to get past the checkout validation step.
         $tenantId = $this->createTenant();
+        $this->currentTenantId = $tenantId;
+        $productId = $this->createProductWithStock($tenantId, 1000, 'USD', 100);
 
         // Act & Assert
-        $this->createAuthenticatedClient()->request('POST', '/api/v1/orders', [
+        $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN', 'ROLE_USER'], $tenantId)->request('POST', '/api/v1/orders', [
             'json' => [
                 'tenantId' => $tenantId,
                 'customerEmail' => 'not-a-valid-email',
                 'lines' => [
                     [
-                        'productId' => \Symfony\Component\Uid\Uuid::v4()->toString(),
+                        'productId' => $productId,
                         'productName' => 'Test Product',
                         'quantity' => 1,
                         'unitPriceAmount' => 1000,
@@ -812,23 +930,29 @@ final class OrderApiTest extends ApiTestCase
     {
         // Arrange
         $tenantId = $this->createTenant();
+        $this->currentTenantId = $tenantId;
+
+        $productId1 = $this->createProductWithStock($tenantId, 1000, 'USD', 100);
+        $productId2 = $this->createProductWithStock($tenantId, 2500, 'USD', 100);
+        $productId3 = $this->createProductWithStock($tenantId, 500, 'USD', 100);
+
         $lines = [
             [
-                'productId' => \Symfony\Component\Uid\Uuid::v4()->toString(),
+                'productId' => $productId1,
                 'productName' => 'Product 1',
                 'quantity' => 2,
                 'unitPriceAmount' => 1000,
                 'unitPriceCurrency' => 'USD',
             ],
             [
-                'productId' => \Symfony\Component\Uid\Uuid::v4()->toString(),
+                'productId' => $productId2,
                 'productName' => 'Product 2',
                 'quantity' => 1,
                 'unitPriceAmount' => 2500,
                 'unitPriceCurrency' => 'USD',
             ],
             [
-                'productId' => \Symfony\Component\Uid\Uuid::v4()->toString(),
+                'productId' => $productId3,
                 'productName' => 'Product 3',
                 'quantity' => 3,
                 'unitPriceAmount' => 500,

@@ -78,4 +78,12 @@ interface CartRepositoryInterface
      * Mark cart as having received abandonment email.
      */
     public function markAbandonmentEmailSent(CartId $cartId): void;
+
+    /**
+     * Mark a cart as converted to an order.
+     *
+     * Uses a direct database update to avoid EntityManager state issues
+     * that can occur when domain event handlers corrupt the EM during order creation.
+     */
+    public function markAsConverted(CartId $cartId): void;
 }

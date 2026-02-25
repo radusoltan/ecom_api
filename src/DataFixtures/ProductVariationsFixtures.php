@@ -6,6 +6,7 @@ namespace App\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Uid\Uuid;
 
@@ -14,12 +15,21 @@ use Symfony\Component\Uid\Uuid;
  *
  * Adds Color and Size options to selected products and generates variants
  */
-class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface
+class ProductVariationsFixtures extends Fixture implements FixtureGroupInterface, DependentFixtureInterface
 {
     public static function getGroups(): array
     {
         return ['variations', 'product-variations'];
     }
+
+    public function getDependencies(): array
+    {
+        return [
+            TenantFixtures::class,
+            ProductFixtures::class,
+        ];
+    }
+
     // Define common options
     private const COLORS = [
         'red' => ['en' => 'Red', 'fr' => 'Rouge', 'de' => 'Rot'],

@@ -1,7 +1,11 @@
 security:
-    # Disable authentication for API endpoints in test environment
-    # This allows functional tests to run without JWT tokens
+    # Enable JWT authentication in test environment.
+    # Uses the standard BlindIndexUserProvider (same as production).
+    # The UserBlindIndexListener auto-generates blind indexes on persist,
+    # so test-created users are always findable by the user provider.
     firewalls:
         api:
             pattern: ^/api
-            security: false  # Disable security for all /api routes in test
+            stateless: true
+            provider: app_user_provider
+            jwt: ~

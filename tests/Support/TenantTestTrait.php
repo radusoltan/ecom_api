@@ -158,6 +158,7 @@ trait TenantTestTrait
             'promotions',
             'tax_rules',
             'warehouses',
+            'customer_addresses',
             'customers',
         ];
 

@@ -86,11 +86,6 @@ final class VariantApiTest extends ApiTestCase
                 }
             }
 
-            // Ensure we're connected
-            if (!$connection->isConnected()) {
-                $connection->connect();
-            }
-
             // Set tenant context again to ensure it's active
             $connection->executeStatement(
                 sprintf("SET app.tenant_id = '%s'", $this->tenantId->toString())
@@ -521,7 +516,7 @@ final class VariantApiTest extends ApiTestCase
         $response1 = $client1->request('POST', '/api/v1/variant_entities', [
             'json' => [
                 'productId' => $productId1->toString(),
-                'sku' => 'TST-FUN-000008-red',
+                'sku' => sprintf('TST-FUN-%06d-red', random_int(100000, 999999)),
                 'optionValueMap' => ['color' => 'red'],
                 'priceAmount' => '1000',
                 'priceCurrency' => 'USD',

@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Payment\Application\Command;
 
+use App\Payment\Domain\Model\PaymentId as GatewayPaymentId;
+use App\Payment\Domain\Model\PaymentMethod as GatewayPaymentMethod;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
-use App\Payment\Infrastructure\Gateway\PaymentGatewayFactory;
+use App\Payment\Domain\Service\PaymentGatewayFactoryInterface;
+use App\Shared\Domain\ValueObject\Money;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -14,7 +17,7 @@ final readonly class AuthorizePaymentHandler
 {
     public function __construct(
         private PaymentRepositoryInterface $paymentRepository,
-        private PaymentGatewayFactory $gatewayFactory,
+        private PaymentGatewayFactoryInterface $gatewayFactory,
         private LoggerInterface $logger,
     ) {
     }
@@ -35,14 +38,21 @@ final readonly class AuthorizePaymentHandler
         ]);
 
         try {
-            // Get gateway instance
-            $gateway = $this->gatewayFactory->getGateway($payment->gateway());
+            // Resolve gateway using domain port (create() takes Model\PaymentMethod enum)
+            $gatewayMethod = GatewayPaymentMethod::from($payment->gateway()->value());
+            $gateway = $this->gatewayFactory->create($gatewayMethod);
 
-            // Call gateway to authorize payment
-            $result = $gateway->authorize(
-                amountInCents: $payment->amountInCents(),
+            // Build typed arguments required by createPaymentIntent()
+            $gatewayPaymentId = GatewayPaymentId::generate();
+            $amount = Money::fromScalars($payment->amountInCents(), $payment->currency());
+            $idempotencyKey = $payment->idempotencyKey() ?? $payment->id()->toString();
+
+            // Create payment intent to authorize (reserve) funds
+            $result = $gateway->createPaymentIntent(
+                paymentId: $gatewayPaymentId,
+                amount: $amount,
                 currency: $payment->currency(),
-                method: $payment->method(),
+                idempotencyKey: $idempotencyKey,
                 metadata: [
                     'payment_id' => $payment->id()->toString(),
                     'order_id' => $payment->orderId(),
@@ -52,12 +62,12 @@ final readonly class AuthorizePaymentHandler
 
             $this->logger->info('Payment authorization successful', [
                 'payment_id' => $command->id->toString(),
-                'transaction_id' => $result['transaction_id'],
-                'status' => $result['status'],
+                'transaction_id' => $result->gatewayPaymentIntentId,
+                'status' => $result->status,
             ]);
 
             // Update domain model with gateway transaction ID
-            $payment->authorize($result['transaction_id']);
+            $payment->authorize($result->gatewayPaymentIntentId);
 
             // Persist changes
             $this->paymentRepository->save($payment);

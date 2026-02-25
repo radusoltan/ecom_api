@@ -1383,3 +1383,36 @@ services:
     # Invoice PDF Generator Interface binding
     App\Invoice\Domain\Service\InvoicePdfGeneratorInterface:
         alias: App\Invoice\Infrastructure\Pdf\InvoicePdfGenerator
+
+    # Invoice Context - Decorate processors with TenantContext
+    tenant_context_create_invoice_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Invoice\Infrastructure\ApiPlatform\State\CreateInvoiceProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_issue_invoice_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Invoice\Infrastructure\ApiPlatform\State\IssueInvoiceProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_mark_invoice_paid_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Invoice\Infrastructure\ApiPlatform\State\MarkInvoicePaidProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'
+
+    tenant_context_cancel_invoice_processor:
+        class: App\Shared\Infrastructure\ApiPlatform\State\TenantContextProcessor
+        decorates: App\Invoice\Infrastructure\ApiPlatform\State\CancelInvoiceProcessor
+        decoration_priority: 100
+        arguments:
+            $decorated: '@.inner'
+            $requestStack: '@request_stack'

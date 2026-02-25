@@ -72,7 +72,7 @@ class FulfillmentEntity
     #[ORM\Column(type: 'string', length: 36, name: 'order_id')]
     private string $orderId;
 
-    #[ORM\Column(type: 'string', length: 26, name: 'warehouse_id')]
+    #[ORM\Column(type: 'string', length: 36, name: 'warehouse_id')]
     private string $warehouseId;
 
     #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]

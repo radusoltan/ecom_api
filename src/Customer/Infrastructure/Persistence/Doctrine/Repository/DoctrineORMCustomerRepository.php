@@ -7,6 +7,7 @@ namespace App\Customer\Infrastructure\Persistence\Doctrine\Repository;
 use App\Customer\Domain\Model\Customer;
 use App\Customer\Domain\Repository\CustomerRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
+use App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerAddressEntity;
 use App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity;
 use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\TenantId;
@@ -34,9 +35,11 @@ final readonly class DoctrineORMCustomerRepository implements CustomerRepository
         if ($existing instanceof CustomerEntity) {
             $existing->updateFromDomainModel($customer);
             $existing->setEmailBlindIndex($this->blindIndexService->generate($customer->email()->toString()));
+            $this->syncAddresses($existing, $customer);
         } else {
             $entity = CustomerEntity::fromDomainModel($customer);
             $entity->setEmailBlindIndex($this->blindIndexService->generate($customer->email()->toString()));
+            $this->syncAddresses($entity, $customer);
             $this->entityManager->persist($entity);
         }
 
@@ -112,6 +115,52 @@ final readonly class DoctrineORMCustomerRepository implements CustomerRepository
             fn (CustomerEntity $entity) => $entity->toDomainModel(),
             $entities
         );
+    }
+
+    /**
+     * Sync addresses from domain model to entity.
+     */
+    private function syncAddresses(CustomerEntity $entity, Customer $customer): void
+    {
+        $domainAddresses = $customer->getAddresses();
+        $existingEntities = $entity->getAddressEntities();
+
+        // Index existing address entities by ID
+        $existingById = [];
+        foreach ($existingEntities as $addressEntity) {
+            $existingById[$addressEntity->getId()] = $addressEntity;
+        }
+
+        // Index domain addresses by ID
+        $domainById = [];
+        foreach ($domainAddresses as $address) {
+            $domainById[$address->id->toString()] = $address;
+        }
+
+        // Add new addresses
+        foreach ($domainAddresses as $address) {
+            $addressId = $address->id->toString();
+            if (!isset($existingById[$addressId])) {
+                $addressEntity = CustomerAddressEntity::fromDomainModel(
+                    $address->toArray(),
+                    $customer->id()->toString(),
+                    $customer->tenantId()->toString(),
+                );
+                $entity->addAddressEntity($addressEntity);
+                $this->entityManager->persist($addressEntity);
+            } else {
+                // Update existing
+                $existingById[$addressId]->updateFromDomainModel($address->toArray());
+            }
+        }
+
+        // Remove addresses no longer in domain model
+        foreach ($existingEntities->toArray() as $addressEntity) {
+            if (!isset($domainById[$addressEntity->getId()])) {
+                $entity->removeAddressEntity($addressEntity);
+                $this->entityManager->remove($addressEntity);
+            }
+        }
     }
 
     public function delete(Customer $customer): void

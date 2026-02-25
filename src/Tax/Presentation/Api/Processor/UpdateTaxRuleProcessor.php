@@ -8,7 +8,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Application\Command\UpdateTaxRule;
-use App\Tax\Domain\ValueObject\TaxRuleId;
+use App\Tax\Domain\Model\TaxRuleId;
 use App\Tax\Presentation\Api\Resource\TaxRuleResource;
 use Symfony\Component\Messenger\MessageBusInterface;
 

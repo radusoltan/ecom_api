@@ -181,11 +181,14 @@ final class OrderWorkflowE2ETest extends WebTestCase
         // Place order
         $orderId = $this->placeOrder($client);
 
-        // Cancel order (use merge-patch+json for PATCH operations)
+        // Cancel order requires authentication (PATCH is not PUBLIC_ACCESS)
+        $token = $this->getJwtToken($client);
+
         $client->request('PATCH', '/api/v1/orders/'.$orderId.'/cancel', [], [], [
             'HTTP_X_TENANT_ID' => self::DEFAULT_TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
             'CONTENT_TYPE' => 'application/merge-patch+json',
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ], json_encode([]));
 
         $this->assertResponseIsSuccessful();
@@ -270,6 +273,38 @@ final class OrderWorkflowE2ETest extends WebTestCase
     }
 
     // Helper Methods
+
+    private function getJwtToken($client): string
+    {
+        $container = $client->getContainer();
+        $entityManager = $container->get('doctrine')->getManager();
+        $userRepository = $entityManager->getRepository(\App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity::class);
+
+        $email = 'order-e2e-test@example.com';
+        $existingUser = $userRepository->findOneBy(['email' => $email]);
+
+        if (!$existingUser) {
+            $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
+            $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
+            $userEntity->setEmail($email);
+            $userEntity->setUsername('order-e2e-test-'.bin2hex(random_bytes(4)));
+            $userEntity->setPassword('$2y$13$dummy.password.hash');
+            $userEntity->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_USER']);
+            $userEntity->setCreatedAt(new \DateTimeImmutable());
+
+            $entityManager->persist($userEntity);
+            $entityManager->flush();
+        }
+
+        $encoder = $container->get('lexik_jwt_authentication.encoder');
+
+        return $encoder->encode([
+            'email' => $email,
+            'roles' => ['ROLE_SUPER_ADMIN', 'ROLE_USER'],
+            'iat' => time(),
+            'exp' => time() + 3600,
+        ]);
+    }
 
     private function placeOrder($client): string
     {

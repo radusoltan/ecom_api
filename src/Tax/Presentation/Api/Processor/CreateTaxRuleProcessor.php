@@ -9,7 +9,7 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Application\Command\CreateTaxRule;
 use App\Tax\Application\Query\GetTaxRuleById;
-use App\Tax\Domain\ValueObject\TaxRuleId;
+use App\Tax\Domain\Model\TaxRuleId;
 use App\Tax\Presentation\Api\Resource\TaxRuleResource;
 use App\Tax\Presentation\Api\Transformer\TaxRuleResourceTransformer;
 use Symfony\Component\Messenger\HandleTrait;
@@ -60,14 +60,20 @@ final class CreateTaxRuleProcessor implements ProcessorInterface
         $taxRuleId = TaxRuleId::generate();
         $tenantId = TenantId::fromString($data->tenantId);
 
-        // Create command
+        // Create command - argument order must match CreateTaxRule constructor
         $command = new CreateTaxRule(
             id: $taxRuleId,
             tenantId: $tenantId,
-            name: $data->name,
             countryCode: $data->countryCode,
             regionCode: $data->regionCode,
-            ratePercentage: $data->ratePercentage
+            category: $data->category ?? 'standard',
+            ratePercentage: $data->ratePercentage,
+            name: $data->name,
+            description: $data->description,
+            priority: $data->priority ?? 0,
+            validFrom: $data->validFrom,
+            validTo: $data->validTo,
+            isReverseCharge: $data->isReverseCharge ?? false,
         );
 
         // Dispatch command - catch HandlerFailedException and extract domain validation errors

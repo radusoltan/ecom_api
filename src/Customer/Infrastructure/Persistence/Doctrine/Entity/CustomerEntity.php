@@ -14,6 +14,9 @@ use ApiPlatform\Metadata\Put;
 use App\Customer\Domain\Model\Customer;
 use App\Customer\Domain\ValueObject\CustomerConsent;
 use App\Customer\Domain\ValueObject\CustomerId;
+use App\Customer\Domain\ValueObject\AddressType;
+use App\Customer\Domain\ValueObject\CustomerAddress;
+use App\Customer\Domain\ValueObject\CustomerAddressId;
 use App\Customer\Domain\ValueObject\CustomerPreferences;
 use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Customer\Domain\ValueObject\NotificationPreferences;
@@ -276,6 +279,27 @@ class CustomerEntity
             preferSms: $this->notifPreferSms
         );
 
+        // Reconstitute addresses from entity collection
+        $addresses = [];
+        foreach ($this->addressEntities as $addressEntity) {
+            if ($addressEntity->isDeleted()) {
+                continue;
+            }
+            $addr = CustomerAddress::create(
+                id: CustomerAddressId::fromString($addressEntity->getId()),
+                street: $addressEntity->getStreet(),
+                street2: $addressEntity->getStreet2(),
+                city: $addressEntity->getCity(),
+                state: $addressEntity->getState(),
+                postalCode: $addressEntity->getPostalCode(),
+                country: $addressEntity->getCountry(),
+                type: AddressType::fromString($addressEntity->getType()),
+                isDefaultShipping: $addressEntity->isDefaultShipping(),
+                isDefaultBilling: $addressEntity->isDefaultBilling(),
+            );
+            $addresses[$addressEntity->getId()] = $addr;
+        }
+
         return Customer::reconstituteFromPersistence(
             CustomerId::fromString($this->id),
             TenantId::fromString($this->tenantId),
@@ -290,7 +314,8 @@ class CustomerEntity
             $consents,
             $notificationPreferences,
             $this->createdAt,
-            $this->updatedAt
+            $this->updatedAt,
+            $addresses
         );
     }
 

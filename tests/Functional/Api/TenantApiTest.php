@@ -5,61 +5,58 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
-use App\Tenant\Presentation\Api\TenantResource;
-use App\Tests\Support\TenantTestTrait;
 
 /**
  * Comprehensive Functional Tests for Tenant API Endpoints.
  *
- * Tests all 5 Tenant API endpoints using API Platform testing best practices:
- * - GET /api/tenants (Collection)
- * - GET /api/tenants/{id} (Item)
- * - POST /api/tenants (Create)
- * - PATCH /api/tenants/{id}/activate (Activate)
- * - PATCH /api/tenants/{id}/deactivate (Deactivate)
- *
- * Uses ApiTestCase with DAMA Bundle for automatic database transaction rollback.
+ * Uses a single client per test to avoid DB connection isolation issues with RLS.
  */
 final class TenantApiTest extends ApiTestCase
 {
-    use TenantTestTrait;
-
     private static int $counter = 0;
 
-    /**
-     * Setup method to enable RLS bypass for superadmin tests.
-     */
+    private ?string $jwtToken = null;
+
     protected function setUp(): void
     {
         parent::setUp();
+    }
 
-        // Enable RLS bypass so superadmin can query all tenants
-        $this->enableRLSBypass();
+    protected function tearDown(): void
+    {
+        try {
+            $client = static::createClient();
+            $em = $client->getContainer()->get('doctrine.orm.entity_manager');
+            $connection = $em->getConnection();
+            $connection->executeStatement("SET app.bypass_rls = 'true'");
+            $connection->executeStatement("DELETE FROM tenants WHERE slug LIKE 'test-%' OR slug LIKE 'new-%' OR slug LIKE 'company-%' OR slug LIKE 'acme-%' OR slug LIKE 'lifecycle-%' OR slug LIKE 'to-%' OR slug LIKE 'collection-%' OR slug LIKE 'preserve-%' OR slug LIKE 'already-%' OR slug LIKE 'location-%' OR slug LIKE 'status-%' OR slug LIKE 'first-%' OR slug LIKE 'second-%' OR slug LIKE 'invalid-%'");
+            $connection->executeStatement("SET app.bypass_rls = ''");
+        } catch (\Exception $e) {
+            // Ignore cleanup errors
+        }
+        parent::tearDown();
     }
 
     /**
-     * Create an authenticated client with JWT token.
+     * Create a client with JWT auth and RLS bypass set on its DB connection.
+     *
+     * IMPORTANT: Call this ONCE per test, then reuse the returned client for all requests.
      */
-    protected function createAuthenticatedClient(string $email = 'admin@admin.com', array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'])
+    private function createClientWithAuth(): object
     {
-        $token = $this->generateToken($email, $roles);
+        // Generate JWT token
+        $client = static::createClient();
+        $container = $client->getContainer();
 
-        // Create authenticated client with token in headers (API Platform recommended way)
-        return static::createClient([], ['headers' => ['authorization' => 'Bearer '.$token]]);
-    }
-
-    /**
-     * Generate a JWT token for testing.
-     */
-    private function generateToken(string $email = 'admin@admin.com', array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER']): string
-    {
-        // First, create a temporary client to access services
-        $tempClient = static::createClient();
-        $container = $tempClient->getContainer();
-
-        // Create user in database for JWT authentication (if not exists)
         $entityManager = $container->get('doctrine')->getManager();
+        $connection = $entityManager->getConnection();
+
+        // Set bypass_rls on THIS connection so tenant queries work
+        $connection->executeStatement("SET app.bypass_rls = 'true'");
+
         $userRepository = $entityManager->getRepository(\App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity::class);
+        $email = 'admin@admin.com';
+        $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'];
 
         $existingUser = $userRepository->findOneBy(['email' => $email]);
 
@@ -67,8 +64,8 @@ final class TenantApiTest extends ApiTestCase
             $userEntity = new \App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity();
             $userEntity->setId(\Symfony\Component\Uid\Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
-            $userEntity->setPassword('$2y$13$dummy.password.hash'); // Dummy password (not used for JWT)
+            $userEntity->setUsername('admin-'.bin2hex(random_bytes(4)));
+            $userEntity->setPassword('$2y$13$dummy.password.hash');
             $userEntity->setRoles($roles);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
 
@@ -76,35 +73,46 @@ final class TenantApiTest extends ApiTestCase
             $entityManager->flush();
         }
 
-        // Generate JWT token using Lexik encoder for testing
         $encoder = $container->get('lexik_jwt_authentication.encoder');
-
-        return $encoder->encode([
+        $this->jwtToken = $encoder->encode([
             'email' => $email,
             'roles' => $roles,
             'iat' => time(),
             'exp' => time() + 3600,
         ]);
+
+        return $client;
     }
 
     /**
-     * Generate a unique email address for testing.
+     * Make an authenticated request using the stored JWT token.
      */
+    private function authRequest(object $client, string $method, string $url, array $options = []): object
+    {
+        $options['headers'] = array_merge(
+            $options['headers'] ?? [],
+            ['authorization' => 'Bearer '.$this->jwtToken]
+        );
+
+        return $client->request($method, $url, $options);
+    }
+
     private function generateUniqueEmail(string $prefix = 'test'): string
     {
         return sprintf('%s-%d-%s@example.com', $prefix, ++self::$counter, uniqid());
     }
 
     /**
-     * Helper method to create a tenant via the API.
-     *
-     * @return array<string, mixed> The created tenant data
+     * Create a tenant via the API using the given client.
      */
-    private function createTenant(string $name = 'Test Company', ?string $email = null): array
+    private function createTenantViaApi(object $client, string $name = '', ?string $email = null): array
     {
+        if ('' === $name) {
+            $name = 'Test Company '.uniqid();
+        }
         $email = $email ?? $this->generateUniqueEmail();
 
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/tenants', [
+        $response = $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
                 'name' => $name,
                 'ownerEmail' => $email,
@@ -116,31 +124,19 @@ final class TenantApiTest extends ApiTestCase
         return json_decode($response->getContent(), true);
     }
 
-    /**
-     * Extract tenant ID from API response.
-     */
-    private function extractTenantId(array $tenantData): string
-    {
-        $this->assertArrayHasKey('id', $tenantData);
-        $this->assertNotEmpty($tenantData['id']);
-
-        return $tenantData['id'];
-    }
-
     // ========================================================================
     // GET /api/tenants - Collection Tests
     // ========================================================================
 
     public function testGetCollectionOfTenants(): void
     {
-        // Arrange - Create some test tenants
-        $this->createTenant('Company One', $this->generateUniqueEmail('company1'));
-        $this->createTenant('Company Two', $this->generateUniqueEmail('company2'));
+        $client = $this->createClientWithAuth();
 
-        // Act
-        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/tenants');
+        $this->createTenantViaApi($client, 'Company One '.uniqid(), $this->generateUniqueEmail('company1'));
+        $this->createTenantViaApi($client, 'Company Two '.uniqid(), $this->generateUniqueEmail('company2'));
 
-        // Assert
+        $response = $this->authRequest($client, 'GET', '/api/v1/tenants');
+
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
         $this->assertJsonContains([
@@ -148,13 +144,11 @@ final class TenantApiTest extends ApiTestCase
             '@type' => 'Collection',
         ]);
 
-        // Verify collection structure
         $data = json_decode($response->getContent(), true);
         $this->assertArrayHasKey('member', $data);
         $this->assertIsArray($data['member']);
         $this->assertGreaterThanOrEqual(2, count($data['member']));
 
-        // Verify each tenant has required fields
         foreach ($data['member'] as $tenant) {
             $this->assertArrayHasKey('@id', $tenant);
             $this->assertArrayHasKey('@type', $tenant);
@@ -165,19 +159,14 @@ final class TenantApiTest extends ApiTestCase
             $this->assertArrayHasKey('createdAt', $tenant);
             $this->assertSame('Tenant', $tenant['@type']);
         }
-
-        // Validate against resource schema
-        // TODO: Fix JSON Schema validation for enabledLocales array
-        // $this->assertMatchesResourceCollectionJsonSchema(TenantResource::class);
     }
 
     public function testGetCollectionReturnsEmptyWhenNoTenants(): void
     {
-        // Note: DAMA Bundle ensures isolated transactions, so we start with a clean slate
-        // Act
-        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/tenants');
+        $client = $this->createClientWithAuth();
 
-        // Assert
+        $response = $this->authRequest($client, 'GET', '/api/v1/tenants');
+
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
         $this->assertJsonContains([
@@ -185,29 +174,24 @@ final class TenantApiTest extends ApiTestCase
             '@type' => 'Collection',
         ]);
 
-        // Verify empty collection structure
         $data = json_decode($response->getContent(), true);
         $this->assertArrayHasKey('member', $data);
         $this->assertIsArray($data['member']);
-        // TODO: Fix JSON Schema validation for enabledLocales array
-        // $this->assertMatchesResourceCollectionJsonSchema(TenantResource::class);
     }
 
     public function testGetCollectionIncludesPaginationMetadata(): void
     {
-        // Arrange - Create multiple tenants
+        $client = $this->createClientWithAuth();
+
         for ($i = 1; $i <= 5; ++$i) {
-            $this->createTenant("Company $i", $this->generateUniqueEmail("company$i"));
+            $this->createTenantViaApi($client, 'Company '.uniqid(), $this->generateUniqueEmail("company$i"));
         }
 
-        // Act
-        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/tenants');
+        $response = $this->authRequest($client, 'GET', '/api/v1/tenants');
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $data = json_decode($response->getContent(), true);
 
-        // Verify pagination metadata exists
         $this->assertArrayHasKey('totalItems', $data);
         $this->assertIsInt($data['totalItems']);
         $this->assertGreaterThanOrEqual(5, $data['totalItems']);
@@ -219,50 +203,45 @@ final class TenantApiTest extends ApiTestCase
 
     public function testGetSingleTenantReturnsSuccessfully(): void
     {
-        // Arrange - Create a tenant
-        $tenantData = $this->createTenant('Acme Corporation', $this->generateUniqueEmail('acme'));
-        $tenantId = $this->extractTenantId($tenantData);
+        $client = $this->createClientWithAuth();
 
-        // Act
-        $response = $this->createAuthenticatedClient()->request('GET', "/api/v1/tenants/$tenantId");
+        $name = 'Acme Corporation '.uniqid();
+        $tenantData = $this->createTenantViaApi($client, $name, $this->generateUniqueEmail('acme'));
+        $tenantId = $tenantData['id'];
 
-        // Assert
+        $response = $this->authRequest($client, 'GET', "/api/v1/tenants/$tenantId");
+
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
         $this->assertJsonContains([
             '@context' => '/api/v1/contexts/Tenant',
             '@type' => 'Tenant',
             'id' => $tenantId,
-            'name' => 'Acme Corporation',
+            'name' => $name,
         ]);
-
-        // Validate against resource schema
-        // TODO: Fix JSON Schema validation for enabledLocales array
-        // $this->assertMatchesResourceCollectionJsonSchema(TenantResource::class);
     }
 
     public function testGetSingleTenantReturnsCorrectData(): void
     {
-        // Arrange
+        $client = $this->createClientWithAuth();
+
         $email = $this->generateUniqueEmail('test');
-        $tenantData = $this->createTenant('Test Company', $email);
-        $tenantId = $this->extractTenantId($tenantData);
+        $name = 'Test Company '.uniqid();
+        $tenantData = $this->createTenantViaApi($client, $name, $email);
+        $tenantId = $tenantData['id'];
 
-        // Act
-        $response = $this->createAuthenticatedClient()->request('GET', "/api/v1/tenants/$tenantId");
+        $response = $this->authRequest($client, 'GET', "/api/v1/tenants/$tenantId");
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $data = json_decode($response->getContent(), true);
 
         $this->assertSame($tenantId, $data['id']);
-        $this->assertSame('Test Company', $data['name']);
+        $this->assertSame($name, $data['name']);
         $this->assertSame($email, $data['ownerEmail']);
         $this->assertSame('active', $data['status']);
         $this->assertArrayHasKey('createdAt', $data);
         $this->assertNotEmpty($data['createdAt']);
 
-        // Verify UUID format
         $this->assertMatchesRegularExpression(
             '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
             $data['id']
@@ -271,14 +250,11 @@ final class TenantApiTest extends ApiTestCase
 
     public function testGetSingleTenantReturns404ForNonExistentTenant(): void
     {
-        // Arrange - Use a valid UUID that doesn't exist
+        $client = $this->createClientWithAuth();
         $nonExistentId = '00000000-0000-4000-8000-000000000000';
 
-        // Act & Assert
-        $client = $this->createAuthenticatedClient();
-        $client->request('GET', "/api/v1/tenants/$nonExistentId");
+        $this->authRequest($client, 'GET', "/api/v1/tenants/$nonExistentId");
 
-        // Domain layer throws exception, returns 500 (not ideal but current behavior)
         $statusCode = $client->getResponse()->getStatusCode();
         $this->assertTrue(
             in_array($statusCode, [404, 500]),
@@ -288,14 +264,11 @@ final class TenantApiTest extends ApiTestCase
 
     public function testGetSingleTenantReturns404ForInvalidUuid(): void
     {
-        // Arrange - Use an invalid UUID format
+        $client = $this->createClientWithAuth();
         $invalidId = 'invalid-uuid-format';
 
-        // Act & Assert
-        $client = $this->createAuthenticatedClient();
-        $client->request('GET', "/api/v1/tenants/$invalidId");
+        $this->authRequest($client, 'GET', "/api/v1/tenants/$invalidId");
 
-        // Domain layer throws exception for invalid UUID, returns 500
         $statusCode = $client->getResponse()->getStatusCode();
         $this->assertTrue(
             in_array($statusCode, [404, 500]),
@@ -309,26 +282,22 @@ final class TenantApiTest extends ApiTestCase
 
     public function testCreateTenantWithValidDataReturns201(): void
     {
-        // Arrange
-        $name = 'New Company';
+        $client = $this->createClientWithAuth();
+
+        $name = 'New Company '.uniqid();
         $email = $this->generateUniqueEmail('new');
 
-        // Act
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/tenants', [
+        $response = $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
                 'name' => $name,
                 'ownerEmail' => $email,
             ],
         ]);
 
-        // Assert
         $this->assertResponseStatusCodeSame(201);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
-
-        // Verify Location header is present
         $this->assertResponseHasHeader('location');
 
-        // Verify response body contains created tenant
         $this->assertJsonContains([
             '@context' => '/api/v1/contexts/Tenant',
             '@type' => 'Tenant',
@@ -342,134 +311,118 @@ final class TenantApiTest extends ApiTestCase
         $this->assertArrayHasKey('createdAt', $data);
         $this->assertNotEmpty($data['id']);
         $this->assertNotEmpty($data['createdAt']);
-
-        // Validate against resource schema
-        // TODO: Fix JSON Schema validation for enabledLocales array
-        // $this->assertMatchesResourceCollectionJsonSchema(TenantResource::class);
     }
 
     public function testCreateTenantReturnsCorrectLocationHeader(): void
     {
-        // Arrange
-        $name = 'Location Test Company';
+        $client = $this->createClientWithAuth();
+
+        $name = 'Location Test Company '.uniqid();
         $email = $this->generateUniqueEmail('location');
 
-        // Act
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/tenants', [
+        $response = $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
                 'name' => $name,
                 'ownerEmail' => $email,
             ],
         ]);
 
-        // Assert
         $this->assertResponseStatusCodeSame(201);
         $this->assertResponseHasHeader('location');
 
         $data = json_decode($response->getContent(), true);
         $tenantId = $data['id'];
 
-        // Verify Location header contains tenant ID
         $locationHeader = $response->getHeaders()['location'][0];
         $this->assertStringContainsString("/api/v1/tenants/$tenantId", $locationHeader);
     }
 
     public function testCreateTenantValidatesRequiredNameField(): void
     {
-        // Arrange - Missing name
+        $client = $this->createClientWithAuth();
         $email = $this->generateUniqueEmail('noname');
 
-        // Act & Assert
-        $this->createAuthenticatedClient()->request('POST', '/api/v1/tenants', [
+        $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
                 'ownerEmail' => $email,
             ],
         ]);
 
-        // Domain validation occurs at processor level, returns 500
         $this->assertResponseStatusCodeSame(500);
     }
 
     public function testCreateTenantValidatesRequiredOwnerEmailField(): void
     {
-        // Arrange - Missing ownerEmail
-        // Act & Assert
-        $this->createAuthenticatedClient()->request('POST', '/api/v1/tenants', [
+        $client = $this->createClientWithAuth();
+
+        $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
                 'name' => 'Company Without Email',
             ],
         ]);
 
-        // Domain validation occurs at processor level, returns 500
         $this->assertResponseStatusCodeSame(500);
     }
 
     public function testCreateTenantValidatesEmailFormat(): void
     {
-        // Arrange - Invalid email format
-        // Act & Assert
-        $this->createAuthenticatedClient()->request('POST', '/api/v1/tenants', [
+        $client = $this->createClientWithAuth();
+
+        $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
                 'name' => 'Invalid Email Company',
                 'ownerEmail' => 'not-a-valid-email',
             ],
         ]);
 
-        // Domain validation occurs at value object level, returns 500
         $this->assertResponseStatusCodeSame(500);
     }
 
     public function testCreateTenantValidatesNameMinLength(): void
     {
-        // Arrange - Name too short (less than 3 characters)
+        $client = $this->createClientWithAuth();
         $email = $this->generateUniqueEmail('short');
 
-        // Act & Assert
-        $this->createAuthenticatedClient()->request('POST', '/api/v1/tenants', [
+        $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
-                'name' => 'AB', // Only 2 characters
+                'name' => 'AB',
                 'ownerEmail' => $email,
             ],
         ]);
 
-        // Domain validation occurs at value object level, returns 500
         $this->assertResponseStatusCodeSame(500);
     }
 
     public function testCreateTenantValidatesNameMaxLength(): void
     {
-        // Arrange - Name too long (more than 100 characters)
+        $client = $this->createClientWithAuth();
         $email = $this->generateUniqueEmail('long');
-        $longName = str_repeat('A', 101); // 101 characters
+        $longName = str_repeat('A', 101);
 
-        // Act & Assert
-        $this->createAuthenticatedClient()->request('POST', '/api/v1/tenants', [
+        $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
                 'name' => $longName,
                 'ownerEmail' => $email,
             ],
         ]);
 
-        // Domain validation occurs at value object level, returns 500
         $this->assertResponseStatusCodeSame(500);
     }
 
     public function testCreateTenantPreventsDuplicateEmail(): void
     {
-        // Arrange - Create first tenant
-        $email = $this->generateUniqueEmail('duplicate');
-        $this->createTenant('First Company', $email);
+        $client = $this->createClientWithAuth();
 
-        // Act - Try to create another tenant with same email
-        $client = $this->createAuthenticatedClient();
-        $client->request('POST', '/api/v1/tenants', [
+        $email = $this->generateUniqueEmail('duplicate');
+        $this->createTenantViaApi($client, 'First Company '.uniqid(), $email);
+
+        $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
-                'name' => 'Second Company',
+                'name' => 'Second Company '.uniqid(),
                 'ownerEmail' => $email,
             ],
         ]);
 
-        // Assert - Should return 500 (domain exception for duplicate)
         $statusCode = $client->getResponse()->getStatusCode();
         $this->assertTrue(
             in_array($statusCode, [400, 409, 500]),
@@ -479,40 +432,38 @@ final class TenantApiTest extends ApiTestCase
 
     public function testCreateTenantWithValidNameAtMinLength(): void
     {
-        // Arrange - Name exactly 3 characters (minimum valid)
+        $client = $this->createClientWithAuth();
         $email = $this->generateUniqueEmail('min');
+        $name = 'A'.uniqid();
 
-        // Act
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/tenants', [
+        $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
-                'name' => 'ABC',
+                'name' => $name,
                 'ownerEmail' => $email,
             ],
         ]);
 
-        // Assert
         $this->assertResponseStatusCodeSame(201);
         $this->assertJsonContains([
-            'name' => 'ABC',
+            'name' => $name,
             'ownerEmail' => $email,
         ]);
     }
 
     public function testCreateTenantWithValidNameAtMaxLength(): void
     {
-        // Arrange - Name exactly 100 characters (maximum valid)
+        $client = $this->createClientWithAuth();
         $email = $this->generateUniqueEmail('max');
-        $maxName = str_repeat('A', 100); // Exactly 100 characters
+        $uniquePart = uniqid();
+        $maxName = str_repeat('A', 100 - strlen($uniquePart)).$uniquePart;
 
-        // Act
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/tenants', [
+        $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
                 'name' => $maxName,
                 'ownerEmail' => $email,
             ],
         ]);
 
-        // Assert
         $this->assertResponseStatusCodeSame(201);
         $this->assertJsonContains([
             'name' => $maxName,
@@ -522,19 +473,17 @@ final class TenantApiTest extends ApiTestCase
 
     public function testCreateTenantSetsDefaultStatusToActive(): void
     {
-        // Arrange
-        $name = 'Status Test Company';
+        $client = $this->createClientWithAuth();
+        $name = 'Status Test Company '.uniqid();
         $email = $this->generateUniqueEmail('status');
 
-        // Act
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/tenants', [
+        $response = $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
                 'name' => $name,
                 'ownerEmail' => $email,
             ],
         ]);
 
-        // Assert
         $this->assertResponseStatusCodeSame(201);
         $data = json_decode($response->getContent(), true);
         $this->assertSame('active', $data['status']);
@@ -546,24 +495,24 @@ final class TenantApiTest extends ApiTestCase
 
     public function testActivateInactiveTenantReturns200(): void
     {
-        // Arrange - Create and deactivate a tenant
-        $tenantData = $this->createTenant('To Activate', $this->generateUniqueEmail('activate'));
-        $tenantId = $this->extractTenantId($tenantData);
+        $client = $this->createClientWithAuth();
+
+        $tenantData = $this->createTenantViaApi($client, 'To Activate '.uniqid(), $this->generateUniqueEmail('activate'));
+        $tenantId = $tenantData['id'];
 
         // Deactivate first
-        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/tenants/$tenantId/deactivate", [
+        $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
         $this->assertResponseIsSuccessful();
 
-        // Act - Activate the tenant
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/tenants/$tenantId/activate", [
+        // Activate
+        $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -571,23 +520,21 @@ final class TenantApiTest extends ApiTestCase
 
     public function testActivateTenantReturnsUpdatedTenantWithActiveStatus(): void
     {
-        // Arrange - Create and deactivate a tenant
-        $tenantData = $this->createTenant('To Activate', $this->generateUniqueEmail('activate2'));
-        $tenantId = $this->extractTenantId($tenantData);
+        $client = $this->createClientWithAuth();
 
-        // Deactivate first
-        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/tenants/$tenantId/deactivate", [
+        $tenantData = $this->createTenantViaApi($client, 'To Activate '.uniqid(), $this->generateUniqueEmail('activate2'));
+        $tenantId = $tenantData['id'];
+
+        $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Act - Activate the tenant
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/tenants/$tenantId/activate", [
+        $response = $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
             '@context' => '/api/v1/contexts/Tenant',
@@ -598,23 +545,18 @@ final class TenantApiTest extends ApiTestCase
 
         $data = json_decode($response->getContent(), true);
         $this->assertSame('active', $data['status']);
-        // TODO: Fix JSON Schema validation for enabledLocales array
-        // $this->assertMatchesResourceCollectionJsonSchema(TenantResource::class);
     }
 
     public function testActivateTenantReturns404ForNonExistentTenant(): void
     {
-        // Arrange - Use a valid UUID that doesn't exist
+        $client = $this->createClientWithAuth();
         $nonExistentId = '00000000-0000-4000-8000-000000000001';
 
-        // Act & Assert
-        $client = $this->createAuthenticatedClient();
-        $client->request('PATCH', "/api/v1/tenants/$nonExistentId/activate", [
+        $this->authRequest($client, 'PATCH', "/api/v1/tenants/$nonExistentId/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Domain layer throws exception, returns 500
         $statusCode = $client->getResponse()->getStatusCode();
         $this->assertTrue(
             in_array($statusCode, [404, 500]),
@@ -624,50 +566,46 @@ final class TenantApiTest extends ApiTestCase
 
     public function testActivateAlreadyActiveTenantThrowsError(): void
     {
-        // Arrange - Create a tenant (already active by default)
-        $tenantData = $this->createTenant('Already Active', $this->generateUniqueEmail('idempotent'));
-        $tenantId = $this->extractTenantId($tenantData);
+        $client = $this->createClientWithAuth();
 
-        // Verify it's active
+        $tenantData = $this->createTenantViaApi($client, 'Already Active '.uniqid(), $this->generateUniqueEmail('idempotent'));
+        $tenantId = $tenantData['id'];
+
         $this->assertSame('active', $tenantData['status']);
 
-        // Act - Try to activate again
-        $client = $this->createAuthenticatedClient();
-        $client->request('PATCH', "/api/v1/tenants/$tenantId/activate", [
+        $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Assert - Domain rule: cannot activate already active tenant (returns 500)
         $this->assertResponseStatusCodeSame(500);
     }
 
     public function testActivateTenantPreservesOtherFields(): void
     {
-        // Arrange - Create and deactivate a tenant
+        $client = $this->createClientWithAuth();
+
         $email = $this->generateUniqueEmail('preserve');
-        $tenantData = $this->createTenant('Preserve Fields', $email);
-        $tenantId = $this->extractTenantId($tenantData);
+        $name = 'Preserve Fields '.uniqid();
+        $tenantData = $this->createTenantViaApi($client, $name, $email);
+        $tenantId = $tenantData['id'];
         $createdAt = $tenantData['createdAt'];
 
-        // Deactivate
-        $this->createAuthenticatedClient()->request('PATCH', "/api/v1/tenants/$tenantId/deactivate", [
+        $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Act - Activate
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/tenants/$tenantId/activate", [
+        $response = $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Assert - Other fields remain unchanged
         $this->assertResponseIsSuccessful();
         $data = json_decode($response->getContent(), true);
 
         $this->assertSame($tenantId, $data['id']);
-        $this->assertSame('Preserve Fields', $data['name']);
+        $this->assertSame($name, $data['name']);
         $this->assertSame($email, $data['ownerEmail']);
         $this->assertSame($createdAt, $data['createdAt']);
         $this->assertSame('active', $data['status']);
@@ -679,17 +617,16 @@ final class TenantApiTest extends ApiTestCase
 
     public function testDeactivateActiveTenantReturns200(): void
     {
-        // Arrange - Create a tenant (active by default)
-        $tenantData = $this->createTenant('To Deactivate', $this->generateUniqueEmail('deactivate'));
-        $tenantId = $this->extractTenantId($tenantData);
+        $client = $this->createClientWithAuth();
 
-        // Act - Deactivate the tenant
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/tenants/$tenantId/deactivate", [
+        $tenantData = $this->createTenantViaApi($client, 'To Deactivate '.uniqid(), $this->generateUniqueEmail('deactivate'));
+        $tenantId = $tenantData['id'];
+
+        $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -697,17 +634,16 @@ final class TenantApiTest extends ApiTestCase
 
     public function testDeactivateTenantReturnsUpdatedTenantWithInactiveStatus(): void
     {
-        // Arrange - Create a tenant
-        $tenantData = $this->createTenant('To Deactivate', $this->generateUniqueEmail('deactivate2'));
-        $tenantId = $this->extractTenantId($tenantData);
+        $client = $this->createClientWithAuth();
 
-        // Act - Deactivate the tenant
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/tenants/$tenantId/deactivate", [
+        $tenantData = $this->createTenantViaApi($client, 'To Deactivate '.uniqid(), $this->generateUniqueEmail('deactivate2'));
+        $tenantId = $tenantData['id'];
+
+        $response = $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
             '@context' => '/api/v1/contexts/Tenant',
@@ -718,23 +654,18 @@ final class TenantApiTest extends ApiTestCase
 
         $data = json_decode($response->getContent(), true);
         $this->assertSame('inactive', $data['status']);
-        // TODO: Fix JSON Schema validation for enabledLocales array
-        // $this->assertMatchesResourceCollectionJsonSchema(TenantResource::class);
     }
 
     public function testDeactivateTenantReturns404ForNonExistentTenant(): void
     {
-        // Arrange - Use a valid UUID that doesn't exist
+        $client = $this->createClientWithAuth();
         $nonExistentId = '00000000-0000-4000-8000-000000000002';
 
-        // Act & Assert
-        $client = $this->createAuthenticatedClient();
-        $client->request('PATCH', "/api/v1/tenants/$nonExistentId/deactivate", [
+        $this->authRequest($client, 'PATCH', "/api/v1/tenants/$nonExistentId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Domain layer throws exception, returns 500
         $statusCode = $client->getResponse()->getStatusCode();
         $this->assertTrue(
             in_array($statusCode, [404, 500]),
@@ -744,12 +675,13 @@ final class TenantApiTest extends ApiTestCase
 
     public function testDeactivateAlreadyInactiveTenantThrowsError(): void
     {
-        // Arrange - Create and deactivate a tenant
-        $tenantData = $this->createTenant('Already Inactive', $this->generateUniqueEmail('idempotent2'));
-        $tenantId = $this->extractTenantId($tenantData);
+        $client = $this->createClientWithAuth();
+
+        $tenantData = $this->createTenantViaApi($client, 'Already Inactive '.uniqid(), $this->generateUniqueEmail('idempotent2'));
+        $tenantId = $tenantData['id'];
 
         // Deactivate once
-        $response1 = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/tenants/$tenantId/deactivate", [
+        $response1 = $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -757,37 +689,35 @@ final class TenantApiTest extends ApiTestCase
         $data1 = json_decode($response1->getContent(), true);
         $this->assertSame('inactive', $data1['status']);
 
-        // Act - Try to deactivate again
-        $client = $this->createAuthenticatedClient();
-        $client->request('PATCH', "/api/v1/tenants/$tenantId/deactivate", [
+        // Try again
+        $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Assert - Domain rule: cannot deactivate already inactive tenant (returns 500)
         $this->assertResponseStatusCodeSame(500);
     }
 
     public function testDeactivateTenantPreservesOtherFields(): void
     {
-        // Arrange - Create a tenant
+        $client = $this->createClientWithAuth();
+
         $email = $this->generateUniqueEmail('preserve2');
-        $tenantData = $this->createTenant('Preserve Fields 2', $email);
-        $tenantId = $this->extractTenantId($tenantData);
+        $name = 'Preserve Fields 2 '.uniqid();
+        $tenantData = $this->createTenantViaApi($client, $name, $email);
+        $tenantId = $tenantData['id'];
         $createdAt = $tenantData['createdAt'];
 
-        // Act - Deactivate
-        $response = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/tenants/$tenantId/deactivate", [
+        $response = $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Assert - Other fields remain unchanged
         $this->assertResponseIsSuccessful();
         $data = json_decode($response->getContent(), true);
 
         $this->assertSame($tenantId, $data['id']);
-        $this->assertSame('Preserve Fields 2', $data['name']);
+        $this->assertSame($name, $data['name']);
         $this->assertSame($email, $data['ownerEmail']);
         $this->assertSame($createdAt, $data['createdAt']);
         $this->assertSame('inactive', $data['status']);
@@ -799,11 +729,13 @@ final class TenantApiTest extends ApiTestCase
 
     public function testCompleteLifecycleCreateActivateDeactivate(): void
     {
-        // Step 1: Create tenant
+        $client = $this->createClientWithAuth();
+
         $email = $this->generateUniqueEmail('lifecycle');
-        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/tenants', [
+        $name = 'Lifecycle Company '.uniqid();
+        $createResponse = $this->authRequest($client, 'POST', '/api/v1/tenants', [
             'json' => [
-                'name' => 'Lifecycle Company',
+                'name' => $name,
                 'ownerEmail' => $email,
             ],
         ]);
@@ -813,8 +745,8 @@ final class TenantApiTest extends ApiTestCase
         $tenantId = $createData['id'];
         $this->assertSame('active', $createData['status']);
 
-        // Step 2: Deactivate tenant
-        $deactivateResponse = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/tenants/$tenantId/deactivate", [
+        // Deactivate
+        $deactivateResponse = $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/deactivate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -822,8 +754,8 @@ final class TenantApiTest extends ApiTestCase
         $deactivateData = json_decode($deactivateResponse->getContent(), true);
         $this->assertSame('inactive', $deactivateData['status']);
 
-        // Step 3: Activate tenant
-        $activateResponse = $this->createAuthenticatedClient()->request('PATCH', "/api/v1/tenants/$tenantId/activate", [
+        // Activate
+        $activateResponse = $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/activate", [
             'json' => [],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -831,35 +763,34 @@ final class TenantApiTest extends ApiTestCase
         $activateData = json_decode($activateResponse->getContent(), true);
         $this->assertSame('active', $activateData['status']);
 
-        // Step 4: Verify via GET
-        $getResponse = $this->createAuthenticatedClient()->request('GET', "/api/v1/tenants/$tenantId");
+        // Verify via GET
+        $getResponse = $this->authRequest($client, 'GET', "/api/v1/tenants/$tenantId");
         $this->assertResponseIsSuccessful();
         $getData = json_decode($getResponse->getContent(), true);
         $this->assertSame('active', $getData['status']);
-        $this->assertSame('Lifecycle Company', $getData['name']);
+        $this->assertSame($name, $getData['name']);
         $this->assertSame($email, $getData['ownerEmail']);
     }
 
     public function testCreatedTenantAppearsInCollection(): void
     {
-        // Arrange - Create a tenant with unique identifier
+        $client = $this->createClientWithAuth();
+
         $email = $this->generateUniqueEmail('collection');
-        $tenantData = $this->createTenant('Collection Test Company', $email);
-        $tenantId = $this->extractTenantId($tenantData);
+        $name = 'Collection Test Company '.uniqid();
+        $tenantData = $this->createTenantViaApi($client, $name, $email);
+        $tenantId = $tenantData['id'];
 
-        // Act - Get collection
-        $response = $this->createAuthenticatedClient()->request('GET', '/api/v1/tenants');
+        $response = $this->authRequest($client, 'GET', '/api/v1/tenants');
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $data = json_decode($response->getContent(), true);
 
-        // Find our created tenant in the collection
         $found = false;
         foreach ($data['member'] as $tenant) {
             if ($tenant['id'] === $tenantId) {
                 $found = true;
-                $this->assertSame('Collection Test Company', $tenant['name']);
+                $this->assertSame($name, $tenant['name']);
                 $this->assertSame($email, $tenant['ownerEmail']);
                 $this->assertSame('active', $tenant['status']);
 

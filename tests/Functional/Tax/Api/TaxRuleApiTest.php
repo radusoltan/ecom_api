@@ -252,11 +252,7 @@ final class TaxRuleApiTest extends ApiTestCase
             ],
         ]);
 
-        // In test environment, unauthenticated request reaches processor which checks X-Tenant-ID header
-        // Results in 500 (RLS violation) instead of 401
-        // In production, Symfony firewall returns 401 before reaching processor
-        $this->assertResponseStatusCodeSame(500);
-        $this->assertResponseHeaderSame('content-type', 'application/problem+json; charset=utf-8');
+        $this->assertResponseStatusCodeSame(401);
     }
 
     public function testCreateTaxRuleFailsWithoutTenantId(): void
@@ -363,11 +359,7 @@ final class TaxRuleApiTest extends ApiTestCase
 
         static::createClient()->request('GET', '/api/v1/tax_rules/'.$taxRule['id']);
 
-        // In test environment, unauthenticated request reaches provider which requires tenant_id
-        // Results in 500 (Tenant ID required) instead of 401
-        // In production, Symfony firewall returns 401 before reaching provider
-        $this->assertResponseStatusCodeSame(500);
-        $this->assertResponseHeaderSame('content-type', 'application/problem+json; charset=utf-8');
+        $this->assertResponseStatusCodeSame(401);
     }
 
     // ===========================
@@ -460,11 +452,7 @@ final class TaxRuleApiTest extends ApiTestCase
     {
         static::createClient()->request('GET', '/api/v1/tax_rules');
 
-        // In test environment, unauthenticated request reaches provider which requires tenant_id
-        // Results in 500 (Tenant ID required) instead of 401
-        // In production, Symfony firewall returns 401 before reaching provider
-        $this->assertResponseStatusCodeSame(500);
-        $this->assertResponseHeaderSame('content-type', 'application/problem+json; charset=utf-8');
+        $this->assertResponseStatusCodeSame(401);
     }
 
     // ===========================
@@ -555,11 +543,7 @@ final class TaxRuleApiTest extends ApiTestCase
             ],
         ]);
 
-        // In test environment, unauthenticated request reaches provider/processor which requires tenant_id
-        // Results in 500 (Tenant ID required) instead of 401
-        // In production, Symfony firewall returns 401 before reaching provider/processor
-        $this->assertResponseStatusCodeSame(500);
-        $this->assertResponseHeaderSame('content-type', 'application/problem+json; charset=utf-8');
+        $this->assertResponseStatusCodeSame(401);
     }
 
     // ===========================
@@ -596,16 +580,16 @@ final class TaxRuleApiTest extends ApiTestCase
                 'json' => [],
             ]);
 
-        // Deactivate again - should succeed (idempotent)
+        // Deactivate again - API returns 422 since it's already inactive
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $this->currentTenantId)
             ->request('PATCH', '/api/v1/tax_rules/'.$taxRule['id'].'/deactivate', [
                 'headers' => ['content-type' => 'application/merge-patch+json'],
                 'json' => [],
             ]);
 
-        $this->assertResponseStatusCodeSame(200);
-        $data = json_decode($response->getContent(), true);
-        $this->assertFalse($data['isActive']);
+        $this->assertResponseStatusCodeSame(422);
+        $data = json_decode($response->getContent(false), true);
+        $this->assertStringContainsString('already inactive', $data['detail'] ?? $data['hydra:description'] ?? '');
     }
 
     public function testDeactivateTaxRuleFailsForNonExistentId(): void
@@ -630,11 +614,7 @@ final class TaxRuleApiTest extends ApiTestCase
             'json' => [],
         ]);
 
-        // In test environment, unauthenticated request reaches processor which checks X-Tenant-ID header
-        // Results in 422 (X-Tenant-ID header is required) instead of 401
-        // In production, Symfony firewall returns 401 before reaching processor
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertResponseHeaderSame('content-type', 'application/problem+json; charset=utf-8');
+        $this->assertResponseStatusCodeSame(401);
     }
 
     // ===========================

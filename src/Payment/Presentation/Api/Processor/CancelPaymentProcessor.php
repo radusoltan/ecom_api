@@ -9,7 +9,6 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Payment\Application\Command\CancelPayment;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity;
-use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final readonly class CancelPaymentProcessor implements ProcessorInterface
@@ -32,7 +31,6 @@ final readonly class CancelPaymentProcessor implements ProcessorInterface
 
         $command = new CancelPayment(
             id: PaymentId::fromString($data->getId()),
-            tenantId: TenantId::fromString($data->getTenantId()),
             reason: $reason
         );
 

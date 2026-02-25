@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tax\Application\Query;
 
-use App\Tax\Application\DTO\TaxRuleDto;
+use App\Tax\Application\DTO\TaxRuleDTO;
 use App\Tax\Domain\Model\TaxCategory;
 use App\Tax\Domain\Model\TaxJurisdiction;
 use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
@@ -30,7 +30,7 @@ final readonly class GetApplicableTaxRulesHandler
     }
 
     /**
-     * @return TaxRuleDto[]
+     * @return TaxRuleDTO[]
      */
     public function __invoke(GetApplicableTaxRules $query): array
     {
@@ -52,7 +52,7 @@ final readonly class GetApplicableTaxRulesHandler
 
         // Map to DTOs
         return array_map(
-            fn ($taxRule) => TaxRuleDto::fromDomainModel($taxRule),
+            fn ($taxRule) => TaxRuleDTO::fromDomainModel($taxRule),
             $taxRules
         );
     }

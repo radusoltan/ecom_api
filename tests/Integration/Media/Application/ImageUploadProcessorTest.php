@@ -21,10 +21,7 @@ use App\Media\Presentation\Api\State\ImageUploadProcessor;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Shared\Domain\ValueObject\TenantId as SharedTenantId;
-use App\Shared\Infrastructure\Doctrine\TenantConnectionSubscriber;
 use App\Shared\Infrastructure\Tenant\TenantContext;
-use Doctrine\DBAL\Events;
-use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -34,7 +31,6 @@ final class ImageUploadProcessorTest extends KernelTestCase
 {
     private Filesystem $filesystem;
     private TenantContext $tenantContext;
-    private static bool $schemaPrepared = false;
     private ProductRepositoryInterface $productRepositoryStub;
     private CategoryRepositoryInterface $categoryRepositoryStub;
 
@@ -43,27 +39,6 @@ final class ImageUploadProcessorTest extends KernelTestCase
         self::bootKernel();
         $this->filesystem = new Filesystem();
         $this->tenantContext = static::getContainer()->get(TenantContext::class);
-
-        if (!self::$schemaPrepared) {
-            $container = static::getContainer();
-            $entityManager = $container->get('doctrine')->getManager();
-            $schemaTool = new SchemaTool($entityManager);
-            $metadata = [
-                $entityManager->getClassMetadata(\App\Media\Infrastructure\Persistence\Doctrine\Entity\ImageEntity::class),
-                $entityManager->getClassMetadata(\App\Media\Infrastructure\Persistence\Doctrine\Entity\ThumbnailEntity::class),
-            ];
-
-            $schemaTool->updateSchema($metadata, true);
-            self::$schemaPrepared = true;
-        }
-
-        $entityManager = static::getContainer()->get('doctrine')->getManager();
-        $eventManager = $entityManager->getEventManager();
-        foreach ($eventManager->getListeners(Events::postConnect) as $listener) {
-            if ($listener instanceof TenantConnectionSubscriber) {
-                $eventManager->removeEventListener([Events::postConnect], $listener);
-            }
-        }
 
         $this->productRepositoryStub = $this->createProductRepositoryStub();
         $this->categoryRepositoryStub = $this->createCategoryRepositoryStub();

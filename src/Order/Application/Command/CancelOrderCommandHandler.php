@@ -17,7 +17,7 @@ final readonly class CancelOrderCommandHandler
     ) {
     }
 
-    public function __invoke(CancelOrderCommand $command): void
+    public function __invoke(CancelOrderCommand $command): \App\Order\Domain\Model\Order
     {
         $order = $this->orderRepository->findByIdAndTenant(
             OrderId::fromString($command->orderId),
@@ -31,5 +31,7 @@ final readonly class CancelOrderCommandHandler
         $order->cancel();
 
         $this->orderRepository->save($order);
+
+        return $order;
     }
 }

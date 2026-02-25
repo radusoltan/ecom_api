@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tax\Application\Query;
 
-use App\Tax\Application\DTO\TaxRuleDto;
+use App\Tax\Application\DTO\TaxRuleDTO;
 use App\Tax\Domain\Repository\TaxRuleRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -21,7 +21,7 @@ final readonly class GetTaxRuleByIdHandler
     ) {
     }
 
-    public function __invoke(GetTaxRuleById $query): ?TaxRuleDto
+    public function __invoke(GetTaxRuleById $query): ?TaxRuleDTO
     {
         $taxRule = $this->taxRuleRepository->findById($query->id);
 
@@ -29,6 +29,6 @@ final readonly class GetTaxRuleByIdHandler
             return null;
         }
 
-        return TaxRuleDto::fromDomainModel($taxRule);
+        return TaxRuleDTO::fromDomainModel($taxRule);
     }
 }

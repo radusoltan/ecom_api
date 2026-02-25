@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Inventory\Domain\Model;
 
-use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Uid\Uuid;
 
 final readonly class WarehouseId implements \Stringable
 {
@@ -15,28 +15,22 @@ final readonly class WarehouseId implements \Stringable
 
     public static function generate(): self
     {
-        return new self((string) new Ulid());
+        return new self((string) Uuid::v7());
     }
 
     public static function fromString(string $id): self
     {
-        // Accept both ULID and UUID formats for backward compatibility
-        if (!Ulid::isValid($id) && !self::isValidUuid($id)) {
+        if (!Uuid::isValid($id)) {
             throw new \InvalidArgumentException(sprintf('Invalid WarehouseId: %s', $id));
         }
 
         return new self($id);
     }
 
-    private static function isValidUuid(string $id): bool
-    {
-        return (bool) preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $id);
-    }
-
     public static function default(): self
     {
         // Default warehouse for single-warehouse tenants
-        return new self('01JABS00000000000000000000');
+        return new self('00000000-0000-4000-8000-000000000001');
     }
 
     public function toString(): string

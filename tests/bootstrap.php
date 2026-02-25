@@ -24,6 +24,14 @@ DG\BypassFinals::setWhitelist([
     '*/src/Pricing/Application/Service/*',
     '*/src/Customer/Application/Service/*',
     '*/src/Shared/Infrastructure/Encryption/BlindIndexService.php',
+    '*/src/Cart/Application/Service/*',
+    '*/src/Cart/Domain/Model/*',
+    '*/src/Customer/Domain/Model/*',
+    '*/src/Invoice/Application/Query/*',
+    '*/src/Invoice/Application/Command/*',
+    '*/src/Invoice/Domain/Model/*',
+    '*/src/Invoice/Domain/Service/*',
+    '*/src/Invoice/Infrastructure/NumberGenerator/*',
 ]);
 
 if (method_exists(Dotenv::class, 'bootEnv')) {

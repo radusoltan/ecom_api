@@ -176,6 +176,12 @@ class CartEntity
         return $this->status;
     }
 
+    public function updateStatus(string $status): void
+    {
+        $this->status = $status;
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     /**
      * @return Collection<int, CartItemEntity>
      */

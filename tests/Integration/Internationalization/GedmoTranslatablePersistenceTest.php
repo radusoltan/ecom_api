@@ -238,8 +238,7 @@ final class GedmoTranslatablePersistenceTest extends KernelTestCase
                 AND foreign_key = :foreignKey
                 AND locale = :locale";
 
-        $stmt = $this->entityManager->getConnection()->prepare($sql);
-        $result = $stmt->executeQuery([
+        $result = $this->entityManager->getConnection()->executeQuery($sql, [
             'foreignKey' => $tenantId,
             'locale' => 'de',
         ]);

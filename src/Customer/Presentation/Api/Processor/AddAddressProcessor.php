@@ -12,12 +12,12 @@ use App\Customer\Application\Query\GetAddressById\GetAddressById;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Presentation\Api\Resource\CustomerAddressResource;
 use App\Shared\Application\Service\TenantContextInterface;
+use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
-use Symfony\Component\Uid\Uuid;
 
 /**
  * Add Address Processor.
@@ -60,10 +60,7 @@ final readonly class AddAddressProcessor implements ProcessorInterface
             throw new BadRequestHttpException('Street, city, postal code, country, and type are required');
         }
 
-        // Generate address ID
-        $addressId = Uuid::v7()->toString();
-
-        // Create command
+        // Create command - the handler generates the address ID internally
         $command = new AddAddressCommand(
             customerId: $customerId->toString(),
             tenantId: $tenantId->toString(),
@@ -79,7 +76,7 @@ final readonly class AddAddressProcessor implements ProcessorInterface
         );
 
         try {
-            $this->commandBus->dispatch($command);
+            $envelope = $this->commandBus->dispatch($command);
         } catch (HandlerFailedException $exception) {
             $previous = $exception->getPrevious();
             if ($previous instanceof HttpExceptionInterface) {
@@ -89,19 +86,30 @@ final readonly class AddAddressProcessor implements ProcessorInterface
             throw $exception;
         }
 
+        // Get the generated address ID returned by the handler
+        $handledStamp = $envelope->last(HandledStamp::class);
+        if (!$handledStamp instanceof HandledStamp) {
+            throw new \RuntimeException('No handler found for command');
+        }
+
+        $addressId = $handledStamp->getResult();
+        if (!is_string($addressId)) {
+            throw new \RuntimeException('Command handler did not return address ID');
+        }
+
         // Retrieve the created address
-        $envelope = $this->queryBus->dispatch(
+        $queryEnvelope = $this->queryBus->dispatch(
             new GetAddressById($addressId, $customerId, $tenantId)
         );
 
-        $handledStamp = $envelope->last(HandledStamp::class);
+        $queryStamp = $queryEnvelope->last(HandledStamp::class);
 
-        if (!$handledStamp instanceof HandledStamp) {
+        if (!$queryStamp instanceof HandledStamp) {
             throw new \RuntimeException('No handler found for query');
         }
 
         /** @var CustomerAddressDTO|null $addressDTO */
-        $addressDTO = $handledStamp->getResult();
+        $addressDTO = $queryStamp->getResult();
 
         if (null === $addressDTO) {
             throw new \RuntimeException('Address not found after creation');

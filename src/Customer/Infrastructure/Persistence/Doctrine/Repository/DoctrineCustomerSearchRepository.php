@@ -36,6 +36,7 @@ final readonly class DoctrineCustomerSearchRepository implements CustomerSearchR
         // Get total count before pagination
         $countQb = clone $qb;
         $countQb->select('COUNT(DISTINCT c.id)');
+        $countQb->resetDQLPart('orderBy');
         $total = (int) $countQb->getQuery()->getSingleScalarResult();
 
         // Apply pagination

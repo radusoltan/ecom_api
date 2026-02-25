@@ -10,8 +10,9 @@ use App\Cart\Application\Service\CartToOrderConverter;
 use App\Cart\Domain\Model\CartId;
 use App\Cart\Domain\Repository\CartRepositoryInterface;
 use App\Cart\Presentation\Api\Resource\CheckoutResource;
-use App\Order\Application\Query\GetOrderByIdQuery;
+use App\Order\Application\DTO\OrderDTO;
 use App\Order\Domain\Exception\CheckoutValidationException;
+use App\Order\Domain\Model\Order;
 use App\Shared\Infrastructure\Tenant\TenantContext;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -40,7 +41,6 @@ final readonly class CheckoutProcessor implements ProcessorInterface
         private CartRepositoryInterface $cartRepository,
         private CartToOrderConverter $cartToOrderConverter,
         private MessageBusInterface $commandBus,
-        private MessageBusInterface $queryBus,
         private TenantContext $tenantContext,
         private LoggerInterface $logger,
     ) {
@@ -125,16 +125,23 @@ final readonly class CheckoutProcessor implements ProcessorInterface
                 'item_count' => $cart->getItemCount(),
             ]);
 
-            // Dispatch command to create order
-            $this->commandBus->dispatch($placeOrderCommand);
+            // Dispatch command to create order and get result from handler
+            $envelope = $this->commandBus->dispatch($placeOrderCommand);
+            $handledStamp = $envelope->last(HandledStamp::class);
+
+            if (!$handledStamp instanceof HandledStamp || !$handledStamp->getResult() instanceof Order) {
+                throw new \RuntimeException('Order creation failed');
+            }
+
+            /** @var Order $order */
+            $order = $handledStamp->getResult();
+            $orderDTO = OrderDTO::fromDomain($order);
+
+            // Re-set tenant context (may have been cleared by event handlers during order dispatch)
+            $this->tenantContext->setCurrentTenant($tenantId);
 
             // Mark cart as converted
-            $cart->markAsConverted();
-            $this->cartRepository->save($cart);
-
-            // Retrieve the created order
-            $orderId = $placeOrderCommand->orderId;
-            $orderDTO = $this->retrieveOrder($orderId, $tenantId->toString());
+            $this->cartRepository->markAsConverted($cart->id());
 
             // Build response
             $response = new CheckoutResource();
@@ -155,7 +162,7 @@ final readonly class CheckoutProcessor implements ProcessorInterface
             $response->couponCode = $orderDTO->couponCode ?? null;
 
             $this->logger->info('Checkout completed successfully', [
-                'order_id' => $orderId,
+                'order_id' => $orderDTO->id,
                 'cart_id' => $data->cartId,
                 'total_amount' => $orderDTO->totalAmount,
             ]);
@@ -208,24 +215,4 @@ final readonly class CheckoutProcessor implements ProcessorInterface
         }
     }
 
-    /**
-     * @return object{id: string, tenantId: string, customerEmail: string, status: string, lines: array<int, mixed>, shippingAddress: array<string, mixed>, billingAddress: array<string, mixed>, totalAmount: int, totalCurrency: string, appliedPromotions: ?array<int, mixed>, discountAmount: ?int, discountCurrency: ?string, couponCode: ?string, createdAt: string, updatedAt: string}
-     */
-    private function retrieveOrder(string $orderId, string $tenantId): object
-    {
-        $envelope = $this->queryBus->dispatch(new GetOrderByIdQuery($orderId, $tenantId));
-        $handledStamp = $envelope->last(HandledStamp::class);
-
-        if (!$handledStamp instanceof HandledStamp) {
-            throw new \RuntimeException('No handler found for GetOrderByIdQuery');
-        }
-
-        $orderDTO = $handledStamp->getResult();
-
-        if (null === $orderDTO) {
-            throw new \RuntimeException('Order not found after creation');
-        }
-
-        return $orderDTO;
-    }
 }

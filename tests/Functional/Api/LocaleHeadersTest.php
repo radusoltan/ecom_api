@@ -151,17 +151,17 @@ final class LocaleHeadersTest extends WebTestCase
     {
         $client = static::createClient();
 
-        // Request non-API route (e.g., homepage or docs)
+        // Request a non-API path. In this project '/' has no route and
+        // returns 404, which is the expected behaviour for a pure API app.
+        // Regardless of the HTTP status code the locale middleware must NOT
+        // add X-Content-Language (or related headers) to non-API responses.
         $client->request('GET', '/');
 
         $response = $client->getResponse();
 
-        // Non-API routes should not have X-Content-Language header
-        if ($response->getStatusCode() < 400) {
-            $this->assertFalse(
-                $response->headers->has('X-Content-Language'),
-                'Non-API routes should not have X-Content-Language header'
-            );
-        }
+        $this->assertFalse(
+            $response->headers->has('X-Content-Language'),
+            'Non-API routes should not have X-Content-Language header'
+        );
     }
 }

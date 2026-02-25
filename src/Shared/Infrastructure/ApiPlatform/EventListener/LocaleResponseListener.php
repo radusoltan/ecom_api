@@ -32,8 +32,8 @@ final readonly class LocaleResponseListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            // Run after the response is created but before it's sent
-            KernelEvents::RESPONSE => ['onKernelResponse', 0],
+            // Run after NelmioCors (which may overwrite Vary header) but before response is sent
+            KernelEvents::RESPONSE => ['onKernelResponse', -256],
         ];
     }
 

@@ -35,6 +35,13 @@ final class ActivateTenantCommandHandlerTest extends KernelTestCase
         // Set tenant context for RLS
         $this->tenantId = $this->getDefaultTenantId();
         $this->setTenantContext($this->tenantId->toString());
+
+        // Clean up stale translations for default tenant to avoid unique constraint violations
+        $em = $container->get('doctrine')->getManager();
+        $em->getConnection()->executeStatement(
+            "DELETE FROM ext_translations WHERE foreign_key = :fk",
+            ['fk' => $this->tenantId->toString()]
+        );
     }
 
     protected function tearDown(): void

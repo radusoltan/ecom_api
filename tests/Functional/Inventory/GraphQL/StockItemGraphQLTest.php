@@ -11,7 +11,6 @@ use App\Inventory\Domain\Model\StockItemId;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tests\Support\TenantTestTrait;
-use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Uid\Uuid;
 
 /**
@@ -35,8 +34,8 @@ final class StockItemGraphQLTest extends ApiTestCase
         // Use default test tenant ID for RLS compatibility
         $this->tenantId = $this->getDefaultTenantId();
         $this->productId = ProductId::fromString(Uuid::v4()->toRfc4122());
-        $this->warehouseId = WarehouseId::fromString((string) new Ulid());
-        $this->stockItemId = StockItemId::fromString((string) new Ulid());
+        $this->warehouseId = WarehouseId::fromString((string) Uuid::v7());
+        $this->stockItemId = StockItemId::fromString((string) Uuid::v7());
 
         // Set tenant context for direct DB operations
         $this->setTenantContext($this->tenantId->toString());

@@ -7,7 +7,8 @@ namespace App\Order\Presentation\Api\Processor;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Order\Application\Command\PlaceOrderCommand;
-use App\Order\Application\Query\GetOrderByIdQuery;
+use App\Order\Application\DTO\OrderDTO;
+use App\Order\Domain\Model\Order;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Service\FraudCheckService;
 use App\Order\Presentation\Api\Resource\OrderResource;
@@ -21,7 +22,6 @@ final readonly class PlaceOrderProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private MessageBusInterface $queryBus,
         private FraudCheckService $fraudCheckService,
         private RequestStack $requestStack,
         private LoggerInterface $logger,
@@ -84,24 +84,25 @@ final readonly class PlaceOrderProcessor implements ProcessorInterface
             promotionContext: $data->promotionContext ?? []
         );
 
-        $this->commandBus->dispatch($command);
+        $envelope = $this->commandBus->dispatch($command);
 
         // Record successful order placement for fraud tracking
         $this->fraudCheckService->recordOrderPlaced($clientIp, $data->customerEmail, $tenantId);
 
-        // Retrieve the created order
-        $envelope = $this->queryBus->dispatch(new GetOrderByIdQuery($orderId, $tenantId));
+        // Use the command handler's return value directly (avoids transaction visibility issues)
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {
-            throw new \RuntimeException('No handler found for query');
+            throw new \RuntimeException('No handler found for PlaceOrderCommand');
         }
 
-        $orderDTO = $handledStamp->getResult();
+        $order = $handledStamp->getResult();
 
-        if (null === $orderDTO) {
+        if (!$order instanceof Order) {
             throw new \RuntimeException('Order not found after creation');
         }
+
+        $orderDTO = OrderDTO::fromDomain($order);
 
         $resource = new OrderResource();
         $resource->id = $orderDTO->id;

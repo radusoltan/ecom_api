@@ -6,6 +6,7 @@ namespace App\User\Presentation\Api\Processor;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use App\Shared\Infrastructure\Encryption\BlindIndexService;
 use App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
 use App\User\Presentation\Api\Resource\AuthResource;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,6 +30,7 @@ final readonly class RefreshTokenProcessor implements ProcessorInterface
         private JWTTokenManagerInterface $jwtManager,
         private RefreshTokenGeneratorInterface $refreshTokenGenerator,
         private EntityManagerInterface $entityManager,
+        private BlindIndexService $blindIndexService,
     ) {
     }
 
@@ -58,11 +60,13 @@ final readonly class RefreshTokenProcessor implements ProcessorInterface
             throw new UnauthorizedHttpException('Bearer', 'Refresh token has expired');
         }
 
-        // Get the user from the refresh token
+        // Get the user from the refresh token using blind index
+        // (email column is encrypted with non-deterministic sodium encryption)
         $username = $refreshToken->getUsername();
+        $emailBlindIndex = $this->blindIndexService->generate($username);
         $userEntity = $this->entityManager
             ->getRepository(UserEntity::class)
-            ->findOneBy(['email' => $username]);
+            ->findOneBy(['emailBlindIndex' => $emailBlindIndex]);
 
         if (!$userEntity) {
             throw new UnauthorizedHttpException('Bearer', 'User not found');

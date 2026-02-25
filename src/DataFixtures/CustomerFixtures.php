@@ -16,7 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * Customer fixtures - creates diverse customers for testing.
@@ -137,7 +137,7 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
         }
 
         $user = new UserEntity();
-        $user->setId((string) new Ulid());
+        $user->setId((string) Uuid::v7());
         $user->setEmail($email);
 
         // Generate username from name

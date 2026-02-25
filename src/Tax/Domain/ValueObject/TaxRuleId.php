@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\Tax\Domain\ValueObject;
 
-use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * Tax Rule ID Value Object.
  *
- * Unique identifier for tax rules using ULID format.
+ * Unique identifier for tax rules using UUID v7 format.
  */
 final readonly class TaxRuleId
 {
     private function __construct(
         private string $value,
     ) {
-        if (!Ulid::isValid($value)) {
-            throw new \InvalidArgumentException(sprintf('Invalid TaxRuleId format: "%s". Must be a valid ULID', $value));
+        if (!Uuid::isValid($value)) {
+            throw new \InvalidArgumentException(sprintf('Invalid TaxRuleId format: "%s". Must be a valid UUID', $value));
         }
     }
 
     public static function generate(): self
     {
-        return new self((string) new Ulid());
+        return new self((string) Uuid::v7());
     }
 
     public static function fromString(string $value): self

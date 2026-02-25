@@ -19,6 +19,7 @@ use App\Customer\Presentation\Api\Processor\SetDefaultAddressProcessor;
 use App\Customer\Presentation\Api\Processor\UpdateAddressProcessor;
 use App\Customer\Presentation\Api\Provider\CustomerAddressCollectionProvider;
 use App\Customer\Presentation\Api\Provider\CustomerAddressItemProvider;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -43,7 +44,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             security: "is_granted('customer.view')",
             openapi: new Model\Operation(
                 summary: 'Retrieve customer addresses',
-                description: 'Get all addresses for a specific customer. Can be filtered by type (shipping, billing, other).',
+                description: 'Get all addresses for a specific customer. Can be filtered by type (shipping, billing, both).',
                 parameters: [
                     new Model\Parameter(
                         name: 'customerId',
@@ -56,7 +57,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                         name: 'type',
                         in: 'query',
                         required: false,
-                        schema: ['type' => 'string', 'enum' => ['shipping', 'billing', 'other']],
+                        schema: ['type' => 'string', 'enum' => ['shipping', 'billing', 'both']],
                         description: 'Filter addresses by type'
                     ),
                 ],
@@ -143,7 +144,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                                     'state' => ['type' => 'string', 'maxLength' => 100, 'nullable' => true, 'example' => 'NY'],
                                     'postalCode' => ['type' => 'string', 'maxLength' => 20, 'example' => '10001'],
                                     'country' => ['type' => 'string', 'minLength' => 2, 'maxLength' => 2, 'example' => 'US'],
-                                    'type' => ['type' => 'string', 'enum' => ['shipping', 'billing', 'other'], 'example' => 'shipping'],
+                                    'type' => ['type' => 'string', 'enum' => ['shipping', 'billing', 'both'], 'example' => 'shipping'],
                                     'isDefaultShipping' => ['type' => 'boolean', 'example' => false],
                                     'isDefaultBilling' => ['type' => 'boolean', 'example' => false],
                                 ],
@@ -172,6 +173,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                     'from_property' => 'id',
                 ],
             ],
+            provider: CustomerAddressItemProvider::class,
             processor: UpdateAddressProcessor::class,
             security: "is_granted('customer.edit')",
             openapi: new Model\Operation(
@@ -199,6 +201,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                     'from_property' => 'id',
                 ],
             ],
+            provider: CustomerAddressItemProvider::class,
             processor: RemoveAddressProcessor::class,
             security: "is_granted('customer.edit')",
             openapi: new Model\Operation(
@@ -206,6 +209,62 @@ use Symfony\Component\Validator\Constraints as Assert;
                 description: 'Soft-delete a customer address (marks as deleted, not permanently removed).',
                 responses: [
                     '204' => ['description' => 'Address deleted successfully'],
+                    '401' => ['description' => 'Unauthorized'],
+                    '403' => ['description' => 'Forbidden'],
+                    '404' => ['description' => 'Address not found'],
+                ],
+            )
+        ),
+        new Post(
+            uriTemplate: '/customers/{customerId}/addresses/{id}/set-default-shipping',
+            uriVariables: [
+                'customerId' => [
+                    'from_class' => CustomerAddressResource::class,
+                    'from_property' => 'customerId',
+                ],
+                'id' => [
+                    'from_class' => CustomerAddressResource::class,
+                    'from_property' => 'id',
+                ],
+            ],
+            provider: CustomerAddressItemProvider::class,
+            processor: SetDefaultAddressProcessor::class,
+            status: 200,
+            security: "is_granted('customer.edit')",
+            input: false,
+            openapi: new Model\Operation(
+                summary: 'Set address as default shipping',
+                description: 'Set an address as the default shipping address. Unsets the previous default shipping address.',
+                responses: [
+                    '200' => ['description' => 'Default shipping address set successfully'],
+                    '401' => ['description' => 'Unauthorized'],
+                    '403' => ['description' => 'Forbidden'],
+                    '404' => ['description' => 'Address not found'],
+                ],
+            )
+        ),
+        new Post(
+            uriTemplate: '/customers/{customerId}/addresses/{id}/set-default-billing',
+            uriVariables: [
+                'customerId' => [
+                    'from_class' => CustomerAddressResource::class,
+                    'from_property' => 'customerId',
+                ],
+                'id' => [
+                    'from_class' => CustomerAddressResource::class,
+                    'from_property' => 'id',
+                ],
+            ],
+            provider: CustomerAddressItemProvider::class,
+            processor: SetDefaultAddressProcessor::class,
+            status: 200,
+            security: "is_granted('customer.edit')",
+            input: false,
+            openapi: new Model\Operation(
+                summary: 'Set address as default billing',
+                description: 'Set an address as the default billing address. Unsets the previous default billing address.',
+                responses: [
+                    '200' => ['description' => 'Default billing address set successfully'],
                     '401' => ['description' => 'Unauthorized'],
                     '403' => ['description' => 'Forbidden'],
                     '404' => ['description' => 'Address not found'],
@@ -224,6 +283,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                     'from_property' => 'id',
                 ],
             ],
+            provider: CustomerAddressItemProvider::class,
             processor: SetDefaultAddressProcessor::class,
             security: "is_granted('customer.edit')",
             openapi: new Model\Operation(
@@ -263,47 +323,61 @@ use Symfony\Component\Validator\Constraints as Assert;
 class CustomerAddressResource
 {
     #[ApiProperty(identifier: true, readable: true, writable: false)]
+    #[Groups(['customer_address:read'])]
     public ?string $id = null;
 
     #[ApiProperty(readable: true, writable: false)]
+    #[Groups(['customer_address:read'])]
     public ?string $customerId = null;
 
     #[ApiProperty(readable: true, writable: false)]
+    #[Groups(['customer_address:read'])]
     public ?string $tenantId = null;
 
     #[Assert\NotBlank(message: 'Street is required')]
     #[Assert\Length(max: 255, maxMessage: 'Street cannot be longer than {{ limit }} characters')]
+    #[Groups(['customer_address:read', 'customer_address:write'])]
     public ?string $street = null;
 
     #[Assert\Length(max: 255, maxMessage: 'Street 2 cannot be longer than {{ limit }} characters')]
+    #[Groups(['customer_address:read', 'customer_address:write'])]
     public ?string $street2 = null;
 
     #[Assert\NotBlank(message: 'City is required')]
     #[Assert\Length(max: 100, maxMessage: 'City cannot be longer than {{ limit }} characters')]
+    #[Groups(['customer_address:read', 'customer_address:write'])]
     public ?string $city = null;
 
     #[Assert\Length(max: 100, maxMessage: 'State cannot be longer than {{ limit }} characters')]
+    #[Groups(['customer_address:read', 'customer_address:write'])]
     public ?string $state = null;
 
     #[Assert\NotBlank(message: 'Postal code is required')]
     #[Assert\Length(max: 20, maxMessage: 'Postal code cannot be longer than {{ limit }} characters')]
+    #[Groups(['customer_address:read', 'customer_address:write'])]
     public ?string $postalCode = null;
 
     #[Assert\NotBlank(message: 'Country is required')]
     #[Assert\Length(min: 2, max: 2, exactMessage: 'Country must be exactly {{ limit }} characters (ISO 3166-1 alpha-2)')]
+    #[Groups(['customer_address:read', 'customer_address:write'])]
     public ?string $country = null;
 
     #[Assert\NotBlank(message: 'Address type is required')]
-    #[Assert\Choice(choices: ['shipping', 'billing', 'other'], message: 'Type must be one of: {{ choices }}')]
+    #[Assert\Choice(choices: ['shipping', 'billing', 'both'], message: 'Type must be one of: {{ choices }}')]
+    #[Groups(['customer_address:read', 'customer_address:write'])]
     public ?string $type = null;
 
+    #[Groups(['customer_address:read', 'customer_address:write'])]
     public bool $isDefaultShipping = false;
 
+    #[Groups(['customer_address:read', 'customer_address:write'])]
     public bool $isDefaultBilling = false;
 
     #[ApiProperty(readable: true, writable: false)]
+    #[Groups(['customer_address:read'])]
     public ?string $createdAt = null;
 
     #[ApiProperty(readable: true, writable: false)]
+    #[Groups(['customer_address:read'])]
     public ?string $updatedAt = null;
 }

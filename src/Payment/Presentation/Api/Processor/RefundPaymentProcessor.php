@@ -9,13 +9,14 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Payment\Application\Command\RefundPayment;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity;
-use App\Shared\Domain\ValueObject\TenantId;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final readonly class RefundPaymentProcessor implements ProcessorInterface
 {
     public function __construct(
         private MessageBusInterface $commandBus,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -35,14 +36,22 @@ final readonly class RefundPaymentProcessor implements ProcessorInterface
             throw new \RuntimeException('Refund reason is required');
         }
 
+        // Restore entity to DB state before dispatching the command.
+        // The deserializer sets refundedAmountInCents from the request body on the
+        // managed entity. Without refresh, the handler would load this same entity
+        // from the identity map with the deserialized value and double-count.
+        $this->entityManager->refresh($data);
+
         $command = new RefundPayment(
             id: PaymentId::fromString($data->getId()),
-            tenantId: TenantId::fromString($data->getTenantId()),
             refundAmountInCents: $refundAmount,
             reason: $errorMessage
         );
 
         $this->commandBus->dispatch($command);
+
+        // Refresh to reflect handler's changes in the response
+        $this->entityManager->refresh($data);
 
         return $data;
     }

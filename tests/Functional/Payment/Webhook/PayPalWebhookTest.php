@@ -28,6 +28,32 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 final class PayPalWebhookTest extends WebTestCase
 {
+    private const WEBHOOK_URL = '/api/v1/webhooks/paypal';
+
+    /**
+     * Build the $server array for KernelBrowser::request() with PayPal headers.
+     *
+     * KernelBrowser maps HTTP headers via the $server parameter using the
+     * HTTP_ prefix convention (e.g. HTTP_CONTENT_TYPE, HTTP_PAYPAL_TRANSMISSION_ID).
+     *
+     * @param array<string, string> $extra Additional HTTP_ server vars to merge in.
+     * @return array<string, string>
+     */
+    private function paypalServerHeaders(array $extra = []): array
+    {
+        return array_merge(
+            [
+                'HTTP_CONTENT_TYPE'            => 'application/json',
+                'HTTP_PAYPAL_TRANSMISSION_SIG' => 'test_signature',
+                'HTTP_PAYPAL_TRANSMISSION_ID'  => 'test_id',
+                'HTTP_PAYPAL_TRANSMISSION_TIME' => '2025-01-01T00:00:00Z',
+                'HTTP_PAYPAL_CERT_URL'         => 'https://api.paypal.com/cert',
+                'HTTP_PAYPAL_AUTH_ALGO'        => 'SHA256withRSA',
+            ],
+            $extra
+        );
+    }
+
     // =============================================
     // Test: Endpoint Exists and Accepts POST
     // =============================================
@@ -43,17 +69,14 @@ final class PayPalWebhookTest extends WebTestCase
         ];
 
         // Act
-        $client->request('POST', '/api/webhooks/paypal', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'paypal-transmission-sig' => 'test_signature',
-                'paypal-transmission-id' => 'test_id',
-                'paypal-transmission-time' => '2025-01-01T00:00:00Z',
-                'paypal-cert-url' => 'https://api.paypal.com/cert',
-                'paypal-auth-algo' => 'SHA256withRSA',
-            ],
-            'json' => $webhookPayload,
-        ]);
+        $client->request(
+            'POST',
+            self::WEBHOOK_URL,
+            [],
+            [],
+            $this->paypalServerHeaders(),
+            (string) json_encode($webhookPayload, JSON_THROW_ON_ERROR)
+        );
 
         // Assert - Endpoint exists (will return 400 for invalid signature, not 404)
         $this->assertNotSame(404, $client->getResponse()->getStatusCode());
@@ -74,16 +97,18 @@ final class PayPalWebhookTest extends WebTestCase
         ];
 
         // Act - No paypal-transmission-sig header
-        $client->request('POST', '/api/webhooks/paypal', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-            'json' => $webhookPayload,
-        ]);
+        $client->request(
+            'POST',
+            self::WEBHOOK_URL,
+            [],
+            [],
+            ['HTTP_CONTENT_TYPE' => 'application/json'],
+            (string) json_encode($webhookPayload, JSON_THROW_ON_ERROR)
+        );
 
         // Assert
         $this->assertSame(400, $client->getResponse()->getStatusCode());
-        $this->assertStringContainsString('Missing signature', $client->getResponse()->getContent());
+        $this->assertStringContainsString('Missing signature', (string) $client->getResponse()->getContent());
     }
 
     // =============================================
@@ -104,21 +129,18 @@ final class PayPalWebhookTest extends WebTestCase
         ];
 
         // Act - Invalid signature (PayPal will reject verification)
-        $client->request('POST', '/api/webhooks/paypal', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'paypal-transmission-sig' => 'invalid_signature_xyz',
-                'paypal-transmission-id' => 'test_id_123',
-                'paypal-transmission-time' => '2025-01-01T00:00:00Z',
-                'paypal-cert-url' => 'https://api.paypal.com/cert',
-                'paypal-auth-algo' => 'SHA256withRSA',
-            ],
-            'json' => $webhookPayload,
-        ]);
+        $client->request(
+            'POST',
+            self::WEBHOOK_URL,
+            [],
+            [],
+            $this->paypalServerHeaders(['HTTP_PAYPAL_TRANSMISSION_SIG' => 'invalid_signature_xyz']),
+            (string) json_encode($webhookPayload, JSON_THROW_ON_ERROR)
+        );
 
         // Assert - Signature verification will fail
         $this->assertSame(400, $client->getResponse()->getStatusCode());
-        $this->assertStringContainsString('Invalid signature', $client->getResponse()->getContent());
+        $this->assertStringContainsString('Invalid signature', (string) $client->getResponse()->getContent());
     }
 
     // =============================================
@@ -130,18 +152,15 @@ final class PayPalWebhookTest extends WebTestCase
         // Arrange
         $client = static::createClient();
 
-        // Act
-        $client->request('POST', '/api/webhooks/paypal', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'paypal-transmission-sig' => 'test_signature',
-                'paypal-transmission-id' => 'test_id',
-                'paypal-transmission-time' => '2025-01-01T00:00:00Z',
-                'paypal-cert-url' => 'https://api.paypal.com/cert',
-                'paypal-auth-algo' => 'SHA256withRSA',
-            ],
-            'content' => '',
-        ]);
+        // Act - Empty body with signature header present
+        $client->request(
+            'POST',
+            self::WEBHOOK_URL,
+            [],
+            [],
+            $this->paypalServerHeaders(),
+            ''
+        );
 
         // Assert - Should return error, not crash
         $this->assertContains($client->getResponse()->getStatusCode(), [400, 500]);
@@ -156,18 +175,15 @@ final class PayPalWebhookTest extends WebTestCase
         // Arrange
         $client = static::createClient();
 
-        // Act
-        $client->request('POST', '/api/webhooks/paypal', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'paypal-transmission-sig' => 'test_signature',
-                'paypal-transmission-id' => 'test_id',
-                'paypal-transmission-time' => '2025-01-01T00:00:00Z',
-                'paypal-cert-url' => 'https://api.paypal.com/cert',
-                'paypal-auth-algo' => 'SHA256withRSA',
-            ],
-            'content' => '{not valid json [[[',
-        ]);
+        // Act - Malformed JSON with signature header present
+        $client->request(
+            'POST',
+            self::WEBHOOK_URL,
+            [],
+            [],
+            $this->paypalServerHeaders(),
+            '{not valid json [[['
+        );
 
         // Assert - Should return error, not crash
         $this->assertContains($client->getResponse()->getStatusCode(), [400, 500]);
@@ -179,7 +195,7 @@ final class PayPalWebhookTest extends WebTestCase
 
     public function testWebhookDoesNotRequireJwtAuthentication(): void
     {
-        // Arrange
+        // Arrange - no Authorization header
         $client = static::createClient();
         $webhookPayload = [
             'id' => 'evt_test_'.uniqid(),
@@ -187,18 +203,15 @@ final class PayPalWebhookTest extends WebTestCase
             'resource' => ['id' => 'capture_test'],
         ];
 
-        // Act - No Authorization header
-        $client->request('POST', '/api/webhooks/paypal', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'paypal-transmission-sig' => 'test_signature',
-                'paypal-transmission-id' => 'test_id',
-                'paypal-transmission-time' => '2025-01-01T00:00:00Z',
-                'paypal-cert-url' => 'https://api.paypal.com/cert',
-                'paypal-auth-algo' => 'SHA256withRSA',
-            ],
-            'json' => $webhookPayload,
-        ]);
+        // Act
+        $client->request(
+            'POST',
+            self::WEBHOOK_URL,
+            [],
+            [],
+            $this->paypalServerHeaders(),
+            (string) json_encode($webhookPayload, JSON_THROW_ON_ERROR)
+        );
 
         // Assert - Should not return 401 (Unauthorized) or 403 (Forbidden)
         // Will return 400 (invalid signature) which is correct - no JWT required
@@ -214,25 +227,22 @@ final class PayPalWebhookTest extends WebTestCase
     {
         // Arrange
         $client = static::createClient();
+        $client->followRedirects(false);
 
         // Act & Assert - GET not allowed
-        $client->request('GET', '/api/webhooks/paypal');
+        $client->request('GET', self::WEBHOOK_URL);
         $this->assertSame(405, $client->getResponse()->getStatusCode());
 
         // Act & Assert - PUT not allowed
-        $client->request('PUT', '/api/webhooks/paypal', [
-            'json' => [],
-        ]);
+        $client->request('PUT', self::WEBHOOK_URL);
         $this->assertSame(405, $client->getResponse()->getStatusCode());
 
         // Act & Assert - DELETE not allowed
-        $client->request('DELETE', '/api/webhooks/paypal');
+        $client->request('DELETE', self::WEBHOOK_URL);
         $this->assertSame(405, $client->getResponse()->getStatusCode());
 
         // Act & Assert - PATCH not allowed
-        $client->request('PATCH', '/api/webhooks/paypal', [
-            'json' => [],
-        ]);
+        $client->request('PATCH', self::WEBHOOK_URL);
         $this->assertSame(405, $client->getResponse()->getStatusCode());
     }
 
@@ -257,25 +267,28 @@ final class PayPalWebhookTest extends WebTestCase
 
         foreach ($eventTypes as $eventType) {
             // Act
-            $client->request('POST', '/api/webhooks/paypal', [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'paypal-transmission-sig' => 'test_signature_'.bin2hex(random_bytes(4)),
-                    'paypal-transmission-id' => 'test_id_'.uniqid(),
-                    'paypal-transmission-time' => '2025-01-01T00:00:00Z',
-                    'paypal-cert-url' => 'https://api.paypal.com/cert',
-                    'paypal-auth-algo' => 'SHA256withRSA',
-                ],
-                'json' => [
-                    'id' => 'evt_test_'.bin2hex(random_bytes(4)),
+            $client->request(
+                'POST',
+                self::WEBHOOK_URL,
+                [],
+                [],
+                $this->paypalServerHeaders([
+                    'HTTP_PAYPAL_TRANSMISSION_SIG' => 'test_signature_'.bin2hex(random_bytes(4)),
+                    'HTTP_PAYPAL_TRANSMISSION_ID'  => 'test_id_'.uniqid(),
+                ]),
+                (string) json_encode([
+                    'id'         => 'evt_test_'.bin2hex(random_bytes(4)),
                     'event_type' => $eventType,
-                    'resource' => ['id' => 'obj_test_'.uniqid()],
-                ],
-            ]);
+                    'resource'   => ['id' => 'obj_test_'.uniqid()],
+                ], JSON_THROW_ON_ERROR)
+            );
 
             // Assert - All event types accepted (signature will fail, but 400 not 404)
-            $this->assertNotSame(404, $client->getResponse()->getStatusCode(),
-                "Event type '{$eventType}' should be accepted");
+            $this->assertNotSame(
+                404,
+                $client->getResponse()->getStatusCode(),
+                "Event type '{$eventType}' should be accepted"
+            );
         }
     }
 
@@ -288,35 +301,31 @@ final class PayPalWebhookTest extends WebTestCase
         // Arrange
         $client = static::createClient();
 
-        // Create a large but valid webhook payload
         $largeMetadata = [];
         for ($i = 0; $i < 50; ++$i) {
             $largeMetadata["key_{$i}"] = str_repeat('x', 100);
         }
 
         $webhookPayload = [
-            'id' => 'evt_test_'.uniqid(),
+            'id'         => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
-            'resource' => [
-                'id' => 'capture_test',
-                'status' => 'COMPLETED',
-                'custom_id' => 'payment_test',
-                'supplementary_data' => $largeMetadata,
+            'resource'   => [
+                'id'                  => 'capture_test',
+                'status'              => 'COMPLETED',
+                'custom_id'           => 'payment_test',
+                'supplementary_data'  => $largeMetadata,
             ],
         ];
 
         // Act
-        $client->request('POST', '/api/webhooks/paypal', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'paypal-transmission-sig' => 'test_signature',
-                'paypal-transmission-id' => 'test_id',
-                'paypal-transmission-time' => '2025-01-01T00:00:00Z',
-                'paypal-cert-url' => 'https://api.paypal.com/cert',
-                'paypal-auth-algo' => 'SHA256withRSA',
-            ],
-            'json' => $webhookPayload,
-        ]);
+        $client->request(
+            'POST',
+            self::WEBHOOK_URL,
+            [],
+            [],
+            $this->paypalServerHeaders(),
+            (string) json_encode($webhookPayload, JSON_THROW_ON_ERROR)
+        );
 
         // Assert - Should handle large payloads without crashing
         $this->assertNotSame(500, $client->getResponse()->getStatusCode());
@@ -331,23 +340,20 @@ final class PayPalWebhookTest extends WebTestCase
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id' => 'evt_test_'.uniqid(),
+            'id'         => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
-            'resource' => ['id' => 'capture_test'],
+            'resource'   => ['id' => 'capture_test'],
         ];
 
         // Act
-        $client->request('POST', '/api/webhooks/paypal', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'paypal-transmission-sig' => 'test_signature',
-                'paypal-transmission-id' => 'test_id',
-                'paypal-transmission-time' => '2025-01-01T00:00:00Z',
-                'paypal-cert-url' => 'https://api.paypal.com/cert',
-                'paypal-auth-algo' => 'SHA256withRSA',
-            ],
-            'json' => $webhookPayload,
-        ]);
+        $client->request(
+            'POST',
+            self::WEBHOOK_URL,
+            [],
+            [],
+            $this->paypalServerHeaders(),
+            (string) json_encode($webhookPayload, JSON_THROW_ON_ERROR)
+        );
 
         // Assert - Response should have standard headers
         $response = $client->getResponse();
@@ -364,23 +370,29 @@ final class PayPalWebhookTest extends WebTestCase
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id' => 'evt_test_'.uniqid(),
+            'id'         => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
-            'resource' => ['id' => 'capture_test'],
+            'resource'   => ['id' => 'capture_test'],
         ];
 
-        // Test missing transmission-id
-        $client->request('POST', '/api/webhooks/paypal', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'paypal-transmission-sig' => 'test_signature',
-                // Missing: paypal-transmission-id
-                'paypal-transmission-time' => '2025-01-01T00:00:00Z',
-                'paypal-cert-url' => 'https://api.paypal.com/cert',
-                'paypal-auth-algo' => 'SHA256withRSA',
-            ],
-            'json' => $webhookPayload,
-        ]);
+        // Test missing transmission-id (but signature is present)
+        $serverWithoutTransmissionId = [
+            'HTTP_CONTENT_TYPE'             => 'application/json',
+            'HTTP_PAYPAL_TRANSMISSION_SIG'  => 'test_signature',
+            // Missing: HTTP_PAYPAL_TRANSMISSION_ID
+            'HTTP_PAYPAL_TRANSMISSION_TIME' => '2025-01-01T00:00:00Z',
+            'HTTP_PAYPAL_CERT_URL'          => 'https://api.paypal.com/cert',
+            'HTTP_PAYPAL_AUTH_ALGO'         => 'SHA256withRSA',
+        ];
+
+        $client->request(
+            'POST',
+            self::WEBHOOK_URL,
+            [],
+            [],
+            $serverWithoutTransmissionId,
+            (string) json_encode($webhookPayload, JSON_THROW_ON_ERROR)
+        );
 
         // Should still process (headers are optional except signature)
         $this->assertContains($client->getResponse()->getStatusCode(), [400, 500]);
@@ -397,27 +409,27 @@ final class PayPalWebhookTest extends WebTestCase
         $eventId = 'evt_duplicate_'.uniqid();
 
         $webhookPayload = [
-            'id' => $eventId,
+            'id'         => $eventId,
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
-            'resource' => [
-                'id' => 'capture_test',
+            'resource'   => [
+                'id'        => 'capture_test',
                 'custom_id' => 'payment_123',
             ],
         ];
 
         // Act - Send same event twice
         for ($i = 0; $i < 2; ++$i) {
-            $client->request('POST', '/api/webhooks/paypal', [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'paypal-transmission-sig' => 'test_signature_'.$i,
-                    'paypal-transmission-id' => 'test_id_'.$i,
-                    'paypal-transmission-time' => '2025-01-01T00:00:00Z',
-                    'paypal-cert-url' => 'https://api.paypal.com/cert',
-                    'paypal-auth-algo' => 'SHA256withRSA',
-                ],
-                'json' => $webhookPayload,
-            ]);
+            $client->request(
+                'POST',
+                self::WEBHOOK_URL,
+                [],
+                [],
+                $this->paypalServerHeaders([
+                    'HTTP_PAYPAL_TRANSMISSION_SIG' => 'test_signature_'.$i,
+                    'HTTP_PAYPAL_TRANSMISSION_ID'  => 'test_id_'.$i,
+                ]),
+                (string) json_encode($webhookPayload, JSON_THROW_ON_ERROR)
+            );
 
             // Assert - Both requests should be processed (idempotency handled at business logic level)
             $this->assertNotSame(404, $client->getResponse()->getStatusCode());
@@ -433,27 +445,24 @@ final class PayPalWebhookTest extends WebTestCase
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id' => 'evt_test_'.uniqid(),
+            'id'         => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
-            'resource' => [
-                'id' => 'capture_test',
+            'resource'   => [
+                'id'        => 'capture_test',
                 'custom_id' => 'payment_with_special_chars_<>&"\'/€',
-                'status' => 'COMPLETED',
+                'status'    => 'COMPLETED',
             ],
         ];
 
         // Act
-        $client->request('POST', '/api/webhooks/paypal', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'paypal-transmission-sig' => 'test_signature',
-                'paypal-transmission-id' => 'test_id',
-                'paypal-transmission-time' => '2025-01-01T00:00:00Z',
-                'paypal-cert-url' => 'https://api.paypal.com/cert',
-                'paypal-auth-algo' => 'SHA256withRSA',
-            ],
-            'json' => $webhookPayload,
-        ]);
+        $client->request(
+            'POST',
+            self::WEBHOOK_URL,
+            [],
+            [],
+            $this->paypalServerHeaders(),
+            (string) json_encode($webhookPayload, JSON_THROW_ON_ERROR)
+        );
 
         // Assert - Should handle special characters without crashing
         $this->assertNotSame(500, $client->getResponse()->getStatusCode());

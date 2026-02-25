@@ -13,10 +13,27 @@ use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tests\Support\TenantTestTrait;
+use Doctrine\ORM\EntityManagerInterface;
 
 final class StockItemApiTest extends ApiTestCase
 {
     use TenantTestTrait;
+
+    /**
+     * Do not reboot the kernel on each createClient() call.
+     *
+     * With the default (null), every static::createClient() call triggers
+     * static::bootKernel(), which creates a brand-new container and a brand-new
+     * database connection.  That means the SET app.tenant_id executed in
+     * setTenantContext() runs on connection A, while the Doctrine repository
+     * injected from static::getContainer() uses connection B — so RLS sees no
+     * tenant context and blocks every INSERT.
+     *
+     * Setting this to false keeps a single kernel/container/connection alive for
+     * the entire test method, so setTenantContext(), the repository and the HTTP
+     * client all share the same PostgreSQL session.
+     */
+    protected static ?bool $alwaysBootKernel = false;
 
     private TenantId $tenantId;
     private ProductId $productId;
@@ -27,7 +44,9 @@ final class StockItemApiTest extends ApiTestCase
     {
         parent::setUp();
 
-        // Use default test tenant ID for RLS compatibility
+        // Boot the kernel once so that static::getContainer() is available.
+        static::createClient();
+
         $this->tenantId = $this->getDefaultTenantId();
         $this->productId = ProductId::generate();
         $this->warehouseId = WarehouseId::generate();
@@ -35,27 +54,43 @@ final class StockItemApiTest extends ApiTestCase
         $container = static::getContainer();
         $this->stockItemRepository = $container->get(StockItemRepositoryInterface::class);
 
-        // Set tenant context for direct DB operations
+        // Set PostgreSQL session variable for RLS on the shared connection.
+        // Must happen before any repository save() or raw SQL against tenant tables.
         $this->setTenantContext($this->tenantId->toString());
 
-        // Clean up existing test data
         $this->cleanupTestData();
     }
 
     protected function tearDown(): void
     {
-        // Clean up after each test
         $this->cleanupTestData();
 
         parent::tearDown();
     }
 
+    /**
+     * Override TenantTestTrait::getEntityManager() to use the stable container
+     * instead of calling static::createClient() (which would reboot the kernel
+     * and open a new connection, losing the tenant context we just set).
+     */
+    private function getEntityManager(): EntityManagerInterface
+    {
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+
+        return $em;
+    }
+
     private function cleanupTestData(): void
     {
-        $em = $this->getEntityManager();
-        $connection = $em->getConnection();
+        $connection = $this->getEntityManager()->getConnection();
 
-        // Delete all stock items for the test tenant
+        // Re-establish tenant context: the connection is shared but a previous
+        // test tearDown may have closed and reopened it.
+        $connection->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $this->tenantId->toString())
+        );
+
         $connection->executeStatement(
             sprintf(
                 "DELETE FROM stock_items WHERE tenant_id = '%s'",
@@ -66,11 +101,14 @@ final class StockItemApiTest extends ApiTestCase
 
     /**
      * Create an authenticated client with JWT token.
+     *
+     * Uses static::getContainer() directly (safe because $alwaysBootKernel = false
+     * keeps a single kernel alive) to avoid rebooting the kernel and losing the
+     * RLS tenant context set on the shared connection.
      */
     protected function createAuthenticatedClient(string $email = 'admin@admin.com', array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'])
     {
-        $tempClient = static::createClient();
-        $container = $tempClient->getContainer();
+        $container = static::getContainer();
 
         $entityManager = $container->get('doctrine')->getManager();
         $userRepository = $entityManager->getRepository(\App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity::class);
@@ -241,7 +279,7 @@ final class StockItemApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(422); // Validation error
+        $this->assertResponseStatusCodeSame(422);
     }
 
     public function testCreateStockItemValidatesPositiveQuantity(): void
@@ -255,12 +293,12 @@ final class StockItemApiTest extends ApiTestCase
                 'tenantId' => $this->tenantId->toString(),
                 'productId' => $this->productId->toString(),
                 'warehouseId' => $this->warehouseId->toString(),
-                'initialQuantity' => -10, // Invalid negative quantity
+                'initialQuantity' => -10,
                 'lowStockThreshold' => 20,
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(422); // Validation error
+        $this->assertResponseStatusCodeSame(422);
     }
 
     public function testGetNonExistentStockItemReturns404(): void

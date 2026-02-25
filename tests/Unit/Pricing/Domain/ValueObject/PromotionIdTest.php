@@ -6,38 +6,39 @@ namespace App\Tests\Unit\Pricing\Domain\ValueObject;
 
 use App\Pricing\Domain\ValueObject\PromotionId;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\Uuid;
 
 final class PromotionIdTest extends TestCase
 {
-    public function testGenerateCreatesValidUlid(): void
+    public function testGenerateCreatesValidUuid(): void
     {
         $id = PromotionId::generate();
 
         $this->assertInstanceOf(PromotionId::class, $id);
-        $this->assertMatchesRegularExpression('/^[0-9A-HJKMNP-TV-Z]{26}$/', $id->toString());
+        $this->assertTrue(Uuid::isValid($id->toString()));
     }
 
     public function testFromStringCreatesValidPromotionId(): void
     {
-        $ulidString = (string) new \Symfony\Component\Uid\Ulid();
-        $id = PromotionId::fromString($ulidString);
+        $uuidString = (string) Uuid::v7();
+        $id = PromotionId::fromString($uuidString);
 
-        $this->assertSame($ulidString, $id->toString());
+        $this->assertSame($uuidString, $id->toString());
     }
 
-    public function testFromStringThrowsExceptionForInvalidUlid(): void
+    public function testFromStringThrowsExceptionForInvalidUuid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid PromotionId');
 
-        PromotionId::fromString('invalid-ulid');
+        PromotionId::fromString('invalid-uuid');
     }
 
     public function testEqualsReturnsTrueForSameValue(): void
     {
-        $ulidString = (string) new \Symfony\Component\Uid\Ulid();
-        $id1 = PromotionId::fromString($ulidString);
-        $id2 = PromotionId::fromString($ulidString);
+        $uuidString = (string) Uuid::v7();
+        $id1 = PromotionId::fromString($uuidString);
+        $id2 = PromotionId::fromString($uuidString);
 
         $this->assertTrue($id1->equals($id2));
     }

@@ -58,12 +58,12 @@ use App\Payment\Domain\Service\PaymentGatewayInterface;
 final class PaymentGatewayFactory implements PaymentGatewayFactoryInterface
 {
     /**
-     * @param StripeGateway        $stripeGateway Stripe payment gateway for card payments
-     * @param PayPalGatewayAdapter $paypalGateway PayPal payment gateway for PayPal account payments
+     * @param PaymentGatewayInterface $stripeGateway Stripe payment gateway for card payments
+     * @param PaymentGatewayInterface $paypalGateway PayPal payment gateway for PayPal account payments
      */
     public function __construct(
-        private readonly StripeGateway $stripeGateway,
-        private readonly PayPalGatewayAdapter $paypalGateway,
+        private readonly PaymentGatewayInterface $stripeGateway,
+        private readonly PaymentGatewayInterface $paypalGateway,
     ) {
     }
 

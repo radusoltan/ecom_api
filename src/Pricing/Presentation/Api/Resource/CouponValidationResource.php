@@ -13,6 +13,7 @@ use App\Pricing\Presentation\Api\Processor\ValidateCouponProcessor;
     operations: [
         new Post(
             uriTemplate: '/coupons/validate',
+            status: 200,
             processor: ValidateCouponProcessor::class,
             description: 'Validate a coupon code - validates a coupon code and returns discount information if valid. Required: code, cart_total (amount, currency)'
         ),

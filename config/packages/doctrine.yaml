@@ -172,6 +172,18 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Invoice/Infrastructure/Persistence/Doctrine/Entity'
                 prefix: 'App\Invoice\Infrastructure\Persistence\Doctrine\Entity'
                 alias: Invoice
+            AuditLog:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/AuditLog/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\AuditLog\Infrastructure\Persistence\Doctrine\Entity'
+                alias: AuditLog
+            Review:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Review/Infrastructure/Persistence/Doctrine/Entity'
+                prefix: 'App\Review\Infrastructure\Persistence\Doctrine\Entity'
+                alias: Review
 
 when@dev:
     framework:

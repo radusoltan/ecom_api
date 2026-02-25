@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace App\Review\Infrastructure\Fixtures;
 
-use App\Catalog\Domain\Model\ProductId;
-use App\Review\Application\Command\SubmitReview;
-use App\Review\Domain\ValueObject\Rating;
-use App\Review\Domain\ValueObject\ReviewId;
-use App\Shared\Domain\ValueObject\TenantId;
+use App\DataFixtures\ProductFixtures;
+use App\DataFixtures\TenantFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Uid\Uuid;
 
-final class ReviewFixtures extends Fixture
+/**
+ * Review Fixtures - Creates product reviews using direct SQL.
+ */
+final class ReviewFixtures extends Fixture implements DependentFixtureInterface
 {
     private const REVIEW_TEMPLATES = [
         ['rating' => 5, 'title' => 'Excellent product!', 'content' => 'This product exceeded my expectations. High quality and great value for money. Highly recommended!'],
@@ -25,74 +27,76 @@ final class ReviewFixtures extends Fixture
         ['rating' => 1, 'title' => 'Disappointed', 'content' => 'Not satisfied with this purchase. Quality is poor.'],
     ];
 
-    private const CUSTOMER_NAMES = [
-        'John Smith', 'Emma Johnson', 'Michael Brown', 'Sophia Davis', 'James Wilson',
-        'Olivia Martinez', 'William Garcia', 'Ava Rodriguez', 'Robert Lee', 'Isabella Walker',
-        'David Hall', 'Mia Allen', 'Richard Young', 'Charlotte King', 'Joseph Wright',
-    ];
-
     public function __construct(
-        private readonly MessageBusInterface $commandBus,
+        private readonly Connection $connection,
     ) {
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            TenantFixtures::class,
+            ProductFixtures::class,
+        ];
     }
 
     public function load(ObjectManager $manager): void
     {
-        $tenantId = TenantId::fromString('51bd1332-307c-480c-bd3c-6bfe5ccd7829');
+        $tenantIdString = $this->connection->fetchOne('SELECT id FROM tenants ORDER BY created_at LIMIT 1');
+        if (!$tenantIdString) {
+            echo "   No tenants found. Skipping review fixtures.\n";
 
-        // Get all product IDs from database
-        $productIds = $manager->getConnection()->executeQuery(
-            'SELECT id FROM catalog_products WHERE tenant_id = :tenant_id AND active = true ORDER BY created_at DESC LIMIT 100',
-            ['tenant_id' => $tenantId->toString()]
-        )->fetchFirstColumn();
+            return;
+        }
+
+        // Set RLS context
+        $this->connection->executeStatement("SET app.tenant_id = '{$tenantIdString}'");
+
+        $productIds = $this->connection->fetchFirstColumn(
+            'SELECT id FROM catalog_products WHERE tenant_id = :tenant_id ORDER BY created_at DESC LIMIT 100',
+            ['tenant_id' => $tenantIdString]
+        );
+
+        if (empty($productIds)) {
+            echo "   No products found. Skipping review fixtures.\n";
+
+            return;
+        }
+
+        echo "Creating product reviews...\n";
 
         $reviewCount = 0;
 
-        // Create reviews for random products
-        // Add 1-5 reviews per product, randomly selected (about 60% of products will have reviews)
-        foreach ($productIds as $index => $productId) {
+        foreach ($productIds as $productId) {
             // Skip some products randomly (40% chance to skip)
             if (mt_rand(1, 100) <= 40) {
                 continue;
             }
 
-            $numReviews = mt_rand(1, 5); // 1-5 reviews per product
+            $numReviews = mt_rand(1, 5);
 
             for ($i = 0; $i < $numReviews; ++$i) {
                 $template = self::REVIEW_TEMPLATES[array_rand(self::REVIEW_TEMPLATES)];
-                $customerName = self::CUSTOMER_NAMES[array_rand(self::CUSTOMER_NAMES)];
-                $customerId = 'customer_'.md5($customerName.$productId.$i);
+                $isVerified = mt_rand(1, 100) <= 70;
 
-                // Some reviews are verified purchases (70% chance)
-                $isVerifiedPurchase = mt_rand(1, 100) <= 70;
-
-                $command = new SubmitReview(
-                    reviewId: ReviewId::generate(),
-                    productId: ProductId::fromString($productId),
-                    tenantId: $tenantId,
-                    customerId: $customerId,
-                    customerName: $customerName,
-                    rating: Rating::fromInt($template['rating']),
-                    title: $template['title'],
-                    content: $template['content'],
-                    isVerifiedPurchase: $isVerifiedPurchase,
+                $this->connection->executeStatement(
+                    'INSERT INTO product_reviews (id, tenant_id, product_id, customer_id, rating, title, content, is_verified, is_approved, created_at, updated_at)
+                     VALUES (:id, :tenant_id, :product_id, :customer_id, :rating, :title, :content, :is_verified, true, NOW(), NOW())',
+                    [
+                        'id' => (string) Uuid::v7(),
+                        'tenant_id' => $tenantIdString,
+                        'product_id' => $productId,
+                        'customer_id' => null,
+                        'rating' => $template['rating'],
+                        'title' => $template['title'],
+                        'content' => $template['content'],
+                        'is_verified' => $isVerified ? 'true' : 'false',
+                    ]
                 );
-
-                $this->commandBus->dispatch($command);
                 ++$reviewCount;
             }
         }
 
-        echo "\n✓ Created {$reviewCount} product reviews\n";
-
-        // Auto-approve all reviews (in real system this would be manual/automated moderation)
-        // $manager->getConnection()->executeStatement(
-        //     "UPDATE product_reviews SET status = 'approved' WHERE tenant_id = :tenant_id",
-        //     ['tenant_id' => $tenantId->toString()]
-        // );
-
-        // echo "✓ Approved all reviews\n";
-
-        $manager->flush();
+        echo "Created {$reviewCount} product reviews\n";
     }
 }

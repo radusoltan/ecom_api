@@ -14,27 +14,47 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  * Note: Comprehensive webhook event processing cannot be fully tested without valid
  * Stripe signatures. For end-to-end testing, use Stripe CLI webhook forwarding.
  * See tests/Functional/Payment/Webhook/README.md for details.
+ *
+ * Headers must be passed via the $server argument to WebTestCase::request() using
+ * the HTTP_ prefix convention (e.g. HTTP_STRIPE_SIGNATURE, CONTENT_TYPE).
  */
 final class StripeWebhookTest extends WebTestCase
 {
+    /**
+     * Encode an array to JSON, asserting that encoding succeeds.
+     *
+     * @param array<mixed> $data
+     */
+    private function jsonEncode(array $data): string
+    {
+        $encoded = json_encode($data);
+        $this->assertNotFalse($encoded, 'json_encode() failed unexpectedly');
+
+        return $encoded;
+    }
+
     public function testWebhookEndpointExistsAndAcceptsPost(): void
     {
         // Arrange
         $client = static::createClient();
-        $webhookPayload = [
+        $webhookPayload = $this->jsonEncode([
             'id' => 'evt_test',
             'type' => 'payment_intent.succeeded',
             'data' => ['object' => ['id' => 'pi_test']],
-        ];
+        ]);
 
         // Act
-        $client->request('POST', '/api/webhooks/stripe', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'stripe-signature' => 'test_signature',
+        $client->request(
+            'POST',
+            '/api/v1/webhooks/stripe',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_STRIPE_SIGNATURE' => 'test_signature',
             ],
-            'json' => $webhookPayload,
-        ]);
+            $webhookPayload
+        );
 
         // Assert - Endpoint exists (will return 400 for invalid signature, not 404)
         $this->assertNotSame(404, $client->getResponse()->getStatusCode());
@@ -44,47 +64,56 @@ final class StripeWebhookTest extends WebTestCase
     {
         // Arrange
         $client = static::createClient();
-        $webhookPayload = [
+        $webhookPayload = $this->jsonEncode([
             'id' => 'evt_test',
             'type' => 'payment_intent.succeeded',
             'data' => ['object' => ['id' => 'pi_test']],
-        ];
+        ]);
 
         // Act - No stripe-signature header
-        $client->request('POST', '/api/v1/webhooks/stripe', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-            'json' => $webhookPayload,
-        ]);
+        $client->request(
+            'POST',
+            '/api/v1/webhooks/stripe',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            $webhookPayload
+        );
 
         // Assert
         $this->assertSame(400, $client->getResponse()->getStatusCode());
-        $this->assertStringContainsString('Missing signature', $client->getResponse()->getContent());
+        $this->assertStringContainsString('Missing signature', (string) $client->getResponse()->getContent());
     }
 
     public function testItReturns400ForInvalidSignature(): void
     {
         // Arrange
         $client = static::createClient();
-        $webhookPayload = [
+        $webhookPayload = $this->jsonEncode([
             'id' => 'evt_test',
             'type' => 'payment_intent.succeeded',
             'data' => ['object' => ['id' => 'pi_test']],
-        ];
-
-        // Act - Invalid signature
-        $client->request('POST', '/api/v1/webhooks/stripe', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'stripe-signature' => 'invalid_signature',
-            ],
-            'json' => $webhookPayload,
         ]);
+
+        // Act - Invalid signature (present but malformed — no t= or v1= components).
+        // The Stripe SDK's WebhookSignature::verifyHeader() returns -1 for getTimestamp()
+        // and immediately throws SignatureVerificationException, which the handler catches
+        // and maps to HTTP 400.
+        $client->request(
+            'POST',
+            '/api/v1/webhooks/stripe',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_STRIPE_SIGNATURE' => 'invalid_signature',
+            ],
+            $webhookPayload
+        );
 
         // Assert
         $this->assertSame(400, $client->getResponse()->getStatusCode());
-        $this->assertStringContainsString('Invalid signature', $client->getResponse()->getContent());
+        $this->assertStringContainsString('Invalid signature', (string) $client->getResponse()->getContent());
     }
 
     public function testItHandlesEmptyPayloadGracefully(): void
@@ -93,13 +122,17 @@ final class StripeWebhookTest extends WebTestCase
         $client = static::createClient();
 
         // Act
-        $client->request('POST', '/api/webhooks/stripe', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'stripe-signature' => 'test_signature',
+        $client->request(
+            'POST',
+            '/api/v1/webhooks/stripe',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_STRIPE_SIGNATURE' => 'test_signature',
             ],
-            'content' => '',
-        ]);
+            ''
+        );
 
         // Assert - Should return error, not crash
         $this->assertContains($client->getResponse()->getStatusCode(), [400, 500]);
@@ -111,13 +144,17 @@ final class StripeWebhookTest extends WebTestCase
         $client = static::createClient();
 
         // Act
-        $client->request('POST', '/api/webhooks/stripe', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'stripe-signature' => 'test_signature',
+        $client->request(
+            'POST',
+            '/api/v1/webhooks/stripe',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_STRIPE_SIGNATURE' => 'test_signature',
             ],
-            'content' => 'not valid json {{{',
-        ]);
+            'not valid json {{{'
+        );
 
         // Assert - Should return error, not crash
         $this->assertContains($client->getResponse()->getStatusCode(), [400, 500]);
@@ -127,20 +164,24 @@ final class StripeWebhookTest extends WebTestCase
     {
         // Arrange
         $client = static::createClient();
-        $webhookPayload = [
+        $webhookPayload = $this->jsonEncode([
             'id' => 'evt_test',
             'type' => 'payment_intent.succeeded',
             'data' => ['object' => ['id' => 'pi_test']],
-        ];
+        ]);
 
         // Act
-        $client->request('POST', '/api/webhooks/stripe', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'stripe-signature' => 'test_signature',
+        $client->request(
+            'POST',
+            '/api/v1/webhooks/stripe',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_STRIPE_SIGNATURE' => 'test_signature',
             ],
-            'json' => $webhookPayload,
-        ]);
+            $webhookPayload
+        );
 
         // Assert - Should not return 401 (Unauthorized) or 403 (Forbidden)
         // Will return 400 (invalid signature) which is correct - no JWT required
@@ -154,17 +195,22 @@ final class StripeWebhookTest extends WebTestCase
         $client = static::createClient();
 
         // Act & Assert - GET not allowed
-        $client->request('GET', '/api/webhooks/stripe');
+        $client->request('GET', '/api/v1/webhooks/stripe');
         $this->assertSame(405, $client->getResponse()->getStatusCode());
 
         // Act & Assert - PUT not allowed
-        $client->request('PUT', '/api/webhooks/stripe', [
-            'json' => [],
-        ]);
+        $client->request(
+            'PUT',
+            '/api/v1/webhooks/stripe',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            '{}'
+        );
         $this->assertSame(405, $client->getResponse()->getStatusCode());
 
         // Act & Assert - DELETE not allowed
-        $client->request('DELETE', '/api/webhooks/stripe');
+        $client->request('DELETE', '/api/v1/webhooks/stripe');
         $this->assertSame(405, $client->getResponse()->getStatusCode());
     }
 
@@ -182,18 +228,24 @@ final class StripeWebhookTest extends WebTestCase
         ];
 
         foreach ($eventTypes as $eventType) {
-            // Act
-            $client->request('POST', '/api/v1/webhooks/stripe', [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'stripe-signature' => 'test_signature',
-                ],
-                'json' => [
-                    'id' => 'evt_test_'.bin2hex(random_bytes(4)),
-                    'type' => $eventType,
-                    'data' => ['object' => ['id' => 'obj_test']],
-                ],
+            $payload = $this->jsonEncode([
+                'id' => 'evt_test_'.bin2hex(random_bytes(4)),
+                'type' => $eventType,
+                'data' => ['object' => ['id' => 'obj_test']],
             ]);
+
+            // Act
+            $client->request(
+                'POST',
+                '/api/v1/webhooks/stripe',
+                [],
+                [],
+                [
+                    'CONTENT_TYPE' => 'application/json',
+                    'HTTP_STRIPE_SIGNATURE' => 'test_signature',
+                ],
+                $payload
+            );
 
             // Assert - All event types accepted (signature will fail, but 400 not 404)
             $this->assertNotSame(404, $client->getResponse()->getStatusCode(),
@@ -212,7 +264,7 @@ final class StripeWebhookTest extends WebTestCase
             $largeMetadata["key_{$i}"] = str_repeat('x', 100);
         }
 
-        $webhookPayload = [
+        $webhookPayload = $this->jsonEncode([
             'id' => 'evt_test',
             'type' => 'payment_intent.succeeded',
             'data' => [
@@ -221,16 +273,20 @@ final class StripeWebhookTest extends WebTestCase
                     'metadata' => $largeMetadata,
                 ],
             ],
-        ];
+        ]);
 
         // Act
-        $client->request('POST', '/api/webhooks/stripe', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'stripe-signature' => 'test_signature',
+        $client->request(
+            'POST',
+            '/api/v1/webhooks/stripe',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_STRIPE_SIGNATURE' => 'test_signature',
             ],
-            'json' => $webhookPayload,
-        ]);
+            $webhookPayload
+        );
 
         // Assert - Should handle large payloads without crashing
         $this->assertNotSame(500, $client->getResponse()->getStatusCode());
@@ -240,20 +296,24 @@ final class StripeWebhookTest extends WebTestCase
     {
         // Arrange
         $client = static::createClient();
-        $webhookPayload = [
+        $webhookPayload = $this->jsonEncode([
             'id' => 'evt_test',
             'type' => 'payment_intent.succeeded',
             'data' => ['object' => ['id' => 'pi_test']],
-        ];
+        ]);
 
         // Act
-        $client->request('POST', '/api/webhooks/stripe', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'stripe-signature' => 'test_signature',
+        $client->request(
+            'POST',
+            '/api/v1/webhooks/stripe',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_STRIPE_SIGNATURE' => 'test_signature',
             ],
-            'json' => $webhookPayload,
-        ]);
+            $webhookPayload
+        );
 
         // Assert - Response should have standard headers
         $response = $client->getResponse();

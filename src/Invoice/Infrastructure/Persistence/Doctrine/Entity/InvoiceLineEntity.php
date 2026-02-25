@@ -116,6 +116,25 @@ class InvoiceLineEntity
         );
     }
 
+    /**
+     * Update entity from domain model (for sync-in-place pattern).
+     */
+    public function updateFromDomainModel(InvoiceLine $line): void
+    {
+        $this->productId = $line->productId()?->toString();
+        $this->sku = $line->sku();
+        $this->description = $line->description();
+        $this->quantity = $line->quantity();
+        $this->unitPriceAmount = $line->unitPrice()->getAmount();
+        $this->unitPriceCurrency = $line->unitPrice()->getCurrency()->getCurrencyCode();
+        $this->taxRate = $line->taxRate();
+        $this->taxAmount = $line->taxAmount()->getAmount();
+        $this->taxCurrency = $line->taxAmount()->getCurrency()->getCurrencyCode();
+        $this->lineTotalAmount = $line->lineTotal()->getAmount();
+        $this->lineTotalCurrency = $line->lineTotal()->getCurrency()->getCurrencyCode();
+        $this->position = $line->position();
+    }
+
     // Getters
 
     public function getId(): string

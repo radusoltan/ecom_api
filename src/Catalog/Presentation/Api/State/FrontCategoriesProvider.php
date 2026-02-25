@@ -106,12 +106,13 @@ final class FrontCategoriesProvider implements ProviderInterface
             ];
         }
 
-        // Count children categories
-        $childrenCount = $category->children() ? count($category->children()) : 0;
+        // Children count is not available on the domain model (Category only stores parentId).
+        // A dedicated query would be needed for accurate counts; default to 0 here.
+        $childrenCount = 0;
 
         return new StorefrontCategoryDto(
             id: $category->id()->toString(),
-            slug: $category->slug() ?? $category->id()->toString(),
+            slug: $category->slug()?->value() ?? $category->id()->toString(),
             name: $category->name()->value(),
             image: $image,
             showOnFront: $category->showOnFront(),

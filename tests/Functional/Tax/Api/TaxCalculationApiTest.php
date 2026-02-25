@@ -369,7 +369,7 @@ final class TaxCalculationApiTest extends ApiTestCase
     {
         $tenantId = $this->createTenant();
 
-        $response = static::createClient()->request('POST', '/api/v1/tax_calculations', [
+        static::createClient()->request('POST', '/api/v1/tax_calculations', [
             'json' => [
                 'amountInCents' => 10000,
                 'countryCode' => 'FR',
@@ -377,12 +377,8 @@ final class TaxCalculationApiTest extends ApiTestCase
             ],
         ]);
 
-        // Note: Tax calculation endpoint may be public for some use cases
-        // If authentication is required, this should return 401
-        // Currently returns 201 with tax calculation result
-        $this->assertResponseStatusCodeSame(201);
-        $data = json_decode($response->getContent(), true);
-        $this->assertSame(0, $data['taxAmount']); // No tax rule exists for this tenant
+        // Tax calculation endpoint requires authentication (IS_AUTHENTICATED_FULLY)
+        $this->assertResponseStatusCodeSame(401);
     }
 
     public function testCalculateTaxFailsWithNegativeAmount(): void

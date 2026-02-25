@@ -8,8 +8,11 @@ use App\Catalog\Domain\Model\ProductId;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Inventory\Domain\Repository\WarehouseRepositoryInterface;
+use App\Notifications\Application\Command\SendNotification\SendNotification;
+use App\Notifications\Domain\Model\NotificationType;
 use App\Order\Application\Command\StartFulfillment;
 use App\Order\Application\EventSubscriber\OrderPlacedFulfillmentSubscriber;
+use App\Order\Domain\Event\FulfillmentCannotBeProcessed;
 use App\Order\Domain\Event\OrderPlaced;
 use App\Order\Domain\Model\Order;
 use App\Order\Domain\Model\OrderId;
@@ -28,6 +31,7 @@ use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 #[CoversClass(OrderPlacedFulfillmentSubscriber::class)]
 final class OrderPlacedFulfillmentSubscriberTest extends TestCase
@@ -36,6 +40,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
     private StockItemRepositoryInterface $stockItemRepository;
     private OrderRepositoryInterface $orderRepository;
     private MessageBusInterface $commandBus;
+    private EventDispatcherInterface $eventDispatcher;
     private LoggerInterface $logger;
     private OrderPlacedFulfillmentSubscriber $subscriber;
 
@@ -52,13 +57,15 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
 
         $this->orderRepository = $this->createMock(OrderRepositoryInterface::class);
         $this->commandBus = $this->createMock(MessageBusInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->subscriber = new OrderPlacedFulfillmentSubscriber(
             routingService: $routingService,
             orderRepository: $this->orderRepository,
             commandBus: $this->commandBus,
-            logger: $this->logger
+            eventDispatcher: $this->eventDispatcher,
+            logger: $this->logger,
         );
     }
 
@@ -135,7 +142,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function itDoesNotDispatchWhenNoWarehouseAvailable(): void
+    public function itDoesNotDispatchStartFulfillmentWhenNoWarehouseAvailable(): void
     {
         // Arrange
         $orderId = OrderId::generate();
@@ -159,10 +166,20 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
         // No warehouse available (empty warehouse list)
         $this->warehouseRepository->method('findActiveByTenant')->willReturn([]);
 
-        // Should NOT dispatch StartFulfillment
+        // Should dispatch SendNotification (NOT StartFulfillment)
         $this->commandBus
-            ->expects($this->never())
-            ->method('dispatch');
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(
+                fn ($command) => $command instanceof SendNotification,
+            ))
+            ->willReturn(new Envelope(new \stdClass()));
+
+        // Should dispatch FulfillmentCannotBeProcessed event
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->isInstanceOf(FulfillmentCannotBeProcessed::class));
 
         // Should log error
         $this->logger
@@ -176,8 +193,6 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
 
         // Act
         $this->subscriber->onOrderPlaced($event);
-
-        // Assert - expectations verified by mocks
     }
 
     #[Test]
@@ -201,10 +216,13 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
             ->with($orderId)
             ->willReturn(null);
 
-        // Should NOT reach routing service since order not found
-
-        // Should NOT dispatch StartFulfillment
+        // Should NOT dispatch any command
         $this->commandBus
+            ->expects($this->never())
+            ->method('dispatch');
+
+        // Should NOT dispatch any event
+        $this->eventDispatcher
             ->expects($this->never())
             ->method('dispatch');
 
@@ -219,8 +237,6 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
 
         // Act
         $this->subscriber->onOrderPlaced($event);
-
-        // Assert - expectations verified by mocks
     }
 
     #[Test]
@@ -309,6 +325,161 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
         $this->subscriber->onOrderPlaced($event);
 
         // Assert - expectations verified by mocks
+    }
+
+    // --- Error path: FulfillmentCannotBeProcessed event ---
+
+    #[Test]
+    public function itDispatchesFulfillmentCannotBeProcessedEventWithCorrectData(): void
+    {
+        $orderId = OrderId::generate();
+        $tenantId = TenantId::generate();
+
+        $event = new OrderPlaced(
+            orderId: $orderId,
+            tenantId: $tenantId,
+            customerEmail: 'test@example.com',
+            total: Money::fromScalars(5000, 'USD')
+        );
+
+        $order = $this->createOrder($orderId, $tenantId);
+
+        $this->orderRepository->method('findById')->willReturn($order);
+        $this->warehouseRepository->method('findActiveByTenant')->willReturn([]);
+        $this->commandBus->method('dispatch')->willReturn(new Envelope(new \stdClass()));
+
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function ($dispatched) use ($orderId, $tenantId): bool {
+                if (!$dispatched instanceof FulfillmentCannotBeProcessed) {
+                    return false;
+                }
+
+                return $dispatched->orderId->equals($orderId)
+                    && $dispatched->tenantId->equals($tenantId)
+                    && str_contains($dispatched->reason, $orderId->toString())
+                    && $dispatched->occurredOn instanceof \DateTimeImmutable;
+            }));
+
+        $this->subscriber->onOrderPlaced($event);
+    }
+
+    #[Test]
+    public function itDispatchesSendNotificationWithCorrectEmailContent(): void
+    {
+        $orderId = OrderId::generate();
+        $tenantId = TenantId::generate();
+
+        $event = new OrderPlaced(
+            orderId: $orderId,
+            tenantId: $tenantId,
+            customerEmail: 'test@example.com',
+            total: Money::fromScalars(5000, 'USD')
+        );
+
+        $order = $this->createOrder($orderId, $tenantId);
+
+        $this->orderRepository->method('findById')->willReturn($order);
+        $this->warehouseRepository->method('findActiveByTenant')->willReturn([]);
+
+        $this->commandBus
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function ($command) use ($orderId, $tenantId): bool {
+                if (!$command instanceof SendNotification) {
+                    return false;
+                }
+
+                return $command->type === NotificationType::EMAIL
+                    && $command->recipientEmail === 'admin@ecommerce.local'
+                    && $command->tenantId->equals($tenantId)
+                    && str_contains($command->subject, $orderId->toString())
+                    && str_contains($command->body, $orderId->toString())
+                    && str_contains($command->body, $tenantId->toString());
+            }))
+            ->willReturn(new Envelope(new \stdClass()));
+
+        $this->subscriber->onOrderPlaced($event);
+    }
+
+    #[Test]
+    public function itUsesCustomAdminEmailForNotification(): void
+    {
+        $routingService = new WarehouseRoutingService(
+            $this->warehouseRepository,
+            $this->stockItemRepository,
+            new NullLogger(),
+        );
+
+        $customSubscriber = new OrderPlacedFulfillmentSubscriber(
+            routingService: $routingService,
+            orderRepository: $this->orderRepository,
+            commandBus: $this->commandBus,
+            eventDispatcher: $this->eventDispatcher,
+            logger: $this->logger,
+            adminEmail: 'ops@custom-domain.com',
+        );
+
+        $orderId = OrderId::generate();
+        $tenantId = TenantId::generate();
+
+        $event = new OrderPlaced(
+            orderId: $orderId,
+            tenantId: $tenantId,
+            customerEmail: 'test@example.com',
+            total: Money::fromScalars(5000, 'USD')
+        );
+
+        $order = $this->createOrder($orderId, $tenantId);
+
+        $this->orderRepository->method('findById')->willReturn($order);
+        $this->warehouseRepository->method('findActiveByTenant')->willReturn([]);
+
+        $this->commandBus
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(
+                fn ($command) => $command instanceof SendNotification
+                    && $command->recipientEmail === 'ops@custom-domain.com',
+            ))
+            ->willReturn(new Envelope(new \stdClass()));
+
+        $customSubscriber->onOrderPlaced($event);
+    }
+
+    #[Test]
+    public function itDoesNotDispatchEventOrNotificationOnSuccessfulFulfillment(): void
+    {
+        $orderId = OrderId::generate();
+        $tenantId = TenantId::generate();
+        $warehouseId = WarehouseId::generate();
+
+        $event = new OrderPlaced(
+            orderId: $orderId,
+            tenantId: $tenantId,
+            customerEmail: 'test@example.com',
+            total: Money::fromScalars(5000, 'USD')
+        );
+
+        $order = $this->createOrder($orderId, $tenantId);
+
+        $this->orderRepository->method('findById')->willReturn($order);
+        $this->configureWarehouseFound($tenantId, $warehouseId, $order);
+
+        // Should dispatch StartFulfillment via commandBus (NOT SendNotification)
+        $this->commandBus
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->isInstanceOf(StartFulfillment::class))
+            ->willReturn(new Envelope(new \stdClass()));
+
+        // Should NOT dispatch any domain event
+        $this->eventDispatcher
+            ->expects($this->never())
+            ->method('dispatch');
+
+        $this->subscriber->onOrderPlaced($event);
     }
 
     /**

@@ -19,3 +19,10 @@ services:
         autoconfigure: false
         arguments:
             $logger: '@logger'
+
+    # RLS bypass listener for test environment
+    # Sets app.bypass_rls = 'true' on every request so tenant queries work
+    App\Shared\Infrastructure\Tenant\TestRLSBypassListener:
+        autowire: true
+        tags:
+            - { name: kernel.event_subscriber }

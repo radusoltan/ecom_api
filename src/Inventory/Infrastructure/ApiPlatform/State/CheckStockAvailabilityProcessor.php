@@ -44,13 +44,18 @@ final readonly class CheckStockAvailabilityProcessor implements ProcessorInterfa
         $tenantId = $this->getTenantIdFromContext($context);
 
         // Transform API request items to query items
-        /** @var array<StockAvailabilityItemResource> $items */
         $items = $data->items;
         $queryItems = array_map(
-            function (StockAvailabilityItemResource $item) {
-                $productId = $item->productId;
-                $variantId = $item->variantId;
-                $quantity = $item->quantity;
+            function (StockAvailabilityItemResource|array $item) {
+                if ($item instanceof StockAvailabilityItemResource) {
+                    $productId = $item->productId;
+                    $variantId = $item->variantId;
+                    $quantity = $item->quantity;
+                } else {
+                    $productId = $item['productId'] ?? null;
+                    $variantId = $item['variantId'] ?? null;
+                    $quantity = $item['quantity'] ?? null;
+                }
 
                 if (null === $productId) {
                     throw new BadRequestHttpException('productId is required for each item');
@@ -62,7 +67,7 @@ final readonly class CheckStockAvailabilityProcessor implements ProcessorInterfa
                 return new StockAvailabilityItem(
                     productId: ProductId::fromString($productId),
                     variantId: $variantId,
-                    quantity: $quantity,
+                    quantity: (int) $quantity,
                 );
             },
             $items

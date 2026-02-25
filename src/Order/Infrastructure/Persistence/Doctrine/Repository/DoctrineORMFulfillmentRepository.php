@@ -45,7 +45,7 @@ final readonly class DoctrineORMFulfillmentRepository implements FulfillmentRepo
         $this->entityManager->flush();
 
         // Dispatch domain events after successful persistence
-        foreach ($fulfillment->releaseEvents() as $event) {
+        foreach ($fulfillment->pullDomainEvents() as $event) {
             $this->eventDispatcher->dispatch($event);
         }
     }

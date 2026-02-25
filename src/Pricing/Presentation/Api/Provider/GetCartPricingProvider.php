@@ -11,6 +11,9 @@ use App\Pricing\Application\Query\GetCartPricing\GetCartPricingQuery;
 use App\Pricing\Presentation\Api\Resource\CartPricingResource;
 use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
@@ -44,7 +47,7 @@ final readonly class GetCartPricingProvider implements ProviderInterface
         $couponsParam = $request->query->get('coupons', '');
 
         if (null === $cartIdString || null === $tenantIdString) {
-            throw new \RuntimeException('X-Cart-ID and X-Tenant-ID headers are required');
+            throw new BadRequestHttpException('X-Cart-ID and X-Tenant-ID headers are required');
         }
 
         // Parse coupon codes
@@ -61,7 +64,17 @@ final readonly class GetCartPricingProvider implements ProviderInterface
         );
 
         // Dispatch query
-        $envelope = $this->queryBus->dispatch($query);
+        try {
+            $envelope = $this->queryBus->dispatch($query);
+        } catch (HandlerFailedException $e) {
+            foreach ($e->getWrappedExceptions() as $nested) {
+                if ($nested instanceof \RuntimeException && str_contains($nested->getMessage(), 'not found')) {
+                    throw new NotFoundHttpException($nested->getMessage(), $nested);
+                }
+            }
+            throw $e;
+        }
+
         $handledStamp = $envelope->last(HandledStamp::class);
 
         if (!$handledStamp instanceof HandledStamp) {

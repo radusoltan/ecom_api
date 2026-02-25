@@ -37,10 +37,6 @@ final readonly class SetDefaultAddressProcessor implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): CustomerAddressResource
     {
-        if (!$data instanceof CustomerAddressResource) {
-            throw new BadRequestHttpException('Expected CustomerAddressResource');
-        }
-
         // Extract IDs from URI
         if (!isset($uriVariables['customerId']) || !isset($uriVariables['id'])) {
             throw new BadRequestHttpException('Customer ID and address ID are required');
@@ -55,13 +51,20 @@ final readonly class SetDefaultAddressProcessor implements ProcessorInterface
             throw new BadRequestHttpException('Tenant context is required');
         }
 
-        // Get type from request body
-        if (null === $data->type) {
+        // Determine type: from URI for set-default-shipping/billing, from body for PATCH
+        $uriTemplate = $operation->getUriTemplate() ?? '';
+        if (str_ends_with($uriTemplate, '/set-default-shipping')) {
+            $type = 'shipping';
+        } elseif (str_ends_with($uriTemplate, '/set-default-billing')) {
+            $type = 'billing';
+        } elseif ($data instanceof CustomerAddressResource && null !== $data->type) {
+            $type = $data->type;
+        } else {
             throw new BadRequestHttpException('Type (shipping or billing) is required');
         }
 
         // Validate type
-        if (!\in_array($data->type, ['shipping', 'billing'], true)) {
+        if (!\in_array($type, ['shipping', 'billing'], true)) {
             throw new BadRequestHttpException('Type must be either "shipping" or "billing"');
         }
 
@@ -70,7 +73,7 @@ final readonly class SetDefaultAddressProcessor implements ProcessorInterface
             customerId: $customerId->toString(),
             tenantId: $tenantId->toString(),
             addressId: $addressId,
-            type: $data->type
+            type: $type
         );
 
         try {

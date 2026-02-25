@@ -4,12 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tax\Infrastructure\Persistence\Doctrine\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Post;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Domain\Model\TaxCategory;
 use App\Tax\Domain\Model\TaxJurisdiction;
@@ -35,23 +29,13 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_tax_rules_category', columns: ['category'])]
 #[ORM\Index(name: 'idx_tax_rules_active', columns: ['is_active'])]
 #[ORM\Index(name: 'idx_tax_rules_validity', columns: ['valid_from', 'valid_until'])]
-#[ApiResource(
-    shortName: 'TaxRule',
-    operations: [
-        new GetCollection(),
-        new Post(),
-        new Get(),
-        new Patch(),
-        new Delete(),
-    ]
-)]
 final class TaxRuleEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'tax_rule_id')]
+    #[ORM\Column(type: 'string', length: 36)]
     private string $id;
 
-    #[ORM\Column(type: 'tenant_id')]
+    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
     private string $tenantId;
 
     #[ORM\Column(type: 'string', length: 2, name: 'country_code')]

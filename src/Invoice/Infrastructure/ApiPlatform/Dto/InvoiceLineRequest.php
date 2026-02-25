@@ -37,7 +37,7 @@ final class InvoiceLineRequest
     #[Groups(['invoice:write'])]
     #[Assert\NotBlank(message: 'Tax rate is required')]
     #[Assert\GreaterThanOrEqual(0, message: 'Tax rate must be 0 or greater')]
-    #[Assert\LessThanOrEqual(1, message: 'Tax rate must be 1 or less')]
+    #[Assert\LessThanOrEqual(100, message: 'Tax rate must be 100 or less')]
     public float $taxRate;
 
     #[Groups(['invoice:write'])]

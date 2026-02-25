@@ -76,7 +76,7 @@ final class StockItemResource
         #[Assert\Uuid]
         public ?string $productId = null,
         #[Assert\NotBlank(groups: ['create'])]
-        #[Assert\Ulid]
+        #[Assert\Uuid]
         public ?string $warehouseId = null,
         #[Assert\NotBlank(groups: ['create'])]
         #[Assert\PositiveOrZero]

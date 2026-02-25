@@ -96,9 +96,9 @@ final class StripePaymentApiTest extends ApiTestCase
         $this->assertNotEmpty($data['clientSecret']);
         $this->assertStringStartsWith('pi_', $data['paymentIntentId']);
 
-        // Verify paymentId is a valid ULID (26 characters, uppercase alphanumeric)
+        // Verify paymentId is a valid UUID (8-4-4-4-12 hex format)
         $this->assertMatchesRegularExpression(
-            '/^[0-9A-Z]{26}$/i',
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i',
             $data['paymentId']
         );
     }

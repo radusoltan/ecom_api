@@ -7,6 +7,7 @@ namespace App\Tests\Integration\Payment\Application\EventSubscriber;
 use App\Order\Application\Command\UpdateOrderStatusCommand;
 use App\Order\Domain\Event\OrderPaid;
 use App\Payment\Application\EventSubscriber\PaymentCapturedSubscriber;
+use App\Payment\Application\Service\PaymentCustomerEmailResolver;
 use App\Payment\Domain\Event\PaymentCaptured;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Shared\Domain\ValueObject\TenantId;
@@ -30,6 +31,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
 {
     private MessageBusInterface $commandBus;
     private EventDispatcherInterface $eventDispatcher;
+    private PaymentCustomerEmailResolver $emailResolver;
     private MailerInterface $mailer;
     private LoggerInterface $logger;
     private PaymentCapturedSubscriber $subscriber;
@@ -38,12 +40,20 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
     {
         $this->commandBus = $this->createMock(MessageBusInterface::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->emailResolver = $this->createMock(PaymentCustomerEmailResolver::class);
         $this->mailer = $this->createMock(MailerInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+
+        // Default: emailResolver returns a customer email
+        $this->emailResolver->method('resolveByOrderId')
+            ->willReturn('customer@example.com');
+        $this->emailResolver->method('resolveByPaymentId')
+            ->willReturn('customer@example.com');
 
         $this->subscriber = new PaymentCapturedSubscriber(
             commandBus: $this->commandBus,
             eventDispatcher: $this->eventDispatcher,
+            emailResolver: $this->emailResolver,
             mailer: $this->mailer,
             logger: $this->logger,
             senderEmail: 'payments@test.com',

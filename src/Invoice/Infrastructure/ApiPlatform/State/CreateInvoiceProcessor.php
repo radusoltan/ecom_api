@@ -11,6 +11,7 @@ use App\Invoice\Application\Command\GenerateInvoice\GenerateInvoiceLineDto;
 use App\Invoice\Domain\Model\InvoiceId;
 use App\Invoice\Domain\Repository\InvoiceRepositoryInterface;
 use App\Invoice\Infrastructure\ApiPlatform\Dto\CreateInvoiceRequest;
+use App\Invoice\Infrastructure\ApiPlatform\Dto\InvoiceLineRequest;
 use App\Invoice\Infrastructure\Persistence\Doctrine\Entity\InvoiceEntity;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -66,18 +67,21 @@ final readonly class CreateInvoiceProcessor implements ProcessorInterface
         $invoiceId = InvoiceId::generate();
 
         // Map request lines to command DTOs
-        $lineDtos = array_map(
-            fn ($line) => new GenerateInvoiceLineDto(
-                description: $line->description,
-                quantity: $line->quantity,
-                unitPriceAmount: $line->unitPriceAmount,
-                unitPriceCurrency: $line->unitPriceCurrency,
-                taxRate: $line->taxRate,
-                productId: $line->productId,
-                sku: $line->sku,
-            ),
-            $data->lines
-        );
+        // Lines may arrive as InvoiceLineRequest objects or associative arrays
+        // depending on the serializer configuration, so we handle both formats.
+        $lineDtos = [];
+        foreach ($data->lines as $line) {
+            $lineData = (array) $line;
+            $lineDtos[] = new GenerateInvoiceLineDto(
+                description: (string) ($lineData['description'] ?? ''),
+                quantity: (int) ($lineData['quantity'] ?? 0),
+                unitPriceAmount: (int) ($lineData['unitPriceAmount'] ?? 0),
+                unitPriceCurrency: (string) ($lineData['unitPriceCurrency'] ?? 'EUR'),
+                taxRate: (float) ($lineData['taxRate'] ?? 0.0),
+                productId: isset($lineData['productId']) ? (string) $lineData['productId'] : null,
+                sku: isset($lineData['sku']) ? (string) $lineData['sku'] : null,
+            );
+        }
 
         // Create command
         $command = new GenerateInvoiceCommand(

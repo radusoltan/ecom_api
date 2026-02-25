@@ -4,36 +4,38 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Notifications\Api;
 
+use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Notifications\Domain\Model\Notification;
 use App\Notifications\Domain\Model\NotificationId;
 use App\Notifications\Domain\Model\NotificationType;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Tests\Support\TenantTestTrait;
+use App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Uid\Uuid;
 
-final class NotificationApiTest extends WebTestCase
+final class NotificationApiTest extends ApiTestCase
 {
+    use TenantTestTrait;
+
     private const DEFAULT_TENANT_ID = '00000000-0000-4000-8000-000000000001';
+
+    protected static ?bool $alwaysBootKernel = false;
 
     private TenantId $tenantId;
     private TenantId $otherTenantId;
-    private static ?EntityManagerInterface $entityManager = null;
-
-    public static function setUpBeforeClass(): void
-    {
-        parent::setUpBeforeClass();
-        $client = static::createClient();
-        self::$entityManager = $client->getContainer()->get('doctrine.orm.entity_manager');
-    }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Use default test tenant
+        static::createClient();
+
         $this->tenantId = TenantId::fromString(self::DEFAULT_TENANT_ID);
         $this->otherTenantId = TenantId::generate();
+
+        $this->setTenantContext($this->tenantId->toString());
 
         $this->cleanupNotifications();
     }
@@ -41,18 +43,66 @@ final class NotificationApiTest extends WebTestCase
     protected function tearDown(): void
     {
         $this->cleanupNotifications();
+
         parent::tearDown();
+    }
+
+    private function getEntityManager(): EntityManagerInterface
+    {
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+
+        return $em;
+    }
+
+    /**
+     * @param list<string> $roles
+     */
+    protected function createAuthenticatedClient(
+        string $email = 'admin@test.com',
+        array $roles = ['ROLE_SUPER_ADMIN', 'ROLE_USER'],
+        ?string $tenantId = null,
+    ): \ApiPlatform\Symfony\Bundle\Test\Client {
+        $container = static::getContainer();
+
+        $entityManager = $container->get('doctrine')->getManager();
+        $userRepository = $entityManager->getRepository(UserEntity::class);
+        $existingUser = $userRepository->findOneBy(['email' => $email]);
+
+        if (!$existingUser) {
+            $userEntity = new UserEntity();
+            $userEntity->setId(Uuid::v4()->toString());
+            $userEntity->setEmail($email);
+            $userEntity->setUsername(explode('@', $email)[0].'-'.bin2hex(random_bytes(4)));
+            $userEntity->setPassword('$2y$13$dummy.password.hash');
+            $userEntity->setRoles($roles);
+            $userEntity->setCreatedAt(new \DateTimeImmutable());
+            $entityManager->persist($userEntity);
+            $entityManager->flush();
+        }
+
+        $encoder = $container->get('lexik_jwt_authentication.encoder');
+        $token = $encoder->encode([
+            'email' => $email,
+            'roles' => $roles,
+            'iat' => time(),
+            'exp' => time() + 3600,
+        ]);
+
+        $headers = [
+            'authorization' => 'Bearer '.$token,
+        ];
+
+        $tenantIdToUse = $tenantId ?? $this->tenantId->toString();
+        $headers['x-tenant-id'] = $tenantIdToUse;
+
+        return static::createClient([], ['headers' => $headers]);
     }
 
     private function cleanupNotifications(): void
     {
-        if (null === self::$entityManager) {
-            return;
-        }
+        $connection = $this->getEntityManager()->getConnection();
 
-        $connection = self::$entityManager->getConnection();
-
-        // Set tenant context for RLS
         $connection->executeStatement(
             sprintf("SET app.tenant_id = '%s'", $this->tenantId->toString())
         );
@@ -69,20 +119,21 @@ final class NotificationApiTest extends WebTestCase
 
     public function testGetNotificationsCollection(): void
     {
-        $client = static::createClient();
+        $client = $this->createAuthenticatedClient();
 
-        // Create test notification
         $notificationId = $this->createTestNotification();
 
-        $client->request('GET', '/api/v1/notifications', [], [], [
-            'HTTP_X_TENANT_ID' => $this->tenantId->toString(),
-            'HTTP_ACCEPT' => 'application/json',
+        $response = $client->request('GET', '/api/v1/notifications', [
+            'headers' => [
+                'x-tenant-id' => $this->tenantId->toString(),
+                'accept' => 'application/json',
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/json; charset=utf-8');
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $response->toArray();
         $this->assertIsArray($data);
         $this->assertNotEmpty($data);
         $this->assertCount(1, $data);
@@ -91,31 +142,31 @@ final class NotificationApiTest extends WebTestCase
 
     public function testGetNotificationsCollectionRequiresAuth(): void
     {
-        $client = static::createClient();
-
-        // Without tenant header should fail
-        $client->request('GET', '/api/v1/notifications', [], [], [
-            'HTTP_ACCEPT' => 'application/json',
+        static::createClient()->request('GET', '/api/v1/notifications', [
+            'headers' => [
+                'accept' => 'application/json',
+            ],
         ]);
 
-        // Should fail due to missing tenant context
-        $this->assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
 
     public function testGetSingleNotification(): void
     {
-        $client = static::createClient();
+        $client = $this->createAuthenticatedClient();
 
         $notificationId = $this->createTestNotification();
 
-        $client->request('GET', '/api/v1/notifications/'.$notificationId, [], [], [
-            'HTTP_X_TENANT_ID' => $this->tenantId->toString(),
-            'HTTP_ACCEPT' => 'application/json',
+        $response = $client->request('GET', '/api/v1/notifications/'.$notificationId, [
+            'headers' => [
+                'x-tenant-id' => $this->tenantId->toString(),
+                'accept' => 'application/json',
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $response->toArray();
         $this->assertSame($notificationId, $data['id']);
         $this->assertSame('email', $data['type']);
         $this->assertSame('pending', $data['status']);
@@ -125,13 +176,15 @@ final class NotificationApiTest extends WebTestCase
 
     public function testGetNotificationNotFound(): void
     {
-        $client = static::createClient();
+        $client = $this->createAuthenticatedClient();
 
         $nonExistentId = NotificationId::generate()->toString();
 
-        $client->request('GET', '/api/v1/notifications/'.$nonExistentId, [], [], [
-            'HTTP_X_TENANT_ID' => $this->tenantId->toString(),
-            'HTTP_ACCEPT' => 'application/json',
+        $client->request('GET', '/api/v1/notifications/'.$nonExistentId, [
+            'headers' => [
+                'x-tenant-id' => $this->tenantId->toString(),
+                'accept' => 'application/json',
+            ],
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
@@ -139,52 +192,56 @@ final class NotificationApiTest extends WebTestCase
 
     public function testRetryFailedNotification(): void
     {
-        $client = static::createClient();
+        $client = $this->createAuthenticatedClient();
 
         $notificationId = $this->createFailedNotification();
 
-        $client->request('POST', '/api/v1/notifications/'.$notificationId.'/retry', [], [], [
-            'HTTP_X_TENANT_ID' => $this->tenantId->toString(),
-            'HTTP_ACCEPT' => 'application/json',
-            'CONTENT_TYPE' => 'application/json',
+        $response = $client->request('POST', '/api/v1/notifications/'.$notificationId.'/retry', [
+            'headers' => [
+                'x-tenant-id' => $this->tenantId->toString(),
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+            ],
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_ACCEPTED);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $response->toArray();
         $this->assertSame('retry_queued', $data['status']);
     }
 
     public function testRetryNonFailedNotificationFails(): void
     {
-        $client = static::createClient();
+        $client = $this->createAuthenticatedClient();
 
-        // Create a notification with status 'pending' (cannot retry pending notifications)
         $notificationId = $this->createTestNotification();
 
-        $client->request('POST', '/api/v1/notifications/'.$notificationId.'/retry', [], [], [
-            'HTTP_X_TENANT_ID' => $this->tenantId->toString(),
-            'HTTP_ACCEPT' => 'application/json',
-            'CONTENT_TYPE' => 'application/json',
+        $response = $client->request('POST', '/api/v1/notifications/'.$notificationId.'/retry', [
+            'headers' => [
+                'x-tenant-id' => $this->tenantId->toString(),
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+            ],
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertStringContainsString('Notification cannot be retried', $data['hydra:description']);
+        $data = $response->toArray(false);
+        $this->assertStringContainsString('Notification cannot be retried', $data['detail'] ?? $data['hydra:description'] ?? '');
     }
 
     public function testRetrySentNotificationFails(): void
     {
-        $client = static::createClient();
+        $client = $this->createAuthenticatedClient();
 
-        // Create a sent notification (cannot retry sent notifications)
         $notificationId = $this->createSentNotification();
 
-        $client->request('POST', '/api/v1/notifications/'.$notificationId.'/retry', [], [], [
-            'HTTP_X_TENANT_ID' => $this->tenantId->toString(),
-            'HTTP_ACCEPT' => 'application/json',
-            'CONTENT_TYPE' => 'application/json',
+        $client->request('POST', '/api/v1/notifications/'.$notificationId.'/retry', [
+            'headers' => [
+                'x-tenant-id' => $this->tenantId->toString(),
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+            ],
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -192,49 +249,47 @@ final class NotificationApiTest extends WebTestCase
 
     public function testTenantIsolation(): void
     {
-        $client = static::createClient();
-
-        // Create notification for default tenant
         $notificationId = $this->createTestNotification();
 
-        // Try to access with different tenant ID
-        $client->request('GET', '/api/v1/notifications/'.$notificationId, [], [], [
-            'HTTP_X_TENANT_ID' => $this->otherTenantId->toString(),
-            'HTTP_ACCEPT' => 'application/json',
+        $client = $this->createAuthenticatedClient(tenantId: $this->otherTenantId->toString());
+
+        $client->request('GET', '/api/v1/notifications/'.$notificationId, [
+            'headers' => [
+                'x-tenant-id' => $this->otherTenantId->toString(),
+                'accept' => 'application/json',
+            ],
         ]);
 
-        // Should return 404 because of tenant isolation
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
     public function testCollectionPagination(): void
     {
-        $client = static::createClient();
+        $client = $this->createAuthenticatedClient();
 
-        // Create multiple notifications
         for ($i = 0; $i < 35; ++$i) {
             $this->createTestNotification();
         }
 
-        $client->request('GET', '/api/v1/notifications', [], [], [
-            'HTTP_X_TENANT_ID' => $this->tenantId->toString(),
-            'HTTP_ACCEPT' => 'application/json',
+        $response = $client->request('GET', '/api/v1/notifications', [
+            'headers' => [
+                'x-tenant-id' => $this->tenantId->toString(),
+                'accept' => 'application/json',
+            ],
         ]);
 
         $this->assertResponseIsSuccessful();
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $response->toArray();
         $this->assertIsArray($data);
 
-        // Default page size is 30
         $this->assertCount(30, $data);
     }
 
     private function createTestNotification(): string
     {
-        $connection = self::$entityManager->getConnection();
+        $connection = $this->getEntityManager()->getConnection();
 
-        // Set tenant context for RLS
         $connection->executeStatement(
             sprintf("SET app.tenant_id = '%s'", $this->tenantId->toString())
         );
@@ -251,17 +306,16 @@ final class NotificationApiTest extends WebTestCase
 
         $entity = \App\Notifications\Infrastructure\Persistence\Doctrine\Entity\NotificationEntity::fromDomainModel($notification);
 
-        self::$entityManager->persist($entity);
-        self::$entityManager->flush();
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
 
         return $notification->id()->toString();
     }
 
     private function createFailedNotification(): string
     {
-        $connection = self::$entityManager->getConnection();
+        $connection = $this->getEntityManager()->getConnection();
 
-        // Set tenant context for RLS
         $connection->executeStatement(
             sprintf("SET app.tenant_id = '%s'", $this->tenantId->toString())
         );
@@ -276,22 +330,20 @@ final class NotificationApiTest extends WebTestCase
             body: 'Test Body'
         );
 
-        // Mark as failed so it can be retried
         $notification->markAsFailed('Test failure reason');
 
         $entity = \App\Notifications\Infrastructure\Persistence\Doctrine\Entity\NotificationEntity::fromDomainModel($notification);
 
-        self::$entityManager->persist($entity);
-        self::$entityManager->flush();
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
 
         return $notification->id()->toString();
     }
 
     private function createSentNotification(): string
     {
-        $connection = self::$entityManager->getConnection();
+        $connection = $this->getEntityManager()->getConnection();
 
-        // Set tenant context for RLS
         $connection->executeStatement(
             sprintf("SET app.tenant_id = '%s'", $this->tenantId->toString())
         );
@@ -306,13 +358,12 @@ final class NotificationApiTest extends WebTestCase
             body: 'Test Body'
         );
 
-        // Mark as sent
         $notification->markAsSent();
 
         $entity = \App\Notifications\Infrastructure\Persistence\Doctrine\Entity\NotificationEntity::fromDomainModel($notification);
 
-        self::$entityManager->persist($entity);
-        self::$entityManager->flush();
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
 
         return $notification->id()->toString();
     }

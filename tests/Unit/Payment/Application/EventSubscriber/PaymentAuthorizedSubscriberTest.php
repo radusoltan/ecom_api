@@ -61,7 +61,7 @@ final class PaymentAuthorizedSubscriberTest extends TestCase
                 $this->callback(function (array $context) {
                     return isset($context['payment_id'])
                         && is_string($context['payment_id'])
-                        && 26 === strlen($context['payment_id']) // ULID length
+                        && 36 === strlen($context['payment_id']) // UUID length
                         && isset($context['tenant_id'])
                         && is_string($context['tenant_id']);
                 })

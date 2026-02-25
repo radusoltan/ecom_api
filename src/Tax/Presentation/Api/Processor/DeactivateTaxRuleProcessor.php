@@ -9,7 +9,7 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Application\Command\DeactivateTaxRule;
 use App\Tax\Application\Query\GetTaxRuleById;
-use App\Tax\Domain\ValueObject\TaxRuleId;
+use App\Tax\Domain\Model\TaxRuleId;
 use App\Tax\Presentation\Api\Resource\TaxRuleResource;
 use App\Tax\Presentation\Api\Transformer\TaxRuleResourceTransformer;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -53,9 +53,15 @@ final class DeactivateTaxRuleProcessor implements ProcessorInterface
             throw new \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException('X-Tenant-ID header is required');
         }
 
+        try {
+            $taxRuleId = TaxRuleId::fromString($id);
+        } catch (\InvalidArgumentException) {
+            throw new NotFoundHttpException('Tax rule not found');
+        }
+
         // Create command
         $command = new DeactivateTaxRule(
-            id: TaxRuleId::fromString($id),
+            id: $taxRuleId,
             tenantId: TenantId::fromString($tenantIdString)
         );
 
@@ -79,7 +85,7 @@ final class DeactivateTaxRuleProcessor implements ProcessorInterface
 
         // Fetch updated tax rule
         $query = new GetTaxRuleById(
-            id: TaxRuleId::fromString($id),
+            id: $taxRuleId,
             tenantId: TenantId::fromString($tenantIdString)
         );
 

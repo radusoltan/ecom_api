@@ -170,4 +170,17 @@ final readonly class DoctrineCartRepository implements CartRepositoryInterface
             $this->entityManager->flush();
         }
     }
+
+    public function markAsConverted(CartId $cartId): void
+    {
+        $connection = $this->entityManager->getConnection();
+        $connection->executeStatement(
+            'UPDATE carts SET status = :status, updated_at = :updatedAt WHERE id = :id',
+            [
+                'status' => 'converted',
+                'updatedAt' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+                'id' => $cartId->toString(),
+            ]
+        );
+    }
 }

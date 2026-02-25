@@ -41,7 +41,7 @@ final readonly class PlaceOrderCommandHandler
     ) {
     }
 
-    public function __invoke(PlaceOrderCommand $command): void
+    public function __invoke(PlaceOrderCommand $command): Order
     {
         $this->profiler->start('order.place');
 
@@ -239,6 +239,8 @@ final readonly class PlaceOrderCommandHandler
                     'metrics' => $metrics,
                 ]);
             }
+
+            return $order;
         } catch (\Throwable $e) {
             $this->profiler->stop('order.place');
 

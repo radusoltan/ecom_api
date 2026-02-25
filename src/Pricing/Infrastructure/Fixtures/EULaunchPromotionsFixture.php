@@ -11,6 +11,7 @@ use App\Pricing\Domain\ValueObject\PromotionType;
 use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -36,13 +37,23 @@ final class EULaunchPromotionsFixture extends Fixture implements FixtureGroupInt
 
     public function __construct(
         private readonly MessageBusInterface $commandBus,
+        private readonly Connection $connection,
     ) {
     }
 
     public function load(ObjectManager $manager): void
     {
-        // Get tenant ID for seeding
-        $tenantId = TenantId::fromString('9efae4ea-94fc-4807-b1bc-5e495ee7858c');
+        // Get first tenant dynamically
+        $tenantIdString = $this->connection->fetchOne('SELECT id FROM tenants ORDER BY created_at LIMIT 1');
+        if (!$tenantIdString) {
+            echo "   ⚠️  No tenants found. Skipping promotions fixtures.\n";
+
+            return;
+        }
+        $tenantId = TenantId::fromString($tenantIdString);
+
+        // Set RLS context
+        $this->connection->executeStatement("SET app.tenant_id = '{$tenantIdString}'");
 
         echo "🎁  Creating EU Launch Promotions...\n\n";
 

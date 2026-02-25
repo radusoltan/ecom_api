@@ -63,9 +63,24 @@ final class TaxRuleResource
 
     public ?string $regionCode = null;
 
+    /**
+     * Tax category: standard, reduced, super_reduced, zero, exempt.
+     */
+    public ?string $category = null;
+
     public ?float $ratePercentage = null;
 
+    public ?string $description = null;
+
+    public ?int $priority = null;
+
     public ?bool $isActive = null;
+
+    public ?\DateTimeImmutable $validFrom = null;
+
+    public ?\DateTimeImmutable $validTo = null;
+
+    public ?bool $isReverseCharge = null;
 
     public ?\DateTimeImmutable $createdAt = null;
 

@@ -4,14 +4,22 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Order;
 
+use App\Catalog\Application\Command\CreateProduct;
 use App\Catalog\Domain\Model\ProductId;
+use App\Catalog\Domain\Model\ProductName;
+use App\Catalog\Domain\Model\SKU;
 use App\Inventory\Application\Command\CreateStockItem\CreateStockItemCommand;
-use App\Inventory\Application\Command\CreateWarehouse\CreateWarehouseCommand;
+use App\Inventory\Domain\Model\StockItemId;
+use App\Inventory\Application\Command\CreateWarehouse\CreateWarehouse;
+use App\Inventory\Domain\Model\WarehouseCode;
+use App\Inventory\Domain\Model\WarehouseName;
+use App\Shared\Domain\ValueObject\Address;
+use App\Shared\Domain\ValueObject\Money;
 use App\Inventory\Domain\Model\Quantity;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Inventory\Domain\Repository\WarehouseRepositoryInterface;
-use App\Order\Application\Command\PlaceOrder;
+use App\Order\Application\Command\PlaceOrderCommand;
 use App\Order\Domain\Event\OrderPlaced;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Repository\FulfillmentRepositoryInterface;
@@ -75,6 +83,7 @@ final class StockAllocationFlowTest extends KernelTestCase
         $productId = ProductId::generate();
         $initialStock = 100;
 
+        $this->createProduct($productId, 'Test Product', 2000);
         $this->createWarehouse($warehouseId);
         $this->createStockItem($warehouseId, $productId, $initialStock);
 
@@ -82,27 +91,30 @@ final class StockAllocationFlowTest extends KernelTestCase
         $orderId = OrderId::generate();
         $orderQuantity = 5;
 
-        $placeOrderCommand = new PlaceOrder(
-            id: $orderId,
-            tenantId: $this->tenantId,
+        $placeOrderCommand = new PlaceOrderCommand(
+            orderId: $orderId->toString(),
+            tenantId: $this->tenantId->toString(),
             customerEmail: 'customer@example.com',
             lines: [
                 [
                     'productId' => $productId->toString(),
+                    'productName' => 'Test Product',
                     'quantity' => $orderQuantity,
-                    'unitPrice' => 2000, // $20.00
-                    'currency' => 'USD',
+                    'unitPriceAmount' => 2000,
+                    'unitPriceCurrency' => 'USD',
                 ],
             ],
             shippingAddress: [
                 'street' => '123 Main St',
                 'city' => 'Test City',
+                'state' => 'CA',
                 'postalCode' => '12345',
                 'country' => 'US',
             ],
             billingAddress: [
                 'street' => '123 Main St',
                 'city' => 'Test City',
+                'state' => 'CA',
                 'postalCode' => '12345',
                 'country' => 'US',
             ]
@@ -136,12 +148,12 @@ final class StockAllocationFlowTest extends KernelTestCase
 
         // Assert: Stock was decremented
         // Note: This might not happen immediately if AllocateStock is async
-        $stockItem = $this->stockItemRepository->findByProductAndWarehouse($productId, $warehouseId);
+        $stockItem = $this->stockItemRepository->findByProductAndWarehouse($productId, $warehouseId, $this->tenantId);
         $this->assertNotNull($stockItem, 'Stock item should exist');
 
         // Stock should be reduced (if sync) or unchanged (if async)
         $expectedStock = $initialStock - $orderQuantity; // 95
-        $currentStock = $stockItem->availableQuantity()->toInt();
+        $currentStock = $stockItem->calculateAvailable()->value();
 
         // Allow for both scenarios (sync vs async)
         $this->assertTrue(
@@ -162,6 +174,7 @@ final class StockAllocationFlowTest extends KernelTestCase
         $productId = ProductId::generate();
         $initialStock = 20;
 
+        $this->createProduct($productId, 'Test Product', 5000);
         $this->createWarehouse($warehouseId);
         $this->createStockItem($warehouseId, $productId, $initialStock);
 
@@ -169,36 +182,39 @@ final class StockAllocationFlowTest extends KernelTestCase
         $orderId = OrderId::generate();
         $orderQuantity = 10;
 
-        $placeOrderCommand = new PlaceOrder(
-            id: $orderId,
-            tenantId: $this->tenantId,
+        $placeOrderCommand = new PlaceOrderCommand(
+            orderId: $orderId->toString(),
+            tenantId: $this->tenantId->toString(),
             customerEmail: 'customer@example.com',
             lines: [
                 [
                     'productId' => $productId->toString(),
+                    'productName' => 'Test Product',
                     'quantity' => $orderQuantity,
-                    'unitPrice' => 5000, // $50.00
-                    'currency' => 'USD',
+                    'unitPriceAmount' => 5000,
+                    'unitPriceCurrency' => 'USD',
                 ],
             ],
             shippingAddress: [
                 'street' => '456 Elm St',
                 'city' => 'Test Town',
+                'state' => 'CA',
                 'postalCode' => '54321',
                 'country' => 'US',
             ],
             billingAddress: [
                 'street' => '456 Elm St',
                 'city' => 'Test Town',
+                'state' => 'CA',
                 'postalCode' => '54321',
                 'country' => 'US',
             ]
         );
 
         // Get initial stock level
-        $stockItemBefore = $this->stockItemRepository->findByProductAndWarehouse($productId, $warehouseId);
+        $stockItemBefore = $this->stockItemRepository->findByProductAndWarehouse($productId, $warehouseId, $this->tenantId);
         $this->assertNotNull($stockItemBefore);
-        $stockBefore = $stockItemBefore->availableQuantity()->toInt();
+        $stockBefore = $stockItemBefore->calculateAvailable()->value();
 
         // Act: Place order
         $this->commandBus->dispatch($placeOrderCommand);
@@ -208,9 +224,9 @@ final class StockAllocationFlowTest extends KernelTestCase
         $this->assertNotNull($order);
 
         // Assert: Check stock after order
-        $stockItemAfter = $this->stockItemRepository->findByProductAndWarehouse($productId, $warehouseId);
+        $stockItemAfter = $this->stockItemRepository->findByProductAndWarehouse($productId, $warehouseId, $this->tenantId);
         $this->assertNotNull($stockItemAfter);
-        $stockAfter = $stockItemAfter->availableQuantity()->toInt();
+        $stockAfter = $stockItemAfter->calculateAvailable()->value();
 
         // Stock should be decremented (if synchronous transport)
         // or unchanged (if async - would need to consume messenger)
@@ -232,6 +248,9 @@ final class StockAllocationFlowTest extends KernelTestCase
         $productId2 = ProductId::generate();
         $productId3 = ProductId::generate();
 
+        $this->createProduct($productId1, 'Product 1', 1000);
+        $this->createProduct($productId2, 'Product 2', 2000);
+        $this->createProduct($productId3, 'Product 3', 1500);
         $this->createWarehouse($warehouseId);
         $this->createStockItem($warehouseId, $productId1, 50);
         $this->createStockItem($warehouseId, $productId2, 30);
@@ -240,39 +259,44 @@ final class StockAllocationFlowTest extends KernelTestCase
         // Create order with multiple lines
         $orderId = OrderId::generate();
 
-        $placeOrderCommand = new PlaceOrder(
-            id: $orderId,
-            tenantId: $this->tenantId,
+        $placeOrderCommand = new PlaceOrderCommand(
+            orderId: $orderId->toString(),
+            tenantId: $this->tenantId->toString(),
             customerEmail: 'customer@example.com',
             lines: [
                 [
                     'productId' => $productId1->toString(),
+                    'productName' => 'Product 1',
                     'quantity' => 5,
-                    'unitPrice' => 1000,
-                    'currency' => 'USD',
+                    'unitPriceAmount' => 1000,
+                    'unitPriceCurrency' => 'USD',
                 ],
                 [
                     'productId' => $productId2->toString(),
+                    'productName' => 'Product 2',
                     'quantity' => 3,
-                    'unitPrice' => 2000,
-                    'currency' => 'USD',
+                    'unitPriceAmount' => 2000,
+                    'unitPriceCurrency' => 'USD',
                 ],
                 [
                     'productId' => $productId3->toString(),
+                    'productName' => 'Product 3',
                     'quantity' => 7,
-                    'unitPrice' => 1500,
-                    'currency' => 'USD',
+                    'unitPriceAmount' => 1500,
+                    'unitPriceCurrency' => 'USD',
                 ],
             ],
             shippingAddress: [
                 'street' => '789 Oak Ave',
                 'city' => 'Test Village',
+                'state' => 'CA',
                 'postalCode' => '98765',
                 'country' => 'US',
             ],
             billingAddress: [
                 'street' => '789 Oak Ave',
                 'city' => 'Test Village',
+                'state' => 'CA',
                 'postalCode' => '98765',
                 'country' => 'US',
             ]
@@ -298,19 +322,39 @@ final class StockAllocationFlowTest extends KernelTestCase
      */
     private function createWarehouse(WarehouseId $warehouseId): void
     {
-        $command = new CreateWarehouseCommand(
+        $command = new CreateWarehouse(
             id: $warehouseId,
             tenantId: $this->tenantId,
-            code: 'WH-'.substr($warehouseId->toString(), 0, 8),
-            name: 'Test Warehouse',
-            isActive: true,
-            priority: 1,
-            address: [
+            code: WarehouseCode::fromString('WH-'.substr($warehouseId->toString(), 0, 5)),
+            name: WarehouseName::fromString('Test Warehouse'),
+            address: Address::fromArray([
                 'street' => '100 Warehouse Blvd',
                 'city' => 'Warehouse City',
                 'postalCode' => '00000',
                 'country' => 'US',
-            ]
+            ]),
+            priority: 1,
+        );
+
+        $this->commandBus->dispatch($command);
+    }
+
+    /**
+     * Helper: Create a catalog product for testing.
+     */
+    private function createProduct(ProductId $productId, string $name, int $priceAmount): void
+    {
+        $command = new CreateProduct(
+            id: $productId,
+            tenantId: $this->tenantId,
+            sku: SKU::fromString(sprintf('TST-%06d', random_int(0, 999999))),
+            name: ProductName::fromString($name),
+            description: 'Test product',
+            shortDescription: null,
+            price: Money::fromScalars($priceAmount, 'USD'),
+            categoryId: null,
+            stockQuantity: 0,
+            trackInventory: false,
         );
 
         $this->commandBus->dispatch($command);
@@ -322,9 +366,11 @@ final class StockAllocationFlowTest extends KernelTestCase
     private function createStockItem(WarehouseId $warehouseId, ProductId $productId, int $quantity): void
     {
         $command = new CreateStockItemCommand(
+            stockItemId: StockItemId::generate(),
             productId: $productId,
             warehouseId: $warehouseId,
-            quantity: Quantity::fromInt($quantity),
+            initialQuantity: Quantity::fromInt($quantity),
+            lowStockThreshold: null,
             tenantId: $this->tenantId
         );
 

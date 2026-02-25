@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Returns\Domain\ValueObject;
 
-use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * Value Object representing a unique identifier for a ReturnRequest.
  *
- * Uses ULID (Universally Unique Lexicographically Sortable Identifier) for:
+ * Uses UUID v7 (time-ordered) for:
  * - Time-ordered IDs (better for database indexes)
  * - 128-bit uniqueness
- * - URL-safe representation
+ * - Native PostgreSQL uuid type support
  */
 final readonly class ReturnRequestId
 {
@@ -23,13 +23,13 @@ final readonly class ReturnRequestId
 
     public static function generate(): self
     {
-        return new self((string) new Ulid());
+        return new self((string) Uuid::v7());
     }
 
     public static function fromString(string $value): self
     {
-        if (!Ulid::isValid($value)) {
-            throw new \InvalidArgumentException(sprintf('Invalid ReturnRequestId: "%s". Must be a valid ULID.', $value));
+        if (!Uuid::isValid($value)) {
+            throw new \InvalidArgumentException(sprintf('Invalid ReturnRequestId: "%s". Must be a valid UUID.', $value));
         }
 
         return new self($value);

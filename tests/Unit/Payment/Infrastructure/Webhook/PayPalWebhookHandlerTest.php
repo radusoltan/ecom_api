@@ -382,12 +382,12 @@ final class PayPalWebhookHandlerTest extends TestCase
             ->method('request')
             ->willReturnOnConsecutiveCalls($oauthResponse, $verifyResponse);
 
-        // Note: queryBus->dispatch() is NOT called because GetPaymentById construction
-        // throws a TypeError before dispatch (PaymentId type mismatch: Model\PaymentId
-        // vs ValueObject\PaymentId). The error is caught by \Throwable catch blocks.
+        // queryBus->dispatch() IS called (PaymentId types match). We make it throw
+        // to test the exception handling path through both inner and outer catch blocks.
         $this->queryBus
-            ->expects($this->never())
-            ->method('dispatch');
+            ->expects($this->once())
+            ->method('dispatch')
+            ->willThrowException(new \RuntimeException('Payment not found in database'));
 
         // Three info calls:
         // 1. verifySignature(): 'PayPal webhook signature verification'

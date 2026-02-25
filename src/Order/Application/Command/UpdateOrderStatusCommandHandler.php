@@ -18,7 +18,7 @@ final readonly class UpdateOrderStatusCommandHandler
     ) {
     }
 
-    public function __invoke(UpdateOrderStatusCommand $command): void
+    public function __invoke(UpdateOrderStatusCommand $command): \App\Order\Domain\Model\Order
     {
         $order = $this->orderRepository->findByIdAndTenant(
             OrderId::fromString($command->orderId),
@@ -38,5 +38,7 @@ final readonly class UpdateOrderStatusCommandHandler
         };
 
         $this->orderRepository->save($order);
+
+        return $order;
     }
 }

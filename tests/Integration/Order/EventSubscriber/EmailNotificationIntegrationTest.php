@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Order\EventSubscriber;
 
 use App\Catalog\Domain\Model\ProductId;
+use App\Customer\Application\Service\NotificationPreferenceService;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Order\Application\EventSubscriber\FulfillmentShippedSubscriber;
 use App\Order\Application\EventSubscriber\OrderCancelledSubscriber;
@@ -58,10 +59,15 @@ final class EmailNotificationIntegrationTest extends KernelTestCase
 
     public function testOrderPlacedSubscriberSendsEmail(): void
     {
+        $notificationPreferenceService = $this->createMock(NotificationPreferenceService::class);
+        $notificationPreferenceService->method('shouldSendEmailByEmail')
+            ->willReturn(true);
+
         $subscriber = new OrderPlacedSubscriber(
             $this->mailer,
             $this->translator,
-            $this->logger
+            $this->logger,
+            $notificationPreferenceService
         );
 
         $event = new OrderPlaced(
@@ -91,11 +97,15 @@ final class EmailNotificationIntegrationTest extends KernelTestCase
         $orderRepository->method('findById')
             ->willReturn($order);
 
+        $notificationPreferenceService = $this->createMock(NotificationPreferenceService::class);
+        $notificationPreferenceService->method('shouldSendEmailByEmail')->willReturn(true);
+
         $subscriber = new OrderStatusChangedSubscriber(
             $this->mailer,
             $orderRepository,
             $this->translator,
-            $this->logger
+            $this->logger,
+            $notificationPreferenceService
         );
 
         $event = new OrderStatusChanged(
@@ -198,11 +208,15 @@ final class EmailNotificationIntegrationTest extends KernelTestCase
         $orderRepository->method('findById')
             ->willReturn(null); // Simulate order not found
 
+        $notificationPreferenceService = $this->createMock(NotificationPreferenceService::class);
+        $notificationPreferenceService->method('shouldSendEmailByEmail')->willReturn(true);
+
         $subscriber = new OrderStatusChangedSubscriber(
             $this->mailer,
             $orderRepository,
             $this->translator,
-            $this->logger
+            $this->logger,
+            $notificationPreferenceService
         );
 
         $event = new OrderStatusChanged(

@@ -15,16 +15,17 @@ use App\Inventory\Domain\Model\WarehouseName;
 use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * Inventory fixtures - creates warehouses and stock items
- * Depends on: TenantFixtures, CatalogFixtures.
+ * Depends on: TenantFixtures, ProductFixtures.
  */
-class InventoryFixtures extends Fixture
+class InventoryFixtures extends Fixture implements DependentFixtureInterface
 {
     public function __construct(
         private readonly MessageBusInterface $commandBus,
@@ -107,7 +108,7 @@ class InventoryFixtures extends Fixture
         $warehouses = [];
 
         // Main Warehouse
-        $mainWarehouseId = WarehouseId::fromString((string) new Ulid());
+        $mainWarehouseId = WarehouseId::fromString((string) Uuid::v7());
         $command1 = new CreateWarehouse(
             id: $mainWarehouseId,
             tenantId: $tenantId,
@@ -127,7 +128,7 @@ class InventoryFixtures extends Fixture
         echo "   ✓ Main Warehouse created\n";
 
         // Secondary Warehouse
-        $secondaryWarehouseId = WarehouseId::fromString((string) new Ulid());
+        $secondaryWarehouseId = WarehouseId::fromString((string) Uuid::v7());
         $command2 = new CreateWarehouse(
             id: $secondaryWarehouseId,
             tenantId: $tenantId,
@@ -155,7 +156,7 @@ class InventoryFixtures extends Fixture
         WarehouseId $warehouseId,
         int $quantity,
     ): void {
-        $stockItemId = StockItemId::fromString((string) new Ulid());
+        $stockItemId = StockItemId::fromString((string) Uuid::v7());
 
         $command = new CreateStockItemCommand(
             stockItemId: $stockItemId,
@@ -169,9 +170,11 @@ class InventoryFixtures extends Fixture
         $this->commandBus->dispatch($command);
     }
 
-    public function getOrder(): int
+    public function getDependencies(): array
     {
-        // Run after TenantFixtures (1) and CatalogFixtures (2)
-        return 3;
+        return [
+            TenantFixtures::class,
+            ProductFixtures::class,
+        ];
     }
 }

@@ -44,6 +44,12 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
         $this->tenantId = $this->getDefaultTenantId();
         $this->setTenantContext($this->tenantId->toString());
 
+        // Clean up any leftover payments from other test suites
+        $this->entityManager->getConnection()->executeStatement(
+            "DELETE FROM payments WHERE tenant_id = :tid",
+            ['tid' => $this->tenantId->toString()]
+        );
+
         // Start transaction for test isolation
         $this->entityManager->beginTransaction();
     }
@@ -97,22 +103,20 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
         $this->repository->save($payment);
 
         // Act
-        $foundPayments = $this->repository->findByOrderId($orderId, $this->tenantId);
+        $foundPayment = $this->repository->findByOrderId($orderId);
 
         // Assert
-        $this->assertIsArray($foundPayments);
-        $this->assertCount(1, $foundPayments);
-        $this->assertSame($orderId, $foundPayments[0]->orderId());
+        $this->assertNotNull($foundPayment);
+        $this->assertSame($orderId, $foundPayment->orderId());
     }
 
-    public function testFindByOrderIdReturnsEmptyArrayWhenNotFound(): void
+    public function testFindByOrderIdReturnsNullWhenNotFound(): void
     {
         // Act
-        $foundPayments = $this->repository->findByOrderId('NON_EXISTENT_ORDER', $this->tenantId);
+        $foundPayment = $this->repository->findByOrderId('NON_EXISTENT_ORDER');
 
         // Assert
-        $this->assertIsArray($foundPayments);
-        $this->assertEmpty($foundPayments);
+        $this->assertNull($foundPayment);
     }
 
     public function testFindAll(): void
