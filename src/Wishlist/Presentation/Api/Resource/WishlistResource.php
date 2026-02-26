@@ -16,6 +16,7 @@ use App\Wishlist\Presentation\Api\State\WishlistProvider;
 
 #[ApiResource(
     shortName: 'Wishlist',
+    security: "is_granted('ROLE_USER')",
     operations: [
         new Get(
             uriTemplate: '/storefront/wishlist',

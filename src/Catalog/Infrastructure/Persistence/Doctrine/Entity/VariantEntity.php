@@ -34,18 +34,21 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantCollectionProvider::class
         ),
         new Post(
-            processor: \App\Catalog\Infrastructure\ApiPlatform\State\CreateVariantProcessor::class
+            processor: \App\Catalog\Infrastructure\ApiPlatform\State\CreateVariantProcessor::class,
+            security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')"
         ),
         new Get(
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantItemProvider::class
         ),
         new Patch(
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantItemProvider::class,
-            processor: \App\Catalog\Infrastructure\ApiPlatform\State\UpdateVariantProcessor::class
+            processor: \App\Catalog\Infrastructure\ApiPlatform\State\UpdateVariantProcessor::class,
+            security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')"
         ),
         new Delete(
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantItemProvider::class,
-            processor: \App\Catalog\Infrastructure\ApiPlatform\State\DeleteVariantProcessor::class
+            processor: \App\Catalog\Infrastructure\ApiPlatform\State\DeleteVariantProcessor::class,
+            security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')"
         ),
     ]
 )]

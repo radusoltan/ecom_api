@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Payment\Presentation\Api\Controller;
 
-use App\Order\Application\Command\UpdateOrderStatusCommand;
-use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,12 +13,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Stripe payment controller for checkout flow.
+ *
+ * NOTE: Payment state transitions (authorize, capture, order status updates) are
+ * handled exclusively by StripeWebhookController via verified webhook events.
+ * This controller only handles payment intent creation and verification.
+ */
 #[Route('/api/v1/payments/stripe', name: 'api_stripe_payment_')]
 class StripePaymentController extends AbstractController
 {
     public function __construct(
         private readonly string $stripeSecretKey,
-        private readonly PaymentRepositoryInterface $paymentRepository,
         private readonly MessageBusInterface $commandBus,
     ) {
         Stripe::setApiKey($this->stripeSecretKey);
@@ -118,105 +122,4 @@ class StripePaymentController extends AbstractController
         }
     }
 
-    #[Route('/capture-after-success/{paymentIntentId}', name: 'capture_after_success', methods: ['POST'])]
-    public function captureAfterSuccess(string $paymentIntentId, Request $request): JsonResponse
-    {
-        try {
-            // Retrieve the payment intent to verify it succeeded
-            $paymentIntent = PaymentIntent::retrieve($paymentIntentId);
-
-            // Find payment by gateway transaction ID
-            $tenantId = $request->headers->get('X-Tenant-ID');
-            if (!$tenantId) {
-                return new JsonResponse([
-                    'error' => 'X-Tenant-ID header is required',
-                ], Response::HTTP_BAD_REQUEST);
-            }
-
-            $payment = $this->paymentRepository->findByGatewayTransactionId($paymentIntentId, $tenantId);
-
-            if (!$payment) {
-                return new JsonResponse([
-                    'error' => 'Payment not found for this transaction',
-                ], Response::HTTP_NOT_FOUND);
-            }
-
-            if ('succeeded' === $paymentIntent->status) {
-                // Payment already succeeded in Stripe
-                // For test mode with automatic_payment_methods, Stripe captures automatically
-
-                // Step 1: Authorize payment if not already authorized
-                if ('pending' === $payment->status()->value()) {
-                    $payment->authorize($paymentIntent->id);
-                    $this->paymentRepository->save($payment);
-                }
-
-                // Step 2: Capture payment if not already captured
-                if ('authorized' === $payment->status()->value()) {
-                    $payment->capture();
-                    $this->paymentRepository->save($payment);
-                }
-
-                // Step 3: Update order status to paid
-                $this->commandBus->dispatch(new UpdateOrderStatusCommand(
-                    $payment->orderId(),
-                    $tenantId,
-                    'paid' // OrderStatus::PAID constant
-                ));
-
-                return new JsonResponse([
-                    'success' => true,
-                    'status' => $paymentIntent->status,
-                    'message' => 'Payment authorized, captured and order updated successfully',
-                ]);
-            }
-
-            // If payment requires capture, capture it
-            if ('requires_capture' === $paymentIntent->status) {
-                $paymentIntent = $paymentIntent->capture();
-            }
-
-            return new JsonResponse([
-                'success' => 'succeeded' === $paymentIntent->status,
-                'status' => $paymentIntent->status,
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse([
-                'error' => $e->getMessage(),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    #[Route('/webhook', name: 'webhook', methods: ['POST'])]
-    public function webhook(Request $request): JsonResponse
-    {
-        $payload = $request->getContent();
-        $sigHeader = $request->headers->get('Stripe-Signature');
-
-        // Verify webhook signature (webhook secret should be configured)
-        // For now, just acknowledge receipt
-
-        try {
-            $event = json_decode($payload, true);
-
-            // Handle different event types
-            switch ($event['type']) {
-                case 'payment_intent.succeeded':
-                    // Handle successful payment
-                    // TODO: Update order status, send confirmation email
-                    break;
-
-                case 'payment_intent.payment_failed':
-                    // Handle failed payment
-                    // TODO: Update order status, notify customer
-                    break;
-            }
-
-            return new JsonResponse(['received' => true]);
-        } catch (\Exception $e) {
-            return new JsonResponse([
-                'error' => $e->getMessage(),
-            ], Response::HTTP_BAD_REQUEST);
-        }
-    }
 }

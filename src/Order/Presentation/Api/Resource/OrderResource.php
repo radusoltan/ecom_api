@@ -17,6 +17,7 @@ use App\Order\Presentation\Api\Provider\OrderItemProvider;
 
 #[ApiResource(
     shortName: 'Order',
+    security: "is_granted('ROLE_USER')",
     operations: [
         new GetCollection(
             provider: OrderCollectionProvider::class

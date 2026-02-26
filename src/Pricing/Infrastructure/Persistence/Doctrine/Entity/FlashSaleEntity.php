@@ -33,6 +33,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_flash_sales_created_at', columns: ['created_at'])]
 #[ApiResource(
     shortName: 'FlashSale',
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     operations: [
         new Get(provider: FlashSaleItemProvider::class),
         new GetCollection(provider: FlashSaleCollectionProvider::class),

@@ -40,6 +40,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\UniqueConstraint(name: 'unique_coupon_per_tenant', columns: ['tenant_id', 'coupon_code'])]
 #[ApiResource(
     shortName: 'Promotion',
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     operations: [
         new Get(provider: PromotionItemProvider::class),
         new GetCollection(provider: PromotionCollectionProvider::class),

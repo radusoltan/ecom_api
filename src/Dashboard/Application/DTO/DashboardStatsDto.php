@@ -10,6 +10,7 @@ use App\Dashboard\Presentation\Api\Provider\DashboardStatsProvider;
 
 #[ApiResource(
     shortName: 'DashboardStats',
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     operations: [
         new Get(
             uriTemplate: '/dashboard/stats',

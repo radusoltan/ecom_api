@@ -10,6 +10,7 @@ use App\Pricing\Presentation\Api\Provider\PromotionPerformanceProvider;
 
 #[ApiResource(
     shortName: 'PromotionPerformance',
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     operations: [
         new GetCollection(
             uriTemplate: '/analytics/pricing/promotions',

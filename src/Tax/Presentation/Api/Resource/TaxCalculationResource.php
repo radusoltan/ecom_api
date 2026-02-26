@@ -16,6 +16,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
  */
 #[ApiResource(
     shortName: 'TaxCalculation',
+    security: "is_granted('ROLE_ADMIN')",
     operations: [
         new Post(
             uriTemplate: '/tax_calculations',

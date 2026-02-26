@@ -15,6 +15,7 @@ use App\Customer\Presentation\Api\Provider\PaymentMethodsProvider;
  */
 #[ApiResource(
     shortName: 'ProfilePaymentMethods',
+    security: "is_granted('ROLE_USER')",
     operations: [
         new Get(
             uriTemplate: '/profile/payment-methods',

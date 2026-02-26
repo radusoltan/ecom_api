@@ -23,6 +23,7 @@ use App\Tax\Presentation\Api\Provider\TaxRuleItemProvider;
  */
 #[ApiResource(
     shortName: 'TaxRule',
+    security: "is_granted('ROLE_ADMIN')",
     operations: [
         new Get(
             uriTemplate: '/tax_rules/{id}',

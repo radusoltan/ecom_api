@@ -26,6 +26,7 @@ use App\Returns\Presentation\Api\Provider\ReturnRequestItemProvider;
  */
 #[ApiResource(
     shortName: 'ReturnRequest',
+    security: "is_granted('ROLE_USER')",
     operations: [
         new Get(
             uriTemplate: '/return-requests/{id}',

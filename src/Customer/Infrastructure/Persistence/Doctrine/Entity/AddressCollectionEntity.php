@@ -15,6 +15,7 @@ use App\Customer\Presentation\Api\Provider\AddressesProvider;
  */
 #[ApiResource(
     shortName: 'ProfileAddresses',
+    security: "is_granted('ROLE_USER')",
     operations: [
         new Get(
             uriTemplate: '/profile/addresses',

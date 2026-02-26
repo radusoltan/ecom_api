@@ -70,6 +70,36 @@ class TenantIsolationRLSTest extends KernelTestCase
     }
 
     /**
+     * Test that RLS is enabled on catalog_configurable_products table.
+     */
+    public function testRLSIsEnabledOnCatalogConfigurableProducts(): void
+    {
+        $sql = "SELECT tablename, rowsecurity
+                FROM pg_tables
+                WHERE schemaname = 'public' AND tablename = 'catalog_configurable_products'";
+
+        $result = $this->connection->fetchAssociative($sql);
+
+        $this->assertNotFalse($result, 'Table catalog_configurable_products should exist');
+        $this->assertTrue((bool) $result['rowsecurity'], 'RLS should be enabled on catalog_configurable_products');
+    }
+
+    /**
+     * Test that RLS is enabled on i18n_backfill_tracking table.
+     */
+    public function testRLSIsEnabledOnI18nBackfillTracking(): void
+    {
+        $sql = "SELECT tablename, rowsecurity
+                FROM pg_tables
+                WHERE schemaname = 'public' AND tablename = 'i18n_backfill_tracking'";
+
+        $result = $this->connection->fetchAssociative($sql);
+
+        $this->assertNotFalse($result, 'Table i18n_backfill_tracking should exist');
+        $this->assertTrue((bool) $result['rowsecurity'], 'RLS should be enabled on i18n_backfill_tracking');
+    }
+
+    /**
      * Test that setting tenant context allows reading only tenant's data.
      */
     public function testCanOnlyReadOwnTenantData(): void

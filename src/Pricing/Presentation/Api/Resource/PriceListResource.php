@@ -17,6 +17,7 @@ use App\Pricing\Presentation\Api\Provider\PriceListItemProvider;
 
 #[ApiResource(
     shortName: 'PriceList',
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     operations: [
         new GetCollection(
             provider: PriceListCollectionProvider::class

@@ -45,6 +45,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\UniqueConstraint(name: 'unique_email_per_tenant_bi', columns: ['tenant_id', 'email_blind_index'])]
 #[ApiResource(
     shortName: 'Customer',
+    security: "is_granted('ROLE_USER')",
     operations: [
         new Get(provider: CustomerItemProvider::class),
         new GetCollection(provider: CustomerCollectionProvider::class),

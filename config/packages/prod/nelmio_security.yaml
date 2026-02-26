@@ -1,0 +1,42 @@
+nelmio_security:
+    # HSTS: Force HTTPS in production
+    forced_ssl:
+        enabled: true
+        hsts_max_age: 31536000  # 1 year
+        hsts_subdomains: true
+        hsts_preload: true
+        redirect_status_code: 301  # Permanent redirect in production
+
+    # Stricter CSP in production — remove unsafe-inline
+    # API Platform docs UI will use nonces for inline scripts/styles
+    csp:
+        enabled: true
+        enforce:
+            level1_fallback: true
+            default-src:
+                - 'self'
+            script-src:
+                - 'self'
+                # unsafe-inline removed — API docs may need nonce support
+            style-src:
+                - 'self'
+                # unsafe-inline removed — API docs may need nonce support
+            img-src:
+                - 'self'
+                - 'data:'
+                - 'https:'
+            font-src:
+                - 'self'
+                - 'data:'
+            connect-src:
+                - 'self'
+            frame-ancestors:
+                - "'none'"
+            object-src:
+                - "'none'"
+            base-uri:
+                - 'self'
+            form-action:
+                - 'self'
+            upgrade-insecure-requests: true
+            block-all-mixed-content: true

@@ -9,7 +9,7 @@ security:
         # Admin Panel Hierarchy
         ROLE_VIEWER:        ROLE_USER            # Viewer inherits base user privileges
         ROLE_MANAGER:       ROLE_USER            # Manager inherits base user privileges
-        ROLE_ADMIN:         ROLE_MANAGER         # Admin inherits manager privileges
+        ROLE_ADMIN:         ROLE_MANAGER         # Admin inherits admin privileges
         ROLE_SUPER_ADMIN:   ROLE_ADMIN           # Super Admin inherits admin privileges
 
         # Tenant & Business Hierarchy
@@ -34,14 +34,6 @@ security:
                 check_path: /api/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-        # Commenting out for now - these firewalls bypass authentication
-        # Uncomment in production if you need public API endpoints
-        # search:
-        #     pattern: ^/api/search
-        #     security: false
-        # public_api:
-        #     pattern: ^/api/(product_entities|category_entities|warehouses|price_lists|tenants)
-        #     security: false
         api:
             pattern: ^/api
             stateless: true
@@ -51,74 +43,53 @@ security:
             lazy: true
             provider: app_user_provider
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api/v1/mfa/verify, roles: IS_AUTHENTICATED_FULLY }  # MFA verification (JWT required, mfa_pending check via listener)
+        # === Authentication endpoints ===
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }  # JWT login endpoint
-        - { path: ^/api/docs, roles: PUBLIC_ACCESS }  # Allow access to API documentation
-        - { path: ^/api/translations, roles: PUBLIC_ACCESS }  # Allow access to translations (UI strings)
+        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/docs, roles: PUBLIC_ACCESS }  # Allow access to API documentation
-        - { path: ^/api/v1/translations, roles: PUBLIC_ACCESS }  # Allow access to translations
-        - { path: ^/api/v1/auth/register, roles: PUBLIC_ACCESS }  # Allow public user registration
-        - { path: ^/api/v1/auth/token/refresh, roles: PUBLIC_ACCESS }  # Allow public token refresh
-        - { path: ^/api/v1/storefront, roles: PUBLIC_ACCESS }  # Allow public access to storefront endpoints
-        - { path: ^/api/v1/categories, roles: PUBLIC_ACCESS }  # Allow public access to categories for storefront
-        - { path: ^/api/v1/category_entities, roles: PUBLIC_ACCESS }  # Allow public access to category entities for storefront filters
-        - { path: ^/api/v1/product_entities, roles: PUBLIC_ACCESS }  # Allow public access to products for storefront
-        - { path: ^/api/v1/search/products, roles: PUBLIC_ACCESS }  # Allow public access to products for storefront
-        - { path: ^/api/v1/search/autocomplete, roles: PUBLIC_ACCESS }  # Allow public access to autocomplete for storefront
-        - { path: ^/api/product-options, roles: PUBLIC_ACCESS }  # Allow public access to product options for storefront filters
-        - { path: ^/api/v1/product-options, roles: PUBLIC_ACCESS }  # Allow public access to product options for storefront filters (v1)
-        - { path: ^/api/customers, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public customer registration
-        - { path: ^/api/v1/customers, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public customer registration (v1)
-        - { path: ^/api/v1/orders, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public place orders
-        - { path: ^/api/v1/orders, roles: PUBLIC_ACCESS, methods: [GET] }  # Allow public get orders (collection and item)
-        - { path: ^/api/orders, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public place orders (no v1)
-        - { path: ^/api/orders, roles: PUBLIC_ACCESS, methods: [GET] }  # Allow public get orders (no v1, collection and item)
-        - { path: ^/api/payments/stripe/create-intent, roles: PUBLIC_ACCESS }  # Allow public payment intent creation
-        - { path: ^/api/payments/stripe/verify-payment, roles: PUBLIC_ACCESS }  # Allow public payment verification
-        - { path: ^/api/payments/stripe/capture-after-success, roles: PUBLIC_ACCESS }  # Allow public payment capture (dev only)
-        - { path: ^/api/payments/stripe/webhook, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks
-        - { path: ^/api/webhooks/stripe, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks (alternative path)
-        - { path: ^/api/payments, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public payment creation
-        - { path: ^/api/v1/payments, roles: PUBLIC_ACCESS, methods: [POST] }  # Allow public payment creation (v1)
-        - { path: ^/api/payments/paypal, roles: PUBLIC_ACCESS }  # Allow public PayPal payment operations
-        - { path: ^/api/v1/payments/paypal, roles: PUBLIC_ACCESS }  # Allow public PayPal payment operations (v1)
-        - { path: ^/api/payments/2checkout, roles: PUBLIC_ACCESS }  # Allow public 2Checkout payment operations
-        - { path: ^/api/v1/payments/2checkout, roles: PUBLIC_ACCESS }  # Allow public 2Checkout payment operations (v1)
-        - { path: ^/api/v1/payments/stripe/create-intent, roles: PUBLIC_ACCESS }  # Allow public payment intent creation (v1)
-        - { path: ^/api/v1/payments/stripe/verify-payment, roles: PUBLIC_ACCESS }  # Allow public payment verification (v1)
-        - { path: ^/api/v1/payments/stripe/capture-after-success, roles: PUBLIC_ACCESS }  # Allow public payment capture (v1, dev only)
-        - { path: ^/api/v1/payments/stripe/webhook, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks (v1)
-        - { path: ^/api/v1/webhooks/stripe, roles: PUBLIC_ACCESS }  # Allow Stripe webhooks (v1)
-        - { path: ^/api/webhooks/paypal, roles: PUBLIC_ACCESS }  # Allow PayPal webhooks
-        - { path: ^/api/v1/webhooks/paypal, roles: PUBLIC_ACCESS }  # Allow PayPal webhooks (v1)
-        - { path: ^/api/v1/dashboard/stats, roles: PUBLIC_ACCESS }  # Allow public access to dashboard stats (dev only)
-        - { path: ^/api/v1/inventory/stats, roles: PUBLIC_ACCESS }  # Allow public access to inventory stats (dev only)
-        - { path: ^/api/stock-items, roles: PUBLIC_ACCESS }  # Allow public access to stock items (dev only)
-        - { path: ^/api/v1/stock-items, roles: PUBLIC_ACCESS }  # Allow public access to stock items v1 (dev only)
-        - { path: ^/api/v1/validate-coupon, roles: PUBLIC_ACCESS }  # Allow public coupon validation for shopping cart
-        - { path: ^/api/v1/variant_entities, roles: PUBLIC_ACCESS }  # Allow public access to variants (dev only)
-        - { path: ^/api/variant_entities, roles: PUBLIC_ACCESS }  # Allow public access to variants (dev only - no v1)
-        - { path: ^/api/v1/product-options, roles: PUBLIC_ACCESS }  # Allow public access to product options (dev only)
-        - { path: ^/api/product-options, roles: PUBLIC_ACCESS }  # Allow public access to product options (dev only - no v1)
-        - { path: ^/api/v1/product-option-values, roles: PUBLIC_ACCESS }  # Allow public access to product option values (dev only)
-        - { path: ^/api/product-option-values, roles: PUBLIC_ACCESS }  # Allow public access to product option values (dev only - no v1)
-        - { path: ^/api/v1/cart, roles: PUBLIC_ACCESS }  # Allow public access to cart for guest users
-        - { path: ^/api/cart, roles: PUBLIC_ACCESS }  # Allow public access to cart for guest users (no v1)
-        - { path: ^/api/v1/auth/register, roles: PUBLIC_ACCESS }  # Allow public user registration
-        - { path: ^/api/v1/auth/password, roles: PUBLIC_ACCESS }  # Allow public password reset
-        - { path: ^/api/v1/auth/token/refresh, roles: PUBLIC_ACCESS }  # Allow public token refresh
-        - { path: ^/api/v1/profile, roles: IS_AUTHENTICATED_FULLY }  # Require authentication for profile endpoints
-        - { path: ^/api/v1/profile/addresses, roles: IS_AUTHENTICATED_FULLY }  # Require authentication for addresses
-        - { path: ^/api/v1/profile/payment-methods, roles: IS_AUTHENTICATED_FULLY }  # Require authentication for payment methods
+        - { path: ^/api/v1/auth/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/auth/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/auth/password, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/mfa/verify, roles: IS_AUTHENTICATED_FULLY }
+
+        # === API Documentation ===
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/docs, roles: PUBLIC_ACCESS }
+
+        # === Public storefront read endpoints (products, categories, search) ===
+        - { path: ^/api/v1/storefront, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/categories, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/category_entities, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/product_entities, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/product-options, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/product-option-values, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/variant_entities, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/search/products, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/search/autocomplete, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/translations, roles: PUBLIC_ACCESS }
+
+        # === Guest checkout: cart, customer registration, order creation ===
+        - { path: ^/api/v1/cart, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/customers, roles: PUBLIC_ACCESS, methods: [POST] }
+        - { path: ^/api/v1/orders, roles: PUBLIC_ACCESS, methods: [POST] }
+        - { path: ^/api/v1/validate-coupon, roles: PUBLIC_ACCESS }
+
+        # === Payment intent creation (needed for guest checkout Stripe flow) ===
+        - { path: ^/api/v1/payments/stripe/create-intent, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/payments/stripe/verify-payment, roles: PUBLIC_ACCESS }
+
+        # === Webhook endpoints (signature-verified server-to-server) ===
+        - { path: ^/api/v1/webhooks/stripe, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/webhooks/paypal, roles: PUBLIC_ACCESS }
+
+        # === Authenticated endpoints ===
+        - { path: ^/api/v1/orders, roles: IS_AUTHENTICATED_FULLY, methods: [GET] }
+        - { path: ^/api/v1/profile, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/v1/profile/addresses, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/v1/profile/payment-methods, roles: IS_AUTHENTICATED_FULLY }
+
+        # === Catch-all: require authentication for all other API endpoints ===
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

@@ -20,6 +20,7 @@ use App\Catalog\Infrastructure\ApiPlatform\State\UpdateProductTranslationsProces
  */
 #[ApiResource(
     shortName: 'ProductTranslation',
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     routePrefix: '/products/{id}',
     operations: [
         new Get(

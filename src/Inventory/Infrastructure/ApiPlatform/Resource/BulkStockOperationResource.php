@@ -23,6 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ApiResource(
     shortName: 'BulkStockOperation',
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     operations: [
         new Post(
             uriTemplate: '/stock/bulk-reserve',

@@ -29,6 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ApiResource(
     shortName: 'StockOperation',
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     operations: [
         new Post(
             uriTemplate: '/stock/reserve',

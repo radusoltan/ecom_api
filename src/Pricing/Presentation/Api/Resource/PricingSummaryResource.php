@@ -10,6 +10,7 @@ use App\Pricing\Presentation\Api\Provider\PricingSummaryProvider;
 
 #[ApiResource(
     shortName: 'PricingSummary',
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     operations: [
         new Get(
             uriTemplate: '/analytics/pricing/summary',

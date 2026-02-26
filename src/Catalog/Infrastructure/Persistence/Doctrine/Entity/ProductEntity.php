@@ -45,13 +45,18 @@ use Gedmo\Mapping\Annotation as Gedmo;
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\ProductCollectionProvider::class
         ),
         new Post(
-            processor: \App\Catalog\Infrastructure\ApiPlatform\State\CreateProductProcessor::class
+            processor: \App\Catalog\Infrastructure\ApiPlatform\State\CreateProductProcessor::class,
+            security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')"
         ),
         new Get(
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\ProductItemProvider::class
         ),
-        new Patch(),
-        new Delete(),
+        new Patch(
+            security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')"
+        ),
+        new Delete(
+            security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')"
+        ),
     ]
 )]
 class ProductEntity

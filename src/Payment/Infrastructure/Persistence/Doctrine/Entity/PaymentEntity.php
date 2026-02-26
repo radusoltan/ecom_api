@@ -36,6 +36,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_payments_retry', columns: ['status', 'next_retry_at', 'retry_count'])]
 #[ApiResource(
     shortName: 'Payment',
+    security: "is_granted('ROLE_USER')",
     operations: [
         new Get(
             provider: PaymentItemProvider::class

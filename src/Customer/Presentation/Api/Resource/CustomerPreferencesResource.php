@@ -19,6 +19,7 @@ use App\Customer\Presentation\Api\Provider\CustomerPreferencesProvider;
  */
 #[ApiResource(
     shortName: 'CustomerPreferences',
+    security: "is_granted('ROLE_USER')",
     operations: [
         new Get(
             uriTemplate: '/customers/{customerId}/preferences',

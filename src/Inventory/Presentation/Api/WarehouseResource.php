@@ -21,6 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     shortName: 'Warehouse',
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     operations: [
         new GetCollection(
             uriTemplate: '/warehouses',

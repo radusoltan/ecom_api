@@ -27,10 +27,12 @@ final class TenantContext implements TenantContextInterface
     {
         $this->currentTenantId = $tenantId;
 
-        // Set PostgreSQL session variable for RLS
-        // Using SET (not SET LOCAL) to persist across transactions within the same connection
+        // Set PostgreSQL session variable for RLS using parameterized set_config()
+        // to prevent SQL injection. Using set_config with is_local=false to persist
+        // across transactions within the same connection.
         $this->connection->executeStatement(
-            sprintf("SET app.tenant_id = '%s'", $tenantId->toString())
+            "SELECT set_config('app.tenant_id', :tenantId, false)",
+            ['tenantId' => $tenantId->toString()]
         );
     }
 
