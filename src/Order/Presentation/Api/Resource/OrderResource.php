@@ -59,4 +59,28 @@ class OrderResource
     public array $promotionContext = [];
     public ?string $createdAt = null;
     public ?string $updatedAt = null;
+
+    /**
+     * HATEOAS navigation links for related resources.
+     *
+     * @return array<string, array{href: string}>|null
+     */
+    public function getLinks(): ?array
+    {
+        if (null === $this->id) {
+            return null;
+        }
+
+        $links = [
+            'self' => ['href' => '/api/v1/orders/' . $this->id],
+            'cancel' => ['href' => '/api/v1/orders/' . $this->id . '/cancel'],
+            'fulfillments' => ['href' => '/api/v1/fulfillments?orderId=' . $this->id],
+        ];
+
+        if (null !== $this->customerEmail) {
+            $links['customer_orders'] = ['href' => '/api/v1/orders?customerEmail=' . urlencode($this->customerEmail)];
+        }
+
+        return $links;
+    }
 }

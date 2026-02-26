@@ -489,4 +489,19 @@ class CustomerEntity
     {
         $this->emailBlindIndex = $emailBlindIndex;
     }
+
+    /**
+     * HATEOAS navigation links for related resources.
+     *
+     * @return array<string, array{href: string}>
+     */
+    public function getLinks(): array
+    {
+        return [
+            'self' => ['href' => '/api/v1/customers/' . $this->id],
+            'orders' => ['href' => '/api/v1/customers/' . $this->id . '/orders'],
+            'addresses' => ['href' => '/api/v1/customer-addresses?customerId=' . $this->id],
+            'preferences' => ['href' => '/api/v1/customers/' . $this->id . '/preferences'],
+        ];
+    }
 }

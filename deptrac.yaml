@@ -466,12 +466,17 @@ deptrac:
           value: src/Internationalization/Infrastructure/.*
 
     # =========================================================================
-    # Monitoring Context (no Application layer)
+    # Monitoring Context
     # =========================================================================
     - name: Monitoring_Domain
       collectors:
         - type: directory
           value: src/Monitoring/Domain/.*
+
+    - name: Monitoring_Application
+      collectors:
+        - type: directory
+          value: src/Monitoring/Application/.*
 
     - name: Monitoring_Infrastructure
       collectors:
@@ -482,6 +487,42 @@ deptrac:
       collectors:
         - type: directory
           value: src/Monitoring/Presentation/.*
+
+    # =========================================================================
+    # Shipping Context
+    # =========================================================================
+    - name: Shipping_Domain
+      collectors:
+        - type: directory
+          value: src/Shipping/Domain/.*
+
+    - name: Shipping_Application
+      collectors:
+        - type: directory
+          value: src/Shipping/Application/.*
+
+    - name: Shipping_Infrastructure
+      collectors:
+        - type: directory
+          value: src/Shipping/Infrastructure/.*
+
+    - name: Shipping_Presentation
+      collectors:
+        - type: directory
+          value: src/Shipping/Presentation/.*
+
+    # =========================================================================
+    # Dashboard Context (no Domain or Infrastructure layer)
+    # =========================================================================
+    - name: Dashboard_Application
+      collectors:
+        - type: directory
+          value: src/Dashboard/Application/.*
+
+    - name: Dashboard_Presentation
+      collectors:
+        - type: directory
+          value: src/Dashboard/Presentation/.*
 
   # ===========================================================================
   # RULESET: Allowed dependencies per layer
@@ -511,6 +552,7 @@ deptrac:
       - Tenant_Domain
       - Shared_Domain
       - Shared_Application
+      - Shared_Infrastructure  # CacheService used by FeatureFlagService
 
     Tenant_Infrastructure:
       - Tenant_Domain
@@ -1101,10 +1143,17 @@ deptrac:
       - Shared_Infrastructure
 
     # -----------------------------------------------------------------------
-    # Monitoring Context (no Application layer)
+    # Monitoring Context
     # -----------------------------------------------------------------------
     Monitoring_Domain:
       - Shared_Domain
+
+    Monitoring_Application:
+      - Monitoring_Domain
+      - Monitoring_Infrastructure  # Handlers use APM service
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure
 
     Monitoring_Infrastructure:
       - Monitoring_Domain
@@ -1113,7 +1162,70 @@ deptrac:
       - Shared_Infrastructure
 
     Monitoring_Presentation:
+      - Monitoring_Application     # Controller dispatches queries/commands
       - Monitoring_Domain
-      - Monitoring_Infrastructure  # Uses ApplicationPerformanceMonitor
       - Shared_Domain
       - Shared_Application         # Uses PerformanceProfiler
+
+    # -----------------------------------------------------------------------
+    # Shipping Context
+    # Cross-context: Order (OrderId), Catalog (weight/dimensions)
+    # -----------------------------------------------------------------------
+    Shipping_Domain:
+      - Shared_Domain
+      - Order_Domain   # OrderId
+
+    Shipping_Application:
+      - Shipping_Domain
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure
+      - Order_Domain
+      - Order_Application
+
+    Shipping_Infrastructure:
+      - Shipping_Domain
+      - Shipping_Application
+      - Shipping_Presentation  # ApiPlatform state processors use Resource class
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Order_Domain
+
+    Shipping_Presentation:
+      - Shipping_Application
+      - Shipping_Domain
+      - Shipping_Infrastructure  # ApiPlatform state processors
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Order_Domain
+
+    # -----------------------------------------------------------------------
+    # Dashboard Context (no Domain or Infrastructure layer)
+    # Cross-context: reads from multiple contexts for aggregated reporting
+    # -----------------------------------------------------------------------
+    Dashboard_Application:
+      - Dashboard_Presentation  # ApiPlatform DTO references state provider
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure
+      - Order_Domain
+      - Order_Application
+      - Customer_Domain
+      - Customer_Application
+      - Catalog_Domain
+      - Catalog_Application
+      - Payment_Domain
+      - Payment_Application
+      - Inventory_Domain
+      - Inventory_Application
+
+    Dashboard_Presentation:
+      - Dashboard_Application
+      - Shared_Domain
+      - Shared_Application
+      - Shared_Infrastructure
+      - Order_Domain
+      - Customer_Domain
+      - Catalog_Domain
+      - Payment_Domain
+      - Inventory_Domain

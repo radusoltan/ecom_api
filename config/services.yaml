@@ -1428,3 +1428,25 @@ services:
 
     OpenTelemetry\API\Trace\TracerInterface:
         factory: ['@App\Shared\Infrastructure\Telemetry\TracerFactory', 'createTracer']
+
+    # Monitoring Context
+    App\Monitoring\Presentation\Api\Controller\PerformanceMonitoringController:
+        arguments:
+            $queryBus: '@query.bus'
+            $commandBus: '@command.bus'
+
+    App\Monitoring\Application\Query\GetHealthStatusQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Monitoring\Application\Query\GetPerformanceStatusQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Monitoring\Application\Query\GetMetricStatisticsQueryHandler:
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    App\Monitoring\Application\Command\ClearAlertsCommandHandler:
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }

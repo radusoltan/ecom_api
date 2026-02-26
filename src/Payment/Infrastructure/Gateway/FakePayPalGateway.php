@@ -38,13 +38,13 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
             'currency' => $currency,
         ]);
 
-        return new PaymentIntentResult(
+        return PaymentIntentResult::success(
             gatewayPaymentIntentId: 'PAYID-'.strtoupper(bin2hex(random_bytes(16))),
-            clientSecret: 'secret_'.bin2hex(random_bytes(10)),
             status: 'requires_payment_method',
-            amount: $amount->amount(),
-            currency: $currency,
-            rawData: ['mock' => true]
+            amount: $amount,
+            clientSecret: 'secret_'.bin2hex(random_bytes(10)),
+            customerId: $customerId,
+            rawResponse: json_encode(['mock' => true]) ?: null,
         );
     }
 
@@ -57,13 +57,12 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
             'method_id' => $paymentMethodId,
         ]);
 
-        return new PaymentIntentResult(
+        return PaymentIntentResult::success(
             gatewayPaymentIntentId: $gatewayPaymentIntentId,
+            status: 'succeeded',
+            amount: Money::fromScalars(1000, 'USD'),
             clientSecret: 'secret_confirmed',
-            status: 'succeeded', // Assume immediate success for fake
-            amount: 1000, // Dummy amount
-            currency: 'USD',
-            rawData: ['mock' => true]
+            rawResponse: json_encode(['mock' => true]) ?: null,
         );
     }
 
@@ -75,13 +74,11 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
             'intent_id' => $gatewayPaymentIntentId,
         ]);
 
-        return new PaymentIntentResult(
+        return PaymentIntentResult::success(
             gatewayPaymentIntentId: $gatewayPaymentIntentId,
-            clientSecret: null,
             status: 'succeeded',
-            amount: $amount ? $amount->amount() : 1000,
-            currency: 'USD',
-            rawData: ['mock' => true, 'captured' => true]
+            amount: $amount ?? Money::fromScalars(1000, 'USD'),
+            rawResponse: json_encode(['mock' => true, 'captured' => true]) ?: null,
         );
     }
 
@@ -91,13 +88,11 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
             'intent_id' => $gatewayPaymentIntentId,
         ]);
 
-        return new PaymentIntentResult(
+        return PaymentIntentResult::success(
             gatewayPaymentIntentId: $gatewayPaymentIntentId,
-            clientSecret: null,
             status: 'canceled',
-            amount: 0,
-            currency: 'USD',
-            rawData: ['mock' => true, 'canceled' => true]
+            amount: Money::fromScalars(0, 'USD'),
+            rawResponse: json_encode(['mock' => true, 'canceled' => true]) ?: null,
         );
     }
 
@@ -113,12 +108,11 @@ final readonly class FakePayPalGateway implements PaymentGatewayInterface
             'reason' => $reason,
         ]);
 
-        return new RefundResult(
+        return RefundResult::success(
             gatewayRefundId: 'REFUND-'.strtoupper(bin2hex(random_bytes(12))),
             status: 'succeeded',
-            amount: $amount->amount(),
-            currency: 'USD',
-            rawData: ['mock' => true]
+            amount: $amount,
+            rawResponse: json_encode(['mock' => true]) ?: null,
         );
     }
 

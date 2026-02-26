@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Monitoring\Presentation\Api\Controller;
 
+use App\Monitoring\Application\Command\ClearAlertsCommand;
+use App\Monitoring\Application\Query\GetHealthStatusQuery;
+use App\Monitoring\Application\Query\GetMetricStatisticsQuery;
+use App\Monitoring\Application\Query\GetPerformanceStatusQuery;
 use App\Monitoring\Infrastructure\Service\ApplicationPerformanceMonitor;
 use App\Monitoring\Presentation\Api\Controller\PerformanceMonitoringController;
 use App\Shared\Application\Service\PerformanceProfiler;
@@ -14,6 +18,9 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
  * Unit tests for PerformanceMonitoringController.
@@ -49,13 +56,50 @@ final class PerformanceMonitoringControllerTest extends TestCase
             logger: new NullLogger(),
         );
 
-        $this->controller = new PerformanceMonitoringController($this->apm, $this->profiler);
+        // Build query bus that dispatches to real handlers
+        $queryBus = $this->createQueryBus();
+        $commandBus = $this->createCommandBus();
+
+        $this->controller = new PerformanceMonitoringController($queryBus, $commandBus, $this->profiler);
 
         // Provide a stub container so AbstractController::json() works without
         // a real Symfony kernel. has('serializer') returns false → plain JsonResponse.
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturn(false);
         $this->controller->setContainer($container);
+    }
+
+    private function createQueryBus(): MessageBusInterface
+    {
+        $apm = $this->apm;
+        $bus = $this->createMock(MessageBusInterface::class);
+        $bus->method('dispatch')->willReturnCallback(function (object $message) use ($apm): Envelope {
+            $result = match (true) {
+                $message instanceof GetPerformanceStatusQuery => $apm->getPerformanceStatus(),
+                $message instanceof GetHealthStatusQuery => $apm->getHealthCheck(),
+                $message instanceof GetMetricStatisticsQuery => $apm->getMetricStatistics($message->metric, $message->period),
+                default => null,
+            };
+
+            return new Envelope($message, [new HandledStamp($result, 'handler')]);
+        });
+
+        return $bus;
+    }
+
+    private function createCommandBus(): MessageBusInterface
+    {
+        $apm = $this->apm;
+        $bus = $this->createMock(MessageBusInterface::class);
+        $bus->method('dispatch')->willReturnCallback(function (object $message) use ($apm): Envelope {
+            if ($message instanceof ClearAlertsCommand) {
+                $apm->clearAlerts();
+            }
+
+            return new Envelope($message, [new HandledStamp(null, 'handler')]);
+        });
+
+        return $bus;
     }
 
     // -----------------------------------------------------------------------

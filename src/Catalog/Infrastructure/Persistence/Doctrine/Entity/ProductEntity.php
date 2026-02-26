@@ -461,4 +461,24 @@ class ProductEntity
     {
         $this->locale = $locale;
     }
+
+    /**
+     * HATEOAS navigation links for related resources.
+     *
+     * @return array<string, array{href: string}>
+     */
+    public function getLinks(): array
+    {
+        $links = [
+            'self' => ['href' => '/api/v1/product_entities/' . $this->id],
+            'variants' => ['href' => '/api/v1/variant_entities?productId=' . $this->id],
+            'translations' => ['href' => '/api/v1/products/' . $this->id . '/translations'],
+        ];
+
+        if (null !== $this->categoryId) {
+            $links['category'] = ['href' => '/api/v1/categories/' . $this->categoryId];
+        }
+
+        return $links;
+    }
 }
