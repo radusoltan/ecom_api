@@ -32,7 +32,7 @@ class WebhookEventEntity
     #[ORM\Column(type: 'string', length: 100, nullable: false, name: 'event_type')]
     private string $eventType;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'processed_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'processed_at')]
     private \DateTimeImmutable $processedAt;
 
     #[ORM\Column(type: 'string', length: 64, nullable: true, name: 'payload_hash')]

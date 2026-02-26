@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Order\Domain\Service;
 
+use App\Catalog\Domain\Model\ProductId;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Inventory\Domain\Repository\WarehouseRepositoryInterface;
@@ -96,7 +97,7 @@ final readonly class WarehouseRoutingService
         $lines = $order->lines();
 
         foreach ($lines as $line) {
-            $productId = $line->productId();
+            $productId = ProductId::fromString($line->productId()->toString());
             $requiredQuantity = $line->quantity();
 
             // Find stock item for this product at this warehouse
@@ -156,7 +157,7 @@ final readonly class WarehouseRoutingService
 
             foreach ($order->lines() as $line) {
                 $stockItem = $this->stockItemRepository->findByProductAndWarehouse(
-                    $line->productId(),
+                    ProductId::fromString($line->productId()->toString()),
                     $warehouseId,
                     $tenantId
                 );

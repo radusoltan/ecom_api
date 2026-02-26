@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Order\Application\Command;
 
-use App\Catalog\Domain\Model\ProductId;
-use App\Catalog\Domain\Repository\ProductRepositoryInterface;
+use App\Order\Application\Port\ProductPriceLookupInterface;
 use App\Order\Application\Service\CheckoutValidationService;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Order\Domain\Model\Order;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderLine;
@@ -30,7 +30,7 @@ final readonly class PlaceOrderCommandHandler
 {
     public function __construct(
         private OrderRepositoryInterface $orderRepository,
-        private ProductRepositoryInterface $productRepository,
+        private ProductPriceLookupInterface $productPriceLookup,
         private PromotionApplicationService $promotionService,
         private TaxCalculationService $taxCalculationService,
         private TaxCalculatorInterface $taxCalculator,
@@ -51,17 +51,18 @@ final readonly class PlaceOrderCommandHandler
             // Create order lines, fetching prices from Catalog if not provided
             $lines = array_map(
                 function (array $lineData) use ($tenantId) {
-                    $productId = ProductId::fromString($lineData['productId']);
+                    $productId = OrderProductId::fromString($lineData['productId']);
 
-                    // If price is not provided, fetch from Catalog
+                    // If price is not provided, fetch via ACL port
                     if (!isset($lineData['unitPriceAmount']) || !isset($lineData['unitPriceCurrency'])) {
-                        $product = $this->productRepository->findById($productId, $tenantId);
+                        $unitPrice = $this->productPriceLookup->findCurrentPrice(
+                            $lineData['productId'],
+                            $tenantId->toString()
+                        );
 
-                        if (null === $product) {
+                        if (null === $unitPrice) {
                             throw new \RuntimeException(sprintf('Product with ID %s not found', $productId->toString()));
                         }
-
-                        $unitPrice = $product->price();
                     } else {
                         $unitPrice = Money::fromScalars($lineData['unitPriceAmount'], $lineData['unitPriceCurrency']);
                     }

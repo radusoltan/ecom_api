@@ -60,10 +60,10 @@ class ProductReviewEntity implements Translatable
     #[ORM\Column(type: 'boolean', name: 'is_verified_purchase')]
     private bool $isVerifiedPurchase = false;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
 
     #[Gedmo\Locale]

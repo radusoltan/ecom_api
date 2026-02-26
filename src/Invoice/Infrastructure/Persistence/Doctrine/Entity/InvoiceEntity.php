@@ -155,15 +155,15 @@ class InvoiceEntity
     #[Groups(['invoice:read'])]
     private bool $isReverseCharge;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'issue_date')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'issue_date')]
     #[Groups(['invoice:read'])]
     private ?\DateTimeImmutable $issueDate = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'due_date')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'due_date')]
     #[Groups(['invoice:read'])]
     private ?\DateTimeImmutable $dueDate = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'paid_date')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'paid_date')]
     #[Groups(['invoice:read'])]
     private ?\DateTimeImmutable $paidDate = null;
 
@@ -179,11 +179,11 @@ class InvoiceEntity
     #[Groups(['invoice:read'])]
     private ?string $notes = null;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     #[Groups(['invoice:read'])]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'updated_at')]
     #[Groups(['invoice:read'])]
     private \DateTimeImmutable $updatedAt;
 

@@ -65,10 +65,10 @@ class LoyaltyProgramEntity
     #[ORM\Column(type: 'boolean', nullable: false, options: ['default' => true])]
     private bool $isActive = true;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false)]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false)]
     private \DateTimeImmutable $updatedAt;
 
     /**

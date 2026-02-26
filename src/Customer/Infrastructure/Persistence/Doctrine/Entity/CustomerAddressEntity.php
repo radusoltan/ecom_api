@@ -69,10 +69,10 @@ class CustomerAddressEntity
     #[ORM\Column(type: 'boolean', nullable: false, options: ['default' => false])]
     private bool $isDeleted = false;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false)]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false)]
     private \DateTimeImmutable $updatedAt;
 
     /**

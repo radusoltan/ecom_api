@@ -80,10 +80,10 @@ class CategoryEntity
     #[ORM\Column(type: 'string', length: 512, name: 'cover_image', nullable: true)]
     private ?string $coverImage = null;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
 
     #[Gedmo\Locale]

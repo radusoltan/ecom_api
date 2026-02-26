@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Application\Command;
 
-use App\Catalog\Domain\Model\Product;
-use App\Catalog\Domain\Model\ProductId;
-use App\Catalog\Domain\Repository\ProductRepositoryInterface;
+use App\Order\Application\Port\ProductPriceLookupInterface;
 use App\Order\Application\Command\PlaceOrderCommand;
 use App\Order\Application\Command\PlaceOrderCommandHandler;
 use App\Order\Application\Service\CheckoutValidationService;
@@ -35,7 +33,7 @@ use Psr\Log\LoggerInterface;
 final class PlaceOrderCommandHandlerTest extends TestCase
 {
     private OrderRepositoryInterface $orderRepository;
-    private ProductRepositoryInterface $productRepository;
+    private ProductPriceLookupInterface $productPriceLookup;
     private PromotionApplicationService $promotionService;
     private TaxCalculationService $taxCalculationService;
     private TaxCalculatorInterface $taxCalculator;
@@ -48,7 +46,7 @@ final class PlaceOrderCommandHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->orderRepository = $this->createMock(OrderRepositoryInterface::class);
-        $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
+        $this->productPriceLookup = $this->createMock(ProductPriceLookupInterface::class);
         $this->promotionService = $this->createMock(PromotionApplicationService::class);
         $this->taxCalculationService = $this->createMock(TaxCalculationService::class);
         $this->taxCalculator = $this->createMock(TaxCalculatorInterface::class);
@@ -61,7 +59,7 @@ final class PlaceOrderCommandHandlerTest extends TestCase
 
         $this->handler = new PlaceOrderCommandHandler(
             orderRepository: $this->orderRepository,
-            productRepository: $this->productRepository,
+            productPriceLookup: $this->productPriceLookup,
             promotionService: $this->promotionService,
             taxCalculationService: $this->taxCalculationService,
             taxCalculator: $this->taxCalculator,

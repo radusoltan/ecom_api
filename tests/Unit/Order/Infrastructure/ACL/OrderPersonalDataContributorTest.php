@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Infrastructure\ACL;
 
-use App\Catalog\Domain\Model\ProductId;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Order\Domain\Model\Order;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderLine;
@@ -224,7 +224,7 @@ final class OrderPersonalDataContributorTest extends TestCase
         );
 
         $line = OrderLine::create(
-            productId: ProductId::generate(),
+            productId: OrderProductId::generate(),
             productName: 'Test Product',
             quantity: 1,
             unitPrice: Money::fromScalars(1000, 'USD'),

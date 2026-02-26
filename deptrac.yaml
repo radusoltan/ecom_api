@@ -592,7 +592,7 @@ deptrac:
     # -----------------------------------------------------------------------
     Order_Domain:
       - Shared_Domain
-      - Catalog_Domain      # ProductId in OrderLine
+      - Catalog_Domain       # ProductId shared identifier (ACL boundary conversion)
       - Inventory_Domain     # WarehouseId in Fulfillment
       - Tax_Domain           # TaxCategory, TaxJurisdiction, VatNumber
 
@@ -601,8 +601,7 @@ deptrac:
       - Shared_Domain
       - Shared_Application
       - Shared_Infrastructure    # MetricsCollector
-      - Catalog_Domain
-      - Inventory_Domain
+      - Inventory_Domain         # WarehouseId, Quantity in fulfillment
       - Inventory_Application    # AllocateStockCommand
       - Tax_Domain
       - Customer_Application     # NotificationPreferenceService
@@ -616,10 +615,10 @@ deptrac:
       - Order_Application
       - Shared_Domain
       - Shared_Infrastructure
-      - Catalog_Domain
-      - Inventory_Domain
-      - Pricing_Domain          # Price references
-      - Privacy_Domain          # Data compliance
+      - Catalog_Domain           # ACL adapter bridges to Catalog
+      - Inventory_Domain         # ACL adapter bridges to Inventory
+      - Pricing_Domain           # Price references
+      - Privacy_Domain           # Data compliance
 
     Order_Presentation:
       - Order_Application

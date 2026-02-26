@@ -110,13 +110,13 @@ class PaymentEntity
     #[ORM\Column(type: 'integer', nullable: false, options: ['default' => 0], name: 'retry_count')]
     private int $retryCount = 0;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'next_retry_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'next_retry_at')]
     private ?\DateTimeImmutable $nextRetryAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
 
     public static function fromDomainModel(Payment $payment): self

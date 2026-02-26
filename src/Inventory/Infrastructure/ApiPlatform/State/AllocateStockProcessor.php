@@ -49,9 +49,9 @@ final readonly class AllocateStockProcessor implements ProcessorInterface
             throw new NotFoundHttpException(sprintf('Stock item not found for product %s in warehouse %s', $data->productId, $data->warehouseId));
         }
 
-        // Allocate stock
+        // Allocate stock (productId already validated by findByProductAndWarehouse above)
         $command = new AllocateStockCommand(
-            ProductId::fromString($data->productId),
+            (string) $data->productId,
             WarehouseId::fromString($data->warehouseId),
             Quantity::fromInt($data->quantity),
             $data->referenceId, // order ID

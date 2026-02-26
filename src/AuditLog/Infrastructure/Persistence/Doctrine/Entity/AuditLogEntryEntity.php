@@ -89,7 +89,7 @@ class AuditLogEntryEntity
     #[Groups(['audit_log:read', 'audit_log:detail'])]
     private ?string $userAgent = null;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: 'datetimetz_immutable')]
     #[Groups(['audit_log:read'])]
     private \DateTimeImmutable $occurredAt;
 

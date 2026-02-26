@@ -32,7 +32,7 @@ class TenantEntity
         private string $ownerEmail,
         #[ORM\Column(type: 'string', length: 20)]
         private string $status,
-        #[ORM\Column(type: 'datetime_immutable')]
+        #[ORM\Column(type: 'datetimetz_immutable')]
         private \DateTimeImmutable $createdAt,
         #[ORM\Column(type: 'string', length: 2)]
         private string $defaultLocale = 'en',

@@ -97,11 +97,11 @@ class NotificationEntity
     #[Groups(['notification:read'])]
     private int $attemptCount = 0;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'sent_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'sent_at')]
     #[Groups(['notification:read'])]
     private ?\DateTimeImmutable $sentAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'failed_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'failed_at')]
     #[Groups(['notification:read'])]
     private ?\DateTimeImmutable $failedAt = null;
 
@@ -109,11 +109,11 @@ class NotificationEntity
     #[Groups(['notification:read'])]
     private ?string $failureReason = null;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     #[Groups(['notification:read'])]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'updated_at')]
     #[Groups(['notification:read'])]
     private \DateTimeImmutable $updatedAt;
 

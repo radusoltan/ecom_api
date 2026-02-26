@@ -135,7 +135,7 @@ class ProductEntity
     #[ORM\Column(type: 'string', length: 3, nullable: true, name: 'subscription_setup_fee_currency')]
     private ?string $subscriptionSetupFeeCurrency = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'subscription_trial_end')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'subscription_trial_end')]
     private ?\DateTimeImmutable $subscriptionTrialEnd = null;
 
     // Downloadable file fields (for virtual products)
@@ -151,13 +151,13 @@ class ProductEntity
     #[ORM\Column(type: 'integer', nullable: true, name: 'downloadable_limit')]
     private ?int $downloadableLimit = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'downloadable_expires_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'downloadable_expires_at')]
     private ?\DateTimeImmutable $downloadableExpiresAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
 
     #[Gedmo\Locale]

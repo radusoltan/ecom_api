@@ -54,7 +54,7 @@ class LoyaltyTierEntity
     #[ORM\Column(type: 'integer', nullable: false)]
     private int $sortOrder = 0;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false)]
     private \DateTimeImmutable $createdAt;
 
     public function __construct()

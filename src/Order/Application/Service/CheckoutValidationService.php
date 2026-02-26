@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\Order\Application\Service;
 
-use App\Catalog\Domain\Model\ProductId;
-use App\Catalog\Domain\Repository\ProductRepositoryInterface;
-use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
+use App\Order\Application\Port\ProductPriceLookupInterface;
+use App\Order\Application\Port\StockAvailabilityLookupInterface;
 use App\Order\Domain\Exception\CheckoutValidationException;
 use App\Shared\Domain\ValueObject\TenantId;
 
 final readonly class CheckoutValidationService
 {
     public function __construct(
-        private ProductRepositoryInterface $productRepository,
-        private StockItemRepositoryInterface $stockItemRepository,
+        private ProductPriceLookupInterface $productPriceLookup,
+        private StockAvailabilityLookupInterface $stockAvailabilityLookup,
     ) {
     }
 
@@ -37,13 +36,14 @@ final readonly class CheckoutValidationService
         $stockIssues = [];
 
         foreach ($lines as $line) {
-            $productId = ProductId::fromString($line['productId']);
-
             // --- Price freshness check ---
             if (isset($line['unitPriceAmount'], $line['unitPriceCurrency'])) {
-                $product = $this->productRepository->findById($productId);
+                $currentPrice = $this->productPriceLookup->findCurrentPrice(
+                    $line['productId'],
+                    $tenantId->toString()
+                );
 
-                if (null === $product) {
+                if (null === $currentPrice) {
                     // Product was deleted since it was added to cart
                     $priceChanges[] = [
                         'productId' => $line['productId'],
@@ -53,7 +53,6 @@ final readonly class CheckoutValidationService
                         'currency' => $line['unitPriceCurrency'],
                     ];
                 } else {
-                    $currentPrice = $product->price();
                     $currentAmount = $currentPrice->getAmount();
                     $currentCurrency = $currentPrice->getCurrency()->getCurrencyCode();
 
@@ -69,13 +68,11 @@ final readonly class CheckoutValidationService
                 }
             }
 
-            // --- Stock availability check ---
-            $stockItems = $this->stockItemRepository->findByProduct($productId, $tenantId);
-
-            $totalAvailable = 0;
-            foreach ($stockItems as $stockItem) {
-                $totalAvailable += $stockItem->calculateAvailable()->value();
-            }
+            // --- Stock availability check via ACL port ---
+            $totalAvailable = $this->stockAvailabilityLookup->getAvailableQuantity(
+                $line['productId'],
+                $tenantId->toString()
+            );
 
             if ($totalAvailable < $line['quantity']) {
                 $stockIssues[] = [

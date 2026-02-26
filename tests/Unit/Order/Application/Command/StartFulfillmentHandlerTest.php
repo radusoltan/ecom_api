@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Application\Command;
 
-use App\Catalog\Domain\Model\ProductId;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Inventory\Application\Command\AllocateStock\AllocateStockCommand;
 use App\Inventory\Domain\Model\Quantity;
 use App\Inventory\Domain\Model\WarehouseId;
@@ -59,8 +59,8 @@ final class StartFulfillmentHandlerTest extends TestCase
         $warehouseId = WarehouseId::generate();
         $fulfillmentId = FulfillmentId::generate();
 
-        $productId1 = ProductId::generate();
-        $productId2 = ProductId::generate();
+        $productId1 = OrderProductId::generate();
+        $productId2 = OrderProductId::generate();
 
         // Create order with 2 lines
         $order = $this->createOrder($orderId, $tenantId, [
@@ -100,9 +100,9 @@ final class StartFulfillmentHandlerTest extends TestCase
                     return false;
                 }
 
-                // Verify command fields
-                return ($command->productId->equals($productId1) && 3 === $command->quantity->value())
-                    || ($command->productId->equals($productId2) && 5 === $command->quantity->value())
+                // Verify command fields (productId is now a string)
+                return ($command->productId === $productId1->toString() && 3 === $command->quantity->value())
+                    || ($command->productId === $productId2->toString() && 5 === $command->quantity->value())
                     && $command->warehouseId->equals($warehouseId)
                     && $command->orderId === $orderId->toString()
                     && $command->tenantId->equals($tenantId);
@@ -176,7 +176,7 @@ final class StartFulfillmentHandlerTest extends TestCase
         $warehouseId = WarehouseId::generate();
 
         $order = $this->createOrder($orderId, $tenantId, [
-            ['productId' => ProductId::generate(), 'quantity' => 1],
+            ['productId' => OrderProductId::generate(), 'quantity' => 1],
         ]);
 
         $command = new StartFulfillment(
@@ -230,7 +230,7 @@ final class StartFulfillmentHandlerTest extends TestCase
         $tenantId = TenantId::generate();
         $warehouseId = WarehouseId::generate();
 
-        $productId = ProductId::generate();
+        $productId = OrderProductId::generate();
         $order = $this->createOrder($orderId, $tenantId, [
             ['productId' => $productId, 'quantity' => 10],
         ]);
@@ -290,7 +290,7 @@ final class StartFulfillmentHandlerTest extends TestCase
         $orderId = OrderId::generate();
         $tenantId = TenantId::generate();
         $warehouseId = WarehouseId::generate();
-        $productId = ProductId::generate();
+        $productId = OrderProductId::generate();
 
         $order = $this->createOrder($orderId, $tenantId, [
             ['productId' => $productId, 'quantity' => 2],
@@ -347,7 +347,7 @@ final class StartFulfillmentHandlerTest extends TestCase
         $orderId = OrderId::generate();
         $tenantId = TenantId::generate();
         $warehouseId = WarehouseId::generate();
-        $productId = ProductId::generate();
+        $productId = OrderProductId::generate();
 
         $order = $this->createOrder($orderId, $tenantId, [
             ['productId' => $productId, 'quantity' => 100],

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Order\Domain\Model;
 
-use App\Catalog\Domain\Model\ProductId;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Shared\Domain\ValueObject\Money;
 
 /**
@@ -20,7 +20,7 @@ use App\Shared\Domain\ValueObject\Money;
 final readonly class OrderLine
 {
     private function __construct(
-        private ProductId $productId,
+        private OrderProductId $productId,
         private string $productName,
         private int $quantity,
         private Money $unitPrice,
@@ -35,7 +35,7 @@ final readonly class OrderLine
     }
 
     public static function create(
-        ProductId $productId,
+        OrderProductId $productId,
         string $productName,
         int $quantity,
         Money $unitPrice,
@@ -43,7 +43,7 @@ final readonly class OrderLine
         return new self($productId, $productName, $quantity, $unitPrice);
     }
 
-    public function productId(): ProductId
+    public function productId(): OrderProductId
     {
         return $this->productId;
     }

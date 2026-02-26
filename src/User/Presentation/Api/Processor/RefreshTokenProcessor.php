@@ -63,6 +63,9 @@ final readonly class RefreshTokenProcessor implements ProcessorInterface
         // Get the user from the refresh token using blind index
         // (email column is encrypted with non-deterministic sodium encryption)
         $username = $refreshToken->getUsername();
+        if (null === $username) {
+            throw new UnauthorizedHttpException('Bearer', 'Refresh token has no associated user');
+        }
         $emailBlindIndex = $this->blindIndexService->generate($username);
         $userEntity = $this->entityManager
             ->getRepository(UserEntity::class)

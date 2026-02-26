@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Order\Infrastructure\Persistence\Doctrine\Entity;
 
-use App\Catalog\Domain\Model\ProductId;
 use App\Order\Domain\Model\Order;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderLine;
 use App\Order\Domain\Model\OrderStatus;
@@ -84,10 +84,10 @@ class OrderEntity
     #[ORM\Column(type: 'encrypted_string', nullable: true, name: 'vat_number')]
     private ?string $vatNumber = null;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
 
     public static function fromDomainModel(Order $order): self
@@ -217,7 +217,7 @@ class OrderEntity
     {
         $lines = array_map(
             fn (array $lineData) => OrderLine::create(
-                ProductId::fromString($lineData['productId']),
+                OrderProductId::fromString($lineData['productId']),
                 $lineData['productName'],
                 $lineData['quantity'],
                 Money::fromScalars($lineData['unitPriceAmount'], $lineData['unitPriceCurrency'])

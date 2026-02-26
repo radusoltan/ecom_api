@@ -93,16 +93,16 @@ class PromotionEntity
     #[ORM\Column(type: 'json', nullable: false, name: 'target_segments')]
     private array $targetSegments = [];
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'valid_from')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'valid_from')]
     private ?\DateTimeImmutable $validFrom = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'valid_to')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'valid_to')]
     private ?\DateTimeImmutable $validTo = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
 
     public static function fromDomainModel(Promotion $promotion): self

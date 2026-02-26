@@ -39,17 +39,18 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Index(columns: ['tenant_id', 'product_id', 'changed_at'], name: 'idx_price_history_tenant_product_date')]
 #[ORM\Index(columns: ['source'], name: 'idx_price_history_source')]
 #[ApiResource(
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     operations: [
         new Get(
-            uriTemplate: '/v1/price-history/{id}',
+            uriTemplate: '/price-history/{id}',
             provider: PriceHistoryProvider::class
         ),
         new GetCollection(
-            uriTemplate: '/v1/price-history',
+            uriTemplate: '/price-history',
             provider: PriceHistoryProvider::class
         ),
         new GetCollection(
-            uriTemplate: '/v1/products/{productId}/price-history',
+            uriTemplate: '/products/{productId}/price-history',
             uriVariables: ['productId'],
             provider: PriceHistoryProvider::class
         ),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Customer\Presentation\Api\Processor;
 
+use ApiPlatform\Metadata\HttpOperation;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Customer\Application\Command\SetDefaultAddress\SetDefaultAddressCommand;
@@ -52,7 +53,7 @@ final readonly class SetDefaultAddressProcessor implements ProcessorInterface
         }
 
         // Determine type: from URI for set-default-shipping/billing, from body for PATCH
-        $uriTemplate = $operation->getUriTemplate() ?? '';
+        $uriTemplate = $operation instanceof HttpOperation ? ($operation->getUriTemplate() ?? '') : '';
         if (str_ends_with($uriTemplate, '/set-default-shipping')) {
             $type = 'shipping';
         } elseif (str_ends_with($uriTemplate, '/set-default-billing')) {

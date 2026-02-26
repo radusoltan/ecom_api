@@ -66,19 +66,19 @@ class FlashSaleEntity
     #[ORM\Column(type: 'float', nullable: false, name: 'discount_value')]
     private float $discountValue;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'start_time')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'start_time')]
     private \DateTimeImmutable $startTime;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'end_time')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'end_time')]
     private \DateTimeImmutable $endTime;
 
     #[ORM\Column(type: 'string', length: 20, nullable: false)]
     private string $status;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
 
     public static function fromDomainModel(FlashSale $flashSale): self

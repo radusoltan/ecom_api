@@ -14,7 +14,7 @@ use App\Shared\Domain\ValueObject\TenantId;
 /**
  * Provider for notification collection (GET /api/v1/notifications).
  *
- * @implements ProviderInterface<NotificationEntity>
+ * @implements ProviderInterface<object>
  */
 final readonly class NotificationCollectionProvider implements ProviderInterface
 {

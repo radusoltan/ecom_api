@@ -84,7 +84,7 @@ class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read', 'user:create', 'user:update'])]
     private array $roles = [];
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: 'datetimetz_immutable')]
     #[Groups(['user:read'])]
     private \DateTimeImmutable $createdAt;
 
@@ -99,7 +99,7 @@ class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'encrypted_json', nullable: true)]
     private ?array $backupCodes = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true)]
     private ?\DateTimeImmutable $mfaEnabledAt = null;
 
     public function getId(): string

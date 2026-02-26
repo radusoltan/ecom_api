@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Domain\Model;
 
-use App\Catalog\Domain\Model\ProductId;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Order\Domain\Event\OrderCancelled;
 use App\Order\Domain\Event\OrderDelivered;
 use App\Order\Domain\Event\OrderPlaced;
@@ -354,7 +354,7 @@ final class OrderTest extends TestCase
     {
         // Arrange
         $line = OrderLine::create(
-            ProductId::generate(),
+            OrderProductId::generate(),
             'Test Product',
             2,
             Money::fromScalars(1000, 'USD') // $10.00
@@ -373,13 +373,13 @@ final class OrderTest extends TestCase
     {
         // Arrange
         $line1 = OrderLine::create(
-            ProductId::generate(),
+            OrderProductId::generate(),
             'Product 1',
             2,
             Money::fromScalars(1000, 'USD') // $10.00
         );
         $line2 = OrderLine::create(
-            ProductId::generate(),
+            OrderProductId::generate(),
             'Product 2',
             1,
             Money::fromScalars(1500, 'USD') // $15.00
@@ -618,7 +618,7 @@ final class OrderTest extends TestCase
     private function createSampleOrderLine(): OrderLine
     {
         return OrderLine::create(
-            ProductId::generate(),
+            OrderProductId::generate(),
             'Sample Product',
             2,
             Money::fromScalars(1000, 'USD') // $10.00

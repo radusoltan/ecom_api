@@ -37,10 +37,10 @@ class BundleItemEntity
     #[ORM\Column(type: 'string', length: 3, name: 'price_currency')]
     private string $priceCurrency;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
 
     public function __construct()

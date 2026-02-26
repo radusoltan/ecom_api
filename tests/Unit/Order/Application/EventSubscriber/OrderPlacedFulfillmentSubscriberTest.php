@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Order\Application\EventSubscriber;
 
 use App\Catalog\Domain\Model\ProductId;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Inventory\Domain\Repository\WarehouseRepositoryInterface;
@@ -538,7 +539,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
             customerEmail: 'test@example.com',
             lines: [
                 OrderLine::create(
-                    productId: ProductId::generate(),
+                    productId: OrderProductId::generate(),
                     productName: 'Test Product',
                     quantity: 2,
                     unitPrice: Money::fromScalars(2500, 'USD')
@@ -565,7 +566,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
         $lines = [];
         for ($i = 0; $i < $lineCount; ++$i) {
             $lines[] = OrderLine::create(
-                productId: ProductId::generate(),
+                productId: OrderProductId::generate(),
                 productName: sprintf('Test Product %d', $i + 1),
                 quantity: $i + 1,
                 unitPrice: Money::fromScalars(1000 * ($i + 1), 'USD')

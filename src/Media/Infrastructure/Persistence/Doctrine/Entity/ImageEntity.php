@@ -48,10 +48,10 @@ class ImageEntity
     #[ORM\Column(type: 'string', length: 255, nullable: true, name: 'alt_text')]
     private ?string $altText = null;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'uploaded_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'uploaded_at')]
     private \DateTimeImmutable $uploadedAt;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'deleted_at', nullable: true)]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'deleted_at', nullable: true)]
     private ?\DateTimeImmutable $deletedAt = null;
 
     /**

@@ -78,7 +78,7 @@ class OptionEntity
     #[MaxDepth(1)]
     private Collection $values;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
     public function __construct()

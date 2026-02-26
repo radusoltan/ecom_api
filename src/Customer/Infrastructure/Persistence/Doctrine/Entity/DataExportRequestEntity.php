@@ -46,13 +46,13 @@ class DataExportRequestEntity
     #[ORM\Column(type: 'string', length: 100, nullable: true, name: 'download_token')]
     private ?string $downloadToken = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'expires_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'expires_at')]
     private ?\DateTimeImmutable $expiresAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'completed_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'completed_at')]
     private ?\DateTimeImmutable $completedAt = null;
 
     #[ORM\Column(type: 'text', nullable: true, name: 'error_message')]

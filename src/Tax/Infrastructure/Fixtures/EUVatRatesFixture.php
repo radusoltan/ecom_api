@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace App\Tax\Infrastructure\Fixtures;
 
 use App\Shared\Domain\ValueObject\TenantId;
-use App\Tax\Application\Command\CreateTaxRule;
-use App\Tax\Domain\Model\TaxRuleId;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * EU VAT Rates Fixture.
@@ -74,7 +71,6 @@ final class EUVatRatesFixture extends Fixture implements FixtureGroupInterface
     ];
 
     public function __construct(
-        private readonly MessageBusInterface $commandBus,
         private readonly Connection $connection,
     ) {
     }

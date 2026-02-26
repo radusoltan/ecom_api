@@ -59,10 +59,10 @@ final class TaxRuleEntity
     #[ORM\Column(type: 'boolean', name: 'is_active')]
     private bool $isActive = true;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'valid_from')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'valid_from')]
     private ?\DateTimeImmutable $validFrom = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'valid_until')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'valid_until')]
     private ?\DateTimeImmutable $validUntil = null;
 
     #[ORM\Column(type: 'integer')]
@@ -71,10 +71,10 @@ final class TaxRuleEntity
     #[ORM\Column(type: 'boolean', name: 'is_reverse_charge')]
     private bool $isReverseCharge = false;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
 
     /**

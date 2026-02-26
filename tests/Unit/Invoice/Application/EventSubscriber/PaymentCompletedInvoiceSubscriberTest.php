@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Invoice\Application\EventSubscriber;
 
-use App\Catalog\Domain\Model\ProductId;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Invoice\Application\Command\GenerateInvoice\GenerateInvoiceCommand;
 use App\Invoice\Application\Command\IssueInvoice\IssueInvoiceCommand;
 use App\Invoice\Application\EventSubscriber\PaymentCompletedInvoiceSubscriber;
@@ -157,7 +157,7 @@ final class PaymentCompletedInvoiceSubscriberTest extends TestCase
 
         $lines = [
             OrderLine::create(
-                ProductId::generate(),
+                OrderProductId::generate(),
                 'Widget Pro',
                 2,
                 Money::fromScalars(5000, 'EUR')
@@ -192,7 +192,7 @@ final class PaymentCompletedInvoiceSubscriberTest extends TestCase
 
         $lines = [
             OrderLine::create(
-                ProductId::generate(),
+                OrderProductId::generate(),
                 'Widget Basic',
                 1,
                 Money::fromScalars(2000, 'USD')

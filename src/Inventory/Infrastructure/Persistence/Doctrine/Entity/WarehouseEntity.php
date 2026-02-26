@@ -44,10 +44,10 @@ class WarehouseEntity
     #[ORM\Column(type: 'boolean')]
     private bool $isActive;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: 'datetimetz_immutable')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: 'datetimetz_immutable')]
     private \DateTimeImmutable $updatedAt;
 
     public function __construct(

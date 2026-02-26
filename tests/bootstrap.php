@@ -32,6 +32,8 @@ DG\BypassFinals::setWhitelist([
     '*/src/Invoice/Domain/Model/*',
     '*/src/Invoice/Domain/Service/*',
     '*/src/Invoice/Infrastructure/NumberGenerator/*',
+    '*/src/Monitoring/Infrastructure/Service/*',
+    '*/src/Catalog/Infrastructure/Elasticsearch/*',
 ]);
 
 if (method_exists(Dotenv::class, 'bootEnv')) {

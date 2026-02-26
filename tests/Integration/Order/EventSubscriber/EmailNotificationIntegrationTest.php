@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Order\EventSubscriber;
 
-use App\Catalog\Domain\Model\ProductId;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Customer\Application\Service\NotificationPreferenceService;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Order\Application\EventSubscriber\FulfillmentShippedSubscriber;
@@ -300,7 +300,7 @@ final class EmailNotificationIntegrationTest extends KernelTestCase
             $email,
             [
                 OrderLine::create(
-                    ProductId::generate(), // Generate valid ULID
+                    OrderProductId::generate(), // Generate valid ULID
                     'Test Product',
                     2,
                     Money::fromScalars(2500, 'USD')

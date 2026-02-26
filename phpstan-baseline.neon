@@ -1329,7 +1329,7 @@ parameters:
 		-
 			message: '#^Parameter \$responses of class ApiPlatform\\OpenApi\\Model\\Operation constructor expects array\<ApiPlatform\\OpenApi\\Model\\Response\>\|null, array\<int, array\<string, string\>\> given\.$#'
 			identifier: argument.type
-			count: 5
+			count: 7
 			path: src/Customer/Presentation/Api/Resource/CustomerAddressResource.php
 
 		-

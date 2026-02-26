@@ -87,34 +87,34 @@ class FulfillmentEntity
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $carrier = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'assigned_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'assigned_at')]
     private ?\DateTimeImmutable $assignedAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'picking_started_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'picking_started_at')]
     private ?\DateTimeImmutable $pickingStartedAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'packing_started_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'packing_started_at')]
     private ?\DateTimeImmutable $packingStartedAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'shipped_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'shipped_at')]
     private ?\DateTimeImmutable $shippedAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'delivered_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'delivered_at')]
     private ?\DateTimeImmutable $deliveredAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'cancelled_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'cancelled_at')]
     private ?\DateTimeImmutable $cancelledAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'failed_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'failed_at')]
     private ?\DateTimeImmutable $failedAt = null;
 
     #[ORM\Column(type: 'text', nullable: true, name: 'failure_reason')]
     private ?string $failureReason = null;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
 
     public static function fromDomainModel(Fulfillment $fulfillment): self

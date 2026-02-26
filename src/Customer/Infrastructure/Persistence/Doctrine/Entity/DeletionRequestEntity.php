@@ -38,16 +38,16 @@ class DeletionRequestEntity
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $holdReason = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false)]
     private \DateTimeImmutable $scheduledFor;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true)]
     private ?\DateTimeImmutable $confirmedAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true)]
     private ?\DateTimeImmutable $completedAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false)]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'string', length: 36, nullable: true, name: 'privacy_request_id')]

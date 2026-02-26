@@ -50,7 +50,7 @@ class ConsentHistoryEntity
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $userAgent = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false)]
     private \DateTimeImmutable $createdAt;
 
     /**

@@ -63,7 +63,7 @@ class TransactionEntity
     #[ORM\Column(type: 'text', nullable: true, name: 'error_message')]
     private ?string $errorMessage = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: false, name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
     public static function fromDomainModel(Transaction $transaction): self

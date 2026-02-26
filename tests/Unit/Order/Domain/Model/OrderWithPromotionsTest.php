@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Domain\Model;
 
-use App\Catalog\Domain\Model\ProductId;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Order\Domain\Model\Order;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderLine;
@@ -28,7 +28,7 @@ final class OrderWithPromotionsTest extends TestCase
 
         $this->lines = [
             OrderLine::create(
-                ProductId::generate(),
+                OrderProductId::generate(),
                 'Product 1',
                 2,
                 Money::fromScalars(5000, 'USD') // $50.00
@@ -200,8 +200,8 @@ final class OrderWithPromotionsTest extends TestCase
     public function testSubtotalAndTotalCalculation(): void
     {
         $lines = [
-            OrderLine::create(ProductId::generate(), 'Product 1', 2, Money::fromScalars(5000, 'USD')),
-            OrderLine::create(ProductId::generate(), 'Product 2', 1, Money::fromScalars(3000, 'USD')),
+            OrderLine::create(OrderProductId::generate(), 'Product 1', 2, Money::fromScalars(5000, 'USD')),
+            OrderLine::create(OrderProductId::generate(), 'Product 2', 1, Money::fromScalars(3000, 'USD')),
         ];
 
         $discount = Money::fromScalars(2600, 'USD'); // 20% discount on $13,000 = $2,600

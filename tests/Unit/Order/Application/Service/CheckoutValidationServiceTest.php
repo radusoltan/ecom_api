@@ -4,14 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Application\Service;
 
-use App\Catalog\Domain\Model\Product;
-use App\Catalog\Domain\Model\ProductId;
-use App\Catalog\Domain\Repository\ProductRepositoryInterface;
-use App\Inventory\Domain\Model\Quantity;
-use App\Inventory\Domain\Model\StockItem;
-use App\Inventory\Domain\Model\StockItemId;
-use App\Inventory\Domain\Model\WarehouseId;
-use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
+use App\Order\Application\Port\ProductPriceLookupInterface;
+use App\Order\Application\Port\StockAvailabilityLookupInterface;
 use App\Order\Application\Service\CheckoutValidationService;
 use App\Order\Domain\Exception\CheckoutValidationException;
 use App\Shared\Domain\ValueObject\Money;
@@ -23,8 +17,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(CheckoutValidationService::class)]
 final class CheckoutValidationServiceTest extends TestCase
 {
-    private ProductRepositoryInterface $productRepository;
-    private StockItemRepositoryInterface $stockItemRepository;
+    private ProductPriceLookupInterface $productPriceLookup;
+    private StockAvailabilityLookupInterface $stockAvailabilityLookup;
     private CheckoutValidationService $service;
     private TenantId $tenantId;
 
@@ -34,13 +28,13 @@ final class CheckoutValidationServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
-        $this->stockItemRepository = $this->createMock(StockItemRepositoryInterface::class);
+        $this->productPriceLookup = $this->createMock(ProductPriceLookupInterface::class);
+        $this->stockAvailabilityLookup = $this->createMock(StockAvailabilityLookupInterface::class);
         $this->tenantId = TenantId::fromString(self::TENANT_ID);
 
         $this->service = new CheckoutValidationService(
-            $this->productRepository,
-            $this->stockItemRepository,
+            $this->productPriceLookup,
+            $this->stockAvailabilityLookup,
         );
     }
 
@@ -227,21 +221,16 @@ final class CheckoutValidationServiceTest extends TestCase
      */
     private function stubProductPrices(array $products): void
     {
-        $this->productRepository
-            ->method('findById')
-            ->willReturnCallback(function (ProductId $id) use ($products): ?Product {
-                $priceData = $products[$id->toString()] ?? null;
+        $this->productPriceLookup
+            ->method('findCurrentPrice')
+            ->willReturnCallback(function (string $productId) use ($products): ?Money {
+                $priceData = $products[$productId] ?? null;
 
                 if (null === $priceData) {
                     return null;
                 }
 
-                $product = $this->createMock(Product::class);
-                $product->method('price')->willReturn(
-                    Money::fromScalars($priceData['amount'], $priceData['currency']),
-                );
-
-                return $product;
+                return Money::fromScalars($priceData['amount'], $priceData['currency']);
             });
     }
 
@@ -250,26 +239,10 @@ final class CheckoutValidationServiceTest extends TestCase
      */
     private function stubStockLevels(array $stockLevels): void
     {
-        $tenantId = $this->tenantId;
-
-        $this->stockItemRepository
-            ->method('findByProduct')
-            ->willReturnCallback(function (ProductId $productId, TenantId $tid) use ($stockLevels, $tenantId): array {
-                $available = $stockLevels[$productId->toString()] ?? 0;
-
-                if (0 === $available) {
-                    return [];
-                }
-
-                return [
-                    StockItem::create(
-                        StockItemId::generate(),
-                        $tenantId,
-                        $productId,
-                        WarehouseId::generate(),
-                        Quantity::fromInt($available),
-                    ),
-                ];
+        $this->stockAvailabilityLookup
+            ->method('getAvailableQuantity')
+            ->willReturnCallback(function (string $productId) use ($stockLevels): int {
+                return $stockLevels[$productId] ?? 0;
             });
     }
 }

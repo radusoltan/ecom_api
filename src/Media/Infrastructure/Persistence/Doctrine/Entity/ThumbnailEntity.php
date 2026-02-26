@@ -44,7 +44,7 @@ class ThumbnailEntity
     /** @var array<string, mixed> */
     private array $crop;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
     public static function fromDomain(DomainThumbnail $thumbnail, ImageEntity $image, TenantId $tenantId): self

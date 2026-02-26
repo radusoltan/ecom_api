@@ -71,7 +71,7 @@ final readonly class StartFulfillmentHandler
         foreach ($order->lines() as $orderLine) {
             try {
                 $this->commandBus->dispatch(new AllocateStockCommand(
-                    productId: $orderLine->productId(),
+                    productId: $orderLine->productId()->toString(),
                     warehouseId: $command->warehouseId,
                     quantity: Quantity::fromInt($orderLine->quantity()),
                     orderId: $command->orderId->toString(),

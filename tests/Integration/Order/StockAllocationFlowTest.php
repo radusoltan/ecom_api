@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Order;
 
 use App\Catalog\Application\Command\CreateProduct;
-use App\Catalog\Domain\Model\ProductId;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Catalog\Domain\Model\ProductName;
 use App\Catalog\Domain\Model\SKU;
 use App\Inventory\Application\Command\CreateStockItem\CreateStockItemCommand;
@@ -80,7 +80,7 @@ final class StockAllocationFlowTest extends KernelTestCase
     {
         // Arrange: Create warehouse with stock
         $warehouseId = WarehouseId::generate();
-        $productId = ProductId::generate();
+        $productId = OrderProductId::generate();
         $initialStock = 100;
 
         $this->createProduct($productId, 'Test Product', 2000);
@@ -171,7 +171,7 @@ final class StockAllocationFlowTest extends KernelTestCase
     {
         // Arrange: Create warehouse with limited stock
         $warehouseId = WarehouseId::generate();
-        $productId = ProductId::generate();
+        $productId = OrderProductId::generate();
         $initialStock = 20;
 
         $this->createProduct($productId, 'Test Product', 5000);
@@ -244,9 +244,9 @@ final class StockAllocationFlowTest extends KernelTestCase
     {
         // Arrange: Create warehouse with stock for multiple products
         $warehouseId = WarehouseId::generate();
-        $productId1 = ProductId::generate();
-        $productId2 = ProductId::generate();
-        $productId3 = ProductId::generate();
+        $productId1 = OrderProductId::generate();
+        $productId2 = OrderProductId::generate();
+        $productId3 = OrderProductId::generate();
 
         $this->createProduct($productId1, 'Product 1', 1000);
         $this->createProduct($productId2, 'Product 2', 2000);

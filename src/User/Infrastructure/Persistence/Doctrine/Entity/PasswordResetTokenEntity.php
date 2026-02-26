@@ -29,13 +29,13 @@ class PasswordResetTokenEntity
     #[ORM\Column(type: 'string', length: 64, unique: true)]
     private string $token;
 
-    #[ORM\Column(name: 'expires_at', type: 'datetime_immutable')]
+    #[ORM\Column(name: 'expires_at', type: 'datetimetz_immutable')]
     private \DateTimeImmutable $expiresAt;
 
-    #[ORM\Column(name: 'used_at', type: 'datetime_immutable', nullable: true)]
+    #[ORM\Column(name: 'used_at', type: 'datetimetz_immutable', nullable: true)]
     private ?\DateTimeImmutable $usedAt = null;
 
-    #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
+    #[ORM\Column(name: 'created_at', type: 'datetimetz_immutable')]
     private \DateTimeImmutable $createdAt;
 
     public function __construct(

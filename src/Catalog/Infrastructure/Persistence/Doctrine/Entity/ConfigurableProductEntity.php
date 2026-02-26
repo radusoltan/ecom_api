@@ -48,10 +48,10 @@ class ConfigurableProductEntity
     #[MaxDepth(2)] // Limit recursion depth to prevent circular references (ConfigurableProduct -> Variants -> ConfigurableProduct)
     private Collection $variants;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
 
     public function __construct()

@@ -56,7 +56,7 @@ class OptionValueEntity
     #[Groups(['option:read'])]
     private int $position = 0;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
     public function __construct()
