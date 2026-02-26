@@ -1,0 +1,14 @@
+apiVersion: 1
+
+providers:
+  - name: E-Commerce
+    orgId: 1
+    folder: E-Commerce
+    folderUid: ecommerce
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/www/ecom_api/config/grafana/dashboards
+      foldersFromFilesStructure: false
