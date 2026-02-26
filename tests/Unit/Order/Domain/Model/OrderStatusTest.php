@@ -13,6 +13,13 @@ final class OrderStatusTest extends TestCase
     // Test Status Creation via Named Constructors
     // =============================================
 
+    public function testItCreatesDraftStatus(): void
+    {
+        $status = OrderStatus::draft();
+        $this->assertTrue($status->isDraft());
+        $this->assertSame('draft', $status->value());
+    }
+
     public function testItCreatesPendingStatus(): void
     {
         $status = OrderStatus::pending();
@@ -77,9 +84,20 @@ final class OrderStatusTest extends TestCase
     // Test State Checkers
     // =============================================
 
+    public function testIsDraftReturnsTrueOnlyForDraftStatus(): void
+    {
+        $this->assertTrue(OrderStatus::draft()->isDraft());
+        $this->assertFalse(OrderStatus::pending()->isDraft());
+        $this->assertFalse(OrderStatus::processing()->isDraft());
+        $this->assertFalse(OrderStatus::shipped()->isDraft());
+        $this->assertFalse(OrderStatus::delivered()->isDraft());
+        $this->assertFalse(OrderStatus::cancelled()->isDraft());
+    }
+
     public function testIsPendingReturnsTrueOnlyForPendingStatus(): void
     {
         $this->assertTrue(OrderStatus::pending()->isPending());
+        $this->assertFalse(OrderStatus::draft()->isPending());
         $this->assertFalse(OrderStatus::processing()->isPending());
         $this->assertFalse(OrderStatus::shipped()->isPending());
         $this->assertFalse(OrderStatus::delivered()->isPending());
@@ -124,6 +142,7 @@ final class OrderStatusTest extends TestCase
 
     public function testIsFinalReturnsTrueForDeliveredAndCancelled(): void
     {
+        $this->assertFalse(OrderStatus::draft()->isFinal());
         $this->assertFalse(OrderStatus::pending()->isFinal());
         $this->assertFalse(OrderStatus::processing()->isFinal());
         $this->assertFalse(OrderStatus::shipped()->isFinal());
@@ -134,6 +153,17 @@ final class OrderStatusTest extends TestCase
     // =============================================
     // Test Valid Transitions
     // =============================================
+
+    public function testDraftCanTransitionToPendingOrCancelled(): void
+    {
+        $draft = OrderStatus::draft();
+        $this->assertTrue($draft->canTransitionTo(OrderStatus::pending()));
+        $this->assertTrue($draft->canTransitionTo(OrderStatus::cancelled()));
+        $this->assertFalse($draft->canTransitionTo(OrderStatus::processing()));
+        $this->assertFalse($draft->canTransitionTo(OrderStatus::shipped()));
+        $this->assertFalse($draft->canTransitionTo(OrderStatus::delivered()));
+        $this->assertFalse($draft->canTransitionTo(OrderStatus::paid()));
+    }
 
     public function testPendingCanTransitionToProcessingOrCancelled(): void
     {
@@ -202,8 +232,16 @@ final class OrderStatusTest extends TestCase
     // Test String Representation
     // =============================================
 
+    public function testDraftCanBeCreatedFromString(): void
+    {
+        $status = OrderStatus::fromString('draft');
+        $this->assertTrue($status->isDraft());
+        $this->assertSame('draft', $status->value());
+    }
+
     public function testToStringReturnsStatusValue(): void
     {
+        $this->assertSame('draft', (string) OrderStatus::draft());
         $this->assertSame('pending', (string) OrderStatus::pending());
         $this->assertSame('processing', (string) OrderStatus::processing());
         $this->assertSame('shipped', (string) OrderStatus::shipped());

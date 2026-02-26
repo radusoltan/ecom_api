@@ -8,12 +8,13 @@ namespace App\Order\Domain\Model;
  * Order Status Value Object.
  *
  * Business Rules:
- * - Valid transitions: pending → processing → shipped → delivered
- * - Can cancel from: pending, processing
+ * - Valid transitions: draft → pending → processing → shipped → delivered
+ * - Can cancel from: draft, pending, processing
  * - Cannot modify after: shipped, delivered, cancelled
  */
 final readonly class OrderStatus
 {
+    public const DRAFT = 'draft';
     public const PENDING = 'pending';
     public const PAID = 'paid';
     public const PROCESSING = 'processing';
@@ -22,6 +23,7 @@ final readonly class OrderStatus
     public const CANCELLED = 'cancelled';
 
     private const VALID_STATUSES = [
+        self::DRAFT,
         self::PENDING,
         self::PAID,
         self::PROCESSING,
@@ -31,6 +33,7 @@ final readonly class OrderStatus
     ];
 
     private const VALID_TRANSITIONS = [
+        self::DRAFT => [self::PENDING, self::CANCELLED],
         self::PENDING => [self::PAID, self::PROCESSING, self::CANCELLED],
         self::PAID => [self::PROCESSING, self::CANCELLED],
         self::PROCESSING => [self::PAID, self::SHIPPED, self::CANCELLED],
@@ -49,6 +52,11 @@ final readonly class OrderStatus
     public static function fromString(string $value): self
     {
         return new self($value);
+    }
+
+    public static function draft(): self
+    {
+        return new self(self::DRAFT);
     }
 
     public static function pending(): self
@@ -89,6 +97,11 @@ final readonly class OrderStatus
     public function equals(OrderStatus $other): bool
     {
         return $this->value === $other->value;
+    }
+
+    public function isDraft(): bool
+    {
+        return self::DRAFT === $this->value;
     }
 
     public function isPending(): bool

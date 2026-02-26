@@ -117,6 +117,44 @@ final class Order extends AggregateRoot
         return $order;
     }
 
+
+    public static function createDraft(
+        OrderId $id,
+        TenantId $tenantId,
+        string $customerEmail,
+        array $lines,
+        Address $shippingAddress,
+        Address $billingAddress,
+    ): self {
+        if (empty($lines)) {
+            throw new \InvalidArgumentException('Order must have at least one line item');
+        }
+
+        foreach ($lines as $line) {
+            if (!$line instanceof OrderLine) {
+                throw new \InvalidArgumentException('All order lines must be instances of OrderLine');
+            }
+        }
+
+        if (false === filter_var($customerEmail, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException(sprintf('Invalid customer email: "%s"', $customerEmail));
+        }
+
+        $order = new self();
+        $order->id = $id;
+        $order->tenantId = $tenantId;
+        $order->customerEmail = $customerEmail;
+        $order->status = OrderStatus::draft();
+        $order->lines = $lines;
+        $order->shippingAddress = $shippingAddress;
+        $order->billingAddress = $billingAddress;
+        $order->appliedPromotions = [];
+        $order->createdAt = new \DateTimeImmutable();
+        $order->updatedAt = new \DateTimeImmutable();
+
+        return $order;
+    }
+
     public static function reconstituteFromPersistence(
         OrderId $id,
         TenantId $tenantId,
@@ -158,6 +196,11 @@ final class Order extends AggregateRoot
         $order->updatedAt = $updatedAt;
 
         return $order;
+    }
+
+    public function submitDraft(): void
+    {
+        $this->changeStatus(OrderStatus::pending());
     }
 
     public function markAsPaid(): void
