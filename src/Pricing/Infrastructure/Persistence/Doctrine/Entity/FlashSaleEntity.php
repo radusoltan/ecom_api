@@ -35,14 +35,14 @@ use Doctrine\ORM\Mapping as ORM;
     shortName: 'FlashSale',
     security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     operations: [
-        new Get(provider: FlashSaleItemProvider::class),
-        new GetCollection(provider: FlashSaleCollectionProvider::class),
-        new Post(processor: CreateFlashSaleProcessor::class),
+        new Get(uriTemplate: '/flash-sales/{id}', provider: FlashSaleItemProvider::class),
+        new GetCollection(uriTemplate: '/flash-sales', provider: FlashSaleCollectionProvider::class),
+        new Post(uriTemplate: '/flash-sales', processor: CreateFlashSaleProcessor::class),
         new Patch(
             uriTemplate: '/flash-sales/{id}/cancel',
             processor: CancelFlashSaleProcessor::class
         ),
-        new Delete(),
+        new Delete(uriTemplate: '/flash-sales/{id}'),
     ]
 )]
 class FlashSaleEntity

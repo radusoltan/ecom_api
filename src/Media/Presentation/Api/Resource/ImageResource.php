@@ -25,14 +25,17 @@ use Symfony\Component\Validator\Constraints as Assert;
     shortName: 'MediaImage',
     operations: [
         new Get(
+            uriTemplate: '/media-images/{id}',
             provider: ImageItemProvider::class,
             normalizationContext: ['groups' => ['media:image:read']]
         ),
         new GetCollection(
+            uriTemplate: '/media-images',
             provider: ImageCollectionProvider::class,
             normalizationContext: ['groups' => ['media:image:read']]
         ),
         new Post(
+            uriTemplate: '/media-images',
             processor: ImageUploadProcessor::class,
             inputFormats: ['multipart' => ['multipart/form-data']],
             denormalizationContext: ['groups' => ['media:image:write']],
@@ -73,7 +76,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             )
         ),
         new Patch(
-            uriTemplate: '/media_images/{id}/regenerate-thumbnails',
+            uriTemplate: '/media-images/{id}/regenerate-thumbnails',
             processor: RegenerateThumbnailsProcessor::class,
             input: ThumbnailRegenerationRequest::class,
             read: false,
@@ -113,6 +116,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             )
         ),
         new Patch(
+            uriTemplate: '/media-images/{id}',
             processor: UpdateImageMetadataProcessor::class,
             denormalizationContext: ['groups' => ['media:image:write']],
             normalizationContext: ['groups' => ['media:image:read']],
@@ -121,6 +125,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             )
         ),
         new Delete(
+            uriTemplate: '/media-images/{id}',
             processor: ImageDeleteProcessor::class
         ),
     ]

@@ -118,6 +118,9 @@ final class Order extends AggregateRoot
     }
 
 
+    /**
+     * @param OrderLine[] $lines
+     */
     public static function createDraft(
         OrderId $id,
         TenantId $tenantId,

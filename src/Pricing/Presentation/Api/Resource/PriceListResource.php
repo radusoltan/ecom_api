@@ -20,21 +20,24 @@ use App\Pricing\Presentation\Api\Provider\PriceListItemProvider;
     security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
     operations: [
         new GetCollection(
+            uriTemplate: '/price-lists',
             provider: PriceListCollectionProvider::class
         ),
         new Get(
+            uriTemplate: '/price-lists/{id}',
             provider: PriceListItemProvider::class
         ),
         new Post(
+            uriTemplate: '/price-lists',
             processor: CreatePriceListProcessor::class
         ),
         new Patch(
-            uriTemplate: '/price_lists/{id}/activate',
+            uriTemplate: '/price-lists/{id}/activate',
             provider: PriceListItemProvider::class,
             processor: ActivatePriceListProcessor::class
         ),
         new Patch(
-            uriTemplate: '/price_lists/{id}/deactivate',
+            uriTemplate: '/price-lists/{id}/deactivate',
             provider: PriceListItemProvider::class,
             processor: DeactivatePriceListProcessor::class
         ),

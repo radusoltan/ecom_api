@@ -29,12 +29,15 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Index(columns: ['resource_id'], name: 'idx_audit_log_resource_id')]
 #[ORM\Index(columns: ['occurred_at'], name: 'idx_audit_log_occurred_at')]
 #[ApiResource(
+    shortName: 'AuditLog',
     operations: [
         new GetCollection(
+            uriTemplate: '/audit-logs',
             normalizationContext: ['groups' => ['audit_log:read', 'audit_log:list']],
             security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_VIEWER')"
         ),
         new Get(
+            uriTemplate: '/audit-logs/{id}',
             normalizationContext: ['groups' => ['audit_log:read', 'audit_log:detail']],
             security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_VIEWER')"
         ),

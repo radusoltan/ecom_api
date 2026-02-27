@@ -11,6 +11,7 @@ use App\Order\Application\DTO\OrderDTO;
 use App\Order\Domain\Model\Order;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Service\FraudCheckService;
+use App\Order\Infrastructure\Security\GuestOrderTokenService;
 use App\Order\Presentation\Api\Resource\OrderResource;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -23,6 +24,7 @@ final readonly class PlaceOrderProcessor implements ProcessorInterface
     public function __construct(
         private MessageBusInterface $commandBus,
         private FraudCheckService $fraudCheckService,
+        private GuestOrderTokenService $guestOrderTokenService,
         private RequestStack $requestStack,
         private LoggerInterface $logger,
     ) {
@@ -120,6 +122,7 @@ final readonly class PlaceOrderProcessor implements ProcessorInterface
         $resource->couponCode = $orderDTO->couponCode ?? null;
         $resource->createdAt = $orderDTO->createdAt;
         $resource->updatedAt = $orderDTO->updatedAt;
+        $resource->guestToken = $this->guestOrderTokenService->generateToken($orderId);
 
         return $resource;
     }

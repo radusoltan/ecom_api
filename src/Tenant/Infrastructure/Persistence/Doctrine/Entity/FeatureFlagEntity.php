@@ -28,16 +28,17 @@ class FeatureFlagEntity
     #[ORM\Column(type: 'boolean')]
     private bool $enabled = false;
 
+    /** @var array<string, mixed> */
     #[ORM\Column(type: 'json')]
     private array $configuration = [];
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'updated_at')]
     private ?\DateTimeImmutable $updatedAt = null;
 
     public static function fromDomainModel(FeatureFlag $flag): self

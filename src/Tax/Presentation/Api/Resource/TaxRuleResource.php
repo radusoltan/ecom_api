@@ -26,24 +26,24 @@ use App\Tax\Presentation\Api\Provider\TaxRuleItemProvider;
     security: "is_granted('ROLE_ADMIN')",
     operations: [
         new Get(
-            uriTemplate: '/tax_rules/{id}',
+            uriTemplate: '/tax-rules/{id}',
             provider: TaxRuleItemProvider::class
         ),
         new GetCollection(
-            uriTemplate: '/tax_rules',
+            uriTemplate: '/tax-rules',
             provider: TaxRuleCollectionProvider::class
         ),
         new Post(
-            uriTemplate: '/tax_rules',
+            uriTemplate: '/tax-rules',
             processor: CreateTaxRuleProcessor::class
         ),
         new Patch(
-            uriTemplate: '/tax_rules/{id}',
+            uriTemplate: '/tax-rules/{id}',
             provider: TaxRuleItemProvider::class,
             processor: UpdateTaxRuleProcessor::class
         ),
         new Patch(
-            uriTemplate: '/tax_rules/{id}/deactivate',
+            uriTemplate: '/tax-rules/{id}/deactivate',
             processor: DeactivateTaxRuleProcessor::class,
             read: false
         ),

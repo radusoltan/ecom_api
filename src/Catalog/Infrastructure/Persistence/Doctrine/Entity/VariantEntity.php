@@ -29,23 +29,29 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
 #[ORM\Index(name: 'idx_product_variants_product', columns: ['configurable_product_id'])]
 #[ORM\Index(name: 'idx_product_variants_product_active', columns: ['configurable_product_id', 'is_active'])]
 #[ApiResource(
+    shortName: 'Variant',
     operations: [
         new GetCollection(
+            uriTemplate: '/variants',
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantCollectionProvider::class
         ),
         new Post(
+            uriTemplate: '/variants',
             processor: \App\Catalog\Infrastructure\ApiPlatform\State\CreateVariantProcessor::class,
             security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')"
         ),
         new Get(
+            uriTemplate: '/variants/{id}',
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantItemProvider::class
         ),
         new Patch(
+            uriTemplate: '/variants/{id}',
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantItemProvider::class,
             processor: \App\Catalog\Infrastructure\ApiPlatform\State\UpdateVariantProcessor::class,
             security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')"
         ),
         new Delete(
+            uriTemplate: '/variants/{id}',
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\VariantItemProvider::class,
             processor: \App\Catalog\Infrastructure\ApiPlatform\State\DeleteVariantProcessor::class,
             security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')"

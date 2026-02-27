@@ -40,21 +40,27 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[ORM\Index(name: 'idx_products_created_at', columns: ['created_at'])]
 #[ORM\Index(name: 'idx_products_price_amount', columns: ['price_amount'])]
 #[ApiResource(
+    shortName: 'Product',
     operations: [
         new GetCollection(
+            uriTemplate: '/products',
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\ProductCollectionProvider::class
         ),
         new Post(
+            uriTemplate: '/products',
             processor: \App\Catalog\Infrastructure\ApiPlatform\State\CreateProductProcessor::class,
             security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')"
         ),
         new Get(
+            uriTemplate: '/products/{id}',
             provider: \App\Catalog\Infrastructure\ApiPlatform\State\ProductItemProvider::class
         ),
         new Patch(
+            uriTemplate: '/products/{id}',
             security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')"
         ),
         new Delete(
+            uriTemplate: '/products/{id}',
             security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')"
         ),
     ]

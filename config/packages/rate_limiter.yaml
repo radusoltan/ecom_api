@@ -91,6 +91,12 @@ framework:
             limit: 10
             interval: '1 minute'
 
+        # Payment intent creation - strict to prevent payment fraud
+        api_payment:
+            policy: 'sliding_window'
+            limit: 10
+            interval: '1 minute'
+
         # Webhook endpoints - higher limit for incoming service-to-service calls
         api_webhook:
             policy: 'sliding_window'

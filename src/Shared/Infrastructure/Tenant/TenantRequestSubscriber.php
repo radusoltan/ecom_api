@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -80,20 +81,33 @@ final class TenantRequestSubscriber implements EventSubscriberInterface
 
         // Priority 1: JWT claim (authenticated users)
         if (null !== $jwtTenantId) {
-            // If header is also provided and differs, log a warning but use JWT
+            // If header is also provided and differs, REJECT the request
             if (null !== $headerTenantId && $headerTenantId !== $jwtTenantId) {
-                $this->logger->warning('Tenant ID mismatch: JWT claim "{jwtTenant}" differs from X-Tenant-ID header "{headerTenant}". Using JWT claim.', [
+                $this->logger->warning('Tenant spoofing attempt: JWT claim "{jwtTenant}" differs from X-Tenant-ID header "{headerTenant}". Request rejected.', [
                     'jwtTenant' => $jwtTenantId,
                     'headerTenant' => $headerTenantId,
                     'ip' => $request->getClientIp(),
+                    'uri' => $request->getRequestUri(),
                 ]);
+
+                throw new AccessDeniedHttpException('Tenant ID mismatch: X-Tenant-ID header does not match authenticated tenant.');
             }
 
             return $jwtTenantId;
         }
 
         // Priority 2: X-Tenant-ID header (unauthenticated/public requests)
+        // Validate UUID format to prevent injection via malformed headers
         if (null !== $headerTenantId) {
+            if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $headerTenantId)) {
+                $this->logger->warning('Invalid X-Tenant-ID header format rejected.', [
+                    'headerTenant' => $headerTenantId,
+                    'ip' => $request->getClientIp(),
+                ]);
+
+                return null;
+            }
+
             return $headerTenantId;
         }
 

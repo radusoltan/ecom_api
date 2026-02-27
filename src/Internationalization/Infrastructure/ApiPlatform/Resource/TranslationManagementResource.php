@@ -30,22 +30,27 @@ use App\Internationalization\Infrastructure\ApiPlatform\State\TranslationManagem
     operations: [
         new GetCollection(
             uriTemplate: '/translation-management',
+            security: "is_granted('ROLE_USER')",
             provider: TranslationManagementProvider::class,
         ),
         new Get(
             uriTemplate: '/translation-management/{id}',
+            security: "is_granted('ROLE_USER')",
             provider: TranslationManagementProvider::class,
         ),
         new Post(
             uriTemplate: '/translation-management',
+            security: "is_granted('ROLE_ADMIN')",
             processor: TranslationManagementProcessor::class,
         ),
         new Put(
             uriTemplate: '/translation-management/{id}',
+            security: "is_granted('ROLE_ADMIN')",
             processor: TranslationManagementProcessor::class,
         ),
         new Delete(
             uriTemplate: '/translation-management/{id}',
+            security: "is_granted('ROLE_ADMIN')",
             processor: TranslationManagementProcessor::class,
         ),
     ],

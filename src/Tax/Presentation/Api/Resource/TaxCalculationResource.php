@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
     security: "is_granted('ROLE_ADMIN')",
     operations: [
         new Post(
-            uriTemplate: '/tax_calculations',
+            uriTemplate: '/tax-calculations',
             normalizationContext: ['groups' => ['tax_calculation:read']],
             denormalizationContext: ['groups' => ['tax_calculation:write']],
             processor: CalculateTaxProcessor::class

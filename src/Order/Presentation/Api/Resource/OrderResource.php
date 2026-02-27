@@ -17,12 +17,13 @@ use App\Order\Presentation\Api\Provider\OrderItemProvider;
 
 #[ApiResource(
     shortName: 'Order',
-    security: "is_granted('ROLE_USER')",
     operations: [
         new GetCollection(
+            security: "is_granted('ROLE_USER')",
             provider: OrderCollectionProvider::class
         ),
         new Get(
+            security: "is_granted('ROLE_USER') or (object != null and object.guestToken != null and object.guestToken == request.query.get('token'))",
             provider: OrderItemProvider::class
         ),
         new Post(
@@ -30,11 +31,13 @@ use App\Order\Presentation\Api\Provider\OrderItemProvider;
         ),
         new Patch(
             uriTemplate: '/orders/{id}/status',
+            security: "is_granted('ROLE_ADMIN')",
             provider: OrderItemProvider::class,
             processor: UpdateOrderStatusProcessor::class
         ),
         new Patch(
             uriTemplate: '/orders/{id}/cancel',
+            security: "is_granted('ROLE_USER')",
             provider: OrderItemProvider::class,
             processor: CancelOrderProcessor::class
         ),
@@ -59,6 +62,7 @@ class OrderResource
     public array $promotionContext = [];
     public ?string $createdAt = null;
     public ?string $updatedAt = null;
+    public ?string $guestToken = null;
 
     /**
      * HATEOAS navigation links for related resources.

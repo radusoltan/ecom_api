@@ -46,50 +46,40 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # === Authentication endpoints ===
-        - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/auth/register, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/auth/token/refresh, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/auth/password, roles: PUBLIC_ACCESS }
+        # === Authentication endpoints (4 entries) ===
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }             # JWT login + login_check
+        - { path: ^/api/v1/auth, roles: PUBLIC_ACCESS }           # register, token/refresh, password
         - { path: ^/api/v1/mfa/verify, roles: IS_AUTHENTICATED_FULLY }
 
-        # === API Documentation ===
-        - { path: ^/api/docs, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/docs, roles: PUBLIC_ACCESS }
+        # === API Documentation (1 entry) ===
+        - { path: ^/api/(v1/)?docs, roles: PUBLIC_ACCESS }
 
-        # === Public storefront read endpoints (products, categories, search) ===
-        - { path: ^/api/v1/storefront, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/categories, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/category_entities, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/product_entities, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/product-options, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/product-option-values, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/variant_entities, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/search/products, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/search/autocomplete, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/translations, roles: PUBLIC_ACCESS }
+        # === Public storefront read endpoints (6 entries — GET only) ===
+        - { path: ^/api/v1/storefront, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/v1/categor, roles: PUBLIC_ACCESS, methods: [GET] }          # categories + category_entities
+        - { path: ^/api/v1/product, roles: PUBLIC_ACCESS, methods: [GET] }           # product_entities, product-options, product-option-values
+        - { path: ^/api/v1/variant_entities, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/v1/search, roles: PUBLIC_ACCESS, methods: [GET] }            # products + autocomplete
+        - { path: ^/api/v1/translations, roles: PUBLIC_ACCESS, methods: [GET] }
 
-        # === Guest checkout: cart, customer registration, order creation ===
+        # === Guest-safe fulfillment tracking (1 entry — GET only, RLS-scoped) ===
+        - { path: ^/api/v1/fulfillments, roles: PUBLIC_ACCESS, methods: [GET] }
+
+        # === Guest checkout (4 entries — POST only where applicable) ===
         - { path: ^/api/v1/cart, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/customers, roles: PUBLIC_ACCESS, methods: [POST] }
         - { path: ^/api/v1/orders, roles: PUBLIC_ACCESS, methods: [POST] }
-        - { path: ^/api/v1/validate-coupon, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/validate-coupon, roles: PUBLIC_ACCESS, methods: [POST] }
 
-        # === Payment intent creation (needed for guest checkout Stripe flow) ===
-        - { path: ^/api/v1/payments/stripe/create-intent, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/payments/stripe/verify-payment, roles: PUBLIC_ACCESS }
+        # === Payment (1 entry — Stripe guest checkout flow) ===
+        - { path: ^/api/v1/payments/stripe, roles: PUBLIC_ACCESS, methods: [POST, GET] }
 
-        # === Webhook endpoints (signature-verified server-to-server) ===
-        - { path: ^/api/v1/webhooks/stripe, roles: PUBLIC_ACCESS }
-        - { path: ^/api/v1/webhooks/paypal, roles: PUBLIC_ACCESS }
+        # === Webhooks (1 entry — signature-verified server-to-server) ===
+        - { path: ^/api/v1/webhooks, roles: PUBLIC_ACCESS, methods: [POST] }
 
         # === Authenticated endpoints ===
         - { path: ^/api/v1/orders, roles: IS_AUTHENTICATED_FULLY, methods: [GET] }
         - { path: ^/api/v1/profile, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/v1/profile/addresses, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/v1/profile/payment-methods, roles: IS_AUTHENTICATED_FULLY }
 
         # === Catch-all: require authentication for all other API endpoints ===
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

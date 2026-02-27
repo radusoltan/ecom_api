@@ -27,6 +27,8 @@ final class DataRetentionCommand extends Command
         'sessions' => ['table' => 'refresh_tokens', 'column' => 'valid', 'days' => 30],
         'notifications' => ['table' => 'notifications', 'column' => 'created_at', 'days' => 60],
         'abandoned_carts' => ['table' => 'carts', 'column' => 'updated_at', 'days' => 30],
+        'orders' => ['table' => 'orders', 'column' => 'created_at', 'days' => 2555], // 7 years per PRD §6.2
+        'analytics_price_history' => ['table' => 'price_history', 'column' => 'changed_at', 'days' => 730], // 2 years per PRD §6.2
     ];
 
     public function __construct(
@@ -40,7 +42,7 @@ final class DataRetentionCommand extends Command
     {
         $this
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Show what would be deleted without actually deleting')
-            ->addOption('policy', null, InputOption::VALUE_REQUIRED, 'Run only a specific policy (audit_logs, sessions, notifications, abandoned_carts)')
+            ->addOption('policy', null, InputOption::VALUE_REQUIRED, 'Run only a specific policy (audit_logs, sessions, notifications, abandoned_carts, orders, analytics_price_history)')
             ->addOption('batch-size', null, InputOption::VALUE_REQUIRED, 'Number of rows to delete per batch', '1000');
     }
 

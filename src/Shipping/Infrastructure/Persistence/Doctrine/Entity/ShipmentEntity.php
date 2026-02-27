@@ -55,19 +55,20 @@ class ShipmentEntity
     #[ORM\Column(type: 'string', length: 255, name: 'recipient_name')]
     private string $recipientName;
 
+    /** @var array<string, string> */
     #[ORM\Column(type: 'json', name: 'recipient_address')]
     private array $recipientAddress;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'shipped_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'shipped_at')]
     private ?\DateTimeImmutable $shippedAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'delivered_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'delivered_at')]
     private ?\DateTimeImmutable $deliveredAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', name: 'created_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true, name: 'updated_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'updated_at')]
     private ?\DateTimeImmutable $updatedAt = null;
 
     public static function fromDomainModel(Shipment $shipment): self

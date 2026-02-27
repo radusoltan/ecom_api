@@ -16,13 +16,14 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
  * 2Checkout Payment Gateway Adapter.
  *
- * Implements payment operations using 2Checkout API (now Verifone).
- *
- * @todo Implement full support for new PaymentGatewayInterface
+ * Status: PLANNED — 2Checkout/Verifone integration is scheduled for a future release.
+ * All operations throw LogicException until implementation is completed.
+ * Use Stripe or PayPal as active alternatives.
  */
 final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterface
 {
     private const API_BASE_URL = 'https://api.2checkout.com';
+    private const NOT_AVAILABLE = '2Checkout payment gateway is not yet available. This feature is planned for a future release. Use Stripe or PayPal.';
 
     public function __construct(
         private string $merchantCode,
@@ -42,26 +43,26 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
         ?string $customerId = null,
         array $metadata = [],
     ): PaymentIntentResult {
-        throw new \RuntimeException('2Checkout createPaymentIntent not implemented yet.');
+        throw new \LogicException(self::NOT_AVAILABLE);
     }
 
     public function confirmPaymentIntent(
         string $gatewayPaymentIntentId,
         string $paymentMethodId,
     ): PaymentIntentResult {
-        throw new \RuntimeException('2Checkout confirmPaymentIntent not implemented yet.');
+        throw new \LogicException(self::NOT_AVAILABLE);
     }
 
     public function capturePaymentIntent(
         string $gatewayPaymentIntentId,
         ?Money $amount = null,
     ): PaymentIntentResult {
-        throw new \RuntimeException('2Checkout capturePaymentIntent not implemented yet.');
+        throw new \LogicException(self::NOT_AVAILABLE);
     }
 
     public function cancelPaymentIntent(string $gatewayPaymentIntentId): PaymentIntentResult
     {
-        throw new \RuntimeException('2Checkout cancelPaymentIntent not implemented yet.');
+        throw new \LogicException(self::NOT_AVAILABLE);
     }
 
     public function createRefund(
@@ -70,7 +71,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
         string $reason,
         string $idempotencyKey,
     ): RefundResult {
-        throw new \RuntimeException('2Checkout createRefund not implemented yet.');
+        throw new \LogicException(self::NOT_AVAILABLE);
     }
 
     public function verifyWebhookSignature(
@@ -83,20 +84,7 @@ final readonly class TwoCheckoutPaymentGateway implements PaymentGatewayInterfac
 
     public function getGatewayId(): PaymentMethod
     {
-        // Assuming there is a 2Checkout case, or we fallback to card.
-        // Checking PaymentMethod Enum again would be good, but for now assuming CARD or similar is not quite right.
-        // It's likely PaymentMethod::BANK_TRANSFER or just missing from Enum.
-        // I'll return a placeholder or STRIPE if forced, but really should be its own.
-        // I will attempt PaymentMethod::BANK_TRANSFER as closest valid one or just fail if strict.
-        // Actually, previous code didn't use getGatewayId.
-        // I will use `PaymentMethod::STRIPE` temporarily to satisfy return type if 2CO is not in Enum,
-        // but given the previous file had manual mapping, it implies it was supported.
-        // Let's assume `PaymentMethod::STRIPE` is NOT safe.
-        // I'll leave it as throwing exception or `PaymentMethod::STRIPE` with a comment.
-        // Actually, looking at `PaymentMethod.php` saw earlier: STRIPE, PAYPAL, BANK_TRANSFER, APPLE_PAY, GOOGLE_PAY.
-        // No 2Checkout. So this gateway is doubly broken (no Enum support).
-        // I will just return PaymentMethod::STRIPE and comment it's invalid.
-        return PaymentMethod::STRIPE;
+        return PaymentMethod::STRIPE; // Placeholder — no 2Checkout enum value exists yet
     }
 
     public function getName(): string

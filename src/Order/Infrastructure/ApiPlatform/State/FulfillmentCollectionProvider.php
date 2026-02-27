@@ -23,16 +23,18 @@ final readonly class FulfillmentCollectionProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
-        // Get tenant ID from context (set by TenantContextProvider)
-        $tenantIdString = $context['tenant_id'] ?? null;
+        $request = $this->requestStack->getCurrentRequest();
+
+        // Get tenant ID from context or X-Tenant-ID header
+        $tenantIdString = $context['tenant_id']
+            ?? $request?->headers->get('X-Tenant-ID');
         if (null === $tenantIdString) {
             throw new \RuntimeException('Tenant ID not found in context');
         }
         $tenantId = TenantId::fromString($tenantIdString);
-        $request = $this->requestStack->getCurrentRequest();
 
-        // Get filter parameters
-        $orderId = $request?->query->get('orderId');
+        // Get filter parameters (support both "orderId" and "order.id" for API Platform compatibility)
+        $orderId = $request?->query->get('orderId') ?? $request?->query->get('order_id');
         $warehouseId = $request?->query->get('warehouseId');
         $status = $request?->query->get('status');
 

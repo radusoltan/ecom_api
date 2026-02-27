@@ -15,11 +15,15 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'cart_items')]
 #[ORM\Index(name: 'idx_cart_items_cart_id', columns: ['cart_id'])]
 #[ORM\Index(name: 'idx_cart_items_product', columns: ['product_id', 'variant_id'])]
+#[ORM\Index(name: 'idx_cart_items_tenant_id', columns: ['tenant_id'])]
 class CartItemEntity
 {
     #[ORM\Id]
     #[ORM\Column(type: 'string', length: 26)]
     private string $id;
+
+    #[ORM\Column(type: 'guid', name: 'tenant_id')]
+    private string $tenantId;
 
     #[ORM\ManyToOne(targetEntity: CartEntity::class, inversedBy: 'items')]
     #[ORM\JoinColumn(name: 'cart_id', referencedColumnName: 'id', nullable: false)]
@@ -40,11 +44,12 @@ class CartItemEntity
     #[ORM\Column(type: 'string', length: 3, name: 'unit_price_currency')]
     private string $unitPriceCurrency;
 
-    public static function fromDomainModel(CartItem $item, CartEntity $cartEntity): self
+    public static function fromDomainModel(CartItem $item, CartEntity $cartEntity, string $tenantId = ''): self
     {
         $entity = new self();
         $entity->id = $item->id()->toString();
         $entity->cart = $cartEntity;
+        $entity->tenantId = $tenantId ?: $cartEntity->getTenantId();
         $entity->productId = $item->productId()->toString();
         $entity->variantId = $item->variantId();
         $entity->quantity = $item->quantity()->toInt();
@@ -96,6 +101,16 @@ class CartItemEntity
     public function setCart(CartEntity $cart): void
     {
         $this->cart = $cart;
+    }
+
+    public function getTenantId(): string
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(string $tenantId): void
+    {
+        $this->tenantId = $tenantId;
     }
 
     public function getProductId(): string

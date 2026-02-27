@@ -53,8 +53,8 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
 
     public function testCreatePaymentIntentThrowsRuntimeException(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('2Checkout createPaymentIntent not implemented yet.');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('2Checkout payment gateway is not yet available.');
 
         $this->gateway->createPaymentIntent(
             paymentId: PaymentId::generate(),
@@ -66,8 +66,8 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
 
     public function testCreatePaymentIntentThrowsWithOptionalArguments(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('2Checkout createPaymentIntent not implemented yet.');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('2Checkout payment gateway is not yet available.');
 
         $this->gateway->createPaymentIntent(
             paymentId: PaymentId::generate(),
@@ -81,8 +81,8 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
 
     public function testConfirmPaymentIntentThrowsRuntimeException(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('2Checkout confirmPaymentIntent not implemented yet.');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('2Checkout payment gateway is not yet available.');
 
         $this->gateway->confirmPaymentIntent(
             gatewayPaymentIntentId: 'pi_test_123',
@@ -92,8 +92,8 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
 
     public function testCapturePaymentIntentThrowsRuntimeException(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('2Checkout capturePaymentIntent not implemented yet.');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('2Checkout payment gateway is not yet available.');
 
         $this->gateway->capturePaymentIntent(
             gatewayPaymentIntentId: 'pi_test_123',
@@ -102,8 +102,8 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
 
     public function testCapturePaymentIntentThrowsWithPartialAmount(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('2Checkout capturePaymentIntent not implemented yet.');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('2Checkout payment gateway is not yet available.');
 
         $this->gateway->capturePaymentIntent(
             gatewayPaymentIntentId: 'pi_test_123',
@@ -113,8 +113,8 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
 
     public function testCancelPaymentIntentThrowsRuntimeException(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('2Checkout cancelPaymentIntent not implemented yet.');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('2Checkout payment gateway is not yet available.');
 
         $this->gateway->cancelPaymentIntent(
             gatewayPaymentIntentId: 'pi_test_123',
@@ -123,8 +123,8 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
 
     public function testCreateRefundThrowsRuntimeException(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('2Checkout createRefund not implemented yet.');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('2Checkout payment gateway is not yet available.');
 
         $this->gateway->createRefund(
             gatewayPaymentIntentId: 'pi_test_123',
@@ -136,8 +136,8 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
 
     public function testCreateRefundThrowsWithDifferentCurrency(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('2Checkout createRefund not implemented yet.');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('2Checkout payment gateway is not yet available.');
 
         $this->gateway->createRefund(
             gatewayPaymentIntentId: 'pi_test_456',
@@ -227,7 +227,7 @@ final class TwoCheckoutPaymentGatewayTest extends TestCase
         foreach ($methods as $method) {
             try {
                 $method();
-            } catch (\RuntimeException) {
+            } catch (\LogicException) {
                 // Expected: the gateway is not yet implemented
             }
         }

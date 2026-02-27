@@ -16,11 +16,15 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_bundle_items_bundle_product', columns: ['bundle_product_id'])]
 #[ORM\Index(name: 'idx_bundle_items_product', columns: ['product_id'])]
 #[ORM\Index(name: 'idx_bundle_items_created_at', columns: ['created_at'])]
+#[ORM\Index(name: 'idx_bundle_items_tenant_id', columns: ['tenant_id'])]
 class BundleItemEntity
 {
     #[ORM\Id]
     #[ORM\Column(type: 'string', length: 36)]
     private string $id;
+
+    #[ORM\Column(type: 'guid', name: 'tenant_id')]
+    private string $tenantId;
 
     #[ORM\Column(type: 'string', length: 36, name: 'bundle_product_id')]
     private string $bundleProductId;
@@ -53,6 +57,16 @@ class BundleItemEntity
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getTenantId(): string
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(string $tenantId): void
+    {
+        $this->tenantId = $tenantId;
     }
 
     public function getBundleProductId(): string

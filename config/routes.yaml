@@ -18,6 +18,13 @@ pricing_controllers:
         namespace: App\Pricing\Presentation\Api\Controller
     type: attribute
 
+# Internationalization controllers (translation tools)
+i18n_controllers:
+    resource:
+        path: ../src/Internationalization/Infrastructure/ApiPlatform/Controller/
+        namespace: App\Internationalization\Infrastructure\ApiPlatform\Controller
+    type: attribute
+
 # User controllers (MFA, etc.)
 user_controllers:
     resource:
