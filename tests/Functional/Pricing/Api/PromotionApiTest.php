@@ -61,7 +61,7 @@ final class PromotionApiTest extends ApiTestCase
     /**
      * Create an authenticated client with JWT token for API testing.
      */
-    protected function createAuthenticatedClient(string $email = 'test@example.com', array $roles = ['ROLE_USER'])
+    protected function createAuthenticatedClient(string $email = 'admin@admin.com', array $roles = ['ROLE_SUPER_ADMIN'])
     {
         // First, create a temporary client to access services
         $tempClient = static::createClient();
