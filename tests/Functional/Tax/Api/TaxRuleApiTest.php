@@ -10,11 +10,11 @@ use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
  * Comprehensive Functional Tests for Tax Rule API Endpoints.
  *
  * Tests all Tax Rule API endpoints:
- * - GET /api/tax_rules (Collection with pagination)
- * - GET /api/tax_rules/{id} (Item)
- * - POST /api/tax_rules (Create Tax Rule)
- * - PATCH /api/tax_rules/{id} (Update Tax Rule)
- * - PATCH /api/tax_rules/{id}/deactivate (Deactivate Tax Rule)
+ * - GET /api/tax-rules (Collection with pagination)
+ * - GET /api/tax-rules/{id} (Item)
+ * - POST /api/tax-rules (Create Tax Rule)
+ * - PATCH /api/tax-rules/{id} (Update Tax Rule)
+ * - PATCH /api/tax-rules/{id}/deactivate (Deactivate Tax Rule)
  *
  * Uses ApiTestCase with DAMA Bundle for automatic database transaction rollback.
  *
@@ -130,7 +130,7 @@ final class TaxRuleApiTest extends ApiTestCase
         }
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN', 'ROLE_USER'], $tenantId)
-            ->request('POST', '/api/v1/tax_rules', [
+            ->request('POST', '/api/v1/tax-rules', [
                 'json' => $payload,
             ]);
 
@@ -140,7 +140,7 @@ final class TaxRuleApiTest extends ApiTestCase
     }
 
     // ===========================
-    // POST /api/tax_rules - Create Tax Rule
+    // POST /api/tax-rules - Create Tax Rule
     // ===========================
 
     public function testCreateTaxRuleSuccessfully(): void
@@ -148,7 +148,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN', 'ROLE_USER'], $tenantId)
-            ->request('POST', '/api/v1/tax_rules', [
+            ->request('POST', '/api/v1/tax-rules', [
                 'json' => [
                     'tenantId' => $tenantId,
                     'name' => 'France VAT Standard',
@@ -176,7 +176,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_rules', [
+            ->request('POST', '/api/v1/tax-rules', [
                 'json' => [
                     'tenantId' => $tenantId,
                     'name' => 'Germany VAT Standard',
@@ -198,7 +198,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_rules', [
+            ->request('POST', '/api/v1/tax-rules', [
                 'json' => [
                     'tenantId' => $tenantId,
                     'name' => 'Romania VAT Standard',
@@ -220,7 +220,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_rules', [
+            ->request('POST', '/api/v1/tax-rules', [
                 'json' => [
                     'tenantId' => $tenantId,
                     'name' => 'California Sales Tax',
@@ -243,7 +243,7 @@ final class TaxRuleApiTest extends ApiTestCase
     {
         $tenantId = $this->createTenant();
 
-        static::createClient()->request('POST', '/api/v1/tax_rules', [
+        static::createClient()->request('POST', '/api/v1/tax-rules', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'Test Tax Rule',
@@ -258,7 +258,7 @@ final class TaxRuleApiTest extends ApiTestCase
     public function testCreateTaxRuleFailsWithoutTenantId(): void
     {
         $response = $this->createAuthenticatedClient()
-            ->request('POST', '/api/v1/tax_rules', [
+            ->request('POST', '/api/v1/tax-rules', [
                 'json' => [
                     'name' => 'Test Tax Rule',
                     'countryCode' => 'FR',
@@ -275,7 +275,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_rules', [
+            ->request('POST', '/api/v1/tax-rules', [
                 'json' => [
                     'tenantId' => $tenantId,
                     'name' => 'Invalid Country',
@@ -292,7 +292,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_rules', [
+            ->request('POST', '/api/v1/tax-rules', [
                 'json' => [
                     'tenantId' => $tenantId,
                     'name' => 'Negative Rate',
@@ -309,7 +309,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_rules', [
+            ->request('POST', '/api/v1/tax-rules', [
                 'json' => [
                     'tenantId' => $tenantId,
                     'name' => 'Over 100 Rate',
@@ -322,7 +322,7 @@ final class TaxRuleApiTest extends ApiTestCase
     }
 
     // ===========================
-    // GET /api/tax_rules/{id} - Get Tax Rule by ID
+    // GET /api/tax-rules/{id} - Get Tax Rule by ID
     // ===========================
 
     public function testGetTaxRuleById(): void
@@ -330,7 +330,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $taxRule = $this->createTaxRule();
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $this->currentTenantId)
-            ->request('GET', '/api/v1/tax_rules/'.$taxRule['id']);
+            ->request('GET', '/api/v1/tax-rules/'.$taxRule['id']);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -348,7 +348,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('GET', '/api/v1/tax_rules/'.\Symfony\Component\Uid\Ulid::generate());
+            ->request('GET', '/api/v1/tax-rules/'.\Symfony\Component\Uid\Ulid::generate());
 
         $this->assertResponseStatusCodeSame(404);
     }
@@ -357,13 +357,13 @@ final class TaxRuleApiTest extends ApiTestCase
     {
         $taxRule = $this->createTaxRule();
 
-        static::createClient()->request('GET', '/api/v1/tax_rules/'.$taxRule['id']);
+        static::createClient()->request('GET', '/api/v1/tax-rules/'.$taxRule['id']);
 
         $this->assertResponseStatusCodeSame(401);
     }
 
     // ===========================
-    // GET /api/tax_rules - Get Tax Rules Collection
+    // GET /api/tax-rules - Get Tax Rules Collection
     // ===========================
 
     public function testGetTaxRulesCollection(): void
@@ -376,7 +376,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $this->createTaxRule($tenantId, 'Romania VAT', 'RO', 19.0);
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('GET', '/api/v1/tax_rules');
+            ->request('GET', '/api/v1/tax-rules');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -412,7 +412,7 @@ final class TaxRuleApiTest extends ApiTestCase
         }
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('GET', '/api/v1/tax_rules?page=1');
+            ->request('GET', '/api/v1/tax-rules?page=1');
 
         $this->assertResponseStatusCodeSame(200);
         $data = json_decode($response->getContent(), true);
@@ -433,7 +433,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('GET', '/api/v1/tax_rules');
+            ->request('GET', '/api/v1/tax-rules');
 
         $this->assertResponseStatusCodeSame(200);
         $data = json_decode($response->getContent(), true);
@@ -450,13 +450,13 @@ final class TaxRuleApiTest extends ApiTestCase
 
     public function testGetTaxRulesCollectionFailsWithoutAuthentication(): void
     {
-        static::createClient()->request('GET', '/api/v1/tax_rules');
+        static::createClient()->request('GET', '/api/v1/tax-rules');
 
         $this->assertResponseStatusCodeSame(401);
     }
 
     // ===========================
-    // PATCH /api/tax_rules/{id} - Update Tax Rule
+    // PATCH /api/tax-rules/{id} - Update Tax Rule
     // ===========================
 
     public function testUpdateTaxRuleName(): void
@@ -464,7 +464,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $taxRule = $this->createTaxRule();
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $this->currentTenantId)
-            ->request('PATCH', '/api/v1/tax_rules/'.$taxRule['id'], [
+            ->request('PATCH', '/api/v1/tax-rules/'.$taxRule['id'], [
                 'headers' => ['content-type' => 'application/merge-patch+json'],
                 'json' => [
                     'name' => 'France VAT Updated',
@@ -484,7 +484,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $taxRule = $this->createTaxRule();
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $this->currentTenantId)
-            ->request('PATCH', '/api/v1/tax_rules/'.$taxRule['id'], [
+            ->request('PATCH', '/api/v1/tax-rules/'.$taxRule['id'], [
                 'headers' => ['content-type' => 'application/merge-patch+json'],
                 'json' => [
                     'ratePercentage' => 19.6,
@@ -502,7 +502,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $taxRule = $this->createTaxRule();
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $this->currentTenantId)
-            ->request('PATCH', '/api/v1/tax_rules/'.$taxRule['id'], [
+            ->request('PATCH', '/api/v1/tax-rules/'.$taxRule['id'], [
                 'headers' => ['content-type' => 'application/merge-patch+json'],
                 'json' => [
                     'name' => 'France VAT Reduced',
@@ -522,7 +522,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $taxRule = $this->createTaxRule();
 
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $this->currentTenantId)
-            ->request('PATCH', '/api/v1/tax_rules/'.$taxRule['id'], [
+            ->request('PATCH', '/api/v1/tax-rules/'.$taxRule['id'], [
                 'headers' => ['content-type' => 'application/merge-patch+json'],
                 'json' => [
                     'ratePercentage' => -10.0,  // Negative
@@ -536,7 +536,7 @@ final class TaxRuleApiTest extends ApiTestCase
     {
         $taxRule = $this->createTaxRule();
 
-        static::createClient()->request('PATCH', '/api/v1/tax_rules/'.$taxRule['id'], [
+        static::createClient()->request('PATCH', '/api/v1/tax-rules/'.$taxRule['id'], [
             'headers' => ['content-type' => 'application/merge-patch+json'],
             'json' => [
                 'name' => 'Updated Name',
@@ -547,7 +547,7 @@ final class TaxRuleApiTest extends ApiTestCase
     }
 
     // ===========================
-    // PATCH /api/tax_rules/{id}/deactivate - Deactivate Tax Rule
+    // PATCH /api/tax-rules/{id}/deactivate - Deactivate Tax Rule
     // ===========================
 
     public function testDeactivateTaxRule(): void
@@ -558,7 +558,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $this->assertTrue($taxRule['isActive']);
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $this->currentTenantId)
-            ->request('PATCH', '/api/v1/tax_rules/'.$taxRule['id'].'/deactivate', [
+            ->request('PATCH', '/api/v1/tax-rules/'.$taxRule['id'].'/deactivate', [
                 'headers' => ['content-type' => 'application/merge-patch+json'],
                 'json' => [],
             ]);
@@ -575,14 +575,14 @@ final class TaxRuleApiTest extends ApiTestCase
 
         // Deactivate once
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $this->currentTenantId)
-            ->request('PATCH', '/api/v1/tax_rules/'.$taxRule['id'].'/deactivate', [
+            ->request('PATCH', '/api/v1/tax-rules/'.$taxRule['id'].'/deactivate', [
                 'headers' => ['content-type' => 'application/merge-patch+json'],
                 'json' => [],
             ]);
 
         // Deactivate again - API returns 422 since it's already inactive
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $this->currentTenantId)
-            ->request('PATCH', '/api/v1/tax_rules/'.$taxRule['id'].'/deactivate', [
+            ->request('PATCH', '/api/v1/tax-rules/'.$taxRule['id'].'/deactivate', [
                 'headers' => ['content-type' => 'application/merge-patch+json'],
                 'json' => [],
             ]);
@@ -597,7 +597,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('PATCH', '/api/v1/tax_rules/'.\Symfony\Component\Uid\Ulid::generate().'/deactivate', [
+            ->request('PATCH', '/api/v1/tax-rules/'.\Symfony\Component\Uid\Ulid::generate().'/deactivate', [
                 'headers' => ['content-type' => 'application/merge-patch+json'],
                 'json' => [],
             ]);
@@ -609,7 +609,7 @@ final class TaxRuleApiTest extends ApiTestCase
     {
         $taxRule = $this->createTaxRule();
 
-        static::createClient()->request('PATCH', '/api/v1/tax_rules/'.$taxRule['id'].'/deactivate', [
+        static::createClient()->request('PATCH', '/api/v1/tax-rules/'.$taxRule['id'].'/deactivate', [
             'headers' => ['content-type' => 'application/merge-patch+json'],
             'json' => [],
         ]);
@@ -633,7 +633,7 @@ final class TaxRuleApiTest extends ApiTestCase
 
         // Verify Tenant A cannot see Tenant B's tax rule
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantA)
-            ->request('GET', '/api/v1/tax_rules/'.$taxRuleB['id']);
+            ->request('GET', '/api/v1/tax-rules/'.$taxRuleB['id']);
 
         // Should return 404 or 403 (not found because of tenant isolation)
         $this->assertResponseStatusCodeSame(404);
@@ -649,7 +649,7 @@ final class TaxRuleApiTest extends ApiTestCase
         $this->createTaxRule($tenantId, 'France VAT Super Reduced', 'FR', 2.1);
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('GET', '/api/v1/tax_rules');
+            ->request('GET', '/api/v1/tax-rules');
 
         $this->assertResponseStatusCodeSame(200);
         $data = json_decode($response->getContent(), true);
@@ -678,7 +678,7 @@ final class TaxRuleApiTest extends ApiTestCase
         }
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('GET', '/api/v1/tax_rules');
+            ->request('GET', '/api/v1/tax-rules');
 
         $this->assertResponseStatusCodeSame(200);
         $data = json_decode($response->getContent(), true);

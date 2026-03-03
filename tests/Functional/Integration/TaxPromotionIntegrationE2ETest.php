@@ -111,7 +111,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
 
         // Create EU VAT tax rule (Germany - 19%)
-        $taxRuleResponse = $client->request('POST', '/api/v1/tax_rules', [
+        $taxRuleResponse = $client->request('POST', '/api/v1/tax-rules', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'Germany VAT',
@@ -125,7 +125,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $taxRuleData = json_decode($taxRuleResponse->getContent(), true);
 
         // Calculate tax for €100.00 order
-        $taxResponse = $client->request('POST', '/api/v1/tax_calculations', [
+        $taxResponse = $client->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'tenantId' => $tenantId,
                 'amountInCents' => 10000, // €100.00
@@ -150,7 +150,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
 
         // Create France reduced VAT tax rule (5.5% for books/food)
-        $taxRuleResponse = $client->request('POST', '/api/v1/tax_rules', [
+        $taxRuleResponse = $client->request('POST', '/api/v1/tax-rules', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'France Reduced VAT',
@@ -163,7 +163,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $this->assertResponseStatusCodeSame(201);
 
         // Calculate tax for €50.00 order
-        $taxResponse = $client->request('POST', '/api/v1/tax_calculations', [
+        $taxResponse = $client->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'tenantId' => $tenantId,
                 'amountInCents' => 5000, // €50.00
@@ -188,7 +188,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
 
         // Don't create any tax rule for US
         // Calculate tax for US (no rule exists)
-        $taxResponse = $client->request('POST', '/api/v1/tax_calculations', [
+        $taxResponse = $client->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'tenantId' => $tenantId,
                 'amountInCents' => 10000,
@@ -212,7 +212,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
 
         // Create tax rule with rate that produces fractional cents
-        $client->request('POST', '/api/v1/tax_rules', [
+        $client->request('POST', '/api/v1/tax-rules', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'Test Tax',
@@ -224,7 +224,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
 
         // Calculate tax for €10.01 (1001 cents)
         // 19.5% of 1001 = 195.195 → should round to 195
-        $taxResponse = $client->request('POST', '/api/v1/tax_calculations', [
+        $taxResponse = $client->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'tenantId' => $tenantId,
                 'amountInCents' => 1001,
@@ -461,7 +461,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
 
         // 1. Create tax rule (Germany 19% VAT)
-        $client->request('POST', '/api/v1/tax_rules', [
+        $client->request('POST', '/api/v1/tax-rules', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'Germany VAT',
@@ -498,7 +498,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $discountedAmount = 8000;
 
         // 5. Calculate tax on discounted amount
-        $taxResponse = $client->request('POST', '/api/v1/tax_calculations', [
+        $taxResponse = $client->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'tenantId' => $tenantId,
                 'amountInCents' => $discountedAmount,
@@ -535,7 +535,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
 
         // 1. Create tax rule
-        $client->request('POST', '/api/v1/tax_rules', [
+        $client->request('POST', '/api/v1/tax-rules', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'Germany VAT',
@@ -599,7 +599,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $finalDiscountedAmount = 15675;
 
         // 7. Calculate tax on final discounted amount
-        $taxResponse = $client->request('POST', '/api/v1/tax_calculations', [
+        $taxResponse = $client->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'tenantId' => $tenantId,
                 'amountInCents' => $finalDiscountedAmount,
@@ -633,7 +633,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
 
         // Create tax rule
-        $client->request('POST', '/api/v1/tax_rules', [
+        $client->request('POST', '/api/v1/tax-rules', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'Germany VAT',
@@ -669,7 +669,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $discountedAmount = 6750;
 
         // Calculate tax
-        $taxResponse = $client->request('POST', '/api/v1/tax_calculations', [
+        $taxResponse = $client->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'tenantId' => $tenantId,
                 'amountInCents' => $discountedAmount,
@@ -710,7 +710,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         ];
 
         foreach ($vatRates as $vat) {
-            $response = $client->request('POST', '/api/v1/tax_rules', [
+            $response = $client->request('POST', '/api/v1/tax-rules', [
                 'json' => [
                     'tenantId' => $tenantId,
                     'name' => $vat['name'],
@@ -726,7 +726,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $testAmount = 10000; // €100.00
 
         // Germany: 19% → €19.00
-        $taxDE = $client->request('POST', '/api/v1/tax_calculations', [
+        $taxDE = $client->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'tenantId' => $tenantId,
                 'amountInCents' => $testAmount,
@@ -738,7 +738,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $this->assertSame(1900, $taxDEData['taxAmount']);
 
         // France: 20% → €20.00
-        $taxFR = $client->request('POST', '/api/v1/tax_calculations', [
+        $taxFR = $client->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'tenantId' => $tenantId,
                 'amountInCents' => $testAmount,
@@ -750,7 +750,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $this->assertSame(2000, $taxFRData['taxAmount']);
 
         // Italy: 22% → €22.00
-        $taxIT = $client->request('POST', '/api/v1/tax_calculations', [
+        $taxIT = $client->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'tenantId' => $tenantId,
                 'amountInCents' => $testAmount,
@@ -774,7 +774,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         // VAT should be France's rate (destination-based)
 
         // Create France VAT rule
-        $client->request('POST', '/api/v1/tax_rules', [
+        $client->request('POST', '/api/v1/tax-rules', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'France VAT',
@@ -785,7 +785,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         ]);
 
         // Calculate tax for French customer (€100 order)
-        $taxResponse = $client->request('POST', '/api/v1/tax_calculations', [
+        $taxResponse = $client->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'tenantId' => $tenantId,
                 'amountInCents' => 10000,
@@ -875,7 +875,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
 
         // Create tax rule
-        $client->request('POST', '/api/v1/tax_rules', [
+        $client->request('POST', '/api/v1/tax-rules', [
             'json' => [
                 'tenantId' => $tenantId,
                 'name' => 'Germany VAT',
@@ -888,7 +888,7 @@ final class TaxPromotionIntegrationE2ETest extends ApiTestCase
         // Calculate tax for €100,000.00
         $largeAmount = 10000000; // 10 million cents
 
-        $taxResponse = $client->request('POST', '/api/v1/tax_calculations', [
+        $taxResponse = $client->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'tenantId' => $tenantId,
                 'amountInCents' => $largeAmount,

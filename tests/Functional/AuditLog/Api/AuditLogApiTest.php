@@ -29,7 +29,7 @@ final class AuditLogApiTest extends ApiTestCase
 
     public function testGetAuditLogCollectionRequiresAuthentication(): void
     {
-        $response = static::createClient()->request('GET', '/api/v1/audit_log_entry_entities');
+        $response = static::createClient()->request('GET', '/api/v1/audit-logs');
 
         $this->assertResponseStatusCodeSame(401);
     }
@@ -40,7 +40,7 @@ final class AuditLogApiTest extends ApiTestCase
         $this->createAuditLogEntry(ActionType::update(), ResourceType::order(), 'order-456');
 
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('GET', '/api/v1/audit_log_entry_entities', [
+        $response = $client->request('GET', '/api/v1/audit-logs', [
             'headers' => ['X-Tenant-ID' => $this->tenantId->toString()],
         ]);
 
@@ -53,7 +53,7 @@ final class AuditLogApiTest extends ApiTestCase
         $entry = $this->createAuditLogEntry(ActionType::delete(), ResourceType::customer(), 'customer-789');
 
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('GET', '/api/v1/audit_log_entry_entities/' . $entry->id()->toString(), [
+        $response = $client->request('GET', '/api/v1/audit-logs/' . $entry->id()->toString(), [
             'headers' => ['X-Tenant-ID' => $this->tenantId->toString()],
         ]);
 
@@ -72,7 +72,7 @@ final class AuditLogApiTest extends ApiTestCase
         $this->createAuditLogEntry(ActionType::delete(), ResourceType::product(), 'product-3');
 
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('GET', '/api/v1/audit_log_entry_entities?actionType=create', [
+        $response = $client->request('GET', '/api/v1/audit-logs?actionType=create', [
             'headers' => ['X-Tenant-ID' => $this->tenantId->toString()],
         ]);
 
@@ -93,7 +93,7 @@ final class AuditLogApiTest extends ApiTestCase
         $this->createAuditLogEntry(ActionType::create(), ResourceType::order(), 'order-2');
 
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('GET', '/api/v1/audit_log_entry_entities?resourceType=order', [
+        $response = $client->request('GET', '/api/v1/audit-logs?resourceType=order', [
             'headers' => ['X-Tenant-ID' => $this->tenantId->toString()],
         ]);
 
@@ -114,7 +114,7 @@ final class AuditLogApiTest extends ApiTestCase
         $this->createAuditLogEntry(ActionType::create(), ResourceType::product(), 'product-2', UserId::generate());
 
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('GET', '/api/v1/audit_log_entry_entities?userId=' . $userId->toString(), [
+        $response = $client->request('GET', '/api/v1/audit-logs?userId=' . $userId->toString(), [
             'headers' => ['X-Tenant-ID' => $this->tenantId->toString()],
         ]);
 
@@ -134,7 +134,7 @@ final class AuditLogApiTest extends ApiTestCase
         $this->createAuditLogEntry(ActionType::create(), ResourceType::payment(), 'payment-456');
 
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('GET', '/api/v1/audit_log_entry_entities?resourceId=payment-123', [
+        $response = $client->request('GET', '/api/v1/audit-logs?resourceId=payment-123', [
             'headers' => ['X-Tenant-ID' => $this->tenantId->toString()],
         ]);
 
@@ -155,7 +155,7 @@ final class AuditLogApiTest extends ApiTestCase
         $tomorrow = new \DateTimeImmutable('+1 day');
 
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('GET', '/api/v1/audit_log_entry_entities?occurredAt[before]=' . $tomorrow->format('Y-m-d'), [
+        $response = $client->request('GET', '/api/v1/audit-logs?occurredAt[before]=' . $tomorrow->format('Y-m-d'), [
             'headers' => ['X-Tenant-ID' => $this->tenantId->toString()],
         ]);
 
@@ -170,7 +170,7 @@ final class AuditLogApiTest extends ApiTestCase
         }
 
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('GET', '/api/v1/audit_log_entry_entities?page=1', [
+        $response = $client->request('GET', '/api/v1/audit-logs?page=1', [
             'headers' => ['X-Tenant-ID' => $this->tenantId->toString()],
         ]);
 
@@ -183,7 +183,7 @@ final class AuditLogApiTest extends ApiTestCase
 
     public function testAuditLogEntriesAreReadOnly(): void
     {
-        $response = static::createClient()->request('POST', '/api/v1/audit_log_entry_entities', [
+        $response = static::createClient()->request('POST', '/api/v1/audit-logs', [
             'json' => [
                 'actionType' => 'create',
                 'resourceType' => 'product',
@@ -198,7 +198,7 @@ final class AuditLogApiTest extends ApiTestCase
     {
         $entry = $this->createAuditLogEntry(ActionType::create(), ResourceType::product(), 'product-123');
 
-        $response = static::createClient()->request('PATCH', '/api/v1/audit_log_entry_entities/' . $entry->id()->toString(), [
+        $response = static::createClient()->request('PATCH', '/api/v1/audit-logs/' . $entry->id()->toString(), [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
             'json' => ['actionType' => 'update'],
         ]);
@@ -210,7 +210,7 @@ final class AuditLogApiTest extends ApiTestCase
     {
         $entry = $this->createAuditLogEntry(ActionType::create(), ResourceType::product(), 'product-123');
 
-        $response = static::createClient()->request('DELETE', '/api/v1/audit_log_entry_entities/' . $entry->id()->toString());
+        $response = static::createClient()->request('DELETE', '/api/v1/audit-logs/' . $entry->id()->toString());
 
         $this->assertResponseStatusCodeSame(405);
     }

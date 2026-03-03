@@ -10,7 +10,7 @@ use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
  * Comprehensive Functional Tests for Tax Calculation API Endpoint.
  *
  * Tests the Tax Calculation endpoint:
- * - POST /api/tax_calculations (Calculate Tax)
+ * - POST /api/tax-calculations (Calculate Tax)
  *
  * Uses ApiTestCase with DAMA Bundle for automatic database transaction rollback.
  *
@@ -123,7 +123,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         }
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN', 'ROLE_USER'], $tenantId)
-            ->request('POST', '/api/v1/tax_rules', [
+            ->request('POST', '/api/v1/tax-rules', [
                 'json' => $payload,
             ]);
 
@@ -133,7 +133,7 @@ final class TaxCalculationApiTest extends ApiTestCase
     }
 
     // ===========================
-    // POST /api/tax_calculations - Calculate Tax
+    // POST /api/tax-calculations - Calculate Tax
     // ===========================
 
     public function testCalculateTaxForFrance(): void
@@ -145,7 +145,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $this->createTaxRule($tenantId, 'France VAT Standard', 'FR', 20.0);
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 10000,  // €100.00
                     'countryCode' => 'FR',
@@ -172,7 +172,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $this->createTaxRule($tenantId, 'Germany VAT Standard', 'DE', 19.0);
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 10000,  // €100.00
                     'countryCode' => 'DE',
@@ -197,7 +197,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $this->createTaxRule($tenantId, 'Romania VAT Standard', 'RO', 19.0);
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 5000,  // €50.00
                     'countryCode' => 'RO',
@@ -222,7 +222,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $this->createTaxRule($tenantId, 'California Sales Tax', 'US', 7.25, 'CA');
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 10000,  // $100.00
                     'countryCode' => 'US',
@@ -246,7 +246,7 @@ final class TaxCalculationApiTest extends ApiTestCase
 
         // No tax rule for US (without region)
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 10000,  // $100.00
                     'countryCode' => 'US',
@@ -271,7 +271,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $this->createTaxRule($tenantId, 'France VAT', 'FR', 20.0);
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 0,  // €0.00
                     'countryCode' => 'FR',
@@ -294,7 +294,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $this->createTaxRule($tenantId, 'France VAT', 'FR', 20.0);
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 100000000,  // €1,000,000.00
                     'countryCode' => 'FR',
@@ -317,7 +317,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $this->createTaxRule($tenantId, 'Germany VAT', 'DE', 19.0);
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 9999,  // €99.99
                     'countryCode' => 'DE',
@@ -342,14 +342,14 @@ final class TaxCalculationApiTest extends ApiTestCase
         $taxRule = $this->createTaxRule($tenantId, 'France VAT', 'FR', 20.0);
 
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('PATCH', '/api/v1/tax_rules/'.$taxRule['id'].'/deactivate', [
+            ->request('PATCH', '/api/v1/tax-rules/'.$taxRule['id'].'/deactivate', [
                 'headers' => ['Content-Type' => 'application/merge-patch+json'],
                 'json' => [], // Empty JSON body for PATCH
             ]);
 
         // Try to calculate tax with deactivated rule
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 10000,
                     'countryCode' => 'FR',
@@ -369,7 +369,7 @@ final class TaxCalculationApiTest extends ApiTestCase
     {
         $tenantId = $this->createTenant();
 
-        static::createClient()->request('POST', '/api/v1/tax_calculations', [
+        static::createClient()->request('POST', '/api/v1/tax-calculations', [
             'json' => [
                 'amountInCents' => 10000,
                 'countryCode' => 'FR',
@@ -389,7 +389,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $this->createTaxRule($tenantId, 'France VAT', 'FR', 20.0);
 
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => -1000,  // Negative amount
                     'countryCode' => 'FR',
@@ -406,7 +406,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $this->currentTenantId = $tenantId;
 
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 10000,
                     'countryCode' => 'INVALID',  // Invalid ISO code
@@ -420,7 +420,7 @@ final class TaxCalculationApiTest extends ApiTestCase
     public function testCalculateTaxFailsWithoutTenantId(): void
     {
         $this->createAuthenticatedClient()
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 10000,
                     'countryCode' => 'FR',
@@ -435,7 +435,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 10000,
                     'tenantId' => $tenantId,
@@ -450,7 +450,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
 
         $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'countryCode' => 'FR',
                     'tenantId' => $tenantId,
@@ -476,7 +476,7 @@ final class TaxCalculationApiTest extends ApiTestCase
 
         // Calculate for Tenant A
         $responseA = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantA)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 10000,
                     'countryCode' => 'FR',
@@ -490,7 +490,7 @@ final class TaxCalculationApiTest extends ApiTestCase
 
         // Calculate for Tenant B
         $responseB = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantB)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 10000,
                     'countryCode' => 'FR',
@@ -512,7 +512,7 @@ final class TaxCalculationApiTest extends ApiTestCase
         $this->createTaxRule($tenantId, 'France VAT Reduced', 'FR', 5.5);
 
         $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-            ->request('POST', '/api/v1/tax_calculations', [
+            ->request('POST', '/api/v1/tax-calculations', [
                 'json' => [
                     'amountInCents' => 10000,
                     'countryCode' => 'FR',
@@ -544,7 +544,7 @@ final class TaxCalculationApiTest extends ApiTestCase
             $this->createTaxRule($tenantId, $country['code'].' VAT', $country['code'], $country['rate']);
 
             $response = $this->createAuthenticatedClient('admin@admin.com', ['ROLE_SUPER_ADMIN'], $tenantId)
-                ->request('POST', '/api/v1/tax_calculations', [
+                ->request('POST', '/api/v1/tax-calculations', [
                     'json' => [
                         'amountInCents' => 10000,  // €100.00
                         'countryCode' => $country['code'],
