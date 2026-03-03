@@ -589,7 +589,11 @@ final class TenantApiTest extends ApiTestCase
         $name = 'Preserve Fields '.uniqid();
         $tenantData = $this->createTenantViaApi($client, $name, $email);
         $tenantId = $tenantData['id'];
-        $createdAt = $tenantData['createdAt'];
+
+        // Fetch via GET to capture createdAt in a consistent serialization format,
+        // since POST and GET/PATCH may serialize timestamps with different timezone handling
+        $getResponse = $this->authRequest($client, 'GET', "/api/v1/tenants/$tenantId");
+        $createdAt = json_decode($getResponse->getContent(), true)['createdAt'];
 
         $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/deactivate", [
             'json' => [],
@@ -706,7 +710,11 @@ final class TenantApiTest extends ApiTestCase
         $name = 'Preserve Fields 2 '.uniqid();
         $tenantData = $this->createTenantViaApi($client, $name, $email);
         $tenantId = $tenantData['id'];
-        $createdAt = $tenantData['createdAt'];
+
+        // Fetch via GET to capture createdAt in a consistent serialization format,
+        // since POST and GET/PATCH may serialize timestamps with different timezone handling
+        $getResponse = $this->authRequest($client, 'GET', "/api/v1/tenants/$tenantId");
+        $createdAt = json_decode($getResponse->getContent(), true)['createdAt'];
 
         $response = $this->authRequest($client, 'PATCH', "/api/v1/tenants/$tenantId/deactivate", [
             'json' => [],
