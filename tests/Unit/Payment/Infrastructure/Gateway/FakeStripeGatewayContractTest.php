@@ -20,7 +20,7 @@ use Psr\Log\NullLogger;
  * - clientSecret is prefixed with 'secret_fake_'
  * - createRefund() gatewayRefundId is prefixed with 're_fake_'
  */
-final class FakeStripeGatewayContractTest extends PaymentGatewayContractTest
+final class FakeStripeGatewayContractTest extends PaymentGatewayContractTestCase
 {
     protected function createGateway(): PaymentGatewayInterface
     {

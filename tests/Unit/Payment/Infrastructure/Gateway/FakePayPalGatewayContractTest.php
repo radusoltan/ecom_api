@@ -25,7 +25,7 @@ use Psr\Log\NullLogger;
  * in tests because DG\BypassFinals strips the `private` modifier from
  * src/Payment/Domain/Service/* as configured in tests/bootstrap.php.
  */
-final class FakePayPalGatewayContractTest extends PaymentGatewayContractTest
+final class FakePayPalGatewayContractTest extends PaymentGatewayContractTestCase
 {
     protected function createGateway(): PaymentGatewayInterface
     {

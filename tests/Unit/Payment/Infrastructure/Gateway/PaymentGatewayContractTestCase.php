@@ -33,7 +33,7 @@ use PHPUnit\Framework\TestCase;
  * - verifyWebhookSignature() returns false for clearly invalid data
  * - Calling createPaymentIntent() twice with the same idempotency key does not throw
  */
-abstract class PaymentGatewayContractTest extends TestCase
+abstract class PaymentGatewayContractTestCase extends TestCase
 {
     // -----------------------------------------------------------------------
     // Abstract configuration — subclasses provide these
