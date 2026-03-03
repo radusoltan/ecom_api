@@ -42,16 +42,20 @@ final class VariantApiTest extends ApiTestCase
         self::bootKernel();
 
         // Use default test tenant instead of random
-        $this->tenantId = $this->getDefaultTenantId();
-        $this->setTenantContext($this->tenantId->toString());
+        $this->tenantId = TenantId::fromString($_ENV['DEFAULT_TENANT_ID']);
 
         $container = static::getContainer();
         $this->repository = $container->get(ConfigurableProductRepositoryInterface::class);
 
-        // CRITICAL: Set tenant context in application service
-        // This ensures TenantConnectionSubscriber sets RLS correctly
+        // Set tenant context in application service
         $tenantContext = $container->get(\App\Shared\Infrastructure\Tenant\TenantContext::class);
         $tenantContext->setCurrentTenant($this->tenantId);
+
+        // Set RLS context directly on the connection used by the repository
+        $em = $container->get('doctrine.orm.entity_manager');
+        $em->getConnection()->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $this->tenantId->toString())
+        );
 
         // Clean catalog test data
         $this->cleanCatalogTestData();
@@ -74,7 +78,7 @@ final class VariantApiTest extends ApiTestCase
     private function cleanCatalogTestData(): void
     {
         try {
-            $em = $this->getEntityManager();
+            $em = static::getContainer()->get('doctrine.orm.entity_manager');
             $connection = $em->getConnection();
 
             // Close any open transaction
@@ -197,13 +201,13 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Test 1: Create a variant via POST /api/v1/variant_entities.
+     * Test 1: Create a variant via POST /api/v1/variants.
      */
     public function testCreateVariant(): void
     {
         $product = $this->createFreshConfigurableProduct();
 
-        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/variant_entities', [
+        $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/variants', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -245,7 +249,7 @@ final class VariantApiTest extends ApiTestCase
         $product = $this->createFreshConfigurableProduct();
 
         // Create first variant
-        $this->createAuthenticatedClient()->request('POST', '/api/v1/variant_entities', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/variants', [
             'json' => [
                 'productId' => $product['productId']->toString(),
                 'sku' => 'TST-FUN-000002-blue-large',
@@ -259,7 +263,7 @@ final class VariantApiTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
 
         // Try to create duplicate variant with same combination
-        $this->createAuthenticatedClient()->request('POST', '/api/v1/variant_entities', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/variants', [
             'json' => [
                 'productId' => $product['productId']->toString(),
                 'sku' => 'TST-FUN-000003-blue-large',
@@ -275,14 +279,14 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Test 3: Get variant collection via GET /api/v1/variant_entities.
+     * Test 3: Get variant collection via GET /api/v1/variants.
      */
     public function testGetVariantCollection(): void
     {
         $product = $this->createFreshConfigurableProduct();
 
         // Create a variant first
-        $this->createAuthenticatedClient()->request('POST', '/api/v1/variant_entities', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/variants', [
             'json' => [
                 'productId' => $product['productId']->toString(),
                 'sku' => 'TST-FUN-000004-green-medium',
@@ -297,7 +301,7 @@ final class VariantApiTest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
         $response = $client->request(
             'GET',
-            '/api/v1/variant_entities?productId='.$product['productId']->toString(),
+            '/api/v1/variants?productId='.$product['productId']->toString(),
             [
                 'headers' => [
                     'Accept' => 'application/ld+json',
@@ -323,14 +327,14 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Test 4: Get single variant via GET /api/v1/variant_entities/{id}.
+     * Test 4: Get single variant via GET /api/v1/variants/{id}.
      */
     public function testGetSingleVariant(): void
     {
         $product = $this->createFreshConfigurableProduct();
 
         // Create a variant first
-        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/variant_entities', [
+        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/variants', [
             'json' => [
                 'productId' => $product['productId']->toString(),
                 'sku' => 'TST-FUN-000005-black-small',
@@ -348,7 +352,7 @@ final class VariantApiTest extends ApiTestCase
         $client = $this->createAuthenticatedClient();
         $response = $client->request(
             'GET',
-            '/api/v1/variant_entities/'.$variantId.'?productId='.$product['productId']->toString(),
+            '/api/v1/variants/'.$variantId.'?productId='.$product['productId']->toString(),
             [
                 'headers' => [
                     'Accept' => 'application/json',
@@ -368,14 +372,14 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Test 5: Update variant via PATCH /api/v1/variant_entities/{id}.
+     * Test 5: Update variant via PATCH /api/v1/variants/{id}.
      */
     public function testUpdateVariant(): void
     {
         $product = $this->createFreshConfigurableProduct();
 
         // Create a variant first
-        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/variant_entities', [
+        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/variants', [
             'json' => [
                 'productId' => $product['productId']->toString(),
                 'sku' => 'TST-FUN-000006-white-large',
@@ -391,7 +395,7 @@ final class VariantApiTest extends ApiTestCase
 
         // Update the variant (include productId as query parameter for provider)
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('PATCH', '/api/v1/variant_entities/'.$variantId.'?productId='.$product['productId']->toString(), [
+        $response = $client->request('PATCH', '/api/v1/variants/'.$variantId.'?productId='.$product['productId']->toString(), [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
                 'Accept' => 'application/json',
@@ -417,14 +421,14 @@ final class VariantApiTest extends ApiTestCase
     }
 
     /**
-     * Test 6: Delete variant via DELETE /api/v1/variant_entities/{id}.
+     * Test 6: Delete variant via DELETE /api/v1/variants/{id}.
      */
     public function testDeleteVariant(): void
     {
         $product = $this->createFreshConfigurableProduct();
 
         // Create a variant first
-        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/variant_entities', [
+        $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/variants', [
             'json' => [
                 'productId' => $product['productId']->toString(),
                 'sku' => 'TST-FUN-000007-yellow-medium',
@@ -440,7 +444,7 @@ final class VariantApiTest extends ApiTestCase
 
         // Delete the variant (provide productId as query parameter)
         $client = $this->createAuthenticatedClient();
-        $client->request('DELETE', '/api/v1/variant_entities/'.$variantId.'?productId='.$product['productId']->toString(), [
+        $client->request('DELETE', '/api/v1/variants/'.$variantId.'?productId='.$product['productId']->toString(), [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
             ],
@@ -450,7 +454,7 @@ final class VariantApiTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(204); // No content
 
         // Try to get the deleted variant - should fail
-        $client->request('GET', '/api/v1/variant_entities/'.$variantId.'?productId='.$product['productId']->toString(), [
+        $client->request('GET', '/api/v1/variants/'.$variantId.'?productId='.$product['productId']->toString(), [
             'headers' => [
                 'X-Tenant-ID' => $this->tenantId->toString(),
             ],
@@ -467,7 +471,7 @@ final class VariantApiTest extends ApiTestCase
         $product = $this->createFreshConfigurableProduct();
 
         // Try to create variant without SKU (required field)
-        $this->createAuthenticatedClient()->request('POST', '/api/v1/variant_entities', [
+        $this->createAuthenticatedClient()->request('POST', '/api/v1/variants', [
             'json' => [
                 'productId' => $product['productId']->toString(),
                 // Missing 'sku'
@@ -494,6 +498,12 @@ final class VariantApiTest extends ApiTestCase
         $productId1 = ProductId::generate();
         $cfgProductId1 = ConfigurableProductId::fromString(\Symfony\Component\Uid\Uuid::v7()->toString());
 
+        // Set RLS context for tenant1 before saving
+        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $em->getConnection()->executeStatement(
+            sprintf("SET app.tenant_id = '%s'", $tenant1Id->toString())
+        );
+
         $cfgProduct1 = ConfigurableProduct::create($cfgProductId1, $productId1, $tenant1Id);
         $option1 = Option::create(
             OptionId::fromString(\Symfony\Component\Uid\Uuid::v7()->toString()),
@@ -513,7 +523,7 @@ final class VariantApiTest extends ApiTestCase
             ],
         ]);
 
-        $response1 = $client1->request('POST', '/api/v1/variant_entities', [
+        $response1 = $client1->request('POST', '/api/v1/variants', [
             'json' => [
                 'productId' => $productId1->toString(),
                 'sku' => sprintf('TST-FUN-%06d-red', random_int(100000, 999999)),
@@ -535,7 +545,7 @@ final class VariantApiTest extends ApiTestCase
             ],
         ]);
 
-        $client2->request('GET', '/api/v1/variant_entities/'.$tenant1VariantId.'?productId='.$productId1->toString());
+        $client2->request('GET', '/api/v1/variants/'.$tenant1VariantId.'?productId='.$productId1->toString());
 
         // Should fail with 404 (not found for this tenant)
         $this->assertResponseStatusCodeSame(404);
