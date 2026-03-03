@@ -46,15 +46,21 @@ final readonly class CheckStockAvailabilityProcessor implements ProcessorInterfa
         // Transform API request items to query items
         $items = $data->items;
         $queryItems = array_map(
-            static function (StockAvailabilityItemResource|StockAvailabilityItemResultResource $item): StockAvailabilityItem {
-                if ($item instanceof StockAvailabilityItemResource) {
+            static function (mixed $item): StockAvailabilityItem {
+                if (\is_array($item)) {
+                    $productId = $item['productId'] ?? null;
+                    $variantId = $item['variantId'] ?? null;
+                    $quantity = $item['quantity'] ?? null;
+                } elseif ($item instanceof StockAvailabilityItemResource) {
                     $productId = $item->productId;
                     $variantId = $item->variantId;
                     $quantity = $item->quantity;
-                } else {
+                } elseif ($item instanceof StockAvailabilityItemResultResource) {
                     $productId = $item->productId;
                     $variantId = $item->variantId ?? null;
                     $quantity = $item->requestedQuantity ?? 1;
+                } else {
+                    throw new BadRequestHttpException('Invalid item format');
                 }
 
                 if (null === $productId) {
