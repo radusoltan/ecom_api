@@ -10,6 +10,7 @@ doctrine:
         logging: true  # Enable query logging
         profiling: true  # Enable profiling
         types:
+            datetimetz_immutable: App\Shared\Infrastructure\Persistence\Doctrine\Type\MicroDateTimeTzImmutableType
             tenant_id: App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantIdType
             tenant_name: App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantNameType
             tenant_status: App\Tenant\Infrastructure\Persistence\Doctrine\Type\TenantStatusType
