@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Api;
 
+use App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * API Versioning Functional Tests.
@@ -19,6 +21,47 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 final class ApiVersioningTest extends WebTestCase
 {
+    private const TENANT_ID = '9efae4ea-94fc-4807-b1bc-5e495ee7858c';
+
+    /**
+     * Generate a JWT token for authenticated requests.
+     *
+     * Redirect routes sit behind the JWT firewall (pattern ^/api), so they
+     * require a valid Bearer token even though the controller itself does
+     * not enforce any role.
+     */
+    private function getJwtToken(): string
+    {
+        $container = static::getContainer();
+        $entityManager = $container->get('doctrine')->getManager();
+        $userRepository = $entityManager->getRepository(UserEntity::class);
+
+        $email = 'api-versioning-test@example.com';
+        $existingUser = $userRepository->findOneBy(['email' => $email]);
+
+        if (!$existingUser) {
+            $userEntity = new UserEntity();
+            $userEntity->setId(Uuid::v4()->toString());
+            $userEntity->setEmail($email);
+            $userEntity->setUsername('api-versioning-test-' . bin2hex(random_bytes(4)));
+            $userEntity->setPassword('$2y$13$dummy.password.hash');
+            $userEntity->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_USER']);
+            $userEntity->setCreatedAt(new \DateTimeImmutable());
+
+            $entityManager->persist($userEntity);
+            $entityManager->flush();
+        }
+
+        $encoder = $container->get('lexik_jwt_authentication.encoder');
+
+        return $encoder->encode([
+            'email' => $email,
+            'roles' => ['ROLE_SUPER_ADMIN', 'ROLE_USER'],
+            'iat' => time(),
+            'exp' => time() + 3600,
+        ]);
+    }
+
     public function testApiV1RoutesAreAccessible(): void
     {
         $client = static::createClient();
@@ -27,7 +70,7 @@ final class ApiVersioningTest extends WebTestCase
         $client->request('GET', '/api/v1/orders', [], [], [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
-            'HTTP_X_TENANT_ID' => '9efae4ea-94fc-4807-b1bc-5e495ee7858c',
+            'HTTP_X_TENANT_ID' => self::TENANT_ID,
         ]);
 
         // Should work (200 or 401 if auth required, not 404)
@@ -39,12 +82,14 @@ final class ApiVersioningTest extends WebTestCase
     {
         $client = static::createClient();
         $client->followRedirects(false);
+        $token = $this->getJwtToken();
 
         // Test GET /api/orders → should redirect to /api/v1/orders
         $client->request('GET', '/api/orders', [], [], [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
-            'HTTP_X_TENANT_ID' => '9efae4ea-94fc-4807-b1bc-5e495ee7858c',
+            'HTTP_X_TENANT_ID' => self::TENANT_ID,
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
         ]);
 
         $response = $client->getResponse();
@@ -59,12 +104,14 @@ final class ApiVersioningTest extends WebTestCase
     {
         $client = static::createClient();
         $client->followRedirects(false);
+        $token = $this->getJwtToken();
 
         // Test POST /api/orders → should redirect with HTTP 308
         $client->request('POST', '/api/orders', [], [], [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
-            'HTTP_X_TENANT_ID' => '9efae4ea-94fc-4807-b1bc-5e495ee7858c',
+            'HTTP_X_TENANT_ID' => self::TENANT_ID,
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
         ], json_encode([
             'customerEmail' => 'test@example.com',
             'lines' => [],
@@ -81,12 +128,14 @@ final class ApiVersioningTest extends WebTestCase
     {
         $client = static::createClient();
         $client->followRedirects(false);
+        $token = $this->getJwtToken();
 
         // Test with query parameters
         $client->request('GET', '/api/orders?page=2&limit=20', [], [], [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
-            'HTTP_X_TENANT_ID' => '9efae4ea-94fc-4807-b1bc-5e495ee7858c',
+            'HTTP_X_TENANT_ID' => self::TENANT_ID,
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
         ]);
 
         $response = $client->getResponse();

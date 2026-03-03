@@ -237,11 +237,13 @@ final class OrderWorkflowE2ETest extends WebTestCase
     {
         $this->cleanupTestData();
         $client = static::createClient();
+        $token = $this->getJwtToken($client);
 
         // Request JSON response
         $client->request('GET', '/api/v1/orders', [], [], [
             'HTTP_X_TENANT_ID' => self::DEFAULT_TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertResponseHeaderSame('content-type', 'application/json; charset=utf-8');
@@ -256,11 +258,13 @@ final class OrderWorkflowE2ETest extends WebTestCase
 
         // Create order for tenant 1
         $orderId = $this->placeOrder($client);
+        $token = $this->getJwtToken($client);
 
         // Try to access with different tenant ID
         $client->request('GET', '/api/v1/orders/'.$orderId, [], [], [
             'HTTP_X_TENANT_ID' => '00000000-0000-0000-0000-000000000002', // Different tenant
             'HTTP_ACCEPT' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         // Should return 404 or 500 (not found for this tenant due to RLS)
@@ -351,9 +355,12 @@ final class OrderWorkflowE2ETest extends WebTestCase
 
     private function retrieveOrder($client, string $orderId): array
     {
+        $token = $this->getJwtToken($client);
+
         $client->request('GET', '/api/v1/orders/'.$orderId, [], [], [
             'HTTP_X_TENANT_ID' => self::DEFAULT_TENANT_ID,
             'HTTP_ACCEPT' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $this->assertResponseIsSuccessful();
