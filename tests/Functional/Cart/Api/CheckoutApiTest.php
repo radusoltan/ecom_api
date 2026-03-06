@@ -27,58 +27,81 @@ final class CheckoutApiTest extends ApiTestCase
 
     private const DEFAULT_TENANT_ID = '00000000-0000-4000-8000-000000000001';
     private static int $counter = 0;
-    private static ?string $defaultWarehouseId = null;
+    private ?string $warehouseId = null;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Clean up from previous tests
         $client = static::createClient();
         $container = $client->getContainer();
         $entityManager = $container->get('doctrine')->getManager();
+
+        // Reset entity manager if closed by a previous test
+        if (!$entityManager->isOpen()) {
+            $entityManager = $container->get('doctrine')->resetManager();
+        }
+        $entityManager->clear();
+
         $connection = $entityManager->getConnection();
 
-        // Set RLS context
+        // Set RLS context using parameterized set_config
         $connection->executeStatement(
-            sprintf("SET app.tenant_id = '%s'", self::DEFAULT_TENANT_ID)
+            "SELECT set_config('app.tenant_id', :tenantId, false)",
+            ['tenantId' => self::DEFAULT_TENANT_ID]
         );
 
-        // Clear test data (orders.lines is a JSON column, not a separate table)
+        // Clean up test data in correct FK order
+        $connection->executeStatement('DELETE FROM stock_reservations');
+        $connection->executeStatement('DELETE FROM stock_items');
         $connection->executeStatement('DELETE FROM orders');
         $connection->executeStatement('DELETE FROM cart_items');
         $connection->executeStatement('DELETE FROM carts');
 
-        // Create default warehouse if not exists (needed for stock validation)
-        if (null === self::$defaultWarehouseId) {
-            // Check if warehouse already exists
-            $existingWarehouse = $connection->fetchOne(
-                "SELECT id FROM warehouses WHERE tenant_id = :tenantId AND code = 'WH-TEST' LIMIT 1",
-                ['tenantId' => self::DEFAULT_TENANT_ID]
-            );
+        // Create a fresh warehouse per test class instance (avoids stale static refs)
+        $this->warehouseId = Uuid::v4()->toString();
+        $testAddress = json_encode([
+            'street' => '123 Test St',
+            'city' => 'Test City',
+            'state' => 'TS',
+            'postalCode' => '12345',
+            'country' => 'US',
+        ]);
+        $connection->executeStatement(
+            "INSERT INTO warehouses (id, tenant_id, code, name, address, is_active, priority, created_at, updated_at)
+             VALUES (:id, :tenantId, :code, 'Test Warehouse', :address, true, 1, NOW(), NOW())",
+            [
+                'id' => $this->warehouseId,
+                'tenantId' => self::DEFAULT_TENANT_ID,
+                'code' => 'WCK'.substr(bin2hex(random_bytes(3)), 0, 7),
+                'address' => $testAddress,
+            ]
+        );
+    }
 
-            if ($existingWarehouse) {
-                self::$defaultWarehouseId = $existingWarehouse;
-            } else {
-                self::$defaultWarehouseId = Uuid::v4()->toString();
-                $testAddress = json_encode([
-                    'street' => '123 Test St',
-                    'city' => 'Test City',
-                    'state' => 'TS',
-                    'postalCode' => '12345',
-                    'country' => 'US',
-                ]);
+    protected function tearDown(): void
+    {
+        // Clean up data created by this test
+        try {
+            $client = static::createClient();
+            $em = $client->getContainer()->get('doctrine')->getManager();
+            if ($em->isOpen()) {
+                $connection = $em->getConnection();
                 $connection->executeStatement(
-                    "INSERT INTO warehouses (id, tenant_id, code, name, address, is_active, priority, created_at, updated_at)
-                     VALUES (:id, :tenantId, 'WH-TEST', 'Test Warehouse', :address, true, 1, NOW(), NOW())",
-                    [
-                        'id' => self::$defaultWarehouseId,
-                        'tenantId' => self::DEFAULT_TENANT_ID,
-                        'address' => $testAddress,
-                    ]
+                    "SELECT set_config('app.tenant_id', :tenantId, false)",
+                    ['tenantId' => self::DEFAULT_TENANT_ID]
                 );
+                $connection->executeStatement('DELETE FROM stock_reservations');
+                $connection->executeStatement('DELETE FROM stock_items');
+                $connection->executeStatement('DELETE FROM orders');
+                $connection->executeStatement('DELETE FROM cart_items');
+                $connection->executeStatement('DELETE FROM carts');
             }
+        } catch (\Exception) {
+            // Ignore cleanup errors
         }
+
+        parent::tearDown();
     }
 
     /**
@@ -147,7 +170,8 @@ final class CheckoutApiTest extends ApiTestCase
         $entityManager = $container->get('doctrine')->getManager();
         $connection = $entityManager->getConnection();
         $connection->executeStatement(
-            sprintf("SET app.tenant_id = '%s'", self::DEFAULT_TENANT_ID)
+            "SELECT set_config('app.tenant_id', :tenantId, false)",
+            ['tenantId' => self::DEFAULT_TENANT_ID]
         );
 
         $productId = Uuid::v7()->toString();
@@ -201,7 +225,7 @@ final class CheckoutApiTest extends ApiTestCase
                 'id' => $stockItemId,
                 'tenantId' => self::DEFAULT_TENANT_ID,
                 'productId' => $productId,
-                'warehouseId' => self::$defaultWarehouseId,
+                'warehouseId' => $this->warehouseId,
                 'stock' => $stock,
             ]
         );
