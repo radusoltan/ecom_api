@@ -44,7 +44,7 @@ final readonly class PaymentRefundedSubscriber implements EventSubscriberInterfa
             // Log refund for audit trail
             $this->logger->info('Payment refunded', [
                 'payment_id' => $event->paymentId->toString(),
-                'refunded_amount_in_cents' => $event->refundedAmountInCents,
+                'refunded_amount_in_cents' => $event->refundedAmount->getAmount(),
                 'reason' => $event->reason,
                 'occurred_on' => date('Y-m-d H:i:s'),
             ]);
@@ -84,7 +84,7 @@ final readonly class PaymentRefundedSubscriber implements EventSubscriberInterfa
                 return;
             }
 
-            $amountFormatted = number_format($event->refundedAmountInCents / 100, 2);
+            $amountFormatted = number_format($event->refundedAmount->getAmount() / 100, 2);
 
             // Build HTML email
             $htmlBody = $this->buildHtmlEmailBody($event, $amountFormatted);

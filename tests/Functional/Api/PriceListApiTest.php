@@ -137,7 +137,7 @@ final class PriceListApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     // ========================================================================
@@ -271,7 +271,7 @@ final class PriceListApiTest extends ApiTestCase
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     // ========================================================================
@@ -320,7 +320,7 @@ final class PriceListApiTest extends ApiTestCase
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     // ========================================================================

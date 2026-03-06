@@ -30,11 +30,11 @@ final readonly class WebhookDeduplicationService
     /**
      * Check if a webhook event is a duplicate and record it if not.
      *
-     * @param string   $gateway         The payment gateway identifier (e.g. 'stripe', 'paypal')
-     * @param string   $externalEventId The gateway's unique event identifier
-     * @param string   $eventType       The type of webhook event (e.g. 'payment_intent.succeeded')
-     * @param TenantId $tenantId        The tenant context
-     * @param string|null $payload      Raw webhook payload for hash computation
+     * @param string      $gateway         The payment gateway identifier (e.g. 'stripe', 'paypal')
+     * @param string      $externalEventId The gateway's unique event identifier
+     * @param string      $eventType       The type of webhook event (e.g. 'payment_intent.succeeded')
+     * @param TenantId    $tenantId        The tenant context
+     * @param string|null $payload         Raw webhook payload for hash computation
      *
      * @return bool True if this is a duplicate (already processed), false if new
      */

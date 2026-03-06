@@ -274,8 +274,8 @@ final class VariantApiTest extends ApiTestCase
             ],
         ]);
 
-        // Should fail with 500 (domain exception)
-        $this->assertResponseStatusCodeSame(500);
+        // Should fail with 400 (domain exception)
+        $this->assertResponseStatusCodeSame(400);
     }
 
     /**

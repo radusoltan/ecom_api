@@ -1,0 +1,162 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\Customer\Presentation\Api\Processor;
+
+use ApiPlatform\Metadata\Operation;
+use App\Customer\Application\Command\ActivateCustomerCommand;
+use App\Customer\Application\DTO\CustomerDTO;
+use App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity;
+use App\Customer\Presentation\Api\Processor\ActivateCustomerProcessor;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
+
+#[CoversClass(ActivateCustomerProcessor::class)]
+final class ActivateCustomerProcessorTest extends TestCase
+{
+    private const TENANT_ID = '00000000-0000-4000-8000-000000000001';
+    private const CUSTOMER_ID = '11111111-1111-4111-8111-111111111111';
+
+    private MessageBusInterface $commandBus;
+    private MessageBusInterface $queryBus;
+    private ActivateCustomerProcessor $processor;
+
+    protected function setUp(): void
+    {
+        $this->commandBus = $this->createMock(MessageBusInterface::class);
+        $this->queryBus = $this->createMock(MessageBusInterface::class);
+        $this->processor = new ActivateCustomerProcessor($this->commandBus, $this->queryBus);
+    }
+
+    // ---------------------------------------------------------------
+    // Happy path
+    // ---------------------------------------------------------------
+
+    #[Test]
+    public function itDispatchesActivateCommandAndReturnsCustomerEntity(): void
+    {
+        $dto = $this->buildCustomerDTO(isActive: true);
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(ActivateCustomerCommand::class))
+            ->willReturn(new Envelope(new \stdClass()));
+
+        $queryEnvelope = new Envelope(new \stdClass(), [new HandledStamp($dto, 'handler')]);
+        $this->queryBus
+            ->expects(self::once())
+            ->method('dispatch')
+            ->willReturn($queryEnvelope);
+
+        $data = new CustomerEntity();
+        $operation = $this->createMock(Operation::class);
+        $context = ['tenant_id' => self::TENANT_ID];
+        $uriVariables = ['id' => self::CUSTOMER_ID];
+
+        $result = $this->processor->process($data, $operation, $uriVariables, $context);
+
+        self::assertInstanceOf(CustomerEntity::class, $result);
+        self::assertSame($dto->id, $result->getId());
+        self::assertSame($dto->email, $result->getEmail());
+    }
+
+    // ---------------------------------------------------------------
+    // Validation guards
+    // ---------------------------------------------------------------
+
+    #[Test]
+    public function itThrowsWhenDataIsNotCustomerEntity(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $operation = $this->createMock(Operation::class);
+        $this->processor->process(new \stdClass(), $operation, ['id' => self::CUSTOMER_ID], ['tenant_id' => self::TENANT_ID]);
+    }
+
+    #[Test]
+    public function itThrowsWhenTenantIdMissingFromContext(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        $data = new CustomerEntity();
+        $operation = $this->createMock(Operation::class);
+        $this->processor->process($data, $operation, ['id' => self::CUSTOMER_ID], []);
+    }
+
+    #[Test]
+    public function itThrowsWhenCustomerIdMissingFromUriVariables(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $data = new CustomerEntity();
+        $operation = $this->createMock(Operation::class);
+        $this->processor->process($data, $operation, [], ['tenant_id' => self::TENANT_ID]);
+    }
+
+    #[Test]
+    public function itThrowsWhenQueryHandlerReturnsNoStamp(): void
+    {
+        $this->commandBus
+            ->method('dispatch')
+            ->willReturn(new Envelope(new \stdClass()));
+
+        $this->queryBus
+            ->method('dispatch')
+            ->willReturn(new Envelope(new \stdClass())); // no HandledStamp
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('No handler found for query');
+
+        $data = new CustomerEntity();
+        $operation = $this->createMock(Operation::class);
+        $this->processor->process($data, $operation, ['id' => self::CUSTOMER_ID], ['tenant_id' => self::TENANT_ID]);
+    }
+
+    #[Test]
+    public function itThrowsWhenQueryHandlerReturnsNullDto(): void
+    {
+        $this->commandBus
+            ->method('dispatch')
+            ->willReturn(new Envelope(new \stdClass()));
+
+        $queryEnvelope = new Envelope(new \stdClass(), [new HandledStamp(null, 'handler')]);
+        $this->queryBus
+            ->method('dispatch')
+            ->willReturn($queryEnvelope);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Customer not found after activation');
+
+        $data = new CustomerEntity();
+        $operation = $this->createMock(Operation::class);
+        $this->processor->process($data, $operation, ['id' => self::CUSTOMER_ID], ['tenant_id' => self::TENANT_ID]);
+    }
+
+    // ---------------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------------
+
+    private function buildCustomerDTO(bool $isActive = true): CustomerDTO
+    {
+        return new CustomerDTO(
+            id: self::CUSTOMER_ID,
+            tenantId: self::TENANT_ID,
+            email: 'test@example.com',
+            firstName: 'John',
+            lastName: 'Doe',
+            fullName: 'John Doe',
+            phoneNumber: null,
+            segment: 'standard',
+            loyaltyPoints: 0,
+            isActive: $isActive,
+            createdAt: '2024-01-01 00:00:00',
+            updatedAt: '2024-01-01 00:00:00',
+        );
+    }
+}

@@ -19,6 +19,7 @@ use App\Payment\Domain\ValueObject\PaymentMethod;
 use App\Payment\Domain\ValueObject\PaymentStatus;
 use App\Payment\Domain\ValueObject\RetryPolicy;
 use App\Shared\Domain\Aggregate\AggregateRoot;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
@@ -50,15 +51,14 @@ final class Payment extends AggregateRoot
     private PaymentId $id;
     private TenantId $tenantId;
     private string $orderId; // Reference to Order aggregate
-    private int $amountInCents;
-    private string $currency;
+    private Money $amount;
     private PaymentMethod $method;
     private PaymentGateway $gateway;
     private PaymentStatus $status;
     private ?string $gatewayTransactionId;
     private ?string $errorMessage;
     private ?string $errorCode; // Normalized error code for retry logic
-    private int $refundedAmountInCents;
+    private Money $refundedAmount;
     private ?string $idempotencyKey; // Prevents duplicate payment processing
     private int $retryCount; // Number of retry attempts made (0-indexed)
     private ?\DateTimeImmutable $nextRetryAt; // Scheduled time for next retry
@@ -73,21 +73,18 @@ final class Payment extends AggregateRoot
         PaymentId $id,
         TenantId $tenantId,
         string $orderId,
-        int $amountInCents,
-        string $currency,
+        Money $amount,
         PaymentMethod $method,
         PaymentGateway $gateway,
         ?string $idempotencyKey = null,
     ): self {
-        self::validateAmount($amountInCents);
-        self::validateCurrency($currency);
+        self::validateAmount($amount);
 
         $payment = new self();
         $payment->id = $id;
         $payment->tenantId = $tenantId;
         $payment->orderId = $orderId;
-        $payment->amountInCents = $amountInCents;
-        $payment->currency = strtoupper($currency);
+        $payment->amount = $amount;
         $payment->method = $method;
         $payment->gateway = $gateway;
         $payment->status = PaymentStatus::pending();
@@ -95,7 +92,7 @@ final class Payment extends AggregateRoot
         $payment->errorMessage = null;
         $payment->errorCode = null;
         $payment->idempotencyKey = $idempotencyKey;
-        $payment->refundedAmountInCents = 0;
+        $payment->refundedAmount = Money::fromScalars(0, $amount->getCurrency()->getCurrencyCode());
         $payment->retryCount = 0;
         $payment->nextRetryAt = null;
         $payment->createdAt = new \DateTimeImmutable();
@@ -105,8 +102,7 @@ final class Payment extends AggregateRoot
             $payment->id,
             $payment->tenantId,
             $payment->orderId,
-            $payment->amountInCents,
-            $payment->currency,
+            $payment->amount,
             $payment->gateway->value()
         ));
 
@@ -117,14 +113,13 @@ final class Payment extends AggregateRoot
         PaymentId $id,
         TenantId $tenantId,
         string $orderId,
-        int $amountInCents,
-        string $currency,
+        Money $amount,
         PaymentMethod $method,
         PaymentGateway $gateway,
         PaymentStatus $status,
         ?string $gatewayTransactionId,
         ?string $errorMessage,
-        int $refundedAmountInCents,
+        Money $refundedAmount,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $updatedAt,
         // Optional fields with defaults for backwards compatibility
@@ -137,8 +132,7 @@ final class Payment extends AggregateRoot
         $payment->id = $id;
         $payment->tenantId = $tenantId;
         $payment->orderId = $orderId;
-        $payment->amountInCents = $amountInCents;
-        $payment->currency = $currency;
+        $payment->amount = $amount;
         $payment->method = $method;
         $payment->gateway = $gateway;
         $payment->status = $status;
@@ -146,7 +140,7 @@ final class Payment extends AggregateRoot
         $payment->errorMessage = $errorMessage;
         $payment->errorCode = $errorCode;
         $payment->idempotencyKey = $idempotencyKey;
-        $payment->refundedAmountInCents = $refundedAmountInCents;
+        $payment->refundedAmount = $refundedAmount;
         $payment->retryCount = $retryCount;
         $payment->nextRetryAt = $nextRetryAt;
         $payment->createdAt = $createdAt;
@@ -188,38 +182,38 @@ final class Payment extends AggregateRoot
         $this->recordEvent(new PaymentCaptured(
             $this->id,
             $this->tenantId,
-            $this->amountInCents,
+            $this->amount,
             $this->orderId
         ));
     }
 
-    public function refund(int $refundAmountInCents, string $reason): void
+    public function refund(Money $refundAmount, string $reason): void
     {
         if (!$this->status->canTransitionTo(PaymentStatus::refunded())) {
             throw new \InvalidArgumentException(sprintf('Cannot refund payment in status: %s', $this->status->value()));
         }
 
-        if ($refundAmountInCents <= 0) {
+        if ($refundAmount->isZero() || $refundAmount->isNegative()) {
             throw new \InvalidArgumentException('Refund amount must be greater than 0');
         }
 
-        $maxRefundable = $this->amountInCents - $this->refundedAmountInCents;
-        if ($refundAmountInCents > $maxRefundable) {
-            throw new \InvalidArgumentException(sprintf('Refund amount (%d) exceeds available amount (%d)', $refundAmountInCents, $maxRefundable));
+        $maxRefundable = $this->amount->subtract($this->refundedAmount);
+        if ($refundAmount->isGreaterThan($maxRefundable)) {
+            throw new \InvalidArgumentException(sprintf('Refund amount (%d) exceeds available amount (%d)', $refundAmount->getAmount(), $maxRefundable->getAmount()));
         }
 
         if (empty($reason)) {
             throw new \InvalidArgumentException('Refund reason is required');
         }
 
-        $this->refundedAmountInCents += $refundAmountInCents;
+        $this->refundedAmount = $this->refundedAmount->add($refundAmount);
         $this->status = PaymentStatus::refunded();
         $this->updatedAt = new \DateTimeImmutable();
 
         $this->recordEvent(new PaymentRefunded(
             $this->id,
             $this->tenantId,
-            $refundAmountInCents,
+            $refundAmount,
             $reason
         ));
     }
@@ -372,23 +366,15 @@ final class Payment extends AggregateRoot
         return $now >= $this->nextRetryAt;
     }
 
-    private static function validateAmount(int $amountInCents): void
+    private static function validateAmount(Money $amount): void
     {
-        if ($amountInCents <= 0) {
-            throw new \InvalidArgumentException(sprintf('Payment amount must be greater than 0. Got: %d cents', $amountInCents));
+        if ($amount->isZero() || $amount->isNegative()) {
+            throw new \InvalidArgumentException(sprintf('Payment amount must be greater than 0. Got: %d cents', $amount->getAmount()));
         }
 
         // Maximum amount: $1,000,000.00 (100,000,000 cents)
-        if ($amountInCents > 100_000_000) {
-            throw new \InvalidArgumentException(sprintf('Payment amount exceeds maximum allowed ($1,000,000.00). Got: %d cents', $amountInCents));
-        }
-    }
-
-    private static function validateCurrency(string $currency): void
-    {
-        // ISO 4217 currency codes (3 uppercase letters)
-        if (!preg_match('/^[A-Z]{3}$/', $currency)) {
-            throw new \InvalidArgumentException(sprintf('Invalid currency code: "%s". Must be 3 uppercase letters (ISO 4217)', $currency));
+        if ($amount->getAmount() > 100_000_000) {
+            throw new \InvalidArgumentException(sprintf('Payment amount exceeds maximum allowed ($1,000,000.00). Got: %d cents', $amount->getAmount()));
         }
     }
 
@@ -408,14 +394,14 @@ final class Payment extends AggregateRoot
         return $this->orderId;
     }
 
-    public function amountInCents(): int
+    public function amount(): Money
     {
-        return $this->amountInCents;
+        return $this->amount;
     }
 
     public function currency(): string
     {
-        return $this->currency;
+        return $this->amount->getCurrency()->getCurrencyCode();
     }
 
     public function method(): PaymentMethod
@@ -453,9 +439,9 @@ final class Payment extends AggregateRoot
         return $this->idempotencyKey;
     }
 
-    public function refundedAmountInCents(): int
+    public function refundedAmount(): Money
     {
-        return $this->refundedAmountInCents;
+        return $this->refundedAmount;
     }
 
     public function retryCount(): int

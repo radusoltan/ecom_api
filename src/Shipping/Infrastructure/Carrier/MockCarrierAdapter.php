@@ -4,14 +4,24 @@ declare(strict_types=1);
 
 namespace App\Shipping\Infrastructure\Carrier;
 
-use App\Shipping\Domain\Service\ShippingRateCalculatorInterface;
+use App\Shipping\Domain\Service\CarrierAdapterInterface;
 use App\Shipping\Domain\ValueObject\CarrierCode;
 use App\Shipping\Domain\ValueObject\ShippingRate;
 use App\Shipping\Domain\ValueObject\TrackingNumber;
 use Brick\Money\Money;
 
-final class MockCarrierAdapter implements ShippingRateCalculatorInterface
+final class MockCarrierAdapter implements CarrierAdapterInterface
 {
+    public function carrierCode(): CarrierCode
+    {
+        return CarrierCode::mock();
+    }
+
+    public function isEnabled(): bool
+    {
+        return true;
+    }
+
     /** @return ShippingRate[] */
     public function calculateRates(string $originCountry, string $destinationCountry, float $weightKg): array
     {
@@ -39,8 +49,8 @@ final class MockCarrierAdapter implements ShippingRateCalculatorInterface
         ];
     }
 
-    public function generateTrackingNumber(CarrierCode $carrier): TrackingNumber
+    public function generateTrackingNumber(): TrackingNumber
     {
-        return TrackingNumber::fromString(sprintf('MOCK-%s-%s', strtoupper($carrier->toString()), bin2hex(random_bytes(6))));
+        return TrackingNumber::fromString(sprintf('MOCK-%s-%s', 'MOCK', bin2hex(random_bytes(6))));
     }
 }

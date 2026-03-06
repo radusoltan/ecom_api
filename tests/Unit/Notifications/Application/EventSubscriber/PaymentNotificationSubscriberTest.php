@@ -10,6 +10,7 @@ use App\Payment\Domain\Event\PaymentCaptured;
 use App\Payment\Domain\Event\PaymentFailed;
 use App\Payment\Domain\Event\PaymentRefunded;
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -54,7 +55,7 @@ final class PaymentNotificationSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: $capturedAmountInCents,
+            capturedAmount: Money::fromScalars($capturedAmountInCents, 'USD'),
             orderId: $orderId
         );
 
@@ -97,7 +98,7 @@ final class PaymentNotificationSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: $capturedAmountInCents,
+            capturedAmount: Money::fromScalars($capturedAmountInCents, 'USD'),
             orderId: null
         );
 
@@ -125,7 +126,7 @@ final class PaymentNotificationSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: $capturedAmountInCents
+            capturedAmount: Money::fromScalars($capturedAmountInCents, 'USD')
         );
 
         $exception = new \RuntimeException('Email service unavailable');
@@ -233,7 +234,7 @@ final class PaymentNotificationSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            refundedAmountInCents: $refundedAmountInCents,
+            refundedAmount: Money::fromScalars($refundedAmountInCents, 'USD'),
             reason: $reason
         );
 
@@ -275,7 +276,7 @@ final class PaymentNotificationSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            refundedAmountInCents: $refundedAmountInCents,
+            refundedAmount: Money::fromScalars($refundedAmountInCents, 'USD'),
             reason: $reason
         );
 

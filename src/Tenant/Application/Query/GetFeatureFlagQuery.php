@@ -9,5 +9,6 @@ final readonly class GetFeatureFlagQuery
     public function __construct(
         public string $tenantId,
         public string $featureName,
-    ) {}
+    ) {
+    }
 }

@@ -17,7 +17,7 @@ final class Version20260226140002_CreateFeatureFlagsTable extends AbstractMigrat
     public function up(Schema $schema): void
     {
         $this->addSql(
-            "CREATE TABLE tenant_feature_flags (
+            'CREATE TABLE tenant_feature_flags (
                 id VARCHAR(36) NOT NULL,
                 tenant_id VARCHAR(36) NOT NULL,
                 feature_name VARCHAR(100) NOT NULL,
@@ -27,7 +27,7 @@ final class Version20260226140002_CreateFeatureFlagsTable extends AbstractMigrat
                 created_at TIMESTAMP(0) WITH TIME ZONE NOT NULL,
                 updated_at TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL,
                 PRIMARY KEY (id)
-            )"
+            )'
         );
 
         $this->addSql('CREATE UNIQUE INDEX uniq_tenant_feature ON tenant_feature_flags (tenant_id, feature_name)');

@@ -12,6 +12,7 @@ use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -477,8 +478,7 @@ final class PaymentCustomerEmailResolverTest extends TestCase
             id: PaymentId::generate(),
             tenantId: TenantId::fromString(self::DEFAULT_TENANT_ID),
             orderId: $orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
         );

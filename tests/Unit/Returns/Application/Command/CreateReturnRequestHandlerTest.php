@@ -46,7 +46,7 @@ final class CreateReturnRequestHandlerTest extends TestCase
             ->with($this->callback(function (ReturnRequest $rr) use ($returnRequestId, $orderId): bool {
                 return $rr->id()->toString() === $returnRequestId
                     && $rr->orderId()->toString() === $orderId
-                    && $rr->reason()->value() === 'Product arrived damaged and is not usable'
+                    && 'Product arrived damaged and is not usable' === $rr->reason()->value()
                     && $rr->status()->isRequested();
             }));
 

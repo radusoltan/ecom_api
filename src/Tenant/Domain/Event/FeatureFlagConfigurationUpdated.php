@@ -13,5 +13,6 @@ final readonly class FeatureFlagConfigurationUpdated
         public FeatureFlagId $flagId,
         public TenantId $tenantId,
         public string $featureName,
-    ) {}
+    ) {
+    }
 }

@@ -15,7 +15,8 @@ final readonly class ToggleFeatureFlagCommandHandler
     public function __construct(
         private FeatureFlagRepositoryInterface $repository,
         private FeatureFlagService $featureFlagService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(ToggleFeatureFlagCommand $command): void
     {

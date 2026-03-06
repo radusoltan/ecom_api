@@ -17,7 +17,8 @@ final readonly class DoctrineORMFeatureFlagRepository implements FeatureFlagRepo
     public function __construct(
         private EntityManagerInterface $entityManager,
         private EventDispatcherInterface $eventDispatcher,
-    ) {}
+    ) {
+    }
 
     public function save(FeatureFlag $flag): void
     {
@@ -38,6 +39,7 @@ final readonly class DoctrineORMFeatureFlagRepository implements FeatureFlagRepo
     public function findById(FeatureFlagId $id): ?FeatureFlag
     {
         $entity = $this->entityManager->find(FeatureFlagEntity::class, $id->toString());
+
         return $entity?->toDomainModel();
     }
 
@@ -47,6 +49,7 @@ final readonly class DoctrineORMFeatureFlagRepository implements FeatureFlagRepo
             'tenantId' => $tenantId->toString(),
             'featureName' => $featureName,
         ]);
+
         return $entity?->toDomainModel();
     }
 
@@ -56,6 +59,7 @@ final readonly class DoctrineORMFeatureFlagRepository implements FeatureFlagRepo
         $entities = $this->entityManager->getRepository(FeatureFlagEntity::class)->findBy([
             'tenantId' => $tenantId->toString(),
         ]);
+
         return array_map(fn (FeatureFlagEntity $e) => $e->toDomainModel(), $entities);
     }
 

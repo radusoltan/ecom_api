@@ -368,6 +368,138 @@ final class CategoryEntityTest extends TestCase
         $this->assertTrue(true); // If we got here, the method works
     }
 
+    public function testNameTranslationsStoreAndRetrieve(): void
+    {
+        $category = Category::create(
+            id: $this->categoryId,
+            tenantId: $this->tenantId,
+            name: CategoryName::fromString('Electronics'),
+            description: 'Electronic products',
+            parentId: null,
+            position: 0
+        );
+
+        $entity = CategoryEntity::fromDomainModel($category);
+
+        $this->assertNull($entity->getNameTranslations());
+        $this->assertNull($entity->getDescriptionTranslations());
+
+        $nameTranslations = ['en' => 'Electronics', 'fr' => 'Electronique', 'de' => 'Elektronik'];
+        $descTranslations = ['en' => 'Electronic products', 'fr' => 'Produits electroniques'];
+
+        $entity->setNameTranslations($nameTranslations);
+        $entity->setDescriptionTranslations($descTranslations);
+
+        $this->assertSame($nameTranslations, $entity->getNameTranslations());
+        $this->assertSame($descTranslations, $entity->getDescriptionTranslations());
+    }
+
+    public function testGetNameInLocaleWithExistingLocale(): void
+    {
+        $category = Category::create(
+            id: $this->categoryId,
+            tenantId: $this->tenantId,
+            name: CategoryName::fromString('Electronics'),
+            description: 'Electronic products',
+            parentId: null,
+            position: 0
+        );
+
+        $entity = CategoryEntity::fromDomainModel($category);
+        $entity->setNameTranslations(['en' => 'Electronics', 'fr' => 'Electronique']);
+
+        $this->assertSame('Electronique', $entity->getNameInLocale('fr'));
+    }
+
+    public function testGetNameInLocaleWithFallback(): void
+    {
+        $category = Category::create(
+            id: $this->categoryId,
+            tenantId: $this->tenantId,
+            name: CategoryName::fromString('Electronics'),
+            description: 'Electronic products',
+            parentId: null,
+            position: 0
+        );
+
+        $entity = CategoryEntity::fromDomainModel($category);
+        $entity->setNameTranslations(['en' => 'Electronics']);
+
+        // 'de' not available, falls back to 'en'
+        $this->assertSame('Electronics', $entity->getNameInLocale('de'));
+    }
+
+    public function testGetNameInLocaleFallsBackToDefaultName(): void
+    {
+        $category = Category::create(
+            id: $this->categoryId,
+            tenantId: $this->tenantId,
+            name: CategoryName::fromString('Electronics'),
+            description: 'Electronic products',
+            parentId: null,
+            position: 0
+        );
+
+        $entity = CategoryEntity::fromDomainModel($category);
+        // No translations set
+        $this->assertSame('Electronics', $entity->getNameInLocale('fr'));
+
+        // Translations set but without requested locale or fallback
+        $entity->setNameTranslations(['es' => 'Electronica']);
+        $this->assertSame('Electronics', $entity->getNameInLocale('fr'));
+    }
+
+    public function testGetDescriptionInLocaleWithExistingLocale(): void
+    {
+        $category = Category::create(
+            id: $this->categoryId,
+            tenantId: $this->tenantId,
+            name: CategoryName::fromString('Electronics'),
+            description: 'Electronic products',
+            parentId: null,
+            position: 0
+        );
+
+        $entity = CategoryEntity::fromDomainModel($category);
+        $entity->setDescriptionTranslations(['en' => 'Electronic products', 'fr' => 'Produits electroniques']);
+
+        $this->assertSame('Produits electroniques', $entity->getDescriptionInLocale('fr'));
+    }
+
+    public function testGetDescriptionInLocaleFallsBackToDefault(): void
+    {
+        $category = Category::create(
+            id: $this->categoryId,
+            tenantId: $this->tenantId,
+            name: CategoryName::fromString('Electronics'),
+            description: 'Electronic products',
+            parentId: null,
+            position: 0
+        );
+
+        $entity = CategoryEntity::fromDomainModel($category);
+        // No translations set
+        $this->assertSame('Electronic products', $entity->getDescriptionInLocale('fr'));
+    }
+
+    public function testTranslationsCanBeSetToNull(): void
+    {
+        $category = Category::create(
+            id: $this->categoryId,
+            tenantId: $this->tenantId,
+            name: CategoryName::fromString('Electronics'),
+            description: 'Electronic products',
+            parentId: null,
+            position: 0
+        );
+
+        $entity = CategoryEntity::fromDomainModel($category);
+        $entity->setNameTranslations(['en' => 'English']);
+        $entity->setNameTranslations(null);
+
+        $this->assertNull($entity->getNameTranslations());
+    }
+
     public function testEmptyDescriptionHandling(): void
     {
         $category = Category::create(

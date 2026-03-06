@@ -69,8 +69,7 @@ final class TestPayPalIntegrationCommand extends Command
                 id: $paymentId,
                 tenantId: $tenantId,
                 orderId: '01J9XAMPLE'.bin2hex(random_bytes(8)),
-                amountInCents: self::TEST_AMOUNT_CENTS,
-                currency: self::TEST_CURRENCY,
+                amount: \App\Shared\Domain\ValueObject\Money::fromScalars(self::TEST_AMOUNT_CENTS, self::TEST_CURRENCY),
                 method: PaymentMethod::paypal(),
                 gateway: PaymentGateway::paypal()
             );
@@ -154,8 +153,7 @@ final class TestPayPalIntegrationCommand extends Command
 
             try {
                 $captureCommand = new CapturePayment(
-                    id: $paymentId,
-                    tenantId: $tenantId
+                    id: $paymentId
                 );
 
                 $this->commandBus->dispatch($captureCommand);
@@ -187,8 +185,7 @@ final class TestPayPalIntegrationCommand extends Command
                 id: $paymentId2,
                 tenantId: $tenantId,
                 orderId: '01J9XAMPLE'.bin2hex(random_bytes(8)),
-                amountInCents: 3000, // $30.00
-                currency: self::TEST_CURRENCY,
+                amount: \App\Shared\Domain\ValueObject\Money::fromScalars(3000, self::TEST_CURRENCY),
                 method: PaymentMethod::paypal(),
                 gateway: PaymentGateway::paypal()
             );

@@ -11,6 +11,7 @@ use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 
@@ -32,8 +33,7 @@ final class CreatePaymentCommandHandlerTest extends TestCase
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -44,8 +44,8 @@ final class CreatePaymentCommandHandlerTest extends TestCase
                 return $payment->id()->equals($command->id)
                     && $payment->tenantId()->equals($command->tenantId)
                     && $payment->orderId() === $command->orderId
-                    && $payment->amountInCents() === $command->amountInCents
-                    && $payment->currency() === $command->currency
+                    && $payment->amount()->getAmount() === $command->amount->getAmount()
+                    && $payment->currency() === $command->amount->getCurrency()->getCurrencyCode()
                     && $payment->status()->isPending();
             }));
 
@@ -62,8 +62,7 @@ final class CreatePaymentCommandHandlerTest extends TestCase
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 5000,
-            currency: 'EUR',
+            amount: Money::fromScalars(5000, 'EUR'),
             method: PaymentMethod::paypal(),
             gateway: PaymentGateway::paypal()
         );
@@ -82,7 +81,7 @@ final class CreatePaymentCommandHandlerTest extends TestCase
         $this->assertNotNull($capturedPayment);
         $this->assertTrue($capturedPayment->status()->isPending());
         $this->assertNull($capturedPayment->gatewayTransactionId());
-        $this->assertSame(0, $capturedPayment->refundedAmountInCents());
+        $this->assertSame(0, $capturedPayment->refundedAmount()->getAmount());
     }
 
     public function testHandleWithDifferentCurrencies(): void
@@ -92,8 +91,7 @@ final class CreatePaymentCommandHandlerTest extends TestCase
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 12500,
-            currency: 'GBP',
+            amount: Money::fromScalars(12500, 'GBP'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -115,8 +113,7 @@ final class CreatePaymentCommandHandlerTest extends TestCase
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 7500,
-            currency: 'USD',
+            amount: Money::fromScalars(7500, 'USD'),
             method: PaymentMethod::paypal(),
             gateway: PaymentGateway::paypal()
         );

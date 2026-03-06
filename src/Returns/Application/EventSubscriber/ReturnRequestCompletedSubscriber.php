@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Returns\Application\EventSubscriber;
 
-use App\Payment\Application\Command\RefundPayment;
 use App\Returns\Domain\Event\ReturnRequestCompleted;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\Email;
 
 /**
@@ -39,7 +37,6 @@ final readonly class ReturnRequestCompletedSubscriber implements EventSubscriber
         private LoggerInterface $logger,
         private string $senderEmail,
         private string $senderName,
-        private MessageBusInterface $commandBus,
     ) {
     }
 
@@ -75,34 +72,17 @@ final readonly class ReturnRequestCompletedSubscriber implements EventSubscriber
 
     private function triggerRefundProcess(ReturnRequestCompleted $event): void
     {
-        // Dispatch RefundPayment command to Payment bounded context
-        // Note: This assumes Order has paymentId stored. If not, you need to query Payment by orderId.
-        // For now, we'll use the orderId as a reference and let the Payment context handle the lookup.
+        // TODO: To dispatch RefundPayment, we need a PaymentId associated with this return.
+        // The ReturnRequestCompleted event currently only carries returnRequestId and tenantId.
+        // A future implementation should look up the PaymentId from the Order/Payment context.
 
-        try {
-            $this->commandBus->dispatch(
-                new RefundPayment(
-                    id: \App\Payment\Domain\ValueObject\PaymentId::fromString($event->orderId->toString()), // In production: lookup actual paymentId
-                    refundAmountInCents: $event->refundAmount,
-                    reason: 'Return completed - RMA: '.$event->returnRequestId->toString()
-                )
-            );
-
-            $this->logger->info('Refund command dispatched successfully', [
-                'returnRequestId' => $event->returnRequestId->toString(),
-                'orderId' => $event->orderId->toString(),
-                'refundAmount' => $event->refundAmount / 100,
-                'refundCurrency' => $event->refundCurrency,
-                'action' => 'payment_refund',
-            ]);
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to dispatch refund command', [
-                'returnRequestId' => $event->returnRequestId->toString(),
-                'orderId' => $event->orderId->toString(),
-                'error' => $e->getMessage(),
-            ]);
-            // Don't throw - allow return completion to proceed even if refund dispatch fails
-        }
+        $this->logger->info('Return completed, refund process pending payment lookup', [
+            'returnRequestId' => $event->returnRequestId->toString(),
+            'tenantId' => $event->tenantId->toString(),
+            'refundAmount' => $event->refundAmount,
+            'refundCurrency' => $event->refundCurrency,
+            'action' => 'payment_refund_pending',
+        ]);
     }
 
     private function sendRefundConfirmationEmail(ReturnRequestCompleted $event): void

@@ -193,7 +193,7 @@ final class TranslationCacheServiceTest extends TestCase
     public function testInvalidate(): void
     {
         // Arrange
-        $expectedKey = 'translations:51bd1332-307c-480c-bd3c-6bfe5ccd7829:en:messages';
+        $expectedKey = 'i18n:51bd1332-307c-480c-bd3c-6bfe5ccd7829:messages:en';
 
         $this->cache->expects($this->once())
             ->method('delete')
@@ -225,13 +225,13 @@ final class TranslationCacheServiceTest extends TestCase
 
     public function testInvalidateAll(): void
     {
-        // Arrange - expect 30 delete calls (3 locales × 10 domains)
-        $this->cache->expects($this->exactly(30))
+        // Arrange - expect 60 delete calls (6 locales × 10 domains)
+        $this->cache->expects($this->exactly(60))
             ->method('delete')
             ->willReturn(true);
 
-        // Logger is called 31 times: 30 invalidate() calls + 1 invalidateAll() call
-        $this->logger->expects($this->exactly(31))
+        // Logger is called 61 times: 60 invalidate() calls + 1 invalidateAll() call
+        $this->logger->expects($this->exactly(61))
             ->method('info');
 
         // Act
@@ -244,7 +244,7 @@ final class TranslationCacheServiceTest extends TestCase
         // Since we're using hardcoded valid values, we need to test the catch block differently
         // Let's just verify the method completes successfully even if one invalidate() call fails
         $callCount = 0;
-        $this->cache->expects($this->exactly(30))
+        $this->cache->expects($this->exactly(60))
             ->method('delete')
             ->willReturnCallback(function () use (&$callCount) {
                 ++$callCount;
@@ -277,8 +277,8 @@ final class TranslationCacheServiceTest extends TestCase
             value: TranslationValue::fromString('Test'),
         );
 
-        // Expect 30 cache get calls (3 locales × 10 domains)
-        $this->cache->expects($this->exactly(30))
+        // Expect 60 cache get calls (6 locales × 10 domains)
+        $this->cache->expects($this->exactly(60))
             ->method('get')
             ->willReturnCallback(function ($key, $callback) {
                 $item = $this->createMock(ItemInterface::class);
@@ -287,20 +287,20 @@ final class TranslationCacheServiceTest extends TestCase
                 return $callback($item);
             });
 
-        // Expect 30 repository findAll calls
-        $this->repository->expects($this->exactly(30))
+        // Expect 60 repository findAll calls
+        $this->repository->expects($this->exactly(60))
             ->method('findAll')
             ->willReturn([$entry]);
 
-        // Logger is called 31 times: 30 cache misses + 1 warming completed
-        $this->logger->expects($this->exactly(31))
+        // Logger is called 61 times: 60 cache misses + 1 warming completed
+        $this->logger->expects($this->exactly(61))
             ->method('info');
 
         // Act
         $warmedCount = $this->service->warmCache($this->tenantId);
 
         // Assert
-        $this->assertEquals(30, $warmedCount);
+        $this->assertEquals(60, $warmedCount);
     }
 
     public function testWarmCacheSkipsEmptyTranslations(): void
@@ -379,19 +379,19 @@ final class TranslationCacheServiceTest extends TestCase
         // Act
         $warmedCount = $this->service->warmCache($this->tenantId);
 
-        // Assert - All 30 combinations are warmed (1 from DB fallback, 29 from cache)
-        $this->assertEquals(30, $warmedCount);
+        // Assert - All 60 combinations are warmed (1 from DB fallback, 59 from cache)
+        $this->assertEquals(60, $warmedCount);
     }
 
     public function testClearCache(): void
     {
-        // Arrange - clearCache calls invalidateAll which calls invalidate 30 times
-        $this->cache->expects($this->exactly(30))
+        // Arrange - clearCache calls invalidateAll which calls invalidate 60 times
+        $this->cache->expects($this->exactly(60))
             ->method('delete')
             ->willReturn(true);
 
-        // Logger is called 32 times: 30 invalidate() + 1 invalidateAll() + 1 clearCache()
-        $this->logger->expects($this->exactly(32))
+        // Logger is called 62 times: 60 invalidate() + 1 invalidateAll() + 1 clearCache()
+        $this->logger->expects($this->exactly(62))
             ->method('info');
 
         // Act
@@ -401,7 +401,7 @@ final class TranslationCacheServiceTest extends TestCase
     public function testBuildCacheKeyFormat(): void
     {
         // This tests the cache key format indirectly through invalidate
-        $expectedKey = 'translations:51bd1332-307c-480c-bd3c-6bfe5ccd7829:fr:validators';
+        $expectedKey = 'i18n:51bd1332-307c-480c-bd3c-6bfe5ccd7829:validators:fr';
 
         $frenchLocale = LanguageCode::fromString('fr');
         $validatorsDomain = TranslationDomain::fromString('validators');

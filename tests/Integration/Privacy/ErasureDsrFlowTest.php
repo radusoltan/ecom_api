@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Privacy;
 
 use App\Customer\Application\EventSubscriber\PrivacyErasureRequestSubscriber;
+use App\Customer\Domain\Event\AccountDeletionCompleted;
 use App\Customer\Domain\Model\DeletionRequest;
 use App\Customer\Domain\Repository\DeletionRequestRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Domain\ValueObject\DeletionRequestId;
-use App\Customer\Domain\Event\AccountDeletionCompleted;
 use App\Privacy\Application\EventSubscriber\CustomerDeletionCompletedSubscriber;
 use App\Privacy\Domain\Event\DataErasureRequested;
 use App\Privacy\Domain\Model\DataSubjectRequest;
@@ -103,8 +103,8 @@ final class ErasureDsrFlowTest extends TestCase
             ->expects($this->once())
             ->method('findPendingByCustomerId')
             ->with(
-                $this->callback(fn (CustomerId $id) => $id->toString() === self::DEFAULT_CUSTOMER_ID),
-                $this->callback(fn (TenantId $id) => $id->toString() === self::DEFAULT_TENANT_ID),
+                $this->callback(fn (CustomerId $id) => self::DEFAULT_CUSTOMER_ID === $id->toString()),
+                $this->callback(fn (TenantId $id) => self::DEFAULT_TENANT_ID === $id->toString()),
             )
             ->willReturn(null);
 
@@ -147,7 +147,7 @@ final class ErasureDsrFlowTest extends TestCase
         $this->dsrRepository
             ->expects($this->once())
             ->method('findByCustomerId')
-            ->with($this->callback(fn (CustomerId $id) => $id->toString() === self::DEFAULT_CUSTOMER_ID))
+            ->with($this->callback(fn (CustomerId $id) => self::DEFAULT_CUSTOMER_ID === $id->toString()))
             ->willReturn([$dsr]);
 
         // DSR must be saved after completion

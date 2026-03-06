@@ -17,413 +17,529 @@ use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Inventory\Domain\Repository\WarehouseRepositoryInterface;
 use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\TenantId;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(WarehouseRoutingService::class)]
 final class WarehouseRoutingServiceTest extends TestCase
 {
+    private const TENANT_ID = '00000000-0000-4000-8000-000000000001';
+
     private WarehouseRepositoryInterface $warehouseRepository;
     private StockItemRepositoryInterface $stockItemRepository;
     private WarehouseRoutingService $service;
     private TenantId $tenantId;
-    private ProductId $productId;
     private Address $shippingAddress;
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->warehouseRepository = $this->createMock(WarehouseRepositoryInterface::class);
         $this->stockItemRepository = $this->createMock(StockItemRepositoryInterface::class);
+
         $this->service = new WarehouseRoutingService(
             $this->warehouseRepository,
-            $this->stockItemRepository
+            $this->stockItemRepository,
         );
-        $this->tenantId = TenantId::generate();
-        $this->productId = ProductId::generate();
-        $this->shippingAddress = Address::fromArray([
-            'street' => '123 Main St',
-            'city' => 'New York',
-            'state' => 'NY',
-            'postalCode' => '10001',
-            'country' => 'US',
-        ]);
-    }
 
-    private function createWarehouse(int $priority): Warehouse
-    {
-        return Warehouse::create(
-            WarehouseId::generate(),
-            $this->tenantId,
-            WarehouseCode::fromString('WH'.str_pad((string) $priority, 3, '0', STR_PAD_LEFT)),
-            WarehouseName::fromString("Warehouse Priority {$priority}"),
-            $this->shippingAddress,
-            $priority
+        $this->tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $this->shippingAddress = Address::create(
+            street: '123 Main St',
+            city: 'New York',
+            state: 'NY',
+            postalCode: '10001',
+            country: 'US',
         );
     }
 
-    private function createStockItem(WarehouseId $warehouseId, int $quantity): StockItem
-    {
-        return StockItem::create(
-            StockItemId::generate(),
-            $this->tenantId,
-            $this->productId,
-            $warehouseId,
-            Quantity::fromInt($quantity),
-            Quantity::fromInt(10) // low stock threshold
-        );
-    }
+    // -----------------------------------------------------------------------
+    // selectWarehouse() — happy paths
+    // -----------------------------------------------------------------------
 
-    public function testSelectWarehouseReturnsHighestPriorityWarehouseWithStock(): void
+    #[Test]
+    public function itSelectsTheOnlyWarehouseWhenItHasSufficientStock(): void
     {
-        $warehouse1 = $this->createWarehouse(5);
-        $warehouse2 = $this->createWarehouse(8); // Highest priority
-        $warehouse3 = $this->createWarehouse(3);
+        $productId = ProductId::generate();
+        $quantity = Quantity::fromInt(5);
+
+        $warehouse = $this->makeWarehouse(priority: 5);
+        $stockItem = $this->makeStockItem($productId, $warehouse->id(), onHand: 20);
 
         $this->warehouseRepository
+            ->expects(self::once())
             ->method('findActiveByTenant')
-            ->willReturn([$warehouse1, $warehouse2, $warehouse3]);
-
-        // All warehouses have sufficient stock
-        $stock1 = $this->createStockItem($warehouse1->id(), 100);
-        $stock2 = $this->createStockItem($warehouse2->id(), 100);
-        $stock3 = $this->createStockItem($warehouse3->id(), 100);
+            ->with($this->tenantId)
+            ->willReturn([$warehouse]);
 
         $this->stockItemRepository
+            ->expects(self::once())
             ->method('findByProductAndWarehouse')
-            ->willReturnMap([
-                [$this->productId, $warehouse1->id(), $this->tenantId, $stock1],
-                [$this->productId, $warehouse2->id(), $this->tenantId, $stock2],
-                [$this->productId, $warehouse3->id(), $this->tenantId, $stock3],
-            ]);
+            ->willReturn($stockItem);
 
-        $result = $this->service->selectWarehouse(
-            $this->productId,
-            Quantity::fromInt(10),
-            $this->shippingAddress,
-            $this->tenantId
-        );
+        $result = $this->service->selectWarehouse($productId, $quantity, $this->shippingAddress, $this->tenantId);
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result->equals($warehouse2->id())); // Highest priority = 8
+        self::assertNotNull($result);
+        self::assertTrue($warehouse->id()->equals($result));
     }
 
-    public function testSelectWarehouseReturnsNullWhenNoWarehousesActive(): void
+    #[Test]
+    public function itSelectsHigherPriorityWarehouseWhenBothHaveSufficientStock(): void
+    {
+        $productId = ProductId::generate();
+        $quantity = Quantity::fromInt(3);
+
+        $lowPriority = $this->makeWarehouse(priority: 2);
+        $highPriority = $this->makeWarehouse(priority: 8);
+
+        $stockLow = $this->makeStockItem($productId, $lowPriority->id(), onHand: 50);
+        $stockHigh = $this->makeStockItem($productId, $highPriority->id(), onHand: 50);
+
+        $this->warehouseRepository
+            ->expects(self::once())
+            ->method('findActiveByTenant')
+            ->willReturn([$lowPriority, $highPriority]);
+
+        $this->stockItemRepository
+            ->expects(self::exactly(2))
+            ->method('findByProductAndWarehouse')
+            ->willReturnCallback(
+                function (ProductId $pid, WarehouseId $wid, TenantId $tid) use (
+                    $lowPriority,
+                    $stockLow,
+                    $stockHigh,
+                ): StockItem {
+                    if ($wid->equals($lowPriority->id())) {
+                        return $stockLow;
+                    }
+
+                    return $stockHigh;
+                }
+            );
+
+        $result = $this->service->selectWarehouse($productId, $quantity, $this->shippingAddress, $this->tenantId);
+
+        self::assertNotNull($result);
+        self::assertTrue($highPriority->id()->equals($result));
+    }
+
+    #[Test]
+    public function itBreaksPriorityTiesByAvailableStockDescending(): void
+    {
+        $productId = ProductId::generate();
+        $quantity = Quantity::fromInt(1);
+
+        $warehouseA = $this->makeWarehouse(priority: 5);
+        $warehouseB = $this->makeWarehouse(priority: 5);
+
+        // warehouseB has more available stock
+        $stockA = $this->makeStockItem($productId, $warehouseA->id(), onHand: 10);
+        $stockB = $this->makeStockItem($productId, $warehouseB->id(), onHand: 30);
+
+        $this->warehouseRepository
+            ->expects(self::once())
+            ->method('findActiveByTenant')
+            ->willReturn([$warehouseA, $warehouseB]);
+
+        $this->stockItemRepository
+            ->expects(self::exactly(2))
+            ->method('findByProductAndWarehouse')
+            ->willReturnCallback(
+                function (ProductId $pid, WarehouseId $wid, TenantId $tid) use (
+                    $warehouseA,
+                    $stockA,
+                    $stockB,
+                ): StockItem {
+                    if ($wid->equals($warehouseA->id())) {
+                        return $stockA;
+                    }
+
+                    return $stockB;
+                }
+            );
+
+        $result = $this->service->selectWarehouse($productId, $quantity, $this->shippingAddress, $this->tenantId);
+
+        self::assertNotNull($result);
+        // warehouseB has more stock so it wins the tie-break
+        self::assertTrue($warehouseB->id()->equals($result));
+    }
+
+    // -----------------------------------------------------------------------
+    // selectWarehouse() — no stock / no warehouses
+    // -----------------------------------------------------------------------
+
+    #[Test]
+    public function itReturnsNullWhenNoActiveWarehousesExist(): void
     {
         $this->warehouseRepository
+            ->expects(self::once())
             ->method('findActiveByTenant')
             ->willReturn([]);
 
         $result = $this->service->selectWarehouse(
-            $this->productId,
-            Quantity::fromInt(10),
+            ProductId::generate(),
+            Quantity::fromInt(1),
             $this->shippingAddress,
-            $this->tenantId
+            $this->tenantId,
         );
 
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 
-    public function testSelectWarehouseReturnsNullWhenNoWarehouseHasStock(): void
+    #[Test]
+    public function itReturnsNullWhenNoWarehouseHasStock(): void
     {
-        $warehouse1 = $this->createWarehouse(5);
-        $warehouse2 = $this->createWarehouse(8);
+        $productId = ProductId::generate();
+        $quantity = Quantity::fromInt(10);
+
+        $warehouse = $this->makeWarehouse(priority: 5);
 
         $this->warehouseRepository
+            ->expects(self::once())
             ->method('findActiveByTenant')
-            ->willReturn([$warehouse1, $warehouse2]);
+            ->willReturn([$warehouse]);
 
-        // No stock items exist
         $this->stockItemRepository
+            ->expects(self::once())
             ->method('findByProductAndWarehouse')
             ->willReturn(null);
 
-        $result = $this->service->selectWarehouse(
-            $this->productId,
-            Quantity::fromInt(10),
-            $this->shippingAddress,
-            $this->tenantId
-        );
+        $result = $this->service->selectWarehouse($productId, $quantity, $this->shippingAddress, $this->tenantId);
 
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 
-    public function testSelectWarehouseReturnsNullWhenNoWarehouseHasSufficientStock(): void
+    #[Test]
+    public function itReturnsNullWhenStockIsInsufficientInAllWarehouses(): void
     {
-        $warehouse1 = $this->createWarehouse(5);
-        $warehouse2 = $this->createWarehouse(8);
+        $productId = ProductId::generate();
+        $quantity = Quantity::fromInt(100);
+
+        $warehouse = $this->makeWarehouse(priority: 5);
+        // Only 10 on hand, need 100
+        $stockItem = $this->makeStockItem($productId, $warehouse->id(), onHand: 10);
 
         $this->warehouseRepository
+            ->expects(self::once())
             ->method('findActiveByTenant')
-            ->willReturn([$warehouse1, $warehouse2]);
-
-        // Stock exists but insufficient
-        $stock1 = $this->createStockItem($warehouse1->id(), 5); // Need 10
-        $stock2 = $this->createStockItem($warehouse2->id(), 7); // Need 10
+            ->willReturn([$warehouse]);
 
         $this->stockItemRepository
+            ->expects(self::once())
             ->method('findByProductAndWarehouse')
-            ->willReturnMap([
-                [$this->productId, $warehouse1->id(), $this->tenantId, $stock1],
-                [$this->productId, $warehouse2->id(), $this->tenantId, $stock2],
-            ]);
+            ->willReturn($stockItem);
 
-        $result = $this->service->selectWarehouse(
-            $this->productId,
-            Quantity::fromInt(10),
-            $this->shippingAddress,
-            $this->tenantId
-        );
+        $result = $this->service->selectWarehouse($productId, $quantity, $this->shippingAddress, $this->tenantId);
 
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 
-    public function testSelectWarehouseSkipsWarehousesWithInsufficientStock(): void
+    #[Test]
+    public function itSkipsWarehouseWithStockItemNullAndPicksNextOneWithStock(): void
     {
-        $warehouse1 = $this->createWarehouse(10); // Highest priority but no stock
-        $warehouse2 = $this->createWarehouse(5);  // Lower priority but has stock
+        $productId = ProductId::generate();
+        $quantity = Quantity::fromInt(5);
+
+        $noStockWarehouse = $this->makeWarehouse(priority: 10); // higher priority but no stock item
+        $withStockWarehouse = $this->makeWarehouse(priority: 3);
+        $stockItem = $this->makeStockItem($productId, $withStockWarehouse->id(), onHand: 20);
 
         $this->warehouseRepository
+            ->expects(self::once())
             ->method('findActiveByTenant')
-            ->willReturn([$warehouse1, $warehouse2]);
-
-        $stock1 = $this->createStockItem($warehouse1->id(), 5);  // Insufficient
-        $stock2 = $this->createStockItem($warehouse2->id(), 20); // Sufficient
+            ->willReturn([$noStockWarehouse, $withStockWarehouse]);
 
         $this->stockItemRepository
+            ->expects(self::exactly(2))
             ->method('findByProductAndWarehouse')
-            ->willReturnMap([
-                [$this->productId, $warehouse1->id(), $this->tenantId, $stock1],
-                [$this->productId, $warehouse2->id(), $this->tenantId, $stock2],
-            ]);
+            ->willReturnCallback(
+                function (ProductId $pid, WarehouseId $wid, TenantId $tid) use (
+                    $noStockWarehouse,
+                    $stockItem,
+                ): ?StockItem {
+                    if ($wid->equals($noStockWarehouse->id())) {
+                        return null;
+                    }
 
-        $result = $this->service->selectWarehouse(
-            $this->productId,
-            Quantity::fromInt(10),
-            $this->shippingAddress,
-            $this->tenantId
-        );
+                    return $stockItem;
+                }
+            );
 
-        $this->assertNotNull($result);
-        $this->assertTrue($result->equals($warehouse2->id())); // Selected warehouse2 despite lower priority
+        $result = $this->service->selectWarehouse($productId, $quantity, $this->shippingAddress, $this->tenantId);
+
+        self::assertNotNull($result);
+        self::assertTrue($withStockWarehouse->id()->equals($result));
     }
 
-    public function testSelectWarehouseWithSamePrioritySelectsHigherStock(): void
-    {
-        $warehouse1 = $this->createWarehouse(5);
-        $warehouse2 = $this->createWarehouse(5); // Same priority
+    // -----------------------------------------------------------------------
+    // selectWarehouse() — quantity validation
+    // -----------------------------------------------------------------------
 
-        $this->warehouseRepository
-            ->method('findActiveByTenant')
-            ->willReturn([$warehouse1, $warehouse2]);
-
-        $stock1 = $this->createStockItem($warehouse1->id(), 15);
-        $stock2 = $this->createStockItem($warehouse2->id(), 50); // More stock
-
-        $this->stockItemRepository
-            ->method('findByProductAndWarehouse')
-            ->willReturnMap([
-                [$this->productId, $warehouse1->id(), $this->tenantId, $stock1],
-                [$this->productId, $warehouse2->id(), $this->tenantId, $stock2],
-            ]);
-
-        $result = $this->service->selectWarehouse(
-            $this->productId,
-            Quantity::fromInt(10),
-            $this->shippingAddress,
-            $this->tenantId
-        );
-
-        $this->assertNotNull($result);
-        $this->assertTrue($result->equals($warehouse2->id())); // Selected warehouse2 due to higher stock
-    }
-
-    public function testSelectWarehouseThrowsExceptionForZeroQuantity(): void
+    #[Test]
+    public function itThrowsDomainExceptionWhenQuantityIsZero(): void
     {
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Quantity must be positive');
 
         $this->service->selectWarehouse(
-            $this->productId,
+            ProductId::generate(),
             Quantity::fromInt(0),
             $this->shippingAddress,
-            $this->tenantId
+            $this->tenantId,
         );
     }
 
-    public function testSelectWarehouseThrowsExceptionForNegativeQuantity(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Quantity cannot be negative');
+    // -----------------------------------------------------------------------
+    // getAvailableWarehouses()
+    // -----------------------------------------------------------------------
 
-        $this->service->selectWarehouse(
-            $this->productId,
-            Quantity::fromInt(-5),
-            $this->shippingAddress,
-            $this->tenantId
-        );
-    }
-
-    public function testGetAvailableWarehousesReturnsAllWarehousesWithStock(): void
+    #[Test]
+    public function itReturnsAllWarehousesWithSufficientStock(): void
     {
-        $warehouse1 = $this->createWarehouse(3);
-        $warehouse2 = $this->createWarehouse(8);
-        $warehouse3 = $this->createWarehouse(5);
+        $productId = ProductId::generate();
+        $quantity = Quantity::fromInt(5);
+
+        $warehouseA = $this->makeWarehouse(priority: 3);
+        $warehouseB = $this->makeWarehouse(priority: 7);
+
+        $stockA = $this->makeStockItem($productId, $warehouseA->id(), onHand: 10);
+        $stockB = $this->makeStockItem($productId, $warehouseB->id(), onHand: 20);
 
         $this->warehouseRepository
+            ->expects(self::once())
             ->method('findActiveByTenant')
-            ->willReturn([$warehouse1, $warehouse2, $warehouse3]);
-
-        $stock1 = $this->createStockItem($warehouse1->id(), 20);
-        $stock2 = $this->createStockItem($warehouse2->id(), 50);
-        $stock3 = $this->createStockItem($warehouse3->id(), 30);
+            ->willReturn([$warehouseA, $warehouseB]);
 
         $this->stockItemRepository
+            ->expects(self::exactly(2))
             ->method('findByProductAndWarehouse')
-            ->willReturnMap([
-                [$this->productId, $warehouse1->id(), $this->tenantId, $stock1],
-                [$this->productId, $warehouse2->id(), $this->tenantId, $stock2],
-                [$this->productId, $warehouse3->id(), $this->tenantId, $stock3],
-            ]);
+            ->willReturnCallback(
+                function (ProductId $pid, WarehouseId $wid, TenantId $tid) use (
+                    $warehouseA,
+                    $stockA,
+                    $stockB,
+                ): StockItem {
+                    if ($wid->equals($warehouseA->id())) {
+                        return $stockA;
+                    }
 
-        $result = $this->service->getAvailableWarehouses(
-            $this->productId,
-            Quantity::fromInt(10),
-            $this->tenantId
-        );
+                    return $stockB;
+                }
+            );
 
-        $this->assertCount(3, $result);
-        // Should be sorted by priority descending: 8, 5, 3
-        $this->assertTrue($result[0]['warehouseId']->equals($warehouse2->id()));
-        $this->assertSame(8, $result[0]['priority']);
-        $this->assertSame(50, $result[0]['availableStock']);
+        $result = $this->service->getAvailableWarehouses($productId, $quantity, $this->tenantId);
 
-        $this->assertTrue($result[1]['warehouseId']->equals($warehouse3->id()));
-        $this->assertSame(5, $result[1]['priority']);
-
-        $this->assertTrue($result[2]['warehouseId']->equals($warehouse1->id()));
-        $this->assertSame(3, $result[2]['priority']);
+        self::assertCount(2, $result);
+        // Sorted by priority descending: warehouseB (7) first
+        self::assertTrue($warehouseB->id()->equals($result[0]['warehouseId']));
+        self::assertSame(7, $result[0]['priority']);
+        self::assertSame(20, $result[0]['availableStock']);
+        self::assertTrue($warehouseA->id()->equals($result[1]['warehouseId']));
+        self::assertSame(3, $result[1]['priority']);
     }
 
-    public function testGetAvailableWarehousesExcludesWarehousesWithoutStock(): void
+    #[Test]
+    public function itReturnsEmptyArrayWhenNoWarehousesHaveSufficientStock(): void
     {
-        $warehouse1 = $this->createWarehouse(8);
-        $warehouse2 = $this->createWarehouse(5);
+        $productId = ProductId::generate();
+        $quantity = Quantity::fromInt(999);
+
+        $warehouse = $this->makeWarehouse(priority: 5);
+        $stockItem = $this->makeStockItem($productId, $warehouse->id(), onHand: 1);
 
         $this->warehouseRepository
-            ->method('findActiveByTenant')
-            ->willReturn([$warehouse1, $warehouse2]);
-
-        // Only warehouse2 has stock
-        $stock2 = $this->createStockItem($warehouse2->id(), 30);
-
-        $this->stockItemRepository
-            ->method('findByProductAndWarehouse')
-            ->willReturnMap([
-                [$this->productId, $warehouse1->id(), $this->tenantId, null], // No stock
-                [$this->productId, $warehouse2->id(), $this->tenantId, $stock2],
-            ]);
-
-        $result = $this->service->getAvailableWarehouses(
-            $this->productId,
-            Quantity::fromInt(10),
-            $this->tenantId
-        );
-
-        $this->assertCount(1, $result);
-        $this->assertTrue($result[0]['warehouseId']->equals($warehouse2->id()));
-    }
-
-    public function testCanFulfillReturnsTrueWhenWarehouseHasStock(): void
-    {
-        $warehouse = $this->createWarehouse(5);
-
-        $this->warehouseRepository
+            ->expects(self::once())
             ->method('findActiveByTenant')
             ->willReturn([$warehouse]);
 
-        $stock = $this->createStockItem($warehouse->id(), 50);
+        $this->stockItemRepository
+            ->expects(self::once())
+            ->method('findByProductAndWarehouse')
+            ->willReturn($stockItem);
+
+        $result = $this->service->getAvailableWarehouses($productId, $quantity, $this->tenantId);
+
+        self::assertSame([], $result);
+    }
+
+    #[Test]
+    public function itReturnsCorrectStructureForEachAvailableWarehouse(): void
+    {
+        $productId = ProductId::generate();
+        $quantity = Quantity::fromInt(1);
+
+        $warehouse = $this->makeWarehouse(priority: 6);
+        $stockItem = $this->makeStockItem($productId, $warehouse->id(), onHand: 15);
+
+        $this->warehouseRepository
+            ->expects(self::once())
+            ->method('findActiveByTenant')
+            ->willReturn([$warehouse]);
 
         $this->stockItemRepository
+            ->expects(self::once())
             ->method('findByProductAndWarehouse')
-            ->with($this->productId, $warehouse->id(), $this->tenantId)
-            ->willReturn($stock);
+            ->willReturn($stockItem);
+
+        $result = $this->service->getAvailableWarehouses($productId, $quantity, $this->tenantId);
+
+        self::assertCount(1, $result);
+        self::assertArrayHasKey('warehouseId', $result[0]);
+        self::assertArrayHasKey('priority', $result[0]);
+        self::assertArrayHasKey('availableStock', $result[0]);
+        self::assertInstanceOf(WarehouseId::class, $result[0]['warehouseId']);
+        self::assertSame(6, $result[0]['priority']);
+        self::assertSame(15, $result[0]['availableStock']);
+    }
+
+    // -----------------------------------------------------------------------
+    // canFulfill()
+    // -----------------------------------------------------------------------
+
+    #[Test]
+    public function itReturnsTrueWhenAtLeastOneWarehouseHasSufficientStock(): void
+    {
+        $productId = ProductId::generate();
+        $quantity = Quantity::fromInt(5);
+
+        $warehouse = $this->makeWarehouse(priority: 5);
+        $stockItem = $this->makeStockItem($productId, $warehouse->id(), onHand: 10);
+
+        $this->warehouseRepository
+            ->expects(self::once())
+            ->method('findActiveByTenant')
+            ->willReturn([$warehouse]);
+
+        $this->stockItemRepository
+            ->expects(self::once())
+            ->method('findByProductAndWarehouse')
+            ->willReturn($stockItem);
+
+        $result = $this->service->canFulfill($productId, $quantity, $this->tenantId);
+
+        self::assertTrue($result);
+    }
+
+    #[Test]
+    public function itReturnsFalseWhenNoWarehouseCanFulfill(): void
+    {
+        $productId = ProductId::generate();
+        $quantity = Quantity::fromInt(100);
+
+        $warehouse = $this->makeWarehouse(priority: 5);
+        $stockItem = $this->makeStockItem($productId, $warehouse->id(), onHand: 1);
+
+        $this->warehouseRepository
+            ->expects(self::once())
+            ->method('findActiveByTenant')
+            ->willReturn([$warehouse]);
+
+        $this->stockItemRepository
+            ->expects(self::once())
+            ->method('findByProductAndWarehouse')
+            ->willReturn($stockItem);
+
+        $result = $this->service->canFulfill($productId, $quantity, $this->tenantId);
+
+        self::assertFalse($result);
+    }
+
+    #[Test]
+    public function itReturnsFalseWhenNoActiveWarehousesExistForCanFulfill(): void
+    {
+        $this->warehouseRepository
+            ->expects(self::once())
+            ->method('findActiveByTenant')
+            ->willReturn([]);
 
         $result = $this->service->canFulfill(
-            $this->productId,
-            Quantity::fromInt(10),
-            $this->tenantId
+            ProductId::generate(),
+            Quantity::fromInt(1),
+            $this->tenantId,
         );
 
-        $this->assertTrue($result);
+        self::assertFalse($result);
     }
 
-    public function testCanFulfillReturnsFalseWhenNoWarehouseHasStock(): void
+    #[Test]
+    public function itReturnsFalseWhenStockItemIsNullForCanFulfill(): void
     {
-        $warehouse = $this->createWarehouse(5);
+        $productId = ProductId::generate();
+
+        $warehouse = $this->makeWarehouse(priority: 5);
 
         $this->warehouseRepository
+            ->expects(self::once())
             ->method('findActiveByTenant')
             ->willReturn([$warehouse]);
 
         $this->stockItemRepository
+            ->expects(self::once())
             ->method('findByProductAndWarehouse')
             ->willReturn(null);
 
-        $result = $this->service->canFulfill(
-            $this->productId,
-            Quantity::fromInt(10),
-            $this->tenantId
-        );
+        $result = $this->service->canFulfill($productId, Quantity::fromInt(1), $this->tenantId);
 
-        $this->assertFalse($result);
+        self::assertFalse($result);
     }
 
-    public function testCanFulfillReturnsFalseWhenStockIsInsufficient(): void
+    #[Test]
+    public function itReturnsTrueEarlyWhenFirstWarehouseCanFulfill(): void
     {
-        $warehouse = $this->createWarehouse(5);
+        $productId = ProductId::generate();
+        $quantity = Quantity::fromInt(2);
+
+        $warehouseA = $this->makeWarehouse(priority: 9);
+        $warehouseB = $this->makeWarehouse(priority: 1);
+
+        $stockA = $this->makeStockItem($productId, $warehouseA->id(), onHand: 50);
 
         $this->warehouseRepository
+            ->expects(self::once())
             ->method('findActiveByTenant')
-            ->willReturn([$warehouse]);
+            ->willReturn([$warehouseA, $warehouseB]);
 
-        $stock = $this->createStockItem($warehouse->id(), 5); // Insufficient
-
+        // canFulfill should stop at warehouseA and NOT query warehouseB
         $this->stockItemRepository
+            ->expects(self::once())
             ->method('findByProductAndWarehouse')
-            ->willReturn($stock);
+            ->willReturn($stockA);
 
-        $result = $this->service->canFulfill(
-            $this->productId,
-            Quantity::fromInt(10),
-            $this->tenantId
-        );
+        $result = $this->service->canFulfill($productId, $quantity, $this->tenantId);
 
-        $this->assertFalse($result);
+        self::assertTrue($result);
     }
 
-    public function testCanFulfillReturnsTrueWhenAtLeastOneWarehouseCanFulfill(): void
+    // -----------------------------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------------------------
+
+    private function makeWarehouse(int $priority): Warehouse
     {
-        $warehouse1 = $this->createWarehouse(5);
-        $warehouse2 = $this->createWarehouse(8);
-
-        $this->warehouseRepository
-            ->method('findActiveByTenant')
-            ->willReturn([$warehouse1, $warehouse2]);
-
-        $stock1 = $this->createStockItem($warehouse1->id(), 5);  // Insufficient
-        $stock2 = $this->createStockItem($warehouse2->id(), 50); // Sufficient
-
-        $this->stockItemRepository
-            ->method('findByProductAndWarehouse')
-            ->willReturnMap([
-                [$this->productId, $warehouse1->id(), $this->tenantId, $stock1],
-                [$this->productId, $warehouse2->id(), $this->tenantId, $stock2],
-            ]);
-
-        $result = $this->service->canFulfill(
-            $this->productId,
-            Quantity::fromInt(10),
-            $this->tenantId
+        return Warehouse::create(
+            id: WarehouseId::generate(),
+            tenantId: $this->tenantId,
+            code: WarehouseCode::fromString('WH'.random_int(100, 999)),
+            name: WarehouseName::fromString('Warehouse '.random_int(1, 9999)),
+            address: $this->shippingAddress,
+            priority: $priority,
         );
+    }
 
-        $this->assertTrue($result);
+    private function makeStockItem(
+        ProductId $productId,
+        WarehouseId $warehouseId,
+        int $onHand,
+    ): StockItem {
+        return StockItem::create(
+            id: StockItemId::generate(),
+            tenantId: $this->tenantId,
+            productId: $productId,
+            warehouseId: $warehouseId,
+            initialQuantity: Quantity::fromInt($onHand),
+        );
     }
 }

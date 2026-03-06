@@ -1262,7 +1262,6 @@ services:
             $logger: '@logger'
             $senderEmail: 'returns@ecommerce.local'
             $senderName: 'E-Commerce Platform - Returns'
-            $commandBus: '@command.bus'
         tags:
             - { name: kernel.event_subscriber }
 
@@ -1361,6 +1360,20 @@ services:
     App\Internationalization\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslationEntryRepository:
         arguments:
             $connection: '@doctrine.dbal.default_connection'
+
+    App\Internationalization\Domain\Repository\TranslationRepositoryInterface:
+        alias: App\Internationalization\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslationRepository
+
+    App\Internationalization\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslationRepository:
+        arguments:
+            $connection: '@doctrine.dbal.default_connection'
+
+    # Locale Provider interfaces (used by LocaleNegotiator to avoid cross-context dependencies)
+    App\Shared\Application\Service\UserLocaleProviderInterface:
+        alias: App\User\Infrastructure\Service\SecurityUserLocaleProvider
+
+    App\Shared\Application\Service\TenantLocaleProviderInterface:
+        alias: App\Tenant\Infrastructure\Service\TenantContextLocaleProvider
 
     # DomPDF Factory for Invoice PDF Generation
     App\Invoice\Infrastructure\Pdf\DompdfFactory:

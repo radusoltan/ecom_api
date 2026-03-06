@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Tenant\Application\Query;
 
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Application\DTO\TenantDTO;
 use App\Tenant\Application\Query\GetAllTenantsQuery;
 use App\Tenant\Application\Query\GetAllTenantsQueryHandler;
@@ -28,37 +29,39 @@ final class GetAllTenantsQueryHandlerTest extends KernelTestCase
         self::bootKernel();
 
         $container = self::getContainer();
+
+        // Clear EntityManager identity map to prevent stale entities from prior tests
+        $em = $container->get('doctrine.orm.entity_manager');
+        $em->clear();
+
         $this->tenantRepository = $container->get(TenantRepositoryInterface::class);
         $this->handler = $container->get(GetAllTenantsQueryHandler::class);
 
-        // Set tenant context for RLS
-        $this->tenantId = $this->getDefaultTenantId();
+        // Use a fresh unique tenant ID per test to avoid ext_translations unique constraint violations
+        $this->tenantId = TenantId::generate();
         $this->setTenantContext($this->tenantId->toString());
-
-        // Clean up existing tenant to ensure fresh state
-        $em = $this->getEntityManager();
-        try {
-            $em->getConnection()->executeStatement(
-                'DELETE FROM ext_translations WHERE foreign_key = :tenantId',
-                ['tenantId' => $this->tenantId->toString()]
-            );
-            $em->getConnection()->executeStatement(
-                'DELETE FROM tenants WHERE id = :tenantId',
-                ['tenantId' => $this->tenantId->toString()]
-            );
-        } catch (\Exception $e) {
-            // Ignore errors
-        }
     }
 
     protected function tearDown(): void
     {
+        // Clean up test tenants to avoid slug unique constraint violations
+        $em = self::getContainer()->get('doctrine.orm.entity_manager');
+        $conn = $em->getConnection();
+        $conn->executeStatement('DELETE FROM ext_translations WHERE foreign_key = ?', [$this->tenantId->toString()]);
+        $conn->executeStatement('DELETE FROM tenants WHERE id = ?', [$this->tenantId->toString()]);
+        $em->clear();
+
         parent::tearDown();
     }
 
     private function generateUniqueEmail(string $prefix = 'test'): string
     {
         return sprintf('%s-%d-%s@example.com', $prefix, ++self::$counter, uniqid());
+    }
+
+    private function uniqueName(string $base): string
+    {
+        return $base.' '.substr(uniqid(), -6);
     }
 
     public function testItRetrievesAllTenants(): void
@@ -68,7 +71,7 @@ final class GetAllTenantsQueryHandlerTest extends KernelTestCase
         $email1 = $this->generateUniqueEmail('first');
         $tenant1 = Tenant::fromPersistence(
             id: $this->tenantId,
-            name: TenantName::fromString('First Company'),
+            name: TenantName::fromString($this->uniqueName('First Company')),
             ownerEmail: Email::fromString($email1),
             status: \App\Tenant\Domain\ValueObject\TenantStatus::active(),
             createdAt: new \DateTimeImmutable()
@@ -99,7 +102,7 @@ final class GetAllTenantsQueryHandlerTest extends KernelTestCase
         $email = $this->generateUniqueEmail('verify');
         $tenant = Tenant::fromPersistence(
             id: $this->tenantId,
-            name: TenantName::fromString('Verify Company'),
+            name: TenantName::fromString($this->uniqueName('Verify Company')),
             ownerEmail: Email::fromString($email),
             status: \App\Tenant\Domain\ValueObject\TenantStatus::active(),
             createdAt: new \DateTimeImmutable()
@@ -124,9 +127,10 @@ final class GetAllTenantsQueryHandlerTest extends KernelTestCase
         // Arrange - Use the default test tenant (required for RLS)
         $email1 = $this->generateUniqueEmail('admin');
         $createdAt = new \DateTimeImmutable();
+        $name1 = $this->uniqueName('Acme Corporation');
         $tenant1 = Tenant::fromPersistence(
             id: $this->tenantId,
-            name: TenantName::fromString('Acme Corporation'),
+            name: TenantName::fromString($name1),
             ownerEmail: Email::fromString($email1),
             status: \App\Tenant\Domain\ValueObject\TenantStatus::active(),
             createdAt: $createdAt
@@ -152,7 +156,7 @@ final class GetAllTenantsQueryHandlerTest extends KernelTestCase
 
         $this->assertNotNull($acmeDto);
         $this->assertSame($tenant1->id()->toString(), $acmeDto->id);
-        $this->assertSame('Acme Corporation', $acmeDto->name);
+        $this->assertSame($name1, $acmeDto->name);
         $this->assertSame($email1, $acmeDto->ownerEmail);
         $this->assertSame('active', $acmeDto->status);
 

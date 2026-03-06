@@ -1,0 +1,20 @@
+services:
+    # Carrier adapter constructor args (env-based credentials)
+    App\Shipping\Infrastructure\Carrier\UpsCarrierAdapter:
+        arguments:
+            $apiKey: '%env(SHIPPING_UPS_API_KEY)%'
+            $sandbox: '%env(bool:SHIPPING_UPS_SANDBOX)%'
+
+    App\Shipping\Infrastructure\Carrier\FedExCarrierAdapter:
+        arguments:
+            $apiKey: '%env(SHIPPING_FEDEX_API_KEY)%'
+            $sandbox: '%env(bool:SHIPPING_FEDEX_SANDBOX)%'
+
+    App\Shipping\Infrastructure\Carrier\DhlCarrierAdapter:
+        arguments:
+            $apiKey: '%env(SHIPPING_DHL_API_KEY)%'
+            $sandbox: '%env(bool:SHIPPING_DHL_SANDBOX)%'
+
+    # Interface aliases
+    App\Shipping\Domain\Service\ShippingRateCalculatorInterface: '@App\Shipping\Infrastructure\Carrier\CompositeShippingRateCalculator'
+    App\Shipping\Domain\Repository\ShipmentRepositoryInterface: '@App\Shipping\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMShipmentRepository'

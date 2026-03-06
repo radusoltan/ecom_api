@@ -43,7 +43,7 @@ final class InspectReturnRequestHandlerTest extends TestCase
             ->with($this->callback(function (ReturnRequest $rr): bool {
                 return $rr->status()->isInspected()
                     && true === $rr->isResellable()
-                    && $rr->inspectionNotes() === 'Item in good condition, original packaging intact';
+                    && 'Item in good condition, original packaging intact' === $rr->inspectionNotes();
             }));
 
         ($this->handler)(new InspectReturnRequest(

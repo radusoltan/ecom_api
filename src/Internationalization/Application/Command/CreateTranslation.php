@@ -11,12 +11,16 @@ namespace App\Internationalization\Application\Command;
  */
 final readonly class CreateTranslation
 {
+    /**
+     * @param array<string, string> $parameters
+     */
     public function __construct(
         public string $tenantId,
         public string $locale,
         public string $domain,
         public string $key,
         public string $value,
+        public array $parameters = [],
     ) {
     }
 }

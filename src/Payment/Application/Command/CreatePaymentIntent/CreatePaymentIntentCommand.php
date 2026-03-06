@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Payment\Application\Command\CreatePaymentIntent;
 
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**
@@ -22,8 +23,7 @@ final readonly class CreatePaymentIntentCommand
     public function __construct(
         public TenantId $tenantId,
         public string $orderId,
-        public int $amountInCents,
-        public string $currency,
+        public Money $amount,
         public string $paymentMethod,  // 'stripe', 'paypal', etc.
         public string $idempotencyKey,
         public ?string $customerId = null,

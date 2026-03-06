@@ -119,7 +119,7 @@ final class PersonalDataInventoryTest extends TestCase
         $this->consentRepository
             ->expects(self::once())
             ->method('findByCustomerId')
-            ->with(self::callback(fn (CustomerId $id) => $id->toString() === self::CUSTOMER_ID))
+            ->with(self::callback(fn (CustomerId $id) => self::CUSTOMER_ID === $id->toString()))
             ->willReturn([$consent]);
 
         $inventory = new PersonalDataInventory(
@@ -283,10 +283,64 @@ final class PersonalDataInventoryTest extends TestCase
         self::assertArrayHasKey('metadata', $result);
     }
 
+    public function testGetDataCategoriesReturnsAllExpectedCategories(): void
+    {
+        $inventory = new PersonalDataInventory(
+            $this->consentRepository,
+            [],
+            $this->logger,
+        );
+
+        $categories = $inventory->getDataCategories();
+
+        self::assertArrayHasKey('identity', $categories);
+        self::assertArrayHasKey('contact', $categories);
+        self::assertArrayHasKey('transaction', $categories);
+        self::assertArrayHasKey('behavioral', $categories);
+        self::assertArrayHasKey('consent', $categories);
+        self::assertArrayHasKey('authentication', $categories);
+
+        foreach ($categories as $key => $cat) {
+            self::assertArrayHasKey('category', $cat, "Category '{$key}' missing 'category' field");
+            self::assertArrayHasKey('description', $cat, "Category '{$key}' missing 'description' field");
+            self::assertArrayHasKey('retention_period', $cat, "Category '{$key}' missing 'retention_period' field");
+            self::assertArrayHasKey('lawful_basis', $cat, "Category '{$key}' missing 'lawful_basis' field");
+            self::assertArrayHasKey('contexts', $cat, "Category '{$key}' missing 'contexts' field");
+        }
+    }
+
+    public function testGetProcessingPurposesReturnsAllExpectedPurposes(): void
+    {
+        $inventory = new PersonalDataInventory(
+            $this->consentRepository,
+            [],
+            $this->logger,
+        );
+
+        $purposes = $inventory->getProcessingPurposes();
+
+        self::assertArrayHasKey('contract_performance', $purposes);
+        self::assertArrayHasKey('legal_obligation', $purposes);
+        self::assertArrayHasKey('marketing', $purposes);
+        self::assertArrayHasKey('analytics', $purposes);
+        self::assertArrayHasKey('profiling', $purposes);
+        self::assertArrayHasKey('legitimate_interest', $purposes);
+
+        // Marketing, analytics, profiling require consent
+        self::assertTrue($purposes['marketing']['requires_consent']);
+        self::assertTrue($purposes['analytics']['requires_consent']);
+        self::assertTrue($purposes['profiling']['requires_consent']);
+
+        // Contract performance, legal obligation, legitimate interest do NOT require consent
+        self::assertFalse($purposes['contract_performance']['requires_consent']);
+        self::assertFalse($purposes['legal_obligation']['requires_consent']);
+        self::assertFalse($purposes['legitimate_interest']['requires_consent']);
+    }
+
     private function buildConsent(ConsentPurpose $purpose, bool $isGranted): Consent
     {
         $consentText = 'I consent to the processing of my personal data for the purpose of '
-            . 'marketing communications as described in the privacy policy.';
+            .'marketing communications as described in the privacy policy.';
 
         return Consent::reconstituteFromPersistence(
             id: ConsentId::generate(),

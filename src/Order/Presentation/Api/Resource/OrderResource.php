@@ -76,13 +76,13 @@ class OrderResource
         }
 
         $links = [
-            'self' => ['href' => '/api/v1/orders/' . $this->id],
-            'cancel' => ['href' => '/api/v1/orders/' . $this->id . '/cancel'],
-            'fulfillments' => ['href' => '/api/v1/fulfillments?orderId=' . $this->id],
+            'self' => ['href' => '/api/v1/orders/'.$this->id],
+            'cancel' => ['href' => '/api/v1/orders/'.$this->id.'/cancel'],
+            'fulfillments' => ['href' => '/api/v1/fulfillments?orderId='.$this->id],
         ];
 
         if (null !== $this->customerEmail) {
-            $links['customer_orders'] = ['href' => '/api/v1/orders?customerEmail=' . urlencode($this->customerEmail)];
+            $links['customer_orders'] = ['href' => '/api/v1/orders?customerEmail='.urlencode($this->customerEmail)];
         }
 
         return $links;

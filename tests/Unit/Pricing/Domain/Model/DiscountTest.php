@@ -180,4 +180,75 @@ final class DiscountTest extends TestCase
 
         $this->assertSame(5000, $discountedPrice->getAmount());
     }
+
+    public function testFromTypeAndValuePercentage(): void
+    {
+        $discount = Discount::fromTypeAndValue('percentage', 25.0);
+
+        $this->assertTrue($discount->isPercentage());
+        $this->assertFalse($discount->isFixed());
+        $this->assertSame(25.0, $discount->value());
+    }
+
+    public function testFromTypeAndValueFixed(): void
+    {
+        $discount = Discount::fromTypeAndValue('fixed', 1500.0);
+
+        $this->assertTrue($discount->isFixed());
+        $this->assertFalse($discount->isPercentage());
+    }
+
+    public function testFromTypeAndValueThrowsOnInvalidType(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid discount type');
+
+        Discount::fromTypeAndValue('bogus', 10.0);
+    }
+
+    public function testTypeReturnsDiscountType(): void
+    {
+        $pct = Discount::percentage(10.0);
+        $fixed = Discount::fixed(Money::of('5.00', 'USD'));
+
+        $this->assertSame('percentage', $pct->type()->toString());
+        $this->assertSame('fixed_amount', $fixed->type()->toString());
+    }
+
+    public function testValueReturnsCorrectValueForBothTypes(): void
+    {
+        $pct = Discount::percentage(33.3);
+        $this->assertSame(33.3, $pct->value());
+
+        $fixed = Discount::fixed(Money::of('25.00', 'USD'));
+        $this->assertSame(2500.0, $fixed->value());
+    }
+
+    public function testEqualsForPercentageDiscounts(): void
+    {
+        $a = Discount::percentage(20.0);
+        $b = Discount::percentage(20.0);
+        $c = Discount::percentage(30.0);
+
+        $this->assertTrue($a->equals($b));
+        $this->assertFalse($a->equals($c));
+    }
+
+    public function testEqualsForFixedDiscounts(): void
+    {
+        $a = Discount::fixed(Money::of('10.00', 'USD'));
+        $b = Discount::fixed(Money::of('10.00', 'USD'));
+        $c = Discount::fixed(Money::of('20.00', 'USD'));
+
+        $this->assertTrue($a->equals($b));
+        $this->assertFalse($a->equals($c));
+    }
+
+    public function testEqualsReturnsFalseForDifferentTypes(): void
+    {
+        $pct = Discount::percentage(10.0);
+        $fixed = Discount::fixed(Money::of('10.00', 'USD'));
+
+        $this->assertFalse($pct->equals($fixed));
+    }
 }

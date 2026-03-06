@@ -76,7 +76,7 @@ final class RequestTracingListener
 
     public function onResponse(ResponseEvent $event): void
     {
-        if (!$event->isMainRequest() || $this->span === null) {
+        if (!$event->isMainRequest() || null === $this->span) {
             return;
         }
 
@@ -84,7 +84,7 @@ final class RequestTracingListener
         $this->span->setAttribute('http.response.status_code', $statusCode);
 
         if ($statusCode >= 500) {
-            $this->span->setStatus(StatusCode::STATUS_ERROR, 'HTTP ' . $statusCode);
+            $this->span->setStatus(StatusCode::STATUS_ERROR, 'HTTP '.$statusCode);
         } elseif ($statusCode >= 400) {
             $this->span->setStatus(StatusCode::STATUS_UNSET);
         } else {
@@ -94,7 +94,7 @@ final class RequestTracingListener
 
     public function onTerminate(TerminateEvent $event): void
     {
-        if ($this->span === null) {
+        if (null === $this->span) {
             return;
         }
 

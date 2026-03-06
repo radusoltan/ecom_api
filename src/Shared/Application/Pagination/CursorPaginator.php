@@ -30,13 +30,13 @@ final readonly class CursorPaginator
      * The caller must fetch limit + 1 items from the database.
      * If more than limit items are returned, hasNextPage is true.
      *
-     * @param list<mixed>  $items           Items fetched (limit + 1 for next page detection)
-     * @param int          $limit           Requested page size
-     * @param string       $sortField       Name of the sort field
-     * @param \Closure     $getId           Extracts the ID from an item
-     * @param \Closure     $getSortValue    Extracts the sort value from an item
-     * @param bool         $hasPreviousPage Whether a previous page exists (cursor was provided)
-     * @param int|null     $totalCount      Optional total count
+     * @param list<mixed> $items           Items fetched (limit + 1 for next page detection)
+     * @param int         $limit           Requested page size
+     * @param string      $sortField       Name of the sort field
+     * @param \Closure    $getId           Extracts the ID from an item
+     * @param \Closure    $getSortValue    Extracts the sort value from an item
+     * @param bool        $hasPreviousPage Whether a previous page exists (cursor was provided)
+     * @param int|null    $totalCount      Optional total count
      *
      * @return CursorPaginationResult<mixed>
      */

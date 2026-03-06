@@ -42,7 +42,7 @@ final class RejectReturnRequestHandlerTest extends TestCase
             ->method('save')
             ->with($this->callback(function (ReturnRequest $rr): bool {
                 return $rr->status()->isRejected()
-                    && $rr->rejectionReason() === 'Return window has expired (30 days)';
+                    && 'Return window has expired (30 days)' === $rr->rejectionReason();
             }));
 
         ($this->handler)(new RejectReturnRequest(

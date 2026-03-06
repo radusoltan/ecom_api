@@ -11,5 +11,6 @@ final readonly class UpdateFeatureFlagConfigCommand
         public string $tenantId,
         public string $featureName,
         public array $configuration,
-    ) {}
+    ) {
+    }
 }

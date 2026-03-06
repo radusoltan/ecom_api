@@ -53,6 +53,10 @@ framework:
             limit: 100000
             interval: '1 minute'
 
+        api_payment:
+            limit: 100000
+            interval: '1 minute'
+
         api_webhook:
             limit: 100000
             interval: '1 minute'

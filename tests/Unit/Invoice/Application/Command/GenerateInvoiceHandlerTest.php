@@ -59,8 +59,8 @@ final class GenerateInvoiceHandlerTest extends TestCase
             ->with(self::callback(function (Invoice $invoice) use ($invoiceId): bool {
                 return $invoice->id()->equals($invoiceId)
                     && $invoice->status()->isDraft()
-                    && count($invoice->lines()) === 1
-                    && $invoice->subtotal()->getAmount() === 2000;
+                    && 1 === count($invoice->lines())
+                    && 2000 === $invoice->subtotal()->getAmount();
             }));
 
         $result = ($this->handler)($command);
@@ -100,7 +100,7 @@ final class GenerateInvoiceHandlerTest extends TestCase
             ->method('save')
             ->with(self::callback(function (Invoice $invoice): bool {
                 return $invoice->isReverseCharge()
-                    && $invoice->taxAmount()->getAmount() === 0;
+                    && 0 === $invoice->taxAmount()->getAmount();
             }));
 
         ($this->handler)($command);
@@ -131,7 +131,7 @@ final class GenerateInvoiceHandlerTest extends TestCase
         $this->repository->expects(self::once())
             ->method('save')
             ->with(self::callback(function (Invoice $invoice): bool {
-                return count($invoice->lines()) === 3;
+                return 3 === count($invoice->lines());
             }));
 
         ($this->handler)($command);

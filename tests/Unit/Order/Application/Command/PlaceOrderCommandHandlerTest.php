@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Application\Command;
 
-use App\Order\Application\Port\ProductPriceLookupInterface;
 use App\Order\Application\Command\PlaceOrderCommand;
 use App\Order\Application\Command\PlaceOrderCommandHandler;
+use App\Order\Application\Port\ProductPriceLookupInterface;
 use App\Order\Application\Service\CheckoutValidationService;
 use App\Order\Domain\Exception\CheckoutValidationException;
 use App\Order\Domain\Model\Order;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
 use App\Pricing\Application\Service\PromotionApplicationService;
 use App\Shared\Application\Service\PerformanceProfiler;
-use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tax\Domain\Service\TaxCalculationResult;
 use App\Tax\Domain\Service\TaxCalculationService;

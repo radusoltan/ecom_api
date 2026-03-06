@@ -10,6 +10,7 @@ use App\Payment\Application\EventSubscriber\PaymentCapturedSubscriber;
 use App\Payment\Application\Service\PaymentCustomerEmailResolver;
 use App\Payment\Domain\Event\PaymentCaptured;
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -77,7 +78,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 9999
+            capturedAmount: Money::fromScalars(9999, 'USD')
         );
 
         $this->commandBus->method('dispatch');
@@ -111,7 +112,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 5000
+            capturedAmount: Money::fromScalars(5000, 'USD')
         );
 
         $this->commandBus->method('dispatch');
@@ -153,7 +154,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 9999
+            capturedAmount: Money::fromScalars(9999, 'USD')
         );
 
         $this->commandBus->method('dispatch');
@@ -197,7 +198,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: $capturedAmount,
+            capturedAmount: Money::fromScalars($capturedAmount, 'USD'),
             orderId: $orderId
         );
 
@@ -238,7 +239,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: TenantId::generate(),
-            capturedAmountInCents: 12345
+            capturedAmount: Money::fromScalars(12345, 'USD')
         );
 
         $this->commandBus->method('dispatch');
@@ -270,7 +271,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            capturedAmountInCents: 12345 // $123.45
+            capturedAmount: Money::fromScalars(12345, 'USD') // $123.45
         );
 
         $this->commandBus->method('dispatch');
@@ -316,7 +317,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
             $event = new PaymentCaptured(
                 paymentId: PaymentId::generate(),
                 tenantId: TenantId::generate(),
-                capturedAmountInCents: $testCase['amountInCents']
+                capturedAmount: Money::fromScalars($testCase['amountInCents'], 'USD')
             );
 
             $this->commandBus->method('dispatch');
@@ -344,7 +345,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: TenantId::generate(),
-            capturedAmountInCents: 9999
+            capturedAmount: Money::fromScalars(9999, 'USD')
         );
 
         $this->commandBus->method('dispatch');
@@ -380,7 +381,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            capturedAmountInCents: 5000
+            capturedAmount: Money::fromScalars(5000, 'USD')
         );
 
         $this->commandBus->method('dispatch');
@@ -413,7 +414,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 5000,
+            capturedAmount: Money::fromScalars(5000, 'USD'),
             orderId: $orderId
         );
 
@@ -454,7 +455,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: TenantId::generate(),
-            capturedAmountInCents: 5000,
+            capturedAmount: Money::fromScalars(5000, 'USD'),
             orderId: $orderId
         );
 
@@ -495,7 +496,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 1000
+            capturedAmount: Money::fromScalars(1000, 'USD')
         );
 
         $this->commandBus->method('dispatch');
@@ -525,7 +526,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            capturedAmountInCents: 5000,
+            capturedAmount: Money::fromScalars(5000, 'USD'),
             orderId: null
         );
 
@@ -549,7 +550,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            capturedAmountInCents: 1000
+            capturedAmount: Money::fromScalars(1000, 'USD')
         );
 
         $this->commandBus->method('dispatch');
@@ -591,7 +592,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            capturedAmountInCents: 5000,
+            capturedAmount: Money::fromScalars(5000, 'USD'),
             orderId: 'order-123'
         );
 
@@ -624,7 +625,7 @@ final class PaymentCapturedSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            capturedAmountInCents: 5000,
+            capturedAmount: Money::fromScalars(5000, 'USD'),
             orderId: 'order-abc'
         );
 

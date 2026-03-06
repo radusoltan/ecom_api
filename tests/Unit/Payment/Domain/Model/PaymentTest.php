@@ -15,6 +15,7 @@ use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
 use App\Payment\Domain\ValueObject\PaymentStatus;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 
@@ -37,8 +38,7 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -46,14 +46,14 @@ final class PaymentTest extends TestCase
         $this->assertTrue($payment->id()->equals($this->paymentId));
         $this->assertTrue($payment->tenantId()->equals($this->tenantId));
         $this->assertSame($this->orderId, $payment->orderId());
-        $this->assertSame(9999, $payment->amountInCents());
+        $this->assertSame(9999, $payment->amount()->getAmount());
         $this->assertSame('USD', $payment->currency());
         $this->assertTrue($payment->method()->isCard());
         $this->assertTrue($payment->gateway()->isStripe());
         $this->assertTrue($payment->status()->isPending());
         $this->assertNull($payment->gatewayTransactionId());
         $this->assertNull($payment->errorMessage());
-        $this->assertSame(0, $payment->refundedAmountInCents());
+        $this->assertSame(0, $payment->refundedAmount()->getAmount());
 
         // Check domain event
         $events = $payment->popEvents();
@@ -70,8 +70,7 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 0,
-            currency: 'USD',
+            amount: Money::fromScalars(0, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -86,8 +85,7 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 100_000_001, // > $1,000,000.00
-            currency: 'USD',
+            amount: Money::fromScalars(100_000_001, 'USD'), // > $1,000,000.00
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -95,15 +93,13 @@ final class PaymentTest extends TestCase
 
     public function testCreatePaymentWithInvalidCurrencyThrowsException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('/Invalid currency code/');
+        $this->expectException(\Brick\Money\Exception\UnknownCurrencyException::class);
 
         Payment::create(
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'US', // Invalid - must be 3 letters
+            amount: Money::fromScalars(9999, 'US'), // Invalid - must be 3 letters
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -177,13 +173,13 @@ final class PaymentTest extends TestCase
     public function testRefundPayment(): void
     {
         $payment = $this->createCapturedPayment();
-        $refundAmount = 5000;
+        $refundAmount = Money::fromScalars(5000, 'USD');
         $reason = 'Customer requested refund';
 
         $payment->refund($refundAmount, $reason);
 
         $this->assertTrue($payment->status()->isRefunded());
-        $this->assertSame($refundAmount, $payment->refundedAmountInCents());
+        $this->assertSame(5000, $payment->refundedAmount()->getAmount());
 
         $events = $payment->popEvents();
         $this->assertCount(1, $events);
@@ -195,8 +191,8 @@ final class PaymentTest extends TestCase
         $payment = $this->createCapturedPayment();
 
         // First refund: $50 (out of $99.99)
-        $payment->refund(5000, 'Partial refund 1');
-        $this->assertSame(5000, $payment->refundedAmountInCents());
+        $payment->refund(Money::fromScalars(5000, 'USD'), 'Partial refund 1');
+        $this->assertSame(5000, $payment->refundedAmount()->getAmount());
 
         // After first refund, status changes to refunded
         // This is expected behavior - any refund changes status
@@ -210,7 +206,7 @@ final class PaymentTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/Refund amount.*exceeds available amount/');
 
-        $payment->refund(10000, 'Refund exceeds captured amount'); // $100.00 > $99.99
+        $payment->refund(Money::fromScalars(10000, 'USD'), 'Refund exceeds captured amount'); // $100.00 > $99.99
     }
 
     public function testRefundWithEmptyReasonThrowsException(): void
@@ -220,7 +216,7 @@ final class PaymentTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Refund reason is required');
 
-        $payment->refund(5000, '');
+        $payment->refund(Money::fromScalars(5000, 'USD'), '');
     }
 
     public function testRefundPendingPaymentThrowsException(): void
@@ -230,7 +226,7 @@ final class PaymentTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot refund payment in status: pending');
 
-        $payment->refund(5000, 'Cannot refund pending payment');
+        $payment->refund(Money::fromScalars(5000, 'USD'), 'Cannot refund pending payment');
     }
 
     public function testCancelPayment(): void
@@ -311,14 +307,13 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             status: PaymentStatus::captured(),
             gatewayTransactionId: 'pi_abc123xyz',
             errorMessage: null,
-            refundedAmountInCents: 0,
+            refundedAmount: Money::fromScalars(0, 'USD'),
             createdAt: $createdAt,
             updatedAt: $updatedAt
         );
@@ -339,8 +334,7 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -392,14 +386,13 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             status: PaymentStatus::failed(),
             gatewayTransactionId: 'pi_abc123xyz',
             errorMessage: 'Card declined',
-            refundedAmountInCents: 0,
+            refundedAmount: Money::fromScalars(0, 'USD'),
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable(),
             errorCode: 'card_declined',
@@ -456,14 +449,13 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             status: PaymentStatus::failed(),
             gatewayTransactionId: 'pi_abc123xyz',
             errorMessage: 'Card declined',
-            refundedAmountInCents: 0,
+            refundedAmount: Money::fromScalars(0, 'USD'),
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable(),
             errorCode: 'card_declined',
@@ -517,14 +509,13 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             status: PaymentStatus::failed(),
             gatewayTransactionId: null,
             errorMessage: 'Card declined',
-            refundedAmountInCents: 0,
+            refundedAmount: Money::fromScalars(0, 'USD'),
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable(),
             errorCode: 'card_declined',
@@ -551,14 +542,13 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             status: PaymentStatus::failed(),
             gatewayTransactionId: null,
             errorMessage: 'Card declined',
-            refundedAmountInCents: 0,
+            refundedAmount: Money::fromScalars(0, 'USD'),
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable(),
             errorCode: 'card_declined',
@@ -575,14 +565,13 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             status: PaymentStatus::failed(),
             gatewayTransactionId: null,
             errorMessage: 'Card declined',
-            refundedAmountInCents: 0,
+            refundedAmount: Money::fromScalars(0, 'USD'),
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable(),
             errorCode: 'card_declined',
@@ -607,14 +596,13 @@ final class PaymentTest extends TestCase
 
     public function testCreatePaymentWithIdempotencyKey(): void
     {
-        $idempotencyKey = 'idem_' . bin2hex(random_bytes(16));
+        $idempotencyKey = 'idem_'.bin2hex(random_bytes(16));
 
         $payment = Payment::create(
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             idempotencyKey: $idempotencyKey
@@ -629,8 +617,7 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -646,14 +633,13 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             status: PaymentStatus::pending(),
             gatewayTransactionId: null,
             errorMessage: null,
-            refundedAmountInCents: 0,
+            refundedAmount: Money::fromScalars(0, 'USD'),
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable(),
             idempotencyKey: $idempotencyKey
@@ -668,14 +654,13 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             status: PaymentStatus::pending(),
             gatewayTransactionId: null,
             errorMessage: null,
-            refundedAmountInCents: 0,
+            refundedAmount: Money::fromScalars(0, 'USD'),
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable()
         );
@@ -690,14 +675,13 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 5000,
-            currency: 'EUR',
+            amount: Money::fromScalars(5000, 'EUR'),
             method: PaymentMethod::paypal(),
             gateway: PaymentGateway::paypal(),
             status: PaymentStatus::captured(),
             gatewayTransactionId: 'pp_test_123',
             errorMessage: null,
-            refundedAmountInCents: 0,
+            refundedAmount: Money::fromScalars(0, 'EUR'),
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable(),
             errorCode: null,
@@ -722,8 +706,7 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: -1000,
-            currency: 'USD',
+            amount: Money::fromScalars(-1000, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -746,7 +729,7 @@ final class PaymentTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Refund amount must be greater than 0');
 
-        $payment->refund(0, 'Invalid refund');
+        $payment->refund(Money::fromScalars(0, 'USD'), 'Invalid refund');
     }
 
     public function testRefundNegativeAmountThrowsException(): void
@@ -756,7 +739,7 @@ final class PaymentTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Refund amount must be greater than 0');
 
-        $payment->refund(-1000, 'Invalid refund');
+        $payment->refund(Money::fromScalars(-1000, 'USD'), 'Invalid refund');
     }
 
     public function testMarkAsFailedWithErrorCode(): void
@@ -776,8 +759,7 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD', // Already uppercase
+            amount: Money::fromScalars(9999, 'USD'), // Already uppercase
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -788,15 +770,13 @@ final class PaymentTest extends TestCase
 
     public function testCreatePaymentWithLowercaseCurrencyThrowsException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('/Invalid currency code/');
+        $this->expectException(\Brick\Money\Exception\UnknownCurrencyException::class);
 
         Payment::create(
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'usd', // lowercase - invalid
+            amount: Money::fromScalars(9999, 'usd'), // lowercase - invalid
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -809,8 +789,7 @@ final class PaymentTest extends TestCase
             id: $this->paymentId,
             tenantId: $this->tenantId,
             orderId: $this->orderId,
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );

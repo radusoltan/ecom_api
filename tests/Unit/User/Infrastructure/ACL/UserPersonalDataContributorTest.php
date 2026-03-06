@@ -48,7 +48,7 @@ final class UserPersonalDataContributorTest extends TestCase
         $this->userRepository
             ->expects(self::once())
             ->method('findByEmail')
-            ->with(self::callback(fn (Email $e) => $e->value() === 'jane.doe@example.com'))
+            ->with(self::callback(fn (Email $e) => 'jane.doe@example.com' === $e->value()))
             ->willReturn($user);
 
         $result = $this->contributor->collectPersonalData([

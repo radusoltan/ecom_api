@@ -49,8 +49,8 @@ final class ReviewDataSubjectRequestCommandHandlerTest extends TestCase
         $this->repository->expects(self::once())
             ->method('save')
             ->with(self::callback(function (DataSubjectRequest $saved): bool {
-                return $saved->status()->value() === 'under_review'
-                    && $saved->reviewNotes() === 'Reviewing access request for compliance.';
+                return 'under_review' === $saved->status()->value()
+                    && 'Reviewing access request for compliance.' === $saved->reviewNotes();
             }));
 
         ($this->handler)($command);

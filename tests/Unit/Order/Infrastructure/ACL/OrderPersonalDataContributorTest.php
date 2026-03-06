@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Infrastructure\ACL;
 
-use App\Order\Domain\ValueObject\OrderProductId;
 use App\Order\Domain\Model\Order;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderLine;
 use App\Order\Domain\Model\OrderStatus;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Order\Infrastructure\ACL\OrderPersonalDataContributor;
 use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\Money;
@@ -51,7 +51,7 @@ final class OrderPersonalDataContributorTest extends TestCase
             ->method('findByCustomerEmail')
             ->with(
                 self::EMAIL,
-                self::callback(fn (TenantId $t) => $t->toString() === self::TENANT_ID),
+                self::callback(fn (TenantId $t) => self::TENANT_ID === $t->toString()),
             )
             ->willReturn([$order]);
 

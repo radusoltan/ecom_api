@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Invoice\Application\EventSubscriber;
 
-use App\Order\Domain\ValueObject\OrderProductId;
 use App\Invoice\Application\Command\GenerateInvoice\GenerateInvoiceCommand;
-use App\Invoice\Application\Command\IssueInvoice\IssueInvoiceCommand;
 use App\Invoice\Application\EventSubscriber\PaymentCompletedInvoiceSubscriber;
 use App\Invoice\Domain\Model\InvoiceId;
 use App\Invoice\Domain\Repository\InvoiceRepositoryInterface;
@@ -14,6 +12,7 @@ use App\Order\Domain\Model\Order;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderLine;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Payment\Domain\Event\PaymentCaptured;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Shared\Domain\ValueObject\Address;
@@ -224,7 +223,7 @@ final class PaymentCompletedInvoiceSubscriberTest extends TestCase
         return new PaymentCaptured(
             paymentId: PaymentId::generate(),
             tenantId: $tenantId,
-            capturedAmountInCents: 10000,
+            capturedAmount: Money::fromScalars(10000, 'USD'),
             orderId: $orderId,
         );
     }

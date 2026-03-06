@@ -139,7 +139,7 @@ final class CustomerApiTest extends ApiTestCase
             ],
         ]);
 
-        self::assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
 
     public function testCreateCustomerRejectsDuplicateEmail(): void
@@ -169,8 +169,8 @@ final class CustomerApiTest extends ApiTestCase
             ],
         ]);
 
-        // Expect 500 error with message about duplicate
-        self::assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+        // Expect 400 error with message about duplicate
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = $client->getResponse();
         self::assertStringContainsString('already exists', $response->getContent(false));
     }
@@ -213,7 +213,7 @@ final class CustomerApiTest extends ApiTestCase
         $tenantId = $this->createTenant();
         $client = $this->createAuthenticatedClient();
 
-        $client->request('GET', '/api/v1/customers/'.(\Symfony\Component\Uid\Uuid::v4()->toString()));
+        $client->request('GET', '/api/v1/customers/'.\Symfony\Component\Uid\Uuid::v4()->toString());
 
         $statusCode = $client->getResponse()->getStatusCode();
         self::assertTrue(
@@ -415,7 +415,7 @@ final class CustomerApiTest extends ApiTestCase
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        self::assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
 
     public function testChangeSegmentFailsWhenAlreadyInSegment(): void
@@ -443,8 +443,8 @@ final class CustomerApiTest extends ApiTestCase
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Expect 500 error with message about already in segment
-        self::assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+        // Expect 400 error with message about already in segment
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = $client->getResponse();
         self::assertStringContainsString('already in segment', $response->getContent(false));
     }
@@ -512,8 +512,8 @@ final class CustomerApiTest extends ApiTestCase
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Expect 500 error with message about already active
-        self::assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+        // Expect 400 error with message about already active
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = $client->getResponse();
         self::assertStringContainsString('already active', $response->getContent(false));
     }
@@ -583,8 +583,8 @@ final class CustomerApiTest extends ApiTestCase
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        // Expect 500 error with message about already inactive
-        self::assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+        // Expect 400 error with message about already inactive
+        self::assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = $client->getResponse();
         self::assertStringContainsString('already inactive', $response->getContent(false));
     }

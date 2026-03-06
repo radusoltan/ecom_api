@@ -6,11 +6,11 @@ namespace App\Order\Application\Command;
 
 use App\Order\Application\Port\ProductPriceLookupInterface;
 use App\Order\Application\Service\CheckoutValidationService;
-use App\Order\Domain\ValueObject\OrderProductId;
 use App\Order\Domain\Model\Order;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderLine;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Pricing\Application\Service\PromotionApplicationService;
 use App\Shared\Application\Service\PerformanceProfiler;
 use App\Shared\Domain\ValueObject\Address;
@@ -179,11 +179,7 @@ final readonly class PlaceOrderCommandHandler
 
                         $b2bTaxHandled = true;
                     } else {
-                        throw new \InvalidArgumentException(sprintf(
-                            'VAT number validation failed for %s: %s',
-                            $command->vatNumber,
-                            $vatValidation->errorMessage ?? 'VIES validation failed'
-                        ));
+                        throw new \InvalidArgumentException(sprintf('VAT number validation failed for %s: %s', $command->vatNumber, $vatValidation->errorMessage ?? 'VIES validation failed'));
                     }
                 } else {
                     // VIES service unavailable — graceful degradation, proceed with standard tax

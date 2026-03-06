@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Payment\Application\Command;
 
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\Money;
 
 /**
  * Command to capture an authorized payment.
@@ -14,14 +15,14 @@ use App\Payment\Domain\ValueObject\PaymentId;
  * 2. Confirm payment intent - completes authorization
  * 3. Capture payment (this command) - transfers funds to merchant
  *
- * Supports partial capture - if amountInCents is provided and less than
+ * Supports partial capture - if amount is provided and less than
  * authorized amount, only that amount will be captured.
  */
 final readonly class CapturePayment
 {
     public function __construct(
         public PaymentId $id,
-        public ?int $amountInCents = null,  // null = capture full authorized amount
+        public ?Money $amount = null,  // null = capture full authorized amount
     ) {
     }
 }

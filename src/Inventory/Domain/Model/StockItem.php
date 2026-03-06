@@ -10,6 +10,7 @@ use App\Inventory\Domain\Event\StockAllocated;
 use App\Inventory\Domain\Event\StockDepleted;
 use App\Inventory\Domain\Event\StockReleased;
 use App\Inventory\Domain\Event\StockReserved;
+use App\Inventory\Domain\Event\StockTransferred;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\TenantId;
 
@@ -204,6 +205,49 @@ final class StockItem extends AggregateRoot
         ));
 
         $this->checkLowStock();
+    }
+
+    /**
+     * Transfer stock out to another warehouse.
+     * Deducts quantity from on-hand available stock and records a transfer event.
+     * The caller is responsible for adding the quantity to the destination StockItem.
+     */
+    public function transferOut(Quantity $quantity, WarehouseId $destinationWarehouseId): void
+    {
+        if (!$quantity->isPositive()) {
+            throw new \DomainException('Transfer quantity must be greater than zero.');
+        }
+
+        $available = $this->calculateAvailable();
+
+        if ($available->isLessThan($quantity)) {
+            throw new \DomainException(sprintf('Insufficient available stock to transfer. Available: %d, Requested: %d', $available->value(), $quantity->value()));
+        }
+
+        $this->onHand = $this->onHand->subtract($quantity);
+        $this->updatedAt = new \DateTimeImmutable();
+
+        $this->recordEvent(new StockTransferred(
+            $this->id,
+            $this->productId,
+            $this->warehouseId,
+            $destinationWarehouseId,
+            $quantity,
+            $this->tenantId,
+            new \DateTimeImmutable()
+        ));
+
+        $this->checkLowStock();
+    }
+
+    /**
+     * Receive stock transferred in from another warehouse.
+     * Increases on-hand quantity. Called on the destination StockItem.
+     */
+    public function transferIn(Quantity $quantity): void
+    {
+        $this->onHand = $this->onHand->add($quantity);
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     /**

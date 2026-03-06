@@ -16,6 +16,7 @@ use App\Tenant\Domain\Event\TenantSuspended;
 use App\Tenant\Domain\Event\TenantUpdated;
 use App\Tenant\Domain\Exception\TranslationQuotaExceededException;
 use App\Tenant\Domain\ValueObject\TenantName;
+use App\Tenant\Domain\ValueObject\TenantQuotas;
 use App\Tenant\Domain\ValueObject\TenantStatus;
 
 final class Tenant extends AggregateRoot
@@ -41,11 +42,13 @@ final class Tenant extends AggregateRoot
         ?array $enabledLocales = null,
         private int $translationQuota = self::DEFAULT_TRANSLATION_QUOTA,
         private int $translationUsage = 0,
+        private string $tier = 'starter',
     ) {
         $this->defaultLocale = $defaultLocale ?? LanguageCode::en();
         $this->enabledLocales = $enabledLocales ?? [LanguageCode::en()];
         $this->validateDefaultLocaleIsEnabled();
         $this->validateTranslationQuota();
+        $this->validateTier();
         $this->recordEvent(new TenantCreated($this->id, $this->name, $this->ownerEmail));
     }
 
@@ -70,6 +73,7 @@ final class Tenant extends AggregateRoot
         ?array $enabledLocales = null,
         int $translationQuota = self::DEFAULT_TRANSLATION_QUOTA,
         int $translationUsage = 0,
+        string $tier = 'starter',
     ): self {
         $instance = new self(
             $id,
@@ -80,7 +84,8 @@ final class Tenant extends AggregateRoot
             $defaultLocale,
             $enabledLocales,
             $translationQuota,
-            $translationUsage
+            $translationUsage,
+            $tier,
         );
         $instance->clearEvents();
 
@@ -186,6 +191,13 @@ final class Tenant extends AggregateRoot
         }
     }
 
+    private function validateTier(): void
+    {
+        if (!in_array($this->tier, ['starter', 'professional', 'enterprise'], true)) {
+            throw new \DomainException(sprintf('Invalid tier: %s', $this->tier));
+        }
+    }
+
     private function validateTranslationQuota(): void
     {
         if ($this->translationQuota < 0) {
@@ -238,6 +250,33 @@ final class Tenant extends AggregateRoot
     public function remainingTranslationQuota(): int
     {
         return max(0, $this->translationQuota - $this->translationUsage);
+    }
+
+    public function upgradeTier(string $tier): void
+    {
+        $validTiers = ['starter', 'professional', 'enterprise'];
+        if (!in_array($tier, $validTiers, true)) {
+            throw new \DomainException(sprintf('Invalid tier: %s', $tier));
+        }
+
+        $currentIndex = array_search($this->tier, $validTiers, true);
+        $newIndex = array_search($tier, $validTiers, true);
+
+        if ($newIndex <= $currentIndex) {
+            throw new \DomainException(sprintf('Cannot downgrade from %s to %s', $this->tier, $tier));
+        }
+
+        $this->tier = $tier;
+    }
+
+    public function quotas(): TenantQuotas
+    {
+        return TenantQuotas::forTier($this->tier);
+    }
+
+    public function tier(): string
+    {
+        return $this->tier;
     }
 
     // Getters

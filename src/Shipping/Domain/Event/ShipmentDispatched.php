@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Shipping\Domain\Event;
 
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Shipping\Domain\Model\ShipmentId;
 use App\Shipping\Domain\ValueObject\CarrierCode;
 use App\Shipping\Domain\ValueObject\TrackingNumber;
-use App\Shared\Domain\ValueObject\TenantId;
 
 final readonly class ShipmentDispatched
 {

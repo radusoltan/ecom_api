@@ -15,7 +15,8 @@ final readonly class DeleteFeatureFlagCommandHandler
     public function __construct(
         private FeatureFlagRepositoryInterface $repository,
         private FeatureFlagService $featureFlagService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(DeleteFeatureFlagCommand $command): void
     {

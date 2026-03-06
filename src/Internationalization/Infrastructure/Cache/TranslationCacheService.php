@@ -16,7 +16,7 @@ use Symfony\Contracts\Cache\ItemInterface;
  * Translation Cache Service.
  *
  * Manages Redis caching for translations with:
- * - Cache key pattern: translations:{tenantId}:{locale}:{domain}
+ * - Cache key pattern: i18n:{tenantId}:{domain}:{locale} (PRD §4.7)
  * - TTL: 24 hours (configurable)
  * - Cache warming on deployment
  * - Cache invalidation on CRUD operations
@@ -30,9 +30,9 @@ use Symfony\Contracts\Cache\ItemInterface;
 final readonly class TranslationCacheService
 {
     /**
-     * Cache key prefix.
+     * Cache key prefix per PRD §4.7.
      */
-    private const CACHE_PREFIX = 'translations';
+    private const CACHE_PREFIX = 'i18n';
 
     /**
      * Default TTL: 24 hours.
@@ -117,7 +117,7 @@ final readonly class TranslationCacheService
      */
     public function invalidateAll(TenantId $tenantId): void
     {
-        $locales = ['en', 'fr', 'de'];
+        $locales = LanguageCode::supportedLanguages();
         $domains = ['messages', 'validators', 'emails', 'auth', 'admin', 'catalog', 'inventory', 'order', 'customer', 'pricing'];
 
         foreach ($locales as $localeStr) {
@@ -147,7 +147,7 @@ final readonly class TranslationCacheService
      */
     public function warmCache(TenantId $tenantId): int
     {
-        $locales = ['en', 'fr', 'de'];
+        $locales = LanguageCode::supportedLanguages();
         $domains = ['messages', 'validators', 'emails', 'auth', 'admin', 'catalog', 'inventory', 'order', 'customer', 'pricing'];
         $warmedCount = 0;
 
@@ -200,7 +200,7 @@ final readonly class TranslationCacheService
     }
 
     /**
-     * Build cache key.
+     * Build cache key per PRD §4.7: i18n:{tenant_id}:{domain}:{locale}.
      */
     private function buildCacheKey(
         TenantId $tenantId,
@@ -211,8 +211,8 @@ final readonly class TranslationCacheService
             '%s:%s:%s:%s',
             self::CACHE_PREFIX,
             $tenantId->toString(),
-            $locale->value(),
-            $domain->value()
+            $domain->value(),
+            $locale->value()
         );
     }
 

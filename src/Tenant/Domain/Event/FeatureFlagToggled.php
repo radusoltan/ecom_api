@@ -14,5 +14,6 @@ final readonly class FeatureFlagToggled
         public TenantId $tenantId,
         public string $featureName,
         public bool $enabled,
-    ) {}
+    ) {
+    }
 }

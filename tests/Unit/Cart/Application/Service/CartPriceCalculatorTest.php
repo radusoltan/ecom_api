@@ -49,7 +49,7 @@ final class CartPriceCalculatorTest extends TestCase
         $this->productRepository->method('findById')->willReturn(null);
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Product with ID "' . $productId->toString() . '" not found');
+        $this->expectExceptionMessage('Product with ID "'.$productId->toString().'" not found');
 
         $this->calculator->calculateItemPrice($productId, null, $tenantId);
     }

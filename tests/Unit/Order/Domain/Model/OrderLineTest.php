@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Domain\Model;
 
-use App\Order\Domain\ValueObject\OrderProductId;
 use App\Order\Domain\Model\OrderLine;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Shared\Domain\ValueObject\Money;
 use PHPUnit\Framework\TestCase;
 

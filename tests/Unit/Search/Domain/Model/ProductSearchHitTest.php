@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Search\Domain\Model;
 
 use App\Catalog\Domain\Model\ProductId;
 use App\Search\Domain\Model\ProductSearchHit;
+use Brick\Money\Money;
 use PHPUnit\Framework\TestCase;
 
 final class ProductSearchHitTest extends TestCase
@@ -21,7 +22,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-123456',
             name: 'Test Product',
             description: null,
-            price: 99.99,
+            priceInCents: 9999,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -34,7 +35,7 @@ final class ProductSearchHitTest extends TestCase
         $this->assertSame('PROD-123456', $hit->sku);
         $this->assertSame('Test Product', $hit->name);
         $this->assertNull($hit->description);
-        $this->assertSame(99.99, $hit->price);
+        $this->assertSame(9999, $hit->priceInCents);
         $this->assertSame('USD', $hit->currency);
         $this->assertNull($hit->imageUrl);
         $this->assertTrue($hit->isActive);
@@ -53,7 +54,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-789012',
             name: 'Premium Product',
             description: 'A detailed description of the product',
-            price: 199.99,
+            priceInCents: 19999,
             currency: 'EUR',
             imageUrl: 'https://example.com/image.jpg',
             isActive: true,
@@ -67,7 +68,7 @@ final class ProductSearchHitTest extends TestCase
         // Assert
         $this->assertSame('Premium Product', $hit->name);
         $this->assertSame('A detailed description of the product', $hit->description);
-        $this->assertSame(199.99, $hit->price);
+        $this->assertSame(19999, $hit->priceInCents);
         $this->assertSame('EUR', $hit->currency);
         $this->assertSame('https://example.com/image.jpg', $hit->imageUrl);
         $this->assertTrue($hit->isFeatured);
@@ -75,6 +76,31 @@ final class ProductSearchHitTest extends TestCase
         $this->assertSame(['cat-1', 'cat-2'], $hit->categoryIds);
         $this->assertSame(4.5, $hit->averageRating);
         $this->assertSame(42, $hit->reviewCount);
+    }
+
+    public function testPriceConvenienceMethodReturnsMoney(): void
+    {
+        // Arrange
+        $hit = new ProductSearchHit(
+            productId: ProductId::fromString('018c6e60-e270-7e43-9f19-000000000001'),
+            sku: 'PROD-123456',
+            name: 'Test Product',
+            description: null,
+            priceInCents: 9999,
+            currency: 'USD',
+            imageUrl: null,
+            isActive: true,
+            isFeatured: false,
+            score: 1.0
+        );
+
+        // Act
+        $money = $hit->price();
+
+        // Assert
+        $this->assertInstanceOf(Money::class, $money);
+        $this->assertSame('99.99', $money->getAmount()->__toString());
+        $this->assertSame('USD', $money->getCurrency()->getCurrencyCode());
     }
 
     public function testHasImageReturnsTrueWhenImageUrlIsPresent(): void
@@ -85,7 +111,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-123',
             name: 'Product with Image',
             description: null,
-            price: 50.0,
+            priceInCents: 5000,
             currency: 'USD',
             imageUrl: 'https://example.com/image.jpg',
             isActive: true,
@@ -105,7 +131,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-456',
             name: 'Product without Image',
             description: null,
-            price: 50.0,
+            priceInCents: 5000,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -125,7 +151,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-789',
             name: 'Product with Empty Image',
             description: null,
-            price: 50.0,
+            priceInCents: 5000,
             currency: 'USD',
             imageUrl: '',
             isActive: true,
@@ -145,7 +171,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-111',
             name: 'Popular Product',
             description: null,
-            price: 100.0,
+            priceInCents: 10000,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -168,7 +194,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-222',
             name: 'New Product',
             description: null,
-            price: 100.0,
+            priceInCents: 10000,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -191,7 +217,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-333',
             name: 'Product without Reviews',
             description: null,
-            price: 100.0,
+            priceInCents: 10000,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -216,7 +242,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-999',
             name: 'Test Product',
             description: 'A description',
-            price: 79.99,
+            priceInCents: 7999,
             currency: 'GBP',
             imageUrl: 'https://example.com/test.jpg',
             isActive: true,
@@ -236,7 +262,7 @@ final class ProductSearchHitTest extends TestCase
         $this->assertArrayHasKey('sku', $array);
         $this->assertArrayHasKey('name', $array);
         $this->assertArrayHasKey('description', $array);
-        $this->assertArrayHasKey('price', $array);
+        $this->assertArrayHasKey('priceInCents', $array);
         $this->assertArrayHasKey('currency', $array);
         $this->assertArrayHasKey('imageUrl', $array);
         $this->assertArrayHasKey('isActive', $array);
@@ -250,7 +276,7 @@ final class ProductSearchHitTest extends TestCase
         $this->assertSame('PROD-999', $array['sku']);
         $this->assertSame('Test Product', $array['name']);
         $this->assertSame('A description', $array['description']);
-        $this->assertSame(79.99, $array['price']);
+        $this->assertSame(7999, $array['priceInCents']);
         $this->assertSame('GBP', $array['currency']);
         $this->assertSame('https://example.com/test.jpg', $array['imageUrl']);
         $this->assertTrue($array['isActive']);
@@ -269,7 +295,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-000',
             name: 'Minimal Product',
             description: null,
-            price: 10.0,
+            priceInCents: 1000,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -295,7 +321,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-111',
             name: 'Uncategorized',
             description: null,
-            price: 20.0,
+            priceInCents: 2000,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -318,7 +344,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-222',
             name: 'Multi-category Product',
             description: null,
-            price: 30.0,
+            priceInCents: 3000,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -339,7 +365,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-FREE',
             name: 'Free Product',
             description: null,
-            price: 0.0,
+            priceInCents: 0,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -348,7 +374,7 @@ final class ProductSearchHitTest extends TestCase
         );
 
         // Assert
-        $this->assertSame(0.0, $hit->price);
+        $this->assertSame(0, $hit->priceInCents);
     }
 
     public function testItCreatesWithVeryHighPrice(): void
@@ -359,7 +385,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-LUXURY',
             name: 'Luxury Product',
             description: null,
-            price: 999999.99,
+            priceInCents: 99999999,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -368,7 +394,7 @@ final class ProductSearchHitTest extends TestCase
         );
 
         // Assert
-        $this->assertSame(999999.99, $hit->price);
+        $this->assertSame(99999999, $hit->priceInCents);
     }
 
     public function testItCreatesWithZeroScore(): void
@@ -379,7 +405,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-LOW',
             name: 'Low Relevance',
             description: null,
-            price: 50.0,
+            priceInCents: 5000,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -399,7 +425,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-HIGH',
             name: 'High Relevance',
             description: null,
-            price: 50.0,
+            priceInCents: 5000,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -419,7 +445,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-INACTIVE',
             name: 'Inactive Product',
             description: null,
-            price: 50.0,
+            priceInCents: 5000,
             currency: 'USD',
             imageUrl: null,
             isActive: false,
@@ -439,7 +465,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-USD',
             name: 'USD Product',
             description: null,
-            price: 100.0,
+            priceInCents: 10000,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -452,7 +478,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-EUR',
             name: 'EUR Product',
             description: null,
-            price: 100.0,
+            priceInCents: 10000,
             currency: 'EUR',
             imageUrl: null,
             isActive: true,
@@ -473,7 +499,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-BAD',
             name: 'Bad Product',
             description: null,
-            price: 50.0,
+            priceInCents: 5000,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -497,7 +523,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-PERFECT',
             name: 'Perfect Product',
             description: null,
-            price: 50.0,
+            priceInCents: 5000,
             currency: 'USD',
             imageUrl: null,
             isActive: true,
@@ -523,7 +549,7 @@ final class ProductSearchHitTest extends TestCase
             sku: 'PROD-READONLY',
             name: 'Readonly Test',
             description: 'Test',
-            price: 50.0,
+            priceInCents: 5000,
             currency: 'USD',
             imageUrl: 'https://example.com/image.jpg',
             isActive: true,
@@ -534,6 +560,6 @@ final class ProductSearchHitTest extends TestCase
         // Assert - Properties are readonly
         $this->assertSame('PROD-READONLY', $hit->sku);
         $this->assertSame('Readonly Test', $hit->name);
-        $this->assertSame(50.0, $hit->price);
+        $this->assertSame(5000, $hit->priceInCents);
     }
 }

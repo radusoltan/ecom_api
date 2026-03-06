@@ -42,7 +42,7 @@ final class MarkReturnAsReceivedHandlerTest extends TestCase
             ->method('save')
             ->with($this->callback(function (ReturnRequest $rr): bool {
                 return $rr->status()->isReceived()
-                    && $rr->warehouseId() === 'WH-CENTRAL-01';
+                    && 'WH-CENTRAL-01' === $rr->warehouseId();
             }));
 
         ($this->handler)(new MarkReturnAsReceived(

@@ -74,11 +74,11 @@ final class ConsentProcessorTest extends TestCase
             ->expects($this->once())
             ->method('dispatch')
             ->with($this->callback(function (GrantConsentCommand $cmd): bool {
-                return $cmd->tenantId->toString() === self::TENANT_ID
-                    && $cmd->customerId->toString() === self::CUSTOMER_ID
-                    && $cmd->purpose->value() === 'marketing'
-                    && $cmd->consentText === self::VALID_CONSENT_TEXT
-                    && $cmd->consentVersion === self::CONSENT_VERSION;
+                return self::TENANT_ID === $cmd->tenantId->toString()
+                    && self::CUSTOMER_ID === $cmd->customerId->toString()
+                    && 'marketing' === $cmd->purpose->value()
+                    && self::VALID_CONSENT_TEXT === $cmd->consentText
+                    && self::CONSENT_VERSION === $cmd->consentVersion;
             }))
             ->willReturn(new Envelope(new \stdClass(), [
                 new HandledStamp($consentId, 'handler'),

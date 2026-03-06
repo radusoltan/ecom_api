@@ -6,6 +6,29 @@ api_platform:
         jsonld: ['application/ld+json']
         json: ['application/json']
         multipart: ['multipart/form-data']
+    error_formats:
+        jsonproblem: ['application/problem+json']
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+    exception_to_status:
+        App\Cart\Domain\Exception\CartNotFoundException: 404
+        App\Cart\Domain\Exception\CartItemNotFoundException: 404
+        App\Catalog\Domain\Exception\ProductNotFoundException: 404
+        App\Catalog\Domain\Exception\CategoryNotFoundException: 404
+        App\Tenant\Domain\Exception\TenantNotFoundException: 404
+        App\Cart\Domain\Exception\InsufficientStockException: 409
+        App\Tenant\Domain\Exception\TenantAlreadyExistsException: 409
+        App\User\Domain\Exception\EmailAlreadyExistsException: 409
+        App\User\Domain\Exception\UsernameAlreadyExistsException: 409
+        App\Shipping\Domain\Exception\InvalidShipmentTransitionException: 409
+        App\Cart\Domain\Exception\InvalidQuantityException: 400
+        App\Shared\Domain\Exception\InvalidLanguageCodeException: 400
+        App\Payment\Domain\Exception\InvalidPaymentMethodException: 400
+        App\Payment\Domain\Exception\UnsupportedPaymentMethodException: 400
+        App\Order\Domain\Exception\CheckoutValidationException: 422
+        App\Payment\Domain\Exception\CardDeclinedException: 402
+        App\Payment\Domain\Exception\InsufficientFundsException: 402
+        App\Payment\Domain\Exception\PaymentGatewayException: 402
     patch_formats:
         json: ['application/merge-patch+json']
     docs_formats:
@@ -14,6 +37,10 @@ api_platform:
         html: ['text/html']
     defaults:
         stateless: true
+        pagination_items_per_page: 30
+        pagination_maximum_items_per_page: 100
+        pagination_client_items_per_page: true
+        pagination_client_enabled: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Accept', 'Accept-Language', 'X-Tenant-ID']
             max_age: 60  # Cache for 60 seconds

@@ -157,7 +157,7 @@ final class CustomerDataExportCompletedSubscriberTest extends TestCase
         // Arrange: file path that does not exist
         $customerId = CustomerId::generate();
         $tenantId = TenantId::generate();
-        $nonExistentPath = '/tmp/dsr_test_does_not_exist_' . uniqid() . '.json';
+        $nonExistentPath = '/tmp/dsr_test_does_not_exist_'.uniqid().'.json';
 
         $accessDsr = $this->createAccessDsrUnderReview($customerId, $tenantId);
 

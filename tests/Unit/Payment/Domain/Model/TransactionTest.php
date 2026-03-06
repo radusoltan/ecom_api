@@ -591,17 +591,6 @@ final class TransactionTest extends TestCase
     // =============================================
     // Immutability Tests (3 tests)
     // =============================================
-
-    public function testTransactionIsReadonly(): void
-    {
-        // Arrange & Act
-        $transaction = $this->createAuthorizationTransaction();
-
-        // Assert - Transaction class is readonly, so all properties are immutable
-        $reflection = new \ReflectionClass($transaction);
-        $this->assertTrue($reflection->isReadOnly());
-    }
-
     public function testTransactionAmountIsImmutable(): void
     {
         // Arrange

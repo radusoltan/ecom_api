@@ -100,8 +100,7 @@ final class CancelPaymentCommandHandlerTest extends TestCase
             id: PaymentId::generate(),
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -137,14 +136,13 @@ final class CancelPaymentCommandHandlerTest extends TestCase
             id: PaymentId::generate(),
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 5000,
-            currency: 'EUR',
+            amount: Money::fromScalars(5000, 'EUR'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             status: PaymentStatus::authorized(),
             gatewayTransactionId: 'pi_stripe_authorized_123',
             errorMessage: null,
-            refundedAmountInCents: 0,
+            refundedAmount: Money::fromScalars(0, 'EUR'),
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable()
         );

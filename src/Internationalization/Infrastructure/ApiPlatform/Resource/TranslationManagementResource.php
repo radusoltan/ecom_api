@@ -59,8 +59,11 @@ use App\Internationalization\Infrastructure\ApiPlatform\State\TranslationManagem
 )]
 final class TranslationManagementResource
 {
+    /**
+     * @param array<string, string> $parameters
+     */
     public function __construct(
-        public ?int $id = null,
+        public int|string|null $id = null,
         public ?string $tenantId = null,
         public ?string $locale = null,
         public ?string $domain = null,
@@ -68,6 +71,7 @@ final class TranslationManagementResource
         public ?string $value = null,
         public ?string $createdAt = null,
         public ?string $updatedAt = null,
+        public array $parameters = [],
     ) {
     }
 }

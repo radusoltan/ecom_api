@@ -10,6 +10,7 @@ use App\Payment\Application\EventSubscriber\PaymentCapturedSubscriber;
 use App\Payment\Application\Service\PaymentCustomerEmailResolver;
 use App\Payment\Domain\Event\PaymentCaptured;
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -71,7 +72,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 10000,
+            capturedAmount: Money::fromScalars(10000, 'USD'),
             orderId: $orderId
         );
 
@@ -107,7 +108,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: $capturedAmount,
+            capturedAmount: Money::fromScalars($capturedAmount, 'USD'),
             orderId: $orderId
         );
 
@@ -145,7 +146,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 9999,
+            capturedAmount: Money::fromScalars(9999, 'USD'),
             orderId: $orderId
         );
 
@@ -185,7 +186,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 10000,
+            capturedAmount: Money::fromScalars(10000, 'USD'),
             orderId: $orderId
         );
 
@@ -227,7 +228,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 10000,
+            capturedAmount: Money::fromScalars(10000, 'USD'),
             orderId: null // No order ID
         );
 
@@ -258,7 +259,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 10000,
+            capturedAmount: Money::fromScalars(10000, 'USD'),
             orderId: $orderId
         );
 
@@ -305,7 +306,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 10000,
+            capturedAmount: Money::fromScalars(10000, 'USD'),
             orderId: $orderId
         );
 
@@ -346,7 +347,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 10000,
+            capturedAmount: Money::fromScalars(10000, 'USD'),
             orderId: '01J9TEST12345'
         );
 
@@ -385,7 +386,7 @@ final class PaymentCapturedSubscriberIntegrationTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: $capturedAmount,
+            capturedAmount: Money::fromScalars($capturedAmount, 'USD'),
             orderId: $orderId
         );
 

@@ -6,7 +6,6 @@ namespace App\Tests\Functional\Cart\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Tests\Support\TenantTestTrait;
-use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Uid\Uuid;
 
 /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Tenant\Application\Command;
 
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Tenant\Application\Command\CreateTenantCommand;
 use App\Tenant\Application\Command\CreateTenantCommandHandler;
 use App\Tenant\Domain\Exception\TenantAlreadyExistsException;
@@ -28,16 +29,31 @@ final class CreateTenantCommandHandlerTest extends KernelTestCase
         self::bootKernel();
 
         $container = self::getContainer();
+
+        // Clear EntityManager identity map to prevent stale entities from prior tests
+        $em = $container->get('doctrine.orm.entity_manager');
+        $em->clear();
+
         $this->tenantRepository = $container->get(TenantRepositoryInterface::class);
         $this->handler = $container->get(CreateTenantCommandHandler::class);
 
-        // Set tenant context for RLS
-        $this->tenantId = $this->getDefaultTenantId();
+        // Use a fresh unique tenant ID per test to avoid ext_translations unique constraint violations
+        $this->tenantId = TenantId::generate();
         $this->setTenantContext($this->tenantId->toString());
     }
 
     protected function tearDown(): void
     {
+        // Clean up test tenants to avoid slug unique constraint violations
+        $em = self::getContainer()->get('doctrine.orm.entity_manager');
+        $conn = $em->getConnection();
+        // Bypass RLS so we can delete regardless of which tenant context is active
+        $conn->executeStatement("SET app.bypass_rls = 'true'");
+        $conn->executeStatement('DELETE FROM ext_translations WHERE foreign_key = ?', [$this->tenantId->toString()]);
+        $conn->executeStatement('DELETE FROM tenants WHERE id = ?', [$this->tenantId->toString()]);
+        $conn->executeStatement("SET app.bypass_rls = 'false'");
+        $em->clear();
+
         parent::tearDown();
     }
 
@@ -46,15 +62,21 @@ final class CreateTenantCommandHandlerTest extends KernelTestCase
         return sprintf('%s-%d-%s@example.com', $prefix, ++self::$counter, uniqid());
     }
 
+    private function uniqueName(string $base): string
+    {
+        return $base.' '.substr(uniqid(), -6);
+    }
+
     public function testItCreatesNewTenant(): void
     {
         // Arrange - Use the default test tenant (required for RLS)
         // Note: In a real multi-tenant system, tenant creation would be done by a superuser
         // without RLS constraints. Here we test within RLS constraints using default tenant ID.
         $email = $this->generateUniqueEmail();
+        $name = $this->uniqueName('Test Company');
         $tenant = Tenant::fromPersistence(
             id: $this->tenantId,
-            name: TenantName::fromString('Test Company'),
+            name: TenantName::fromString($name),
             ownerEmail: Email::fromString($email),
             status: \App\Tenant\Domain\ValueObject\TenantStatus::active(),
             createdAt: new \DateTimeImmutable()
@@ -68,7 +90,7 @@ final class CreateTenantCommandHandlerTest extends KernelTestCase
 
         $this->assertNotNull($foundTenant);
         $this->assertInstanceOf(Tenant::class, $foundTenant);
-        $this->assertSame('Test Company', $foundTenant->name()->value());
+        $this->assertSame($name, $foundTenant->name()->value());
         $this->assertSame($email, $foundTenant->ownerEmail()->value());
         $this->assertTrue($foundTenant->status()->isActive());
         $this->assertInstanceOf(\DateTimeImmutable::class, $foundTenant->createdAt());
@@ -80,7 +102,7 @@ final class CreateTenantCommandHandlerTest extends KernelTestCase
         $email = $this->generateUniqueEmail('existing');
         $existingTenant = Tenant::fromPersistence(
             id: $this->tenantId,
-            name: TenantName::fromString('Existing Company'),
+            name: TenantName::fromString($this->uniqueName('Existing Company')),
             ownerEmail: Email::fromString($email),
             status: \App\Tenant\Domain\ValueObject\TenantStatus::active(),
             createdAt: new \DateTimeImmutable()
@@ -104,9 +126,10 @@ final class CreateTenantCommandHandlerTest extends KernelTestCase
     {
         // Arrange - Use the default test tenant (required for RLS)
         $email = $this->generateUniqueEmail('admin');
+        $name = $this->uniqueName('Acme Corporation');
         $tenant = Tenant::fromPersistence(
             id: $this->tenantId,
-            name: TenantName::fromString('Acme Corporation'),
+            name: TenantName::fromString($name),
             ownerEmail: Email::fromString($email),
             status: \App\Tenant\Domain\ValueObject\TenantStatus::active(),
             createdAt: new \DateTimeImmutable()
@@ -121,7 +144,7 @@ final class CreateTenantCommandHandlerTest extends KernelTestCase
         );
 
         $this->assertNotNull($savedTenant);
-        $this->assertSame('Acme Corporation', $savedTenant->name()->value());
+        $this->assertSame($name, $savedTenant->name()->value());
         $this->assertSame($email, $savedTenant->ownerEmail()->value());
 
         // Verify the tenant has the correct UUID (default test tenant)

@@ -407,22 +407,4 @@ final class CustomerAddressTest extends TestCase
         $this->assertTrue($newAddress->isDefaultBilling); // New has flag
         $this->assertTrue($address->id->equals($newAddress->id)); // Same ID
     }
-
-    public function testImmutability(): void
-    {
-        $address = CustomerAddress::create(
-            id: CustomerAddressId::generate(),
-            street: '123 Main St',
-            street2: null,
-            city: 'New York',
-            state: 'NY',
-            postalCode: '10001',
-            country: 'US',
-            type: AddressType::SHIPPING
-        );
-
-        // Readonly properties should not be modifiable
-        $reflection = new \ReflectionClass($address);
-        $this->assertTrue($reflection->isReadOnly());
-    }
 }

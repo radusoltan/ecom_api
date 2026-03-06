@@ -218,14 +218,13 @@ final class CapturePaymentCommandHandlerTest extends TestCase
             id: PaymentId::generate(),
             tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: $amountInCents,
-            currency: $currency,
+            amount: Money::fromScalars($amountInCents, $currency),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             status: PaymentStatus::authorized(),
             gatewayTransactionId: $transactionId,
             errorMessage: null,
-            refundedAmountInCents: 0,
+            refundedAmount: Money::fromScalars(0, $currency),
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable()
         );
@@ -237,8 +236,7 @@ final class CapturePaymentCommandHandlerTest extends TestCase
             id: PaymentId::generate(),
             tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );

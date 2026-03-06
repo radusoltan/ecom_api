@@ -38,7 +38,7 @@ final readonly class TranslationImportService
     /**
      * Valid locales.
      */
-    private const VALID_LOCALES = ['en', 'fr', 'de', 'ro'];
+    private const VALID_LOCALES = ['en', 'fr', 'de', 'ro', 'es', 'it'];
 
     public function __construct(
         private TranslationEntryRepositoryInterface $repository,

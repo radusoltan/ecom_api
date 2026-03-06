@@ -9,6 +9,7 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Payment\Application\Command\RefundPayment;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity;
+use App\Shared\Domain\ValueObject\Money;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -25,10 +26,10 @@ final readonly class RefundPaymentProcessor implements ProcessorInterface
      */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): PaymentEntity
     {
-        $refundAmount = $data->getRefundedAmountInCents();
+        $refundAmountInCents = $data->getRefundedAmountInCents();
         $errorMessage = $data->getErrorMessage();
 
-        if ($refundAmount <= 0) {
+        if ($refundAmountInCents <= 0) {
             throw new \RuntimeException('Refund amount must be greater than 0');
         }
 
@@ -44,7 +45,7 @@ final readonly class RefundPaymentProcessor implements ProcessorInterface
 
         $command = new RefundPayment(
             id: PaymentId::fromString($data->getId()),
-            refundAmountInCents: $refundAmount,
+            refundAmount: Money::fromScalars($refundAmountInCents, $data->getCurrency()),
             reason: $errorMessage
         );
 

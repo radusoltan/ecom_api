@@ -47,7 +47,7 @@ final class SubmitReviewHandlerTest extends TestCase
             ->method('save')
             ->with(self::callback(function (ProductReview $review) use ($command): bool {
                 return $review->id()->equals($command->reviewId)
-                    && $review->rating()->value() === 4
+                    && 4 === $review->rating()->value()
                     && $review->status()->isPending();
             }));
 

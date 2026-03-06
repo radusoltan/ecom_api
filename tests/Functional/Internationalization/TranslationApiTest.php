@@ -155,9 +155,9 @@ final class TranslationApiTest extends WebTestCase
 
         $client->request('GET', '/api/v1/translations', ['domain' => 'invalid_domain', 'locale' => 'en']);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
 
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = json_decode($client->getResponse()->getContent(false), true);
 
         $this->assertStringContainsString('Invalid domain', $data['detail']);
     }
@@ -166,9 +166,9 @@ final class TranslationApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'es']);
+        $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'ja']);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
 
         $data = json_decode($client->getResponse()->getContent(), true);
 

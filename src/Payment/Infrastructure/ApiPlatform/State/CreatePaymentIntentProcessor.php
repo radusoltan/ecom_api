@@ -9,6 +9,7 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Payment\Application\Command\CreatePaymentIntent\CreatePaymentIntentCommand;
 use App\Payment\Application\Command\CreatePaymentIntent\CreatePaymentIntentResult;
 use App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
@@ -47,8 +48,7 @@ final readonly class CreatePaymentIntentProcessor implements ProcessorInterface
         $command = new CreatePaymentIntentCommand(
             tenantId: $tenantId,
             orderId: $data->getOrderId(),
-            amountInCents: $data->getAmountInCents(),
-            currency: $data->getCurrency(),
+            amount: Money::fromScalars($data->getAmountInCents(), $data->getCurrency()),
             paymentMethod: $data->getMethod(),
             idempotencyKey: $idempotencyKey
         );

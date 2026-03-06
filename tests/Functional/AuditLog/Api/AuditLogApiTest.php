@@ -9,7 +9,6 @@ use App\AuditLog\Domain\Model\AuditLogEntry;
 use App\AuditLog\Domain\Repository\AuditLogRepositoryInterface;
 use App\AuditLog\Domain\ValueObject\ActionType;
 use App\AuditLog\Domain\ValueObject\ResourceType;
-use App\Shared\Domain\ValueObject\TenantId;
 use App\Tests\Support\TenantTestTrait;
 use App\User\Domain\ValueObject\UserId;
 
@@ -53,7 +52,7 @@ final class AuditLogApiTest extends ApiTestCase
         $entry = $this->createAuditLogEntry(ActionType::delete(), ResourceType::customer(), 'customer-789');
 
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('GET', '/api/v1/audit-logs/' . $entry->id()->toString(), [
+        $response = $client->request('GET', '/api/v1/audit-logs/'.$entry->id()->toString(), [
             'headers' => ['X-Tenant-ID' => $this->tenantId->toString()],
         ]);
 
@@ -114,7 +113,7 @@ final class AuditLogApiTest extends ApiTestCase
         $this->createAuditLogEntry(ActionType::create(), ResourceType::product(), 'product-2', UserId::generate());
 
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('GET', '/api/v1/audit-logs?userId=' . $userId->toString(), [
+        $response = $client->request('GET', '/api/v1/audit-logs?userId='.$userId->toString(), [
             'headers' => ['X-Tenant-ID' => $this->tenantId->toString()],
         ]);
 
@@ -155,7 +154,7 @@ final class AuditLogApiTest extends ApiTestCase
         $tomorrow = new \DateTimeImmutable('+1 day');
 
         $client = $this->createAuthenticatedClient();
-        $response = $client->request('GET', '/api/v1/audit-logs?occurredAt[before]=' . $tomorrow->format('Y-m-d'), [
+        $response = $client->request('GET', '/api/v1/audit-logs?occurredAt[before]='.$tomorrow->format('Y-m-d'), [
             'headers' => ['X-Tenant-ID' => $this->tenantId->toString()],
         ]);
 
@@ -166,7 +165,7 @@ final class AuditLogApiTest extends ApiTestCase
     public function testPaginationWorks(): void
     {
         for ($i = 0; $i < 60; ++$i) {
-            $this->createAuditLogEntry(ActionType::create(), ResourceType::product(), 'product-' . $i);
+            $this->createAuditLogEntry(ActionType::create(), ResourceType::product(), 'product-'.$i);
         }
 
         $client = $this->createAuthenticatedClient();
@@ -198,7 +197,7 @@ final class AuditLogApiTest extends ApiTestCase
     {
         $entry = $this->createAuditLogEntry(ActionType::create(), ResourceType::product(), 'product-123');
 
-        $response = static::createClient()->request('PATCH', '/api/v1/audit-logs/' . $entry->id()->toString(), [
+        $response = static::createClient()->request('PATCH', '/api/v1/audit-logs/'.$entry->id()->toString(), [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
             'json' => ['actionType' => 'update'],
         ]);
@@ -210,7 +209,7 @@ final class AuditLogApiTest extends ApiTestCase
     {
         $entry = $this->createAuditLogEntry(ActionType::create(), ResourceType::product(), 'product-123');
 
-        $response = static::createClient()->request('DELETE', '/api/v1/audit-logs/' . $entry->id()->toString());
+        $response = static::createClient()->request('DELETE', '/api/v1/audit-logs/'.$entry->id()->toString());
 
         $this->assertResponseStatusCodeSame(405);
     }
@@ -248,7 +247,7 @@ final class AuditLogApiTest extends ApiTestCase
             'exp' => time() + 3600,
         ]);
 
-        return static::createClient([], ['headers' => ['authorization' => 'Bearer ' . $token]]);
+        return static::createClient([], ['headers' => ['authorization' => 'Bearer '.$token]]);
     }
 
     private function createAuditLogEntry(

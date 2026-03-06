@@ -38,7 +38,7 @@ final class AddItemToWishlistHandlerTest extends TestCase
         $this->repository->expects(self::once())
             ->method('save')
             ->with(self::callback(function (Wishlist $wishlist) use ($productId): bool {
-                return $wishlist->hasItem($productId) && $wishlist->itemCount() === 1;
+                return $wishlist->hasItem($productId) && 1 === $wishlist->itemCount();
             }));
 
         ($this->handler)($command);

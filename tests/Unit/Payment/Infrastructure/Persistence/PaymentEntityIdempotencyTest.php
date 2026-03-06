@@ -9,6 +9,7 @@ use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
 use App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 
@@ -16,14 +17,13 @@ final class PaymentEntityIdempotencyTest extends TestCase
 {
     public function testFromDomainModelPreservesIdempotencyKey(): void
     {
-        $idempotencyKey = 'idem_entity_test_' . bin2hex(random_bytes(8));
+        $idempotencyKey = 'idem_entity_test_'.bin2hex(random_bytes(8));
 
         $payment = Payment::create(
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
-            amountInCents: 5000,
-            currency: 'EUR',
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
+            amount: Money::fromScalars(5000, 'EUR'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             idempotencyKey: $idempotencyKey
@@ -39,9 +39,8 @@ final class PaymentEntityIdempotencyTest extends TestCase
         $payment = Payment::create(
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
-            amountInCents: 5000,
-            currency: 'EUR',
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
+            amount: Money::fromScalars(5000, 'EUR'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -53,14 +52,13 @@ final class PaymentEntityIdempotencyTest extends TestCase
 
     public function testRoundTripPreservesIdempotencyKey(): void
     {
-        $idempotencyKey = 'idem_roundtrip_' . bin2hex(random_bytes(8));
+        $idempotencyKey = 'idem_roundtrip_'.bin2hex(random_bytes(8));
 
         $original = Payment::create(
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
-            amountInCents: 7500,
-            currency: 'USD',
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
+            amount: Money::fromScalars(7500, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             idempotencyKey: $idempotencyKey
@@ -72,19 +70,18 @@ final class PaymentEntityIdempotencyTest extends TestCase
 
         $this->assertSame($idempotencyKey, $reconstituted->idempotencyKey());
         $this->assertSame($original->orderId(), $reconstituted->orderId());
-        $this->assertSame($original->amountInCents(), $reconstituted->amountInCents());
+        $this->assertSame($original->amount()->getAmount(), $reconstituted->amount()->getAmount());
     }
 
     public function testUpdateFromDomainModelPreservesIdempotencyKey(): void
     {
-        $idempotencyKey = 'idem_update_' . bin2hex(random_bytes(8));
+        $idempotencyKey = 'idem_update_'.bin2hex(random_bytes(8));
 
         $payment = Payment::create(
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
-            amountInCents: 3000,
-            currency: 'GBP',
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
+            amount: Money::fromScalars(3000, 'GBP'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe(),
             idempotencyKey: $idempotencyKey
@@ -103,9 +100,8 @@ final class PaymentEntityIdempotencyTest extends TestCase
         $payment = Payment::create(
             id: PaymentId::generate(),
             tenantId: TenantId::generate(),
-            orderId: '01JCEX' . bin2hex(random_bytes(10)),
-            amountInCents: 1000,
-            currency: 'USD',
+            orderId: '01JCEX'.bin2hex(random_bytes(10)),
+            amount: Money::fromScalars(1000, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );

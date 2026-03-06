@@ -326,7 +326,7 @@ final class Version20260226120001_MigrateTimestampToTimestamptz extends Abstract
 
         foreach ($tables as $table => $columns) {
             $alterClauses = implode(",\n                ", array_map(
-                fn(string $col) => "ALTER COLUMN {$col} TYPE TIMESTAMP WITHOUT TIME ZONE USING {$col} AT TIME ZONE 'UTC'",
+                fn (string $col) => "ALTER COLUMN {$col} TYPE TIMESTAMP WITHOUT TIME ZONE USING {$col} AT TIME ZONE 'UTC'",
                 $columns
             ));
             $this->addSql("ALTER TABLE {$table}\n                {$alterClauses}");

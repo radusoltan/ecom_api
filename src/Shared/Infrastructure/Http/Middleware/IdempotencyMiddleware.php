@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -33,6 +34,14 @@ final class IdempotencyMiddleware
     private const CACHE_TTL = 86400; // 24 hours
     private const CACHE_PREFIX = 'idempotency';
 
+    /** @var list<string> Paths requiring Idempotency-Key on POST/PUT/PATCH */
+    private const REQUIRED_PATHS = [
+        '/api/v1/orders',
+        '/api/v1/payments',
+        '/api/v1/refunds',
+        '/api/v1/shipments',
+    ];
+
     public function __construct(
         private readonly CacheInterface $cache,
         private readonly LoggerInterface $logger,
@@ -46,13 +55,20 @@ final class IdempotencyMiddleware
         }
 
         $request = $event->getRequest();
+        $method = $request->getMethod();
 
-        // Only process POST requests with Idempotency-Key
-        if (Request::METHOD_POST !== $request->getMethod()) {
+        // Only process mutation methods (POST, PUT, PATCH)
+        if (!in_array($method, [Request::METHOD_POST, Request::METHOD_PUT, Request::METHOD_PATCH], true)) {
             return;
         }
 
         $idempotencyKey = $request->headers->get(self::HEADER_NAME);
+
+        // Enforce Idempotency-Key on critical endpoints
+        if (!$idempotencyKey && $this->requiresIdempotencyKey($request)) {
+            throw new BadRequestHttpException('Missing required Idempotency-Key header for this endpoint.');
+        }
+
         if (!$idempotencyKey) {
             return;
         }
@@ -184,6 +200,18 @@ final class IdempotencyMiddleware
             ]);
             // Continue without caching on error
         }
+    }
+
+    private function requiresIdempotencyKey(Request $request): bool
+    {
+        $path = $request->getPathInfo();
+        foreach (self::REQUIRED_PATHS as $requiredPath) {
+            if (str_starts_with($path, $requiredPath)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function isValidIdempotencyKey(string $key): bool

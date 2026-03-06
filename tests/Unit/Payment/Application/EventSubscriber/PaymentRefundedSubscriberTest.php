@@ -8,6 +8,7 @@ use App\Payment\Application\EventSubscriber\PaymentRefundedSubscriber;
 use App\Payment\Application\Service\PaymentCustomerEmailResolver;
 use App\Payment\Domain\Event\PaymentRefunded;
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -66,7 +67,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            refundedAmountInCents: 5000,
+            refundedAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Customer requested refund'
         );
 
@@ -99,7 +100,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            refundedAmountInCents: 3000,
+            refundedAmount: Money::fromScalars(3000, 'USD'),
             reason: 'Damaged item'
         );
 
@@ -142,7 +143,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            refundedAmountInCents: 5000,
+            refundedAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Test refund'
         );
 
@@ -180,7 +181,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: PaymentId::generate(),
             tenantId: $tenantId,
-            refundedAmountInCents: 12345, // $123.45
+            refundedAmount: Money::fromScalars(12345, 'USD'), // $123.45
             reason: 'Test'
         );
 
@@ -215,7 +216,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: PaymentId::generate(),
             tenantId: $tenantId,
-            refundedAmountInCents: 2500,
+            refundedAmount: Money::fromScalars(2500, 'USD'),
             reason: 'Product not as described'
         );
 
@@ -250,7 +251,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: PaymentId::generate(),
             tenantId: $tenantId,
-            refundedAmountInCents: 9999,
+            refundedAmount: Money::fromScalars(9999, 'USD'),
             reason: 'Refund test'
         );
 
@@ -297,7 +298,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
             $event = new PaymentRefunded(
                 paymentId: PaymentId::generate(),
                 tenantId: $tenantId,
-                refundedAmountInCents: $testCase['amountInCents'],
+                refundedAmount: Money::fromScalars($testCase['amountInCents'], 'USD'),
                 reason: 'Test refund'
             );
 
@@ -326,7 +327,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            refundedAmountInCents: 5000,
+            refundedAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Customer request'
         );
 
@@ -363,7 +364,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: PaymentId::generate(),
             tenantId: $tenantId,
-            refundedAmountInCents: 5000,
+            refundedAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Test'
         );
 
@@ -393,7 +394,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            refundedAmountInCents: 5000,
+            refundedAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Test refund'
         );
 
@@ -429,7 +430,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            refundedAmountInCents: 1000,
+            refundedAmount: Money::fromScalars(1000, 'USD'),
             reason: 'Wrong item shipped'
         );
 
@@ -459,7 +460,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: PaymentId::generate(),
             tenantId: $tenantId,
-            refundedAmountInCents: 1000,
+            refundedAmount: Money::fromScalars(1000, 'USD'),
             reason: 'Test'
         );
 
@@ -488,7 +489,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: PaymentId::generate(),
             tenantId: $tenantId,
-            refundedAmountInCents: 5000,
+            refundedAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Product defect'
         );
 
@@ -519,7 +520,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: PaymentId::generate(),
             tenantId: $tenantId,
-            refundedAmountInCents: 5000,
+            refundedAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Customer request'
         );
 
@@ -551,7 +552,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            refundedAmountInCents: 7500,
+            refundedAmount: Money::fromScalars(7500, 'USD'),
             reason: 'Order cancelled by customer'
         );
 
@@ -590,7 +591,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            refundedAmountInCents: 5000,
+            refundedAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Test'
         );
 
@@ -631,7 +632,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: PaymentId::generate(),
             tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
-            refundedAmountInCents: 5000,
+            refundedAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Customer request'
         );
 
@@ -659,7 +660,7 @@ final class PaymentRefundedSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: PaymentId::generate(),
             tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
-            refundedAmountInCents: 5000,
+            refundedAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Customer request'
         );
 

@@ -9,6 +9,7 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Payment\Application\Command\CapturePayment;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity;
+use App\Shared\Domain\ValueObject\Money;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -42,12 +43,15 @@ final readonly class CapturePaymentProcessor implements ProcessorInterface
     {
         $paymentId = $uriVariables['id'] ?? throw new \RuntimeException('Payment ID is required');
 
-        // Optional: capture partial amount (from request body)
+        // Optional: capture partial amount (from request body; currency taken from the entity)
         $amountInCents = $context['amount_in_cents'] ?? null;
+        $captureAmount = null !== $amountInCents
+            ? Money::fromScalars((int) $amountInCents, $data->getCurrency())
+            : null;
 
         $command = new CapturePayment(
             id: PaymentId::fromString($paymentId),
-            amountInCents: $amountInCents
+            amount: $captureAmount
         );
 
         $this->commandBus->dispatch($command);

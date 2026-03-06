@@ -49,7 +49,7 @@ final class CalculateTaxHandlerTest extends TestCase
             ->with(
                 10000,
                 $this->callback(function (TaxJurisdiction $j): bool {
-                    return $j->getCountryCode() === 'DE' && !$j->hasRegion();
+                    return 'DE' === $j->getCountryCode() && !$j->hasRegion();
                 }),
                 $tenantId,
             )
@@ -84,8 +84,8 @@ final class CalculateTaxHandlerTest extends TestCase
             ->with(
                 5000,
                 $this->callback(function (TaxJurisdiction $j): bool {
-                    return $j->getCountryCode() === 'US'
-                        && $j->getRegionCode() === 'CA';
+                    return 'US' === $j->getCountryCode()
+                        && 'CA' === $j->getRegionCode();
                 }),
                 $tenantId,
             )

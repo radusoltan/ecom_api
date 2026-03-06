@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Locale;
 
+use App\Shared\Application\Service\TenantLocaleProviderInterface;
+use App\Shared\Application\Service\UserLocaleProviderInterface;
 use App\Shared\Domain\ValueObject\LanguageCode;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -11,21 +13,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Locale Negotiator Service.
  *
- * Provides consistent locale detection across the application using content negotiation.
+ * Provides consistent locale detection using PRD §4.7 5-step priority chain:
  *
- * Priority order:
  * 1. Query parameter: ?locale=fr
  * 2. Accept-Language header
- * 3. Default locale (en)
- *
- * Example usage:
- * ```php
- * $locale = $localeNegotiator->negotiate($request);
- * // Returns: 'fr'
- *
- * $availableLocales = $localeNegotiator->getSupportedLocales();
- * // Returns: ['en', 'fr', 'de']
- * ```
+ * 3. User preferred locale (authenticated users)
+ * 4. Tenant default locale
+ * 5. en fallback
  */
 final readonly class LocaleNegotiator
 {
@@ -34,13 +28,15 @@ final readonly class LocaleNegotiator
 
     public function __construct(
         private RequestStack $requestStack,
+        private UserLocaleProviderInterface $userLocaleProvider,
+        private TenantLocaleProviderInterface $tenantLocaleProvider,
     ) {
     }
 
     /**
-     * Negotiate locale from request.
+     * Negotiate locale from request using 5-step PRD priority chain.
      *
-     * @return string The negotiated locale code (en, fr, de)
+     * @return string The negotiated locale code (en, fr, de, ro, es, it)
      */
     public function negotiate(?Request $request = null): string
     {
@@ -50,19 +46,33 @@ final readonly class LocaleNegotiator
             return self::DEFAULT_LOCALE;
         }
 
-        // Priority 1: Query parameter (?locale=fr)
+        // Step 1: Query parameter (?locale=fr)
         $queryLocale = $request->query->get(self::QUERY_PARAM_NAME);
         if (is_string($queryLocale) && $this->isValidLocale($queryLocale)) {
             return $this->normalizeLocale($queryLocale);
         }
 
-        // Priority 2: Accept-Language header
-        $preferredLanguage = $request->getPreferredLanguage($this->getSupportedLocales());
-        if (null !== $preferredLanguage && $this->isValidLocale($preferredLanguage)) {
-            return $this->normalizeLocale($preferredLanguage);
+        // Step 2: Accept-Language header (only if actually present)
+        if ($request->headers->has('Accept-Language')) {
+            $preferredLanguage = $request->getPreferredLanguage($this->getSupportedLocales());
+            if (null !== $preferredLanguage && $this->isValidLocale($preferredLanguage)) {
+                return $this->normalizeLocale($preferredLanguage);
+            }
         }
 
-        // Priority 3: Default locale
+        // Step 3: User preferred locale (authenticated users only)
+        $userLocale = $this->userLocaleProvider->getPreferredLocale();
+        if (null !== $userLocale && $this->isValidLocale($userLocale)) {
+            return $this->normalizeLocale($userLocale);
+        }
+
+        // Step 4: Tenant default locale
+        $tenantLocale = $this->tenantLocaleProvider->getDefaultLocale();
+        if (null !== $tenantLocale && $this->isValidLocale($tenantLocale)) {
+            return $this->normalizeLocale($tenantLocale);
+        }
+
+        // Step 5: Global fallback
         return self::DEFAULT_LOCALE;
     }
 
@@ -79,7 +89,6 @@ final readonly class LocaleNegotiator
      */
     public function isValidLocale(string $locale): bool
     {
-        // Extract base language code (e.g., 'en' from 'en_US' or 'en-US')
         $baseLocale = strtok($locale, '_-');
 
         try {
@@ -92,7 +101,7 @@ final readonly class LocaleNegotiator
     }
 
     /**
-     * Normalize locale to base language code (en, fr, de).
+     * Normalize locale to base language code (en, fr, de, ro, es, it).
      */
     public function normalizeLocale(string $locale): string
     {
@@ -106,8 +115,6 @@ final readonly class LocaleNegotiator
     }
 
     /**
-     * Get all supported locales.
-     *
      * @return string[]
      */
     public function getSupportedLocales(): array
@@ -115,25 +122,17 @@ final readonly class LocaleNegotiator
         return LanguageCode::all();
     }
 
-    /**
-     * Get default locale.
-     */
     public function getDefaultLocale(): string
     {
         return self::DEFAULT_LOCALE;
     }
 
-    /**
-     * Get fallback locale (alias for getDefaultLocale).
-     */
     public function getFallbackLocale(): string
     {
         return self::DEFAULT_LOCALE;
     }
 
     /**
-     * Get locale information for API responses.
-     *
      * @return array{current: string, default: string, supported: string[]}
      */
     public function getLocaleMetadata(): array
@@ -145,11 +144,6 @@ final readonly class LocaleNegotiator
         ];
     }
 
-    /**
-     * Create locale-aware cache key.
-     *
-     * Useful for caching translated content per locale
-     */
     public function createCacheKey(string $baseKey, ?string $locale = null): string
     {
         $locale = $locale ?? $this->getCurrentLocale();

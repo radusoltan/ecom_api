@@ -12,7 +12,6 @@ use App\Customer\Application\Query\GetAddressById\GetAddressById;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Presentation\Api\Resource\CustomerAddressResource;
 use App\Shared\Application\Service\TenantContextInterface;
-use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;

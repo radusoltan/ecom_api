@@ -22,8 +22,7 @@ final readonly class CreatePaymentHandler
             id: $command->id,
             tenantId: $command->tenantId,
             orderId: $command->orderId,
-            amountInCents: $command->amountInCents,
-            currency: $command->currency,
+            amount: $command->amount,
             method: $command->method,
             gateway: $command->gateway
         );

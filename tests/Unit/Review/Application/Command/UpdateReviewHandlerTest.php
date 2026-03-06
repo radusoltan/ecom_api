@@ -42,8 +42,8 @@ final class UpdateReviewHandlerTest extends TestCase
         $this->repository->expects(self::once())
             ->method('save')
             ->with(self::callback(function (ProductReview $r): bool {
-                return $r->title() === 'New Title'
-                    && $r->content() === 'New content body.';
+                return 'New Title' === $r->title()
+                    && 'New content body.' === $r->content();
             }));
 
         ($this->handler)($command);

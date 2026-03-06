@@ -110,7 +110,7 @@ final class PrivacyProviderTest extends TestCase
             ->expects(self::once())
             ->method('findByTenantId')
             ->with(self::callback(
-                fn (TenantId $id) => $id->toString() === self::TENANT_ID,
+                fn (TenantId $id) => self::TENANT_ID === $id->toString(),
             ))
             ->willReturn([$consent]);
 
@@ -137,7 +137,7 @@ final class PrivacyProviderTest extends TestCase
             ->expects(self::once())
             ->method('findByCustomerId')
             ->with(self::callback(
-                fn (CustomerId $id) => $id->toString() === self::CUSTOMER_ID,
+                fn (CustomerId $id) => self::CUSTOMER_ID === $id->toString(),
             ))
             ->willReturn([$consent]);
 
@@ -168,7 +168,7 @@ final class PrivacyProviderTest extends TestCase
             ->expects(self::once())
             ->method('findActiveByCustomerId')
             ->with(self::callback(
-                fn (CustomerId $id) => $id->toString() === self::CUSTOMER_ID,
+                fn (CustomerId $id) => self::CUSTOMER_ID === $id->toString(),
             ))
             ->willReturn([$consent]);
 
@@ -336,7 +336,7 @@ final class PrivacyProviderTest extends TestCase
             ->expects(self::once())
             ->method('findByTenantId')
             ->with(self::callback(
-                fn (TenantId $id) => $id->toString() === self::TENANT_ID,
+                fn (TenantId $id) => self::TENANT_ID === $id->toString(),
             ))
             ->willReturn([$dsRequest]);
 
@@ -363,7 +363,7 @@ final class PrivacyProviderTest extends TestCase
             ->expects(self::once())
             ->method('findByCustomerId')
             ->with(self::callback(
-                fn (CustomerId $id) => $id->toString() === self::CUSTOMER_ID,
+                fn (CustomerId $id) => self::CUSTOMER_ID === $id->toString(),
             ))
             ->willReturn([$dsRequest]);
 
@@ -394,8 +394,8 @@ final class PrivacyProviderTest extends TestCase
             ->expects(self::once())
             ->method('findByStatus')
             ->with(
-                self::callback(fn (RequestStatus $s) => $s->value() === 'pending'),
-                self::callback(fn (TenantId $id) => $id->toString() === self::TENANT_ID),
+                self::callback(fn (RequestStatus $s) => 'pending' === $s->value()),
+                self::callback(fn (TenantId $id) => self::TENANT_ID === $id->toString()),
             )
             ->willReturn([$dsRequest]);
 
@@ -430,8 +430,8 @@ final class PrivacyProviderTest extends TestCase
             ->expects(self::once())
             ->method('findByType')
             ->with(
-                self::callback(fn (RequestType $t) => $t->value() === 'access'),
-                self::callback(fn (TenantId $id) => $id->toString() === self::TENANT_ID),
+                self::callback(fn (RequestType $t) => 'access' === $t->value()),
+                self::callback(fn (TenantId $id) => self::TENANT_ID === $id->toString()),
             )
             ->willReturn([$dsRequest]);
 

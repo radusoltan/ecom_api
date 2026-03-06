@@ -54,8 +54,7 @@ final class InitiatePaymentHandlerTest extends TestCase
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             customerEmail: 'customer@example.com',
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
@@ -121,8 +120,7 @@ final class InitiatePaymentHandlerTest extends TestCase
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 5000,
-            currency: 'EUR',
+            amount: Money::fromScalars(5000, 'EUR'),
             customerEmail: 'test@example.com',
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
@@ -173,8 +171,7 @@ final class InitiatePaymentHandlerTest extends TestCase
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 12000,
-            currency: 'GBP',
+            amount: Money::fromScalars(12000, 'GBP'),
             customerEmail: 'uk@example.com',
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
@@ -216,8 +213,7 @@ final class InitiatePaymentHandlerTest extends TestCase
             paymentId: PaymentId::generate(),
             tenantId: TenantId::generate(),
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 7500,
-            currency: 'USD',
+            amount: Money::fromScalars(7500, 'USD'),
             customerEmail: 'paypal@example.com',
             method: PaymentMethod::paypal(),
             gateway: PaymentGateway::paypal()

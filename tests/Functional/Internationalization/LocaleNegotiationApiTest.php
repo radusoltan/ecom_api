@@ -36,7 +36,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
         $client->request('GET', '/api/v1/translations', ['locale' => 'en']);
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('X-Supported-Languages', 'en, fr, de');
+        $this->assertResponseHeaderSame('X-Supported-Languages', 'en, fr, de, ro, es, it');
     }
 
     public function testApiResponseIncludesVaryHeader(): void
@@ -124,7 +124,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
             '/api/v1/translations',
             ['domain' => 'messages'],
             [],
-            ['HTTP_ACCEPT_LANGUAGE' => 'es-ES,it-IT;q=0.9'] // Unsupported languages
+            ['HTTP_ACCEPT_LANGUAGE' => 'ja-JP,zh-CN;q=0.9'] // Unsupported languages
         );
 
         $this->assertResponseIsSuccessful();
@@ -143,14 +143,14 @@ final class LocaleNegotiationApiTest extends WebTestCase
             '/api/v1/translations',
             ['domain' => 'messages'],
             [],
-            ['HTTP_ACCEPT_LANGUAGE' => 'it-IT,es-ES;q=0.9,fr-FR;q=0.8,en;q=0.7'] // French is first supported
+            ['HTTP_ACCEPT_LANGUAGE' => 'it-IT,es-ES;q=0.9,fr-FR;q=0.8,en;q=0.7'] // Italian is first supported
         );
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('Content-Language', 'fr');
+        $this->assertResponseHeaderSame('Content-Language', 'it');
 
         $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertSame('fr', $data['member'][0]['locale']);
+        $this->assertSame('it', $data['member'][0]['locale']);
     }
 
     public function testLocaleNormalizationFromRegionalVariant(): void
@@ -229,7 +229,7 @@ final class LocaleNegotiationApiTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Language', 'de');
         $this->assertResponseHeaderSame('X-Content-Language', 'de');
-        $this->assertResponseHeaderSame('X-Supported-Languages', 'en, fr, de');
+        $this->assertResponseHeaderSame('X-Supported-Languages', 'en, fr, de, ro, es, it');
 
         $varyHeader = $client->getResponse()->headers->get('Vary');
         $this->assertStringContainsString('Accept-Language', $varyHeader);
@@ -297,8 +297,8 @@ final class LocaleNegotiationApiTest extends WebTestCase
 
         $client->request('GET', '/api/v1/translations', ['domain' => 'messages', 'locale' => 'invalid']);
 
-        // Should return 500 error for invalid language code
-        $this->assertResponseStatusCodeSame(500);
+        // Should return 400 error for invalid language code
+        $this->assertResponseStatusCodeSame(400);
 
         // Headers should still be present (even for error responses)
         $response = $client->getResponse();

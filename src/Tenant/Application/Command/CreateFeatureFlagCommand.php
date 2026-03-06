@@ -13,5 +13,6 @@ final readonly class CreateFeatureFlagCommand
         public bool $enabled = false,
         public array $configuration = [],
         public ?string $description = null,
-    ) {}
+    ) {
+    }
 }

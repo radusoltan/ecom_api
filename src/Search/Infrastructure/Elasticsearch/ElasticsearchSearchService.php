@@ -173,12 +173,16 @@ final readonly class ElasticsearchSearchService implements SearchServiceInterfac
     {
         $source = $hit['_source'];
 
+        // Elasticsearch stores price as a float in major units (e.g. 9.99 for $9.99).
+        // Convert to minor units (cents) for correct monetary representation.
+        $priceInCents = (int) round((float) $source['price'] * 100);
+
         return new ProductSearchHit(
             productId: ProductId::fromString($source['id']),
             sku: $source['sku'],
             name: $source['name'],
             description: $source['description'] ?? null,
-            price: (float) $source['price'],
+            priceInCents: $priceInCents,
             currency: $source['currency'],
             imageUrl: $source['image_url'] ?? null,
             isActive: 'active' === $source['status'],

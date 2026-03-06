@@ -50,7 +50,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
             }
             $this->indexManager->createProductIndex($this->tenantId, $this->locale);
         } catch (\Throwable $e) {
-            $this->markTestSkipped('Elasticsearch is not available: ' . $e->getMessage());
+            $this->markTestSkipped('Elasticsearch is not available: '.$e->getMessage());
         }
     }
 
@@ -162,7 +162,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500); // Should be 400, but depends on error handling
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testAutocompleteWithoutQueryFails(): void
@@ -177,7 +177,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500); // Should be 400, but depends on error handling
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testAutocompleteWithoutTenantIdFails(): void
@@ -191,7 +191,7 @@ final class ProductAutocompleteApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500); // Should be 400, but depends on error handling
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testAutocompleteReturnsCorrectStructure(): void

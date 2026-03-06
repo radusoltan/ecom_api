@@ -12,7 +12,7 @@ namespace App\Internationalization\Application\Command;
 final readonly class DeleteTranslation
 {
     public function __construct(
-        public int $id,
+        public string $id,
         public string $tenantId,
     ) {
     }

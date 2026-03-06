@@ -50,7 +50,7 @@ final class RejectDataSubjectRequestCommandHandlerTest extends TestCase
         $this->repository->expects(self::once())
             ->method('save')
             ->with(self::callback(function (DataSubjectRequest $saved) use ($rejectionReason): bool {
-                return $saved->status()->value() === 'rejected'
+                return 'rejected' === $saved->status()->value()
                     && $saved->rejectionReason() === $rejectionReason;
             }));
 

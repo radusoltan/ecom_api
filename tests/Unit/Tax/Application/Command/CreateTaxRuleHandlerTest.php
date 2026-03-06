@@ -44,9 +44,9 @@ final class CreateTaxRuleHandlerTest extends TestCase
             ->method('save')
             ->with($this->callback(function (TaxRule $rule) use ($command): bool {
                 return $rule->id()->equals($command->id)
-                    && $rule->name() === 'German Standard VAT'
-                    && $rule->jurisdiction()->countryCode() === 'DE'
-                    && $rule->rate()->percentage() === 19.0
+                    && 'German Standard VAT' === $rule->name()
+                    && 'DE' === $rule->jurisdiction()->countryCode()
+                    && 19.0 === $rule->rate()->percentage()
                     && $rule->isActive();
             }));
 
@@ -69,8 +69,8 @@ final class CreateTaxRuleHandlerTest extends TestCase
             ->expects($this->once())
             ->method('save')
             ->with($this->callback(function (TaxRule $rule): bool {
-                return $rule->jurisdiction()->countryCode() === 'US'
-                    && $rule->jurisdiction()->regionCode() === 'CA';
+                return 'US' === $rule->jurisdiction()->countryCode()
+                    && 'CA' === $rule->jurisdiction()->regionCode();
             }));
 
         ($this->handler)($command);
@@ -92,7 +92,7 @@ final class CreateTaxRuleHandlerTest extends TestCase
             ->expects($this->once())
             ->method('save')
             ->with($this->callback(function (TaxRule $rule): bool {
-                return $rule->rate()->percentage() === 7.0;
+                return 7.0 === $rule->rate()->percentage();
             }));
 
         ($this->handler)($command);
@@ -144,7 +144,7 @@ final class CreateTaxRuleHandlerTest extends TestCase
             ->expects($this->once())
             ->method('save')
             ->with($this->callback(function (TaxRule $rule) use ($validFrom, $validTo): bool {
-                return $rule->priority() === 10
+                return 10 === $rule->priority()
                     && $rule->validFrom() == $validFrom
                     && $rule->validTo() == $validTo;
             }));

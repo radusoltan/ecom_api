@@ -8,7 +8,6 @@ use App\Payment\Domain\Model\PaymentId as GatewayPaymentId;
 use App\Payment\Domain\Model\PaymentMethod as GatewayPaymentMethod;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use App\Payment\Domain\Service\PaymentGatewayFactoryInterface;
-use App\Shared\Domain\ValueObject\Money;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -33,8 +32,8 @@ final readonly class AuthorizePaymentHandler
         $this->logger->info('Authorizing payment via gateway', [
             'payment_id' => $command->id->toString(),
             'gateway' => $payment->gateway()->value(),
-            'amount' => $payment->amountInCents(),
-            'currency' => $payment->currency(),
+            'amount' => $payment->amount()->getAmount(),
+            'currency' => $payment->amount()->getCurrency()->getCurrencyCode(),
         ]);
 
         try {
@@ -44,14 +43,14 @@ final readonly class AuthorizePaymentHandler
 
             // Build typed arguments required by createPaymentIntent()
             $gatewayPaymentId = GatewayPaymentId::generate();
-            $amount = Money::fromScalars($payment->amountInCents(), $payment->currency());
+            $amount = $payment->amount();
             $idempotencyKey = $payment->idempotencyKey() ?? $payment->id()->toString();
 
             // Create payment intent to authorize (reserve) funds
             $result = $gateway->createPaymentIntent(
                 paymentId: $gatewayPaymentId,
                 amount: $amount,
-                currency: $payment->currency(),
+                currency: $amount->getCurrency()->getCurrencyCode(),
                 idempotencyKey: $idempotencyKey,
                 metadata: [
                     'payment_id' => $payment->id()->toString(),

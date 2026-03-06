@@ -74,7 +74,7 @@ final class QueryBuilder
             $filters[] = ['term' => ['category_ids' => $query->filters['category']]];
         }
 
-        // Price range filter
+        // Price range filter (values are in major currency units matching ES index)
         if ($query->hasPriceFilter()) {
             $range = [];
             if (isset($query->filters['price_min'])) {

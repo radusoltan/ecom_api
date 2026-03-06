@@ -17,7 +17,7 @@ final readonly class HealthCheckService
 {
     public function __construct(
         private Connection $connection,
-        private \Redis|null $redis,
+        private ?\Redis $redis,
         private LoggerInterface $logger,
         private string $elasticsearchUrl = '',
         private string $rabbitmqUrl = '',

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Order\EventSubscriber;
 
-use App\Order\Domain\ValueObject\OrderProductId;
 use App\Customer\Application\Service\NotificationPreferenceService;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Order\Application\EventSubscriber\FulfillmentShippedSubscriber;
@@ -24,6 +23,7 @@ use App\Order\Domain\Repository\FulfillmentRepositoryInterface;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
 use App\Order\Domain\ValueObject\FulfillmentId;
 use App\Order\Domain\ValueObject\FulfillmentStatus;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;

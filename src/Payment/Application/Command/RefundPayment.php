@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Payment\Application\Command;
 
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Domain\ValueObject\Money;
 
 /**
  * Command to refund a captured payment.
@@ -28,7 +29,7 @@ final readonly class RefundPayment
 {
     public function __construct(
         public PaymentId $id,
-        public int $refundAmountInCents,
+        public Money $refundAmount,
         public string $reason,
     ) {
     }

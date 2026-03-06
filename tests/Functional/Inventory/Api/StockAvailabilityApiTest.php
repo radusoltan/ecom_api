@@ -410,8 +410,8 @@ final class StockAvailabilityApiTest extends ApiTestCase
             'headers' => ['X-Tenant-ID' => $this->tenantId->toString()],
         ]);
 
-        // Should be 422, but currently returns 500 due to uncaught exception in processor
-        $this->assertResponseStatusCodeSame(500);
+        // InvalidArgumentException from ProductId::fromString() returns 400 via ApiProblemExceptionListener
+        $this->assertResponseStatusCodeSame(400);
         $this->assertJsonContains(['detail' => 'Invalid ProductId']);
     }
 

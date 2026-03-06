@@ -54,13 +54,13 @@ final readonly class RefundPaymentHandler
         }
 
         // Generate idempotency key for refund
-        $idempotencyKey = $this->generateRefundIdempotencyKey($command->id, $command->refundAmountInCents);
+        $idempotencyKey = $this->generateRefundIdempotencyKey($command->id, $command->refundAmount->getAmount());
 
         $this->logger->info('Refunding payment via gateway', [
             'payment_id' => $command->id->toString(),
             'gateway' => $payment->gateway()->value(),
             'transaction_id' => $payment->gatewayTransactionId(),
-            'refund_amount' => $command->refundAmountInCents,
+            'refund_amount' => $command->refundAmount->getAmount(),
             'reason' => $command->reason,
             'idempotency_key' => $idempotencyKey,
         ]);
@@ -69,7 +69,7 @@ final readonly class RefundPaymentHandler
             // Create refund at gateway
             $result = $this->gateway->createRefund(
                 gatewayPaymentIntentId: $payment->gatewayTransactionId(),
-                amount: Money::fromScalars($command->refundAmountInCents, $payment->currency()),
+                amount: $command->refundAmount,
                 reason: $command->reason,
                 idempotencyKey: $idempotencyKey
             );
@@ -94,7 +94,7 @@ final readonly class RefundPaymentHandler
             ]);
 
             // Update domain model
-            $payment->refund($command->refundAmountInCents, $command->reason);
+            $payment->refund($command->refundAmount, $command->reason);
 
             // Persist changes
             $this->paymentRepository->save($payment);

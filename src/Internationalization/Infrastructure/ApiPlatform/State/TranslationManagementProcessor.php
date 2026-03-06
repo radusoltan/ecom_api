@@ -10,6 +10,7 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Internationalization\Application\Command\CreateTranslation;
 use App\Internationalization\Application\Command\DeleteTranslation;
 use App\Internationalization\Application\Command\UpdateTranslation;
+use App\Internationalization\Domain\Model\Translation;
 use App\Internationalization\Infrastructure\ApiPlatform\Resource\TranslationManagementResource;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
@@ -18,6 +19,7 @@ use Symfony\Component\Messenger\Stamp\HandledStamp;
  * Translation Management Processor.
  *
  * State processor for write operations (CREATE, UPDATE, DELETE).
+ * Works with Translation aggregate root (UUID identity).
  */
 final readonly class TranslationManagementProcessor implements ProcessorInterface
 {
@@ -32,7 +34,7 @@ final readonly class TranslationManagementProcessor implements ProcessorInterfac
 
         if ($operation instanceof DeleteOperationInterface) {
             $command = new DeleteTranslation(
-                id: (int) $uriVariables['id'],
+                id: (string) $uriVariables['id'],
                 tenantId: $tenantId,
             );
 
@@ -49,38 +51,43 @@ final readonly class TranslationManagementProcessor implements ProcessorInterfac
                 domain: $data->domain,
                 key: $data->key,
                 value: $data->value,
+                parameters: $data->parameters ?? [],
             );
 
             $envelope = $this->commandBus->dispatch($command);
-            $entry = $envelope->last(HandledStamp::class)?->getResult();
+            /** @var Translation $translation */
+            $translation = $envelope->last(HandledStamp::class)?->getResult();
 
-            return new TranslationManagementResource(
-                id: $entry->id,
-                tenantId: $entry->tenantId->toString(),
-                locale: $entry->locale->value(),
-                domain: $entry->domain->value(),
-                key: $entry->key->value(),
-                value: $entry->value->value(),
-            );
+            return $this->toResource($translation);
         }
 
         // UPDATE
         $command = new UpdateTranslation(
-            id: $data->id,
+            id: (string) $data->id,
             tenantId: $tenantId,
             value: $data->value,
+            parameters: $data->parameters ?? [],
         );
 
         $envelope = $this->commandBus->dispatch($command);
-        $entry = $envelope->last(HandledStamp::class)?->getResult();
+        /** @var Translation $translation */
+        $translation = $envelope->last(HandledStamp::class)?->getResult();
 
+        return $this->toResource($translation);
+    }
+
+    private function toResource(Translation $translation): TranslationManagementResource
+    {
         return new TranslationManagementResource(
-            id: $entry->id,
-            tenantId: $entry->tenantId->toString(),
-            locale: $entry->locale->value(),
-            domain: $entry->domain->value(),
-            key: $entry->key->value(),
-            value: $entry->value->value(),
+            id: $translation->id()->toString(),
+            tenantId: $translation->tenantId()->toString(),
+            locale: $translation->locale()->value(),
+            domain: $translation->domain()->value(),
+            key: $translation->key()->value(),
+            value: $translation->value()->value(),
+            createdAt: $translation->createdAt()->format(\DateTimeInterface::ATOM),
+            updatedAt: $translation->updatedAt()->format(\DateTimeInterface::ATOM),
+            parameters: $translation->parameters(),
         );
     }
 }

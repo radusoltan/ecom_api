@@ -24,7 +24,7 @@ final class Version20260219100002_CreatePaymentWebhookEventsTable extends Abstra
     public function up(Schema $schema): void
     {
         // Create the table
-        $this->addSql("
+        $this->addSql('
             CREATE TABLE IF NOT EXISTS payment_webhook_events (
                 id UUID NOT NULL,
                 tenant_id UUID NOT NULL,
@@ -37,25 +37,25 @@ final class Version20260219100002_CreatePaymentWebhookEventsTable extends Abstra
                 CONSTRAINT fk_payment_webhook_events_tenant FOREIGN KEY (tenant_id)
                     REFERENCES tenants(id) ON DELETE CASCADE
             )
-        ");
+        ');
 
         // Unique index: (gateway, external_event_id) - core deduplication constraint
-        $this->addSql("
+        $this->addSql('
             CREATE UNIQUE INDEX IF NOT EXISTS idx_payment_webhook_events_dedup
             ON payment_webhook_events (gateway, external_event_id)
-        ");
+        ');
 
         // Tenant isolation index (CRITICAL for RLS performance)
-        $this->addSql("
+        $this->addSql('
             CREATE INDEX IF NOT EXISTS idx_payment_webhook_events_tenant_id
             ON payment_webhook_events (tenant_id)
-        ");
+        ');
 
         // Cleanup index: processed_at for efficient deletion of old entries
-        $this->addSql("
+        $this->addSql('
             CREATE INDEX IF NOT EXISTS idx_payment_webhook_events_processed_at
             ON payment_webhook_events (processed_at)
-        ");
+        ');
 
         // Enable Row Level Security
         $this->addSql('ALTER TABLE payment_webhook_events ENABLE ROW LEVEL SECURITY');

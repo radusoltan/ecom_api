@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\User\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\LanguageCode;
 use App\Shared\Infrastructure\Encryption\BlindIndexService;
 use App\User\Domain\Model\User;
 use App\User\Domain\Repository\UserRepositoryInterface;
@@ -48,6 +49,7 @@ final class DoctrineORMUserRepository extends ServiceEntityRepository implements
         $entity->setTotpSecret($user->totpSecret());
         $entity->setBackupCodes([] !== $user->backupCodes() ? $user->backupCodes() : null);
         $entity->setMfaEnabledAt($user->mfaEnabledAt());
+        $entity->setPreferredLocale($user->preferredLocale()?->value());
 
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
@@ -110,7 +112,8 @@ final class DoctrineORMUserRepository extends ServiceEntityRepository implements
             mfaEnabled: $entity->isMfaEnabled(),
             totpSecret: $entity->getTotpSecret(),
             backupCodes: $entity->getBackupCodes() ?? [],
-            mfaEnabledAt: $entity->getMfaEnabledAt()
+            mfaEnabledAt: $entity->getMfaEnabledAt(),
+            preferredLocale: $entity->getPreferredLocale() ? LanguageCode::fromString($entity->getPreferredLocale()) : null
         );
     }
 }

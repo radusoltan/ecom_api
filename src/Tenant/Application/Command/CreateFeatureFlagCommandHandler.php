@@ -15,7 +15,8 @@ final readonly class CreateFeatureFlagCommandHandler
 {
     public function __construct(
         private FeatureFlagRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(CreateFeatureFlagCommand $command): string
     {

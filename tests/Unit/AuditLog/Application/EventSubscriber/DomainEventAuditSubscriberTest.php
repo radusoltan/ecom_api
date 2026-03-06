@@ -6,6 +6,33 @@ namespace App\Tests\Unit\AuditLog\Application\EventSubscriber;
 
 use App\AuditLog\Application\Command\LogAuditEntry\LogAuditEntry;
 use App\AuditLog\Application\EventSubscriber\DomainEventAuditSubscriber;
+use App\Cart\Domain\Event\CartCreated;
+use App\Cart\Domain\Event\ItemAddedToCart;
+use App\Cart\Domain\Model\CartId;
+use App\Cart\Domain\Model\CartItemId;
+use App\Cart\Domain\Model\Quantity as CartQuantity;
+use App\Catalog\Domain\Event\CategoryCreated;
+use App\Catalog\Domain\Event\ProductCreated;
+use App\Catalog\Domain\Model\CategoryId;
+use App\Catalog\Domain\Model\ProductId;
+use App\Catalog\Domain\Model\SKU;
+use App\Customer\Domain\Event\AccountDeletionRequested;
+use App\Customer\Domain\Event\CustomerCreated;
+use App\Customer\Domain\ValueObject\CustomerId;
+use App\Customer\Domain\ValueObject\DeletionRequestId;
+use App\Inventory\Domain\Event\StockAdjusted;
+use App\Inventory\Domain\Event\WarehouseCreated;
+use App\Inventory\Domain\Model\Quantity as InventoryQuantity;
+use App\Inventory\Domain\Model\StockItemId;
+use App\Inventory\Domain\Model\WarehouseCode;
+use App\Inventory\Domain\Model\WarehouseId;
+use App\Inventory\Domain\Model\WarehouseName;
+use App\Invoice\Domain\Event\InvoiceCreated;
+use App\Invoice\Domain\Model\InvoiceId;
+use App\Notifications\Domain\Event\NotificationCreated;
+use App\Notifications\Domain\Model\NotificationId;
+use App\Notifications\Domain\Model\NotificationType;
+use App\Order\Domain\Model\OrderId;
 use App\Payment\Domain\Event\PaymentCancelled;
 use App\Payment\Domain\Event\PaymentCaptured;
 use App\Payment\Domain\Event\PaymentCreated;
@@ -15,7 +42,20 @@ use App\Payment\Domain\Event\PaymentRetryAttempted;
 use App\Payment\Domain\Event\PaymentRetryExhausted;
 use App\Payment\Domain\Event\PaymentRetryScheduled;
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Privacy\Domain\Event\ConsentGranted;
+use App\Privacy\Domain\ValueObject\ConsentId;
+use App\Privacy\Domain\ValueObject\ConsentPurpose;
+use App\Returns\Domain\Event\ReturnRequestCreated;
+use App\Returns\Domain\ValueObject\ReturnRequestId;
+use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Shipping\Domain\Event\ShipmentCreated;
+use App\Shipping\Domain\Model\ShipmentId;
+use App\Tenant\Domain\Event\TenantCreated;
+use App\Tenant\Domain\ValueObject\TenantName;
+use App\Wishlist\Domain\Event\ItemAddedToWishlist;
+use App\Wishlist\Domain\ValueObject\WishlistId;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
@@ -102,7 +142,7 @@ final class DomainEventAuditSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 5000,
+            capturedAmount: Money::fromScalars(5000, 'USD'),
             orderId: 'order-123',
         );
 
@@ -130,7 +170,7 @@ final class DomainEventAuditSubscriberTest extends TestCase
         $event = new PaymentRefunded(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            refundedAmountInCents: 2500,
+            refundedAmount: Money::fromScalars(2500, 'USD'),
             reason: 'Customer request',
         );
 
@@ -267,8 +307,7 @@ final class DomainEventAuditSubscriberTest extends TestCase
             paymentId: $paymentId,
             tenantId: $tenantId,
             orderId: 'order-100',
-            amountInCents: 9999,
-            currency: 'EUR',
+            amount: Money::fromScalars(9999, 'EUR'),
             gateway: 'stripe',
         );
 
@@ -314,7 +353,7 @@ final class DomainEventAuditSubscriberTest extends TestCase
         $event = new PaymentCaptured(
             paymentId: $paymentId,
             tenantId: $tenantId,
-            capturedAmountInCents: 1000,
+            capturedAmount: Money::fromScalars(1000, 'USD'),
         );
 
         $this->subscriber->onPaymentCaptured($event);
@@ -353,5 +392,395 @@ final class DomainEventAuditSubscriberTest extends TestCase
         $this->assertNull($command->userId);
         $this->assertNull($command->ipAddress);
         $this->assertNull($command->userAgent);
+    }
+
+    public function testSubscribesToAllBoundedContextEvents(): void
+    {
+        $events = DomainEventAuditSubscriber::getSubscribedEvents();
+
+        // Verify we subscribe to events from all 14 bounded contexts
+        $contexts = [
+            'User' => 'onUserCreated',
+            'Order' => 'onOrderPlaced',
+            'Payment' => 'onPaymentCreated',
+            'Review' => 'onReviewSubmitted',
+            'Catalog' => 'onProductCreated',
+            'Customer' => 'onCustomerCreated',
+            'Inventory' => 'onStockAdjusted',
+            'Tenant' => 'onTenantCreated',
+            'Cart' => 'onCartCreated',
+            'Shipping' => 'onShipmentCreated',
+            'Invoice' => 'onInvoiceCreated',
+            'Returns' => 'onReturnRequestCreated',
+            'Privacy' => 'onConsentGranted',
+            'Notifications' => 'onNotificationCreated',
+            'Wishlist' => 'onItemAddedToWishlist',
+        ];
+
+        foreach ($contexts as $context => $handler) {
+            $this->assertContains($handler, $events, "Missing handler for {$context} context");
+        }
+
+        // Total event count: 88 events across 15 bounded contexts
+        $this->assertGreaterThanOrEqual(88, \count($events));
+    }
+
+    public function testProductCreatedCreatesAuditRecord(): void
+    {
+        $productId = ProductId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $event = new ProductCreated(
+            productId: $productId,
+            tenantId: $tenantId,
+            sku: SKU::fromString('PRD-000001'),
+            name: 'Test Product',
+        );
+
+        $this->subscriber->onProductCreated($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
+        $this->assertSame('create', $command->actionType);
+        $this->assertSame('product', $command->resourceType);
+        $this->assertSame($productId->toString(), $command->resourceId);
+        $this->assertSame('PRD-000001', $command->metadata['sku']);
+        $this->assertSame('Test Product', $command->metadata['name']);
+        $this->assertSame('ProductCreated', $command->metadata['event']);
+    }
+
+    public function testCategoryCreatedCreatesAuditRecord(): void
+    {
+        $categoryId = CategoryId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $event = new CategoryCreated(
+            categoryId: $categoryId,
+            tenantId: $tenantId,
+            name: 'Electronics',
+        );
+
+        $this->subscriber->onCategoryCreated($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame('create', $command->actionType);
+        $this->assertSame('category', $command->resourceType);
+        $this->assertSame('Electronics', $command->metadata['name']);
+    }
+
+    public function testCustomerCreatedCreatesAuditRecord(): void
+    {
+        $customerId = CustomerId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $event = new CustomerCreated(
+            customerId: $customerId,
+            tenantId: $tenantId,
+            email: Email::fromString('customer@example.com'),
+            firstName: 'John',
+            lastName: 'Doe',
+        );
+
+        $this->subscriber->onCustomerCreated($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
+        $this->assertSame('create', $command->actionType);
+        $this->assertSame('customer', $command->resourceType);
+        $this->assertSame($customerId->toString(), $command->resourceId);
+        $this->assertSame('customer@example.com', $command->metadata['email']);
+        $this->assertSame('John', $command->metadata['firstName']);
+        $this->assertSame('Doe', $command->metadata['lastName']);
+    }
+
+    public function testAccountDeletionRequestedCreatesAuditRecord(): void
+    {
+        $requestId = DeletionRequestId::generate();
+        $customerId = CustomerId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $event = new AccountDeletionRequested(
+            requestId: $requestId,
+            customerId: $customerId,
+            tenantId: $tenantId,
+            reason: 'No longer needed',
+        );
+
+        $this->subscriber->onAccountDeletionRequested($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
+        $this->assertSame('request_deletion', $command->actionType);
+        $this->assertSame('account_deletion', $command->resourceType);
+        $this->assertSame($requestId->toString(), $command->resourceId);
+        $this->assertSame($customerId->toString(), $command->metadata['customerId']);
+        $this->assertSame('No longer needed', $command->metadata['reason']);
+    }
+
+    public function testStockAdjustedUsesSystemTenant(): void
+    {
+        $stockItemId = StockItemId::generate();
+
+        $event = new StockAdjusted(
+            stockItemId: $stockItemId,
+            previousQuantity: InventoryQuantity::fromInt(100),
+            newQuantity: InventoryQuantity::fromInt(80),
+            reason: 'Manual adjustment',
+            occurredOn: new \DateTimeImmutable(),
+        );
+
+        $this->subscriber->onStockAdjusted($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        // Events without tenantId fall back to system tenant
+        $this->assertSame('00000000-0000-0000-0000-000000000000', $command->tenantId);
+        $this->assertSame('adjust', $command->actionType);
+        $this->assertSame('stock', $command->resourceType);
+        $this->assertSame(100, $command->metadata['previousQuantity']);
+        $this->assertSame(80, $command->metadata['newQuantity']);
+        $this->assertSame('Manual adjustment', $command->metadata['reason']);
+    }
+
+    public function testWarehouseCreatedCreatesAuditRecord(): void
+    {
+        $warehouseId = WarehouseId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $event = new WarehouseCreated(
+            warehouseId: $warehouseId,
+            tenantId: $tenantId,
+            code: WarehouseCode::fromString('WH-001'),
+            name: WarehouseName::fromString('Main Warehouse'),
+            occurredOn: new \DateTimeImmutable(),
+        );
+
+        $this->subscriber->onWarehouseCreated($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
+        $this->assertSame('create', $command->actionType);
+        $this->assertSame('warehouse', $command->resourceType);
+        $this->assertSame('WH-001', $command->metadata['code']);
+        $this->assertSame('Main Warehouse', $command->metadata['name']);
+    }
+
+    public function testTenantCreatedCreatesAuditRecord(): void
+    {
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $event = new TenantCreated(
+            tenantId: $tenantId,
+            name: TenantName::fromString('Test Store'),
+            ownerEmail: Email::fromString('owner@store.com'),
+            occurredAt: new \DateTimeImmutable(),
+        );
+
+        $this->subscriber->onTenantCreated($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
+        $this->assertSame('create', $command->actionType);
+        $this->assertSame('tenant', $command->resourceType);
+        $this->assertSame(self::TENANT_ID, $command->resourceId);
+        $this->assertSame('Test Store', $command->metadata['name']);
+        $this->assertSame('owner@store.com', $command->metadata['ownerEmail']);
+    }
+
+    public function testCartCreatedCreatesAuditRecord(): void
+    {
+        $cartId = CartId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $event = new CartCreated(
+            cartId: $cartId,
+            tenantId: $tenantId,
+            customerId: null,
+            sessionId: null,
+        );
+
+        $this->subscriber->onCartCreated($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame('create', $command->actionType);
+        $this->assertSame('cart', $command->resourceType);
+        $this->assertSame($cartId->toString(), $command->resourceId);
+    }
+
+    public function testItemAddedToCartCreatesAuditRecord(): void
+    {
+        $cartId = CartId::generate();
+        $productId = ProductId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $event = new ItemAddedToCart(
+            cartId: $cartId,
+            tenantId: $tenantId,
+            cartItemId: CartItemId::generate(),
+            productId: $productId,
+            variantId: null,
+            quantity: CartQuantity::fromInt(2),
+            unitPrice: Money::fromScalars(1999, 'USD'),
+        );
+
+        $this->subscriber->onItemAddedToCart($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame('add_item', $command->actionType);
+        $this->assertSame('cart', $command->resourceType);
+        $this->assertSame($productId->toString(), $command->metadata['productId']);
+        $this->assertSame(2, $command->metadata['quantity']);
+    }
+
+    public function testShipmentCreatedCreatesAuditRecord(): void
+    {
+        $shipmentId = ShipmentId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $event = new ShipmentCreated(
+            shipmentId: $shipmentId,
+            tenantId: $tenantId,
+            orderId: 'order-500',
+            recipientName: 'Jane Doe',
+            occurredOn: new \DateTimeImmutable(),
+        );
+
+        $this->subscriber->onShipmentCreated($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
+        $this->assertSame('create', $command->actionType);
+        $this->assertSame('shipment', $command->resourceType);
+        $this->assertSame('order-500', $command->metadata['orderId']);
+        $this->assertSame('Jane Doe', $command->metadata['recipientName']);
+    }
+
+    public function testInvoiceCreatedCreatesAuditRecord(): void
+    {
+        $invoiceId = InvoiceId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+        $orderId = OrderId::generate();
+        $customerId = CustomerId::generate();
+
+        $event = new InvoiceCreated(
+            invoiceId: $invoiceId,
+            tenantId: $tenantId,
+            orderId: $orderId,
+            customerId: $customerId,
+        );
+
+        $this->subscriber->onInvoiceCreated($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame('create', $command->actionType);
+        $this->assertSame('invoice', $command->resourceType);
+        $this->assertSame($invoiceId->toString(), $command->resourceId);
+        $this->assertSame($orderId->toString(), $command->metadata['orderId']);
+        $this->assertSame($customerId->toString(), $command->metadata['customerId']);
+    }
+
+    public function testReturnRequestCreatedCreatesAuditRecord(): void
+    {
+        $returnRequestId = ReturnRequestId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $event = new ReturnRequestCreated(
+            returnRequestId: $returnRequestId,
+            tenantId: $tenantId,
+            orderId: 'order-600',
+            reason: 'Defective product',
+            occurredOn: new \DateTimeImmutable(),
+        );
+
+        $this->subscriber->onReturnRequestCreated($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame('create', $command->actionType);
+        $this->assertSame('return_request', $command->resourceType);
+        $this->assertSame('order-600', $command->metadata['orderId']);
+        $this->assertSame('Defective product', $command->metadata['reason']);
+    }
+
+    public function testConsentGrantedCreatesAuditRecord(): void
+    {
+        $consentId = ConsentId::generate();
+        $customerId = CustomerId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $event = new ConsentGranted(
+            consentId: $consentId,
+            customerId: $customerId,
+            purpose: ConsentPurpose::fromString('marketing'),
+            tenantId: $tenantId,
+            occurredOn: new \DateTimeImmutable(),
+        );
+
+        $this->subscriber->onConsentGranted($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
+        $this->assertSame('grant', $command->actionType);
+        $this->assertSame('consent', $command->resourceType);
+        $this->assertSame($consentId->toString(), $command->resourceId);
+        $this->assertSame('marketing', $command->metadata['purpose']);
+    }
+
+    public function testNotificationCreatedCreatesAuditRecord(): void
+    {
+        $notificationId = NotificationId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+
+        $event = new NotificationCreated(
+            notificationId: $notificationId,
+            tenantId: $tenantId,
+            type: NotificationType::EMAIL,
+            recipientEmail: 'user@example.com',
+            subject: 'Order Confirmation',
+        );
+
+        $this->subscriber->onNotificationCreated($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        $this->assertSame('create', $command->actionType);
+        $this->assertSame('notification', $command->resourceType);
+        $this->assertSame('email', $command->metadata['type']);
+        $this->assertSame('Order Confirmation', $command->metadata['subject']);
+    }
+
+    public function testWishlistItemAddedUsesSystemTenant(): void
+    {
+        $wishlistId = WishlistId::generate();
+        $productId = ProductId::generate();
+
+        $event = new ItemAddedToWishlist(
+            wishlistId: $wishlistId,
+            productId: $productId,
+            customerId: 'customer-123',
+            occurredAt: new \DateTimeImmutable(),
+        );
+
+        $this->subscriber->onItemAddedToWishlist($event);
+
+        $this->assertCount(1, $this->dispatchedCommands);
+        $command = $this->dispatchedCommands[0];
+        // Wishlist events lack tenantId, falls back to system tenant
+        $this->assertSame('00000000-0000-0000-0000-000000000000', $command->tenantId);
+        $this->assertSame('add_item', $command->actionType);
+        $this->assertSame('wishlist', $command->resourceType);
+        $this->assertSame($productId->toString(), $command->metadata['productId']);
+        $this->assertSame('customer-123', $command->metadata['customerId']);
     }
 }

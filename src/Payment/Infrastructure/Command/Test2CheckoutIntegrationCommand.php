@@ -13,6 +13,7 @@ use App\Payment\Application\Query\GetPaymentById;
 use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -73,8 +74,7 @@ final class Test2CheckoutIntegrationCommand extends Command
                 id: $paymentId,
                 tenantId: $tenantId,
                 orderId: '01J9XAMPLE'.bin2hex(random_bytes(8)),
-                amountInCents: 10000, // $100.00
-                currency: 'USD',
+                amount: Money::fromScalars(10000, 'USD'), // $100.00
                 method: PaymentMethod::card(),
                 gateway: PaymentGateway::twoCheckout()
             );
@@ -168,8 +168,7 @@ final class Test2CheckoutIntegrationCommand extends Command
 
         try {
             $captureCommand = new CapturePayment(
-                id: $paymentId,
-                tenantId: $tenantId
+                id: $paymentId
             );
 
             $this->commandBus->dispatch($captureCommand);
@@ -203,8 +202,7 @@ final class Test2CheckoutIntegrationCommand extends Command
         try {
             $refundCommand = new RefundPayment(
                 id: $paymentId,
-                tenantId: $tenantId,
-                refundAmountInCents: 5000, // $50.00
+                refundAmount: Money::fromScalars(5000, 'USD'), // $50.00
                 reason: 'Test refund - customer requested (sandbox test)'
             );
 
@@ -242,8 +240,7 @@ final class Test2CheckoutIntegrationCommand extends Command
                 id: $paymentId2,
                 tenantId: $tenantId,
                 orderId: '01J9XAMPLE'.bin2hex(random_bytes(8)),
-                amountInCents: 2500, // $25.00
-                currency: 'USD',
+                amount: Money::fromScalars(2500, 'USD'), // $25.00
                 method: PaymentMethod::card(),
                 gateway: PaymentGateway::twoCheckout()
             );
@@ -311,8 +308,7 @@ final class Test2CheckoutIntegrationCommand extends Command
                     id: $testPaymentId,
                     tenantId: $tenantId,
                     orderId: '01J9TEST'.bin2hex(random_bytes(4)),
-                    amountInCents: 1500, // $15.00
-                    currency: 'USD',
+                    amount: Money::fromScalars(1500, 'USD'), // $15.00
                     method: PaymentMethod::card(),
                     gateway: PaymentGateway::twoCheckout()
                 );

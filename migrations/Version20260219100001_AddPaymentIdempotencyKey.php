@@ -40,11 +40,11 @@ final class Version20260219100001_AddPaymentIdempotencyKey extends AbstractMigra
         // Create partial unique index (only on non-NULL values) per tenant
         // This allows multiple payments with NULL idempotency_key
         // Note: idx_payments_idempotency may already exist from the original SQL migration
-        $this->addSql("
+        $this->addSql('
             CREATE UNIQUE INDEX IF NOT EXISTS idx_payments_idempotency
             ON payments (tenant_id, idempotency_key)
             WHERE idempotency_key IS NOT NULL
-        ");
+        ');
     }
 
     public function down(Schema $schema): void

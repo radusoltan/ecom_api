@@ -52,8 +52,8 @@ final readonly class PaymentNotificationSubscriber implements EventSubscriberInt
                     'customerName' => 'Customer', // TODO: Get from customer entity
                     'paymentId' => $event->paymentId->toString(),
                     'orderId' => $event->orderId ?? 'N/A',
-                    'amount' => sprintf('%.2f', $event->capturedAmountInCents / 100),
-                    'currency' => 'USD', // TODO: Get currency from payment entity
+                    'amount' => sprintf('%.2f', $event->capturedAmount->getAmount() / 100),
+                    'currency' => $event->capturedAmount->getCurrency()->getCurrencyCode(),
                 ],
             );
 
@@ -107,8 +107,8 @@ final readonly class PaymentNotificationSubscriber implements EventSubscriberInt
                 context: [
                     'customerName' => 'Customer', // TODO: Get from customer entity
                     'paymentId' => $event->paymentId->toString(),
-                    'amount' => sprintf('%.2f', $event->refundedAmountInCents / 100),
-                    'currency' => 'USD', // TODO: Get currency from payment entity
+                    'amount' => sprintf('%.2f', $event->refundedAmount->getAmount() / 100),
+                    'currency' => $event->refundedAmount->getCurrency()->getCurrencyCode(),
                 ],
             );
 

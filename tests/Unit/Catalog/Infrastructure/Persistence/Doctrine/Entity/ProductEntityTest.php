@@ -413,4 +413,183 @@ final class ProductEntityTest extends TestCase
 
         $this->assertTrue(true); // If we got here, the method works
     }
+
+    public function testNameTranslationsStoreAndRetrieve(): void
+    {
+        $product = Product::create(
+            id: $this->productId,
+            tenantId: $this->tenantId,
+            sku: SKU::fromString('PRD-100001'),
+            name: ProductName::fromString('Default Name'),
+            description: 'Default description',
+            shortDescription: 'Default short',
+            price: Money::of('10.00', 'USD'),
+            categoryId: null,
+            stock: Stock::create(1, true, false)
+        );
+
+        $entity = ProductEntity::fromDomainModel($product);
+
+        $this->assertNull($entity->getNameTranslations());
+        $this->assertNull($entity->getDescriptionTranslations());
+        $this->assertNull($entity->getShortDescriptionTranslations());
+
+        $nameTranslations = ['en' => 'Widget', 'fr' => 'Gadget', 'de' => 'Ding'];
+        $descTranslations = ['en' => 'A fine widget', 'fr' => 'Un beau gadget'];
+        $shortDescTranslations = ['en' => 'Fine widget', 'fr' => 'Beau gadget'];
+
+        $entity->setNameTranslations($nameTranslations);
+        $entity->setDescriptionTranslations($descTranslations);
+        $entity->setShortDescriptionTranslations($shortDescTranslations);
+
+        $this->assertSame($nameTranslations, $entity->getNameTranslations());
+        $this->assertSame($descTranslations, $entity->getDescriptionTranslations());
+        $this->assertSame($shortDescTranslations, $entity->getShortDescriptionTranslations());
+    }
+
+    public function testGetNameInLocaleWithExistingLocale(): void
+    {
+        $product = Product::create(
+            id: $this->productId,
+            tenantId: $this->tenantId,
+            sku: SKU::fromString('PRD-100002'),
+            name: ProductName::fromString('Default Name'),
+            description: 'Default description',
+            shortDescription: 'Default short',
+            price: Money::of('10.00', 'USD'),
+            categoryId: null,
+            stock: Stock::create(1, true, false)
+        );
+
+        $entity = ProductEntity::fromDomainModel($product);
+        $entity->setNameTranslations(['en' => 'Widget', 'fr' => 'Gadget']);
+
+        $this->assertSame('Gadget', $entity->getNameInLocale('fr'));
+    }
+
+    public function testGetNameInLocaleWithFallback(): void
+    {
+        $product = Product::create(
+            id: $this->productId,
+            tenantId: $this->tenantId,
+            sku: SKU::fromString('PRD-100003'),
+            name: ProductName::fromString('Default Name'),
+            description: 'Default description',
+            shortDescription: 'Default short',
+            price: Money::of('10.00', 'USD'),
+            categoryId: null,
+            stock: Stock::create(1, true, false)
+        );
+
+        $entity = ProductEntity::fromDomainModel($product);
+        $entity->setNameTranslations(['en' => 'Widget']);
+
+        // 'de' not available, falls back to 'en'
+        $this->assertSame('Widget', $entity->getNameInLocale('de'));
+    }
+
+    public function testGetNameInLocaleFallsBackToDefaultName(): void
+    {
+        $product = Product::create(
+            id: $this->productId,
+            tenantId: $this->tenantId,
+            sku: SKU::fromString('PRD-100004'),
+            name: ProductName::fromString('Default Name'),
+            description: 'Default description',
+            shortDescription: 'Default short',
+            price: Money::of('10.00', 'USD'),
+            categoryId: null,
+            stock: Stock::create(1, true, false)
+        );
+
+        $entity = ProductEntity::fromDomainModel($product);
+        // No translations set at all
+        $this->assertSame('Default Name', $entity->getNameInLocale('fr'));
+
+        // Translations set but without requested locale or fallback
+        $entity->setNameTranslations(['es' => 'Nombre']);
+        $this->assertSame('Default Name', $entity->getNameInLocale('fr'));
+    }
+
+    public function testGetDescriptionInLocaleWithExistingLocale(): void
+    {
+        $product = Product::create(
+            id: $this->productId,
+            tenantId: $this->tenantId,
+            sku: SKU::fromString('PRD-100005'),
+            name: ProductName::fromString('Product'),
+            description: 'Default description',
+            shortDescription: 'Default short',
+            price: Money::of('10.00', 'USD'),
+            categoryId: null,
+            stock: Stock::create(1, true, false)
+        );
+
+        $entity = ProductEntity::fromDomainModel($product);
+        $entity->setDescriptionTranslations(['en' => 'English desc', 'fr' => 'Description francaise']);
+
+        $this->assertSame('Description francaise', $entity->getDescriptionInLocale('fr'));
+    }
+
+    public function testGetDescriptionInLocaleFallsBackToDefault(): void
+    {
+        $product = Product::create(
+            id: $this->productId,
+            tenantId: $this->tenantId,
+            sku: SKU::fromString('PRD-100006'),
+            name: ProductName::fromString('Product'),
+            description: 'Default description',
+            shortDescription: 'Default short',
+            price: Money::of('10.00', 'USD'),
+            categoryId: null,
+            stock: Stock::create(1, true, false)
+        );
+
+        $entity = ProductEntity::fromDomainModel($product);
+        // No translations set
+        $this->assertSame('Default description', $entity->getDescriptionInLocale('fr'));
+    }
+
+    public function testGetShortDescriptionInLocale(): void
+    {
+        $product = Product::create(
+            id: $this->productId,
+            tenantId: $this->tenantId,
+            sku: SKU::fromString('PRD-100007'),
+            name: ProductName::fromString('Product'),
+            description: 'Default description',
+            shortDescription: 'Default short',
+            price: Money::of('10.00', 'USD'),
+            categoryId: null,
+            stock: Stock::create(1, true, false)
+        );
+
+        $entity = ProductEntity::fromDomainModel($product);
+        $entity->setShortDescriptionTranslations(['en' => 'Short EN', 'fr' => 'Court FR']);
+
+        $this->assertSame('Court FR', $entity->getShortDescriptionInLocale('fr'));
+        $this->assertSame('Short EN', $entity->getShortDescriptionInLocale('de')); // fallback to en
+        $this->assertSame('Default short', $entity->getShortDescriptionInLocale('de', 'es')); // fallback to default
+    }
+
+    public function testTranslationsCanBeSetToNull(): void
+    {
+        $product = Product::create(
+            id: $this->productId,
+            tenantId: $this->tenantId,
+            sku: SKU::fromString('PRD-100008'),
+            name: ProductName::fromString('Product'),
+            description: 'Default',
+            shortDescription: 'Short',
+            price: Money::of('10.00', 'USD'),
+            categoryId: null,
+            stock: Stock::create(1, true, false)
+        );
+
+        $entity = ProductEntity::fromDomainModel($product);
+        $entity->setNameTranslations(['en' => 'English']);
+        $entity->setNameTranslations(null);
+
+        $this->assertNull($entity->getNameTranslations());
+    }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Persistence\Doctrine\Type;
 
-use DateTimeImmutable;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\DateTimeTzImmutableType;
 use Doctrine\DBAL\Types\Exception\InvalidFormat;
@@ -20,29 +19,25 @@ final class MicroDateTimeTzImmutableType extends DateTimeTzImmutableType
         'Y-m-d H:i:s.uP',
     ];
 
-    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?DateTimeImmutable
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?\DateTimeImmutable
     {
-        if ($value === null || $value instanceof DateTimeImmutable) {
+        if (null === $value || $value instanceof \DateTimeImmutable) {
             return $value;
         }
 
         foreach (self::FORMATS_WITH_MICROSECONDS as $format) {
-            $dateTime = DateTimeImmutable::createFromFormat($format, $value);
-            if ($dateTime !== false) {
+            $dateTime = \DateTimeImmutable::createFromFormat($format, $value);
+            if (false !== $dateTime) {
                 return $dateTime;
             }
         }
 
-        $dateTime = DateTimeImmutable::createFromFormat($platform->getDateTimeTzFormatString(), $value);
+        $dateTime = \DateTimeImmutable::createFromFormat($platform->getDateTimeTzFormatString(), $value);
 
-        if ($dateTime !== false) {
+        if (false !== $dateTime) {
             return $dateTime;
         }
 
-        throw InvalidFormat::new(
-            $value,
-            static::class,
-            $platform->getDateTimeTzFormatString(),
-        );
+        throw InvalidFormat::new($value, static::class, $platform->getDateTimeTzFormatString());
     }
 }

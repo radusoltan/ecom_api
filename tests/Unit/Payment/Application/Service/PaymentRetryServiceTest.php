@@ -140,8 +140,7 @@ final class PaymentRetryServiceTest extends TestCase
             id: PaymentId::generate(),
             tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
             orderId: 'order-123',
-            amountInCents: 10000,
-            currency: 'USD',
+            amount: Money::fromScalars(10000, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -442,8 +441,7 @@ final class PaymentRetryServiceTest extends TestCase
             id: PaymentId::generate(),
             tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
             orderId: 'order-noop',
-            amountInCents: 10000,
-            currency: 'USD',
+            amount: Money::fromScalars(10000, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -491,7 +489,7 @@ final class PaymentRetryServiceTest extends TestCase
                 $this->equalTo("retry_{$paymentId}_2"), // retryCount=1, attempt=2
                 $this->isNull(),
                 $this->callback(function (array $metadata) use ($paymentId) {
-                    return $metadata['retry_attempt'] === 2
+                    return 2 === $metadata['retry_attempt']
                         && $metadata['original_payment_id'] === $paymentId;
                 })
             )
@@ -637,14 +635,13 @@ final class PaymentRetryServiceTest extends TestCase
         ?string $errorCode = null,
         int $retryCount = 0,
         ?\DateTimeImmutable $nextRetryAt = null,
-        PaymentGateway $gateway = null,
+        ?PaymentGateway $gateway = null,
     ): Payment {
         $payment = Payment::create(
             id: PaymentId::generate(),
             tenantId: TenantId::fromString('00000000-0000-4000-8000-000000000001'),
             orderId: 'order-123',
-            amountInCents: 10000,
-            currency: 'USD',
+            amount: Money::fromScalars(10000, 'USD'),
             method: PaymentMethod::card(),
             gateway: $gateway ?? PaymentGateway::stripe()
         );
@@ -658,14 +655,13 @@ final class PaymentRetryServiceTest extends TestCase
                 id: $payment->id(),
                 tenantId: $payment->tenantId(),
                 orderId: $payment->orderId(),
-                amountInCents: $payment->amountInCents(),
-                currency: $payment->currency(),
+                amount: $payment->amount(),
                 method: $payment->method(),
                 gateway: $payment->gateway(),
                 status: null !== $errorCode ? PaymentStatus::failed() : $payment->status(),
                 gatewayTransactionId: null,
                 errorMessage: null !== $errorCode ? 'Payment failed' : null,
-                refundedAmountInCents: 0,
+                refundedAmount: Money::fromScalars(0, 'USD'),
                 createdAt: new \DateTimeImmutable('-1 hour'),
                 updatedAt: new \DateTimeImmutable(),
                 errorCode: $errorCode,
@@ -687,7 +683,7 @@ final class PaymentRetryServiceTest extends TestCase
         return $this->createFailedPayment(errorCode: 'card_declined', retryCount: 3);
     }
 
-    private function createDueForRetryPayment(PaymentGateway $gateway = null): Payment
+    private function createDueForRetryPayment(?PaymentGateway $gateway = null): Payment
     {
         return $this->createFailedPayment(
             errorCode: 'card_declined',

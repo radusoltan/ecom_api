@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Privacy;
 
 use App\Customer\Application\EventSubscriber\PrivacyDataAccessSubscriber;
+use App\Customer\Domain\Event\DataExportCompleted;
 use App\Customer\Domain\Model\DataExportRequest;
 use App\Customer\Domain\Repository\DataExportRequestRepositoryInterface;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Domain\ValueObject\DataExportRequestId;
-use App\Customer\Domain\Event\DataExportCompleted;
 use App\Privacy\Application\EventSubscriber\CustomerDataExportCompletedSubscriber;
 use App\Privacy\Domain\Event\DataSubjectRequestSubmitted;
 use App\Privacy\Domain\Model\DataSubjectRequest;
@@ -115,8 +115,8 @@ final class AccessDsrFlowTest extends TestCase
             ->expects($this->once())
             ->method('findPendingByCustomerId')
             ->with(
-                $this->callback(fn (CustomerId $id) => $id->toString() === self::DEFAULT_CUSTOMER_ID),
-                $this->callback(fn (TenantId $id) => $id->toString() === self::DEFAULT_TENANT_ID),
+                $this->callback(fn (CustomerId $id) => self::DEFAULT_CUSTOMER_ID === $id->toString()),
+                $this->callback(fn (TenantId $id) => self::DEFAULT_TENANT_ID === $id->toString()),
             )
             ->willReturn(null);
 
@@ -148,10 +148,10 @@ final class AccessDsrFlowTest extends TestCase
 
         $exportData = [
             'customer' => [
-                'id'        => self::DEFAULT_CUSTOMER_ID,
-                'email'     => 'user@example.com',
+                'id' => self::DEFAULT_CUSTOMER_ID,
+                'email' => 'user@example.com',
                 'firstName' => 'John',
-                'lastName'  => 'Doe',
+                'lastName' => 'Doe',
             ],
             'orders' => [],
         ];
@@ -173,7 +173,7 @@ final class AccessDsrFlowTest extends TestCase
         $this->dsrRepository
             ->expects($this->once())
             ->method('findByCustomerId')
-            ->with($this->callback(fn (CustomerId $id) => $id->toString() === self::DEFAULT_CUSTOMER_ID))
+            ->with($this->callback(fn (CustomerId $id) => self::DEFAULT_CUSTOMER_ID === $id->toString()))
             ->willReturn([$dsr]);
 
         $completedDsr = null;
@@ -379,7 +379,7 @@ final class AccessDsrFlowTest extends TestCase
         );
         $dsr->popEvents();
 
-        $nonExistentFilePath = sys_get_temp_dir() . '/non_existent_export_' . uniqid() . '.json';
+        $nonExistentFilePath = sys_get_temp_dir().'/non_existent_export_'.uniqid().'.json';
 
         $dataExportCompleted = new DataExportCompleted(
             requestId: DataExportRequestId::generate(),
@@ -527,7 +527,7 @@ final class AccessDsrFlowTest extends TestCase
      */
     private function createTempExportFile(array $data): string
     {
-        $path = sys_get_temp_dir() . '/test_export_' . uniqid('', true) . '.json';
+        $path = sys_get_temp_dir().'/test_export_'.uniqid('', true).'.json';
         file_put_contents($path, json_encode($data, JSON_THROW_ON_ERROR));
         $this->tempFiles[] = $path;
 

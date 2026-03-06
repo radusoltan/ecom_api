@@ -43,7 +43,7 @@ final class CompleteDataSubjectRequestCommandHandlerTest extends TestCase
         $this->repository->expects(self::once())
             ->method('save')
             ->with(self::callback(function (DataSubjectRequest $saved): bool {
-                return $saved->status()->value() === 'completed'
+                return 'completed' === $saved->status()->value()
                     && null !== $saved->completedAt();
             }));
 

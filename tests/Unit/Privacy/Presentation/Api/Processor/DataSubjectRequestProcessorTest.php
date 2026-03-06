@@ -115,9 +115,9 @@ final class DataSubjectRequestProcessorTest extends TestCase
             ->method('dispatch')
             ->with($this->callback(function ($command) {
                 return $command instanceof SubmitDataSubjectRequestCommand
-                    && $command->tenantId->toString() === self::TENANT_ID
-                    && $command->customerId->toString() === self::CUSTOMER_ID
-                    && $command->requestType->value() === 'access';
+                    && self::TENANT_ID === $command->tenantId->toString()
+                    && self::CUSTOMER_ID === $command->customerId->toString()
+                    && 'access' === $command->requestType->value();
             }))
             ->willReturn(new Envelope(new \stdClass(), [new HandledStamp($requestId, 'handler')]));
 
@@ -260,7 +260,7 @@ final class DataSubjectRequestProcessorTest extends TestCase
             ->with($this->callback(function ($command) use ($requestId) {
                 return $command instanceof ReviewDataSubjectRequestCommand
                     && $command->requestId->equals($requestId)
-                    && $command->reviewNotes === 'Looking into it now';
+                    && 'Looking into it now' === $command->reviewNotes;
             }))
             ->willReturn(new Envelope(new \stdClass()));
 
@@ -923,7 +923,7 @@ final class DataSubjectRequestProcessorTest extends TestCase
             ->method('dispatch')
             ->with($this->callback(function ($command) {
                 return $command instanceof SubmitDataSubjectRequestCommand
-                    && $command->requestType->value() === 'erasure'
+                    && 'erasure' === $command->requestType->value()
                     && null === $command->reason;
             }))
             ->willReturn(new Envelope(new \stdClass(), [new HandledStamp($requestId, 'handler')]));

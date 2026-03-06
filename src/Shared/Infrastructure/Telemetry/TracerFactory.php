@@ -37,7 +37,7 @@ final class TracerFactory
 
     public function getTracerProvider(): TracerProviderInterface
     {
-        if ($this->tracerProvider === null) {
+        if (null === $this->tracerProvider) {
             $this->tracerProvider = $this->buildTracerProvider();
         }
 
@@ -60,7 +60,7 @@ final class TracerFactory
         ]));
 
         $transport = (new OtlpHttpTransportFactory())->create(
-            $this->otlpEndpoint . '/v1/traces',
+            $this->otlpEndpoint.'/v1/traces',
             'application/x-protobuf',
         );
 

@@ -117,7 +117,6 @@ final class Order extends AggregateRoot
         return $order;
     }
 
-
     /**
      * @param OrderLine[] $lines
      */

@@ -6,7 +6,6 @@ namespace App\Payment\Application\Command;
 
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use App\Payment\Domain\Service\PaymentGatewayInterface;
-use App\Shared\Domain\ValueObject\Money;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -14,7 +13,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
  * Handler for CapturePayment command.
  *
  * Captures an authorized payment, transferring funds from customer to merchant.
- * Supports partial capture if amountInCents is provided.
+ * Supports partial capture if amount is provided.
  *
  * Flow:
  * 1. Load Payment aggregate by ID
@@ -49,29 +48,20 @@ final readonly class CapturePaymentHandler
             throw new \InvalidArgumentException(sprintf('Payment %s has not been authorized yet', $command->id->toString()));
         }
 
-        // Prepare capture amount
-        $captureAmount = null;
-        if (null !== $command->amountInCents) {
-            $captureAmount = Money::fromScalars(
-                $command->amountInCents,
-                $payment->currency()
-            );
-        }
-
         $this->logger->info('Capturing payment via gateway', [
             'payment_id' => $command->id->toString(),
             'gateway' => $payment->gateway()->value(),
             'transaction_id' => $payment->gatewayTransactionId(),
-            'full_amount' => $payment->amountInCents(),
-            'capture_amount' => $command->amountInCents,
-            'is_partial' => null !== $command->amountInCents,
+            'full_amount' => $payment->amount()->getAmount(),
+            'capture_amount' => $command->amount?->getAmount(),
+            'is_partial' => null !== $command->amount,
         ]);
 
         try {
             // Capture payment at gateway
             $result = $this->gateway->capturePaymentIntent(
                 gatewayPaymentIntentId: $payment->gatewayTransactionId(),
-                amount: $captureAmount
+                amount: $command->amount
             );
 
             if (!$result->success) {

@@ -43,7 +43,7 @@ final class ApiVersioningTest extends WebTestCase
             $userEntity = new UserEntity();
             $userEntity->setId(Uuid::v4()->toString());
             $userEntity->setEmail($email);
-            $userEntity->setUsername('api-versioning-test-' . bin2hex(random_bytes(4)));
+            $userEntity->setUsername('api-versioning-test-'.bin2hex(random_bytes(4)));
             $userEntity->setPassword('$2y$13$dummy.password.hash');
             $userEntity->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_USER']);
             $userEntity->setCreatedAt(new \DateTimeImmutable());
@@ -89,7 +89,7 @@ final class ApiVersioningTest extends WebTestCase
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
             'HTTP_X_TENANT_ID' => self::TENANT_ID,
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $response = $client->getResponse();
@@ -111,7 +111,7 @@ final class ApiVersioningTest extends WebTestCase
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
             'HTTP_X_TENANT_ID' => self::TENANT_ID,
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ], json_encode([
             'customerEmail' => 'test@example.com',
             'lines' => [],
@@ -135,7 +135,7 @@ final class ApiVersioningTest extends WebTestCase
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
             'HTTP_X_TENANT_ID' => self::TENANT_ID,
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
         $response = $client->getResponse();

@@ -15,7 +15,8 @@ final readonly class UpdateFeatureFlagConfigCommandHandler
     public function __construct(
         private FeatureFlagRepositoryInterface $repository,
         private FeatureFlagService $featureFlagService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(UpdateFeatureFlagConfigCommand $command): void
     {

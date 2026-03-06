@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Search\Domain\Model;
 
 use App\Catalog\Domain\Model\ProductId;
+use Brick\Money\Money;
 
 /**
  * ProductSearchHit Value Object.
@@ -21,7 +22,7 @@ final readonly class ProductSearchHit
         public string $sku,
         public string $name,
         public ?string $description,
-        public float $price,
+        public int $priceInCents,
         public string $currency,
         public ?string $imageUrl,
         public bool $isActive,
@@ -31,6 +32,14 @@ final readonly class ProductSearchHit
         public ?float $averageRating = null,
         public ?int $reviewCount = null,
     ) {
+    }
+
+    /**
+     * Return the price as a Money value object.
+     */
+    public function price(): Money
+    {
+        return Money::ofMinor($this->priceInCents, $this->currency);
     }
 
     public function hasImage(): bool
@@ -55,7 +64,7 @@ final readonly class ProductSearchHit
             'sku' => $this->sku,
             'name' => $this->name,
             'description' => $this->description,
-            'price' => $this->price,
+            'priceInCents' => $this->priceInCents,
             'currency' => $this->currency,
             'imageUrl' => $this->imageUrl,
             'isActive' => $this->isActive,

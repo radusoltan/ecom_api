@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -227,6 +228,111 @@ final class IdempotencyMiddlewareTest extends TestCase
 
         // Request should proceed despite cache error
         $this->assertNull($event->getResponse());
+    }
+
+    public function testRejectsPostOrdersWithoutIdempotencyKey(): void
+    {
+        $request = Request::create('/api/v1/orders', 'POST', [], [], [], [], '{"items": []}');
+
+        $event = $this->createRequestEvent($request);
+
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Missing required Idempotency-Key header for this endpoint.');
+
+        $this->middleware->onKernelRequest($event);
+    }
+
+    public function testRejectsPostPaymentsWithoutIdempotencyKey(): void
+    {
+        $request = Request::create('/api/v1/payments', 'POST', [], [], [], [], '{"amount": 100}');
+
+        $event = $this->createRequestEvent($request);
+
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Missing required Idempotency-Key header for this endpoint.');
+
+        $this->middleware->onKernelRequest($event);
+    }
+
+    public function testRejectsPutRefundsWithoutIdempotencyKey(): void
+    {
+        $request = Request::create('/api/v1/refunds/123', 'PUT', [], [], [], [], '{"reason": "damaged"}');
+
+        $event = $this->createRequestEvent($request);
+
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Missing required Idempotency-Key header for this endpoint.');
+
+        $this->middleware->onKernelRequest($event);
+    }
+
+    public function testRejectsPostShipmentsWithoutIdempotencyKey(): void
+    {
+        $request = Request::create('/api/v1/shipments', 'POST', [], [], [], [], '{}');
+
+        $event = $this->createRequestEvent($request);
+
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Missing required Idempotency-Key header for this endpoint.');
+
+        $this->middleware->onKernelRequest($event);
+    }
+
+    public function testAcceptsPostOrdersWithIdempotencyKey(): void
+    {
+        $request = Request::create('/api/v1/orders', 'POST', [], [], [], [], '{"items": []}');
+        $request->headers->set('Idempotency-Key', 'unique-key-abc');
+
+        $event = $this->createRequestEvent($request);
+
+        $this->cache->expects($this->once())
+            ->method('get')
+            ->willReturnCallback(function ($key, $callback) {
+                return $callback($this->createMock(ItemInterface::class));
+            });
+
+        $this->middleware->onKernelRequest($event);
+
+        // No rejection — request proceeds
+        $this->assertNull($event->getResponse());
+    }
+
+    public function testDoesNotRequireIdempotencyKeyForGetRequests(): void
+    {
+        $request = Request::create('/api/v1/orders', 'GET');
+
+        $event = $this->createRequestEvent($request);
+
+        $this->cache->expects($this->never())->method('get');
+
+        $this->middleware->onKernelRequest($event);
+
+        $this->assertNull($event->getResponse());
+    }
+
+    public function testDoesNotRequireIdempotencyKeyOnNonCriticalEndpoints(): void
+    {
+        $request = Request::create('/api/v1/products', 'POST', [], [], [], [], '{}');
+
+        $event = $this->createRequestEvent($request);
+
+        $this->cache->expects($this->never())->method('get');
+
+        $this->middleware->onKernelRequest($event);
+
+        $this->assertNull($event->getResponse());
+    }
+
+    public function testEnforcesOnSubpathsOfCriticalEndpoints(): void
+    {
+        $request = Request::create('/api/v1/orders/123/items', 'POST', [], [], [], [], '{}');
+
+        $event = $this->createRequestEvent($request);
+
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Missing required Idempotency-Key header for this endpoint.');
+
+        $this->middleware->onKernelRequest($event);
     }
 
     private function createRequestEvent(Request $request): RequestEvent

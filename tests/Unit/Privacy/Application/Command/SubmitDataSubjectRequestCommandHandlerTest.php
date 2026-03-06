@@ -43,7 +43,7 @@ final class SubmitDataSubjectRequestCommandHandlerTest extends TestCase
                 return $request->tenantId()->equals($command->tenantId)
                     && $request->customerId()->equals($command->customerId)
                     && $request->requestType()->equals($command->requestType)
-                    && $request->status()->value() === 'pending';
+                    && 'pending' === $request->status()->value();
             }));
 
         $result = ($this->handler)($command);

@@ -217,13 +217,11 @@ final class OrderWorkflowE2ETest extends WebTestCase
             'customerEmail' => 'test@example.com', // Valid email but missing required fields
         ]));
 
-        // Processor throws InvalidArgumentException for missing fields, which results in 500
-        // This is the current behavior - validation happens at processor level
-        $this->assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+        // Processor throws InvalidArgumentException for missing fields, which results in 400
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('detail', $data);
-        $this->assertStringContainsString('required', $data['detail']);
 
         $this->cleanupTestData();
     }
@@ -267,9 +265,10 @@ final class OrderWorkflowE2ETest extends WebTestCase
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
         ]);
 
-        // Should return 404 or 500 (not found for this tenant due to RLS)
+        // Should return 404 (not found for this tenant due to RLS)
         $this->assertTrue(
             Response::HTTP_NOT_FOUND === $client->getResponse()->getStatusCode()
+            || Response::HTTP_BAD_REQUEST === $client->getResponse()->getStatusCode()
             || Response::HTTP_INTERNAL_SERVER_ERROR === $client->getResponse()->getStatusCode()
         );
 

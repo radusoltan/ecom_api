@@ -95,10 +95,10 @@ final readonly class ProductSearchStateProvider implements ProviderInterface
             $resource->name = $productDto->name;
             $resource->description = $productDto->description;
             $resource->slug = $productDto->slug;
-            $resource->price = $productDto->price;
-            $resource->priceMinor = (int) round($productDto->price * 100);
-            $resource->finalPrice = $productDto->price; // TODO: Apply promotions/discounts
-            $resource->finalPriceMinor = (int) round($productDto->price * 100);
+            $resource->price = $productDto->priceInCents / 100;
+            $resource->priceMinor = $productDto->priceInCents;
+            $resource->finalPrice = $productDto->priceInCents / 100; // TODO: Apply promotions/discounts
+            $resource->finalPriceMinor = $productDto->priceInCents;
             $resource->totalDiscountMinor = 0; // TODO: Calculate from promotions
             $resource->discountPercent = 0.0; // TODO: Calculate from promotions
             $resource->currency = $productDto->currency;

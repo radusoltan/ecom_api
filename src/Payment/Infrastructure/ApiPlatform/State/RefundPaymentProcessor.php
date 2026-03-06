@@ -9,6 +9,7 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Payment\Application\Command\RefundPayment;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity;
+use App\Shared\Domain\ValueObject\Money;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -55,7 +56,7 @@ final readonly class RefundPaymentProcessor implements ProcessorInterface
 
         $command = new RefundPayment(
             id: PaymentId::fromString($paymentId),
-            refundAmountInCents: (int) $refundAmountInCents,
+            refundAmount: Money::fromScalars((int) $refundAmountInCents, $data->getCurrency()),
             reason: $reason
         );
 

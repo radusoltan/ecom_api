@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\Payment\Presentation\Api\Controller;
 
+use App\Shared\Domain\ValueObject\Money;
 use Psr\Log\LoggerInterface;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
@@ -99,8 +100,7 @@ class StripePaymentController extends AbstractController
                 paymentId: $paymentId,
                 tenantId: \App\Shared\Domain\ValueObject\TenantId::fromString($tenantId),
                 orderId: $orderId,
-                amountInCents: (int) $amount,
-                currency: strtoupper($currency),
+                amount: Money::fromScalars((int) $amount, strtoupper($currency)),
                 customerEmail: $customerEmail,
                 method: \App\Payment\Domain\ValueObject\PaymentMethod::card(),
                 gateway: \App\Payment\Domain\ValueObject\PaymentGateway::stripe()

@@ -49,8 +49,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
             id: $paymentId,
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -59,7 +58,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
 
         $command = new RefundPayment(
             id: $paymentId,
-            refundAmountInCents: 5000,
+            refundAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Customer requested refund'
         );
 
@@ -81,7 +80,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
             ->method('save')
             ->with($this->callback(function (Payment $p) {
                 return $p->status()->isRefunded()
-                    && 5000 === $p->refundedAmountInCents();
+                    && 5000 === $p->refundedAmount()->getAmount();
             }));
 
         // Act
@@ -98,8 +97,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
             id: $paymentId,
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 10000,
-            currency: 'USD',
+            amount: Money::fromScalars(10000, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -108,7 +106,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
 
         $command = new RefundPayment(
             id: $paymentId,
-            refundAmountInCents: 10000,
+            refundAmount: Money::fromScalars(10000, 'USD'),
             reason: 'Order cancelled'
         );
 
@@ -124,7 +122,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
         $this->repository->expects($this->once())
             ->method('save')
             ->with($this->callback(
-                fn (Payment $p) => 10000 === $p->refundedAmountInCents()
+                fn (Payment $p) => 10000 === $p->refundedAmount()->getAmount()
             ));
 
         // Act
@@ -136,7 +134,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
         // Arrange
         $command = new RefundPayment(
             id: PaymentId::generate(),
-            refundAmountInCents: 5000,
+            refundAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Refund'
         );
 
@@ -165,8 +163,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
             id: $paymentId,
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -175,7 +172,7 @@ final class RefundPaymentCommandHandlerTest extends TestCase
 
         $command = new RefundPayment(
             id: $paymentId,
-            refundAmountInCents: 5000,
+            refundAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Customer requested refund'
         );
 
@@ -210,15 +207,14 @@ final class RefundPaymentCommandHandlerTest extends TestCase
             id: $paymentId,
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
 
         $command = new RefundPayment(
             id: $paymentId,
-            refundAmountInCents: 5000,
+            refundAmount: Money::fromScalars(5000, 'USD'),
             reason: 'Customer requested refund'
         );
 

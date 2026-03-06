@@ -12,6 +12,7 @@ use App\Catalog\Domain\Model\VariantId;
 use App\Catalog\Domain\Repository\ConfigurableProductRepositoryInterface;
 use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 use App\Catalog\Domain\Service\VariantCombinator;
+use App\Catalog\Domain\ValueObject\OptionValueCode;
 use App\Catalog\Domain\ValueObject\VariantSKU;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -80,14 +81,11 @@ final readonly class GenerateVariantsHandler
             // Generate SKU suffix from value codes
             $valueCodes = [];
             foreach ($combination as $optionCode => $valueCode) {
-                $valueCodes[] = $valueCode;
+                $valueCodes[] = OptionValueCode::fromString($valueCode);
             }
 
             // Create variant SKU
-            $variantSku = VariantSKU::fromBaseSkuAndSuffix(
-                SKU::fromString($baseSku),
-                implode('-', $valueCodes)
-            );
+            $variantSku = VariantSKU::generate($baseSku, $valueCodes);
 
             // Create the variant
             $variant = Variant::create(
@@ -111,10 +109,7 @@ final readonly class GenerateVariantsHandler
         $this->eventBus->dispatch(new VariantsGenerated(
             $configurableProduct->getId(),
             $command->productId,
-            $command->tenantId,
             $generatedCount,
-            $skippedCount,
-            count($combinations)
         ));
     }
 }

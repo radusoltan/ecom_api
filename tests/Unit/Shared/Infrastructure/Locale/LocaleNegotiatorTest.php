@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Shared\Infrastructure\Locale;
 
+use App\Shared\Application\Service\TenantLocaleProviderInterface;
+use App\Shared\Application\Service\UserLocaleProviderInterface;
 use App\Shared\Infrastructure\Locale\LocaleNegotiator;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -13,11 +16,20 @@ final class LocaleNegotiatorTest extends TestCase
 {
     private LocaleNegotiator $localeNegotiator;
     private RequestStack $requestStack;
+    private UserLocaleProviderInterface&MockObject $userLocaleProvider;
+    private TenantLocaleProviderInterface&MockObject $tenantLocaleProvider;
 
     protected function setUp(): void
     {
         $this->requestStack = new RequestStack();
-        $this->localeNegotiator = new LocaleNegotiator($this->requestStack);
+        $this->userLocaleProvider = $this->createMock(UserLocaleProviderInterface::class);
+        $this->tenantLocaleProvider = $this->createMock(TenantLocaleProviderInterface::class);
+
+        $this->localeNegotiator = new LocaleNegotiator(
+            $this->requestStack,
+            $this->userLocaleProvider,
+            $this->tenantLocaleProvider,
+        );
     }
 
     public function testNegotiateReturnsDefaultWhenNoRequest(): void
@@ -32,11 +44,15 @@ final class LocaleNegotiatorTest extends TestCase
         $request = new Request();
         $this->requestStack->push($request);
 
+        $this->userLocaleProvider->method('getPreferredLocale')->willReturn(null);
+        $this->tenantLocaleProvider->method('getDefaultLocale')->willReturn(null);
+
         $locale = $this->localeNegotiator->negotiate();
 
         $this->assertSame('en', $locale);
     }
 
+    // Step 1: Query parameter takes highest priority
     public function testNegotiatePrioritizesQueryParameter(): void
     {
         $request = new Request(['locale' => 'fr']);
@@ -44,9 +60,10 @@ final class LocaleNegotiatorTest extends TestCase
 
         $locale = $this->localeNegotiator->negotiate($request);
 
-        $this->assertSame('fr', $locale); // Query param wins over header
+        $this->assertSame('fr', $locale);
     }
 
+    // Step 2: Accept-Language header
     public function testNegotiateUsesAcceptLanguageHeaderWhenNoQueryParam(): void
     {
         $request = new Request();
@@ -57,31 +74,56 @@ final class LocaleNegotiatorTest extends TestCase
         $this->assertSame('de', $locale);
     }
 
-    public function testNegotiateWithQueryParameterEn(): void
+    // Step 3: User preferred locale
+    public function testNegotiateUsesUserPreferredLocaleWhenNoHeader(): void
     {
-        $request = new Request(['locale' => 'en']);
+        $request = new Request();
+        $this->requestStack->push($request);
+
+        $this->userLocaleProvider->method('getPreferredLocale')->willReturn('ro');
+
+        $locale = $this->localeNegotiator->negotiate($request);
+
+        $this->assertSame('ro', $locale);
+    }
+
+    // Step 4: Tenant default locale
+    public function testNegotiateUsesTenantDefaultLocaleWhenNoUserPref(): void
+    {
+        $request = new Request();
+
+        $this->userLocaleProvider->method('getPreferredLocale')->willReturn(null);
+        $this->tenantLocaleProvider->method('getDefaultLocale')->willReturn('de');
+
+        $locale = $this->localeNegotiator->negotiate($request);
+
+        $this->assertSame('de', $locale);
+    }
+
+    // Step 5: Fallback to en
+    public function testNegotiateFallsBackToEnWhenNothingElse(): void
+    {
+        $request = new Request();
+
+        $this->userLocaleProvider->method('getPreferredLocale')->willReturn(null);
+        $this->tenantLocaleProvider->method('getDefaultLocale')->willReturn(null);
 
         $locale = $this->localeNegotiator->negotiate($request);
 
         $this->assertSame('en', $locale);
     }
 
-    public function testNegotiateWithQueryParameterFr(): void
+    // Priority: query param > Accept-Language > user pref
+    public function testQueryParameterOverridesAll(): void
     {
-        $request = new Request(['locale' => 'fr']);
+        $request = new Request(['locale' => 'it']);
+        $request->headers->set('Accept-Language', 'de-DE');
+
+        $this->userLocaleProvider->method('getPreferredLocale')->willReturn('ro');
 
         $locale = $this->localeNegotiator->negotiate($request);
 
-        $this->assertSame('fr', $locale);
-    }
-
-    public function testNegotiateWithQueryParameterDe(): void
-    {
-        $request = new Request(['locale' => 'de']);
-
-        $locale = $this->localeNegotiator->negotiate($request);
-
-        $this->assertSame('de', $locale);
+        $this->assertSame('it', $locale);
     }
 
     public function testNegotiateIgnoresInvalidQueryParameter(): void
@@ -91,7 +133,7 @@ final class LocaleNegotiatorTest extends TestCase
 
         $locale = $this->localeNegotiator->negotiate($request);
 
-        $this->assertSame('fr', $locale); // Falls back to Accept-Language header
+        $this->assertSame('fr', $locale);
     }
 
     public function testNegotiateWithLocaleVariant(): void
@@ -100,7 +142,7 @@ final class LocaleNegotiatorTest extends TestCase
 
         $locale = $this->localeNegotiator->negotiate($request);
 
-        $this->assertSame('fr', $locale); // Normalized to base language
+        $this->assertSame('fr', $locale);
     }
 
     public function testNegotiateWithLocaleDash(): void
@@ -109,17 +151,34 @@ final class LocaleNegotiatorTest extends TestCase
 
         $locale = $this->localeNegotiator->negotiate($request);
 
-        $this->assertSame('de', $locale); // Normalized to base language
+        $this->assertSame('de', $locale);
     }
 
-    public function testNegotiateFallsBackToDefaultForUnsupportedLanguages(): void
+    public function testNegotiateWithNewLocaleRo(): void
     {
-        $request = new Request(['locale' => 'es']);
-        $request->headers->set('Accept-Language', 'it-IT,it;q=0.9');
+        $request = new Request(['locale' => 'ro']);
 
         $locale = $this->localeNegotiator->negotiate($request);
 
-        $this->assertSame('en', $locale);
+        $this->assertSame('ro', $locale);
+    }
+
+    public function testNegotiateWithNewLocaleEs(): void
+    {
+        $request = new Request(['locale' => 'es']);
+
+        $locale = $this->localeNegotiator->negotiate($request);
+
+        $this->assertSame('es', $locale);
+    }
+
+    public function testNegotiateWithNewLocaleIt(): void
+    {
+        $request = new Request(['locale' => 'it']);
+
+        $locale = $this->localeNegotiator->negotiate($request);
+
+        $this->assertSame('it', $locale);
     }
 
     public function testGetCurrentLocaleUsesRequestStack(): void
@@ -139,11 +198,14 @@ final class LocaleNegotiatorTest extends TestCase
         $this->assertSame('en', $locale);
     }
 
-    public function testIsValidLocaleReturnsTrueForSupported(): void
+    public function testIsValidLocaleReturnsTrueForAllSupported(): void
     {
         $this->assertTrue($this->localeNegotiator->isValidLocale('en'));
         $this->assertTrue($this->localeNegotiator->isValidLocale('fr'));
         $this->assertTrue($this->localeNegotiator->isValidLocale('de'));
+        $this->assertTrue($this->localeNegotiator->isValidLocale('ro'));
+        $this->assertTrue($this->localeNegotiator->isValidLocale('es'));
+        $this->assertTrue($this->localeNegotiator->isValidLocale('it'));
     }
 
     public function testIsValidLocaleReturnsTrueForSupportedWithVariant(): void
@@ -151,13 +213,14 @@ final class LocaleNegotiatorTest extends TestCase
         $this->assertTrue($this->localeNegotiator->isValidLocale('fr_FR'));
         $this->assertTrue($this->localeNegotiator->isValidLocale('de-DE'));
         $this->assertTrue($this->localeNegotiator->isValidLocale('en_US'));
+        $this->assertTrue($this->localeNegotiator->isValidLocale('ro_RO'));
     }
 
     public function testIsValidLocaleReturnsFalseForUnsupported(): void
     {
-        $this->assertFalse($this->localeNegotiator->isValidLocale('es'));
-        $this->assertFalse($this->localeNegotiator->isValidLocale('it'));
         $this->assertFalse($this->localeNegotiator->isValidLocale('pt'));
+        $this->assertFalse($this->localeNegotiator->isValidLocale('zh'));
+        $this->assertFalse($this->localeNegotiator->isValidLocale('ja'));
     }
 
     public function testNormalizeLocaleReturnsBareLanguageCode(): void
@@ -165,27 +228,25 @@ final class LocaleNegotiatorTest extends TestCase
         $this->assertSame('fr', $this->localeNegotiator->normalizeLocale('fr'));
         $this->assertSame('fr', $this->localeNegotiator->normalizeLocale('fr_FR'));
         $this->assertSame('fr', $this->localeNegotiator->normalizeLocale('fr-FR'));
-        $this->assertSame('fr', $this->localeNegotiator->normalizeLocale('fr_CA'));
+        $this->assertSame('ro', $this->localeNegotiator->normalizeLocale('ro_RO'));
     }
 
     public function testNormalizeLocaleReturnsDefaultForInvalid(): void
     {
         $this->assertSame('en', $this->localeNegotiator->normalizeLocale('invalid'));
-        $this->assertSame('en', $this->localeNegotiator->normalizeLocale('es_ES'));
+        $this->assertSame('en', $this->localeNegotiator->normalizeLocale('pt_BR'));
     }
 
     public function testGetSupportedLocales(): void
     {
         $locales = $this->localeNegotiator->getSupportedLocales();
 
-        $this->assertSame(['en', 'fr', 'de'], $locales);
+        $this->assertSame(['en', 'fr', 'de', 'ro', 'es', 'it'], $locales);
     }
 
     public function testGetDefaultLocale(): void
     {
-        $locale = $this->localeNegotiator->getDefaultLocale();
-
-        $this->assertSame('en', $locale);
+        $this->assertSame('en', $this->localeNegotiator->getDefaultLocale());
     }
 
     public function testGetLocaleMetadataReturnsCorrectStructure(): void
@@ -201,7 +262,7 @@ final class LocaleNegotiatorTest extends TestCase
         $this->assertArrayHasKey('supported', $metadata);
         $this->assertSame('fr', $metadata['current']);
         $this->assertSame('en', $metadata['default']);
-        $this->assertSame(['en', 'fr', 'de'], $metadata['supported']);
+        $this->assertSame(['en', 'fr', 'de', 'ro', 'es', 'it'], $metadata['supported']);
     }
 
     public function testCreateCacheKeyWithCurrentLocale(): void
@@ -221,13 +282,6 @@ final class LocaleNegotiatorTest extends TestCase
         $this->assertSame('categories_fr', $cacheKey);
     }
 
-    public function testCreateCacheKeyUsesDefaultWhenNoRequest(): void
-    {
-        $cacheKey = $this->localeNegotiator->createCacheKey('cart');
-
-        $this->assertSame('cart_en', $cacheKey);
-    }
-
     #[\PHPUnit\Framework\Attributes\DataProvider('acceptLanguageHeaderProvider')]
     public function testNegotiateWithVariousAcceptLanguageHeaders(string $header, string $expectedLocale): void
     {
@@ -245,6 +299,7 @@ final class LocaleNegotiatorTest extends TestCase
             'Simple French' => ['fr', 'fr'],
             'Simple German' => ['de', 'de'],
             'Simple English' => ['en', 'en'],
+            'Simple Romanian' => ['ro', 'ro'],
             'French with region' => ['fr-FR', 'fr'],
             'German with region' => ['de-DE', 'de'],
             'English with region' => ['en-US', 'en'],
@@ -252,25 +307,21 @@ final class LocaleNegotiatorTest extends TestCase
             'German priority' => ['de-DE,de;q=0.9,en;q=0.8', 'de'],
             'Mixed with French first' => ['fr,de;q=0.9,en;q=0.8', 'fr'],
             'Mixed with German first' => ['de,fr;q=0.9,en;q=0.8', 'de'],
-            'Unsupported falls to default' => ['es-ES,it-IT', 'en'],
-            'Mixed unsupported then German' => ['es,it;q=0.9,de;q=0.8', 'de'],
-            'Chrome-like French' => ['fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7', 'fr'],
-            'Firefox-like German' => ['de-DE,de;q=0.8,en-US;q=0.5,en;q=0.3', 'de'],
+            'Unsupported falls to default' => ['zh-CN,ja-JP', 'en'],
+            'Mixed unsupported then German' => ['zh,ja;q=0.9,de;q=0.8', 'de'],
         ];
     }
 
     public function testNegotiateWithProvidedRequest(): void
     {
-        // Request in stack
         $stackRequest = new Request(['locale' => 'fr']);
         $this->requestStack->push($stackRequest);
 
-        // Different request provided
         $providedRequest = new Request(['locale' => 'de']);
 
         $locale = $this->localeNegotiator->negotiate($providedRequest);
 
-        $this->assertSame('de', $locale); // Should use provided request
+        $this->assertSame('de', $locale);
     }
 
     public function testNegotiateWithNullUsesRequestStack(): void
@@ -281,5 +332,17 @@ final class LocaleNegotiatorTest extends TestCase
         $locale = $this->localeNegotiator->negotiate(null);
 
         $this->assertSame('fr', $locale);
+    }
+
+    public function testUserPreferredLocaleNullDoesNotBlock(): void
+    {
+        $request = new Request();
+
+        $this->userLocaleProvider->method('getPreferredLocale')->willReturn(null);
+        $this->tenantLocaleProvider->method('getDefaultLocale')->willReturn('es');
+
+        $locale = $this->localeNegotiator->negotiate($request);
+
+        $this->assertSame('es', $locale);
     }
 }

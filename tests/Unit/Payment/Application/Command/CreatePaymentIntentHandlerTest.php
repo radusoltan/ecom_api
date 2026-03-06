@@ -47,8 +47,7 @@ final class CreatePaymentIntentHandlerTest extends TestCase
         $command = new CreatePaymentIntentCommand(
             tenantId: $tenantId,
             orderId: $orderId,
-            amountInCents: $amountInCents,
-            currency: $currency,
+            amount: Money::fromScalars($amountInCents, $currency),
             paymentMethod: 'card',
             idempotencyKey: $idempotencyKey,
             customerId: 'cus_123',
@@ -76,7 +75,7 @@ final class CreatePaymentIntentHandlerTest extends TestCase
             ->method('save')
             ->with($this->callback(function (Payment $payment) use ($orderId, $amountInCents, $currency, $idempotencyKey) {
                 return $payment->orderId() === $orderId
-                    && $payment->amountInCents() === $amountInCents
+                    && $payment->amount()->getAmount() === $amountInCents
                     && $payment->currency() === $currency
                     && $payment->idempotencyKey() === $idempotencyKey;
             }));
@@ -101,8 +100,7 @@ final class CreatePaymentIntentHandlerTest extends TestCase
         $command = new CreatePaymentIntentCommand(
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 10000,
-            currency: 'EUR',
+            amount: Money::fromScalars(10000, 'EUR'),
             paymentMethod: 'card',
             idempotencyKey: $idempotencyKey
         );
@@ -112,14 +110,13 @@ final class CreatePaymentIntentHandlerTest extends TestCase
             id: $paymentId,
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 10000,
-            currency: 'EUR',
+            amount: Money::fromScalars(10000, 'EUR'),
             method: \App\Payment\Domain\ValueObject\PaymentMethod::card(),
             gateway: \App\Payment\Domain\ValueObject\PaymentGateway::stripe(),
             status: \App\Payment\Domain\ValueObject\PaymentStatus::pending(),
             gatewayTransactionId: 'pi_existing_123',
             errorMessage: null,
-            refundedAmountInCents: 0,
+            refundedAmount: Money::fromScalars(0, 'EUR'),
             createdAt: new \DateTimeImmutable(),
             updatedAt: new \DateTimeImmutable()
         );
@@ -152,8 +149,7 @@ final class CreatePaymentIntentHandlerTest extends TestCase
         $command = new CreatePaymentIntentCommand(
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 10000,
-            currency: 'EUR',
+            amount: Money::fromScalars(10000, 'EUR'),
             paymentMethod: 'card',
             idempotencyKey: 'idem-'.bin2hex(random_bytes(8))
         );
@@ -192,8 +188,7 @@ final class CreatePaymentIntentHandlerTest extends TestCase
         $command = new CreatePaymentIntentCommand(
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 10000,
-            currency: 'EUR',
+            amount: Money::fromScalars(10000, 'EUR'),
             paymentMethod: 'card',
             idempotencyKey: 'idem-'.bin2hex(random_bytes(8))
         );
@@ -229,8 +224,7 @@ final class CreatePaymentIntentHandlerTest extends TestCase
         $command = new CreatePaymentIntentCommand(
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 10000,
-            currency: 'EUR',
+            amount: Money::fromScalars(10000, 'EUR'),
             paymentMethod: 'card',
             idempotencyKey: 'idem-'.bin2hex(random_bytes(8))
         );
@@ -262,8 +256,7 @@ final class CreatePaymentIntentHandlerTest extends TestCase
         $command = new CreatePaymentIntentCommand(
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 10000,
-            currency: 'EUR',
+            amount: Money::fromScalars(10000, 'EUR'),
             paymentMethod: 'card',
             idempotencyKey: 'idem-'.bin2hex(random_bytes(8))
         );
@@ -301,8 +294,7 @@ final class CreatePaymentIntentHandlerTest extends TestCase
             $command = new CreatePaymentIntentCommand(
                 tenantId: $tenantId,
                 orderId: '01JCEX'.bin2hex(random_bytes(10)),
-                amountInCents: 10000,
-                currency: $currency,
+                amount: Money::fromScalars(10000, $currency),
                 paymentMethod: $paymentMethod,
                 idempotencyKey: 'idem-'.bin2hex(random_bytes(8))
             );

@@ -171,10 +171,7 @@ final readonly class CheckoutProcessor implements ProcessorInterface
         } catch (HandlerFailedException $e) {
             foreach ($e->getWrappedExceptions() as $nested) {
                 if ($nested instanceof CheckoutValidationException) {
-                    throw new ConflictHttpException(
-                        json_encode($nested->toArray(), JSON_THROW_ON_ERROR),
-                        $nested,
-                    );
+                    throw new ConflictHttpException(json_encode($nested->toArray(), JSON_THROW_ON_ERROR), $nested);
                 }
                 if ($nested instanceof \InvalidArgumentException) {
                     throw new BadRequestHttpException($nested->getMessage(), $nested);
@@ -182,10 +179,7 @@ final readonly class CheckoutProcessor implements ProcessorInterface
             }
             throw $e;
         } catch (CheckoutValidationException $e) {
-            throw new ConflictHttpException(
-                json_encode($e->toArray(), JSON_THROW_ON_ERROR),
-                $e,
-            );
+            throw new ConflictHttpException(json_encode($e->toArray(), JSON_THROW_ON_ERROR), $e);
         } catch (\InvalidArgumentException $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
@@ -214,5 +208,4 @@ final readonly class CheckoutProcessor implements ProcessorInterface
             throw new BadRequestHttpException('Shipping address is required (or set useBillingAsShipping to true)');
         }
     }
-
 }

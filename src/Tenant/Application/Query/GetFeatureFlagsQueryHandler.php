@@ -14,7 +14,8 @@ final readonly class GetFeatureFlagsQueryHandler
 {
     public function __construct(
         private FeatureFlagRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     /** @return FeatureFlag[] */
     public function __invoke(GetFeatureFlagsQuery $query): array

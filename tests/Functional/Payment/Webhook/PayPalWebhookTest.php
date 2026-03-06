@@ -36,19 +36,20 @@ final class PayPalWebhookTest extends WebTestCase
      * KernelBrowser maps HTTP headers via the $server parameter using the
      * HTTP_ prefix convention (e.g. HTTP_CONTENT_TYPE, HTTP_PAYPAL_TRANSMISSION_ID).
      *
-     * @param array<string, string> $extra Additional HTTP_ server vars to merge in.
+     * @param array<string, string> $extra additional HTTP_ server vars to merge in
+     *
      * @return array<string, string>
      */
     private function paypalServerHeaders(array $extra = []): array
     {
         return array_merge(
             [
-                'HTTP_CONTENT_TYPE'            => 'application/json',
+                'HTTP_CONTENT_TYPE' => 'application/json',
                 'HTTP_PAYPAL_TRANSMISSION_SIG' => 'test_signature',
-                'HTTP_PAYPAL_TRANSMISSION_ID'  => 'test_id',
+                'HTTP_PAYPAL_TRANSMISSION_ID' => 'test_id',
                 'HTTP_PAYPAL_TRANSMISSION_TIME' => '2025-01-01T00:00:00Z',
-                'HTTP_PAYPAL_CERT_URL'         => 'https://api.paypal.com/cert',
-                'HTTP_PAYPAL_AUTH_ALGO'        => 'SHA256withRSA',
+                'HTTP_PAYPAL_CERT_URL' => 'https://api.paypal.com/cert',
+                'HTTP_PAYPAL_AUTH_ALGO' => 'SHA256withRSA',
             ],
             $extra
         );
@@ -274,12 +275,12 @@ final class PayPalWebhookTest extends WebTestCase
                 [],
                 $this->paypalServerHeaders([
                     'HTTP_PAYPAL_TRANSMISSION_SIG' => 'test_signature_'.bin2hex(random_bytes(4)),
-                    'HTTP_PAYPAL_TRANSMISSION_ID'  => 'test_id_'.uniqid(),
+                    'HTTP_PAYPAL_TRANSMISSION_ID' => 'test_id_'.uniqid(),
                 ]),
                 (string) json_encode([
-                    'id'         => 'evt_test_'.bin2hex(random_bytes(4)),
+                    'id' => 'evt_test_'.bin2hex(random_bytes(4)),
                     'event_type' => $eventType,
-                    'resource'   => ['id' => 'obj_test_'.uniqid()],
+                    'resource' => ['id' => 'obj_test_'.uniqid()],
                 ], JSON_THROW_ON_ERROR)
             );
 
@@ -307,13 +308,13 @@ final class PayPalWebhookTest extends WebTestCase
         }
 
         $webhookPayload = [
-            'id'         => 'evt_test_'.uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
-            'resource'   => [
-                'id'                  => 'capture_test',
-                'status'              => 'COMPLETED',
-                'custom_id'           => 'payment_test',
-                'supplementary_data'  => $largeMetadata,
+            'resource' => [
+                'id' => 'capture_test',
+                'status' => 'COMPLETED',
+                'custom_id' => 'payment_test',
+                'supplementary_data' => $largeMetadata,
             ],
         ];
 
@@ -340,9 +341,9 @@ final class PayPalWebhookTest extends WebTestCase
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id'         => 'evt_test_'.uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
-            'resource'   => ['id' => 'capture_test'],
+            'resource' => ['id' => 'capture_test'],
         ];
 
         // Act
@@ -370,19 +371,19 @@ final class PayPalWebhookTest extends WebTestCase
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id'         => 'evt_test_'.uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
-            'resource'   => ['id' => 'capture_test'],
+            'resource' => ['id' => 'capture_test'],
         ];
 
         // Test missing transmission-id (but signature is present)
         $serverWithoutTransmissionId = [
-            'HTTP_CONTENT_TYPE'             => 'application/json',
-            'HTTP_PAYPAL_TRANSMISSION_SIG'  => 'test_signature',
+            'HTTP_CONTENT_TYPE' => 'application/json',
+            'HTTP_PAYPAL_TRANSMISSION_SIG' => 'test_signature',
             // Missing: HTTP_PAYPAL_TRANSMISSION_ID
             'HTTP_PAYPAL_TRANSMISSION_TIME' => '2025-01-01T00:00:00Z',
-            'HTTP_PAYPAL_CERT_URL'          => 'https://api.paypal.com/cert',
-            'HTTP_PAYPAL_AUTH_ALGO'         => 'SHA256withRSA',
+            'HTTP_PAYPAL_CERT_URL' => 'https://api.paypal.com/cert',
+            'HTTP_PAYPAL_AUTH_ALGO' => 'SHA256withRSA',
         ];
 
         $client->request(
@@ -409,10 +410,10 @@ final class PayPalWebhookTest extends WebTestCase
         $eventId = 'evt_duplicate_'.uniqid();
 
         $webhookPayload = [
-            'id'         => $eventId,
+            'id' => $eventId,
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
-            'resource'   => [
-                'id'        => 'capture_test',
+            'resource' => [
+                'id' => 'capture_test',
                 'custom_id' => 'payment_123',
             ],
         ];
@@ -426,7 +427,7 @@ final class PayPalWebhookTest extends WebTestCase
                 [],
                 $this->paypalServerHeaders([
                     'HTTP_PAYPAL_TRANSMISSION_SIG' => 'test_signature_'.$i,
-                    'HTTP_PAYPAL_TRANSMISSION_ID'  => 'test_id_'.$i,
+                    'HTTP_PAYPAL_TRANSMISSION_ID' => 'test_id_'.$i,
                 ]),
                 (string) json_encode($webhookPayload, JSON_THROW_ON_ERROR)
             );
@@ -445,12 +446,12 @@ final class PayPalWebhookTest extends WebTestCase
         // Arrange
         $client = static::createClient();
         $webhookPayload = [
-            'id'         => 'evt_test_'.uniqid(),
+            'id' => 'evt_test_'.uniqid(),
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
-            'resource'   => [
-                'id'        => 'capture_test',
+            'resource' => [
+                'id' => 'capture_test',
                 'custom_id' => 'payment_with_special_chars_<>&"\'/€',
-                'status'    => 'COMPLETED',
+                'status' => 'COMPLETED',
             ],
         ];
 

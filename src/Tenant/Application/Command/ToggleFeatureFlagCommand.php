@@ -10,5 +10,6 @@ final readonly class ToggleFeatureFlagCommand
         public string $tenantId,
         public string $featureName,
         public bool $enabled,
-    ) {}
+    ) {
+    }
 }

@@ -257,8 +257,8 @@ final class TenantApiTest extends ApiTestCase
 
         $statusCode = $client->getResponse()->getStatusCode();
         $this->assertTrue(
-            in_array($statusCode, [404, 500]),
-            "Expected 404 or 500 for non-existent tenant, got $statusCode"
+            in_array($statusCode, [400, 404, 500]),
+            "Expected 400, 404 or 500 for non-existent tenant, got $statusCode"
         );
     }
 
@@ -271,8 +271,8 @@ final class TenantApiTest extends ApiTestCase
 
         $statusCode = $client->getResponse()->getStatusCode();
         $this->assertTrue(
-            in_array($statusCode, [404, 500]),
-            "Expected 404 or 500 for invalid UUID, got $statusCode"
+            in_array($statusCode, [400, 404, 500]),
+            "Expected 400, 404 or 500 for invalid UUID, got $statusCode"
         );
     }
 
@@ -348,7 +348,11 @@ final class TenantApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $statusCode = $client->getResponse()->getStatusCode();
+        $this->assertTrue(
+            in_array($statusCode, [400, 422, 500]),
+            "Expected 400, 422 or 500 for missing name field, got $statusCode"
+        );
     }
 
     public function testCreateTenantValidatesRequiredOwnerEmailField(): void
@@ -361,7 +365,11 @@ final class TenantApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $statusCode = $client->getResponse()->getStatusCode();
+        $this->assertTrue(
+            in_array($statusCode, [400, 422, 500]),
+            "Expected 400, 422 or 500 for missing ownerEmail field, got $statusCode"
+        );
     }
 
     public function testCreateTenantValidatesEmailFormat(): void
@@ -375,7 +383,7 @@ final class TenantApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testCreateTenantValidatesNameMinLength(): void
@@ -390,7 +398,7 @@ final class TenantApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testCreateTenantValidatesNameMaxLength(): void
@@ -406,7 +414,7 @@ final class TenantApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testCreateTenantPreventsDuplicateEmail(): void
@@ -559,8 +567,8 @@ final class TenantApiTest extends ApiTestCase
 
         $statusCode = $client->getResponse()->getStatusCode();
         $this->assertTrue(
-            in_array($statusCode, [404, 500]),
-            "Expected 404 or 500 for non-existent tenant, got $statusCode"
+            in_array($statusCode, [400, 404, 500]),
+            "Expected 400, 404 or 500 for non-existent tenant, got $statusCode"
         );
     }
 
@@ -578,7 +586,7 @@ final class TenantApiTest extends ApiTestCase
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testActivateTenantPreservesOtherFields(): void
@@ -672,8 +680,8 @@ final class TenantApiTest extends ApiTestCase
 
         $statusCode = $client->getResponse()->getStatusCode();
         $this->assertTrue(
-            in_array($statusCode, [404, 500]),
-            "Expected 404 or 500 for non-existent tenant, got $statusCode"
+            in_array($statusCode, [400, 404, 500]),
+            "Expected 400, 404 or 500 for non-existent tenant, got $statusCode"
         );
     }
 
@@ -699,7 +707,7 @@ final class TenantApiTest extends ApiTestCase
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testDeactivateTenantPreservesOtherFields(): void

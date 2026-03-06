@@ -57,8 +57,7 @@ final class TestStripeIntegrationCommand extends Command
                 id: $paymentId,
                 tenantId: $tenantId,
                 orderId: '01J9XAMPLE'.bin2hex(random_bytes(8)),
-                amountInCents: 10000, // $100.00
-                currency: 'USD',
+                amount: \App\Shared\Domain\ValueObject\Money::fromScalars(10000, 'USD'),
                 method: PaymentMethod::card(),
                 gateway: PaymentGateway::stripe()
             );
@@ -128,8 +127,7 @@ final class TestStripeIntegrationCommand extends Command
 
         try {
             $captureCommand = new CapturePayment(
-                id: $paymentId,
-                tenantId: $tenantId
+                id: $paymentId
             );
 
             $this->commandBus->dispatch($captureCommand);
@@ -158,8 +156,7 @@ final class TestStripeIntegrationCommand extends Command
         try {
             $refundCommand = new RefundPayment(
                 id: $paymentId,
-                tenantId: $tenantId,
-                refundAmountInCents: 5000, // $50.00
+                refundAmount: \App\Shared\Domain\ValueObject\Money::fromScalars(5000, 'USD'),
                 reason: 'Test refund - customer requested'
             );
 
@@ -194,8 +191,7 @@ final class TestStripeIntegrationCommand extends Command
                 id: $paymentId2,
                 tenantId: $tenantId,
                 orderId: '01J9XAMPLE'.bin2hex(random_bytes(8)),
-                amountInCents: 2500, // $25.00
-                currency: 'USD',
+                amount: \App\Shared\Domain\ValueObject\Money::fromScalars(2500, 'USD'),
                 method: PaymentMethod::card(),
                 gateway: PaymentGateway::stripe()
             );

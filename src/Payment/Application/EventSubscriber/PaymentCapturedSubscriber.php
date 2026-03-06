@@ -54,7 +54,7 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
             // Log capture for audit trail
             $this->logger->info('Payment captured successfully', [
                 'payment_id' => $event->paymentId->toString(),
-                'captured_amount_in_cents' => $event->capturedAmountInCents,
+                'captured_amount_in_cents' => $event->capturedAmount->getAmount(),
                 'occurred_on' => date('Y-m-d H:i:s'),
             ]);
 
@@ -79,7 +79,7 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
                         orderId: $event->orderId,
                         tenantId: $event->tenantId,
                         paymentId: $event->paymentId->toString(),
-                        paidAmountInCents: $event->capturedAmountInCents,
+                        paidAmountInCents: $event->capturedAmount->getAmount(),
                         occurredOn: new \DateTimeImmutable()
                     );
 
@@ -125,7 +125,7 @@ final readonly class PaymentCapturedSubscriber implements EventSubscriberInterfa
                 return;
             }
 
-            $amountFormatted = number_format($event->capturedAmountInCents / 100, 2);
+            $amountFormatted = number_format($event->capturedAmount->getAmount() / 100, 2);
 
             // Build HTML email
             $htmlBody = $this->buildHtmlEmailBody($event, $amountFormatted);

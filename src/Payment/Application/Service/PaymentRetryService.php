@@ -10,7 +10,6 @@ use App\Payment\Domain\Model\PaymentMethod as PaymentMethodEnum;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use App\Payment\Domain\Service\PaymentGatewayFactoryInterface;
 use App\Payment\Domain\ValueObject\RetryPolicy;
-use App\Shared\Domain\ValueObject\Money;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -182,11 +181,13 @@ final readonly class PaymentRetryService
             // Build retry-specific idempotency key to prevent duplicate charges
             $idempotencyKey = sprintf('retry_%s_%d', $payment->id()->toString(), $attemptNumber);
 
+            $amount = $payment->amount();
+
             // Call the gateway to create a new payment intent
             $gatewayResult = $gateway->createPaymentIntent(
                 paymentId: ModelPaymentId::generate(),
-                amount: Money::fromScalars($payment->amountInCents(), $payment->currency()),
-                currency: $payment->currency(),
+                amount: $amount,
+                currency: $amount->getCurrency()->getCurrencyCode(),
                 idempotencyKey: $idempotencyKey,
                 metadata: [
                     'tenant_id' => $payment->tenantId()->toString(),

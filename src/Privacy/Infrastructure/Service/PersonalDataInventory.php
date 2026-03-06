@@ -83,8 +83,8 @@ final readonly class PersonalDataInventory implements PersonalDataInventoryInter
     }
 
     /**
-     * @deprecated Anonymization is now handled via the event-driven flow:
-     *             Privacy emits DataErasureRequested → Customer anonymizes data.
+     * @deprecated anonymization is now handled via the event-driven flow:
+     *             Privacy emits DataErasureRequested → Customer anonymizes data
      */
     public function anonymizeCustomerData(array $subjectContext): void
     {

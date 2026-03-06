@@ -71,10 +71,11 @@ final class SearchProvider implements ProviderInterface
                 $filters['category'] = $filterParams['category'];
             }
             if (isset($filterParams['price_min'])) {
-                $filters['price_min'] = (float) $filterParams['price_min'];
+                // price_min/price_max are accepted as integer cents (e.g. 1000 = $10.00)
+                $filters['price_min'] = (int) $filterParams['price_min'];
             }
             if (isset($filterParams['price_max'])) {
-                $filters['price_max'] = (float) $filterParams['price_max'];
+                $filters['price_max'] = (int) $filterParams['price_max'];
             }
             if (isset($filterParams['in_stock_only'])) {
                 $filters['in_stock_only'] = (bool) $filterParams['in_stock_only'];

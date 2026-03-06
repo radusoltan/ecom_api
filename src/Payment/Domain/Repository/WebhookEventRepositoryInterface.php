@@ -18,7 +18,7 @@ interface WebhookEventRepositoryInterface
     /**
      * Check if a webhook event has already been processed.
      *
-     * @param string $gateway        The payment gateway (e.g. 'stripe', 'paypal')
+     * @param string $gateway         The payment gateway (e.g. 'stripe', 'paypal')
      * @param string $externalEventId The gateway's unique event identifier
      *
      * @return bool True if the event was already processed

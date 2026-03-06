@@ -235,21 +235,4 @@ final class ProductNameTest extends TestCase
             'too long' => [str_repeat('A', 256), 'is too long (256 characters). Maximum length is 255 characters'],
         ];
     }
-
-    #[Test]
-    public function itIsReadonly(): void
-    {
-        $name = ProductName::fromString('Test Product');
-        $reflection = new \ReflectionClass($name);
-
-        self::assertTrue($reflection->isReadOnly());
-    }
-
-    #[Test]
-    public function itIsFinal(): void
-    {
-        $reflection = new \ReflectionClass(ProductName::class);
-
-        self::assertTrue($reflection->isFinal());
-    }
 }

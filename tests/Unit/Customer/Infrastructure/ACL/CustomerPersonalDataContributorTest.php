@@ -65,8 +65,8 @@ final class CustomerPersonalDataContributorTest extends TestCase
             ->expects(self::once())
             ->method('findById')
             ->with(
-                self::callback(fn (CustomerId $id) => $id->toString() === self::CUSTOMER_ID),
-                self::callback(fn (TenantId $tid) => $tid->toString() === self::TENANT_ID),
+                self::callback(fn (CustomerId $id) => self::CUSTOMER_ID === $id->toString()),
+                self::callback(fn (TenantId $tid) => self::TENANT_ID === $tid->toString()),
             )
             ->willReturn($customer);
 

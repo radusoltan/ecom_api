@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Order\Application\Command;
 
-use App\Order\Domain\ValueObject\OrderProductId;
 use App\Inventory\Application\Command\AllocateStock\AllocateStockCommand;
 use App\Inventory\Domain\Model\Quantity;
 use App\Inventory\Domain\Model\WarehouseId;
@@ -16,6 +15,7 @@ use App\Order\Domain\Model\OrderLine;
 use App\Order\Domain\Repository\FulfillmentRepositoryInterface;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
 use App\Order\Domain\ValueObject\FulfillmentId;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;

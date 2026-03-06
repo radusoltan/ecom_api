@@ -12,6 +12,7 @@ use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
 use App\Payment\Infrastructure\Persistence\Doctrine\Entity\PaymentEntity;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
@@ -39,8 +40,7 @@ final readonly class CreatePaymentProcessor implements ProcessorInterface
             id: $paymentId,
             tenantId: TenantId::fromString($tenantId),
             orderId: $data->getOrderId(),
-            amountInCents: $data->getAmountInCents(),
-            currency: $data->getCurrency(),
+            amount: Money::fromScalars($data->getAmountInCents(), $data->getCurrency()),
             method: PaymentMethod::fromString($data->getMethod()),
             gateway: PaymentGateway::fromString($data->getGateway())
         );

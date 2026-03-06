@@ -6,12 +6,13 @@ namespace App\User\Domain\Model;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\Email;
-use App\User\Domain\Event\UserAccountLocked;
-use App\User\Domain\Event\UserAccountUnlocked;
+use App\Shared\Domain\ValueObject\LanguageCode;
 use App\User\Domain\Event\MfaBackupCodeConsumed;
 use App\User\Domain\Event\MfaBackupCodesRegenerated;
 use App\User\Domain\Event\MfaDisabled;
 use App\User\Domain\Event\MfaEnabled;
+use App\User\Domain\Event\UserAccountLocked;
+use App\User\Domain\Event\UserAccountUnlocked;
 use App\User\Domain\Event\UserCreated;
 use App\User\Domain\Event\UserEmailVerified;
 use App\User\Domain\Event\UserPasswordChanged;
@@ -41,6 +42,7 @@ final class User extends AggregateRoot
     /** @var list<string> Bcrypt-hashed backup codes */
     private array $backupCodes;
     private ?\DateTimeImmutable $mfaEnabledAt;
+    private ?LanguageCode $preferredLocale;
 
     /**
      * @param list<string> $backupCodes
@@ -61,6 +63,7 @@ final class User extends AggregateRoot
         ?string $totpSecret = null,
         array $backupCodes = [],
         ?\DateTimeImmutable $mfaEnabledAt = null,
+        ?LanguageCode $preferredLocale = null,
     ) {
         $this->id = $id;
         $this->email = $email;
@@ -77,6 +80,7 @@ final class User extends AggregateRoot
         $this->totpSecret = $totpSecret;
         $this->backupCodes = $backupCodes;
         $this->mfaEnabledAt = $mfaEnabledAt;
+        $this->preferredLocale = $preferredLocale;
     }
 
     public static function create(
@@ -131,6 +135,7 @@ final class User extends AggregateRoot
         ?string $totpSecret = null,
         array $backupCodes = [],
         ?\DateTimeImmutable $mfaEnabledAt = null,
+        ?LanguageCode $preferredLocale = null,
     ): self {
         return new self(
             $id,
@@ -147,7 +152,8 @@ final class User extends AggregateRoot
             $mfaEnabled,
             $totpSecret,
             $backupCodes,
-            $mfaEnabledAt
+            $mfaEnabledAt,
+            $preferredLocale
         );
     }
 
@@ -333,6 +339,16 @@ final class User extends AggregateRoot
             $this->id,
             new \DateTimeImmutable()
         ));
+    }
+
+    public function preferredLocale(): ?LanguageCode
+    {
+        return $this->preferredLocale;
+    }
+
+    public function setPreferredLocale(?LanguageCode $locale): void
+    {
+        $this->preferredLocale = $locale;
     }
 
     // MFA methods

@@ -88,10 +88,10 @@ final class CartPricingApiTest extends ApiTestCase
     public function testGetCartPricingWithCouponCodes(): void
     {
         $cart = $this->createCartWithItem();
-        $promotion = $this->createPromotion('COUPON' . strtoupper(substr(md5(uniqid()), 0, 6)));
+        $promotion = $this->createPromotion('COUPON'.strtoupper(substr(md5(uniqid()), 0, 6)));
 
         $client = static::createClient();
-        $response = $client->request('GET', '/api/v1/cart/pricing?coupons=' . $promotion->couponCode()->toString(), [
+        $response = $client->request('GET', '/api/v1/cart/pricing?coupons='.$promotion->couponCode()->toString(), [
             'headers' => [
                 'X-Cart-ID' => $cart->id()->toString(),
                 'X-Tenant-ID' => $this->tenantId->toString(),
@@ -123,7 +123,7 @@ final class CartPricingApiTest extends ApiTestCase
     public function testApplyCouponReturnsDiscountDetails(): void
     {
         $cart = $this->createCartWithItem();
-        $couponCode = 'APPLY' . strtoupper(substr(md5(uniqid()), 0, 6));
+        $couponCode = 'APPLY'.strtoupper(substr(md5(uniqid()), 0, 6));
         $promotion = $this->createPromotion($couponCode);
 
         $client = static::createClient();
@@ -171,7 +171,7 @@ final class CartPricingApiTest extends ApiTestCase
     public function testApplyCouponReturns400WhenConditionsNotMet(): void
     {
         $cart = $this->createCartWithSmallItem();
-        $couponCode = 'MINPUR' . strtoupper(substr(md5(uniqid()), 0, 6));
+        $couponCode = 'MINPUR'.strtoupper(substr(md5(uniqid()), 0, 6));
         $promotion = $this->createPromotion($couponCode, ['min_purchase' => 100.00]);
 
         $client = static::createClient();
@@ -253,7 +253,7 @@ final class CartPricingApiTest extends ApiTestCase
         $promotion = Promotion::create(
             PromotionId::generate(),
             $this->tenantId,
-            'Test Promotion ' . $couponCode,
+            'Test Promotion '.$couponCode,
             PromotionType::coupon(),
             Discount::percentage(10.0),
             100,

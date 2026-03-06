@@ -14,6 +14,7 @@ use App\Payment\Domain\ValueObject\PaymentMethod;
 use App\Payment\Infrastructure\Gateway\PaymentGatewayFactory;
 use App\Payment\Infrastructure\Gateway\PayPalGatewayAdapter;
 use App\Payment\Infrastructure\Gateway\StripeGateway;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -91,8 +92,7 @@ final class AuthorizePaymentCommandHandlerTest extends TestCase
             id: $paymentId,
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -138,8 +138,7 @@ final class AuthorizePaymentCommandHandlerTest extends TestCase
             id: $paymentId,
             tenantId: $tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)),
-            amountInCents: 5000,
-            currency: 'EUR',
+            amount: Money::fromScalars(5000, 'EUR'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );

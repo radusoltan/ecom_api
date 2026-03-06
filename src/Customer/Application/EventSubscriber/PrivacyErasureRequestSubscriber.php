@@ -59,7 +59,7 @@ final readonly class PrivacyErasureRequestSubscriber implements EventSubscriberI
             DeletionRequestId::generate(),
             $event->customerId,
             $event->tenantId,
-            'GDPR erasure request via Privacy context (DSR: ' . $event->requestId->toString() . ')',
+            'GDPR erasure request via Privacy context (DSR: '.$event->requestId->toString().')',
         );
 
         // Auto-confirm since Privacy context has already validated the DSR

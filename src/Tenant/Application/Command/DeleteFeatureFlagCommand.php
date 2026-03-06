@@ -9,5 +9,6 @@ final readonly class DeleteFeatureFlagCommand
     public function __construct(
         public string $tenantId,
         public string $featureName,
-    ) {}
+    ) {
+    }
 }

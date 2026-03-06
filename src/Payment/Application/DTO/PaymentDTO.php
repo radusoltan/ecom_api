@@ -31,14 +31,14 @@ final readonly class PaymentDTO
             id: $payment->id()->toString(),
             tenantId: $payment->tenantId()->toString(),
             orderId: $payment->orderId(),
-            amountInCents: $payment->amountInCents(),
+            amountInCents: $payment->amount()->getAmount(),
             currency: $payment->currency(),
             method: $payment->method()->value(),
             gateway: $payment->gateway()->value(),
             status: $payment->status()->value(),
             gatewayTransactionId: $payment->gatewayTransactionId(),
             errorMessage: $payment->errorMessage(),
-            refundedAmountInCents: $payment->refundedAmountInCents(),
+            refundedAmountInCents: $payment->refundedAmount()->getAmount(),
             createdAt: $payment->createdAt(),
             updatedAt: $payment->updatedAt()
         );

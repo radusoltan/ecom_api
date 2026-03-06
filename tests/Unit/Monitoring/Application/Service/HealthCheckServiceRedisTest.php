@@ -179,4 +179,61 @@ final class HealthCheckServiceRedisTest extends TestCase
             self::assertNotEmpty($check['output'], "Check '{$name}' output is unexpectedly empty");
         }
     }
+
+    // -----------------------------------------------------------------------
+    // RabbitMQ: invalid URL
+    // -----------------------------------------------------------------------
+
+    #[Test]
+    public function itReturnsFailWhenRabbitMqUrlIsInvalid(): void
+    {
+        $service = new HealthCheckService(
+            connection: $this->connection,
+            redis: null,
+            logger: new NullLogger(),
+            rabbitmqUrl: ':::invalid-url',
+        );
+
+        $health = $service->check();
+
+        self::assertSame('fail', $health['checks']['rabbitmq']['status']);
+        self::assertSame('Invalid RabbitMQ URL', $health['checks']['rabbitmq']['output']);
+    }
+
+    #[Test]
+    public function itReturnsFailWhenRabbitMqConnectionRefused(): void
+    {
+        // Port 1 is almost certainly unreachable and will be refused quickly
+        $service = new HealthCheckService(
+            connection: $this->connection,
+            redis: null,
+            logger: new NullLogger(),
+            rabbitmqUrl: 'amqp://127.0.0.1:1',
+        );
+
+        $health = $service->check();
+
+        self::assertSame('fail', $health['checks']['rabbitmq']['status']);
+        self::assertStringContainsString('Connection refused', $health['checks']['rabbitmq']['output']);
+    }
+
+    // -----------------------------------------------------------------------
+    // Elasticsearch: unreachable
+    // -----------------------------------------------------------------------
+
+    #[Test]
+    public function itReturnsFailWhenElasticsearchIsUnreachable(): void
+    {
+        $service = new HealthCheckService(
+            connection: $this->connection,
+            redis: null,
+            logger: new NullLogger(),
+            elasticsearchUrl: 'http://127.0.0.1:19999',
+        );
+
+        $health = $service->check();
+
+        self::assertSame('fail', $health['checks']['elasticsearch']['status']);
+        self::assertStringContainsString('Connection failed', $health['checks']['elasticsearch']['output']);
+    }
 }

@@ -174,18 +174,69 @@ final class Shipment extends AggregateRoot
         $this->updatedAt = new \DateTimeImmutable();
     }
 
-    public function id(): ShipmentId { return $this->id; }
-    public function tenantId(): TenantId { return $this->tenantId; }
-    public function orderId(): string { return $this->orderId; }
-    public function status(): ShipmentStatus { return $this->status; }
-    public function carrier(): ?CarrierCode { return $this->carrier; }
-    public function trackingNumber(): ?TrackingNumber { return $this->trackingNumber; }
-    public function rate(): ?ShippingRate { return $this->rate; }
-    public function recipientName(): string { return $this->recipientName; }
+    public function id(): ShipmentId
+    {
+        return $this->id;
+    }
+
+    public function tenantId(): TenantId
+    {
+        return $this->tenantId;
+    }
+
+    public function orderId(): string
+    {
+        return $this->orderId;
+    }
+
+    public function status(): ShipmentStatus
+    {
+        return $this->status;
+    }
+
+    public function carrier(): ?CarrierCode
+    {
+        return $this->carrier;
+    }
+
+    public function trackingNumber(): ?TrackingNumber
+    {
+        return $this->trackingNumber;
+    }
+
+    public function rate(): ?ShippingRate
+    {
+        return $this->rate;
+    }
+
+    public function recipientName(): string
+    {
+        return $this->recipientName;
+    }
+
     /** @return array<string, mixed> */
-    public function recipientAddress(): array { return $this->recipientAddress; }
-    public function shippedAt(): ?\DateTimeImmutable { return $this->shippedAt; }
-    public function deliveredAt(): ?\DateTimeImmutable { return $this->deliveredAt; }
-    public function createdAt(): \DateTimeImmutable { return $this->createdAt; }
-    public function updatedAt(): ?\DateTimeImmutable { return $this->updatedAt; }
+    public function recipientAddress(): array
+    {
+        return $this->recipientAddress;
+    }
+
+    public function shippedAt(): ?\DateTimeImmutable
+    {
+        return $this->shippedAt;
+    }
+
+    public function deliveredAt(): ?\DateTimeImmutable
+    {
+        return $this->deliveredAt;
+    }
+
+    public function createdAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function updatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
 }

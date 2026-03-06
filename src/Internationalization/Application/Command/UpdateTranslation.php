@@ -11,10 +11,14 @@ namespace App\Internationalization\Application\Command;
  */
 final readonly class UpdateTranslation
 {
+    /**
+     * @param array<string, string> $parameters
+     */
     public function __construct(
-        public int $id,
+        public string $id,
         public string $tenantId,
         public string $value,
+        public array $parameters = [],
     ) {
     }
 }

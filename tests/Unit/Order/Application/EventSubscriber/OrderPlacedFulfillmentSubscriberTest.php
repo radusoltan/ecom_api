@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Order\Application\EventSubscriber;
 
 use App\Catalog\Domain\Model\ProductId;
-use App\Order\Domain\ValueObject\OrderProductId;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Inventory\Domain\Repository\WarehouseRepositoryInterface;
@@ -21,6 +20,7 @@ use App\Order\Domain\Model\OrderLine;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
 use App\Order\Domain\Service\WarehouseRoutingService;
 use App\Order\Domain\ValueObject\FulfillmentId;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
@@ -392,8 +392,8 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
                     return false;
                 }
 
-                return $command->type === NotificationType::EMAIL
-                    && $command->recipientEmail === 'admin@ecommerce.local'
+                return NotificationType::EMAIL === $command->type
+                    && 'admin@ecommerce.local' === $command->recipientEmail
                     && $command->tenantId->equals($tenantId)
                     && str_contains($command->subject, $orderId->toString())
                     && str_contains($command->body, $orderId->toString())
@@ -442,7 +442,7 @@ final class OrderPlacedFulfillmentSubscriberTest extends TestCase
             ->method('dispatch')
             ->with($this->callback(
                 fn ($command) => $command instanceof SendNotification
-                    && $command->recipientEmail === 'ops@custom-domain.com',
+                    && 'ops@custom-domain.com' === $command->recipientEmail,
             ))
             ->willReturn(new Envelope(new \stdClass()));
 

@@ -11,7 +11,6 @@ use App\Payment\Domain\Service\PaymentGatewayInterface;
 use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
-use App\Shared\Domain\ValueObject\Money;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -70,8 +69,8 @@ final readonly class CreatePaymentIntentHandler
             // Create payment intent at gateway first (uses UUID-based ModelPaymentId for idempotency)
             $gatewayResult = $this->gateway->createPaymentIntent(
                 paymentId: $modelPaymentId,
-                amount: Money::fromScalars($command->amountInCents, $command->currency),
-                currency: $command->currency,
+                amount: $command->amount,
+                currency: $command->amount->getCurrency()->getCurrencyCode(),
                 idempotencyKey: $command->idempotencyKey,
                 customerId: $command->customerId,
                 metadata: [
@@ -99,8 +98,7 @@ final readonly class CreatePaymentIntentHandler
                 id: $domainPaymentId,
                 tenantId: $command->tenantId,
                 orderId: $command->orderId,
-                amountInCents: $command->amountInCents,
-                currency: $command->currency,
+                amount: $command->amount,
                 method: PaymentMethod::fromString($command->paymentMethod),
                 gateway: $this->resolveGateway($command->paymentMethod),
                 idempotencyKey: $command->idempotencyKey
@@ -116,14 +114,13 @@ final readonly class CreatePaymentIntentHandler
                     id: $payment->id(),
                     tenantId: $payment->tenantId(),
                     orderId: $payment->orderId(),
-                    amountInCents: $payment->amountInCents(),
-                    currency: $payment->currency(),
+                    amount: $payment->amount(),
                     method: $payment->method(),
                     gateway: $payment->gateway(),
                     status: $payment->status(),
                     gatewayTransactionId: $gatewayResult->gatewayPaymentIntentId,
                     errorMessage: null,
-                    refundedAmountInCents: 0,
+                    refundedAmount: $payment->refundedAmount(),
                     createdAt: $payment->createdAt(),
                     updatedAt: new \DateTimeImmutable(),
                     idempotencyKey: $payment->idempotencyKey()
@@ -136,8 +133,8 @@ final readonly class CreatePaymentIntentHandler
             $this->logger->info('Payment intent created successfully', [
                 'payment_id' => $domainPaymentId->toString(),
                 'gateway_payment_id' => $gatewayResult->gatewayPaymentIntentId,
-                'amount' => $command->amountInCents,
-                'currency' => $command->currency,
+                'amount' => $command->amount->getAmount(),
+                'currency' => $command->amount->getCurrency()->getCurrencyCode(),
             ]);
 
             return CreatePaymentIntentResult::success(

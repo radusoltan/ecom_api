@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Unit\User\Domain\Model;
 
 use App\Shared\Domain\ValueObject\Email;
+use App\Tests\Support\BcryptFixtures;
 use App\User\Domain\Model\User;
 use App\User\Domain\ValueObject\HashedPassword;
 use App\User\Domain\ValueObject\UserId;
 use App\User\Domain\ValueObject\Username;
 use App\User\Domain\ValueObject\UserRole;
-use App\Tests\Support\BcryptFixtures;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

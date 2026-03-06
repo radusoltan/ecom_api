@@ -524,13 +524,11 @@ final class PasswordResetApiTest extends ApiTestCase
         // Should return 400 Bad Request
         $this->assertResponseStatusCodeSame(400);
 
-        // Verify error response contains a message (API Platform format)
+        // Verify error response is RFC 7807 Problem Details format
         $response = json_decode($client->getResponse()->getContent(false), true);
         $this->assertIsArray($response);
-        $this->assertTrue(
-            isset($response['@type']) && 'Error' === $response['@type'],
-            'Response should be an API Platform Error resource'
-        );
+        $this->assertArrayHasKey('status', $response, 'Response should be RFC 7807 Problem Details format');
+        $this->assertSame(400, $response['status']);
     }
 
     // =============================================
@@ -553,12 +551,10 @@ final class PasswordResetApiTest extends ApiTestCase
         // Should return 400 Bad Request
         $this->assertResponseStatusCodeSame(400);
 
-        // Verify error response contains a message (API Platform format)
+        // Verify error response is RFC 7807 Problem Details format
         $response = json_decode($client->getResponse()->getContent(false), true);
         $this->assertIsArray($response);
-        $this->assertTrue(
-            isset($response['@type']) && 'Error' === $response['@type'],
-            'Response should be an API Platform Error resource'
-        );
+        $this->assertArrayHasKey('status', $response, 'Response should be RFC 7807 Problem Details format');
+        $this->assertSame(400, $response['status']);
     }
 }

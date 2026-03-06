@@ -70,7 +70,7 @@ abstract class PaymentGatewayContractTestCase extends TestCase
             paymentId: PaymentId::generate(),
             amount: $amount,
             currency: 'USD',
-            idempotencyKey: 'contract-test-' . bin2hex(random_bytes(8)),
+            idempotencyKey: 'contract-test-'.bin2hex(random_bytes(8)),
         );
 
         return [$result, $result->gatewayPaymentIntentId];
@@ -92,7 +92,7 @@ abstract class PaymentGatewayContractTestCase extends TestCase
     public function testGetName(): void
     {
         $gateway = $this->createGateway();
-        $name    = $gateway->getName();
+        $name = $gateway->getName();
 
         $this->assertNotEmpty($name, 'getName() must return a non-empty string');
         $this->assertSame($this->getExpectedName(), $name);
@@ -106,7 +106,7 @@ abstract class PaymentGatewayContractTestCase extends TestCase
     public function testCreatePaymentIntentReturnsResult(): void
     {
         $gateway = $this->createGateway();
-        $amount  = Money::fromScalars(5000, 'USD');
+        $amount = Money::fromScalars(5000, 'USD');
 
         $result = $gateway->createPaymentIntent(
             paymentId: PaymentId::generate(),
@@ -125,11 +125,11 @@ abstract class PaymentGatewayContractTestCase extends TestCase
     #[Test]
     public function testCreatePaymentIntentWithMetadata(): void
     {
-        $gateway  = $this->createGateway();
+        $gateway = $this->createGateway();
         $metadata = [
-            'order_id'  => 'ORD-CONTRACT-001',
+            'order_id' => 'ORD-CONTRACT-001',
             'tenant_id' => '00000000-0000-4000-8000-000000000001',
-            'channel'   => 'web',
+            'channel' => 'web',
         ];
 
         $result = $gateway->createPaymentIntent(
@@ -310,10 +310,10 @@ abstract class PaymentGatewayContractTestCase extends TestCase
     #[Test]
     public function testIdempotencyKeyIsAccepted(): void
     {
-        $gateway        = $this->createGateway();
+        $gateway = $this->createGateway();
         $idempotencyKey = 'contract-idempotency-fixed-key';
-        $paymentId      = PaymentId::generate();
-        $amount         = Money::fromScalars(3000, 'USD');
+        $paymentId = PaymentId::generate();
+        $amount = Money::fromScalars(3000, 'USD');
 
         // First call — must not throw.
         $first = $gateway->createPaymentIntent(

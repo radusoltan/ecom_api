@@ -469,7 +469,7 @@ final class CustomerAddressApiTest extends ApiTestCase
             'exp' => time() + 3600,
         ]);
 
-        return static::createClient([], ['headers' => ['authorization' => 'Bearer ' . $token]]);
+        return static::createClient([], ['headers' => ['authorization' => 'Bearer '.$token]]);
     }
 
     private function generateUniqueEmail(string $prefix = 'customer'): string

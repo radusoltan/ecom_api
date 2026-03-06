@@ -8,7 +8,7 @@ use App\Shared\Domain\Exception\InvalidLanguageCodeException;
 
 final readonly class LanguageCode
 {
-    private const SUPPORTED_LANGUAGES = ['en', 'fr', 'de'];
+    private const SUPPORTED_LANGUAGES = ['en', 'fr', 'de', 'ro', 'es', 'it'];
     private const DEFAULT_LANGUAGE = 'en';
 
     private function __construct(
@@ -40,6 +40,21 @@ final readonly class LanguageCode
     public static function de(): self
     {
         return new self('de');
+    }
+
+    public static function ro(): self
+    {
+        return new self('ro');
+    }
+
+    public static function es(): self
+    {
+        return new self('es');
+    }
+
+    public static function it(): self
+    {
+        return new self('it');
     }
 
     public static function fromAcceptLanguageHeader(?string $header): self

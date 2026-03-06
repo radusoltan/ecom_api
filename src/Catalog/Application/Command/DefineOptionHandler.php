@@ -77,10 +77,8 @@ final readonly class DefineOptionHandler
         $this->eventBus->dispatch(new OptionDefined(
             $configurableProduct->getId(),
             $command->productId,
-            $command->tenantId,
-            $option->getId(),
-            $command->code,
-            $command->nameTranslations
+            OptionCode::fromString($command->code),
+            LocalizedString::fromArray($command->nameTranslations),
         ));
     }
 }

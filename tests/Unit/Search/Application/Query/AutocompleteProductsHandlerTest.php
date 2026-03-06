@@ -46,7 +46,7 @@ final class AutocompleteProductsHandlerTest extends TestCase
                 sku: 'LAP-000001',
                 name: 'Laptop Pro',
                 description: null,
-                price: 999.99,
+                priceInCents: 99999,
                 currency: 'USD',
                 imageUrl: null,
                 isActive: true,

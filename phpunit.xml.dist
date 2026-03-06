@@ -34,8 +34,17 @@
         </include>
         <exclude>
             <directory>src/*/Infrastructure/Persistence/Doctrine/Migrations</directory>
+            <directory>src/DataFixtures</directory>
             <file>src/Kernel.php</file>
             <file>src/Schedule.php</file>
+            <file>src/Payment/Infrastructure/Command/Test2CheckoutIntegrationCommand.php</file>
+            <file>src/Payment/Infrastructure/Command/TestPayPalIntegrationCommand.php</file>
+            <file>src/Payment/Infrastructure/Command/TestStripeIntegrationCommand.php</file>
+            <file>src/Shared/Infrastructure/Command/TestTranslatableCommand.php</file>
+            <file>src/Tenant/Infrastructure/Command/DemoTranslatableTenantCommand.php</file>
+            <file>src/Tenant/Infrastructure/Command/SimpleDemoTranslatableCommand.php</file>
+            <file>src/Catalog/Infrastructure/Command/BackfillJsonbTranslationsCommand.php</file>
+            <file>src/Payment/Infrastructure/Gateway/PayPalClient.php</file>
         </exclude>
     </source>
 </phpunit>

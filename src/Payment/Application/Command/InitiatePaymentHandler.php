@@ -8,7 +8,6 @@ use App\Payment\Domain\Model\Payment;
 use App\Payment\Domain\Model\PaymentId as ModelPaymentId;
 use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 use App\Payment\Domain\Service\PaymentGatewayInterface;
-use App\Shared\Domain\ValueObject\Money;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -38,8 +37,7 @@ final readonly class InitiatePaymentHandler
             id: $command->paymentId,
             tenantId: $command->tenantId,
             orderId: $command->orderId,
-            amountInCents: $command->amountInCents,
-            currency: $command->currency,
+            amount: $command->amount,
             method: $command->method,
             gateway: $command->gateway
         );
@@ -51,8 +49,8 @@ final readonly class InitiatePaymentHandler
             // Create payment intent at gateway
             $gatewayResult = $this->paymentGateway->createPaymentIntent(
                 paymentId: ModelPaymentId::generate(),
-                amount: Money::fromScalars($command->amountInCents, $command->currency),
-                currency: $command->currency,
+                amount: $command->amount,
+                currency: $command->amount->getCurrency()->getCurrencyCode(),
                 idempotencyKey: sprintf('initiate_%s', $command->paymentId->toString()),
                 metadata: [
                     'tenant_id' => $command->tenantId->toString(),

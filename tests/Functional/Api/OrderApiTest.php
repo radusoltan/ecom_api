@@ -418,7 +418,7 @@ final class OrderApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testPlaceOrderValidatesEmptyLines(): void
@@ -449,7 +449,7 @@ final class OrderApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testPlaceOrderValidatesInvalidEmail(): void
@@ -491,7 +491,7 @@ final class OrderApiTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     // ========================================================================
@@ -689,7 +689,7 @@ final class OrderApiTest extends ApiTestCase
         ]);
 
         // Domain validation should reject invalid transition
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     // ========================================================================
@@ -763,7 +763,7 @@ final class OrderApiTest extends ApiTestCase
         ]);
 
         // Cannot cancel shipped order
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testCancelDeliveredOrderFails(): void
@@ -793,7 +793,7 @@ final class OrderApiTest extends ApiTestCase
         ]);
 
         // Cannot cancel delivered order
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testCancelAlreadyCancelledOrderFails(): void
@@ -816,7 +816,7 @@ final class OrderApiTest extends ApiTestCase
         ]);
 
         // Cannot cancel already cancelled order
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     // ========================================================================
@@ -893,7 +893,7 @@ final class OrderApiTest extends ApiTestCase
             'json' => ['status' => 'processing'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testMultipleOrdersForSameCustomer(): void

@@ -56,10 +56,10 @@ final class SearchProductsHandlerTest extends TestCase
             ->method('search')
             ->with(self::callback(function (SearchQuery $query) use ($tenantId): bool {
                 return $query->tenantId->toString() === $tenantId
-                    && $query->query === 'laptop'
+                    && 'laptop' === $query->query
                     && $query->locale->equals(Locale::fromString('en_US'))
-                    && $query->page === 1
-                    && $query->perPage === 24;
+                    && 1 === $query->page
+                    && 24 === $query->perPage;
             }))
             ->willReturn($expectedResult);
 
@@ -109,7 +109,7 @@ final class SearchProductsHandlerTest extends TestCase
             ->expects(self::once())
             ->method('search')
             ->with(self::callback(
-                fn (SearchQuery $q) => $q->sortBy === 'price' && $q->sortOrder === 'asc',
+                fn (SearchQuery $q) => 'price' === $q->sortBy && 'asc' === $q->sortOrder,
             ))
             ->willReturn($expectedResult);
 
@@ -133,7 +133,7 @@ final class SearchProductsHandlerTest extends TestCase
             ->expects(self::once())
             ->method('search')
             ->with(self::callback(
-                fn (SearchQuery $q) => $q->page === 3 && $q->perPage === 12,
+                fn (SearchQuery $q) => 3 === $q->page && 12 === $q->perPage,
             ))
             ->willReturn($expectedResult);
 

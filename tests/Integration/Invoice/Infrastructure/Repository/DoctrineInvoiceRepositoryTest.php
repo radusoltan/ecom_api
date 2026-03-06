@@ -12,7 +12,6 @@ use App\Invoice\Domain\Model\InvoiceLine;
 use App\Invoice\Domain\Model\InvoiceLineId;
 use App\Invoice\Domain\Model\InvoiceNumber;
 use App\Invoice\Domain\Repository\InvoiceRepositoryInterface;
-use App\Invoice\Infrastructure\Persistence\Doctrine\Entity\InvoiceEntity;
 use App\Order\Domain\Model\OrderId;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
