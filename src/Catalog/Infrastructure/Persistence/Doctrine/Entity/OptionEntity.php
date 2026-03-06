@@ -26,6 +26,7 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
 #[ORM\Table(name: 'catalog_product_options')]
 #[ORM\UniqueConstraint(name: 'uniq_product_options_product_code', columns: ['configurable_product_id', 'code'])]
 #[ORM\Index(name: 'idx_product_options_position', columns: ['configurable_product_id', 'position'])]
+#[ORM\Index(name: 'idx_product_options_tenant', columns: ['tenant_id'])]
 // Disabled ApiResource to prevent conflicts with ProductOptionsResource
 // #[ApiResource(
 //     operations: [
@@ -77,6 +78,9 @@ class OptionEntity
     #[Groups(['option:read'])]
     #[MaxDepth(1)]
     private Collection $values;
+
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
+    private string $tenantId;
 
     #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
@@ -163,5 +167,15 @@ class OptionEntity
     public function getConfigurableProduct(): ?ConfigurableProductEntity
     {
         return $this->configurableProduct;
+    }
+
+    public function getTenantId(): string
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(string $tenantId): void
+    {
+        $this->tenantId = $tenantId;
     }
 }

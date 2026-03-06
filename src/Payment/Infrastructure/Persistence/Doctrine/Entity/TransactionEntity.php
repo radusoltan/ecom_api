@@ -23,6 +23,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_transactions_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_transactions_gateway', columns: ['gateway_transaction_id'])]
 #[ORM\Index(name: 'idx_transactions_created_at', columns: ['created_at'])]
+#[ORM\Index(name: 'idx_transactions_tenant', columns: ['tenant_id'])]
 #[ApiResource(
     shortName: 'Transaction',
     operations: [
@@ -63,10 +64,13 @@ class TransactionEntity
     #[ORM\Column(type: 'text', nullable: true, name: 'error_message')]
     private ?string $errorMessage = null;
 
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
+    private string $tenantId;
+
     #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'created_at')]
     private \DateTimeImmutable $createdAt;
 
-    public static function fromDomainModel(Transaction $transaction): self
+    public static function fromDomainModel(Transaction $transaction, ?string $tenantId = null): self
     {
         $entity = new self();
         $entity->id = $transaction->id()->toString();
@@ -80,6 +84,10 @@ class TransactionEntity
         $entity->errorCode = $transaction->errorCode();
         $entity->errorMessage = $transaction->errorMessage();
         $entity->createdAt = $transaction->createdAt();
+
+        if (null !== $tenantId) {
+            $entity->tenantId = $tenantId;
+        }
 
         return $entity;
     }
@@ -210,5 +218,15 @@ class TransactionEntity
     public function setCreatedAt(\DateTimeImmutable $createdAt): void
     {
         $this->createdAt = $createdAt;
+    }
+
+    public function getTenantId(): string
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(string $tenantId): void
+    {
+        $this->tenantId = $tenantId;
     }
 }

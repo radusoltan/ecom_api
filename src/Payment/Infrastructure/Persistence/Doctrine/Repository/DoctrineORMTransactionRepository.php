@@ -9,6 +9,7 @@ use App\Payment\Domain\Model\Transaction;
 use App\Payment\Domain\Model\TransactionId;
 use App\Payment\Domain\Repository\TransactionRepositoryInterface;
 use App\Payment\Infrastructure\Persistence\Doctrine\Entity\TransactionEntity;
+use App\Shared\Application\Service\TenantContextInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -32,6 +33,7 @@ final readonly class DoctrineORMTransactionRepository implements TransactionRepo
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private TenantContextInterface $tenantContext,
     ) {
     }
 
@@ -47,7 +49,7 @@ final readonly class DoctrineORMTransactionRepository implements TransactionRepo
      */
     public function save(Transaction $transaction): void
     {
-        $entity = TransactionEntity::fromDomainModel($transaction);
+        $entity = TransactionEntity::fromDomainModel($transaction, $this->tenantContext->getTenantId());
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
 

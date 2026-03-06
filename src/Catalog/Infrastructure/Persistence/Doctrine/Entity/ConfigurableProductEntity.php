@@ -76,6 +76,11 @@ class ConfigurableProductEntity
         foreach ($configurableProduct->getOptions() as $option) {
             $optionEntity = OptionEntity::fromDomainModel($option);
             $optionEntity->setConfigurableProduct($entity);
+            $optionEntity->setTenantId($entity->tenantId);
+            // Propagate tenant_id to option values
+            foreach ($optionEntity->getValues() as $valueEntity) {
+                $valueEntity->setTenantId($entity->tenantId);
+            }
             $entity->options->add($optionEntity);
         }
 
@@ -83,6 +88,7 @@ class ConfigurableProductEntity
         foreach ($configurableProduct->getVariants() as $variant) {
             $variantEntity = VariantEntity::fromDomainModel($variant);
             $variantEntity->setConfigurableProduct($entity);
+            $variantEntity->setTenantId($entity->tenantId);
             $entity->variants->add($variantEntity);
         }
 
@@ -162,6 +168,10 @@ class ConfigurableProductEntity
                 // Create new option entity
                 $optionEntity = OptionEntity::fromDomainModel($option);
                 $optionEntity->setConfigurableProduct($this);
+                $optionEntity->setTenantId($this->tenantId);
+                foreach ($optionEntity->getValues() as $valueEntity) {
+                    $valueEntity->setTenantId($this->tenantId);
+                }
                 $this->options->add($optionEntity);
             }
         }
@@ -200,6 +210,7 @@ class ConfigurableProductEntity
                 // Create new variant entity
                 $variantEntity = VariantEntity::fromDomainModel($variant);
                 $variantEntity->setConfigurableProduct($this);
+                $variantEntity->setTenantId($this->tenantId);
                 $this->variants->add($variantEntity);
             }
         }

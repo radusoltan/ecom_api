@@ -22,6 +22,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Table(name: 'catalog_product_option_values')]
 #[ORM\UniqueConstraint(name: 'uniq_option_values_option_code', columns: ['option_id', 'code'])]
 #[ORM\Index(name: 'idx_option_values_position', columns: ['option_id', 'position'])]
+#[ORM\Index(name: 'idx_option_values_tenant', columns: ['tenant_id'])]
 #[ApiResource(
     operations: [
         new GetCollection(
@@ -55,6 +56,9 @@ class OptionValueEntity
     #[ORM\Column(type: 'integer')]
     #[Groups(['option:read'])]
     private int $position = 0;
+
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
+    private string $tenantId;
 
     #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
@@ -121,5 +125,15 @@ class OptionValueEntity
     public function getOption(): ?OptionEntity
     {
         return $this->option;
+    }
+
+    public function getTenantId(): string
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(string $tenantId): void
+    {
+        $this->tenantId = $tenantId;
     }
 }

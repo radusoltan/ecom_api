@@ -11,6 +11,7 @@ use App\Payment\Domain\Model\TransactionStatus;
 use App\Payment\Domain\Model\TransactionType;
 use App\Payment\Infrastructure\Persistence\Doctrine\Entity\TransactionEntity;
 use App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMTransactionRepository;
+use App\Shared\Application\Service\TenantContextInterface;
 use App\Shared\Domain\ValueObject\Money;
 use Brick\Money\Currency;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,12 +25,15 @@ use PHPUnit\Framework\TestCase;
 final class DoctrineORMTransactionRepositoryTest extends TestCase
 {
     private EntityManagerInterface&MockObject $entityManager;
+    private TenantContextInterface&MockObject $tenantContext;
     private DoctrineORMTransactionRepository $repository;
 
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->repository = new DoctrineORMTransactionRepository($this->entityManager);
+        $this->tenantContext = $this->createMock(TenantContextInterface::class);
+        $this->tenantContext->method('getTenantId')->willReturn('00000000-0000-4000-8000-000000000001');
+        $this->repository = new DoctrineORMTransactionRepository($this->entityManager, $this->tenantContext);
     }
 
     private function createTransactionDomainMock(): Transaction&MockObject

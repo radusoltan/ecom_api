@@ -28,6 +28,7 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
 #[ORM\UniqueConstraint(name: 'uniq_product_variants_sku', columns: ['sku'])]
 #[ORM\Index(name: 'idx_product_variants_product', columns: ['configurable_product_id'])]
 #[ORM\Index(name: 'idx_product_variants_product_active', columns: ['configurable_product_id', 'is_active'])]
+#[ORM\Index(name: 'idx_product_variants_tenant', columns: ['tenant_id'])]
 #[ApiResource(
     shortName: 'Variant',
     operations: [
@@ -100,6 +101,9 @@ class VariantEntity
 
     #[ORM\Column(type: 'jsonb')]
     private array $images = [];
+
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
+    private string $tenantId;
 
     #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
@@ -260,5 +264,15 @@ class VariantEntity
     public function setIsActive(bool $isActive): void
     {
         $this->isActive = $isActive;
+    }
+
+    public function getTenantId(): string
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(string $tenantId): void
+    {
+        $this->tenantId = $tenantId;
     }
 }
