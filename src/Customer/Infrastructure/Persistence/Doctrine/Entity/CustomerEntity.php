@@ -12,11 +12,11 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Customer\Domain\Model\Customer;
-use App\Customer\Domain\ValueObject\CustomerConsent;
-use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Domain\ValueObject\AddressType;
 use App\Customer\Domain\ValueObject\CustomerAddress;
 use App\Customer\Domain\ValueObject\CustomerAddressId;
+use App\Customer\Domain\ValueObject\CustomerConsent;
+use App\Customer\Domain\ValueObject\CustomerId;
 use App\Customer\Domain\ValueObject\CustomerPreferences;
 use App\Customer\Domain\ValueObject\CustomerSegment;
 use App\Customer\Domain\ValueObject\NotificationPreferences;
@@ -82,10 +82,10 @@ use Doctrine\ORM\Mapping as ORM;
 class CustomerEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id = '';
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $tenantId = '';
 
     #[ORM\Column(type: 'encrypted_string')]
@@ -498,10 +498,10 @@ class CustomerEntity
     public function getLinks(): array
     {
         return [
-            'self' => ['href' => '/api/v1/customers/' . $this->id],
-            'orders' => ['href' => '/api/v1/customers/' . $this->id . '/orders'],
-            'addresses' => ['href' => '/api/v1/customer-addresses?customerId=' . $this->id],
-            'preferences' => ['href' => '/api/v1/customers/' . $this->id . '/preferences'],
+            'self' => ['href' => '/api/v1/customers/'.$this->id],
+            'orders' => ['href' => '/api/v1/customers/'.$this->id.'/orders'],
+            'addresses' => ['href' => '/api/v1/customer-addresses?customerId='.$this->id],
+            'preferences' => ['href' => '/api/v1/customers/'.$this->id.'/preferences'],
         ];
     }
 }

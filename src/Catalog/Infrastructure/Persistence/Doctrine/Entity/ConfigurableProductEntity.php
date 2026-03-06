@@ -25,13 +25,13 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
 class ConfigurableProductEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'product_id')]
+    #[ORM\Column(type: 'uuid', name: 'product_id')]
     private string $productId;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     private string $tenantId;
 
     /**

@@ -29,10 +29,10 @@ use Doctrine\ORM\Mapping as ORM;
 class LoyaltyProgramEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id = '';
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $tenantId = '';
 
     #[ORM\Column(type: 'string', length: 100, nullable: false)]

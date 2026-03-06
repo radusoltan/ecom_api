@@ -12,7 +12,7 @@ final class ProductIdType extends Type
 {
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return 'CHAR(26)';
+        return 'UUID';
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?ProductId

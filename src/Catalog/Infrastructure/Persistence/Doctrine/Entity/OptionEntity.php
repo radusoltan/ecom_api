@@ -46,7 +46,7 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
 class OptionEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     #[Groups(['option:read'])]
     private string $id;
 
@@ -59,7 +59,7 @@ class OptionEntity
     #[Groups(['option:read'])]
     private string $code;
 
-    #[ORM\Column(type: 'json', name: 'name_translations')]
+    #[ORM\Column(type: 'jsonb', name: 'name_translations')]
     #[Groups(['option:read'])]
     /** @var array<string, mixed> */
     private array $nameTranslations = [];

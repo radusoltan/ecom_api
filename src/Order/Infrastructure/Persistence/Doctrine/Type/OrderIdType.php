@@ -14,7 +14,7 @@ final class OrderIdType extends Type
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getStringTypeDeclarationSQL(['length' => 36]);
+        return 'UUID';
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?OrderId

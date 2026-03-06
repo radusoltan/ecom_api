@@ -10,7 +10,6 @@ use App\Inventory\Domain\Model\StockItem;
 use App\Inventory\Domain\Model\StockItemId;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Shared\Domain\ValueObject\TenantId;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -21,16 +20,16 @@ use Doctrine\ORM\Mapping as ORM;
 class StockItemEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $tenantId;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $productId;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $warehouseId;
 
     #[ORM\Column(type: 'integer', nullable: false)]
@@ -45,10 +44,10 @@ class StockItemEntity
     #[ORM\Column(type: 'integer', nullable: false)]
     private int $lowStockThreshold;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: false)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false)]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: false)]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false)]
     private \DateTimeImmutable $updatedAt;
 
     public static function fromDomainModel(StockItem $stockItem): self

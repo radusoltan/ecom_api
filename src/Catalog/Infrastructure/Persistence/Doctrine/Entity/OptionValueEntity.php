@@ -35,7 +35,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class OptionValueEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     #[Groups(['option:read'])]
     private string $id;
 
@@ -48,7 +48,7 @@ class OptionValueEntity
     #[Groups(['option:read'])]
     private string $code;
 
-    #[ORM\Column(type: 'json', name: 'name_translations')]
+    #[ORM\Column(type: 'jsonb', name: 'name_translations')]
     #[Groups(['option:read'])]
     private array $nameTranslations = [];
 

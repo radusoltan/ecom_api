@@ -62,14 +62,14 @@ use Symfony\Component\Uid\Uuid;
 class PriceHistoryEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36, unique: true)]
+    #[ORM\Column(type: 'uuid', unique: true)]
     #[ApiProperty(identifier: true)]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $tenantId;
 
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $productId;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 19, scale: 4, nullable: true)]
@@ -87,7 +87,7 @@ class PriceHistoryEntity
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $changeReason = null;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: true)]
+    #[ORM\Column(type: 'uuid', nullable: true)]
     private ?string $changedBy = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
@@ -161,6 +161,25 @@ class PriceHistoryEntity
             PriceChangeSource::fromString($this->source),
             $this->changedAt
         );
+    }
+
+    /**
+     * Creates entity from PriceChange domain value object (alias for fromPriceChange).
+     */
+    public static function fromDomainModel(
+        PriceChange $priceChange,
+        TenantId $tenantId,
+        ?UserId $changedBy = null,
+    ): self {
+        return self::fromPriceChange($priceChange, $tenantId, $changedBy);
+    }
+
+    /**
+     * Converts entity to PriceChange domain value object (alias for toPriceChange).
+     */
+    public function toDomainModel(): PriceChange
+    {
+        return $this->toPriceChange();
     }
 
     public function id(): string

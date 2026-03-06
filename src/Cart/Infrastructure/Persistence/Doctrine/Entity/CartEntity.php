@@ -29,13 +29,13 @@ class CartEntity
     #[ORM\Column(type: 'string', length: 26)]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     private string $tenantId;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: true, name: 'customer_id')]
+    #[ORM\Column(type: 'uuid', nullable: true, name: 'customer_id')]
     private ?string $customerId = null;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: true, name: 'session_id')]
+    #[ORM\Column(type: 'uuid', nullable: true, name: 'session_id')]
     private ?string $sessionId = null;
 
     #[ORM\Column(type: 'string', length: 20)]

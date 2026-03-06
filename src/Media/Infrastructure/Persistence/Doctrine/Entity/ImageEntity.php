@@ -21,16 +21,16 @@ use Doctrine\ORM\Mapping as ORM;
 class ImageEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     private string $tenantId;
 
     #[ORM\Column(type: 'string', length: 16, name: 'owner_type')]
     private string $ownerType;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'owner_id')]
+    #[ORM\Column(type: 'uuid', name: 'owner_id')]
     private string $ownerId;
 
     #[ORM\Column(type: 'text', name: 'original_path')]
@@ -63,6 +63,16 @@ class ImageEntity
     public function __construct()
     {
         $this->thumbnails = new ArrayCollection();
+    }
+
+    public function toDomainModel(): Image
+    {
+        return $this->toDomain();
+    }
+
+    public static function fromDomainModel(Image $image): self
+    {
+        return self::fromDomain($image);
     }
 
     public static function fromDomain(Image $image): self

@@ -29,10 +29,10 @@ class CartItemEntity
     #[ORM\JoinColumn(name: 'cart_id', referencedColumnName: 'id', nullable: false)]
     private ?CartEntity $cart = null;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'product_id')]
+    #[ORM\Column(type: 'uuid', name: 'product_id')]
     private string $productId;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: true, name: 'variant_id')]
+    #[ORM\Column(type: 'uuid', nullable: true, name: 'variant_id')]
     private ?string $variantId = null;
 
     #[ORM\Column(type: 'integer')]

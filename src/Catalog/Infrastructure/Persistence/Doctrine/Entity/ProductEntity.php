@@ -68,10 +68,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class ProductEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     private string $tenantId;
 
     #[ORM\Column(type: 'string', length: 50)]
@@ -100,7 +100,7 @@ class ProductEntity
     #[ORM\Column(type: 'string', length: 3, name: 'price_currency')]
     private string $priceCurrency;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: true, name: 'category_id')]
+    #[ORM\Column(type: 'uuid', nullable: true, name: 'category_id')]
     private ?string $categoryId = null;
 
     #[ORM\Column(type: 'integer', name: 'stock_quantity')]
@@ -126,7 +126,7 @@ class ProductEntity
 
     #[ORM\Column(type: 'decimal', precision: 5, scale: 2, nullable: true, name: 'bundle_discount_percentage')]
     /** @phpstan-ignore property.unusedType, property.onlyWritten (DB column exists but unused - bundle data stored in bundle_items table) */
-    private ?float $bundleDiscountPercentage = null;
+    private ?string $bundleDiscountPercentage = null;
 
     // Subscription fields
     #[ORM\Column(type: 'string', length: 20, nullable: true, name: 'subscription_interval')]
@@ -165,6 +165,18 @@ class ProductEntity
 
     #[ORM\Column(type: 'datetimetz_immutable', name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
+
+    /** @var array<string, string>|null */
+    #[ORM\Column(type: 'jsonb', name: 'name_translations', nullable: true)]
+    private ?array $nameTranslations = null;
+
+    /** @var array<string, string>|null */
+    #[ORM\Column(type: 'jsonb', name: 'description_translations', nullable: true)]
+    private ?array $descriptionTranslations = null;
+
+    /** @var array<string, string>|null */
+    #[ORM\Column(type: 'jsonb', name: 'short_description_translations', nullable: true)]
+    private ?array $shortDescriptionTranslations = null;
 
     #[Gedmo\Locale]
     private ?string $locale = null;
@@ -463,6 +475,57 @@ class ProductEntity
         return $this->updatedAt;
     }
 
+    /** @return array<string, string>|null */
+    public function getNameTranslations(): ?array
+    {
+        return $this->nameTranslations;
+    }
+
+    /** @param array<string, string>|null $translations */
+    public function setNameTranslations(?array $translations): void
+    {
+        $this->nameTranslations = $translations;
+    }
+
+    /** @return array<string, string>|null */
+    public function getDescriptionTranslations(): ?array
+    {
+        return $this->descriptionTranslations;
+    }
+
+    /** @param array<string, string>|null $translations */
+    public function setDescriptionTranslations(?array $translations): void
+    {
+        $this->descriptionTranslations = $translations;
+    }
+
+    public function getNameInLocale(string $locale, string $fallback = 'en'): string
+    {
+        return $this->nameTranslations[$locale] ?? $this->nameTranslations[$fallback] ?? $this->name;
+    }
+
+    public function getDescriptionInLocale(string $locale, string $fallback = 'en'): ?string
+    {
+        return $this->descriptionTranslations[$locale] ?? $this->descriptionTranslations[$fallback] ?? $this->description;
+    }
+
+    /** @return array<string, string>|null */
+    public function getShortDescriptionTranslations(): ?array
+    {
+        return $this->shortDescriptionTranslations;
+    }
+
+    /** @param array<string, string>|null $translations */
+    public function setShortDescriptionTranslations(?array $translations): void
+    {
+        $this->shortDescriptionTranslations = $translations;
+    }
+
+    public function getShortDescriptionInLocale(string $locale, string $fallback = 'en'): ?string
+    {
+        return $this->shortDescriptionTranslations[$locale] ?? $this->shortDescriptionTranslations[$fallback] ?? $this->shortDescription;
+    }
+
     public function setTranslatableLocale(?string $locale): void
     {
         $this->locale = $locale;
@@ -476,13 +539,13 @@ class ProductEntity
     public function getLinks(): array
     {
         $links = [
-            'self' => ['href' => '/api/v1/product_entities/' . $this->id],
-            'variants' => ['href' => '/api/v1/variant_entities?productId=' . $this->id],
-            'translations' => ['href' => '/api/v1/products/' . $this->id . '/translations'],
+            'self' => ['href' => '/api/v1/product_entities/'.$this->id],
+            'variants' => ['href' => '/api/v1/variant_entities?productId='.$this->id],
+            'translations' => ['href' => '/api/v1/products/'.$this->id.'/translations'],
         ];
 
         if (null !== $this->categoryId) {
-            $links['category'] = ['href' => '/api/v1/categories/' . $this->categoryId];
+            $links['category'] = ['href' => '/api/v1/categories/'.$this->categoryId];
         }
 
         return $links;

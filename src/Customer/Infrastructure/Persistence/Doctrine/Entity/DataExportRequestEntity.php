@@ -28,13 +28,13 @@ use Doctrine\ORM\Mapping as ORM;
 class DataExportRequestEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'customer_id')]
+    #[ORM\Column(type: 'uuid', name: 'customer_id')]
     private string $customerId;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     private string $tenantId;
 
     #[ORM\Column(type: 'string', length: 20)]

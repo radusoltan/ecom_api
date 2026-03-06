@@ -60,10 +60,10 @@ use Doctrine\ORM\Mapping as ORM;
 class PromotionEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', nullable: false, name: 'tenant_id')]
     private string $tenantId;
 
     #[ORM\Column(type: 'string', length: 100, nullable: false)]

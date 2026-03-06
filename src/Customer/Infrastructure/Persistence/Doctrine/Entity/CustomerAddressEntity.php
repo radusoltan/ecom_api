@@ -26,13 +26,13 @@ use Doctrine\ORM\Mapping as ORM;
 class CustomerAddressEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id = '';
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $customerId = '';
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $tenantId = '';
 
     #[ORM\ManyToOne(targetEntity: CustomerEntity::class, inversedBy: 'addressEntities')]
@@ -54,7 +54,7 @@ class CustomerAddressEntity
     #[ORM\Column(type: 'encrypted_string', nullable: false)]
     private string $postalCode = '';
 
-    #[ORM\Column(type: 'string', length: 2, nullable: false)]
+    #[ORM\Column(type: 'string', length: 2, options: ['fixed' => true])]
     private string $country = '';
 
     #[ORM\Column(type: 'string', length: 20, nullable: false)]

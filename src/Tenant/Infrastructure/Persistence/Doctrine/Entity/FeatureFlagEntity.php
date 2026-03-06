@@ -29,7 +29,7 @@ class FeatureFlagEntity
     private bool $enabled = false;
 
     /** @var array<string, mixed> */
-    #[ORM\Column(type: 'json')]
+    #[ORM\Column(type: 'jsonb')]
     private array $configuration = [];
 
     #[ORM\Column(type: 'text', nullable: true)]

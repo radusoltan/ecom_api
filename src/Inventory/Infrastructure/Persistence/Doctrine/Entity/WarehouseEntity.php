@@ -22,10 +22,10 @@ use Doctrine\ORM\Mapping as ORM;
 class WarehouseEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $tenantId;
 
     #[ORM\Column(type: 'string', length: 10)]

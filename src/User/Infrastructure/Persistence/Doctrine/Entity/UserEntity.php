@@ -10,6 +10,13 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\LanguageCode;
+use App\User\Domain\Model\User;
+use App\User\Domain\ValueObject\HashedPassword;
+use App\User\Domain\ValueObject\UserId;
+use App\User\Domain\ValueObject\Username;
+use App\User\Domain\ValueObject\UserRole;
 use App\User\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMUserRepository;
 use App\User\Presentation\Api\Processor\CreateUserProcessor;
 use App\User\Presentation\Api\Processor\DeleteUserProcessor;
@@ -55,7 +62,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     #[Groups(['user:read'])]
     private string $id;
 
@@ -101,6 +108,50 @@ class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'datetimetz_immutable', nullable: true)]
     private ?\DateTimeImmutable $mfaEnabledAt = null;
+
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
+    #[Groups(['user:read', 'user:update'])]
+    private ?string $preferredLocale = null;
+
+    public function toDomainModel(): User
+    {
+        $roles = array_map(
+            fn (string $role) => UserRole::fromString($role),
+            $this->roles,
+        );
+
+        return User::reconstitute(
+            id: UserId::fromString($this->id),
+            email: Email::fromString($this->email),
+            username: Username::fromString($this->username),
+            password: HashedPassword::fromHash($this->password),
+            roles: $roles,
+            createdAt: $this->createdAt,
+            mfaEnabled: $this->mfaEnabled,
+            totpSecret: $this->totpSecret,
+            backupCodes: $this->backupCodes ?? [],
+            mfaEnabledAt: $this->mfaEnabledAt,
+            preferredLocale: null !== $this->preferredLocale ? LanguageCode::fromString($this->preferredLocale) : null,
+        );
+    }
+
+    public static function fromDomainModel(User $user): self
+    {
+        $entity = new self();
+        $entity->id = $user->id()->toString();
+        $entity->email = $user->email()->toString();
+        $entity->username = $user->username()->toString();
+        $entity->password = $user->password()->toString();
+        $entity->roles = $user->rolesAsStrings();
+        $entity->createdAt = $user->createdAt();
+        $entity->mfaEnabled = $user->mfaEnabled();
+        $entity->totpSecret = $user->totpSecret();
+        $entity->backupCodes = $user->backupCodes();
+        $entity->mfaEnabledAt = $user->mfaEnabledAt();
+        $entity->preferredLocale = $user->preferredLocale()?->value();
+
+        return $entity;
+    }
 
     public function getId(): string
     {
@@ -263,6 +314,18 @@ class UserEntity implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMfaEnabledAt(?\DateTimeImmutable $mfaEnabledAt): self
     {
         $this->mfaEnabledAt = $mfaEnabledAt;
+
+        return $this;
+    }
+
+    public function getPreferredLocale(): ?string
+    {
+        return $this->preferredLocale;
+    }
+
+    public function setPreferredLocale(?string $preferredLocale): self
+    {
+        $this->preferredLocale = $preferredLocale;
 
         return $this;
     }

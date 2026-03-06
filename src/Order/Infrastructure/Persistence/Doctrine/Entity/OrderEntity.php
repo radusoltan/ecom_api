@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Order\Infrastructure\Persistence\Doctrine\Entity;
 
 use App\Order\Domain\Model\Order;
-use App\Order\Domain\ValueObject\OrderProductId;
 use App\Order\Domain\Model\OrderId;
 use App\Order\Domain\Model\OrderLine;
 use App\Order\Domain\Model\OrderStatus;
+use App\Order\Domain\ValueObject\OrderProductId;
 use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
@@ -26,10 +26,10 @@ use Doctrine\ORM\Mapping as ORM;
 class OrderEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     private string $tenantId;
 
     #[ORM\Column(type: 'encrypted_string', name: 'customer_email')]
@@ -72,7 +72,7 @@ class OrderEntity
     #[ORM\Column(type: 'string', length: 10, nullable: true, name: 'tax_jurisdiction')]
     private ?string $taxJurisdiction = null;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: true, name: 'tax_rule_id')]
+    #[ORM\Column(type: 'uuid', nullable: true, name: 'tax_rule_id')]
     private ?string $taxRuleId = null;
 
     #[ORM\Column(type: 'float', nullable: true, name: 'tax_rate')]

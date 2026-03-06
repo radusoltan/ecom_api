@@ -46,10 +46,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class CategoryEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     private string $tenantId;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -65,7 +65,7 @@ class CategoryEntity
     #[Gedmo\Slug(fields: ['name'])]
     private string $slug;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: true, name: 'parent_id')]
+    #[ORM\Column(type: 'uuid', nullable: true, name: 'parent_id')]
     private ?string $parentId;
 
     #[ORM\Column(type: 'integer')]
@@ -85,6 +85,14 @@ class CategoryEntity
 
     #[ORM\Column(type: 'datetimetz_immutable', name: 'updated_at')]
     private \DateTimeImmutable $updatedAt;
+
+    /** @var array<string, string>|null */
+    #[ORM\Column(type: 'jsonb', name: 'name_translations', nullable: true)]
+    private ?array $nameTranslations = null;
+
+    /** @var array<string, string>|null */
+    #[ORM\Column(type: 'jsonb', name: 'description_translations', nullable: true)]
+    private ?array $descriptionTranslations = null;
 
     #[Gedmo\Locale]
     private ?string $locale = null;
@@ -225,6 +233,40 @@ class CategoryEntity
     public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
+    }
+
+    /** @return array<string, string>|null */
+    public function getNameTranslations(): ?array
+    {
+        return $this->nameTranslations;
+    }
+
+    /** @param array<string, string>|null $translations */
+    public function setNameTranslations(?array $translations): void
+    {
+        $this->nameTranslations = $translations;
+    }
+
+    /** @return array<string, string>|null */
+    public function getDescriptionTranslations(): ?array
+    {
+        return $this->descriptionTranslations;
+    }
+
+    /** @param array<string, string>|null $translations */
+    public function setDescriptionTranslations(?array $translations): void
+    {
+        $this->descriptionTranslations = $translations;
+    }
+
+    public function getNameInLocale(string $locale, string $fallback = 'en'): string
+    {
+        return $this->nameTranslations[$locale] ?? $this->nameTranslations[$fallback] ?? $this->name;
+    }
+
+    public function getDescriptionInLocale(string $locale, string $fallback = 'en'): ?string
+    {
+        return $this->descriptionTranslations[$locale] ?? $this->descriptionTranslations[$fallback] ?? $this->description;
     }
 
     public function setTranslatableLocale(?string $locale): void

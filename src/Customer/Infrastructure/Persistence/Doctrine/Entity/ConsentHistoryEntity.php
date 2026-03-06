@@ -29,13 +29,13 @@ use Doctrine\ORM\Mapping as ORM;
 class ConsentHistoryEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id = '';
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $customerId = '';
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $tenantId = '';
 
     #[ORM\Column(type: 'string', length: 50, nullable: false)]

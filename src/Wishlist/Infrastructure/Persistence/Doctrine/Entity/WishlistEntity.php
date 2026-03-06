@@ -22,13 +22,13 @@ use Doctrine\ORM\Mapping as ORM;
 class WishlistEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
     #[ORM\Column(type: 'string', length: 255, name: 'customer_id')]
     private string $customerId;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     private string $tenantId;
 
     /**

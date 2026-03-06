@@ -26,17 +26,17 @@ use Doctrine\ORM\Mapping as ORM;
 class LoyaltyPointTransactionEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id = '';
 
     #[ORM\ManyToOne(targetEntity: CustomerEntity::class)]
     #[ORM\JoinColumn(name: 'customer_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private ?CustomerEntity $customer = null;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $customerId = '';
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $tenantId = '';
 
     #[ORM\Column(type: 'string', length: 20, nullable: false)]
@@ -51,7 +51,7 @@ class LoyaltyPointTransactionEntity
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private string $reason = '';
 
-    #[ORM\Column(type: 'string', length: 36, nullable: true)]
+    #[ORM\Column(type: 'uuid', nullable: true)]
     private ?string $orderId = null;
 
     #[ORM\Column(type: 'datetimetz_immutable', nullable: true)]

@@ -31,13 +31,13 @@ use Doctrine\ORM\Mapping as ORM;
 class ReturnRequestEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     private string $tenantId;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'order_id')]
+    #[ORM\Column(type: 'uuid', name: 'order_id')]
     private string $orderId;
 
     #[ORM\Column(type: 'string', length: 500)]
@@ -46,7 +46,7 @@ class ReturnRequestEntity
     #[ORM\Column(type: 'string', length: 20)]
     private string $status;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: true, name: 'warehouse_id')]
+    #[ORM\Column(type: 'uuid', nullable: true, name: 'warehouse_id')]
     private ?string $warehouseId = null;
 
     #[ORM\Column(type: 'float', nullable: true, name: 'refund_amount')]

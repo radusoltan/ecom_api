@@ -65,7 +65,7 @@ class NotificationEntity
     #[Groups(['notification:read'])]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     #[Groups(['notification:read'])]
     private string $tenantId;
 

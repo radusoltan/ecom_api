@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Persistence\Doctrine\Entity;
 
+use App\Catalog\Domain\Model\ProductId;
+use App\Catalog\Domain\ValueObject\BundleItem;
+use App\Shared\Domain\ValueObject\Money;
+use App\Shared\Domain\ValueObject\TenantId;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -20,16 +24,16 @@ use Doctrine\ORM\Mapping as ORM;
 class BundleItemEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
     #[ORM\Column(type: 'guid', name: 'tenant_id')]
     private string $tenantId;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'bundle_product_id')]
+    #[ORM\Column(type: 'uuid', name: 'bundle_product_id')]
     private string $bundleProductId;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'product_id')]
+    #[ORM\Column(type: 'uuid', name: 'product_id')]
     private string $productId;
 
     #[ORM\Column(type: 'integer')]
@@ -138,5 +142,38 @@ class BundleItemEntity
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * Creates a Doctrine entity from a BundleItem domain value object.
+     */
+    public static function fromDomainModel(
+        BundleItem $item,
+        ProductId $bundleProductId,
+        TenantId $tenantId,
+        string $id,
+    ): self {
+        $entity = new self();
+        $entity->id = $id;
+        $entity->tenantId = $tenantId->toString();
+        $entity->bundleProductId = $bundleProductId->toString();
+        $entity->productId = $item->productId()->toString();
+        $entity->quantity = $item->quantity();
+        $entity->priceAmount = $item->price()->getAmount();
+        $entity->priceCurrency = $item->price()->getCurrency()->getCurrencyCode();
+
+        return $entity;
+    }
+
+    /**
+     * Converts this entity back to a BundleItem domain value object.
+     */
+    public function toDomainModel(): BundleItem
+    {
+        return BundleItem::fromPersistence(
+            productId: ProductId::fromString($this->productId),
+            quantity: $this->quantity,
+            price: Money::fromScalars($this->priceAmount, $this->priceCurrency),
+        );
     }
 }

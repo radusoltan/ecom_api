@@ -28,16 +28,16 @@ use Gedmo\Translatable\Translatable;
 class ProductReviewEntity implements Translatable
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'product_id')]
+    #[ORM\Column(type: 'uuid', name: 'product_id')]
     private string $productId;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     private string $tenantId;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'customer_id', nullable: true)]
+    #[ORM\Column(type: 'uuid', name: 'customer_id', nullable: true)]
     private ?string $customerId = null;
 
     #[ORM\Column(type: 'string', length: 255, name: 'customer_name', nullable: true)]
@@ -47,7 +47,7 @@ class ProductReviewEntity implements Translatable
     private int $rating;
 
     #[Gedmo\Translatable]
-    #[ORM\Column(type: 'string', length: 200, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $title = null;
 
     #[Gedmo\Translatable]

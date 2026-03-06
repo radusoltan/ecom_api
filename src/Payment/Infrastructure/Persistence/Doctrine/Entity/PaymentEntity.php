@@ -68,13 +68,13 @@ use Doctrine\ORM\Mapping as ORM;
 class PaymentEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', nullable: false, name: 'tenant_id')]
     private string $tenantId;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false, name: 'order_id')]
+    #[ORM\Column(type: 'uuid', nullable: false, name: 'order_id')]
     private string $orderId;
 
     #[ORM\Column(type: 'integer', nullable: false, name: 'amount_in_cents')]
@@ -83,13 +83,13 @@ class PaymentEntity
     #[ORM\Column(type: 'string', length: 3, nullable: false)]
     private string $currency;
 
-    #[ORM\Column(type: 'string', length: 20, nullable: false)]
+    #[ORM\Column(type: 'string', length: 50, nullable: false)]
     private string $method;
 
     #[ORM\Column(type: 'string', length: 20, nullable: false)]
     private string $gateway;
 
-    #[ORM\Column(type: 'string', length: 20, nullable: false)]
+    #[ORM\Column(type: 'string', length: 50, nullable: false)]
     private string $status;
 
     #[ORM\Column(type: 'encrypted_string', nullable: true, name: 'gateway_transaction_id')]
@@ -125,8 +125,8 @@ class PaymentEntity
         $entity->id = $payment->id()->toString();
         $entity->tenantId = $payment->tenantId()->toString();
         $entity->orderId = $payment->orderId();
-        $entity->amountInCents = $payment->amountInCents();
-        $entity->currency = $payment->currency();
+        $entity->amountInCents = $payment->amount()->getAmount();
+        $entity->currency = $payment->amount()->getCurrency()->getCurrencyCode();
         $entity->method = $payment->method()->value();
         $entity->gateway = $payment->gateway()->value();
         $entity->status = $payment->status()->value();
@@ -134,7 +134,7 @@ class PaymentEntity
         $entity->errorMessage = $payment->errorMessage();
         $entity->errorCode = $payment->errorCode();
         $entity->idempotencyKey = $payment->idempotencyKey();
-        $entity->refundedAmountInCents = $payment->refundedAmountInCents();
+        $entity->refundedAmountInCents = $payment->refundedAmount()->getAmount();
         $entity->retryCount = $payment->retryCount();
         $entity->nextRetryAt = $payment->nextRetryAt();
         $entity->createdAt = $payment->createdAt();
@@ -169,14 +169,13 @@ class PaymentEntity
             id: PaymentId::fromString($this->id),
             tenantId: TenantId::fromString($this->tenantId),
             orderId: $this->orderId,
-            amountInCents: $this->amountInCents,
-            currency: $this->currency,
+            amount: \App\Shared\Domain\ValueObject\Money::fromScalars($this->amountInCents, $this->currency),
             method: PaymentMethod::fromString($this->method),
             gateway: PaymentGateway::fromString($this->gateway),
             status: PaymentStatus::fromString($this->status),
             gatewayTransactionId: $this->gatewayTransactionId,
             errorMessage: $this->errorMessage,
-            refundedAmountInCents: $this->refundedAmountInCents,
+            refundedAmount: \App\Shared\Domain\ValueObject\Money::fromScalars($this->refundedAmountInCents, $this->currency),
             createdAt: $this->createdAt,
             updatedAt: $this->updatedAt,
             errorCode: $this->errorCode,
@@ -189,8 +188,8 @@ class PaymentEntity
     public function updateFromDomainModel(Payment $payment): void
     {
         $this->orderId = $payment->orderId();
-        $this->amountInCents = $payment->amountInCents();
-        $this->currency = $payment->currency();
+        $this->amountInCents = $payment->amount()->getAmount();
+        $this->currency = $payment->amount()->getCurrency()->getCurrencyCode();
         $this->method = $payment->method()->value();
         $this->gateway = $payment->gateway()->value();
         $this->status = $payment->status()->value();
@@ -198,7 +197,7 @@ class PaymentEntity
         $this->errorMessage = $payment->errorMessage();
         $this->errorCode = $payment->errorCode();
         $this->idempotencyKey = $payment->idempotencyKey();
-        $this->refundedAmountInCents = $payment->refundedAmountInCents();
+        $this->refundedAmountInCents = $payment->refundedAmount()->getAmount();
         $this->retryCount = $payment->retryCount();
         $this->nextRetryAt = $payment->nextRetryAt();
         $this->updatedAt = $payment->updatedAt();

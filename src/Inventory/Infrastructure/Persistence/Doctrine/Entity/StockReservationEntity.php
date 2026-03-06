@@ -9,7 +9,6 @@ use App\Inventory\Domain\Model\StockItemId;
 use App\Inventory\Domain\Model\StockReservation;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Shared\Domain\ValueObject\TenantId;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -20,31 +19,31 @@ use Doctrine\ORM\Mapping as ORM;
 class StockReservationEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false, name: 'stock_item_id')]
+    #[ORM\Column(type: 'uuid', nullable: false, name: 'stock_item_id')]
     private string $stockItemId;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false, name: 'warehouse_id')]
+    #[ORM\Column(type: 'uuid', nullable: false, name: 'warehouse_id')]
     private string $warehouseId;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', nullable: false, name: 'tenant_id')]
     private string $tenantId;
 
     #[ORM\Column(type: 'integer', nullable: false)]
     private int $quantity;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: false, name: 'reserved_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'reserved_at')]
     private \DateTimeImmutable $reservedAt;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: false, name: 'expires_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'expires_at')]
     private \DateTimeImmutable $expiresAt;
 
     #[ORM\Column(type: 'boolean', nullable: false, name: 'is_released')]
     private bool $isReleased;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, name: 'released_at')]
+    #[ORM\Column(type: 'datetimetz_immutable', nullable: true, name: 'released_at')]
     private ?\DateTimeImmutable $releasedAt;
 
     public static function fromDomainModel(StockReservation $reservation): self

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\User\Infrastructure\Persistence\Doctrine\Entity;
 
+use App\User\Domain\Model\PasswordResetToken;
+use App\User\Domain\ValueObject\UserId;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -97,5 +99,35 @@ class PasswordResetTokenEntity
     public function markAsUsed(): void
     {
         $this->usedAt = new \DateTimeImmutable();
+    }
+
+    /**
+     * Creates a Doctrine entity from a PasswordResetToken domain model.
+     */
+    public static function fromDomainModel(PasswordResetToken $token): self
+    {
+        return new self(
+            id: $token->id(),
+            userId: $token->userId()->toString(),
+            token: $token->token(),
+            expiresAt: $token->expiresAt(),
+            createdAt: $token->createdAt(),
+            usedAt: $token->usedAt(),
+        );
+    }
+
+    /**
+     * Converts this entity back to a PasswordResetToken domain model.
+     */
+    public function toDomainModel(): PasswordResetToken
+    {
+        return PasswordResetToken::reconstituteFromPersistence(
+            id: $this->id,
+            userId: UserId::fromString($this->userId),
+            token: $this->token,
+            expiresAt: $this->expiresAt,
+            createdAt: $this->createdAt,
+            usedAt: $this->usedAt,
+        );
     }
 }

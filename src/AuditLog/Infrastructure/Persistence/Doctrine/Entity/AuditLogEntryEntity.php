@@ -44,7 +44,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
     ],
     normalizationContext: ['groups' => ['audit_log:read']],
     paginationItemsPerPage: 50,
-    paginationMaximumItemsPerPage: 200
+    paginationMaximumItemsPerPage: 100
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'userId' => 'exact',

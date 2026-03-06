@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class InvoiceLineEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     #[Groups(['invoice:read'])]
     private string $id;
 
@@ -26,11 +26,11 @@ class InvoiceLineEntity
     #[ORM\JoinColumn(name: 'invoice_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private InvoiceEntity $invoice;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: true, name: 'product_id')]
+    #[ORM\Column(type: 'uuid', nullable: true, name: 'product_id')]
     #[Groups(['invoice:read'])]
     private ?string $productId = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     #[Groups(['invoice:read'])]
     private ?string $sku = null;
 

@@ -61,7 +61,7 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
 class VariantEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
     #[ORM\ManyToOne(targetEntity: ConfigurableProductEntity::class, inversedBy: 'variants')]
@@ -73,7 +73,7 @@ class VariantEntity
     #[ORM\Column(type: 'string', length: 64)]
     private string $sku;
 
-    #[ORM\Column(type: 'json', name: 'option_value_map')]
+    #[ORM\Column(type: 'jsonb', name: 'option_value_map')]
     /** @var array<string, mixed> */
     private array $optionValueMap = [];
 
@@ -98,7 +98,7 @@ class VariantEntity
     #[ORM\Column(type: 'boolean', name: 'is_active')]
     private bool $isActive = true;
 
-    #[ORM\Column(type: 'json')]
+    #[ORM\Column(type: 'jsonb')]
     private array $images = [];
 
     #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]

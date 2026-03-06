@@ -23,7 +23,7 @@ class TenantEntity
 {
     public function __construct(
         #[ORM\Id]
-        #[ORM\Column(type: 'string', length: 36)]
+        #[ORM\Column(type: 'uuid')]
         private string $id,
         #[ORM\Column(type: 'string', length: 100)]
         #[Gedmo\Translatable]
@@ -42,6 +42,8 @@ class TenantEntity
         private int $translationQuota = 10000,
         #[ORM\Column(type: 'integer', options: ['default' => 0])]
         private int $translationUsage = 0,
+        #[ORM\Column(type: 'string', length: 20, options: ['default' => 'starter'])]
+        private string $tier = 'starter',
     ) {
     }
 
@@ -156,6 +158,26 @@ class TenantEntity
         $this->translationUsage = $translationUsage;
     }
 
+    public function getTier(): string
+    {
+        return $this->tier;
+    }
+
+    public function setTier(string $tier): void
+    {
+        $this->tier = $tier;
+    }
+
+    public function toDomainModel(): Tenant
+    {
+        return $this->toDomain();
+    }
+
+    public static function fromDomainModel(Tenant $tenant): self
+    {
+        return self::fromDomain($tenant);
+    }
+
     /**
      * Convert Doctrine entity to Domain aggregate.
      */
@@ -175,7 +197,8 @@ class TenantEntity
             LanguageCode::fromString($this->defaultLocale),
             $enabledLocales,
             $this->translationQuota,
-            $this->translationUsage
+            $this->translationUsage,
+            $this->tier,
         );
     }
 
@@ -198,7 +221,8 @@ class TenantEntity
             $tenant->defaultLocale()->value(),
             $enabledLocales,
             $tenant->translationQuota(),
-            $tenant->translationUsage()
+            $tenant->translationUsage(),
+            $tenant->tier(),
         );
     }
 
@@ -217,5 +241,6 @@ class TenantEntity
         );
         $this->translationQuota = $tenant->translationQuota();
         $this->translationUsage = $tenant->translationUsage();
+        $this->tier = $tenant->tier();
     }
 }

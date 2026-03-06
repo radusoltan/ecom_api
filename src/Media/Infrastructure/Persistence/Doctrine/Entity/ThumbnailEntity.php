@@ -18,10 +18,10 @@ use Doctrine\ORM\Mapping as ORM;
 class ThumbnailEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     private string $tenantId;
 
     #[ORM\ManyToOne(targetEntity: ImageEntity::class, inversedBy: 'thumbnails')]
@@ -40,12 +40,22 @@ class ThumbnailEntity
     #[ORM\Column(type: 'integer')]
     private int $height;
 
-    #[ORM\Column(type: 'json', name: 'crop_json')]
+    #[ORM\Column(type: 'jsonb', name: 'crop_json')]
     /** @var array<string, mixed> */
     private array $crop;
 
     #[ORM\Column(type: 'datetimetz_immutable', name: 'created_at')]
     private \DateTimeImmutable $createdAt;
+
+    public function toDomainModel(): DomainThumbnail
+    {
+        return $this->toDomain();
+    }
+
+    public static function fromDomainModel(DomainThumbnail $thumbnail, ImageEntity $image, TenantId $tenantId): self
+    {
+        return self::fromDomain($thumbnail, $image, $tenantId);
+    }
 
     public static function fromDomain(DomainThumbnail $thumbnail, ImageEntity $image, TenantId $tenantId): self
     {

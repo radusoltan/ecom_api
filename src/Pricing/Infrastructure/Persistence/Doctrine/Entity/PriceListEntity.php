@@ -29,10 +29,10 @@ use Doctrine\ORM\Mapping as ORM;
 class PriceListEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: Types::STRING, length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id;
 
-    #[ORM\Column(type: Types::STRING, length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $tenantId;
 
     #[ORM\Column(type: Types::STRING, length: 100)]

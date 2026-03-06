@@ -23,13 +23,13 @@ use Doctrine\ORM\Mapping as ORM;
 class LoyaltyTierEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     private string $id = '';
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $programId = '';
 
-    #[ORM\Column(type: 'string', length: 36, nullable: false)]
+    #[ORM\Column(type: 'uuid', nullable: false)]
     private string $tenantId = '';
 
     #[ORM\ManyToOne(targetEntity: LoyaltyProgramEntity::class, inversedBy: 'tierEntities')]

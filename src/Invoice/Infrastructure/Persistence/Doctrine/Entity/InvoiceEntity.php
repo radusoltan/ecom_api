@@ -93,19 +93,19 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class InvoiceEntity
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', length: 36)]
+    #[ORM\Column(type: 'uuid')]
     #[Groups(['invoice:read'])]
     private string $id;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'tenant_id')]
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
     #[Groups(['invoice:read'])]
     private string $tenantId;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'order_id')]
+    #[ORM\Column(type: 'uuid', name: 'order_id')]
     #[Groups(['invoice:read'])]
     private string $orderId;
 
-    #[ORM\Column(type: 'string', length: 36, name: 'customer_id')]
+    #[ORM\Column(type: 'uuid', name: 'customer_id')]
     #[Groups(['invoice:read'])]
     private string $customerId;
 
@@ -147,7 +147,7 @@ class InvoiceEntity
     private string $totalCurrency;
 
     /** @var array<string, int> */
-    #[ORM\Column(type: 'json', name: 'tax_breakdown')]
+    #[ORM\Column(type: 'jsonb', name: 'tax_breakdown')]
     #[Groups(['invoice:read'])]
     private array $taxBreakdown;
 
@@ -171,7 +171,7 @@ class InvoiceEntity
     #[Groups(['invoice:read'])]
     private ?string $pdfPath = null;
 
-    #[ORM\Column(type: 'string', length: 36, nullable: true, name: 'credited_invoice_id')]
+    #[ORM\Column(type: 'uuid', nullable: true, name: 'credited_invoice_id')]
     #[Groups(['invoice:read'])]
     private ?string $creditedInvoiceId = null;
 
