@@ -15,12 +15,16 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Table(name: 'invoice_lines')]
 #[ORM\Index(name: 'idx_invoice_lines_invoice_id', columns: ['invoice_id'])]
 #[ORM\Index(name: 'idx_invoice_lines_product_id', columns: ['product_id'])]
+#[ORM\Index(name: 'idx_invoice_lines_tenant_id', columns: ['tenant_id'])]
 class InvoiceLineEntity
 {
     #[ORM\Id]
     #[ORM\Column(type: 'uuid')]
     #[Groups(['invoice:read'])]
     private string $id;
+
+    #[ORM\Column(type: 'uuid', name: 'tenant_id')]
+    private string $tenantId;
 
     #[ORM\ManyToOne(targetEntity: InvoiceEntity::class, inversedBy: 'lines')]
     #[ORM\JoinColumn(name: 'invoice_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
@@ -77,10 +81,11 @@ class InvoiceLineEntity
     /**
      * Create entity from domain model.
      */
-    public static function fromDomainModel(InvoiceLine $line, string $invoiceId): self
+    public static function fromDomainModel(InvoiceLine $line, string $invoiceId, string $tenantId = ''): self
     {
         $entity = new self();
         $entity->id = $line->id()->toString();
+        $entity->tenantId = $tenantId;
         $entity->productId = $line->productId()?->toString();
         $entity->sku = $line->sku();
         $entity->description = $line->description();
@@ -210,5 +215,10 @@ class InvoiceLineEntity
     public function getPosition(): int
     {
         return $this->position;
+    }
+
+    public function getTenantId(): string
+    {
+        return $this->tenantId;
     }
 }

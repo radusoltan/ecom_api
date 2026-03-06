@@ -232,7 +232,7 @@ class InvoiceEntity
 
         // Create line entities
         foreach ($invoice->lines() as $line) {
-            $lineEntity = InvoiceLineEntity::fromDomainModel($line, $entity->id);
+            $lineEntity = InvoiceLineEntity::fromDomainModel($line, $entity->id, $entity->tenantId);
             $lineEntity->setInvoice($entity);
             $entity->lines->add($lineEntity);
         }
@@ -289,7 +289,7 @@ class InvoiceEntity
             if (isset($existingLinesById[$lineId])) {
                 $existingLinesById[$lineId]->updateFromDomainModel($domainLine);
             } else {
-                $lineEntity = InvoiceLineEntity::fromDomainModel($domainLine, $this->id);
+                $lineEntity = InvoiceLineEntity::fromDomainModel($domainLine, $this->id, $this->tenantId);
                 $lineEntity->setInvoice($this);
                 $this->lines->add($lineEntity);
             }

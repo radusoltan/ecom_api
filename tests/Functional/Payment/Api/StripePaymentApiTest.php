@@ -42,7 +42,7 @@ final class StripePaymentApiTest extends ApiTestCase
      */
     private function generateUniqueOrderId(): string
     {
-        return sprintf('test-order-%d-%s', ++self::$counter, substr(uniqid(), -8));
+        return \Symfony\Component\Uid\Uuid::v4()->toString();
     }
 
     /**
