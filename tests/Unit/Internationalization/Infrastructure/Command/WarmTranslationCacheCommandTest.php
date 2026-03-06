@@ -100,6 +100,7 @@ final class WarmTranslationCacheCommandTest extends TestCase
     #[Test]
     public function itWarmsCacheForAllTenantsViaEnvVar(): void
     {
+        $savedEnv = $_ENV['DEFAULT_TENANT_ID'] ?? null;
         $_ENV['DEFAULT_TENANT_ID'] = '00000000-0000-4000-8000-000000000001';
 
         $this->cacheService
@@ -112,7 +113,11 @@ final class WarmTranslationCacheCommandTest extends TestCase
         self::assertSame(Command::SUCCESS, $exit);
         self::assertStringContainsString('15 total combinations warmed', $this->tester->getDisplay());
 
-        unset($_ENV['DEFAULT_TENANT_ID']);
+        if (null !== $savedEnv) {
+            $_ENV['DEFAULT_TENANT_ID'] = $savedEnv;
+        } else {
+            unset($_ENV['DEFAULT_TENANT_ID']);
+        }
     }
 
     #[Test]
