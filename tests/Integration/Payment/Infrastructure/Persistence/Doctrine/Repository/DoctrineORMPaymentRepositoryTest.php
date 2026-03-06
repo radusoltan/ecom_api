@@ -12,6 +12,7 @@ use App\Payment\Domain\ValueObject\PaymentGateway;
 use App\Payment\Domain\ValueObject\PaymentId;
 use App\Payment\Domain\ValueObject\PaymentMethod;
 use App\Payment\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMPaymentRepository;
+use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
 use App\Tests\Support\TenantTestTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -46,7 +47,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
 
         // Clean up any leftover payments from other test suites
         $this->entityManager->getConnection()->executeStatement(
-            "DELETE FROM payments WHERE tenant_id = :tid",
+            'DELETE FROM payments WHERE tenant_id = :tid',
             ['tid' => $this->tenantId->toString()]
         );
 
@@ -79,7 +80,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
         $this->assertTrue($foundPayment->id()->equals($payment->id()));
         $this->assertTrue($foundPayment->tenantId()->equals($payment->tenantId()));
         $this->assertSame($payment->orderId(), $foundPayment->orderId());
-        $this->assertSame($payment->amountInCents(), $foundPayment->amountInCents());
+        $this->assertSame($payment->amount()->getAmount(), $foundPayment->amount()->getAmount());
         $this->assertSame($payment->currency(), $foundPayment->currency());
     }
 
@@ -113,7 +114,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
     public function testFindByOrderIdReturnsNullWhenNotFound(): void
     {
         // Act
-        $foundPayment = $this->repository->findByOrderId('NON_EXISTENT_ORDER');
+        $foundPayment = $this->repository->findByOrderId('00000000-0000-4000-8000-000000000099');
 
         // Assert
         $this->assertNull($foundPayment);
@@ -176,8 +177,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
             id: $paymentId,
             tenantId: $this->tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)), // 26 chars ULID format
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -202,7 +202,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
         $this->assertTrue($payment->status()->isCaptured());
 
         // Act 3 - Partial Refund
-        $payment->refund(5000, 'Customer requested partial refund');
+        $payment->refund(Money::fromScalars(5000, 'USD'), 'Customer requested partial refund');
         $this->repository->save($payment);
         $this->entityManager->clear();
 
@@ -210,7 +210,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
         $finalPayment = $this->repository->findById($paymentId, $this->tenantId);
         $this->assertNotNull($finalPayment);
         $this->assertTrue($finalPayment->status()->isRefunded());
-        $this->assertSame(5000, $finalPayment->refundedAmountInCents());
+        $this->assertSame(5000, $finalPayment->refundedAmount()->getAmount());
     }
 
     public function testDomainEventsAreDispatchedAfterSave(): void
@@ -326,8 +326,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
             id: $paymentId,
             tenantId: $this->tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)), // 26 chars ULID format
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -354,8 +353,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
             id: $paymentId,
             tenantId: $this->tenantId,
             orderId: '01JCEX'.bin2hex(random_bytes(10)), // 26 chars ULID format
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );
@@ -385,8 +383,7 @@ final class DoctrineORMPaymentRepositoryTest extends KernelTestCase
             id: PaymentId::generate(),
             tenantId: $tenantId ?? $this->tenantId,
             orderId: $orderId ?? '01JCEX'.bin2hex(random_bytes(10)), // 6 + 20 = 26 chars (ULID format)
-            amountInCents: 9999,
-            currency: 'USD',
+            amount: Money::fromScalars(9999, 'USD'),
             method: PaymentMethod::card(),
             gateway: PaymentGateway::stripe()
         );

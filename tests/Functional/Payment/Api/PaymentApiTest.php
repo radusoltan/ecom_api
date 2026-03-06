@@ -63,7 +63,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testCreatePayment(): void
     {
         // Arrange
-        $orderId = '01JCEX'.bin2hex(random_bytes(10));
+        $orderId = \Symfony\Component\Uid\Uuid::v4()->toString();
 
         // Act
         $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/payments', [
@@ -99,7 +99,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testCreatePaymentWithInvalidAmountFails(): void
     {
         // Arrange
-        $orderId = '01JCEX'.bin2hex(random_bytes(10));
+        $orderId = \Symfony\Component\Uid\Uuid::v4()->toString();
 
         // Act
         $this->createAuthenticatedClient()->request('POST', '/api/v1/payments', [
@@ -116,14 +116,14 @@ final class PaymentApiTest extends ApiTestCase
             ],
         ]);
 
-        // Assert - Domain validation returns 500 (business rule enforcement)
-        $this->assertResponseStatusCodeSame(500);
+        // Assert - Domain validation returns 400 (business rule enforcement)
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testCreatePaymentWithInvalidCurrencyFails(): void
     {
         // Arrange
-        $orderId = '01JCEX'.bin2hex(random_bytes(10));
+        $orderId = \Symfony\Component\Uid\Uuid::v4()->toString();
 
         // Act
         $this->createAuthenticatedClient()->request('POST', '/api/v1/payments', [
@@ -140,14 +140,14 @@ final class PaymentApiTest extends ApiTestCase
             ],
         ]);
 
-        // Assert - Domain validation returns 500 (business rule enforcement)
-        $this->assertResponseStatusCodeSame(500);
+        // Assert - Domain validation returns 400 (business rule enforcement)
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testGetPaymentById(): void
     {
         // Arrange - Create a payment first
-        $orderId = '01JCEX'.bin2hex(random_bytes(10));
+        $orderId = \Symfony\Component\Uid\Uuid::v4()->toString();
 
         $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/payments', [
             'headers' => [
@@ -201,8 +201,8 @@ final class PaymentApiTest extends ApiTestCase
     public function testGetAllPayments(): void
     {
         // Arrange - Create two payments
-        $orderId1 = '01JCEX'.bin2hex(random_bytes(10));
-        $orderId2 = '01JCEX'.bin2hex(random_bytes(10));
+        $orderId1 = \Symfony\Component\Uid\Uuid::v4()->toString();
+        $orderId2 = \Symfony\Component\Uid\Uuid::v4()->toString();
 
         $this->createAuthenticatedClient()->request('POST', '/api/v1/payments', [
             'headers' => [
@@ -258,7 +258,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testAuthorizePayment(): void
     {
         // Arrange - Create a payment
-        $orderId = '01JCEX'.bin2hex(random_bytes(10));
+        $orderId = \Symfony\Component\Uid\Uuid::v4()->toString();
 
         $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/payments', [
             'headers' => [
@@ -298,7 +298,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testCapturePayment(): void
     {
         // Arrange - Create and authorize a payment
-        $orderId = '01JCEX'.bin2hex(random_bytes(10));
+        $orderId = \Symfony\Component\Uid\Uuid::v4()->toString();
 
         $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/payments', [
             'headers' => [
@@ -343,7 +343,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testRefundPayment(): void
     {
         // Arrange - Create, authorize, and capture a payment
-        $orderId = '01JCEX'.bin2hex(random_bytes(10));
+        $orderId = \Symfony\Component\Uid\Uuid::v4()->toString();
 
         $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/payments', [
             'headers' => [
@@ -400,7 +400,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testCancelPayment(): void
     {
         // Arrange - Create a payment
-        $orderId = '01JCEX'.bin2hex(random_bytes(10));
+        $orderId = \Symfony\Component\Uid\Uuid::v4()->toString();
 
         $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/payments', [
             'headers' => [
@@ -455,7 +455,7 @@ final class PaymentApiTest extends ApiTestCase
                 'X-Tenant-ID' => $tenant1Id,
             ],
             'json' => [
-                'orderId' => '01JCEX'.bin2hex(random_bytes(10)),
+                'orderId' => \Symfony\Component\Uid\Uuid::v4()->toString(),
                 'amountInCents' => 5000,
                 'currency' => 'USD',
                 'method' => 'card',
@@ -472,7 +472,7 @@ final class PaymentApiTest extends ApiTestCase
                 'X-Tenant-ID' => $tenant2Id,
             ],
             'json' => [
-                'orderId' => '01JCEX'.bin2hex(random_bytes(10)),
+                'orderId' => \Symfony\Component\Uid\Uuid::v4()->toString(),
                 'amountInCents' => 10000,
                 'currency' => 'EUR',
                 'method' => 'paypal',
@@ -504,7 +504,7 @@ final class PaymentApiTest extends ApiTestCase
     public function testCompletePaymentLifecycle(): void
     {
         // This test validates the complete payment flow
-        $orderId = '01JCEX'.bin2hex(random_bytes(10));
+        $orderId = \Symfony\Component\Uid\Uuid::v4()->toString();
 
         // Step 1: Create payment
         $createResponse = $this->createAuthenticatedClient()->request('POST', '/api/v1/payments', [

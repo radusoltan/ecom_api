@@ -167,7 +167,7 @@ final class StockOperationApiTest extends ApiTestCase
     public function testReserveStock(): void
     {
         $stockItem = $this->createStockItem(100);
-        $reservationId = 'cart-123';
+        $reservationId = '00000000-0000-4000-8000-000000000c01';
 
         $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
             'headers' => [
@@ -238,7 +238,7 @@ final class StockOperationApiTest extends ApiTestCase
     public function testAllocateStock(): void
     {
         $stockItem = $this->createStockItem(100);
-        $orderId = 'order-123';
+        $orderId = '00000000-0000-4000-8000-000000000d01';
 
         // First reserve
         $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
@@ -279,7 +279,7 @@ final class StockOperationApiTest extends ApiTestCase
     public function testAllocateWithoutReservation(): void
     {
         $this->createStockItem(100);
-        $orderId = 'order-456';
+        $orderId = '00000000-0000-4000-8000-000000000d02';
 
         $response = $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/allocate', [
             'headers' => [
@@ -313,7 +313,7 @@ final class StockOperationApiTest extends ApiTestCase
                 'productId' => $this->productId->toString(),
                 'warehouseId' => $this->warehouseId->toString(),
                 'quantity' => 20,
-                'referenceId' => 'order-789',
+                'referenceId' => '00000000-0000-4000-8000-000000000d03',
             ],
         ]);
 
@@ -323,7 +323,7 @@ final class StockOperationApiTest extends ApiTestCase
     public function testReleaseStock(): void
     {
         $stockItem = $this->createStockItem(100);
-        $reservationId = 'cart-123';
+        $reservationId = '00000000-0000-4000-8000-000000000c01';
 
         // First reserve
         $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/reserve', [
@@ -363,7 +363,7 @@ final class StockOperationApiTest extends ApiTestCase
     public function testReleaseAllocatedStock(): void
     {
         $stockItem = $this->createStockItem(100);
-        $orderId = 'order-123';
+        $orderId = '00000000-0000-4000-8000-000000000d01';
 
         // Allocate
         $this->createAuthenticatedClient()->request('POST', '/api/v1/stock/allocate', [
@@ -389,7 +389,7 @@ final class StockOperationApiTest extends ApiTestCase
                 'productId' => $this->productId->toString(),
                 'warehouseId' => $this->warehouseId->toString(),
                 'quantity' => 10,
-                'referenceId' => sprintf('cancel-%s', $orderId),
+                'referenceId' => '00000000-0000-4000-8000-000000000e01',
             ],
         ]);
 
@@ -412,7 +412,7 @@ final class StockOperationApiTest extends ApiTestCase
                 'productId' => $this->productId->toString(),
                 'warehouseId' => $this->warehouseId->toString(),
                 'quantity' => 10,
-                'referenceId' => 'cart-1',
+                'referenceId' => '00000000-0000-4000-8000-000000000c02',
             ],
         ]);
 
@@ -430,7 +430,7 @@ final class StockOperationApiTest extends ApiTestCase
                 'productId' => $this->productId->toString(),
                 'warehouseId' => $this->warehouseId->toString(),
                 'quantity' => 15,
-                'referenceId' => 'cart-2',
+                'referenceId' => '00000000-0000-4000-8000-000000000c03',
             ],
         ]);
 
@@ -448,7 +448,7 @@ final class StockOperationApiTest extends ApiTestCase
                 'productId' => $this->productId->toString(),
                 'warehouseId' => $this->warehouseId->toString(),
                 'quantity' => 20,
-                'referenceId' => 'cart-3',
+                'referenceId' => '00000000-0000-4000-8000-000000000c04',
             ],
         ]);
 

@@ -85,18 +85,16 @@ class TenantIsolationRLSTest extends KernelTestCase
     }
 
     /**
-     * Test that RLS is enabled on i18n_backfill_tracking table.
+     * Test that i18n_backfill_tracking table was removed (Sprint 8 schema sync).
      */
-    public function testRLSIsEnabledOnI18nBackfillTracking(): void
+    public function testI18nBackfillTrackingTableDropped(): void
     {
-        $sql = "SELECT tablename, rowsecurity
-                FROM pg_tables
+        $sql = "SELECT tablename FROM pg_tables
                 WHERE schemaname = 'public' AND tablename = 'i18n_backfill_tracking'";
 
         $result = $this->connection->fetchAssociative($sql);
 
-        $this->assertNotFalse($result, 'Table i18n_backfill_tracking should exist');
-        $this->assertTrue((bool) $result['rowsecurity'], 'RLS should be enabled on i18n_backfill_tracking');
+        $this->assertFalse($result, 'Table i18n_backfill_tracking should have been dropped');
     }
 
     /**

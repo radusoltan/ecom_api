@@ -486,7 +486,7 @@ final class PromotionApiTest extends ApiTestCase
     {
         $client = $this->createAuthenticatedClient();
 
-        $client->request('PUT', '/api/v1/promotions/01HQZXJ9K3M5N6P7Q8R9S0T1U2', [
+        $client->request('PUT', '/api/v1/promotions/00000000-0000-4000-8000-999999999999', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
@@ -567,7 +567,7 @@ final class PromotionApiTest extends ApiTestCase
             'json' => [],
         ]);
 
-        $this->assertResponseStatusCodeSame(500); // Domain exception
+        $this->assertResponseStatusCodeSame(400); // Domain exception now returns 400
     }
 
     // ==================== PATCH /api/promotions/{id}/deactivate ====================
@@ -632,7 +632,7 @@ final class PromotionApiTest extends ApiTestCase
             'json' => [],
         ]);
 
-        $this->assertResponseStatusCodeSame(500); // Domain exception
+        $this->assertResponseStatusCodeSame(400); // Domain exception now returns 400
     }
 
     // ==================== Complete Lifecycle Tests ====================

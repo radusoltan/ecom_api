@@ -121,7 +121,7 @@ final class DoctrineORMReturnRequestRepositoryTest extends KernelTestCase
         // Mark received
         $rr = $this->repository->findById($returnRequest->id());
         $this->assertNotNull($rr);
-        $rr->markAsReceived('WH-001');
+        $rr->markAsReceived('00000000-0000-4000-8000-000000000042');
         $this->repository->save($rr);
 
         // Inspect
@@ -140,7 +140,7 @@ final class DoctrineORMReturnRequestRepositoryTest extends KernelTestCase
         $final = $this->repository->findById($returnRequest->id());
         $this->assertNotNull($final);
         $this->assertTrue($final->status()->isCompleted());
-        $this->assertSame('WH-001', $final->warehouseId());
+        $this->assertSame('00000000-0000-4000-8000-000000000042', $final->warehouseId());
         $this->assertTrue($final->isResellable());
         $this->assertSame('Item in good condition', $final->inspectionNotes());
         $this->assertNotNull($final->refundAmount());

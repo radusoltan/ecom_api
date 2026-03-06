@@ -248,7 +248,7 @@ final class InvoiceApiTest extends ApiTestCase
         ]);
 
         // Should fail - can only cancel issued invoices
-        $this->assertResponseStatusCodeSame(500);
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testCancelReturns404ForNonExistent(): void
