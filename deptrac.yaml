@@ -524,6 +524,71 @@ deptrac:
         - type: directory
           value: src/Dashboard/Presentation/.*
 
+    # =========================================================================
+    # Vendor / External Dependencies
+    # =========================================================================
+    - name: Vendor
+      collectors:
+        - type: classLike
+          value: ^Symfony\\
+        - type: classLike
+          value: ^Doctrine\\
+        - type: classLike
+          value: ^ApiPlatform\\
+        - type: classLike
+          value: ^Psr\\
+        - type: classLike
+          value: ^Brick\\
+        - type: classLike
+          value: ^Gedmo\\
+        - type: classLike
+          value: ^Stripe\\
+        - type: classLike
+          value: ^OpenTelemetry\\
+        - type: classLike
+          value: ^Webmozart\\
+        - type: classLike
+          value: ^Elastic\\
+        - type: classLike
+          value: ^Prometheus\\
+        - type: classLike
+          value: ^Twig\\
+        - type: classLike
+          value: ^Lexik\\
+        - type: classLike
+          value: ^Gesdinet\\
+        - type: classLike
+          value: ^OTPHP\\
+        - type: classLike
+          value: ^Endroid\\
+        - type: classLike
+          value: ^Dompdf\\
+        - type: classLike
+          value: ^Monolog\\
+
+    # =========================================================================
+    # DataFixtures (outside bounded contexts)
+    # =========================================================================
+    - name: DataFixtures
+      collectors:
+        - type: directory
+          value: src/DataFixtures/.*
+
+    # =========================================================================
+    # Tests (referenced from src, e.g. NullMercureHub)
+    # =========================================================================
+    - name: TestStubs
+      collectors:
+        - type: classLike
+          value: ^App\\Tests\\
+
+  # ===========================================================================
+  # Skip violations for known test-infrastructure dependencies
+  # ===========================================================================
+  skip_violations:
+    App\Inventory\Infrastructure\EventSubscriber\StockLevelChangeNotificationSubscriber:
+      - App\Tests\Stub\NullMercureHub  # Test-only guard clause, acceptable
+
   # ===========================================================================
   # RULESET: Allowed dependencies per layer
   # ===========================================================================
@@ -531,76 +596,88 @@ deptrac:
     # -----------------------------------------------------------------------
     # Shared Kernel — no external dependencies for Domain
     # -----------------------------------------------------------------------
-    Shared_Domain: []
+    Shared_Domain:
+      - Vendor
 
     Shared_Application:
+      - Vendor
       - Shared_Domain
-
     Shared_Infrastructure:
+      - Vendor
       - Shared_Domain
       - Shared_Application
       - Internationalization_Domain          # Locale in IndexManager, CacheWarmingService
       - Internationalization_Infrastructure  # TranslatableHelper → Translation entity
-
+      # ApiProblemExceptionListener maps domain exceptions to HTTP status codes
+      - Catalog_Domain
+      - Cart_Domain
+      - Payment_Domain
+      - Order_Domain
+      - Tenant_Domain
+      - User_Domain
+      - Shipping_Domain
     # -----------------------------------------------------------------------
     # Tenant Context
     # -----------------------------------------------------------------------
     Tenant_Domain:
+      - Vendor
       - Shared_Domain
-
     Tenant_Application:
+      - Vendor
       - Tenant_Domain
       - Shared_Domain
       - Shared_Application
       - Shared_Infrastructure  # CacheService used by FeatureFlagService
-
     Tenant_Infrastructure:
+      - Vendor
       - Tenant_Domain
       - Tenant_Application
       - Shared_Domain
+      - Shared_Application  # TenantContextLocaleProvider implements Shared locale interface
       - Shared_Infrastructure
       - Internationalization_Infrastructure  # TenantEntity references Translation
-
     Tenant_Presentation:
+      - Vendor
       - Tenant_Application
       - Tenant_Domain
       - Shared_Domain
-
     # -----------------------------------------------------------------------
     # User Context
     # -----------------------------------------------------------------------
     User_Domain:
+      - Vendor
       - Shared_Domain
-
     User_Application:
+      - Vendor
       - User_Domain
       - User_Infrastructure  # PasswordResetTokenEntity, RefreshTokenEntity
       - Shared_Domain
       - Shared_Application
-
     User_Infrastructure:
+      - Vendor
       - User_Domain
       - User_Application
       - User_Presentation    # API Platform entity → processor annotations
       - Shared_Domain
+      - Shared_Application  # SecurityUserLocaleProvider implements Shared locale interface
       - Shared_Infrastructure
       - Privacy_Domain  # UserPersonalDataContributor implements Privacy port
-
     User_Presentation:
+      - Vendor
       - User_Application
       - User_Domain
       - User_Infrastructure  # API Platform processors use Doctrine entities
       - Shared_Domain
       - Shared_Infrastructure  # BlindIndexService, TenantContext
-
     # -----------------------------------------------------------------------
     # Catalog Context
     # -----------------------------------------------------------------------
     Catalog_Domain:
+      - Vendor
       - Shared_Domain
       - Internationalization_Domain  # Locale value object
-
     Catalog_Application:
+      - Vendor
       - Catalog_Domain
       - Catalog_Infrastructure   # Elasticsearch indexer, cache, analytics
       - Shared_Domain
@@ -608,8 +685,8 @@ deptrac:
       - Shared_Infrastructure    # IndexManager
       - Internationalization_Domain
       - Tenant_Domain            # TenantRepositoryInterface in SkuGenerator
-
     Catalog_Infrastructure:
+      - Vendor
       - Catalog_Domain
       - Catalog_Application
       - Catalog_Presentation     # API Platform entity → provider annotations
@@ -619,26 +696,26 @@ deptrac:
       - Internationalization_Domain
       - Internationalization_Infrastructure  # Translation entity
       - Tenant_Domain  # Tenant references in entity
-
     Catalog_Presentation:
+      - Vendor
       - Catalog_Application
       - Catalog_Domain
       - Catalog_Infrastructure  # API Platform processors use Doctrine entities
       - Shared_Domain
       - Shared_Infrastructure
-
     # -----------------------------------------------------------------------
     # Order Context
     # Cross-context: Catalog (ProductId), Inventory (WarehouseId),
     #                Tax (calculation), Customer (notifications)
     # -----------------------------------------------------------------------
     Order_Domain:
+      - Vendor
       - Shared_Domain
       - Catalog_Domain       # ProductId shared identifier (ACL boundary conversion)
       - Inventory_Domain     # WarehouseId in Fulfillment
       - Tax_Domain           # TaxCategory, TaxJurisdiction, VatNumber
-
     Order_Application:
+      - Vendor
       - Order_Domain
       - Shared_Domain
       - Shared_Application
@@ -651,8 +728,8 @@ deptrac:
       - Notifications_Application # SendNotification command
       - Privacy_Domain           # Data compliance
       - Pricing_Application      # PromotionApplicationService
-
     Order_Infrastructure:
+      - Vendor
       - Order_Domain
       - Order_Application
       - Shared_Domain
@@ -661,64 +738,64 @@ deptrac:
       - Inventory_Domain         # ACL adapter bridges to Inventory
       - Pricing_Domain           # Price references
       - Privacy_Domain           # Data compliance
-
     Order_Presentation:
+      - Vendor
       - Order_Application
       - Order_Domain
       - Order_Infrastructure  # API Platform processors use Doctrine entities
       - Shared_Domain
       - Shared_Infrastructure
-
     # -----------------------------------------------------------------------
     # Inventory Context
     # Cross-context: Catalog (ProductId)
     # -----------------------------------------------------------------------
     Inventory_Domain:
+      - Vendor
       - Shared_Domain
       - Catalog_Domain  # ProductId in StockItem
-
     Inventory_Infrastructure:
+      - Vendor
       - Inventory_Domain
       - Inventory_Application
       - Shared_Domain
       - Shared_Infrastructure
       - Catalog_Domain
-
     # Note: InventoryStatsDto uses Presentation provider reference
     Inventory_Application:
+      - Vendor
       - Inventory_Domain
       - Inventory_Presentation   # DTO references
       - Shared_Domain
       - Shared_Application
       - Catalog_Domain
       - Order_Domain  # OrderCancelled event subscriber
-
     Inventory_Presentation:
+      - Vendor
       - Inventory_Application
       - Inventory_Domain
       - Inventory_Infrastructure  # API Platform processors use Doctrine entities
       - Shared_Domain
       - Shared_Infrastructure
-
     # -----------------------------------------------------------------------
     # Pricing Context
     # Cross-context: Catalog (ProductId), Customer (CustomerSegment)
     # -----------------------------------------------------------------------
     Pricing_Domain:
+      - Vendor
       - Shared_Domain
       - Catalog_Domain    # ProductId
       - Customer_Domain   # CustomerSegment
       - User_Domain       # UserId in PriceHistory
-
     Pricing_Application:
+      - Vendor
       - Pricing_Domain
       - Shared_Domain
       - Shared_Application
       - Catalog_Domain
       - Customer_Domain
       - Cart_Domain  # PromotionApplicator operates on Cart
-
     Pricing_Infrastructure:
+      - Vendor
       - Pricing_Domain
       - Pricing_Application
       - Pricing_Presentation  # API Platform entity → processor annotations
@@ -727,30 +804,30 @@ deptrac:
       - Catalog_Domain
       - Customer_Domain
       - User_Domain  # UserId in PriceHistoryRepository
-
     Pricing_Presentation:
+      - Vendor
       - Pricing_Application
       - Pricing_Domain
       - Pricing_Infrastructure  # API Platform processors use Doctrine entities
       - Shared_Domain
       - Shared_Infrastructure
       - Cart_Domain             # CartId in cart pricing providers
-
     # -----------------------------------------------------------------------
     # Customer Context — self-contained
     # -----------------------------------------------------------------------
     Customer_Domain:
+      - Vendor
       - Shared_Domain
-
     Customer_Application:
+      - Vendor
       - Customer_Domain
       - Customer_Infrastructure  # AddressEntity, DeletionRequestEntity
       - Shared_Domain
       - Shared_Application
       - Order_Domain             # OrderPlaced/OrderPaid events, OrderRepositoryInterface
       - Privacy_Domain           # Privacy event subscribers
-
     Customer_Infrastructure:
+      - Vendor
       - Customer_Domain
       - Customer_Application
       - Customer_Presentation    # API Platform entity → processor annotations
@@ -758,8 +835,8 @@ deptrac:
       - Shared_Infrastructure
       - Privacy_Domain           # GDPR consent integration
       - Privacy_Infrastructure   # Consent repository references
-
     Customer_Presentation:
+      - Vendor
       - Customer_Application
       - Customer_Domain
       - Customer_Infrastructure  # API Platform processors use Doctrine entities
@@ -771,75 +848,75 @@ deptrac:
       - User_Domain              # User references
       - User_Infrastructure      # UserEntity in RegisterCustomerProcessor
       - Privacy_Domain           # Consent display
-
     # -----------------------------------------------------------------------
     # Payment Context
     # Cross-context: Order (status updates, queries)
     # -----------------------------------------------------------------------
     Payment_Domain:
+      - Vendor
       - Shared_Domain
-
     Payment_Application:
+      - Vendor
       - Payment_Domain
       - Shared_Domain
       - Shared_Application
       - Shared_Infrastructure  # MetricsCollector
       - Order_Application  # UpdateOrderStatusCommand, GetOrderByIdQuery
       - Order_Domain
-
     Payment_Infrastructure:
+      - Vendor
       - Payment_Domain
       - Payment_Application
       - Payment_Presentation  # API Platform entity → processor annotations
       - Shared_Domain
       - Shared_Infrastructure
-
     Payment_Presentation:
+      - Vendor
       - Payment_Application
       - Payment_Domain
       - Payment_Infrastructure  # API Platform processors use Doctrine entities
       - Shared_Domain
       - Shared_Infrastructure
       - Order_Application
-
     # -----------------------------------------------------------------------
     # Tax Context — self-contained
     # -----------------------------------------------------------------------
     Tax_Domain:
+      - Vendor
       - Shared_Domain
-
     Tax_Application:
+      - Vendor
       - Tax_Domain
       - Shared_Domain
       - Shared_Application
-
     Tax_Infrastructure:
+      - Vendor
       - Tax_Domain
       - Tax_Application
       - Shared_Domain
       - Shared_Application     # TenantContextInterface
       - Shared_Infrastructure
-
     Tax_Presentation:
+      - Vendor
       - Tax_Application
       - Tax_Domain
       - Tax_Infrastructure  # API Platform processors use Doctrine entities
       - Shared_Domain
       - Shared_Application     # TenantContextInterface
       - Shared_Infrastructure  # TenantContext
-
     # -----------------------------------------------------------------------
     # Invoice Context (no Presentation layer)
     # Cross-context: Catalog (ProductId), Customer (CustomerId),
     #                Order (OrderId), Payment (events)
     # -----------------------------------------------------------------------
     Invoice_Domain:
+      - Vendor
       - Shared_Domain
       - Catalog_Domain    # ProductId in InvoiceLine
       - Customer_Domain   # CustomerId
       - Order_Domain      # OrderId
-
     Invoice_Application:
+      - Vendor
       - Invoice_Domain
       - Shared_Domain
       - Shared_Application
@@ -847,8 +924,8 @@ deptrac:
       - Customer_Domain
       - Order_Domain
       - Payment_Domain  # PaymentCompleted event subscriber
-
     Invoice_Infrastructure:
+      - Vendor
       - Invoice_Domain
       - Invoice_Application
       - Shared_Domain
@@ -856,16 +933,16 @@ deptrac:
       - Catalog_Domain
       - Customer_Domain
       - Order_Domain
-
     # -----------------------------------------------------------------------
     # Returns Context
     # Cross-context: Order (OrderId), Payment (refund), Inventory (restock)
     # -----------------------------------------------------------------------
     Returns_Domain:
+      - Vendor
       - Shared_Domain
       - Order_Domain  # OrderId
-
     Returns_Application:
+      - Vendor
       - Returns_Domain
       - Shared_Domain
       - Shared_Application
@@ -873,33 +950,33 @@ deptrac:
       - Payment_Application    # RefundPayment command
       - Payment_Domain         # PaymentId value object
       - Inventory_Application  # AdjustStock command
-
     Returns_Infrastructure:
+      - Vendor
       - Returns_Domain
       - Returns_Application
       - Shared_Domain
       - Shared_Infrastructure
       - Order_Domain
-
     Returns_Presentation:
+      - Vendor
       - Returns_Application
       - Returns_Domain
       - Returns_Infrastructure  # API Platform processors use Doctrine entities
       - Shared_Domain
       - Shared_Infrastructure
       - Payment_Domain
-
     # -----------------------------------------------------------------------
     # Cart Context
     # Cross-context: Catalog (ProductId), Customer (CustomerId),
     #                Inventory (stock check), Order (checkout), Tax
     # -----------------------------------------------------------------------
     Cart_Domain:
+      - Vendor
       - Shared_Domain
       - Catalog_Domain    # ProductId in CartItem
       - Customer_Domain   # CustomerId
-
     Cart_Application:
+      - Vendor
       - Cart_Domain
       - Shared_Domain
       - Shared_Application
@@ -910,16 +987,16 @@ deptrac:
       - Order_Application    # PlaceOrderCommand
       - Order_Domain
       - Tax_Domain           # TaxCalculationService
-
     Cart_Infrastructure:
+      - Vendor
       - Cart_Domain
       - Cart_Application
       - Shared_Domain
       - Shared_Infrastructure
       - Catalog_Domain
       - Customer_Domain
-
     Cart_Presentation:
+      - Vendor
       - Cart_Application
       - Cart_Domain
       - Cart_Infrastructure  # API Platform processors use Doctrine entities
@@ -929,45 +1006,45 @@ deptrac:
       - Order_Application
       - Order_Domain
       - Customer_Domain
-
     # -----------------------------------------------------------------------
     # Notifications Context (no Presentation layer)
     # Cross-context: subscribes to Order + Payment domain events
     # -----------------------------------------------------------------------
     Notifications_Domain:
+      - Vendor
       - Shared_Domain
-
     Notifications_Application:
+      - Vendor
       - Notifications_Domain
       - Shared_Domain
       - Shared_Application
       - Order_Domain    # OrderPlaced, OrderCancelled events
       - Payment_Domain  # PaymentCaptured, PaymentFailed events
-
     Notifications_Infrastructure:
+      - Vendor
       - Notifications_Domain
       - Notifications_Application
       - Shared_Domain
       - Shared_Infrastructure
-
     # -----------------------------------------------------------------------
     # Search Context
     # Cross-context: Catalog (ProductId), Internationalization (Locale)
     # -----------------------------------------------------------------------
     Search_Domain:
+      - Vendor
       - Shared_Domain
       - Catalog_Domain              # ProductId
       - Internationalization_Domain  # Locale
-
     Search_Application:
+      - Vendor
       - Search_Domain
       - Shared_Domain
       - Shared_Application
       - Catalog_Domain
       - Catalog_Infrastructure       # ProductIndexer
       - Internationalization_Domain
-
     Search_Infrastructure:
+      - Vendor
       - Search_Domain
       - Search_Application
       - Search_Presentation    # API Platform bidirectional
@@ -975,88 +1052,100 @@ deptrac:
       - Shared_Infrastructure
       - Catalog_Domain
       - Internationalization_Domain
-
+      - Tenant_Domain            # Cross-context: TenantIndexLifecycleSubscriber listens to tenant events
     Search_Presentation:
+      - Vendor
       - Search_Application
       - Search_Domain
       - Search_Infrastructure  # API Platform state providers
       - Shared_Domain
-
     # -----------------------------------------------------------------------
     # AuditLog Context (no Presentation layer)
-    # Cross-context: User (UserId), subscribes to Order/Payment/Review events
+    # Cross-context: subscribes to domain events from all bounded contexts
     # -----------------------------------------------------------------------
     AuditLog_Domain:
+      - Vendor
       - Shared_Domain
       - User_Domain  # UserId
-
     AuditLog_Application:
+      - Vendor
       - AuditLog_Domain
       - Shared_Domain
       - Shared_Application
       - User_Domain
-      - Order_Domain    # Order domain events
-      - Payment_Domain  # Payment domain events
-      - Review_Domain   # Review domain events
-
+      - Order_Domain        # Order domain events
+      - Payment_Domain      # Payment domain events
+      - Review_Domain       # Review domain events
+      - Catalog_Domain      # Product/Category/Bundle/Variant events
+      - Customer_Domain     # Customer/Loyalty/AccountDeletion events
+      - Inventory_Domain    # Stock/Warehouse events
+      - Tenant_Domain       # Tenant/FeatureFlag events
+      - Cart_Domain         # Cart item events
+      - Shipping_Domain     # Shipment events
+      - Invoice_Domain      # Invoice events
+      - Returns_Domain      # Return request events
+      - Privacy_Domain      # Consent/DataSubjectRequest events
+      - Notifications_Domain # Notification events
+      - Wishlist_Domain     # Wishlist events
     AuditLog_Infrastructure:
+      - Vendor
       - AuditLog_Domain
       - AuditLog_Application
       - Shared_Domain
       - Shared_Infrastructure
       - User_Domain
-
     # -----------------------------------------------------------------------
     # Privacy Context
     # Cross-context: Customer (CustomerId for consent/data requests)
     # -----------------------------------------------------------------------
     Privacy_Domain:
+      - Vendor
       - Shared_Domain
       - Customer_Domain  # CustomerId in Consent, DataSubjectRequest
-
     Privacy_Application:
+      - Vendor
       - Privacy_Domain
       - Shared_Domain
       - Shared_Application
       - Customer_Domain
-
     Privacy_Infrastructure:
+      - Vendor
       - Privacy_Domain
       - Privacy_Application
       - Privacy_Presentation  # API Platform entity → processor annotations
       - Shared_Domain
       - Shared_Infrastructure
       - Customer_Domain
-
     Privacy_Presentation:
+      - Vendor
       - Privacy_Application
       - Privacy_Domain
       - Privacy_Infrastructure  # API Platform processors use Doctrine entities
       - Shared_Domain
       - Customer_Domain
-
     # -----------------------------------------------------------------------
     # Media Context
     # Cross-context: Catalog (ProductId, CategoryId in upload processor)
     # -----------------------------------------------------------------------
     Media_Domain:
+      - Vendor
       - Shared_Domain
-
     Media_Application:
+      - Vendor
       - Media_Domain
       - Media_Infrastructure     # TenantContextInterface
       - Shared_Domain
       - Shared_Application
       - Shared_Infrastructure    # TenantContext
-
     Media_Infrastructure:
+      - Vendor
       - Media_Domain
       - Media_Application
       - Media_Presentation  # API Platform bidirectional
       - Shared_Domain
       - Shared_Infrastructure
-
     Media_Presentation:
+      - Vendor
       - Media_Application
       - Media_Domain
       - Media_Infrastructure  # API Platform processors use Doctrine entities
@@ -1064,146 +1153,147 @@ deptrac:
       - Shared_Infrastructure
       - Catalog_Domain        # ProductId, CategoryId references
       - Catalog_Application   # ProductRepositoryInterface
-
     # -----------------------------------------------------------------------
     # Wishlist Context
     # Cross-context: Catalog (ProductId)
     # -----------------------------------------------------------------------
     Wishlist_Domain:
+      - Vendor
       - Shared_Domain
       - Catalog_Domain  # ProductId
-
     Wishlist_Application:
+      - Vendor
       - Wishlist_Domain
       - Shared_Domain
       - Shared_Application
       - Catalog_Domain
-
     Wishlist_Infrastructure:
+      - Vendor
       - Wishlist_Domain
       - Wishlist_Application
       - Shared_Domain
       - Shared_Infrastructure
       - Catalog_Domain
-
     Wishlist_Presentation:
+      - Vendor
       - Wishlist_Application
       - Wishlist_Domain
       - Shared_Domain
       - Catalog_Domain
-
     # -----------------------------------------------------------------------
     # Review Context
     # Cross-context: Catalog (ProductId)
     # -----------------------------------------------------------------------
     Review_Domain:
+      - Vendor
       - Shared_Domain
       - Catalog_Domain  # ProductId
-
     Review_Application:
+      - Vendor
       - Review_Domain
       - Review_Infrastructure  # ProductReviewEntity in query handler
       - Shared_Domain
       - Shared_Application
       - Catalog_Domain
-
     Review_Infrastructure:
+      - Vendor
       - Review_Domain
       - Review_Application
       - Review_Presentation  # API Platform bidirectional
       - Shared_Domain
       - Shared_Infrastructure
       - Catalog_Domain
-
+      - DataFixtures  # ReviewFixtures depends on TenantFixtures, ProductFixtures
     Review_Presentation:
+      - Vendor
       - Review_Application
       - Review_Domain
       - Review_Infrastructure  # API Platform processors use Doctrine entities
       - Shared_Domain
       - Catalog_Domain
-
     # -----------------------------------------------------------------------
     # Internationalization Context (no Presentation layer)
     # Cross-context: Tenant (quota management)
     # -----------------------------------------------------------------------
     Internationalization_Domain:
+      - Vendor
       - Shared_Domain
-
     Internationalization_Application:
+      - Vendor
       - Internationalization_Domain
       - Internationalization_Infrastructure  # Parser, CacheService
       - Shared_Domain
       - Shared_Application
       - Tenant_Domain  # TranslationQuotaService uses Tenant
-
     Internationalization_Infrastructure:
+      - Vendor
       - Internationalization_Domain
       - Internationalization_Application
       - Shared_Domain
       - Shared_Infrastructure
-
     # -----------------------------------------------------------------------
     # Monitoring Context
     # -----------------------------------------------------------------------
     Monitoring_Domain:
+      - Vendor
       - Shared_Domain
-
     Monitoring_Application:
+      - Vendor
       - Monitoring_Domain
       - Monitoring_Infrastructure  # Handlers use APM service
       - Shared_Domain
       - Shared_Application
       - Shared_Infrastructure
-
     Monitoring_Infrastructure:
+      - Vendor
       - Monitoring_Domain
       - Shared_Domain
       - Shared_Application
       - Shared_Infrastructure
-
     Monitoring_Presentation:
+      - Vendor
       - Monitoring_Application     # Controller dispatches queries/commands
       - Monitoring_Domain
       - Shared_Domain
       - Shared_Application         # Uses PerformanceProfiler
-
     # -----------------------------------------------------------------------
     # Shipping Context
     # Cross-context: Order (OrderId), Catalog (weight/dimensions)
     # -----------------------------------------------------------------------
     Shipping_Domain:
+      - Vendor
       - Shared_Domain
       - Order_Domain   # OrderId
-
     Shipping_Application:
+      - Vendor
       - Shipping_Domain
       - Shared_Domain
       - Shared_Application
       - Shared_Infrastructure
       - Order_Domain
       - Order_Application
-
     Shipping_Infrastructure:
+      - Vendor
       - Shipping_Domain
       - Shipping_Application
       - Shipping_Presentation  # ApiPlatform state processors use Resource class
       - Shared_Domain
       - Shared_Infrastructure
       - Order_Domain
-
     Shipping_Presentation:
+      - Vendor
       - Shipping_Application
       - Shipping_Domain
       - Shipping_Infrastructure  # ApiPlatform state processors
       - Shared_Domain
       - Shared_Infrastructure
       - Order_Domain
-
     # -----------------------------------------------------------------------
     # Dashboard Context (no Domain or Infrastructure layer)
     # Cross-context: reads from multiple contexts for aggregated reporting
     # -----------------------------------------------------------------------
     Dashboard_Application:
+      - Vendor
       - Dashboard_Presentation  # ApiPlatform DTO references state provider
       - Shared_Domain
       - Shared_Application
@@ -1218,8 +1308,8 @@ deptrac:
       - Payment_Application
       - Inventory_Domain
       - Inventory_Application
-
     Dashboard_Presentation:
+      - Vendor
       - Dashboard_Application
       - Shared_Domain
       - Shared_Application
@@ -1229,3 +1319,22 @@ deptrac:
       - Catalog_Domain
       - Payment_Domain
       - Inventory_Domain
+    # -----------------------------------------------------------------------
+    # DataFixtures — allowed to depend on domain models for seeding
+    # -----------------------------------------------------------------------
+    DataFixtures:
+      - Vendor
+      - Shared_Domain
+      - Shared_Infrastructure
+      - Tenant_Domain
+      - Catalog_Domain
+      - Customer_Domain
+      - Order_Domain
+      - Inventory_Domain
+      - User_Domain
+    # -----------------------------------------------------------------------
+    # TestStubs — test infrastructure referenced from src (to be cleaned up)
+    # -----------------------------------------------------------------------
+    TestStubs:
+      - Vendor
+
