@@ -5,6 +5,7 @@ deptrac:
   exclude_files:
     - '#.*test.*#'
     - '#.*DataFixtures.*#'
+    - '#.*Fixtures.*#'
 
   layers:
     # =========================================================================
@@ -869,6 +870,7 @@ deptrac:
       - Payment_Application
       - Payment_Presentation  # API Platform entity → processor annotations
       - Shared_Domain
+      - Shared_Application     # TenantContextInterface
       - Shared_Infrastructure
     Payment_Presentation:
       - Vendor

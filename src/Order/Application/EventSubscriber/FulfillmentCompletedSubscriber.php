@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Order\Application\EventSubscriber;
 
-use App\Order\Application\Command\UpdateOrderStatus;
+use App\Order\Application\Command\UpdateOrderStatusCommand;
 use App\Order\Domain\Event\FulfillmentCompleted;
 use App\Order\Domain\Model\OrderStatus;
 use Psr\Log\LoggerInterface;
@@ -34,10 +34,10 @@ final readonly class FulfillmentCompletedSubscriber implements EventSubscriberIn
     public function onFulfillmentCompleted(FulfillmentCompleted $event): void
     {
         // Update order status to delivered
-        $this->commandBus->dispatch(new UpdateOrderStatus(
-            orderId: $event->orderId,
-            newStatus: OrderStatus::delivered(),
-            tenantId: $event->tenantId,
+        $this->commandBus->dispatch(new UpdateOrderStatusCommand(
+            orderId: $event->orderId->toString(),
+            tenantId: $event->tenantId->toString(),
+            newStatus: OrderStatus::DELIVERED,
         ));
 
         $this->logger->info('Order marked as delivered after fulfillment completion', [
