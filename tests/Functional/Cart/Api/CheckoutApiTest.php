@@ -705,6 +705,122 @@ final class CheckoutApiTest extends ApiTestCase
     }
 
     // =============================================
+    // Test: Guest Checkout (Unauthenticated)
+    // =============================================
+
+    public function testItSuccessfullyChecksOutAsGuest(): void
+    {
+        // Create product (requires auth)
+        $productId = $this->createProduct(2499);
+
+        // Create unauthenticated client with just tenant header
+        $guestClient = static::createClient([], [
+            'headers' => [
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
+            ],
+        ]);
+
+        // Add item to cart as guest
+        $addItemResponse = $guestClient->request('POST', '/api/v1/cart/items', [
+            'json' => [
+                'tenantId' => self::DEFAULT_TENANT_ID,
+                'productId' => $productId,
+                'quantity' => 2,
+                'unitPriceAmount' => 2499,
+                'unitPriceCurrency' => 'USD',
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(201);
+        $cartData = json_decode($addItemResponse->getContent(), true);
+        $cartId = $cartData['id'];
+
+        // Checkout as guest (no auth token)
+        $checkoutResponse = $guestClient->request('POST', '/api/v1/checkout', [
+            'json' => [
+                'cartId' => $cartId,
+                'customerEmail' => 'guest-shopper@example.com',
+                'shippingAddress' => [
+                    'street' => '789 Guest Blvd',
+                    'city' => 'Austin',
+                    'state' => 'TX',
+                    'postalCode' => '73301',
+                    'country' => 'US',
+                ],
+                'billingAddress' => [
+                    'street' => '789 Guest Blvd',
+                    'city' => 'Austin',
+                    'state' => 'TX',
+                    'postalCode' => '73301',
+                    'country' => 'US',
+                ],
+            ],
+            'headers' => [
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(201);
+        $data = json_decode($checkoutResponse->getContent(), true);
+
+        $this->assertArrayHasKey('orderId', $data);
+        $this->assertNotEmpty($data['orderId']);
+        $this->assertEquals('pending', $data['status']);
+        $this->assertEquals('guest-shopper@example.com', $data['customerEmail']);
+        $this->assertEquals(4998, $data['totalAmount']); // 2499 * 2
+        $this->assertEquals('USD', $data['totalCurrency']);
+    }
+
+    public function testGuestCheckoutIsRejectedWithoutEmail(): void
+    {
+        $productId = $this->createProduct(1000);
+
+        $guestClient = static::createClient([], [
+            'headers' => [
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
+            ],
+        ]);
+
+        $addItemResponse = $guestClient->request('POST', '/api/v1/cart/items', [
+            'json' => [
+                'tenantId' => self::DEFAULT_TENANT_ID,
+                'productId' => $productId,
+                'quantity' => 1,
+                'unitPriceAmount' => 1000,
+                'unitPriceCurrency' => 'USD',
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(201);
+        $cartData = json_decode($addItemResponse->getContent(), true);
+
+        $guestClient->request('POST', '/api/v1/checkout', [
+            'json' => [
+                'cartId' => $cartData['id'],
+                'shippingAddress' => [
+                    'street' => '123 St',
+                    'city' => 'City',
+                    'state' => 'ST',
+                    'postalCode' => '12345',
+                    'country' => 'US',
+                ],
+                'billingAddress' => [
+                    'street' => '123 St',
+                    'city' => 'City',
+                    'state' => 'ST',
+                    'postalCode' => '12345',
+                    'country' => 'US',
+                ],
+            ],
+            'headers' => [
+                'X-Tenant-ID' => self::DEFAULT_TENANT_ID,
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(400);
+    }
+
+    // =============================================
     // Test: Order Lines Match Cart Items
     // =============================================
 

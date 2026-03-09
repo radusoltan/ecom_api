@@ -65,8 +65,9 @@ security:
         # === Guest-safe fulfillment tracking (1 entry — GET only, RLS-scoped) ===
         - { path: ^/api/v1/fulfillments, roles: PUBLIC_ACCESS, methods: [GET] }
 
-        # === Guest checkout (4 entries — POST only where applicable) ===
+        # === Guest checkout (5 entries — POST only where applicable) ===
         - { path: ^/api/v1/cart, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/checkout, roles: PUBLIC_ACCESS, methods: [POST] }
         - { path: ^/api/v1/customers, roles: PUBLIC_ACCESS, methods: [POST] }
         - { path: ^/api/v1/orders, roles: PUBLIC_ACCESS, methods: [POST] }
         - { path: ^/api/v1/validate-coupon, roles: PUBLIC_ACCESS, methods: [POST] }
