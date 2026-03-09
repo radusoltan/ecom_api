@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Telemetry;
 
+use OpenTelemetry\API\Common\Time\SystemClock;
+use OpenTelemetry\API\Trace\NoopTracerProvider as ApiNoopTracerProvider;
 use OpenTelemetry\API\Trace\TracerInterface;
 use OpenTelemetry\API\Trace\TracerProviderInterface;
 use OpenTelemetry\Contrib\Otlp\OtlpHttpTransportFactory;
@@ -13,7 +15,7 @@ use OpenTelemetry\SDK\Resource\ResourceInfo;
 use OpenTelemetry\SDK\Trace\Sampler\AlwaysOnSampler;
 use OpenTelemetry\SDK\Trace\Sampler\ParentBased;
 use OpenTelemetry\SDK\Trace\Sampler\TraceIdRatioBasedSampler;
-use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
+use OpenTelemetry\SDK\Trace\SpanProcessor\BatchSpanProcessor;
 use OpenTelemetry\SDK\Trace\TracerProvider;
 use OpenTelemetry\SemConv\ResourceAttributes;
 
@@ -53,6 +55,15 @@ final class TracerFactory
 
     private function buildTracerProvider(): TracerProviderInterface
     {
+        if ($this->sampleRate <= 0.0 || '' === $this->otlpEndpoint) {
+            return new ApiNoopTracerProvider();
+        }
+
+        // Check if the collector endpoint is reachable before creating the exporter
+        if (!$this->isCollectorReachable()) {
+            return new ApiNoopTracerProvider();
+        }
+
         $resource = ResourceInfo::create(Attributes::create([
             ResourceAttributes::SERVICE_NAME => $this->serviceName,
             ResourceAttributes::SERVICE_VERSION => $this->serviceVersion,
@@ -71,9 +82,29 @@ final class TracerFactory
             : new ParentBased(new TraceIdRatioBasedSampler($this->sampleRate));
 
         return new TracerProvider(
-            spanProcessors: [new SimpleSpanProcessor($exporter)],
+            spanProcessors: [new BatchSpanProcessor($exporter, SystemClock::create())],
             sampler: $sampler,
             resource: $resource,
         );
+    }
+
+    private function isCollectorReachable(): bool
+    {
+        $parts = parse_url($this->otlpEndpoint);
+        if (false === $parts || !isset($parts['host'])) {
+            return false;
+        }
+
+        $host = $parts['host'];
+        $port = $parts['port'] ?? ('https' === ($parts['scheme'] ?? 'http') ? 443 : 80);
+
+        $connection = @fsockopen($host, $port, $errno, $errstr, 1.0);
+        if (false === $connection) {
+            return false;
+        }
+
+        fclose($connection);
+
+        return true;
     }
 }
