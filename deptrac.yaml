@@ -951,7 +951,7 @@ deptrac:
       - Order_Domain
       - Payment_Application    # RefundPayment command
       - Payment_Domain         # PaymentId value object
-      - Inventory_Application  # AdjustStock command
+      # Inventory_Application removed: AdjustStock integration pending (TODO in ReturnRequestInspectedSubscriber)
     Returns_Infrastructure:
       - Vendor
       - Returns_Domain

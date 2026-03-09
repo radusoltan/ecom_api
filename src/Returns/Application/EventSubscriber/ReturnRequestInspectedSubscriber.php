@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace App\Returns\Application\EventSubscriber;
 
-use App\Inventory\Application\Command\AdjustStock\AdjustStock;
 use App\Returns\Domain\Event\ReturnRequestInspected;
-use App\Returns\Domain\Repository\ReturnRequestRepositoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\Email;
 
 /**
@@ -38,9 +35,6 @@ final readonly class ReturnRequestInspectedSubscriber implements EventSubscriber
         private MailerInterface $mailer,
         private LoggerInterface $logger,
         private string $senderEmail,
-        private string $senderName,
-        private MessageBusInterface $commandBus,
-        private ReturnRequestRepositoryInterface $returnRequestRepository,
     ) {
     }
 
@@ -80,50 +74,14 @@ final readonly class ReturnRequestInspectedSubscriber implements EventSubscriber
 
     private function handleResellableItem(ReturnRequestInspected $event): void
     {
-        // Dispatch AdjustStock command to return item to inventory
-        try {
-            $returnRequest = $this->returnRequestRepository->findById($event->returnRequestId);
-
-            if (null === $returnRequest) {
-                $this->logger->error('Cannot adjust stock: Return request not found', [
-                    'returnRequestId' => $event->returnRequestId->toString(),
-                ]);
-
-                return;
-            }
-
-            if (null === $returnRequest->warehouseId()) {
-                $this->logger->warning('Cannot adjust stock: No warehouse assigned to return', [
-                    'returnRequestId' => $event->returnRequestId->toString(),
-                ]);
-
-                return;
-            }
-
-            $this->commandBus->dispatch(
-                new AdjustStock(
-                    productId: $returnRequest->productId(),
-                    warehouseId: $returnRequest->warehouseId(),
-                    quantity: $returnRequest->quantity(),
-                    reason: 'Returned item - resellable (RMA: '.$event->returnRequestId->toString().')',
-                    tenantId: $event->tenantId->toString()
-                )
-            );
-
-            $this->logger->info('Stock adjustment command dispatched successfully', [
-                'returnRequestId' => $event->returnRequestId->toString(),
-                'productId' => $returnRequest->productId(),
-                'warehouseId' => $returnRequest->warehouseId(),
-                'quantity' => $returnRequest->quantity(),
-                'action' => 'return_to_inventory',
-            ]);
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to dispatch stock adjustment command', [
-                'returnRequestId' => $event->returnRequestId->toString(),
-                'error' => $e->getMessage(),
-            ]);
-            // Don't throw - allow inspection to proceed even if stock adjustment fails
-        }
+        // TODO: Dispatch AdjustStockCommand once ReturnRequest carries productId + quantity.
+        // ReturnRequest currently only stores orderId — the Order aggregate must be queried
+        // to resolve product and quantity for inventory restocking.
+        $this->logger->info('Resellable item identified — stock adjustment pending implementation', [
+            'returnRequestId' => $event->returnRequestId->toString(),
+            'tenantId' => $event->tenantId->toString(),
+            'action' => 'return_to_inventory',
+        ]);
     }
 
     private function handleNonResellableItem(ReturnRequestInspected $event): void

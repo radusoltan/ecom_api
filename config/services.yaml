@@ -1250,9 +1250,6 @@ services:
             $mailer: '@mailer.mailer'
             $logger: '@logger'
             $senderEmail: 'returns@ecommerce.local'
-            $senderName: 'E-Commerce Platform - Returns'
-            $commandBus: '@command.bus'
-            $returnRequestRepository: '@App\Returns\Domain\Repository\ReturnRequestRepositoryInterface'
         tags:
             - { name: kernel.event_subscriber }
 
