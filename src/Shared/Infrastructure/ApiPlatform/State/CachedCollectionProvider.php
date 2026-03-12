@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\ApiPlatform\State;
 
+use ApiPlatform\Metadata\CollectionOperationInterface;
+use ApiPlatform\Metadata\HttpOperation;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Shared\Infrastructure\Cache\CacheService;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -32,7 +35,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final readonly class CachedCollectionProvider implements ProviderInterface
 {
     private const DEFAULT_TTL = 300; // 5 minutes
-    private const MAX_TTL = 3600; // 1 hour
 
     public function __construct(
         private ProviderInterface $decorated,
@@ -46,34 +48,26 @@ final readonly class CachedCollectionProvider implements ProviderInterface
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        // Only cache GET requests
-        if (null === $request || 'GET' !== $request->getMethod()) {
+        if (null === $request || 'GET' !== $request->getMethod() || !$operation instanceof CollectionOperationInterface) {
             return $this->decorated->provide($operation, $uriVariables, $context);
         }
 
-        // Skip caching if explicitly disabled
         if ('true' === $request->headers->get('X-No-Cache')) {
             $this->logger->debug('Cache bypassed by request header');
 
             return $this->decorated->provide($operation, $uriVariables, $context);
         }
 
-        // Generate cache key from operation + tenant + query params
-        $tenantId = $request->headers->get('X-Tenant-ID', 'default');
-        $locale = $request->getPreferredLanguage(['en', 'fr', 'de']) ?? 'en';
-
-        $cacheKey = $this->generateCacheKey(
-            $operation,
-            $tenantId,
-            $locale,
-            $request->getQueryString() ?? ''
-        );
-
-        // Determine TTL based on operation
         $ttl = $this->determineTTL($operation);
+        if ($ttl <= 0) {
+            return $this->decorated->provide($operation, $uriVariables, $context);
+        }
 
-        // Generate cache tags for invalidation
-        $tags = $this->generateTags($operation, $tenantId);
+        $tenantId = $this->resolveTenantId($request);
+        $locale = $this->resolveLocale($request);
+        $resource = $this->resolveResource($operation, $request);
+        $cacheKey = $this->generateCacheKey($operation, $request, $tenantId, $locale, $resource, $uriVariables);
+        $tags = $this->generateTags($tenantId, $resource);
 
         $startTime = microtime(true);
 
@@ -88,7 +82,8 @@ final readonly class CachedCollectionProvider implements ProviderInterface
             $duration = (microtime(true) - $startTime) * 1000;
 
             $this->logger->debug('API collection cache lookup', [
-                'operation' => $operation->getShortName(),
+                'operation' => $this->operationIdentifier($operation, $request),
+                'resource' => $resource,
                 'cache_key' => $cacheKey,
                 'duration_ms' => round($duration, 2),
                 'ttl' => $ttl,
@@ -101,51 +96,49 @@ final readonly class CachedCollectionProvider implements ProviderInterface
                 'error' => $e->getMessage(),
             ]);
 
-            // Fallback to direct provider call
             return $this->decorated->provide($operation, $uriVariables, $context);
         }
     }
 
     /**
-     * Generate cache key from operation and request parameters.
+     * @param array<string, mixed> $uriVariables
      */
     private function generateCacheKey(
         Operation $operation,
+        Request $request,
         string $tenantId,
         string $locale,
-        string $queryString,
+        string $resource,
+        array $uriVariables,
     ): string {
-        $baseKey = sprintf(
-            'api:%s:%s:%s',
-            $operation->getShortName(),
-            $locale,
-            md5($queryString)
+        return $this->cacheService->tenantQueryKey(
+            $tenantId,
+            'api',
+            $resource,
+            [
+                'operation' => $this->operationIdentifier($operation, $request),
+                'locale' => $locale,
+                'path' => $request->getPathInfo(),
+                'query' => $request->query->all(),
+                'uri_variables' => $uriVariables,
+            ]
         );
-
-        return $this->cacheService->tenantKey($tenantId, $baseKey);
     }
 
-    /**
-     * Determine TTL based on operation type.
-     *
-     * Different resources have different volatility:
-     * - Products: 5 minutes (frequently updated)
-     * - Categories: 10 minutes (rarely updated)
-     * - Orders: No caching (user-specific)
-     * - Default: 5 minutes
-     */
     private function determineTTL(Operation $operation): int
     {
-        $shortName = $operation->getShortName();
+        $shortName = (string) $operation->getShortName();
 
         return match (true) {
             str_contains($shortName, 'Product') => 300,      // 5 minutes
-            str_contains($shortName, 'Category') => 600,     // 10 minutes
+            str_contains($shortName, 'Category') => 300,     // 5 minutes
             str_contains($shortName, 'PriceList') => 300,    // 5 minutes
             str_contains($shortName, 'Warehouse') => 600,    // 10 minutes
             str_contains($shortName, 'Tenant') => 600,       // 10 minutes
             str_contains($shortName, 'Order') => 0,          // No caching (user-specific)
             str_contains($shortName, 'Payment') => 0,        // No caching (sensitive)
+            str_contains($shortName, 'Notification') => 0,   // No caching (transient)
+            str_contains($shortName, 'Invoice') => 0,        // No caching (sensitive)
             default => self::DEFAULT_TTL,
         };
     }
@@ -155,32 +148,59 @@ final readonly class CachedCollectionProvider implements ProviderInterface
      *
      * @return array<string>
      */
-    private function generateTags(Operation $operation, string $tenantId): array
+    private function generateTags(string $tenantId, string $resource): array
     {
-        $shortName = $operation->getShortName();
-
-        $tags = [
-            'api',
-            'tenant:'.$tenantId,
+        return [
+            $this->cacheService->tag('api'),
+            ...$this->cacheService->tenantScopedTags($tenantId, $resource),
         ];
+    }
 
-        // Add resource-specific tags
-        if (str_contains($shortName, 'Product')) {
-            $tags[] = 'products';
-            $tags[] = 'tenant:'.$tenantId.':products';
-        } elseif (str_contains($shortName, 'Category')) {
-            $tags[] = 'categories';
-            $tags[] = 'tenant:'.$tenantId.':categories';
-        } elseif (str_contains($shortName, 'PriceList')) {
-            $tags[] = 'price_lists';
-            $tags[] = 'tenant:'.$tenantId.':price_lists';
-        } elseif (str_contains($shortName, 'Warehouse')) {
-            $tags[] = 'warehouses';
-            $tags[] = 'tenant:'.$tenantId.':warehouses';
-        } elseif (str_contains($shortName, 'Tenant')) {
-            $tags[] = 'tenants';
-        }
+    private function resolveTenantId(Request $request): string
+    {
+        $tenantId = $request->headers->get('X-Tenant-ID');
 
-        return $tags;
+        return is_string($tenantId) && '' !== trim($tenantId) ? $tenantId : 'default';
+    }
+
+    private function resolveLocale(Request $request): string
+    {
+        $acceptLanguage = (string) $request->headers->get('Accept-Language', 'en');
+        $locale = strtolower(trim(explode(',', $acceptLanguage)[0] ?? 'en'));
+        $locale = trim(explode(';', $locale)[0] ?? $locale);
+        $locale = trim(explode('-', $locale)[0] ?? $locale);
+
+        return '' !== $locale ? $locale : 'en';
+    }
+
+    private function resolveResource(Operation $operation, Request $request): string
+    {
+        $shortName = (string) $operation->getShortName();
+        $path = $request->getPathInfo();
+
+        return match (true) {
+            str_contains($shortName, 'Product') || str_contains($path, '/products') || str_contains($path, '/featured-products') => 'products',
+            str_contains($shortName, 'Category') || str_contains($path, '/categories') || str_contains($path, '/home-categories') => 'categories',
+            str_contains($shortName, 'PriceList') || str_contains($path, '/price-lists') || str_contains($path, '/price_lists') => 'price_lists',
+            str_contains($shortName, 'Promotion') || str_contains($path, '/promotions') => 'promotions',
+            str_contains($shortName, 'Warehouse') || str_contains($path, '/warehouses') => 'warehouses',
+            str_contains($shortName, 'Tenant') || str_contains($path, '/tenants') => 'tenants',
+            default => $this->normalizeResourceName('' !== $shortName ? $shortName : $path),
+        };
+    }
+
+    private function operationIdentifier(Operation $operation, Request $request): string
+    {
+        $uriTemplate = $operation instanceof HttpOperation ? $operation->getUriTemplate() : null;
+
+        return (string) ($operation->getName() ?? $uriTemplate ?? $request->getPathInfo());
+    }
+
+    private function normalizeResourceName(string $value): string
+    {
+        $normalized = preg_replace('/(?<!^)[A-Z]/', '_$0', trim($value, '/'));
+        $normalized = strtolower((string) $normalized);
+
+        return '' !== $normalized ? str_replace('-', '_', $normalized) : 'collections';
     }
 }

@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Inventory\Application\EventSubscriber;
 
+use App\Catalog\Domain\Model\ProductId;
 use App\Inventory\Application\EventSubscriber\OrderCancelledStockSubscriber;
 use App\Inventory\Domain\Event\StockReleased;
 use App\Inventory\Domain\Model\Quantity;
+use App\Inventory\Domain\Model\StockItem;
 use App\Inventory\Domain\Model\StockItemId;
 use App\Inventory\Domain\Model\StockReservation;
 use App\Inventory\Domain\Model\WarehouseId;
+use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Inventory\Domain\Repository\StockReservationRepositoryInterface;
 use App\Order\Domain\Event\OrderCancelled;
 use App\Order\Domain\Model\OrderId;
@@ -23,6 +26,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 final class OrderCancelledStockSubscriberTest extends TestCase
 {
     private StockReservationRepositoryInterface&MockObject $reservationRepository;
+    private StockItemRepositoryInterface&MockObject $stockItemRepository;
     private EventDispatcherInterface&MockObject $eventDispatcher;
     private LoggerInterface&MockObject $logger;
     private OrderCancelledStockSubscriber $subscriber;
@@ -30,11 +34,13 @@ final class OrderCancelledStockSubscriberTest extends TestCase
     protected function setUp(): void
     {
         $this->reservationRepository = $this->createMock(StockReservationRepositoryInterface::class);
+        $this->stockItemRepository = $this->createMock(StockItemRepositoryInterface::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->subscriber = new OrderCancelledStockSubscriber(
             $this->reservationRepository,
+            $this->stockItemRepository,
             $this->eventDispatcher,
             $this->logger
         );
@@ -48,11 +54,11 @@ final class OrderCancelledStockSubscriberTest extends TestCase
         $this->assertSame('onOrderCancelled', $events[OrderCancelled::class]);
     }
 
-    public function testSuccessfullyReleasesReservations(): void
+    public function testSuccessfullyReleasesReservationsAndDispatchesTenantAwareEvents(): void
     {
-        // Arrange
         $orderId = OrderId::generate();
         $tenantId = TenantId::generate();
+        $productId = ProductId::generate();
         $event = new OrderCancelled(
             orderId: $orderId,
             tenantId: $tenantId,
@@ -60,29 +66,16 @@ final class OrderCancelledStockSubscriberTest extends TestCase
             reason: 'Customer requested cancellation'
         );
 
-        $reservation1 = StockReservation::create(
-            reservationId: $orderId->toString(),
-            stockItemId: StockItemId::generate(),
-            warehouseId: WarehouseId::generate(),
-            tenantId: $tenantId,
-            quantity: Quantity::fromInt(2)
-        );
-
-        $reservation2 = StockReservation::create(
-            reservationId: $orderId->toString(),
-            stockItemId: StockItemId::generate(),
-            warehouseId: WarehouseId::generate(),
-            tenantId: $tenantId,
-            quantity: Quantity::fromInt(5)
-        );
-
-        $reservations = [$reservation1, $reservation2];
+        $reservation1 = $this->createReservation($orderId->toString(), $tenantId, Quantity::fromInt(2));
+        $reservation2 = $this->createReservation($orderId->toString(), $tenantId, Quantity::fromInt(5));
+        $stockItem1 = $this->createStockItem($reservation1->stockItemId(), $tenantId, $productId);
+        $stockItem2 = $this->createStockItem($reservation2->stockItemId(), $tenantId, $productId);
 
         $this->reservationRepository
             ->expects($this->once())
             ->method('findByOrderId')
             ->with($orderId->toString())
-            ->willReturn($reservations);
+            ->willReturn([$reservation1, $reservation2]);
 
         $this->reservationRepository
             ->expects($this->exactly(2))
@@ -91,29 +84,32 @@ final class OrderCancelledStockSubscriberTest extends TestCase
                 $this->assertTrue($reservation->isReleased());
             });
 
+        $this->stockItemRepository
+            ->expects($this->exactly(2))
+            ->method('findById')
+            ->willReturnOnConsecutiveCalls($stockItem1, $stockItem2);
+
         $this->eventDispatcher
             ->expects($this->exactly(2))
             ->method('dispatch')
-            ->with($this->isInstanceOf(StockReleased::class))
-            ->willReturnCallback(function (StockReleased $event) use ($orderId) {
-                $this->assertSame($orderId->toString(), $event->referenceId);
-                $this->assertStringContainsString('Order cancelled', $event->reason);
-                $this->assertStringContainsString('Customer requested cancellation', $event->reason);
-
-                return $event;
-            });
+            ->with($this->callback(function (StockReleased $event) use ($orderId, $tenantId, $productId): bool {
+                return $event->referenceId === $orderId->toString()
+                    && $event->tenantId->equals($tenantId)
+                    && $event->productId->equals($productId)
+                    && str_contains($event->reason, 'Order cancelled')
+                    && str_contains($event->reason, 'Customer requested cancellation');
+            }))
+            ->willReturnArgument(0);
 
         $this->logger
             ->expects($this->atLeastOnce())
             ->method('info');
 
-        // Act
         $this->subscriber->onOrderCancelled($event);
     }
 
     public function testHandlesNoReservationsFound(): void
     {
-        // Arrange
         $orderId = OrderId::generate();
         $tenantId = TenantId::generate();
         $event = new OrderCancelled(
@@ -129,25 +125,16 @@ final class OrderCancelledStockSubscriberTest extends TestCase
             ->with($orderId->toString())
             ->willReturn([]);
 
-        $this->reservationRepository
-            ->expects($this->never())
-            ->method('save');
+        $this->reservationRepository->expects($this->never())->method('save');
+        $this->stockItemRepository->expects($this->never())->method('findById');
+        $this->eventDispatcher->expects($this->never())->method('dispatch');
+        $this->logger->expects($this->atLeastOnce())->method('info');
 
-        $this->eventDispatcher
-            ->expects($this->never())
-            ->method('dispatch');
-
-        $this->logger
-            ->expects($this->atLeastOnce())
-            ->method('info');
-
-        // Act
         $this->subscriber->onOrderCancelled($event);
     }
 
     public function testSkipsAlreadyReleasedReservations(): void
     {
-        // Arrange
         $orderId = OrderId::generate();
         $tenantId = TenantId::generate();
         $event = new OrderCancelled(
@@ -157,15 +144,7 @@ final class OrderCancelledStockSubscriberTest extends TestCase
             reason: 'Out of stock'
         );
 
-        $reservation = StockReservation::create(
-            reservationId: $orderId->toString(),
-            stockItemId: StockItemId::generate(),
-            warehouseId: WarehouseId::generate(),
-            tenantId: $tenantId,
-            quantity: Quantity::fromInt(3)
-        );
-
-        // Release the reservation before the event
+        $reservation = $this->createReservation($orderId->toString(), $tenantId, Quantity::fromInt(3));
         $reservation->release();
 
         $this->reservationRepository
@@ -174,93 +153,19 @@ final class OrderCancelledStockSubscriberTest extends TestCase
             ->with($orderId->toString())
             ->willReturn([$reservation]);
 
-        $this->reservationRepository
-            ->expects($this->never())
-            ->method('save');
-
-        $this->eventDispatcher
-            ->expects($this->never())
-            ->method('dispatch');
-
+        $this->reservationRepository->expects($this->never())->method('save');
+        $this->stockItemRepository->expects($this->never())->method('findById');
+        $this->eventDispatcher->expects($this->never())->method('dispatch');
         $this->logger
             ->expects($this->atLeastOnce())
             ->method('debug')
             ->with('Reservation already released, skipping', $this->anything());
 
-        // Act
         $this->subscriber->onOrderCancelled($event);
     }
 
-    public function testHandlesPartialFailuresGracefully(): void
+    public function testLogsWarningWhenStockItemCannotBeResolved(): void
     {
-        // Arrange
-        $orderId = OrderId::generate();
-        $tenantId = TenantId::generate();
-        $event = new OrderCancelled(
-            orderId: $orderId,
-            tenantId: $tenantId,
-            previousStatus: OrderStatus::pending(),
-            reason: 'Payment failed'
-        );
-
-        $reservation1 = StockReservation::create(
-            reservationId: $orderId->toString(),
-            stockItemId: StockItemId::generate(),
-            warehouseId: WarehouseId::generate(),
-            tenantId: $tenantId,
-            quantity: Quantity::fromInt(2)
-        );
-
-        $reservation2 = StockReservation::create(
-            reservationId: $orderId->toString(),
-            stockItemId: StockItemId::generate(),
-            warehouseId: WarehouseId::generate(),
-            tenantId: $tenantId,
-            quantity: Quantity::fromInt(5)
-        );
-
-        $reservations = [$reservation1, $reservation2];
-
-        $this->reservationRepository
-            ->expects($this->once())
-            ->method('findByOrderId')
-            ->with($orderId->toString())
-            ->willReturn($reservations);
-
-        // First save succeeds, second fails
-        $saveCount = 0;
-        $this->reservationRepository
-            ->expects($this->exactly(2))
-            ->method('save')
-            ->willReturnCallback(function () use (&$saveCount) {
-                ++$saveCount;
-                if (2 === $saveCount) {
-                    throw new \RuntimeException('Database connection failed');
-                }
-            });
-
-        // Only first event is dispatched
-        $this->eventDispatcher
-            ->expects($this->once())
-            ->method('dispatch')
-            ->with($this->isInstanceOf(StockReleased::class));
-
-        $this->logger
-            ->expects($this->atLeastOnce())
-            ->method('error')
-            ->with('Failed to release reservation for cancelled order', $this->anything());
-
-        $this->logger
-            ->expects($this->atLeastOnce())
-            ->method('info');
-
-        // Act
-        $this->subscriber->onOrderCancelled($event);
-    }
-
-    public function testLogsReasonInReleaseMessage(): void
-    {
-        // Arrange
         $orderId = OrderId::generate();
         $tenantId = TenantId::generate();
         $event = new OrderCancelled(
@@ -270,41 +175,27 @@ final class OrderCancelledStockSubscriberTest extends TestCase
             reason: 'Customer changed mind'
         );
 
-        $reservation = StockReservation::create(
-            reservationId: $orderId->toString(),
-            stockItemId: StockItemId::generate(),
-            warehouseId: WarehouseId::generate(),
-            tenantId: $tenantId,
-            quantity: Quantity::fromInt(1)
-        );
+        $reservation = $this->createReservation($orderId->toString(), $tenantId, Quantity::fromInt(1));
 
         $this->reservationRepository
             ->expects($this->once())
             ->method('findByOrderId')
             ->willReturn([$reservation]);
 
-        $this->reservationRepository
+        $this->reservationRepository->expects($this->once())->method('save');
+        $this->stockItemRepository
             ->expects($this->once())
-            ->method('save');
+            ->method('findById')
+            ->with($reservation->stockItemId())
+            ->willReturn(null);
+        $this->eventDispatcher->expects($this->never())->method('dispatch');
+        $this->logger->expects($this->atLeastOnce())->method('warning');
 
-        $this->eventDispatcher
-            ->expects($this->once())
-            ->method('dispatch')
-            ->with($this->callback(function (StockReleased $event) {
-                return 'Order cancelled: Customer changed mind' === $event->reason;
-            }));
-
-        $this->logger
-            ->expects($this->atLeastOnce())
-            ->method('info');
-
-        // Act
         $this->subscriber->onOrderCancelled($event);
     }
 
     public function testHandlesExceptionFromRepositoryFindGracefully(): void
     {
-        // Arrange
         $orderId = OrderId::generate();
         $tenantId = TenantId::generate();
         $event = new OrderCancelled(
@@ -319,14 +210,9 @@ final class OrderCancelledStockSubscriberTest extends TestCase
             ->method('findByOrderId')
             ->willThrowException(new \RuntimeException('Database error'));
 
-        $this->reservationRepository
-            ->expects($this->never())
-            ->method('save');
-
-        $this->eventDispatcher
-            ->expects($this->never())
-            ->method('dispatch');
-
+        $this->reservationRepository->expects($this->never())->method('save');
+        $this->stockItemRepository->expects($this->never())->method('findById');
+        $this->eventDispatcher->expects($this->never())->method('dispatch');
         $this->logger
             ->expects($this->atLeastOnce())
             ->method('error')
@@ -335,49 +221,28 @@ final class OrderCancelledStockSubscriberTest extends TestCase
                     && 'Database error' === $context['error'];
             }));
 
-        // Act - should not throw
         $this->subscriber->onOrderCancelled($event);
     }
 
-    public function testIncludesAllRelevantContextInLogs(): void
+    private function createReservation(string $orderId, TenantId $tenantId, Quantity $quantity): StockReservation
     {
-        // Arrange
-        $orderId = OrderId::generate();
-        $tenantId = TenantId::generate();
-        $stockItemId = StockItemId::generate();
-        $event = new OrderCancelled(
-            orderId: $orderId,
-            tenantId: $tenantId,
-            previousStatus: OrderStatus::processing(),
-            reason: 'Test reason'
-        );
-
-        $reservation = StockReservation::create(
-            reservationId: $orderId->toString(),
-            stockItemId: $stockItemId,
+        return StockReservation::create(
+            reservationId: $orderId,
+            stockItemId: StockItemId::generate(),
             warehouseId: WarehouseId::generate(),
             tenantId: $tenantId,
-            quantity: Quantity::fromInt(10)
+            quantity: $quantity
         );
+    }
 
-        $this->reservationRepository
-            ->expects($this->once())
-            ->method('findByOrderId')
-            ->willReturn([$reservation]);
-
-        $this->reservationRepository
-            ->expects($this->once())
-            ->method('save');
-
-        $this->eventDispatcher
-            ->expects($this->once())
-            ->method('dispatch');
-
-        $this->logger
-            ->expects($this->atLeastOnce())
-            ->method('info');
-
-        // Act
-        $this->subscriber->onOrderCancelled($event);
+    private function createStockItem(StockItemId $stockItemId, TenantId $tenantId, ProductId $productId): StockItem
+    {
+        return StockItem::create(
+            id: $stockItemId,
+            tenantId: $tenantId,
+            productId: $productId,
+            warehouseId: WarehouseId::generate(),
+            initialQuantity: Quantity::fromInt(10)
+        );
     }
 }

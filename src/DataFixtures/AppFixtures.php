@@ -4,97 +4,148 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Shared\Infrastructure\Tenant\TenantContext;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 
-/**
- * Main AppFixtures - orchestrates all fixture loading.
- *
- * This is the entry point for loading all fixtures in the correct order:
- * 1. TenantFixtures - Creates tenants
- * 2. UserFixtures - Creates admin users
- * 3. CategoryFixtures - Creates product categories with translations
- * 4. ProductFixtures - Creates products with translations and images
- * 5. CustomerFixtures - Creates customers
- * 6. WarehouseFixtures - Creates warehouses
- * 7. StockItemFixtures - Creates inventory across warehouses
- * 8. PriceListFixtures - Creates pricing rules
- * 9. OrderFixtures - Creates sample orders
- *
- * Usage:
- *   symfony console doctrine:fixtures:load --no-interaction
- *
- * Summary:
- * - 3 Tenants
- * - 5 Users (1 super admin + 4 tenant admins/staff)
- * - 12 Categories (3 root + 9 subcategories) with EN/FR/DE translations
- * - 108 Products with 1-5 images each and EN/FR/DE translations
- * - 15 Customers (8 regular, 5 VIP, 2 premium)
- * - 5 Warehouses
- * - 90 Stock Items (30 products × 3 warehouses)
- * - 4 Price Lists
- * - 20 Orders with various statuses
- */
-class AppFixtures extends Fixture
+final class AppFixtures extends AbstractTenantAwareFixture implements DependentFixtureInterface, FixtureGroupInterface
 {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        TenantContext $tenantContext,
+    ) {
+        parent::__construct($entityManager, $tenantContext);
+    }
+
+    public static function getGroups(): array
+    {
+        return ['sprint3', 'sprint3-summary'];
+    }
+
     public function load(ObjectManager $manager): void
     {
         echo "\n";
-        echo "╔════════════════════════════════════════════════════════════╗\n";
-        echo "║          E-COMMERCE PLATFORM - FIXTURES LOADER             ║\n";
-        echo "╚════════════════════════════════════════════════════════════╝\n";
+        echo "============================================================\n";
+        echo "Sprint 3 Realistic Seed Verification\n";
+        echo "============================================================\n";
         echo "\n";
-        echo "📋 Loading fixtures in order...\n";
-        echo "\n";
-        echo "This will create:\n";
-        echo "  • 3 Tenants (TechMart, Fashion Hub, HomeGoods Plus)\n";
-        echo "  • 5 Users (admin@admin.com / password + tenant admins)\n";
-        echo "  • 12 Categories (with EN/FR/DE translations + images)\n";
-        echo "  • 108 Products (with 1-5 images + EN/FR/DE translations)\n";
-        echo "  • 15 Customers (various segments)\n";
-        echo "  • 5 Warehouses (across US regions)\n";
-        echo "  • 90 Stock Items (inventory management)\n";
-        echo "  • 4 Price Lists (pricing rules)\n";
-        echo "  • 20 Orders (various statuses)\n";
-        echo "\n";
-        echo "────────────────────────────────────────────────────────────\n";
-        echo "\n";
+        echo "RLS per-tenant counts:\n";
 
-        // Note: Individual fixtures will be loaded automatically by Doctrine
-        // in the order specified by their getOrder() methods and dependencies
+        $minimums = Sprint3SeedData::minimumCountsPerTenant();
+        $tenantIds = $this->tenantIdsByOwnerEmail();
+        $sampleProductIds = [];
+
+        foreach (Sprint3SeedData::tenants() as $tenant) {
+            $tenantId = $tenantIds[$tenant['ownerEmail']];
+            $this->activateTenantContext($tenantId);
+
+            foreach ($minimums as $table => $expectedMinimum) {
+                $count = (int) $this->connection()->fetchOne(sprintf('SELECT COUNT(*) FROM %s', $table));
+                if ($count < $expectedMinimum) {
+                    throw new \RuntimeException(sprintf('Tenant %s sees only %d rows in %s, expected at least %d', $tenant['name'], $count, $table, $expectedMinimum));
+                }
+            }
+
+            $sampleProductIds[$tenant['alias']] = (string) $this->connection()->fetchOne(
+                'SELECT id FROM catalog_products ORDER BY created_at ASC LIMIT 1'
+            );
+
+            $translatedProductCount = (int) $this->connection()->fetchOne(
+                "SELECT COUNT(*) FROM catalog_products
+                WHERE jsonb_exists(name_translations, 'en')
+                  AND jsonb_exists(name_translations, 'fr')
+                  AND jsonb_exists(name_translations, 'de')
+                  AND jsonb_exists(description_translations, 'en')
+                  AND jsonb_exists(description_translations, 'fr')
+                  AND jsonb_exists(description_translations, 'de')
+                  AND jsonb_exists(short_description_translations, 'en')
+                  AND jsonb_exists(short_description_translations, 'fr')
+                  AND jsonb_exists(short_description_translations, 'de')"
+            );
+            if ($translatedProductCount < $minimums['catalog_products']) {
+                throw new \RuntimeException(sprintf('Tenant %s has only %d fully translated products, expected at least %d', $tenant['name'], $translatedProductCount, $minimums['catalog_products']));
+            }
+
+            $translatedCategoryCount = (int) $this->connection()->fetchOne(
+                "SELECT COUNT(*) FROM catalog_categories
+                WHERE jsonb_exists(name_translations, 'en')
+                  AND jsonb_exists(name_translations, 'fr')
+                  AND jsonb_exists(name_translations, 'de')
+                  AND jsonb_exists(description_translations, 'en')
+                  AND jsonb_exists(description_translations, 'fr')
+                  AND jsonb_exists(description_translations, 'de')"
+            );
+            if ($translatedCategoryCount < $minimums['catalog_categories']) {
+                throw new \RuntimeException(sprintf('Tenant %s has only %d fully translated categories, expected at least %d', $tenant['name'], $translatedCategoryCount, $minimums['catalog_categories']));
+            }
+
+            echo sprintf(
+                "  - %s: %d categories, %d products, %d options, %d variants, %d customers, %d orders, %d invoices, %d promotions\n",
+                $tenant['name'],
+                (int) $this->connection()->fetchOne('SELECT COUNT(*) FROM catalog_categories'),
+                (int) $this->connection()->fetchOne('SELECT COUNT(*) FROM catalog_products'),
+                (int) $this->connection()->fetchOne('SELECT COUNT(*) FROM catalog_product_options'),
+                (int) $this->connection()->fetchOne('SELECT COUNT(*) FROM catalog_product_variants'),
+                (int) $this->connection()->fetchOne('SELECT COUNT(*) FROM customers'),
+                (int) $this->connection()->fetchOne('SELECT COUNT(*) FROM orders'),
+                (int) $this->connection()->fetchOne('SELECT COUNT(*) FROM invoices'),
+                (int) $this->connection()->fetchOne('SELECT COUNT(*) FROM promotions'),
+            );
+        }
+
+        $tenants = array_values(Sprint3SeedData::tenants());
+        foreach ($tenants as $viewer) {
+            $this->activateTenantContext($tenantIds[$viewer['ownerEmail']]);
+
+            foreach ($tenants as $owner) {
+                if ($viewer['alias'] === $owner['alias']) {
+                    continue;
+                }
+
+                $visibleCount = (int) $this->connection()->fetchOne(
+                    'SELECT COUNT(*) FROM catalog_products WHERE id = :id',
+                    ['id' => $sampleProductIds[$owner['alias']]]
+                );
+
+                if (0 !== $visibleCount) {
+                    throw new \RuntimeException(sprintf('RLS verification failed: tenant %s can read product %s from tenant %s', $viewer['name'], $sampleProductIds[$owner['alias']], $owner['name']));
+                }
+            }
+        }
+
+        $this->clearTenantContext();
 
         echo "\n";
-        echo "────────────────────────────────────────────────────────────\n";
+        echo "RLS verified across all three tenants.\n";
         echo "\n";
-        echo "✨ Fixture loading completed!\n";
-        echo "\n";
-        echo "🔐 Login credentials:\n";
-        echo "   Super Admin: admin@admin.com / password\n";
-        echo "   TechMart Admin: admin@techmart.com / password\n";
-        echo "   Fashion Hub Admin: admin@fashionhub.com / password\n";
-        echo "   HomeGoods Admin: admin@homegoods.com / password\n";
-        echo "   Staff: staff@techmart.com / password\n";
-        echo "\n";
-        echo "🌐 API Endpoints:\n";
-        echo "   Backend: http://localhost:8000\n";
-        echo "   Admin Frontend: http://localhost:3001\n";
-        echo "   API Docs: http://localhost:8000/api/docs\n";
-        echo "\n";
-        echo "📊 Quick Stats:\n";
-        echo "   Total Products: 108\n";
-        echo "   Total Categories: 12\n";
-        echo "   Total Orders: 20\n";
-        echo "   Total Customers: 15\n";
-        echo "   Total Warehouses: 5\n";
-        echo "\n";
-        echo "╔════════════════════════════════════════════════════════════╗\n";
-        echo "║                    READY FOR TESTING! 🚀                   ║\n";
-        echo "╚════════════════════════════════════════════════════════════╝\n";
+        echo "Seed summary:\n";
+        echo "  - 3 tenants with EN/FR/DE locale support\n";
+        echo "  - 54 categories with parent-child hierarchy\n";
+        echo "  - 1,008 products with translated catalog content\n";
+        echo "  - 360 configurable product options and 1,080 option values\n";
+        echo "  - 1,080 variants across configurable products\n";
+        echo "  - 216 customers with default and alternate addresses\n";
+        echo "  - 510 orders across pending, processing, shipped, delivered, and cancelled states\n";
+        echo "  - 108 invoices linked to orders\n";
+        echo "  - 54 active, expired, and scheduled promotions\n";
         echo "\n";
     }
 
-    public function getOrder(): int
+    public function getDependencies(): array
     {
-        return 100; // Run last to display summary
+        return [
+            UserFixtures::class,
+            CategoryFixtures::class,
+            ProductFixtures::class,
+            ProductVariationsFixtures::class,
+            WarehouseFixtures::class,
+            InventoryFixtures::class,
+            CustomerFixtures::class,
+            PromotionFixtures::class,
+            OrderFixtures::class,
+            InvoiceFixtures::class,
+        ];
     }
 }

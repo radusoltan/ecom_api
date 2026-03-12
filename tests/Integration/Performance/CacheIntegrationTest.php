@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Performance;
 
+use App\Catalog\Domain\Event\ProductUpdated;
+use App\Catalog\Domain\Model\ProductId;
+use App\Shared\Domain\ValueObject\TenantId;
 use App\Shared\Infrastructure\Cache\CacheService;
+use App\Shared\Infrastructure\EventSubscriber\CacheInvalidationSubscriber;
+use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
@@ -23,11 +29,11 @@ final class CacheIntegrationTest extends KernelTestCase
     {
         self::bootKernel();
 
-        // Use ArrayAdapter for predictable testing
-        $this->cache = new ArrayAdapter();
+        // Use an in-memory tag-aware cache for predictable testing.
+        $this->cache = new TagAwareAdapter(new ArrayAdapter());
         $this->cacheService = new CacheService(
             $this->cache,
-            self::getContainer()->get('logger')
+            new NullLogger()
         );
     }
 
@@ -140,6 +146,103 @@ final class CacheIntegrationTest extends KernelTestCase
 
         self::assertSame('tenant1_products', $result1);
         self::assertSame('tenant2_products', $result2);
+    }
+
+    public function testTenantQueryCacheTagsInvalidateOnlyAffectedTenant(): void
+    {
+        $tenant1 = '00000000-0000-4000-8000-000000000001';
+        $tenant2 = '00000000-0000-4000-8000-000000000002';
+
+        $tenant1Key = $this->cacheService->tenantQueryKey($tenant1, 'catalog', 'products', ['page' => 1]);
+        $tenant2Key = $this->cacheService->tenantQueryKey($tenant2, 'catalog', 'products', ['page' => 1]);
+        $tenant1Tags = $this->cacheService->tenantScopedTags($tenant1, 'products');
+        $tenant2Tags = $this->cacheService->tenantScopedTags($tenant2, 'products');
+
+        $this->cacheService->get($tenant1Key, fn () => 'tenant-1-cached', tags: $tenant1Tags);
+        $this->cacheService->get($tenant2Key, fn () => 'tenant-2-cached', tags: $tenant2Tags);
+
+        self::assertTrue(
+            $this->cacheService->invalidateTags([$this->cacheService->tenantResourceTag($tenant1, 'products')])
+        );
+
+        $tenant1CallbackInvoked = false;
+        $tenant2CallbackInvoked = false;
+
+        $tenant1Value = $this->cacheService->get($tenant1Key, function () use (&$tenant1CallbackInvoked) {
+            $tenant1CallbackInvoked = true;
+
+            return 'tenant-1-refreshed';
+        }, tags: $tenant1Tags);
+        $tenant2Value = $this->cacheService->get($tenant2Key, function () use (&$tenant2CallbackInvoked) {
+            $tenant2CallbackInvoked = true;
+
+            return 'tenant-2-refreshed';
+        }, tags: $tenant2Tags);
+
+        self::assertTrue($tenant1CallbackInvoked);
+        self::assertFalse($tenant2CallbackInvoked);
+        self::assertSame('tenant-1-refreshed', $tenant1Value);
+        self::assertSame('tenant-2-cached', $tenant2Value);
+    }
+
+    public function testMutationDrivenInvalidationOnlyClearsAffectedTenant(): void
+    {
+        $tenant1 = '00000000-0000-4000-8000-000000000001';
+        $tenant2 = '00000000-0000-4000-8000-000000000002';
+        $query = ['page' => 1, 'itemsPerPage' => 12];
+
+        $tenant1Key = $this->cacheService->tenantQueryKey($tenant1, 'catalog', 'products', $query);
+        $tenant2Key = $this->cacheService->tenantQueryKey($tenant2, 'catalog', 'products', $query);
+        $tenant1Tags = $this->cacheService->tenantScopedTags($tenant1, 'products');
+        $tenant2Tags = $this->cacheService->tenantScopedTags($tenant2, 'products');
+
+        $this->cacheService->get($tenant1Key, fn () => 'tenant-1-before-mutation', tags: $tenant1Tags);
+        $this->cacheService->get($tenant2Key, fn () => 'tenant-2-before-mutation', tags: $tenant2Tags);
+
+        $subscriber = new CacheInvalidationSubscriber($this->cacheService, new NullLogger());
+        $subscriber->onProductUpdated(new ProductUpdated(
+            ProductId::fromString('11111111-1111-4111-8111-111111111111'),
+            TenantId::fromString($tenant1)
+        ));
+
+        $tenant1CallbackInvoked = false;
+        $tenant2CallbackInvoked = false;
+
+        $tenant1Value = $this->cacheService->get($tenant1Key, function () use (&$tenant1CallbackInvoked) {
+            $tenant1CallbackInvoked = true;
+
+            return 'tenant-1-after-mutation';
+        }, tags: $tenant1Tags);
+        $tenant2Value = $this->cacheService->get($tenant2Key, function () use (&$tenant2CallbackInvoked) {
+            $tenant2CallbackInvoked = true;
+
+            return 'tenant-2-after-mutation';
+        }, tags: $tenant2Tags);
+
+        self::assertTrue($tenant1CallbackInvoked);
+        self::assertFalse($tenant2CallbackInvoked);
+        self::assertSame('tenant-1-after-mutation', $tenant1Value);
+        self::assertSame('tenant-2-before-mutation', $tenant2Value);
+    }
+
+    public function testTenantQueryKeyNormalizationIgnoresParameterOrder(): void
+    {
+        $firstKey = $this->cacheService->tenantQueryKey('tenant-1', 'catalog', 'products', [
+            'page' => 1,
+            'filters' => [
+                'priceMax' => 5000,
+                'priceMin' => 1000,
+            ],
+        ]);
+        $secondKey = $this->cacheService->tenantQueryKey('tenant-1', 'catalog', 'products', [
+            'filters' => [
+                'priceMin' => 1000,
+                'priceMax' => 5000,
+            ],
+            'page' => 1,
+        ]);
+
+        self::assertSame($firstKey, $secondKey);
     }
 
     public function testLocaleIsolation(): void

@@ -19,6 +19,9 @@ services:
             - '../src/Shared/Infrastructure/ApiPlatform/State/TenantContextProcessor.php'
             - '../src/Shared/Infrastructure/ApiPlatform/State/TenantContextProvider.php'
             - '../src/Shared/Infrastructure/ApiPlatform/State/CachedCollectionProvider.php'
+            - '../src/Pricing/Infrastructure/Fixtures/'
+            - '../src/Review/Infrastructure/Fixtures/'
+            - '../src/Tax/Infrastructure/Fixtures/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -72,15 +75,10 @@ services:
             - { name: doctrine.middleware }
 
     # API Caching - Cached Collection Provider
-    # Note: Decorates the default Doctrine ORM collection provider
-    # App\Shared\Infrastructure\ApiPlatform\State\CachedCollectionProvider:
-    #     decorates: 'api_platform.doctrine.orm.state.collection_provider'
-    #     arguments:
-    #         $decorated: '@.inner'
-    #         $cacheService: '@App\Shared\Infrastructure\Cache\CacheService'
-    #         $requestStack: '@request_stack'
-    #         $logger: '@logger'
-    # NOTE: Commented out by default. Enable when Redis is configured and ready for production.
+    App\Shared\Infrastructure\ApiPlatform\State\CachedCollectionProvider:
+        decorates: 'api_platform.state_provider.locator'
+        arguments:
+            $decorated: '@.inner'
 
     # API Cache Headers Subscriber
     App\Shared\Infrastructure\EventSubscriber\ApiCacheSubscriber:
@@ -183,6 +181,11 @@ services:
     App\Media\Infrastructure\Serializer\MediaObjectNormalizer:
         tags:
             - { name: serializer.normalizer, priority: 64 }
+
+    doctrine.fixtures.purger.orm_purger_factory:
+        class: App\Shared\Infrastructure\Doctrine\RlsSafeFixturesPurgerFactory
+        tags:
+            - { name: doctrine.fixtures.purger_factory, alias: default }
 
     # Order Repository - inject event dispatcher for domain events
     App\Order\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMOrderRepository:
@@ -345,6 +348,19 @@ services:
     App\Order\Presentation\Api\Provider\OrderCollectionProvider:
         arguments:
             $queryBus: '@query.bus'
+
+    App\Catalog\Infrastructure\Persistence\Doctrine\ReadModel\ProductListingReadRepository:
+        arguments:
+            $connection: '@doctrine.dbal.default_connection'
+
+    App\Catalog\Infrastructure\Persistence\Doctrine\ReadModel\AdminProductReadRepository:
+        arguments:
+            $connection: '@doctrine.dbal.default_connection'
+
+    App\Order\Infrastructure\Persistence\Doctrine\ReadModel\OrderListingReadRepository:
+        arguments:
+            $connection: '@doctrine.dbal.default_connection'
+            $encryptionService: '@App\Shared\Infrastructure\Encryption\EncryptionService'
 
     # Decorate providers with TenantContext to inject X-Tenant-ID header into context
     App\Shared\Infrastructure\ApiPlatform\State\TenantContextProvider:

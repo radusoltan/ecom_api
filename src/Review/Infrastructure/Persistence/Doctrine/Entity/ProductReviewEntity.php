@@ -25,6 +25,7 @@ use Gedmo\Translatable\Translatable;
 #[ORM\Index(name: 'idx_reviews_customer', columns: ['customer_id'])]
 #[ORM\Index(name: 'idx_reviews_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_reviews_product_status', columns: ['product_id', 'status'])]
+#[ORM\Index(name: 'idx_reviews_tenant_text_product_status', columns: ['product_id', 'status', 'created_at'])]
 class ProductReviewEntity implements Translatable
 {
     #[ORM\Id]

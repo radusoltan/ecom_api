@@ -67,7 +67,7 @@ final readonly class CalculateRedemptionQueryHandler
 
         return new RedeemPointsResult(
             pointsRedeemed: $query->pointsToRedeem,
-            discountAmount: $discountAmount->amount(),
+            discountAmountMinorUnits: $discountAmount->getAmount(),
             discountCurrency: $discountAmount->getCurrency()->getCurrencyCode(),
             remainingBalance: $remainingBalance
         );

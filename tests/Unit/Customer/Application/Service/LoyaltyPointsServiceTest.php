@@ -182,7 +182,7 @@ final class LoyaltyPointsServiceTest extends TestCase
         $customer = $this->buildCustomer();
         $redeemResult = new RedeemPointsResult(
             pointsRedeemed: 500,
-            discountAmount: 5.0,
+            discountAmountMinorUnits: 500,
             discountCurrency: 'USD',
             remainingBalance: 200,
         );
@@ -196,7 +196,7 @@ final class LoyaltyPointsServiceTest extends TestCase
         $result = $this->service->redeemPoints($this->customerId, $this->tenantId, 500);
 
         self::assertSame(500, $result->pointsRedeemed);
-        self::assertSame(5.0, $result->discountAmount);
+        self::assertSame(500, $result->discountAmountMinorUnits);
         self::assertSame('USD', $result->discountCurrency);
         self::assertSame(200, $result->remainingBalance);
     }
@@ -205,7 +205,7 @@ final class LoyaltyPointsServiceTest extends TestCase
     public function itRedeemsPointsWithOrderId(): void
     {
         $customer = $this->buildCustomer();
-        $redeemResult = new RedeemPointsResult(100, 1.0, 'USD', 0);
+        $redeemResult = new RedeemPointsResult(100, 100, 'USD', 0);
 
         $handledStamp = new HandledStamp($redeemResult, 'handler');
         $envelope = new Envelope(new \stdClass(), [$handledStamp]);

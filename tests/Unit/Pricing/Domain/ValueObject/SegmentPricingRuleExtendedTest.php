@@ -49,7 +49,7 @@ final class SegmentPricingRuleExtendedTest extends TestCase
     {
         $rule = SegmentPricingRule::create(
             CustomerSegment::premium(),
-            Discount::fixedAmount(10.0),
+            Discount::fixedAmount(1000),
         );
 
         self::assertTrue($rule->discount()->type()->isFixedAmount());
@@ -180,7 +180,7 @@ final class SegmentPricingRuleExtendedTest extends TestCase
     {
         $rule = SegmentPricingRule::create(
             CustomerSegment::wholesale(),
-            Discount::fixedAmount(25.0),
+            Discount::fixedAmount(2500),
             150,
         );
 

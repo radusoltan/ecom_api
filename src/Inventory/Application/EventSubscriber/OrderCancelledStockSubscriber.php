@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Inventory\Application\EventSubscriber;
 
 use App\Inventory\Domain\Event\StockReleased;
+use App\Inventory\Domain\Repository\StockItemRepositoryInterface;
 use App\Inventory\Domain\Repository\StockReservationRepositoryInterface;
 use App\Order\Domain\Event\OrderCancelled;
 use Psr\Log\LoggerInterface;
@@ -25,6 +26,7 @@ final readonly class OrderCancelledStockSubscriber implements EventSubscriberInt
 {
     public function __construct(
         private StockReservationRepositoryInterface $reservationRepository,
+        private StockItemRepositoryInterface $stockItemRepository,
         private EventDispatcherInterface $eventDispatcher,
         private LoggerInterface $logger,
     ) {
@@ -52,7 +54,6 @@ final readonly class OrderCancelledStockSubscriber implements EventSubscriberInt
                 'reason' => $event->reason,
             ]);
 
-            // Find all reservations for this order
             $reservations = $this->reservationRepository->findByOrderId($orderId);
 
             if (empty($reservations)) {
@@ -66,10 +67,8 @@ final readonly class OrderCancelledStockSubscriber implements EventSubscriberInt
             $releasedCount = 0;
             $failedCount = 0;
 
-            // Release each reservation
             foreach ($reservations as $reservation) {
                 try {
-                    // Skip if already released
                     if ($reservation->isReleased()) {
                         $this->logger->debug('Reservation already released, skipping', [
                             'orderId' => $orderId,
@@ -78,13 +77,26 @@ final readonly class OrderCancelledStockSubscriber implements EventSubscriberInt
                         continue;
                     }
 
-                    // Release the reservation
                     $reservation->release();
                     $this->reservationRepository->save($reservation);
 
-                    // Emit StockReleased event
+                    $stockItem = $this->stockItemRepository->findById($reservation->stockItemId());
+                    if (null === $stockItem) {
+                        ++$failedCount;
+
+                        $this->logger->warning('Stock item not found for cancelled order reservation', [
+                            'orderId' => $orderId,
+                            'reservationId' => $reservation->reservationId(),
+                            'stockItemId' => $reservation->stockItemId()->toString(),
+                        ]);
+
+                        continue;
+                    }
+
                     $stockReleasedEvent = new StockReleased(
                         stockItemId: $reservation->stockItemId(),
+                        tenantId: $reservation->tenantId(),
+                        productId: $stockItem->productId(),
                         quantity: $reservation->quantity(),
                         referenceId: $orderId,
                         reason: $reason,
@@ -103,7 +115,6 @@ final readonly class OrderCancelledStockSubscriber implements EventSubscriberInt
                 } catch (\Throwable $exception) {
                     ++$failedCount;
 
-                    // Log error but continue processing other reservations
                     $this->logger->error('Failed to release reservation for cancelled order', [
                         'orderId' => $orderId,
                         'reservationId' => $reservation->reservationId(),
@@ -120,7 +131,6 @@ final readonly class OrderCancelledStockSubscriber implements EventSubscriberInt
                 'failedCount' => $failedCount,
             ]);
         } catch (\Throwable $exception) {
-            // Log error but don't throw - stock release failure shouldn't block order cancellation
             $this->logger->error('Failed to process stock release for cancelled order', [
                 'orderId' => $event->orderId->toString(),
                 'error' => $exception->getMessage(),

@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Payment\Infrastructure\Webhook;
 
 use App\Payment\Application\Service\WebhookDeduplicationService;
 use App\Payment\Infrastructure\Webhook\PayPalWebhookHandler;
+use App\Shared\Application\Service\TenantContextInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -40,6 +41,7 @@ final class PayPalWebhookHandlerTest extends TestCase
     private MockObject&MessageBusInterface $commandBus;
     private MockObject&MessageBusInterface $queryBus;
     private MockObject&WebhookDeduplicationService $deduplicationService;
+    private MockObject&TenantContextInterface $tenantContext;
     private MockObject&LoggerInterface $logger;
 
     protected function setUp(): void
@@ -48,6 +50,7 @@ final class PayPalWebhookHandlerTest extends TestCase
         $this->commandBus = $this->createMock(MessageBusInterface::class);
         $this->queryBus = $this->createMock(MessageBusInterface::class);
         $this->deduplicationService = $this->createMock(WebhookDeduplicationService::class);
+        $this->tenantContext = $this->createMock(TenantContextInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->handler = $this->buildHandler(sandbox: true);
@@ -67,6 +70,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
             deduplicationService: $this->deduplicationService,
+            tenantContext: $this->tenantContext,
             logger: $this->logger,
             sandbox: $sandbox,
         );
@@ -310,7 +314,8 @@ final class PayPalWebhookHandlerTest extends TestCase
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => [
                 'id' => 'capture_001',
-                // no custom_id or supplementary_data
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
+                // no custom_id or supplementary_data → payment_id will be missing
             ],
         ];
         $request = $this->buildRequest($payload);
@@ -338,6 +343,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             'resource' => [
                 'id' => 'capture_002',
                 'custom_id' => self::VALID_PAYMENT_UUID,
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
             ],
         ];
         $request = $this->buildRequest($payload);
@@ -365,6 +371,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             'resource' => [
                 'id' => 'capture_003',
                 'custom_id' => self::VALID_PAYMENT_UUID,
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
                 'status' => 'COMPLETED',
             ],
         ];
@@ -397,6 +404,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             'resource' => [
                 'id' => 'capture_004',
                 'custom_id' => self::VALID_PAYMENT_UUID,
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
             ],
         ];
         $request = $this->buildRequest($payload);
@@ -429,6 +437,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             'event_type' => 'PAYMENT.CAPTURE.COMPLETED',
             'resource' => [
                 'id' => 'capture_005',
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
                 'supplementary_data' => [
                     'related_ids' => [
                         'order_id' => self::VALID_PAYMENT_UUID,
@@ -465,6 +474,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             'resource' => [
                 'id' => 'capture_006',
                 'custom_id' => self::VALID_PAYMENT_UUID,
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
             ],
         ];
         $request = $this->buildRequest($payload);
@@ -499,7 +509,8 @@ final class PayPalWebhookHandlerTest extends TestCase
                 'id' => 'capture_denied_001',
                 'status' => 'DENIED',
                 'status_details' => ['reason' => 'BUYER_CANNOT_PAY'],
-                // no custom_id
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
+                // no custom_id → payment_id will be missing
             ],
         ];
         $request = $this->buildRequest($payload);
@@ -525,6 +536,7 @@ final class PayPalWebhookHandlerTest extends TestCase
                 'id' => 'capture_denied_002',
                 'status' => 'DENIED',
                 'custom_id' => self::VALID_PAYMENT_UUID,
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
                 'status_details' => ['reason' => 'INSTRUMENT_DECLINED'],
             ],
         ];
@@ -552,6 +564,7 @@ final class PayPalWebhookHandlerTest extends TestCase
                 'id' => 'capture_denied_003',
                 'status' => 'DENIED',
                 'custom_id' => self::VALID_PAYMENT_UUID,
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
                 // no status_details
             ],
         ];
@@ -578,6 +591,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             'resource' => [
                 'id' => 'capture_denied_004',
                 'custom_id' => self::VALID_PAYMENT_UUID,
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
             ],
         ];
         $request = $this->buildRequest($payload);
@@ -606,6 +620,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             'resource' => [
                 'id' => 'refund_001',
                 'status' => 'COMPLETED',
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
                 'links' => [['href' => 'https://api.paypal.com/v2/payments/captures/capture_001']],
             ],
         ];
@@ -635,6 +650,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             'resource' => [
                 'id' => 'auth_001',
                 'status' => 'CREATED',
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
             ],
         ];
         $request = $this->buildRequest($payload);
@@ -666,7 +682,8 @@ final class PayPalWebhookHandlerTest extends TestCase
             'resource' => [
                 'id' => 'auth_voided_001',
                 'status' => 'VOIDED',
-                // no custom_id
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
+                // no custom_id → payment_id will be missing
             ],
         ];
         $request = $this->buildRequest($payload);
@@ -692,6 +709,7 @@ final class PayPalWebhookHandlerTest extends TestCase
                 'id' => 'auth_voided_002',
                 'status' => 'VOIDED',
                 'custom_id' => self::VALID_PAYMENT_UUID,
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
             ],
         ];
         $request = $this->buildRequest($payload);
@@ -716,6 +734,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             'event_type' => 'PAYMENT.AUTHORIZATION.VOIDED',
             'resource' => [
                 'id' => 'auth_voided_003',
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
                 'supplementary_data' => [
                     'related_ids' => [
                         'order_id' => self::VALID_PAYMENT_UUID,
@@ -746,6 +765,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             'resource' => [
                 'id' => 'auth_voided_004',
                 'custom_id' => self::VALID_PAYMENT_UUID,
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
             ],
         ];
         $request = $this->buildRequest($payload);
@@ -774,6 +794,7 @@ final class PayPalWebhookHandlerTest extends TestCase
             'resource' => [
                 'id' => 'order_001',
                 'status' => 'APPROVED',
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
             ],
         ];
         $request = $this->buildRequest($payload);
@@ -802,7 +823,9 @@ final class PayPalWebhookHandlerTest extends TestCase
         $payload = [
             'id' => 'evt_unknown_001',
             'event_type' => 'SOME.UNKNOWN.EVENT',
-            'resource' => [],
+            'resource' => [
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
+            ],
         ];
         $request = $this->buildRequest($payload);
 
@@ -826,7 +849,9 @@ final class PayPalWebhookHandlerTest extends TestCase
         $payload = [
             'id' => 'evt_null_type_001',
             // no event_type key
-            'resource' => [],
+            'resource' => [
+                'custom_id_tenant' => self::DEFAULT_TENANT_ID,
+            ],
         ];
         $request = $this->buildRequest($payload);
 
@@ -858,11 +883,24 @@ final class PayPalWebhookHandlerTest extends TestCase
 
         $this->mockHttpForSuccessfulSignatureVerification();
 
+        $tenantContextSet = false;
+        $this->tenantContext->expects(self::once())
+            ->method('setCurrentTenant')
+            ->with(self::callback(static function ($tenantId) use (&$tenantContextSet): bool {
+                $tenantContextSet = true;
+
+                return self::DEFAULT_TENANT_ID === $tenantId->toString();
+            }));
+
         // Deduplication IS called because tenant_id was extracted
         $this->deduplicationService->expects(self::once())
             ->method('isDuplicate')
             ->with('paypal', 'evt_tenant_001', 'PAYMENT.CAPTURE.REFUNDED', self::anything(), self::anything())
-            ->willReturn(false);
+            ->willReturnCallback(static function () use (&$tenantContextSet): bool {
+                self::assertTrue($tenantContextSet);
+
+                return false;
+            });
 
         $response = $this->handler->handle($request);
 
@@ -938,11 +976,14 @@ final class PayPalWebhookHandlerTest extends TestCase
 
         $this->mockHttpForSuccessfulSignatureVerification();
 
+        // tenant_id extraction returns null → handler returns 400
+        $this->tenantContext->expects(self::never())->method('setCurrentTenant');
         $this->deduplicationService->expects(self::never())->method('isDuplicate');
 
         $response = $this->handler->handle($request);
 
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        self::assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertSame('Missing tenant_id in metadata', $response->getContent());
     }
 
     #[Test]
@@ -961,11 +1002,14 @@ final class PayPalWebhookHandlerTest extends TestCase
         $this->mockHttpForSuccessfulSignatureVerification();
 
         // extractTenantIdFromEventData() catches InvalidArgumentException → returns null
+        // handler returns 400
+        $this->tenantContext->expects(self::never())->method('setCurrentTenant');
         $this->deduplicationService->expects(self::never())->method('isDuplicate');
 
         $response = $this->handler->handle($request);
 
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        self::assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertSame('Missing tenant_id in metadata', $response->getContent());
     }
 
     #[Test]
@@ -983,11 +1027,14 @@ final class PayPalWebhookHandlerTest extends TestCase
 
         $this->mockHttpForSuccessfulSignatureVerification();
 
+        // empty string tenant_id is treated as absent → handler returns 400
+        $this->tenantContext->expects(self::never())->method('setCurrentTenant');
         $this->deduplicationService->expects(self::never())->method('isDuplicate');
 
         $response = $this->handler->handle($request);
 
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        self::assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertSame('Missing tenant_id in metadata', $response->getContent());
     }
 
     // -----------------------------------------------------------------------

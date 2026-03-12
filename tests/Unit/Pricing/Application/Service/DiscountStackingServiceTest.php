@@ -89,9 +89,9 @@ final class DiscountStackingServiceTest extends TestCase
     {
         $originalPrice = Money::of('100.00', 'EUR');
 
-        $coupon = $this->createPromotion('Coupon', PromotionType::coupon(), Discount::fixedAmount(5.0), couponCode: CouponCode::fromString('SAVE5'));
-        $catalogRule = $this->createPromotion('Catalog', PromotionType::catalogRule(), Discount::fixedAmount(10.0));
-        $cartRule = $this->createPromotion('Cart', PromotionType::cartRule(), Discount::fixedAmount(15.0));
+        $coupon = $this->createPromotion('Coupon', PromotionType::coupon(), Discount::fixedAmount(500), couponCode: CouponCode::fromString('SAVE5'));
+        $catalogRule = $this->createPromotion('Catalog', PromotionType::catalogRule(), Discount::fixedAmount(1000));
+        $cartRule = $this->createPromotion('Cart', PromotionType::cartRule(), Discount::fixedAmount(1500));
 
         $result = $this->service->calculateStackedDiscount([$coupon, $catalogRule, $cartRule], $originalPrice, $this->tenantId);
 
@@ -107,8 +107,8 @@ final class DiscountStackingServiceTest extends TestCase
     {
         $originalPrice = Money::of('100.00', 'EUR');
 
-        $lowPriority = $this->createPromotion('Low', PromotionType::cartRule(), Discount::fixedAmount(5.0), priority: 100);
-        $highPriority = $this->createPromotion('High', PromotionType::cartRule(), Discount::fixedAmount(10.0), priority: 900);
+        $lowPriority = $this->createPromotion('Low', PromotionType::cartRule(), Discount::fixedAmount(500), priority: 100);
+        $highPriority = $this->createPromotion('High', PromotionType::cartRule(), Discount::fixedAmount(1000), priority: 900);
 
         $result = $this->service->calculateStackedDiscount([$lowPriority, $highPriority], $originalPrice, $this->tenantId);
 
@@ -233,7 +233,7 @@ final class DiscountStackingServiceTest extends TestCase
 
         $blackFriday = $this->createPromotion('Black Friday', PromotionType::cartRule(), Discount::percentage(25.0), priority: 1000);
         $electronics = $this->createPromotion('Electronics', PromotionType::catalogRule(), Discount::percentage(10.0), priority: 500);
-        $loyalty = $this->createPromotion('Loyalty', PromotionType::coupon(), Discount::fixedAmount(10.0), couponCode: CouponCode::fromString('LOYAL10'));
+        $loyalty = $this->createPromotion('Loyalty', PromotionType::coupon(), Discount::fixedAmount(1000), couponCode: CouponCode::fromString('LOYAL10'));
 
         $result = $this->service->calculateStackedDiscount([$loyalty, $electronics, $blackFriday], $originalPrice, $this->tenantId);
 

@@ -68,18 +68,11 @@ final class LocaleResponseListener
         }
 
         // Add Vary header for cache variation
-        $varyHeaders = $response->headers->get('Vary', '');
-        $varyArray = array_map('trim', explode(',', $varyHeaders));
-
-        if (!in_array('Accept-Language', $varyArray, true)) {
-            $varyArray[] = 'Accept-Language';
-        }
-
-        if (!in_array('X-Tenant-ID', $varyArray, true)) {
-            $varyArray[] = 'X-Tenant-ID';
-        }
-
-        $response->headers->set('Vary', implode(', ', array_filter($varyArray)));
+        $response->headers->set('Vary', implode(', ', array_values(array_unique([
+            ...$response->getVary(),
+            'Accept-Language',
+            'X-Tenant-ID',
+        ]))));
 
         // Add Content-Language header
         if (null !== $this->resolvedLocale) {

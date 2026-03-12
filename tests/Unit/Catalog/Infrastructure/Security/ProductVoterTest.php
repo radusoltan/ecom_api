@@ -69,14 +69,15 @@ final class ProductVoterTest extends TestCase
         $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, null, [ProductVoter::DELETE]));
     }
 
-    public function testVendorHasFullCrudAccess(): void
+    public function testVendorCanCreateAndViewOnly(): void
     {
         $token = $this->createTokenWithRoles(['ROLE_VENDOR']);
 
         $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, null, [ProductVoter::VIEW]));
         $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, null, [ProductVoter::CREATE]));
-        $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, null, [ProductVoter::EDIT]));
-        $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, null, [ProductVoter::DELETE]));
+        // EDIT/DELETE denied until vendor_id ownership field is added to Product
+        $this->assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, null, [ProductVoter::EDIT]));
+        $this->assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, null, [ProductVoter::DELETE]));
     }
 
     public function testCustomerHasNoAccess(): void

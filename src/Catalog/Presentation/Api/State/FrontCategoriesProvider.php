@@ -9,24 +9,20 @@ use ApiPlatform\State\ProviderInterface;
 use App\Catalog\Application\DTO\StorefrontCategoryDto;
 use App\Shared\Infrastructure\Tenant\TenantContext;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class FrontCategoriesProvider implements ProviderInterface
 {
-    private const CACHE_KEY_PREFIX = 'sf:homecat';
-    private const CACHE_TTL = 300; // 5 minutes
     private const DEFAULT_LIMIT = 12;
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly TenantContext $tenantContext,
         private readonly RequestStack $requestStack,
-        private readonly ?CacheItemPoolInterface $cache = null,
     ) {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array
     {
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
@@ -34,6 +30,10 @@ final class FrontCategoriesProvider implements ProviderInterface
         }
 
         $tenantId = $this->tenantContext->getTenantId();
+        if (!$tenantId && $request->headers->has('X-Tenant-ID')) {
+            $tenantId = $request->headers->get('X-Tenant-ID');
+        }
+
         if (!$tenantId) {
             return [];
         }
@@ -45,17 +45,6 @@ final class FrontCategoriesProvider implements ProviderInterface
         $limit = (int) $request->query->get('limit', self::DEFAULT_LIMIT);
         $limit = min($limit, 20); // Max 20 items
 
-        // Try to get from cache
-        if ($this->cache) {
-            $cacheKey = sprintf('%s:%s:%s:%d', self::CACHE_KEY_PREFIX, $tenantId, $locale, $limit);
-            $item = $this->cache->getItem($cacheKey);
-
-            if ($item->isHit()) {
-                return $item->get();
-            }
-        }
-
-        // Fetch categories marked as showOnFront using QueryBuilder
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select('c')
             ->from('App\\Catalog\\Infrastructure\\Persistence\\Doctrine\\Entity\\CategoryEntity', 'c')
@@ -81,13 +70,6 @@ final class FrontCategoriesProvider implements ProviderInterface
         foreach ($categoryEntities as $entity) {
             $category = $entity->toDomainModel();
             $dtos[] = $this->mapToDto($category, $locale);
-        }
-
-        // Cache the result
-        if ($this->cache && isset($cacheKey) && isset($item)) {
-            $item->set($dtos);
-            $item->expiresAfter(self::CACHE_TTL);
-            $this->cache->save($item);
         }
 
         return $dtos;
@@ -123,14 +105,15 @@ final class FrontCategoriesProvider implements ProviderInterface
 
     private function parseLocale(string $acceptLanguage): string
     {
-        // Parse Accept-Language header (e.g., "en-US,en;q=0.9")
         $locales = explode(',', $acceptLanguage);
         if (empty($locales)) {
             return 'en';
         }
 
         $locale = explode(';', $locales[0])[0];
+        $locale = strtolower(trim($locale));
+        $locale = explode('-', $locale)[0] ?? $locale;
 
-        return strtolower(trim($locale));
+        return '' !== $locale ? $locale : 'en';
     }
 }

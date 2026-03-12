@@ -29,6 +29,7 @@ use Symfony\Component\Serializer\Attribute\MaxDepth;
 #[ORM\Index(name: 'idx_product_variants_product', columns: ['configurable_product_id'])]
 #[ORM\Index(name: 'idx_product_variants_product_active', columns: ['configurable_product_id', 'is_active'])]
 #[ORM\Index(name: 'idx_product_variants_tenant', columns: ['tenant_id'])]
+#[ORM\Index(name: 'idx_variants_tenant_text_product', columns: ['configurable_product_id', 'is_active'])]
 #[ApiResource(
     shortName: 'Variant',
     operations: [
@@ -264,6 +265,16 @@ class VariantEntity
     public function setIsActive(bool $isActive): void
     {
         $this->isActive = $isActive;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): \DateTimeImmutable
+    {
+        return $this->updatedAt;
     }
 
     public function getTenantId(): string

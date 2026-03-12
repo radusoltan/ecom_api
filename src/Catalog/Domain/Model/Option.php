@@ -177,37 +177,3 @@ final class Option
         return $this->id->equals($other->id);
     }
 }
-
-/**
- * Value object for Option ID.
- */
-final class OptionId
-{
-    private function __construct(
-        private readonly string $value,
-    ) {
-        if (empty($value)) {
-            throw new \InvalidArgumentException('Option ID cannot be empty');
-        }
-    }
-
-    public static function generate(): self
-    {
-        return new self(uniqid('opt_', true));
-    }
-
-    public static function fromString(string $value): self
-    {
-        return new self($value);
-    }
-
-    public function toString(): string
-    {
-        return $this->value;
-    }
-
-    public function equals(self $other): bool
-    {
-        return $this->value === $other->value;
-    }
-}

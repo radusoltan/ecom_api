@@ -209,7 +209,7 @@ final class RedeemPointsCommandHandlerTest extends TestCase
         self::assertSame(100, $result->pointsRedeemed);
         self::assertSame(400, $result->remainingBalance);
         self::assertSame('USD', $result->discountCurrency);
-        self::assertGreaterThan(0, $result->discountAmount);
+        self::assertGreaterThan(0, $result->discountAmountMinorUnits);
     }
 
     // ---------------------------------------------------------------------------
@@ -237,8 +237,8 @@ final class RedeemPointsCommandHandlerTest extends TestCase
 
         $result = ($this->handler)($command);
 
-        // 100 points / 100 rate = 1.00
-        self::assertEqualsWithDelta(1.00, $result->discountAmount, 0.001);
+        // 100 points / 100 rate = 1.00 USD = 100 minor units
+        self::assertSame(100, $result->discountAmountMinorUnits);
     }
 
     // ---------------------------------------------------------------------------

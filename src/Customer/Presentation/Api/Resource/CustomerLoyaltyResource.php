@@ -262,7 +262,7 @@ class CustomerLoyaltyResource
     public ?int $pointsRedeemed = null;
 
     #[ApiProperty(readable: true, writable: false)]
-    public ?float $discountAmount = null;
+    public ?int $discountAmount = null;
 
     #[ApiProperty(readable: true, writable: false)]
     public ?string $discountCurrency = null;

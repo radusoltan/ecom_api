@@ -29,7 +29,7 @@ final class StorefrontCacheSubscriber implements EventSubscriberInterface
 
         // Only apply to storefront API endpoints
         $path = $request->getPathInfo();
-        if (!str_starts_with($path, '/api/storefront/')) {
+        if (!str_starts_with($path, '/api/v1/storefront/') && !str_starts_with($path, '/api/storefront/')) {
             return;
         }
 
@@ -38,8 +38,7 @@ final class StorefrontCacheSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // Add Vary header for Accept-Language
-        $response->headers->set('Vary', 'Accept-Language, X-Tenant-ID', false);
+        $this->mergeVaryHeaders($response, ['Accept', 'Accept-Language', 'X-Tenant-ID']);
 
         // Set cache headers based on endpoint (check most specific paths first)
         if (str_contains($path, '/featured-products')) {
@@ -48,26 +47,13 @@ final class StorefrontCacheSubscriber implements EventSubscriberInterface
         } elseif (str_contains($path, '/home-categories')) {
             // Home categories: Cache for 5 minutes, stale-while-revalidate for 10 minutes
             $response->headers->set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+        } elseif (str_contains($path, '/autocomplete') || str_contains($path, '/search')) {
+            // Search and autocomplete: short TTL with fast revalidation
+            $response->headers->set('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
         } elseif (str_contains($path, '/storefront/products')) {
-            // Product listing: Cache for 2 minutes, stale-while-revalidate for 10 minutes
-            $response->headers->set('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
+            // Product listing: Cache for 5 minutes, stale-while-revalidate for 10 minutes
+            $response->headers->set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
         }
-
-        // Add ETag for better cache validation
-        $content = $response->getContent();
-        if ($content) {
-            $etag = md5($content);
-            $response->headers->set('ETag', '"'.$etag.'"');
-
-            // Check if client has the same version
-            $clientEtag = $request->headers->get('If-None-Match');
-            if ($clientEtag === '"'.$etag.'"') {
-                $response->setNotModified();
-            }
-        }
-
-        // Add Last-Modified header
-        $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s').' GMT');
 
         // Add X-Content-Language header to indicate resolved locale
         $locale = $request->headers->get('Accept-Language', 'en');
@@ -85,5 +71,16 @@ final class StorefrontCacheSubscriber implements EventSubscriberInterface
         $locale = explode(';', $locales[0])[0];
 
         return strtolower(trim($locale));
+    }
+
+    /**
+     * @param array<string> $headers
+     */
+    private function mergeVaryHeaders(\Symfony\Component\HttpFoundation\Response $response, array $headers): void
+    {
+        $response->headers->set('Vary', implode(', ', array_values(array_unique([
+            ...$response->getVary(),
+            ...$headers,
+        ]))));
     }
 }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Customer\Infrastructure\Security;
 
+use App\Customer\Domain\Model\Customer;
 use App\Customer\Infrastructure\Security\CustomerVoter;
+use App\Shared\Domain\ValueObject\Email;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
@@ -81,6 +83,33 @@ final class CustomerVoterTest extends TestCase
         $this->assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, null, [CustomerVoter::EDIT]));
     }
 
+    public function testCustomerCanViewOwnProfile(): void
+    {
+        $token = $this->createTokenWithRolesAndEmail(['ROLE_CUSTOMER'], 'customer@example.com');
+        $customer = $this->createCustomerWithEmail('customer@example.com');
+
+        $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, $customer, [CustomerVoter::VIEW]));
+        $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, $customer, [CustomerVoter::EDIT]));
+    }
+
+    public function testCustomerCannotViewOtherCustomerProfile(): void
+    {
+        $token = $this->createTokenWithRolesAndEmail(['ROLE_CUSTOMER'], 'customer@example.com');
+        $customer = $this->createCustomerWithEmail('other@example.com');
+
+        $this->assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, $customer, [CustomerVoter::VIEW]));
+        $this->assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, $customer, [CustomerVoter::EDIT]));
+    }
+
+    public function testAdminCanViewAnyCustomerProfile(): void
+    {
+        $token = $this->createTokenWithRolesAndEmail(['ROLE_ADMIN'], 'admin@example.com');
+        $customer = $this->createCustomerWithEmail('customer@example.com');
+
+        $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, $customer, [CustomerVoter::VIEW]));
+        $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, $customer, [CustomerVoter::EDIT]));
+    }
+
     /**
      * @param list<string> $roles
      */
@@ -93,5 +122,31 @@ final class CustomerVoterTest extends TestCase
         $token->method('getRoleNames')->willReturn($roles);
 
         return $token;
+    }
+
+    /**
+     * @param list<string> $roles
+     */
+    private function createTokenWithRolesAndEmail(array $roles, string $email): TokenInterface
+    {
+        $user = $this->createMock(UserInterface::class);
+        $user->method('getUserIdentifier')->willReturn($email);
+
+        $token = $this->createMock(TokenInterface::class);
+        $token->method('getUser')->willReturn($user);
+        $token->method('getRoleNames')->willReturn($roles);
+
+        return $token;
+    }
+
+    private function createCustomerWithEmail(string $email): Customer
+    {
+        $emailVo = $this->createMock(Email::class);
+        $emailVo->method('toString')->willReturn($email);
+
+        $customer = $this->createMock(Customer::class);
+        $customer->method('email')->willReturn($emailVo);
+
+        return $customer;
     }
 }

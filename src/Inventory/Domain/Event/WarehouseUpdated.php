@@ -7,11 +7,13 @@ namespace App\Inventory\Domain\Event;
 use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Model\WarehouseName;
 use App\Shared\Domain\Event\DomainEvent;
+use App\Shared\Domain\ValueObject\TenantId;
 
 final readonly class WarehouseUpdated implements DomainEvent
 {
     public function __construct(
         public WarehouseId $warehouseId,
+        public TenantId $tenantId,
         public WarehouseName $name,
         public \DateTimeImmutable $occurredOn,
     ) {

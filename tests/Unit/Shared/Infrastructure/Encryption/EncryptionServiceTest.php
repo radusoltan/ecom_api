@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Shared\Infrastructure\Encryption;
 
 use App\Shared\Infrastructure\Encryption\BlindIndexService;
+use App\Shared\Infrastructure\Encryption\DecryptionFailedException;
 use App\Shared\Infrastructure\Encryption\EncryptionKeyProvider;
 use App\Shared\Infrastructure\Encryption\EncryptionService;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -24,6 +25,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(EncryptionService::class)]
 #[CoversClass(BlindIndexService::class)]
 #[CoversClass(EncryptionKeyProvider::class)]
+#[CoversClass(DecryptionFailedException::class)]
 final class EncryptionServiceTest extends TestCase
 {
     /**
@@ -206,7 +208,7 @@ final class EncryptionServiceTest extends TestCase
     }
 
     #[Test]
-    public function itThrowsWhenDecryptingWithWrongKey(): void
+    public function itThrowsDecryptionFailedExceptionWithWrongKey(): void
     {
         $wrongKeyProvider = new EncryptionKeyProvider(
             encryptionKey: self::WRONG_ENCRYPTION_KEY,
@@ -216,32 +218,36 @@ final class EncryptionServiceTest extends TestCase
 
         $ciphertext = $this->encryption->encrypt('secret');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(DecryptionFailedException::class);
         $this->expectExceptionMessage('Decryption failed');
 
         $wrongKeyService->decrypt($ciphertext);
     }
 
     #[Test]
-    public function itThrowsWhenDecryptingInvalidBase64(): void
+    public function itThrowsDecryptionFailedExceptionForInvalidBase64(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(DecryptionFailedException::class);
 
-        // The string below is not valid base64 (contains characters outside the base64 alphabet
-        // and the strict flag inside decrypt() will return false).
         $this->encryption->decrypt('!!!not-valid-base64!!!');
     }
 
     #[Test]
-    public function itThrowsWhenDecryptingTooShortPayload(): void
+    public function itThrowsDecryptionFailedExceptionForTooShortPayload(): void
     {
-        // A valid base64 string that decodes to fewer bytes than nonce + mac.
         $tooShort = base64_encode('short');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(DecryptionFailedException::class);
         $this->expectExceptionMessage('Ciphertext too short');
 
         $this->encryption->decrypt($tooShort);
+    }
+
+    #[Test]
+    public function itDecryptionFailedExceptionIsRuntimeException(): void
+    {
+        // Ensures backwards compatibility — existing catch blocks for RuntimeException still work
+        self::assertInstanceOf(\RuntimeException::class, DecryptionFailedException::wrongKeyOrCorrupted());
     }
 
     // -------------------------------------------------------------------------

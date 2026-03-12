@@ -98,6 +98,8 @@ final class StockItem extends AggregateRoot
 
         $this->recordEvent(new StockReserved(
             $this->id,
+            $this->tenantId,
+            $this->productId,
             $quantity,
             $reservationId,
             new \DateTimeImmutable()
@@ -128,6 +130,8 @@ final class StockItem extends AggregateRoot
 
         $this->recordEvent(new StockAllocated(
             $this->id,
+            $this->tenantId,
+            $this->productId,
             $quantity,
             $orderId,
             new \DateTimeImmutable()
@@ -173,6 +177,8 @@ final class StockItem extends AggregateRoot
 
         $this->recordEvent(new StockReleased(
             $this->id,
+            $this->tenantId,
+            $this->productId,
             $quantity,
             $referenceId,
             $reason,
@@ -198,6 +204,8 @@ final class StockItem extends AggregateRoot
 
         $this->recordEvent(new StockAdjusted(
             $this->id,
+            $this->tenantId,
+            $this->productId,
             $previousQuantity,
             $newQuantity,
             $reason,

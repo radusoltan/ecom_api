@@ -100,7 +100,7 @@ final readonly class RedeemPointsProcessor implements ProcessorInterface
         $resource = new CustomerLoyaltyResource();
         $resource->customerId = $customerId;
         $resource->pointsRedeemed = $result->pointsRedeemed;
-        $resource->discountAmount = $result->discountAmount;
+        $resource->discountAmount = $result->discountAmountMinorUnits;
         $resource->discountCurrency = $result->discountCurrency;
         $resource->remainingBalance = $result->remainingBalance;
 

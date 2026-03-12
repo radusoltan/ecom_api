@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Payment\Infrastructure\Webhook;
 
 use App\Payment\Application\Service\WebhookDeduplicationService;
 use App\Payment\Infrastructure\Webhook\StripeWebhookHandler;
+use App\Shared\Application\Service\TenantContextInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -38,6 +39,7 @@ final class StripeWebhookHandlerTest extends TestCase
     private MockObject&MessageBusInterface $commandBus;
     private MockObject&MessageBusInterface $queryBus;
     private MockObject&WebhookDeduplicationService $deduplicationService;
+    private MockObject&TenantContextInterface $tenantContext;
     private MockObject&LoggerInterface $logger;
 
     protected function setUp(): void
@@ -45,6 +47,7 @@ final class StripeWebhookHandlerTest extends TestCase
         $this->commandBus = $this->createMock(MessageBusInterface::class);
         $this->queryBus = $this->createMock(MessageBusInterface::class);
         $this->deduplicationService = $this->createMock(WebhookDeduplicationService::class);
+        $this->tenantContext = $this->createMock(TenantContextInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->handler = new StripeWebhookHandler(
@@ -52,6 +55,7 @@ final class StripeWebhookHandlerTest extends TestCase
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
             deduplicationService: $this->deduplicationService,
+            tenantContext: $this->tenantContext,
             logger: $this->logger,
         );
     }
@@ -235,9 +239,22 @@ final class StripeWebhookHandlerTest extends TestCase
         );
         $request = $this->buildSignedRequest($payload);
 
+        $tenantContextSet = false;
+        $this->tenantContext->expects(self::once())
+            ->method('setCurrentTenant')
+            ->with(self::callback(static function ($tenantId) use (&$tenantContextSet): bool {
+                $tenantContextSet = true;
+
+                return self::DEFAULT_TENANT_ID === $tenantId->toString();
+            }));
+
         $this->deduplicationService->expects(self::once())
             ->method('isDuplicate')
-            ->willReturn(true);
+            ->willReturnCallback(static function () use (&$tenantContextSet): bool {
+                self::assertTrue($tenantContextSet);
+
+                return true;
+            });
 
         $this->queryBus->expects(self::never())->method('dispatch');
         $this->commandBus->expects(self::never())->method('dispatch');
@@ -255,7 +272,7 @@ final class StripeWebhookHandlerTest extends TestCase
     #[Test]
     public function itHandlesPaymentIntentSucceededWhenMissingMetadata(): void
     {
-        // No payment_id / tenant_id in metadata
+        // No payment_id / tenant_id in metadata — now returns 400 (tenant_id required)
         $payload = $this->buildPaymentIntentPayload(
             eventType: 'payment_intent.succeeded',
             metadata: [],
@@ -265,16 +282,10 @@ final class StripeWebhookHandlerTest extends TestCase
         $this->deduplicationService->expects(self::never())->method('isDuplicate');
         $this->queryBus->expects(self::never())->method('dispatch');
 
-        $this->logger->expects(self::atLeastOnce())->method('warning')
-            ->with(
-                'Stripe webhook: Missing payment_id or tenant_id in metadata',
-                self::anything(),
-            );
-
         $response = $this->handler->handle($request);
 
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
-        self::assertSame('Missing metadata', $response->getContent());
+        self::assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertSame('Missing tenant_id in metadata', $response->getContent());
     }
 
     #[Test]
@@ -421,8 +432,8 @@ final class StripeWebhookHandlerTest extends TestCase
 
         $response = $this->handler->handle($request);
 
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
-        self::assertSame('Missing metadata', $response->getContent());
+        self::assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertSame('Missing tenant_id in metadata', $response->getContent());
     }
 
     #[Test]
@@ -526,15 +537,19 @@ final class StripeWebhookHandlerTest extends TestCase
     #[Test]
     public function itHandlesPaymentIntentCanceledWithoutPaymentId(): void
     {
+        // No payment_id in metadata but valid tenant_id — handler logs and returns Cancellation confirmed
         $payload = $this->buildPaymentIntentPayload(
             eventType: 'payment_intent.canceled',
-            metadata: [],
+            metadata: [
+                'tenant_id' => self::DEFAULT_TENANT_ID,
+            ],
             cancellationReason: 'fraudulent',
         );
         $request = $this->buildSignedRequest($payload);
 
-        // No tenant_id in metadata → deduplication is NOT called
-        $this->deduplicationService->expects(self::never())->method('isDuplicate');
+        $this->deduplicationService->expects(self::once())
+            ->method('isDuplicate')
+            ->willReturn(false);
         $this->commandBus->expects(self::never())->method('dispatch');
 
         $response = $this->handler->handle($request);
@@ -550,14 +565,26 @@ final class StripeWebhookHandlerTest extends TestCase
     #[Test]
     public function itHandlesChargeRefunded(): void
     {
-        $payload = $this->buildChargePayload(
-            chargeId: 'ch_test_refund',
-            amountRefunded: 4999,
-        );
+        // charge.refunded events must include tenant_id in metadata for the handler to proceed
+        $payload = (string) json_encode([
+            'id' => 'evt_charge_001',
+            'type' => 'charge.refunded',
+            'data' => [
+                'object' => [
+                    'id' => 'ch_test_refund',
+                    'amount_refunded' => 4999,
+                    'refunded' => true,
+                    'metadata' => [
+                        'tenant_id' => self::DEFAULT_TENANT_ID,
+                    ],
+                ],
+            ],
+        ]);
         $request = $this->buildSignedRequest($payload);
 
-        // charge has no metadata.tenant_id → deduplication is NOT called
-        $this->deduplicationService->expects(self::never())->method('isDuplicate');
+        $this->deduplicationService->expects(self::once())
+            ->method('isDuplicate')
+            ->willReturn(false);
         $this->commandBus->expects(self::never())->method('dispatch');
 
         $response = $this->handler->handle($request);
@@ -639,12 +666,14 @@ final class StripeWebhookHandlerTest extends TestCase
         $request = $this->buildSignedRequest($payload);
 
         // extractTenantIdFromEvent() throws InvalidArgumentException → returns null
-        // so deduplicationService should NOT be called
+        // handler now returns 400 "Missing tenant_id in metadata"
+        $this->tenantContext->expects(self::never())->method('setCurrentTenant');
         $this->deduplicationService->expects(self::never())->method('isDuplicate');
 
         $response = $this->handler->handle($request);
 
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        self::assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertSame('Missing tenant_id in metadata', $response->getContent());
     }
 
     // -----------------------------------------------------------------------
@@ -659,6 +688,7 @@ final class StripeWebhookHandlerTest extends TestCase
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
             deduplicationService: $this->deduplicationService,
+            tenantContext: $this->tenantContext,
             logger: $this->logger,
         );
 

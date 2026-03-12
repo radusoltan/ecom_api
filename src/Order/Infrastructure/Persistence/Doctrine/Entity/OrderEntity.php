@@ -23,6 +23,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_orders_created_at', columns: ['created_at'])]
 #[ORM\Index(name: 'idx_orders_customer_created', columns: ['customer_email_blind_index', 'created_at'])]
 #[ORM\Index(name: 'idx_orders_tenant_status_created', columns: ['tenant_id', 'status', 'created_at'])]
+#[ORM\Index(name: 'idx_orders_tenant_text_created', columns: ['created_at'])]
+#[ORM\Index(name: 'idx_orders_tenant_text_status_created', columns: ['status', 'created_at'])]
 class OrderEntity
 {
     #[ORM\Id]

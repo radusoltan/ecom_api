@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Customer\Infrastructure\Security;
 
 use App\Customer\Domain\Model\Customer;
+use App\Shared\Infrastructure\Security\OwnershipCheckTrait;
 use App\Shared\Infrastructure\Security\Voter\AbstractResourceVoter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
@@ -23,6 +24,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Vote;
  */
 final class CustomerVoter extends AbstractResourceVoter
 {
+    use OwnershipCheckTrait;
     public const VIEW = 'customer.view';
     public const CREATE = 'customer.create';
     public const EDIT = 'customer.edit';
@@ -65,14 +67,10 @@ final class CustomerVoter extends AbstractResourceVoter
             return in_array($attribute, [self::VIEW, self::CREATE, self::EDIT, self::DELETE], true);
         }
 
-        // CUSTOMER: can only edit own profile
+        // CUSTOMER: can only view/edit own profile (BOLA protection)
         if ($this->hasRole($token, 'ROLE_CUSTOMER')) {
             if ($subject instanceof Customer && in_array($attribute, [self::VIEW, self::EDIT], true)) {
-                $user = $this->getUser($token);
-
-                // TODO: Implement ownership check when user-customer relationship is established
-                // For now, allow view and edit for all customers
-                return true;
+                return $this->isResourceOwnerByEmail($token, $subject->email()->toString());
             }
 
             return false;

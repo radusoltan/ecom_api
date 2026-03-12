@@ -26,6 +26,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['tenant_id'], name: 'idx_price_lists_tenant')]
 #[ORM\Index(columns: ['is_active'], name: 'idx_price_lists_active')]
 #[ORM\Index(columns: ['tenant_id', 'is_active'], name: 'idx_price_lists_tenant_active')]
+#[ORM\Index(name: 'idx_price_lists_tenant_text_active_pri', columns: ['is_active', 'priority', 'valid_from', 'valid_to'])]
 class PriceListEntity
 {
     #[ORM\Id]

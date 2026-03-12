@@ -139,8 +139,8 @@ final class I18nCacheServiceTest extends TestCase
         $productId = ProductId::fromString('00000000-0000-4000-8000-000000000002');
 
         $this->cache->expects(self::once())->method('invalidateTags')->with([
-            'i18n:tenant:00000000-0000-4000-8000-000000000001',
-            'i18n:product:00000000-0000-4000-8000-000000000002',
+            'i18n.tenant.00000000-0000-4000-8000-000000000001',
+            'i18n.product.00000000-0000-4000-8000-000000000002',
         ]);
 
         $this->service->invalidateProduct($this->tenantId, $productId);
@@ -162,8 +162,8 @@ final class I18nCacheServiceTest extends TestCase
         $categoryId = CategoryId::fromString('00000000-0000-4000-8000-000000000003');
 
         $this->cache->expects(self::once())->method('invalidateTags')->with([
-            'i18n:tenant:00000000-0000-4000-8000-000000000001',
-            'i18n:category:00000000-0000-4000-8000-000000000003',
+            'i18n.tenant.00000000-0000-4000-8000-000000000001',
+            'i18n.category.00000000-0000-4000-8000-000000000003',
         ]);
 
         $this->service->invalidateCategory($this->tenantId, $categoryId);
@@ -172,7 +172,7 @@ final class I18nCacheServiceTest extends TestCase
     public function testInvalidateTenant(): void
     {
         $this->cache->expects(self::once())->method('invalidateTags')->with([
-            'i18n:tenant:00000000-0000-4000-8000-000000000001',
+            'i18n.tenant.00000000-0000-4000-8000-000000000001',
         ]);
 
         $this->service->invalidateTenant($this->tenantId);

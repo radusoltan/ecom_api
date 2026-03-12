@@ -138,6 +138,86 @@ final class TenantContextMiddlewareTest extends TestCase
     }
 
     #[Test]
+    public function itRestoresPreviousTenantContextAfterConsumption(): void
+    {
+        $previousTenantId = \App\Shared\Domain\ValueObject\TenantId::fromString(
+            '00000000-0000-4000-8000-000000000002'
+        );
+
+        // First call returns previous tenant, subsequent calls track state
+        $this->tenantContext
+            ->method('getCurrentTenantId')
+            ->willReturn($previousTenantId);
+
+        $setTenantCalls = [];
+        $this->tenantContext
+            ->method('setCurrentTenant')
+            ->willReturnCallback(function ($tenantId) use (&$setTenantCalls) {
+                $setTenantCalls[] = $tenantId->toString();
+            });
+
+        // clearCurrentTenant should NOT be called when there's a previous context
+        $this->tenantContext->expects(self::never())->method('clearCurrentTenant');
+
+        $envelope = new Envelope(new \stdClass(), [
+            new ReceivedStamp('transport'),
+            new TenantStamp('00000000-0000-4000-8000-000000000001'),
+        ]);
+
+        $this->middleware->handle($envelope, $this->createPassthroughStack());
+
+        // First call: set the message's tenant context
+        // Second call: restore the previous tenant context
+        self::assertCount(2, $setTenantCalls);
+        self::assertSame('00000000-0000-4000-8000-000000000001', $setTenantCalls[0]);
+        self::assertSame('00000000-0000-4000-8000-000000000002', $setTenantCalls[1]);
+    }
+
+    #[Test]
+    public function itRestoresPreviousTenantContextEvenWhenHandlerThrows(): void
+    {
+        $previousTenantId = \App\Shared\Domain\ValueObject\TenantId::fromString(
+            '00000000-0000-4000-8000-000000000002'
+        );
+
+        $this->tenantContext
+            ->method('getCurrentTenantId')
+            ->willReturn($previousTenantId);
+
+        $setTenantCalls = [];
+        $this->tenantContext
+            ->method('setCurrentTenant')
+            ->willReturnCallback(function ($tenantId) use (&$setTenantCalls) {
+                $setTenantCalls[] = $tenantId->toString();
+            });
+
+        $this->tenantContext->expects(self::never())->method('clearCurrentTenant');
+
+        $envelope = new Envelope(new \stdClass(), [
+            new ReceivedStamp('transport'),
+            new TenantStamp('00000000-0000-4000-8000-000000000001'),
+        ]);
+
+        // Create a stack that throws
+        $next = $this->createMock(MiddlewareInterface::class);
+        $next->method('handle')->willThrowException(new \RuntimeException('Handler failed'));
+        $stack = $this->createMock(StackInterface::class);
+        $stack->method('next')->willReturn($next);
+
+        try {
+            $this->middleware->handle($envelope, $stack);
+            self::fail('Expected RuntimeException');
+        } catch (\RuntimeException) {
+            // Expected
+        }
+
+        // Previous context should still be restored via finally block
+        self::assertCount(2, $setTenantCalls);
+        self::assertSame('00000000-0000-4000-8000-000000000001', $setTenantCalls[0]);
+        self::assertSame('00000000-0000-4000-8000-000000000002', $setTenantCalls[1]);
+    }
+
+    #[Test]
     public function itLogsWarningWhenConsumedWithoutStamp(): void
     {
         $this->logger

@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'media_images')]
+#[ORM\Index(name: 'idx_images_tenant_text_owner', columns: ['owner_type', 'owner_id', 'uploaded_at'])]
 class ImageEntity
 {
     #[ORM\Id]

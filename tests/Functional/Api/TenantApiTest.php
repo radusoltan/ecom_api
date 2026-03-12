@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
+use App\Shared\Infrastructure\Doctrine\Type\EncryptedJsonType;
+use App\Shared\Infrastructure\Doctrine\Type\EncryptedStringType;
+use App\Shared\Infrastructure\Encryption\EncryptionService;
+use Psr\Log\NullLogger;
 
 /**
  * Comprehensive Functional Tests for Tenant API Endpoints.
@@ -48,6 +52,15 @@ final class TenantApiTest extends ApiTestCase
         $client = static::createClient();
         $container = $client->getContainer();
 
+        // Bootstrap encryption types before persisting entities with encrypted fields
+        if ($container->has(EncryptionService::class)) {
+            $encryptionService = $container->get(EncryptionService::class);
+            EncryptedStringType::setEncryptionService($encryptionService);
+            EncryptedStringType::setLogger(new NullLogger());
+            EncryptedJsonType::setEncryptionService($encryptionService);
+            EncryptedJsonType::setLogger(new NullLogger());
+        }
+
         $entityManager = $container->get('doctrine')->getManager();
         $connection = $entityManager->getConnection();
 
@@ -89,10 +102,17 @@ final class TenantApiTest extends ApiTestCase
      */
     private function authRequest(object $client, string $method, string $url, array $options = []): object
     {
-        $options['headers'] = array_merge(
+        $headers = array_merge(
             $options['headers'] ?? [],
             ['authorization' => 'Bearer '.$this->jwtToken]
         );
+
+        // Bypass Redis cache in tests to always get fresh data
+        if ('GET' === $method) {
+            $headers['X-No-Cache'] = 'true';
+        }
+
+        $options['headers'] = $headers;
 
         return $client->request($method, $url, $options);
     }

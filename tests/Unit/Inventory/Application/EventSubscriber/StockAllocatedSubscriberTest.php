@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Inventory\Application\EventSubscriber;
 
+use App\Catalog\Domain\Model\ProductId;
 use App\Inventory\Application\EventSubscriber\StockAllocatedSubscriber;
 use App\Inventory\Domain\Event\StockAllocated;
 use App\Inventory\Domain\Model\Quantity;
 use App\Inventory\Domain\Model\StockItemId;
+use App\Shared\Domain\ValueObject\TenantId;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -29,10 +31,6 @@ final class StockAllocatedSubscriberTest extends TestCase
         );
     }
 
-    // -------------------------------------------------------
-    // Subscribed events registration
-    // -------------------------------------------------------
-
     #[Test]
     public function itSubscribesToStockAllocatedEvent(): void
     {
@@ -50,10 +48,6 @@ final class StockAllocatedSubscriberTest extends TestCase
         self::assertCount(1, $events);
     }
 
-    // -------------------------------------------------------
-    // Happy path: info is logged with all expected fields
-    // -------------------------------------------------------
-
     #[Test]
     public function itLogsInfoWhenStockIsAllocated(): void
     {
@@ -62,7 +56,7 @@ final class StockAllocatedSubscriberTest extends TestCase
         $orderId = 'order-abc-123';
         $occurredOn = new \DateTimeImmutable('2026-01-15 10:00:00');
 
-        $event = new StockAllocated(
+        $event = $this->createEvent(
             stockItemId: $stockItemId,
             quantity: $quantity,
             orderId: $orderId,
@@ -90,11 +84,10 @@ final class StockAllocatedSubscriberTest extends TestCase
     {
         $stockItemId = StockItemId::generate();
 
-        $event = new StockAllocated(
+        $event = $this->createEvent(
             stockItemId: $stockItemId,
             quantity: Quantity::fromInt(10),
             orderId: 'order-001',
-            occurredOn: new \DateTimeImmutable(),
         );
 
         $capturedContext = null;
@@ -113,11 +106,9 @@ final class StockAllocatedSubscriberTest extends TestCase
     #[Test]
     public function itLogsQuantityInContext(): void
     {
-        $event = new StockAllocated(
-            stockItemId: StockItemId::generate(),
+        $event = $this->createEvent(
             quantity: Quantity::fromInt(7),
             orderId: 'order-002',
-            occurredOn: new \DateTimeImmutable(),
         );
 
         $capturedContext = null;
@@ -138,11 +129,9 @@ final class StockAllocatedSubscriberTest extends TestCase
     {
         $orderId = '01JKXYZ-SPECIFIC-ORDER-ID';
 
-        $event = new StockAllocated(
-            stockItemId: StockItemId::generate(),
+        $event = $this->createEvent(
             quantity: Quantity::fromInt(3),
             orderId: $orderId,
-            occurredOn: new \DateTimeImmutable(),
         );
 
         $capturedContext = null;
@@ -161,11 +150,9 @@ final class StockAllocatedSubscriberTest extends TestCase
     #[Test]
     public function itLogsOccurredOnTimestampInContext(): void
     {
-        $event = new StockAllocated(
-            stockItemId: StockItemId::generate(),
+        $event = $this->createEvent(
             quantity: Quantity::fromInt(2),
             orderId: 'order-003',
-            occurredOn: new \DateTimeImmutable(),
         );
 
         $capturedContext = null;
@@ -185,11 +172,9 @@ final class StockAllocatedSubscriberTest extends TestCase
     #[Test]
     public function itHandlesLargeQuantityAllocation(): void
     {
-        $event = new StockAllocated(
-            stockItemId: StockItemId::generate(),
+        $event = $this->createEvent(
             quantity: Quantity::fromInt(9999),
             orderId: 'bulk-order-001',
-            occurredOn: new \DateTimeImmutable(),
         );
 
         $this->logger
@@ -201,5 +186,21 @@ final class StockAllocatedSubscriberTest extends TestCase
             );
 
         $this->subscriber->onStockAllocated($event);
+    }
+
+    private function createEvent(
+        ?StockItemId $stockItemId = null,
+        ?Quantity $quantity = null,
+        string $orderId = 'order-default',
+        ?\DateTimeImmutable $occurredOn = null,
+    ): StockAllocated {
+        return new StockAllocated(
+            stockItemId: $stockItemId ?? StockItemId::generate(),
+            tenantId: TenantId::generate(),
+            productId: ProductId::generate(),
+            quantity: $quantity ?? Quantity::fromInt(1),
+            orderId: $orderId,
+            occurredOn: $occurredOn ?? new \DateTimeImmutable(),
+        );
     }
 }

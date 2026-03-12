@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Catalog\Application\DTO;
 
+use App\Catalog\Application\DTO\AdminProductListDto;
 use App\Catalog\Application\DTO\OptionDTO;
 use App\Catalog\Application\DTO\OptionValueDTO;
 use App\Catalog\Application\DTO\ProductImportResult;
@@ -20,6 +21,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(StorefrontCategoryDto::class)]
 #[CoversClass(StorefrontProductDto::class)]
 #[CoversClass(VariantDTO::class)]
+#[CoversClass(AdminProductListDto::class)]
 final class CatalogDTOsTest extends TestCase
 {
     // --- StorefrontProductDto ---
@@ -106,6 +108,41 @@ final class CatalogDTOsTest extends TestCase
         self::assertNull($dto->availability);
         self::assertNull($dto->breadcrumbs);
         self::assertNull($dto->description);
+    }
+
+    #[Test]
+    public function adminProductListDtoConstruction(): void
+    {
+        $dto = new AdminProductListDto(
+            id: 'prod-1',
+            sku: 'SKU-001',
+            name: 'Admin Product',
+            slug: 'admin-product',
+            priceAmount: 1999,
+            priceCurrency: 'USD',
+            categoryId: 'cat-1',
+            stockQuantity: 12,
+            trackInventory: true,
+            active: true,
+            isFeatured: false,
+            primaryImage: ['url' => '/image.jpg', 'position' => 0, 'isPrimary' => true],
+            description: 'Short admin description',
+            createdAt: '2026-03-10 10:00:00+00',
+            updatedAt: '2026-03-10 11:00:00+00',
+            variantCount: 4,
+        );
+
+        self::assertSame('prod-1', $dto->id);
+        self::assertSame('SKU-001', $dto->sku);
+        self::assertSame('Admin Product', $dto->name);
+        self::assertSame(1999, $dto->priceAmount);
+        self::assertSame('USD', $dto->priceCurrency);
+        self::assertSame(12, $dto->stockQuantity);
+        self::assertTrue($dto->trackInventory);
+        self::assertTrue($dto->active);
+        self::assertFalse($dto->isFeatured);
+        self::assertSame('Short admin description', $dto->description);
+        self::assertSame(4, $dto->variantCount);
     }
 
     // --- StorefrontCategoryDto ---

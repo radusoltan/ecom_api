@@ -368,7 +368,7 @@ final class CouponValidationApiTest extends ApiTestCase
             tenantId: $this->tenantId,
             name: 'Fixed Discount',
             type: PromotionType::coupon(),
-            discount: Discount::fixedAmount(15.00),
+            discount: Discount::fixedAmount(1500, 'USD'),
             couponCode: CouponCode::fromString('FIXED15')
         );
         $promotion->activate();

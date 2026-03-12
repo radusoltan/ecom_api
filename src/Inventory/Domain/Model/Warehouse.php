@@ -109,6 +109,7 @@ final class Warehouse extends AggregateRoot
 
         $this->recordEvent(new WarehouseUpdated(
             $this->id,
+            $this->tenantId,
             $this->name,
             new \DateTimeImmutable()
         ));
@@ -128,6 +129,7 @@ final class Warehouse extends AggregateRoot
 
         $this->recordEvent(new WarehouseActivated(
             $this->id,
+            $this->tenantId,
             new \DateTimeImmutable()
         ));
     }
@@ -147,6 +149,7 @@ final class Warehouse extends AggregateRoot
 
         $this->recordEvent(new WarehouseDeactivated(
             $this->id,
+            $this->tenantId,
             new \DateTimeImmutable()
         ));
     }

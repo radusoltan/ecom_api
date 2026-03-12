@@ -4,174 +4,217 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
-use App\Order\Infrastructure\Persistence\Doctrine\Entity\OrderEntity;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity;
+use App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerAddressEntity;
+use App\Customer\Infrastructure\Persistence\Doctrine\Entity\CustomerEntity;
+use App\Order\Application\Command\CancelOrderCommand;
+use App\Order\Application\Command\PlaceOrderCommand;
+use App\Order\Application\Command\UpdateOrderStatusCommand;
+use App\Order\Domain\Model\OrderId;
+use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Tenant\TenantContext;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Order fixtures - creates sample orders for testing.
+ * Order fixtures - creates realistic multi-tenant order history.
  */
-class OrderFixtures extends Fixture implements DependentFixtureInterface
+class OrderFixtures extends AbstractTenantAwareFixture implements DependentFixtureInterface, FixtureGroupInterface
 {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        TenantContext $tenantContext,
+        private readonly MessageBusInterface $commandBus,
+    ) {
+        parent::__construct($entityManager, $tenantContext);
+    }
+
+    public static function getGroups(): array
+    {
+        return ['sprint3', 'sprint3-orders'];
+    }
+
     public function load(ObjectManager $manager): void
     {
-        echo "📦 Creating orders...\n";
+        echo "📦 Creating order history...\n";
 
-        // Get first tenant ID from database
-        $connection = $manager->getConnection();
-        $tenantId = $connection->executeQuery('SELECT id FROM tenants ORDER BY created_at ASC LIMIT 1')->fetchOne();
+        $tenantIds = $this->tenantIdsByOwnerEmail();
 
-        // Set tenant context for RLS
-        $connection->executeStatement("SET app.tenant_id = '{$tenantId}'");
+        foreach (Sprint3SeedData::tenants() as $tenant) {
+            $tenantId = TenantId::fromString($tenantIds[$tenant['ownerEmail']]);
+            $this->activateTenantContext($tenantId);
 
-        $statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
-        $customerEmails = [
-            'john.doe@example.com',
-            'jane.smith@example.com',
-            'william.garcia@example.com',
-            'maria.rodriguez@example.com',
-            'christopher.thomas@example.com',
-        ];
+            /** @var list<CustomerEntity> $customers */
+            $customers = array_values($this->entityManager->getRepository(CustomerEntity::class)->findBy(
+                ['tenantId' => $tenantId->toString()],
+                ['createdAt' => 'ASC']
+            ));
+            $customers = array_values(array_filter(
+                $customers,
+                static fn (CustomerEntity $customer): bool => $customer->isActive()
+            ));
 
-        // Create 20 orders with varying statuses and dates
-        for ($i = 0; $i < 20; ++$i) {
-            $orderId = Uuid::v4()->toString();
-            $customerEmail = $customerEmails[$i % count($customerEmails)];
-            $status = $statuses[$i % count($statuses)];
+            /** @var list<ProductEntity> $products */
+            $products = array_values($this->entityManager->getRepository(ProductEntity::class)->findBy(
+                ['tenantId' => $tenantId->toString()],
+                ['createdAt' => 'ASC']
+            ));
 
-            // Get random products from database
-            $productIds = $connection->executeQuery('SELECT id FROM catalog_products ORDER BY RANDOM() LIMIT '.rand(1, 3))->fetchFirstColumn();
-            $lines = [];
+            $orderCounter = 0;
 
-            foreach ($productIds as $productId) {
-                $quantity = rand(1, 3);
-                $unitPrice = rand(2000, 150000);
+            foreach (Sprint3SeedData::ORDER_STATUS_DISTRIBUTION as $targetStatus => $count) {
+                for ($index = 0; $index < $count; ++$index) {
+                    /** @var CustomerEntity $customer */
+                    $customer = $customers[($orderCounter + $index) % count($customers)];
+                    $shippingAddress = $this->addressPayload($this->pickAddress($customer, true));
+                    $billingAddress = $this->addressPayload($this->pickAddress($customer, false));
+                    $lines = $this->buildLines($products, $orderCounter + $index);
+                    $orderId = OrderId::generate()->toString();
 
-                $lines[] = [
-                    'productId' => $productId,
-                    'productName' => 'Product',
-                    'quantity' => $quantity,
-                    'unitPriceAmount' => $unitPrice,
-                    'unitPriceCurrency' => 'USD',
-                ];
+                    $this->commandBus->dispatch(new PlaceOrderCommand(
+                        orderId: $orderId,
+                        tenantId: $tenantId->toString(),
+                        customerEmail: $customer->getEmail(),
+                        lines: $lines,
+                        shippingAddress: $shippingAddress,
+                        billingAddress: $billingAddress,
+                    ));
+
+                    $this->transitionOrder($orderId, $tenantId->toString(), $targetStatus, ($orderCounter + $index) % 2 === 0);
+                }
+
+                $orderCounter += $count;
             }
 
-            if (empty($lines)) {
-                continue; // Skip if no valid products
+            echo sprintf("   ✓ %s orders: %d\n", $tenant['name'], $orderCounter);
+            $this->entityManager->clear();
+        }
+
+        $this->clearTenantContext();
+
+        echo "✅ Orders created across all target statuses\n";
+    }
+
+    /**
+     * @param array<int, ProductEntity> $products
+     *
+     * @return array<int, array{productId: string, productName: string, quantity: int, unitPriceAmount: int, unitPriceCurrency: string}>
+     */
+    private function buildLines(array $products, int $seed): array
+    {
+        $lineCount = 1 + ($seed % 3);
+        $lines = [];
+
+        for ($offset = 0; $offset < $lineCount; ++$offset) {
+            /** @var ProductEntity $product */
+            $product = $products[($seed + ($offset * 7)) % count($products)];
+            $lines[] = [
+                'productId' => $product->getId(),
+                'productName' => $product->getName(),
+                'quantity' => 1 + (($seed + $offset) % 2),
+                'unitPriceAmount' => $product->getPriceAmount(),
+                'unitPriceCurrency' => $product->getPriceCurrency(),
+            ];
+        }
+
+        return $lines;
+    }
+
+    private function pickAddress(CustomerEntity $customer, bool $shipping): CustomerAddressEntity
+    {
+        $addresses = $customer->getAddressEntities()->toArray();
+
+        foreach ($addresses as $address) {
+            if (
+                $address instanceof CustomerAddressEntity
+                && !$address->isDeleted()
+                && ($shipping ? $address->isDefaultShipping() : $address->isDefaultBilling())
+            ) {
+                return $address;
+            }
+        }
+
+        foreach ($addresses as $address) {
+            if ($address instanceof CustomerAddressEntity && !$address->isDeleted()) {
+                return $address;
+            }
+        }
+
+        throw new \RuntimeException(sprintf('Customer %s does not have a usable address for order fixtures', $customer->getId()));
+    }
+
+    /**
+     * @return array{street: string, city: string, state: string, postalCode: string, country: string}
+     */
+    private function addressPayload(CustomerAddressEntity $address): array
+    {
+        return [
+            'street' => $address->getStreet(),
+            'city' => $address->getCity(),
+            'state' => $address->getState() ?? 'NA',
+            'postalCode' => $address->getPostalCode(),
+            'country' => $address->getCountry(),
+        ];
+    }
+
+    private function transitionOrder(string $orderId, string $tenantId, string $targetStatus, bool $cancelAfterProcessing): void
+    {
+        if ('processing' === $targetStatus) {
+            $this->commandBus->dispatch(new UpdateOrderStatusCommand($orderId, $tenantId, 'processing'));
+
+            return;
+        }
+
+        if ('shipped' === $targetStatus) {
+            $this->advanceToShipped($orderId, $tenantId);
+
+            return;
+        }
+
+        if ('delivered' === $targetStatus) {
+            $this->advanceToDelivered($orderId, $tenantId);
+
+            return;
+        }
+
+        if ('cancelled' === $targetStatus) {
+            if ($cancelAfterProcessing) {
+                $this->cancelFromProcessing($orderId, $tenantId);
+
+                return;
             }
 
-            $shippingAddress = $this->getRandomAddress();
-            $billingAddress = $shippingAddress; // Same as shipping for simplicity
-
-            // Use reflection to create order
-            $order = new OrderEntity();
-            $reflection = new \ReflectionClass($order);
-
-            $idProperty = $reflection->getProperty('id');
-            $idProperty->setValue($order, $orderId);
-
-            $tenantIdProperty = $reflection->getProperty('tenantId');
-            $tenantIdProperty->setValue($order, $tenantId);
-
-            $customerEmailProperty = $reflection->getProperty('customerEmail');
-            $customerEmailProperty->setValue($order, $customerEmail);
-
-            $statusProperty = $reflection->getProperty('status');
-            $statusProperty->setValue($order, $status);
-
-            $linesProperty = $reflection->getProperty('lines');
-            $linesProperty->setValue($order, $lines);
-
-            $shippingAddressProperty = $reflection->getProperty('shippingAddress');
-            $shippingAddressProperty->setValue($order, $shippingAddress);
-
-            $billingAddressProperty = $reflection->getProperty('billingAddress');
-            $billingAddressProperty->setValue($order, $billingAddress);
-
-            // Orders from the past 30 days
-            $daysAgo = rand(0, 30);
-            $createdAtProperty = $reflection->getProperty('createdAt');
-            $createdAtProperty->setValue($order, new \DateTimeImmutable("-{$daysAgo} days"));
-
-            $updatedAtProperty = $reflection->getProperty('updatedAt');
-            $updatedAtProperty->setValue($order, new \DateTimeImmutable("-{$daysAgo} days"));
-
-            $manager->persist($order);
+            $this->commandBus->dispatch(new CancelOrderCommand($orderId, $tenantId));
         }
-
-        $manager->flush();
-        echo "✅ Created 20 orders with various statuses\n";
     }
 
-    private function getRandomProductReferences(int $count): array
+    private function advanceToShipped(string $orderId, string $tenantId): void
     {
-        $prefixes = ['lap', 'pho', 'acc', 'men', 'wom', 'kid', 'fur', 'dec', 'kit'];
-        $refs = [];
-
-        for ($i = 0; $i < $count; ++$i) {
-            $prefix = $prefixes[array_rand($prefixes)];
-            $number = rand(1, 10);
-            $refs[] = sprintf('product_%s_%d', $prefix, $number);
-        }
-
-        return $refs;
+        $this->commandBus->dispatch(new UpdateOrderStatusCommand($orderId, $tenantId, 'processing'));
+        $this->commandBus->dispatch(new UpdateOrderStatusCommand($orderId, $tenantId, 'shipped'));
     }
 
-    private function getRandomAddress(): array
+    private function advanceToDelivered(string $orderId, string $tenantId): void
     {
-        $addresses = [
-            [
-                'street' => '123 Main Street',
-                'city' => 'New York',
-                'state' => 'NY',
-                'postalCode' => '10001',
-                'country' => 'US',
-            ],
-            [
-                'street' => '456 Oak Avenue',
-                'city' => 'Los Angeles',
-                'state' => 'CA',
-                'postalCode' => '90001',
-                'country' => 'US',
-            ],
-            [
-                'street' => '789 Pine Road',
-                'city' => 'Chicago',
-                'state' => 'IL',
-                'postalCode' => '60601',
-                'country' => 'US',
-            ],
-            [
-                'street' => '321 Elm Street',
-                'city' => 'Houston',
-                'state' => 'TX',
-                'postalCode' => '77001',
-                'country' => 'US',
-            ],
-            [
-                'street' => '654 Maple Drive',
-                'city' => 'Seattle',
-                'state' => 'WA',
-                'postalCode' => '98101',
-                'country' => 'US',
-            ],
-        ];
+        $this->advanceToShipped($orderId, $tenantId);
+        $this->commandBus->dispatch(new UpdateOrderStatusCommand($orderId, $tenantId, 'delivered'));
+    }
 
-        return $addresses[array_rand($addresses)];
+    private function cancelFromProcessing(string $orderId, string $tenantId): void
+    {
+        $this->commandBus->dispatch(new UpdateOrderStatusCommand($orderId, $tenantId, 'processing'));
+        $this->commandBus->dispatch(new CancelOrderCommand($orderId, $tenantId));
     }
 
     public function getDependencies(): array
     {
         return [
-            TenantFixtures::class,
             ProductFixtures::class,
+            CustomerFixtures::class,
+            InventoryFixtures::class,
         ];
-    }
-
-    public function getOrder(): int
-    {
-        return 9;
     }
 }

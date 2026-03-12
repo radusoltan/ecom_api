@@ -67,21 +67,9 @@ final class UserVoter extends AbstractResourceVoter
             return in_array($attribute, [self::VIEW, self::CREATE, self::EDIT, self::DELETE], true);
         }
 
-        // TENANT_ADMIN: CRUD for tenant users only
+        // TENANT_ADMIN: CRUD for tenant users (RLS enforces tenant isolation at DB level)
         if ($this->hasRole($token, 'ROLE_TENANT_ADMIN')) {
-            // Can view all users
-            if (self::VIEW === $attribute) {
-                return true;
-            }
-
-            // Can CRUD tenant users (users within same tenant)
-            if ($subject instanceof User && in_array($attribute, [self::CREATE, self::EDIT, self::DELETE], true)) {
-                // TODO: Implement tenant scope check when tenant relationship is established
-                // For now, allow all operations for tenant admins
-                return true;
-            }
-
-            return false;
+            return in_array($attribute, [self::VIEW, self::CREATE, self::EDIT, self::DELETE], true);
         }
 
         // MANAGER, CUSTOMER, VENDOR: no access to user management

@@ -66,6 +66,9 @@ class FlashSaleEntity
     #[ORM\Column(type: 'float', nullable: false, name: 'discount_value')]
     private float $discountValue;
 
+    #[ORM\Column(type: 'string', length: 3, nullable: true, name: 'discount_currency')]
+    private ?string $discountCurrency = null;
+
     #[ORM\Column(type: 'datetimetz_immutable', nullable: false, name: 'start_time')]
     private \DateTimeImmutable $startTime;
 
@@ -93,6 +96,7 @@ class FlashSaleEntity
         );
         $entity->discountType = $flashSale->discount()->type()->toString();
         $entity->discountValue = $flashSale->discount()->value();
+        $entity->discountCurrency = $flashSale->discount()->getFixedAmount()?->getCurrency()->getCurrencyCode();
         $entity->startTime = $flashSale->startTime();
         $entity->endTime = $flashSale->endTime();
         $entity->status = $flashSale->status()->value;
@@ -112,7 +116,7 @@ class FlashSaleEntity
                 fn (string $productId) => ProductId::fromString($productId),
                 $this->productIds
             ),
-            discount: Discount::fromTypeAndValue($this->discountType, $this->discountValue),
+            discount: Discount::fromTypeAndValue($this->discountType, $this->discountValue, $this->discountCurrency ?? 'EUR'),
             startTime: $this->startTime,
             endTime: $this->endTime,
             status: FlashSaleStatus::from($this->status),

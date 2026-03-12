@@ -19,6 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['is_active'], name: 'idx_warehouses_is_active')]
 #[ORM\Index(columns: ['priority'], name: 'idx_warehouses_priority')]
 #[ORM\UniqueConstraint(name: 'uniq_warehouse_code_tenant', columns: ['code', 'tenant_id'])]
+#[ORM\Index(name: 'idx_warehouses_tenant_text_active_pri', columns: ['is_active', 'priority', 'name'])]
 class WarehouseEntity
 {
     #[ORM\Id]

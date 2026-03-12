@@ -65,20 +65,10 @@ final class ProductVoter extends AbstractResourceVoter
             return in_array($attribute, [self::VIEW, self::CREATE, self::EDIT, self::DELETE], true);
         }
 
-        // VENDOR: full access to own products only
+        // VENDOR: can create and view products.
+        // EDIT/DELETE restricted until vendor_id ownership field is added to Product.
         if ($this->hasRole($token, 'ROLE_VENDOR')) {
-            // For CREATE operation, vendor can create products (no subject needed)
-            if (self::CREATE === $attribute) {
-                return true;
-            }
-
-            // For VIEW, EDIT, DELETE: allow all for now (ownership check TODO)
-            // TODO: Implement vendor ownership check when vendor_id is added to Product
-            if (in_array($attribute, [self::VIEW, self::EDIT, self::DELETE], true)) {
-                return true;
-            }
-
-            return false;
+            return in_array($attribute, [self::CREATE, self::VIEW], true);
         }
 
         // CUSTOMER: no access

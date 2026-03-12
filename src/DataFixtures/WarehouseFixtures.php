@@ -10,15 +10,17 @@ use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Model\WarehouseName;
 use App\Shared\Domain\ValueObject\Address;
 use App\Shared\Domain\ValueObject\TenantId;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Shared\Infrastructure\Tenant\TenantContext;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Warehouse fixtures - creates multiple warehouses for inventory management.
  */
-class WarehouseFixtures extends Fixture implements DependentFixtureInterface
+class WarehouseFixtures extends AbstractTenantAwareFixture implements DependentFixtureInterface, FixtureGroupInterface
 {
     // Reference constants for StockItemFixtures
     public const WAREHOUSE_MAIN = 'warehouse_main';
@@ -28,90 +30,48 @@ class WarehouseFixtures extends Fixture implements DependentFixtureInterface
     public const WAREHOUSE_SOUTH = 'warehouse_south';
 
     public function __construct(
+        EntityManagerInterface $entityManager,
+        TenantContext $tenantContext,
         private readonly MessageBusInterface $commandBus,
     ) {
+        parent::__construct($entityManager, $tenantContext);
+    }
+
+    public static function getGroups(): array
+    {
+        return ['sprint3', 'sprint3-inventory', 'sprint3-warehouses'];
     }
 
     public function load(ObjectManager $manager): void
     {
-        echo "🏭 Creating warehouses...\n";
+        echo "🏭 Creating tenant warehouses...\n";
 
-        // Get first tenant ID from database
-        $tenantIdString = $this->getFirstTenantId($manager);
-        $tenantId = TenantId::fromString($tenantIdString);
+        $tenantIds = $this->tenantIdsByOwnerEmail();
 
-        // Warehouse 1: Main Distribution Center (highest priority)
-        $this->createWarehouse(
-            $tenantId,
-            'MAIN01',
-            'Main Distribution Center',
-            '123 Industrial Parkway',
-            'Los Angeles',
-            'CA',
-            '90001',
-            'USA',
-            100
-        );
-        echo "   ✓ Main Distribution Center created\n";
+        foreach (Sprint3SeedData::tenants() as $tenant) {
+            $tenantId = TenantId::fromString($tenantIds[$tenant['ownerEmail']]);
+            $this->activateTenantContext($tenantId);
 
-        // Warehouse 2: East Coast Warehouse
-        $this->createWarehouse(
-            $tenantId,
-            'EAST01',
-            'East Coast Distribution Center',
-            '456 Commerce Boulevard',
-            'New York',
-            'NY',
-            '10001',
-            'USA',
-            90
-        );
-        echo "   ✓ East Coast Distribution Center created\n";
+            foreach (Sprint3SeedData::warehouses($tenant['alias']) as $warehouse) {
+                $this->createWarehouse(
+                    tenantId: $tenantId,
+                    code: $warehouse['code'],
+                    name: $warehouse['name'],
+                    street: $warehouse['street'],
+                    city: $warehouse['city'],
+                    state: $warehouse['state'],
+                    postalCode: $warehouse['postalCode'],
+                    country: $warehouse['country'],
+                    priority: $warehouse['priority'],
+                );
+            }
 
-        // Warehouse 3: West Coast Warehouse
-        $this->createWarehouse(
-            $tenantId,
-            'WEST01',
-            'West Coast Distribution Center',
-            '789 Pacific Highway',
-            'Seattle',
-            'WA',
-            '98101',
-            'USA',
-            85
-        );
-        echo "   ✓ West Coast Distribution Center created\n";
+            echo sprintf("   ✓ %s warehouses: %d\n", $tenant['name'], count(Sprint3SeedData::warehouses($tenant['alias'])));
+        }
 
-        // Warehouse 4: Midwest Warehouse
-        $this->createWarehouse(
-            $tenantId,
-            'MW01',
-            'Midwest Regional Warehouse',
-            '321 Supply Chain Drive',
-            'Chicago',
-            'IL',
-            '60601',
-            'USA',
-            80
-        );
-        echo "   ✓ Midwest Regional Warehouse created\n";
+        $this->clearTenantContext();
 
-        // Warehouse 5: South Warehouse
-        $this->createWarehouse(
-            $tenantId,
-            'SOUTH01',
-            'Southern Distribution Center',
-            '654 Logistics Way',
-            'Houston',
-            'TX',
-            '77001',
-            'USA',
-            75
-        );
-        echo "   ✓ Southern Distribution Center created\n";
-
-        $manager->flush();
-        echo "✅ All warehouses created (5 total)\n";
+        echo "✅ Warehouse network created\n";
     }
 
     private function createWarehouse(
@@ -145,23 +105,10 @@ class WarehouseFixtures extends Fixture implements DependentFixtureInterface
         $this->commandBus->dispatch($command);
     }
 
-    private function getFirstTenantId(ObjectManager $manager): string
-    {
-        $connection = $manager->getConnection();
-        $result = $connection->executeQuery('SELECT id FROM tenants ORDER BY created_at ASC LIMIT 1')->fetchOne();
-
-        return $result;
-    }
-
     public function getDependencies(): array
     {
         return [
             TenantFixtures::class,
         ];
-    }
-
-    public function getOrder(): int
-    {
-        return 6;
     }
 }

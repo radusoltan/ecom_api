@@ -62,7 +62,7 @@ final class PromotionStackingServiceTest extends TestCase
     public function testCalculatePriceWithSingleFixedAmountDiscount(): void
     {
         $originalPrice = Money::of('100.00', 'EUR');
-        $promotion = $this->createPromotion('$5 Off', PromotionType::cartRule(), Discount::fixedAmount(5.0));
+        $promotion = $this->createPromotion('$5 Off', PromotionType::cartRule(), Discount::fixedAmount(500));
 
         $result = $this->service->calculatePriceWithPromotions([$promotion], $originalPrice);
 
@@ -132,8 +132,8 @@ final class PromotionStackingServiceTest extends TestCase
         $originalPrice = Money::of('100.00', 'EUR');
 
         // Two cart_rule promotions with different priorities
-        $lowPriority = $this->createPromotion('Cart Low', PromotionType::cartRule(), Discount::fixedAmount(5.0), priority: 100);
-        $highPriority = $this->createPromotion('Cart High', PromotionType::cartRule(), Discount::fixedAmount(10.0), priority: 900);
+        $lowPriority = $this->createPromotion('Cart Low', PromotionType::cartRule(), Discount::fixedAmount(500), priority: 100);
+        $highPriority = $this->createPromotion('Cart High', PromotionType::cartRule(), Discount::fixedAmount(1000), priority: 900);
 
         $result = $this->service->calculatePriceWithPromotions([$lowPriority, $highPriority], $originalPrice);
 
@@ -165,7 +165,7 @@ final class PromotionStackingServiceTest extends TestCase
         $originalPrice = Money::of('100.00', 'EUR');
 
         $percentageDiscount = $this->createPromotion('10% Off', PromotionType::cartRule(), Discount::percentage(10.0));
-        $fixedDiscount = $this->createPromotion('$5 Off', PromotionType::catalogRule(), Discount::fixedAmount(5.0));
+        $fixedDiscount = $this->createPromotion('$5 Off', PromotionType::catalogRule(), Discount::fixedAmount(500));
 
         $result = $this->service->calculatePriceWithPromotions([$percentageDiscount, $fixedDiscount], $originalPrice);
 
@@ -178,8 +178,8 @@ final class PromotionStackingServiceTest extends TestCase
     {
         $originalPrice = Money::of('100.00', 'EUR');
 
-        $promo1 = $this->createPromotion('First', PromotionType::cartRule(), Discount::fixedAmount(10.0));
-        $promo2 = $this->createPromotion('Second', PromotionType::catalogRule(), Discount::fixedAmount(5.0));
+        $promo1 = $this->createPromotion('First', PromotionType::cartRule(), Discount::fixedAmount(1000));
+        $promo2 = $this->createPromotion('Second', PromotionType::catalogRule(), Discount::fixedAmount(500));
 
         $result = $this->service->calculatePriceWithPromotions([$promo1, $promo2], $originalPrice);
 
@@ -218,7 +218,7 @@ final class PromotionStackingServiceTest extends TestCase
 
         $blackFriday = $this->createPromotion('Black Friday 25%', PromotionType::cartRule(), Discount::percentage(25.0), priority: 1000);
         $categoryDiscount = $this->createPromotion('Electronics 10%', PromotionType::catalogRule(), Discount::percentage(10.0), priority: 500);
-        $loyaltyCoupon = $this->createPromotion('Loyalty $10', PromotionType::coupon(), Discount::fixedAmount(10.0), couponCode: CouponCode::fromString('LOYALTY10'));
+        $loyaltyCoupon = $this->createPromotion('Loyalty $10', PromotionType::coupon(), Discount::fixedAmount(1000), couponCode: CouponCode::fromString('LOYALTY10'));
 
         $result = $this->service->calculatePriceWithPromotions([$loyaltyCoupon, $categoryDiscount, $blackFriday], $originalPrice);
 

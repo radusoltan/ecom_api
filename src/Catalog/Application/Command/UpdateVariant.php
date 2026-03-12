@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Catalog\Application\Command;
 
 use App\Catalog\Domain\Model\ProductId;
+use App\Catalog\Domain\Model\ProductImage;
 use App\Catalog\Domain\Model\VariantId;
 use App\Shared\Domain\ValueObject\Money;
-use App\Catalog\Domain\Model\ProductImage;
 use App\Shared\Domain\ValueObject\TenantId;
 
 /**

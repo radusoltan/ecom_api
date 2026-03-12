@@ -9,8 +9,9 @@ parameters:
         defaultFont: 'DejaVu Sans'
         isFontSubsettingEnabled: true
 
-        # Enable remote content (for logos)
-        isRemoteEnabled: true
+        # SECURITY: Remote content disabled to prevent SSRF.
+        # Logos must be local file paths, not URLs.
+        isRemoteEnabled: false
 
         # Enable HTML5 parser
         isHtml5ParserEnabled: true

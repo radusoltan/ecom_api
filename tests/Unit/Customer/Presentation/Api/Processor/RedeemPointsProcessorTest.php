@@ -49,7 +49,7 @@ final class RedeemPointsProcessorTest extends TestCase
     {
         $redeemResult = new RedeemPointsResult(
             pointsRedeemed: 200,
-            discountAmount: 2.0,
+            discountAmountMinorUnits: 200,
             discountCurrency: 'USD',
             remainingBalance: 800,
         );
@@ -75,7 +75,7 @@ final class RedeemPointsProcessorTest extends TestCase
 
         self::assertInstanceOf(CustomerLoyaltyResource::class, $result);
         self::assertSame(200, $result->pointsRedeemed);
-        self::assertSame(2.0, $result->discountAmount);
+        self::assertSame(200, $result->discountAmount);
         self::assertSame('USD', $result->discountCurrency);
         self::assertSame(800, $result->remainingBalance);
         self::assertSame(self::CUSTOMER_ID, $result->customerId);

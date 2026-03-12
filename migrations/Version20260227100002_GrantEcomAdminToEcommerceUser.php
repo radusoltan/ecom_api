@@ -16,11 +16,39 @@ final class Version20260227100002_GrantEcomAdminToEcommerceUser extends Abstract
 
     public function up(Schema $schema): void
     {
-        $this->addSql('GRANT ecom_admin TO ecommerce');
+        $this->addSql(<<<'SQL'
+            DO $$
+            BEGIN
+                IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'ecom_admin')
+                    AND EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'ecommerce') THEN
+                    BEGIN
+                        EXECUTE 'GRANT ecom_admin TO ecommerce';
+                    EXCEPTION
+                        WHEN insufficient_privilege THEN
+                            RAISE NOTICE 'Skipping GRANT ecom_admin TO ecommerce due to insufficient privilege';
+                    END;
+                END IF;
+            END
+            $$;
+        SQL);
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('REVOKE ecom_admin FROM ecommerce');
+        $this->addSql(<<<'SQL'
+            DO $$
+            BEGIN
+                IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'ecom_admin')
+                    AND EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'ecommerce') THEN
+                    BEGIN
+                        EXECUTE 'REVOKE ecom_admin FROM ecommerce';
+                    EXCEPTION
+                        WHEN insufficient_privilege THEN
+                            RAISE NOTICE 'Skipping REVOKE ecom_admin FROM ecommerce due to insufficient privilege';
+                    END;
+                END IF;
+            END
+            $$;
+        SQL);
     }
 }

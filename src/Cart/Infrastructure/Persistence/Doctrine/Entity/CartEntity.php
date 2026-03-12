@@ -23,6 +23,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_carts_updated_at', columns: ['updated_at'])]
 #[ORM\Index(name: 'idx_carts_tenant_customer', columns: ['tenant_id', 'customer_id'])]
 #[ORM\Index(name: 'idx_carts_tenant_session', columns: ['tenant_id', 'session_id'])]
+#[ORM\Index(name: 'idx_carts_status_updated', columns: ['status', 'updated_at'])]
+#[ORM\Index(name: 'idx_carts_tenant_text_session_status', columns: ['session_id', 'status'])]
+#[ORM\Index(name: 'idx_carts_tenant_text_customer_status', columns: ['customer_id', 'status'])]
 class CartEntity
 {
     #[ORM\Id]

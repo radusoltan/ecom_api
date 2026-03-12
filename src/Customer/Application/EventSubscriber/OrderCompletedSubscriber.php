@@ -119,7 +119,7 @@ final readonly class OrderCompletedSubscriber implements EventSubscriberInterfac
             // Only count completed/delivered orders
             if (in_array($order->status()->value(), ['completed', 'delivered'], true)) {
                 $totalCents += $order->total()->getAmount();
-                $currency = $order->total()->getCurrency();
+                $currency = $order->total()->getCurrency()->getCurrencyCode();
             }
         }
 

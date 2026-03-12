@@ -56,10 +56,22 @@ class DoctrineConfigurableProductRepository extends ServiceEntityRepository impl
 
     public function findByProductId(ProductId $productId, TenantId $tenantId): ?ConfigurableProduct
     {
-        $entity = $this->findOneBy([
-            'productId' => $productId->toString(),
-            'tenantId' => $tenantId->toString(),
-        ]);
+        $dql = <<<'DQL'
+            SELECT cp, o, ov, v
+            FROM App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ConfigurableProductEntity cp
+            LEFT JOIN cp.options o
+            LEFT JOIN o.values ov
+            LEFT JOIN cp.variants v
+            WHERE cp.productId = :productId
+              AND cp.tenantId = :tenantId
+            ORDER BY o.position ASC
+        DQL;
+
+        $entity = $this->getEntityManager()
+            ->createQuery($dql)
+            ->setParameter('productId', $productId->toString())
+            ->setParameter('tenantId', $tenantId->toString())
+            ->getOneOrNullResult();
 
         return $entity?->toDomainModel();
     }

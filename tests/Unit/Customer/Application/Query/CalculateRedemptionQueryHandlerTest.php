@@ -89,7 +89,7 @@ final class CalculateRedemptionQueryHandlerTest extends TestCase
         self::assertSame(200, $result->pointsRedeemed);
         self::assertSame(300, $result->remainingBalance);
         self::assertSame('USD', $result->discountCurrency);
-        self::assertGreaterThan(0.0, $result->discountAmount);
+        self::assertGreaterThan(0, $result->discountAmountMinorUnits);
     }
 
     // -------------------------------------------------------

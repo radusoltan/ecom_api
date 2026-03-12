@@ -29,6 +29,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[ORM\Index(name: 'idx_categories_tenant_active', columns: ['tenant_id', 'active'])]
 #[ORM\Index(name: 'idx_categories_parent_position', columns: ['parent_id', 'position'])]
 #[ORM\Index(name: 'idx_categories_slug', columns: ['slug'])]
+// Sprint 4 performance indexes (expression indexes on tenant_id::text)
+#[ORM\Index(name: 'idx_categories_tenant_text_slug', columns: ['slug'])]
+#[ORM\Index(name: 'idx_categories_tenant_text_parent_pos', columns: ['parent_id', 'position'])]
+#[ORM\Index(name: 'idx_categories_tenant_text_front', columns: ['show_on_front', 'created_at'])]
 #[ApiResource(
     shortName: 'Category',
     operations: [

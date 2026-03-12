@@ -86,8 +86,11 @@ final class EUVatRatesFixture extends Fixture implements FixtureGroupInterface
         }
         $tenantId = TenantId::fromString($tenantIdString);
 
-        // Set RLS context
-        $this->connection->executeStatement("SET app.tenant_id = '{$tenantIdString}'");
+        // Set RLS context using parameterized set_config to prevent SQL injection
+        $this->connection->executeStatement(
+            "SELECT set_config('app.tenant_id', :tenantId, false)",
+            ['tenantId' => $tenantIdString]
+        );
 
         echo "🏛️  Creating EU VAT tax rules...\n";
 

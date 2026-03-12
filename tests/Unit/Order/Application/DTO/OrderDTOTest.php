@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Order\Application\DTO;
 
 use App\Order\Application\DTO\OrderDTO;
+use App\Order\Application\DTO\OrderListDto;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(OrderDTO::class)]
+#[CoversClass(OrderListDto::class)]
 final class OrderDTOTest extends TestCase
 {
     #[Test]
@@ -118,5 +120,33 @@ final class OrderDTOTest extends TestCase
         self::assertNull($dto->taxCurrency);
         self::assertNull($dto->taxJurisdiction);
         self::assertNull($dto->taxRuleId);
+    }
+
+    #[Test]
+    public function orderListDtoConstruction(): void
+    {
+        $dto = new OrderListDto(
+            id: 'ord-list-1',
+            tenantId: 'tenant-1',
+            status: 'processing',
+            customerEmail: 'customer@example.com',
+            lineCount: 3,
+            totalAmount: 7500,
+            totalCurrency: 'USD',
+            discountAmount: 500,
+            couponCode: 'SPRING',
+            createdAt: '2026-03-10 12:00:00+00',
+            updatedAt: '2026-03-10 12:05:00+00',
+        );
+
+        self::assertSame('ord-list-1', $dto->id);
+        self::assertSame('tenant-1', $dto->tenantId);
+        self::assertSame('processing', $dto->status);
+        self::assertSame('customer@example.com', $dto->customerEmail);
+        self::assertSame(3, $dto->lineCount);
+        self::assertSame(7500, $dto->totalAmount);
+        self::assertSame('USD', $dto->totalCurrency);
+        self::assertSame(500, $dto->discountAmount);
+        self::assertSame('SPRING', $dto->couponCode);
     }
 }

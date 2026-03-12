@@ -12,7 +12,7 @@ framework:
 
     # Redis Cache Configuration
     cache:
-        app: cache.adapter.redis
+        app: cache.adapter.redis_tag_aware
         default_redis_provider: '%env(REDIS_URL)%'
 
     # Serializer configuration to handle MaxDepth and prevent circular references
