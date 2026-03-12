@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5d7e289cebf2d73a1a87fb962fbc162e",
+    "content-hash": "6d0d01ed6a1a9280fed0f810747c3678",
     "packages": [
         {
             "name": "api-platform/core",
@@ -349,22 +349,23 @@
         },
         {
             "name": "brick/math",
-            "version": "0.16.1",
+            "version": "0.14.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "9b8bd30c534479b1cd279eec37a7b0aed30a323c"
+                "reference": "63422359a44b7f06cae63c3b429b59e8efcc0629"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/9b8bd30c534479b1cd279eec37a7b0aed30a323c",
-                "reference": "9b8bd30c534479b1cd279eec37a7b0aed30a323c",
+                "url": "https://api.github.com/repos/brick/math/zipball/63422359a44b7f06cae63c3b429b59e8efcc0629",
+                "reference": "63422359a44b7f06cae63c3b429b59e8efcc0629",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.2"
             },
             "require-dev": {
+                "php-coveralls/php-coveralls": "^2.2",
                 "phpstan/phpstan": "2.1.22",
                 "phpunit/phpunit": "^11.5"
             },
@@ -396,7 +397,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.16.1"
+                "source": "https://github.com/brick/math/tree/0.14.8"
             },
             "funding": [
                 {
@@ -404,32 +405,33 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-09T13:41:19+00:00"
+            "time": "2026-02-10T14:33:43+00:00"
         },
         {
             "name": "brick/money",
-            "version": "0.12.1",
+            "version": "0.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/money.git",
-                "reference": "a92438ee68bcbc4fd2b4673c9fa5d47464a41478"
+                "reference": "57fb799337d9c532da7f7c7def52b926bfcf0917"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/money/zipball/a92438ee68bcbc4fd2b4673c9fa5d47464a41478",
-                "reference": "a92438ee68bcbc4fd2b4673c9fa5d47464a41478",
+                "url": "https://api.github.com/repos/brick/money/zipball/57fb799337d9c532da7f7c7def52b926bfcf0917",
+                "reference": "57fb799337d9c532da7f7c7def52b926bfcf0917",
                 "shasum": ""
             },
             "require": {
-                "brick/math": "~0.15.0 || ~0.16.0",
-                "php": "^8.2"
+                "brick/math": "~0.14.4",
+                "php": "^8.2",
+                "symfony/deprecation-contracts": "^2.2|^3.0"
             },
             "require-dev": {
                 "brick/varexporter": "0.7.0",
                 "ext-dom": "*",
                 "ext-pdo": "*",
-                "phpstan/phpstan": "2.1.40",
-                "phpunit/phpunit": "^11.0"
+                "phpunit/phpunit": "^11.0",
+                "vimeo/psalm": "6.14.3"
             },
             "suggest": {
                 "ext-intl": "Required to format Money objects"
@@ -452,7 +454,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/money/issues",
-                "source": "https://github.com/brick/money/tree/0.12.1"
+                "source": "https://github.com/brick/money/tree/0.11.2"
             },
             "funding": [
                 {
@@ -460,7 +462,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-11T11:51:16+00:00"
+            "time": "2026-03-02T20:25:37+00:00"
         },
         {
             "name": "composer/ca-bundle",

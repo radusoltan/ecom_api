@@ -9,7 +9,7 @@
         "ext-iconv": "*",
         "api-platform/core": ">=4.2.20",
         "artprima/prometheus-metrics-bundle": ">=1.21",
-        "brick/money": ">=0.12.1",
+        "brick/money": "^0.11",
         "doctrine/dbal": "^4.4.2",
         "doctrine/doctrine-bundle": "^3.2.2",
         "doctrine/doctrine-migrations-bundle": "^3.7",
