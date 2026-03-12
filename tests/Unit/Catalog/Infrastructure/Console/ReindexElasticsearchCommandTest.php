@@ -13,6 +13,7 @@ use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 use App\Catalog\Infrastructure\Console\ReindexElasticsearchCommand;
 use App\Catalog\Infrastructure\Elasticsearch\CategoryIndexer;
 use App\Catalog\Infrastructure\Elasticsearch\ProductIndexer;
+use App\Shared\Application\Service\TenantContextInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -30,6 +31,7 @@ final class ReindexElasticsearchCommandTest extends TestCase
     private CategoryRepositoryInterface&MockObject $categoryRepository;
     private ProductIndexer&MockObject $productIndexer;
     private CategoryIndexer&MockObject $categoryIndexer;
+    private TenantContextInterface&MockObject $tenantContext;
     private CommandTester $tester;
 
     private const TENANT_ID = '00000000-0000-4000-8000-000000000001';
@@ -40,12 +42,14 @@ final class ReindexElasticsearchCommandTest extends TestCase
         $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
         $this->productIndexer = $this->createMock(ProductIndexer::class);
         $this->categoryIndexer = $this->createMock(CategoryIndexer::class);
+        $this->tenantContext = $this->createMock(TenantContextInterface::class);
 
         $command = new ReindexElasticsearchCommand(
             $this->productRepository,
             $this->categoryRepository,
             $this->productIndexer,
             $this->categoryIndexer,
+            $this->tenantContext,
         );
 
         $this->tester = new CommandTester($command);
