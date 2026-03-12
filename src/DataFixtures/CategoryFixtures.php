@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Catalog\Application\Command\CreateCategory;
+use App\Catalog\Domain\Model\CategoryId;
+use App\Catalog\Domain\Model\CategoryName;
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\CategoryEntity;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Tenant\TenantContext;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Uid\Uuid;
 
 /**
  * Category fixtures - creates hierarchical categories with translations
  * 3 root categories, each with 3 subcategories (12 total).
  */
-class CategoryFixtures extends Fixture implements DependentFixtureInterface
+class CategoryFixtures extends AbstractTenantAwareFixture implements DependentFixtureInterface, FixtureGroupInterface
 {
     // Reference constants for ProductFixtures
     public const CATEGORY_ELECTRONICS = 'category_electronics';
@@ -32,301 +39,92 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
     public const CATEGORY_HOME_DECOR = 'category_home_decor';
     public const CATEGORY_HOME_KITCHEN = 'category_home_kitchen';
 
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        TenantContext $tenantContext,
+        private readonly MessageBusInterface $commandBus,
+    ) {
+        parent::__construct($entityManager, $tenantContext);
+    }
+
+    public static function getGroups(): array
+    {
+        return ['sprint3', 'sprint3-catalog', 'sprint3-categories'];
+    }
+
     public function load(ObjectManager $manager): void
     {
-        echo "📂 Creating categories with translations...\n";
+        echo "📂 Creating localized category trees...\n";
 
-        // Get first tenant ID from database
-        $tenantId = $this->getFirstTenantId($manager);
+        $tenantIds = $this->tenantIdsByOwnerEmail();
 
-        // Set tenant context for RLS
-        $connection = $manager->getConnection();
-        $connection->executeStatement("SET app.tenant_id = '{$tenantId}'");
+        foreach (Sprint3SeedData::tenants() as $tenant) {
+            $tenantId = TenantId::fromString($tenantIds[$tenant['ownerEmail']]);
+            $this->activateTenantContext($tenantId);
 
-        // Root Category 1: Electronics
-        $electronicsId = $this->createCategory(
-            $manager,
-            $tenantId,
-            [
-                'en' => 'Electronics',
-                'fr' => 'Électronique',
-                'de' => 'Elektronik',
-            ],
-            [
-                'en' => 'Latest electronic devices and gadgets',
-                'fr' => 'Derniers appareils électroniques et gadgets',
-                'de' => 'Neueste elektronische Geräte und Gadgets',
-            ],
-            null,
-            1,
-            'https://picsum.photos/1200/400?random=1'
-        );
-        echo "   ✓ Electronics category created\n";
+            $createdForTenant = 0;
 
-        // Electronics Subcategories
-        $laptopsId = $this->createCategory(
-            $manager,
-            $tenantId,
-            [
-                'en' => 'Laptops & Computers',
-                'fr' => 'Ordinateurs portables',
-                'de' => 'Laptops & Computer',
-            ],
-            [
-                'en' => 'High-performance laptops and desktop computers',
-                'fr' => 'Ordinateurs portables et de bureau haute performance',
-                'de' => 'Hochleistungs-Laptops und Desktop-Computer',
-            ],
-            $electronicsId,
-            1,
-            'https://picsum.photos/1200/400?random=2'
-        );
+            foreach ($tenant['categories'] as $rootIndex => $root) {
+                $rootId = CategoryId::fromString((string) Uuid::v7());
+                $this->commandBus->dispatch(new CreateCategory(
+                    id: $rootId,
+                    tenantId: $tenantId,
+                    name: CategoryName::fromString($root['name']['en']),
+                    description: $root['description']['en'],
+                    parentId: null,
+                    position: $rootIndex + 1,
+                    showOnFront: true,
+                ));
 
-        $smartphonesId = $this->createCategory(
-            $manager,
-            $tenantId,
-            [
-                'en' => 'Smartphones & Tablets',
-                'fr' => 'Smartphones et tablettes',
-                'de' => 'Smartphones & Tablets',
-            ],
-            [
-                'en' => 'Latest smartphones and tablets',
-                'fr' => 'Derniers smartphones et tablettes',
-                'de' => 'Neueste Smartphones und Tablets',
-            ],
-            $electronicsId,
-            2,
-            'https://picsum.photos/1200/400?random=3'
-        );
+                $this->applyCategoryPresentation($rootId, $root, $tenant['alias']);
+                ++$createdForTenant;
 
-        $accessoriesId = $this->createCategory(
-            $manager,
-            $tenantId,
-            [
-                'en' => 'Electronics Accessories',
-                'fr' => 'Accessoires électroniques',
-                'de' => 'Elektronik-Zubehör',
-            ],
-            [
-                'en' => 'Chargers, cases, and more',
-                'fr' => 'Chargeurs, étuis et plus',
-                'de' => 'Ladegeräte, Hüllen und mehr',
-            ],
-            $electronicsId,
-            3,
-            'https://picsum.photos/1200/400?random=4'
-        );
-        echo "   ✓ Electronics subcategories created (3)\n";
+                foreach ($root['children'] as $childIndex => $child) {
+                    $childId = CategoryId::fromString((string) Uuid::v7());
+                    $this->commandBus->dispatch(new CreateCategory(
+                        id: $childId,
+                        tenantId: $tenantId,
+                        name: CategoryName::fromString($child['name']['en']),
+                        description: $child['description']['en'],
+                        parentId: $rootId,
+                        position: $childIndex + 1,
+                        showOnFront: true,
+                    ));
 
-        // Root Category 2: Fashion
-        $fashionId = $this->createCategory(
-            $manager,
-            $tenantId,
-            [
-                'en' => 'Fashion & Apparel',
-                'fr' => 'Mode et vêtements',
-                'de' => 'Mode & Bekleidung',
-            ],
-            [
-                'en' => 'Stylish clothing for everyone',
-                'fr' => 'Vêtements élégants pour tous',
-                'de' => 'Stilvolle Kleidung für alle',
-            ],
-            null,
-            2,
-            'https://picsum.photos/1200/400?random=5'
-        );
-        echo "   ✓ Fashion category created\n";
+                    $this->applyCategoryPresentation($childId, $child, $tenant['alias']);
+                    ++$createdForTenant;
+                }
+            }
 
-        // Fashion Subcategories
-        $mensId = $this->createCategory(
-            $manager,
-            $tenantId,
-            [
-                'en' => "Men's Clothing",
-                'fr' => 'Vêtements pour hommes',
-                'de' => 'Herrenbekleidung',
-            ],
-            [
-                'en' => 'Stylish clothing and accessories for men',
-                'fr' => 'Vêtements et accessoires élégants pour hommes',
-                'de' => 'Stilvolle Kleidung und Accessoires für Herren',
-            ],
-            $fashionId,
-            1,
-            'https://picsum.photos/1200/400?random=6'
-        );
-
-        $womensId = $this->createCategory(
-            $manager,
-            $tenantId,
-            [
-                'en' => "Women's Clothing",
-                'fr' => 'Vêtements pour femmes',
-                'de' => 'Damenbekleidung',
-            ],
-            [
-                'en' => 'Fashion-forward clothing and accessories for women',
-                'fr' => 'Vêtements et accessoires tendance pour femmes',
-                'de' => 'Modische Kleidung und Accessoires für Damen',
-            ],
-            $fashionId,
-            2,
-            'https://picsum.photos/1200/400?random=7'
-        );
-
-        $kidsId = $this->createCategory(
-            $manager,
-            $tenantId,
-            [
-                'en' => "Kids' Clothing",
-                'fr' => 'Vêtements pour enfants',
-                'de' => 'Kinderbekleidung',
-            ],
-            [
-                'en' => 'Comfortable and fun clothing for children',
-                'fr' => 'Vêtements confortables et amusants pour enfants',
-                'de' => 'Bequeme und lustige Kleidung für Kinder',
-            ],
-            $fashionId,
-            3,
-            'https://picsum.photos/1200/400?random=8'
-        );
-        echo "   ✓ Fashion subcategories created (3)\n";
-
-        // Root Category 3: Home & Living
-        $homeId = $this->createCategory(
-            $manager,
-            $tenantId,
-            [
-                'en' => 'Home & Living',
-                'fr' => 'Maison et vie',
-                'de' => 'Haus & Wohnen',
-            ],
-            [
-                'en' => 'Everything for your home',
-                'fr' => 'Tout pour votre maison',
-                'de' => 'Alles für Ihr Zuhause',
-            ],
-            null,
-            3,
-            'https://picsum.photos/1200/400?random=9'
-        );
-        echo "   ✓ Home & Living category created\n";
-
-        // Home Subcategories
-        $furnitureId = $this->createCategory(
-            $manager,
-            $tenantId,
-            [
-                'en' => 'Furniture',
-                'fr' => 'Meubles',
-                'de' => 'Möbel',
-            ],
-            [
-                'en' => 'Quality furniture for every room',
-                'fr' => 'Meubles de qualité pour chaque pièce',
-                'de' => 'Hochwertige Möbel für jeden Raum',
-            ],
-            $homeId,
-            1,
-            'https://picsum.photos/1200/400?random=10'
-        );
-
-        $decorId = $this->createCategory(
-            $manager,
-            $tenantId,
-            [
-                'en' => 'Home Decor',
-                'fr' => 'Décoration intérieure',
-                'de' => 'Wohndekoration',
-            ],
-            [
-                'en' => 'Beautiful decorations for your home',
-                'fr' => 'Belles décorations pour votre maison',
-                'de' => 'Schöne Dekorationen für Ihr Zuhause',
-            ],
-            $homeId,
-            2,
-            'https://picsum.photos/1200/400?random=11'
-        );
-
-        $kitchenId = $this->createCategory(
-            $manager,
-            $tenantId,
-            [
-                'en' => 'Kitchen & Dining',
-                'fr' => 'Cuisine et salle à manger',
-                'de' => 'Küche & Esszimmer',
-            ],
-            [
-                'en' => 'Cookware, utensils, and dining essentials',
-                'fr' => 'Ustensiles de cuisine et essentiels pour la salle à manger',
-                'de' => 'Kochgeschirr, Utensilien und Essentials fürs Esszimmer',
-            ],
-            $homeId,
-            3,
-            'https://picsum.photos/1200/400?random=12'
-        );
-        echo "   ✓ Home & Living subcategories created (3)\n";
-
-        $manager->flush();
-        echo "✅ All categories created (3 root + 9 subcategories = 12 total)\n";
-    }
-
-    private function createCategory(
-        ObjectManager $manager,
-        string $tenantId,
-        array $names,
-        array $descriptions,
-        ?string $parentId,
-        int $position,
-        string $coverImage,
-    ): string {
-        $categoryId = Uuid::v4()->toString();
-
-        // Create category with English (default locale)
-        $category = new CategoryEntity();
-        $category->setTenantId($tenantId);
-        $category->setPosition($position);
-        $category->setActive(true);
-        $category->setShowOnFront(true);
-        $category->setCoverImage($coverImage);
-
-        if (null !== $parentId) {
-            $category->setParentId($parentId);
+            echo sprintf("   ✓ %s categories: %d\n", $tenant['name'], $createdForTenant);
+            $this->entityManager->clear();
         }
 
-        // Use reflection to set private properties
-        $reflection = new \ReflectionClass($category);
+        $this->clearTenantContext();
 
-        $idProperty = $reflection->getProperty('id');
-        $idProperty->setValue($category, $categoryId);
-
-        $createdAtProperty = $reflection->getProperty('createdAt');
-        $createdAtProperty->setValue($category, new \DateTimeImmutable());
-
-        $updatedAtProperty = $reflection->getProperty('updatedAt');
-        $updatedAtProperty->setValue($category, new \DateTimeImmutable());
-
-        // Set English content only (translations can be added via admin panel later)
-        $category->setTranslatableLocale('en');
-        $category->setName($names['en']);
-        $category->setDescription($descriptions['en']);
-
-        $manager->persist($category);
-        $manager->flush(); // Flush immediately to generate slug and commit to DB
-
-        return $categoryId;
+        echo "✅ Category trees ready for all tenants\n";
     }
 
-    private function getFirstTenantId(ObjectManager $manager): string
+    /**
+     * @param array{name: array<string, string>, description: array<string, string>} $category
+     */
+    private function applyCategoryPresentation(CategoryId $categoryId, array $category, string $tenantAlias): void
     {
-        $connection = $manager->getConnection();
-        $result = $connection->executeQuery('SELECT id FROM tenants ORDER BY created_at ASC LIMIT 1')->fetchOne();
+        $entity = $this->entityManager->find(CategoryEntity::class, $categoryId->toString());
 
-        return $result;
+        if (!$entity instanceof CategoryEntity) {
+            throw new \RuntimeException(sprintf('Category %s could not be reloaded after creation', $categoryId->toString()));
+        }
+
+        $entity->setNameTranslations($category['name']);
+        $entity->setDescriptionTranslations($category['description']);
+        $entity->setCoverImage(sprintf(
+            'https://picsum.photos/seed/%s-%s/1200/420',
+            $tenantAlias,
+            strtolower(str_replace(' ', '-', $category['name']['en']))
+        ));
+
+        $this->entityManager->flush();
     }
 
     public function getDependencies(): array
@@ -334,10 +132,5 @@ class CategoryFixtures extends Fixture implements DependentFixtureInterface
         return [
             TenantFixtures::class,
         ];
-    }
-
-    public function getOrder(): int
-    {
-        return 3;
     }
 }

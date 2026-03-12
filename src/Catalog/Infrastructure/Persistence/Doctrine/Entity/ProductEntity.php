@@ -39,6 +39,11 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[ORM\Index(name: 'idx_products_category_id', columns: ['category_id'])]
 #[ORM\Index(name: 'idx_products_created_at', columns: ['created_at'])]
 #[ORM\Index(name: 'idx_products_price_amount', columns: ['price_amount'])]
+// Sprint 4 performance indexes (expression indexes on tenant_id::text)
+#[ORM\Index(name: 'idx_products_tenant_text_cat_active', columns: ['category_id', 'active', 'created_at'])]
+#[ORM\Index(name: 'idx_products_tenant_text_featured', columns: ['is_featured', 'active', 'created_at'])]
+#[ORM\Index(name: 'idx_products_tenant_text_active_price', columns: ['active', 'price_amount'])]
+#[ORM\Index(name: 'idx_products_tenant_text_active_created', columns: ['active', 'created_at'])]
 #[ApiResource(
     shortName: 'Product',
     operations: [

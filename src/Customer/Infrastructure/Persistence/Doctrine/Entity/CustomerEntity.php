@@ -43,6 +43,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['segment'])]
 #[ORM\Index(columns: ['is_active'])]
 #[ORM\UniqueConstraint(name: 'unique_email_per_tenant_bi', columns: ['tenant_id', 'email_blind_index'])]
+#[ORM\Index(name: 'idx_customers_tenant_text_email', columns: ['email_blind_index'])]
 #[ApiResource(
     shortName: 'Customer',
     security: "is_granted('ROLE_USER')",

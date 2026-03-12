@@ -6,26 +6,21 @@ namespace App\Catalog\Infrastructure\ApiPlatform\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Catalog\Infrastructure\Persistence\Doctrine\ReadModel\AdminProductReadRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Provider for ProductEntity collection operations
- * Filters products by tenant_id from X-Tenant-ID header
- * Supports Gedmo Translatable for automatic product translation.
- *
- * @implements ProviderInterface<ProductEntity>
+ * @implements ProviderInterface<object>
  */
 final readonly class ProductCollectionProvider implements ProviderInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private AdminProductReadRepository $readRepository,
         private RequestStack $requestStack,
     ) {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array
     {
         // Get tenant ID from context (injected by TenantContextProvider decorator)
         $tenantId = $context['tenant_id'] ?? null;
@@ -42,24 +37,35 @@ final readonly class ProductCollectionProvider implements ProviderInterface
             ?? $request?->getPreferredLanguage(['en', 'fr', 'de'])
             ?? 'en';
 
-        // Build query with Gedmo Translatable support
-        $query = $this->entityManager->createQueryBuilder()
-            ->select('p')
-            ->from(ProductEntity::class, 'p')
-            ->where('p.tenantId = :tenantId')
-            ->andWhere('p.active = :active')
-            ->setParameter('tenantId', $tenantId)
-            ->setParameter('active', true)
-            ->orderBy('p.createdAt', 'DESC')
-            ->getQuery();
+        $page = max(1, (int) ($request?->query->get('page', 1) ?? 1));
+        $itemsPerPage = max(1, min(1000, (int) ($request?->query->get('itemsPerPage', 1000) ?? 1000)));
+        $sort = $request?->query->get('sort', 'newest');
+        $search = $request?->query->get('search') ?? $request?->query->get('q');
+        $activeOnly = $this->parseNullableBoolean(
+            $request?->query->get('activeOnly') ?? $request?->query->get('active')
+        ) ?? true;
 
-        // Set Gedmo Translatable hints to load translations
-        $query->setHint(
-            \Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER,
-            'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
-        );
-        $query->setHint('Gedmo.translatable.locale', $locale);
+        return $this->readRepository->findForAdmin(
+            tenantId: $tenantId,
+            page: $page,
+            itemsPerPage: $itemsPerPage,
+            sort: is_string($sort) ? $sort : 'newest',
+            search: is_string($search) && '' !== $search ? $search : null,
+            activeOnly: $activeOnly,
+            locale: $locale,
+        )['products'];
+    }
 
-        return $query->getResult();
+    private function parseNullableBoolean(mixed $value): ?bool
+    {
+        if (null === $value || '' === $value) {
+            return null;
+        }
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        return filter_var($value, \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE);
     }
 }

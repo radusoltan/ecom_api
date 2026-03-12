@@ -28,6 +28,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Index(columns: ['resource_type'], name: 'idx_audit_log_resource_type')]
 #[ORM\Index(columns: ['resource_id'], name: 'idx_audit_log_resource_id')]
 #[ORM\Index(columns: ['occurred_at'], name: 'idx_audit_log_occurred_at')]
+#[ORM\Index(name: 'idx_audit_tenant_occurred', columns: ['tenant_id', 'occurred_at'])]
+#[ORM\Index(name: 'idx_audit_tenant_resource', columns: ['tenant_id', 'resource_type', 'resource_id', 'occurred_at'])]
 #[ApiResource(
     shortName: 'AuditLog',
     operations: [

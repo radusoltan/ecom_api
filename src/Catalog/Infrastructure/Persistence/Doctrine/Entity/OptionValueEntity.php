@@ -23,6 +23,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\UniqueConstraint(name: 'uniq_option_values_option_code', columns: ['option_id', 'code'])]
 #[ORM\Index(name: 'idx_option_values_position', columns: ['option_id', 'position'])]
 #[ORM\Index(name: 'idx_option_values_tenant', columns: ['tenant_id'])]
+// Sprint 4 performance index (expression index on tenant_id::text)
+#[ORM\Index(name: 'idx_option_values_tenant_text_option', columns: ['option_id'])]
 #[ApiResource(
     operations: [
         new GetCollection(

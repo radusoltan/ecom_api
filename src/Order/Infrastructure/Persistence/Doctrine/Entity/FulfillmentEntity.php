@@ -63,6 +63,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_fulfillments_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_fulfillments_tenant_status', columns: ['tenant_id', 'status'])]
 #[ORM\Index(name: 'idx_fulfillments_created_at', columns: ['created_at'])]
+#[ORM\Index(name: 'idx_fulfillments_tenant_text_order', columns: ['order_id'])]
 class FulfillmentEntity
 {
     #[ORM\Id]

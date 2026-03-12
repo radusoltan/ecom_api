@@ -38,6 +38,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_promotions_tenant_type', columns: ['tenant_id', 'type'])]
 #[ORM\Index(name: 'idx_promotions_created_at', columns: ['created_at'])]
 #[ORM\UniqueConstraint(name: 'unique_coupon_per_tenant', columns: ['tenant_id', 'coupon_code'])]
+#[ORM\Index(name: 'idx_promotions_tenant_text_active_pri', columns: ['is_active', 'priority', 'valid_from', 'valid_to'])]
 #[ApiResource(
     shortName: 'Promotion',
     security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER')",
@@ -78,6 +79,9 @@ class PromotionEntity
     #[ORM\Column(type: 'float', nullable: false, name: 'discount_value')]
     private float $discountValue;
 
+    #[ORM\Column(type: 'string', length: 3, nullable: true, name: 'discount_currency')]
+    private ?string $discountCurrency = null;
+
     #[ORM\Column(type: 'integer', nullable: false)]
     private int $priority = 100;
 
@@ -114,6 +118,7 @@ class PromotionEntity
         $entity->type = $promotion->type()->toString();
         $entity->discountType = $promotion->discount()->type()->toString();
         $entity->discountValue = $promotion->discount()->value();
+        $entity->discountCurrency = $promotion->discount()->getMoneyValue()?->getCurrency()->getCurrencyCode();
         $entity->priority = $promotion->priority();
         $entity->isActive = $promotion->isActive();
         $entity->couponCode = $promotion->couponCode()?->toString();
@@ -160,7 +165,7 @@ class PromotionEntity
             tenantId: TenantId::fromString($this->tenantId),
             name: $this->name,
             type: PromotionType::fromString($this->type),
-            discount: Discount::fromTypeAndValue($this->discountType, $this->discountValue),
+            discount: Discount::fromTypeAndValue($this->discountType, $this->discountValue, $this->discountCurrency ?? 'EUR'),
             priority: $this->priority,
             isActive: $this->isActive,
             couponCode: null !== $this->couponCode ? CouponCode::fromString($this->couponCode) : null,
@@ -178,6 +183,7 @@ class PromotionEntity
         $this->name = $promotion->name();
         $this->discountType = $promotion->discount()->type()->toString();
         $this->discountValue = $promotion->discount()->value();
+        $this->discountCurrency = $promotion->discount()->getMoneyValue()?->getCurrency()->getCurrencyCode();
         $this->priority = $promotion->priority();
         $this->isActive = $promotion->isActive();
         $this->conditions = $promotion->conditions();

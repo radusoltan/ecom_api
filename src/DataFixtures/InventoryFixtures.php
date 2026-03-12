@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Catalog\Domain\Model\ProductId;
+use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity;
 use App\Inventory\Application\Command\CreateStockItem\CreateStockItemCommand;
-use App\Inventory\Application\Command\CreateWarehouse\CreateWarehouse;
 use App\Inventory\Domain\Model\Quantity;
 use App\Inventory\Domain\Model\StockItemId;
-use App\Inventory\Domain\Model\WarehouseCode;
 use App\Inventory\Domain\Model\WarehouseId;
-use App\Inventory\Domain\Model\WarehouseName;
-use App\Shared\Domain\ValueObject\Address;
+use App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity;
 use App\Shared\Domain\ValueObject\TenantId;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Shared\Infrastructure\Tenant\TenantContext;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Uid\Uuid;
@@ -25,129 +24,77 @@ use Symfony\Component\Uid\Uuid;
  * Inventory fixtures - creates warehouses and stock items
  * Depends on: TenantFixtures, ProductFixtures.
  */
-class InventoryFixtures extends Fixture implements DependentFixtureInterface
+class InventoryFixtures extends AbstractTenantAwareFixture implements DependentFixtureInterface, FixtureGroupInterface
 {
     public function __construct(
+        EntityManagerInterface $entityManager,
+        TenantContext $tenantContext,
         private readonly MessageBusInterface $commandBus,
-        private readonly Connection $connection,
     ) {
+        parent::__construct($entityManager, $tenantContext);
+    }
+
+    public static function getGroups(): array
+    {
+        return ['sprint3', 'sprint3-inventory'];
     }
 
     public function load(ObjectManager $manager): void
     {
-        echo "📦 Creating inventory...\n";
+        echo "📦 Creating tenant inventory...\n";
 
-        // Get tenant ID from database (first tenant)
-        $tenantIdString = $this->connection->fetchOne(
-            'SELECT id FROM tenants ORDER BY created_at LIMIT 1'
-        );
+        $tenantIds = $this->tenantIdsByOwnerEmail();
 
-        if (!$tenantIdString) {
-            echo "   ⚠️  No tenants found. Skipping inventory fixtures.\n";
+        foreach (Sprint3SeedData::tenants() as $tenant) {
+            $tenantId = TenantId::fromString($tenantIds[$tenant['ownerEmail']]);
+            $this->activateTenantContext($tenantId);
 
-            return;
-        }
-
-        $tenantId = TenantId::fromString($tenantIdString);
-
-        // Create warehouses
-        $warehouses = $this->createWarehouses($tenantId);
-
-        // Get all products for this tenant
-        $products = $this->connection->fetchAllAssociative(
-            'SELECT id FROM catalog_products WHERE tenant_id = :tenant_id ORDER BY created_at',
-            ['tenant_id' => $tenantId->toString()]
-        );
-
-        if (empty($products)) {
-            echo "   ⚠️  No products found. Skipping stock items.\n";
-
-            return;
-        }
-
-        echo '   Creating stock items for '.count($products)." products...\n";
-
-        // Create stock items for each product
-        $stockItemsCreated = 0;
-        foreach ($products as $product) {
-            $productId = ProductId::fromString($product['id']);
-
-            // Distribute products across warehouses (80% in main, 20% in secondary)
-            $mainWarehouseId = $warehouses[0]['id'];
-            $secondaryWarehouseId = $warehouses[1]['id'];
-
-            // Main warehouse - stock between 50-200 units
-            $mainStockQuantity = random_int(50, 200);
-            $this->createStockItem(
-                $tenantId,
-                $productId,
-                $mainWarehouseId,
-                $mainStockQuantity
+            $warehouses = $this->entityManager->getRepository(WarehouseEntity::class)->findBy(
+                ['tenantId' => $tenantId->toString()],
+                ['priority' => 'ASC']
             );
-            ++$stockItemsCreated;
+            $products = $this->entityManager->getRepository(ProductEntity::class)->findBy(
+                ['tenantId' => $tenantId->toString()],
+                ['createdAt' => 'ASC']
+            );
 
-            // 30% chance to also have stock in secondary warehouse
-            if (random_int(1, 100) <= 30) {
-                $secondaryStockQuantity = random_int(10, 50);
+            if (count($warehouses) < 2) {
+                throw new \RuntimeException(sprintf('Expected 2 warehouses for tenant %s before seeding inventory', $tenantId->toString()));
+            }
+
+            $stockItemsCreated = 0;
+            foreach ($products as $index => $product) {
+                if (!$product instanceof ProductEntity) {
+                    continue;
+                }
+
+                $baseQuantity = 45 + (($index * 17) % 120);
                 $this->createStockItem(
-                    $tenantId,
-                    $productId,
-                    $secondaryWarehouseId,
-                    $secondaryStockQuantity
+                    tenantId: $tenantId,
+                    productId: ProductId::fromString($product->getId()),
+                    warehouseId: WarehouseId::fromString($warehouses[0]->getId()),
+                    quantity: $baseQuantity
                 );
                 ++$stockItemsCreated;
+
+                if (0 === $index % 4) {
+                    $this->createStockItem(
+                        tenantId: $tenantId,
+                        productId: ProductId::fromString($product->getId()),
+                        warehouseId: WarehouseId::fromString($warehouses[1]->getId()),
+                        quantity: 12 + (($index * 9) % 35)
+                    );
+                    ++$stockItemsCreated;
+                }
             }
+
+            echo sprintf("   ✓ %s stock items: %d\n", $tenant['name'], $stockItemsCreated);
+            $this->entityManager->clear();
         }
 
-        echo "   ✓ Created $stockItemsCreated stock items\n";
+        $this->clearTenantContext();
+
         echo "✅ Inventory created successfully\n";
-    }
-
-    private function createWarehouses(TenantId $tenantId): array
-    {
-        $warehouses = [];
-
-        // Main Warehouse
-        $mainWarehouseId = WarehouseId::fromString((string) Uuid::v7());
-        $command1 = new CreateWarehouse(
-            id: $mainWarehouseId,
-            tenantId: $tenantId,
-            code: WarehouseCode::fromString('MAIN'),
-            name: WarehouseName::fromString('Main Warehouse'),
-            address: Address::create(
-                street: '123 Commerce Street',
-                city: 'New York',
-                state: 'NY',
-                postalCode: '10001',
-                country: 'US'
-            ),
-            priority: 10, // Higher priority = processed first
-        );
-        $this->commandBus->dispatch($command1);
-        $warehouses[] = ['id' => $mainWarehouseId, 'name' => 'Main Warehouse'];
-        echo "   ✓ Main Warehouse created\n";
-
-        // Secondary Warehouse
-        $secondaryWarehouseId = WarehouseId::fromString((string) Uuid::v7());
-        $command2 = new CreateWarehouse(
-            id: $secondaryWarehouseId,
-            tenantId: $tenantId,
-            code: WarehouseCode::fromString('SEC'),
-            name: WarehouseName::fromString('Secondary Warehouse'),
-            address: Address::create(
-                street: '456 Industrial Blvd',
-                city: 'Los Angeles',
-                state: 'CA',
-                postalCode: '90001',
-                country: 'US'
-            ),
-            priority: 20, // Lower priority = backup warehouse
-        );
-        $this->commandBus->dispatch($command2);
-        $warehouses[] = ['id' => $secondaryWarehouseId, 'name' => 'Secondary Warehouse'];
-        echo "   ✓ Secondary Warehouse created\n";
-
-        return $warehouses;
     }
 
     private function createStockItem(
@@ -173,8 +120,8 @@ class InventoryFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            TenantFixtures::class,
             ProductFixtures::class,
+            WarehouseFixtures::class,
         ];
     }
 }

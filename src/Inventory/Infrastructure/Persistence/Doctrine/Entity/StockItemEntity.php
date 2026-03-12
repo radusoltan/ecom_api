@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['tenant_id', 'product_id'], name: 'idx_stock_tenant_product')]
 #[ORM\Index(columns: ['tenant_id', 'warehouse_id'], name: 'idx_stock_tenant_warehouse')]
 #[ORM\UniqueConstraint(name: 'uniq_stock_product_warehouse', columns: ['tenant_id', 'product_id', 'warehouse_id'])]
+#[ORM\Index(name: 'idx_stock_tenant_text_product_wh', columns: ['product_id', 'warehouse_id'])]
 class StockItemEntity
 {
     #[ORM\Id]

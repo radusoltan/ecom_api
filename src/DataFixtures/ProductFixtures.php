@@ -4,139 +4,235 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Catalog\Application\Command\CreateProduct;
+use App\Catalog\Domain\Model\CategoryId;
+use App\Catalog\Domain\Model\ProductId;
+use App\Catalog\Domain\Model\ProductName;
+use App\Catalog\Domain\Model\SKU;
+use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\CategoryEntity;
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Shared\Domain\ValueObject\Money;
+use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Tenant\TenantContext;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Product fixtures - creates products with translations and images.
+ * Product fixtures - creates realistic localized products for all tenants.
  */
-class ProductFixtures extends Fixture implements DependentFixtureInterface
+class ProductFixtures extends AbstractTenantAwareFixture implements DependentFixtureInterface, FixtureGroupInterface
 {
-    private int $imageCounter = 100;
-    private int $productCounter = 1;
+    /** @var array<string, int> */
+    private array $skuCounters = [];
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        TenantContext $tenantContext,
+        private readonly MessageBusInterface $commandBus,
+    ) {
+        parent::__construct($entityManager, $tenantContext);
+    }
+
+    public static function getGroups(): array
+    {
+        return ['sprint3', 'sprint3-catalog', 'sprint3-products'];
+    }
 
     public function load(ObjectManager $manager): void
     {
-        echo "🛍️  Creating products with translations and images...\n";
+        echo "🛍️  Creating product catalog data...\n";
 
-        // Get first tenant ID from database
-        $tenantId = $this->getFirstTenantId($manager);
+        $tenantIds = $this->tenantIdsByOwnerEmail();
 
-        // Set tenant context for RLS
-        $connection = $manager->getConnection();
-        $connection->executeStatement("SET app.tenant_id = '{$tenantId}'");
+        foreach (Sprint3SeedData::tenants() as $tenant) {
+            $tenantId = TenantId::fromString($tenantIds[$tenant['ownerEmail']]);
+            $this->activateTenantContext($tenantId);
 
-        // Get all category IDs mapped by name
-        $categories = $this->getAllCategories($manager);
+            $productsCreated = 0;
 
-        $productsCreated = 0;
+            foreach ($tenant['categories'] as $root) {
+                foreach ($root['children'] as $leaf) {
+                    $category = $this->findCategoryEntity($tenantId, $leaf['name']['en']);
 
-        // Create products for each category
-        foreach ($categories as $category) {
-            $productCount = 12; // 12 products per category
-
-            for ($i = 1; $i <= $productCount; ++$i) {
-                $this->createProduct(
-                    $manager,
-                    $tenantId,
-                    $category['id'],
-                    $category['name'],
-                    $i
-                );
-                ++$productsCreated;
+                    for ($index = 1; $index <= Sprint3SeedData::PRODUCTS_PER_LEAF; ++$index) {
+                        $this->seedProduct($tenant, $leaf, $category, $tenantId, $index);
+                        ++$productsCreated;
+                    }
+                }
             }
+
+            echo sprintf("   ✓ %s products: %d\n", $tenant['name'], $productsCreated);
+            $this->entityManager->clear();
         }
 
-        $manager->flush();
-        echo "✅ Created {$productsCreated} products with translations and images\n";
+        $this->clearTenantContext();
+
+        echo "✅ Product catalog ready for all tenants\n";
     }
 
-    private function createProduct(
-        ObjectManager $manager,
-        string $tenantId,
-        string $categoryId,
-        string $categoryName,
+    /**
+     * @param array{
+     *     alias: string,
+     *     code: string,
+     *     name: string,
+     *     profile: string,
+     *     brands: array<int, string>,
+     *     series: array<int, string>
+     * } $tenant
+     * @param array{
+     *     key: string,
+     *     leafCode: string,
+     *     label: array<string, string>,
+     *     name: array<string, string>,
+     *     description: array<string, string>
+     * } $leaf
+     */
+    private function seedProduct(
+        array $tenant,
+        array $leaf,
+        CategoryEntity $category,
+        TenantId $tenantId,
         int $index,
     ): void {
-        $productId = Uuid::v4()->toString();
-        // Generate SKU in format AAA-BBB-000000 (e.g., PRD-CAT-000001)
-        $categoryCode = strtoupper(substr(preg_replace('/[^A-Z]/i', '', $categoryName), 0, 3));
-        if (strlen($categoryCode) < 3) {
-            $categoryCode = str_pad($categoryCode, 3, 'X');
+        $productId = ProductId::fromString((string) \Symfony\Component\Uid\Uuid::v7());
+        $sku = SKU::fromString(sprintf(
+            '%s-%06d',
+            $tenant['code'],
+            $this->nextSkuCounter($tenant['alias'])
+        ));
+
+        $brand = $tenant['brands'][($index - 1) % count($tenant['brands'])];
+        $series = $tenant['series'][($index + 1) % count($tenant['series'])];
+        $model = sprintf('%s-%03d', strtoupper($leaf['leafCode']), $index);
+        $copy = $this->buildLocalizedCopy($tenant, $leaf, $brand, $series, $model);
+        $price = $this->pickPrice($tenant['profile'], $tenant['alias'], $leaf['key'], $index);
+        $stock = 18 + (($index * 7) % 55);
+
+        $this->commandBus->dispatch(new CreateProduct(
+            id: $productId,
+            tenantId: $tenantId,
+            sku: $sku,
+            name: ProductName::fromString($copy['name']['en']),
+            description: $copy['description']['en'],
+            shortDescription: $copy['shortDescription']['en'],
+            price: Money::fromScalars($price, 'USD'),
+            categoryId: CategoryId::fromString($category->getId()),
+            stockQuantity: $stock,
+            trackInventory: true,
+            allowBackorder: false,
+            isFeatured: $index <= 2,
+        ));
+
+        $entity = $this->entityManager->find(ProductEntity::class, $productId->toString());
+
+        if (!$entity instanceof ProductEntity) {
+            throw new \RuntimeException(sprintf('Product %s could not be reloaded after creation', $productId->toString()));
         }
-        $sku = sprintf('PRD-%s-%06d', $categoryCode, $this->productCounter++);
 
-        // Random price between $10 and $500
-        $price = rand(1000, 50000);
+        $entity->setActive(true);
+        $entity->setImages($this->productImages($tenant['alias'], $leaf['key'], $index));
+        $entity->setNameTranslations($copy['name']);
+        $entity->setDescriptionTranslations($copy['description']);
+        $entity->setShortDescriptionTranslations($copy['shortDescription']);
 
-        // Random stock between 10 and 200
-        $stock = rand(10, 200);
-
-        // Generate random number of images (1-5)
-        $numImages = rand(1, 5);
-        $images = [];
-        for ($i = 0; $i < $numImages; ++$i) {
-            $images[] = [
-                'url' => 'https://picsum.photos/800/600?random='.$this->imageCounter++,
-                'position' => $i + 1,
-                'isPrimary' => 0 === $i,
-            ];
-        }
-
-        $baseName = ucfirst($categoryName)." Product {$index}";
-
-        $product = new ProductEntity();
-        $product->setTenantId($tenantId);
-        $product->setSku($sku);
-        $product->setPriceAmount($price);
-        $product->setPriceCurrency('USD');
-        $product->setCategoryId($categoryId);
-        $product->setStockQuantity($stock);
-        $product->setTrackInventory(true);
-        $product->setAllowBackorder(false);
-        $product->setImages($images);
-        $product->setActive(true);
-        $product->setIsFeatured($index <= 3); // First 3 are featured
-
-        // Use reflection to set private properties
-        $reflection = new \ReflectionClass($product);
-
-        $idProperty = $reflection->getProperty('id');
-        $idProperty->setValue($product, $productId);
-
-        $createdAtProperty = $reflection->getProperty('createdAt');
-        $createdAtProperty->setValue($product, new \DateTimeImmutable());
-
-        $updatedAtProperty = $reflection->getProperty('updatedAt');
-        $updatedAtProperty->setValue($product, new \DateTimeImmutable());
-
-        // Set English content only (translations can be added via admin panel later)
-        $product->setTranslatableLocale('en');
-        $product->setName($baseName);
-        $product->setShortDescription("High-quality {$baseName} with excellent features");
-        $product->setDescription("This premium {$baseName} offers exceptional quality and performance. Perfect for everyday use with modern design and reliable functionality.");
-
-        $manager->persist($product);
-        // Note: Slug will be generated on flush
+        $this->entityManager->flush();
     }
 
-    private function getFirstTenantId(ObjectManager $manager): string
+    private function nextSkuCounter(string $tenantAlias): int
     {
-        $connection = $manager->getConnection();
-        $result = $connection->executeQuery('SELECT id FROM tenants ORDER BY created_at ASC LIMIT 1')->fetchOne();
+        $this->skuCounters[$tenantAlias] = ($this->skuCounters[$tenantAlias] ?? 0) + 1;
 
-        return $result;
+        return $this->skuCounters[$tenantAlias];
     }
 
-    private function getAllCategories(ObjectManager $manager): array
+    private function findCategoryEntity(TenantId $tenantId, string $englishName): CategoryEntity
     {
-        $connection = $manager->getConnection();
-        $result = $connection->executeQuery('SELECT id, name FROM catalog_categories WHERE parent_id IS NOT NULL ORDER BY created_at ASC')->fetchAllAssociative();
+        $category = $this->entityManager->getRepository(CategoryEntity::class)->findOneBy([
+            'tenantId' => $tenantId->toString(),
+            'name' => $englishName,
+        ]);
 
-        return $result;
+        if (!$category instanceof CategoryEntity) {
+            throw new \RuntimeException(sprintf('Category "%s" was not found for tenant %s', $englishName, $tenantId->toString()));
+        }
+
+        return $category;
+    }
+
+    /**
+     * @param array{alias: string, name: string, profile: string} $tenant
+     * @param array{key: string, label: array<string, string>}    $leaf
+     *
+     * @return array{
+     *     name: array<string, string>,
+     *     shortDescription: array<string, string>,
+     *     description: array<string, string>
+     * }
+     */
+    private function buildLocalizedCopy(array $tenant, array $leaf, string $brand, string $series, string $model): array
+    {
+        $traits = Sprint3SeedData::localizedTraits();
+        $profile = $tenant['profile'];
+
+        $names = [];
+        $shortDescriptions = [];
+        $descriptions = [];
+
+        foreach (Sprint3SeedData::LOCALES as $locale) {
+            $localeTraits = $traits[$profile.'.'.$locale];
+            $traitA = $localeTraits[abs(crc32($leaf['key'].'-'.$locale.'-a')) % count($localeTraits)];
+            $traitB = $localeTraits[abs(crc32($leaf['key'].'-'.$locale.'-b')) % count($localeTraits)];
+            $label = $leaf['label'][$locale];
+
+            $names[$locale] = sprintf('%s %s %s %s', $brand, $series, $label, $model);
+            $shortDescriptions[$locale] = match ($locale) {
+                'fr' => sprintf('%s avec %s et %s.', $label, $traitA, $traitB),
+                'de' => sprintf('%s mit %s und %s.', $label, $traitA, $traitB),
+                default => sprintf('%s with %s and %s.', $label, $traitA, $traitB),
+            };
+            $descriptions[$locale] = match ($locale) {
+                'fr' => sprintf('Concu pour %s, ce %s combine %s, %s et une finition fiable pour un usage quotidien.', $tenant['name'], strtolower($label), $traitA, $traitB),
+                'de' => sprintf('Fuer %s entwickelt, kombiniert dieses %s %s, %s und eine zuverlaessige Verarbeitung fuer den Alltag.', $tenant['name'], strtolower($label), $traitA, $traitB),
+                default => sprintf('Built for %s customers, this %s combines %s, %s, and dependable everyday performance.', $tenant['name'], strtolower($label), $traitA, $traitB),
+            };
+        }
+
+        return [
+            'name' => $names,
+            'shortDescription' => $shortDescriptions,
+            'description' => $descriptions,
+        ];
+    }
+
+    private function pickPrice(string $profile, string $tenantAlias, string $leafKey, int $index): int
+    {
+        $range = Sprint3SeedData::priceRanges()[$profile];
+        $spread = $range['max'] - $range['min'];
+        $offset = abs(crc32($tenantAlias.'|'.$leafKey.'|'.$index)) % max(1, $spread);
+
+        return $range['min'] + $offset;
+    }
+
+    /**
+     * @return array<int, array{url: string, position: int, isPrimary: bool}>
+     */
+    private function productImages(string $tenantAlias, string $leafKey, int $index): array
+    {
+        return [
+            [
+                'url' => sprintf('https://picsum.photos/seed/%s-%s-%d-main/900/700', $tenantAlias, $leafKey, $index),
+                'position' => 1,
+                'isPrimary' => true,
+            ],
+            [
+                'url' => sprintf('https://picsum.photos/seed/%s-%s-%d-alt/900/700', $tenantAlias, $leafKey, $index),
+                'position' => 2,
+                'isPrimary' => false,
+            ],
+        ];
     }
 
     public function getDependencies(): array
@@ -145,10 +241,5 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
             TenantFixtures::class,
             CategoryFixtures::class,
         ];
-    }
-
-    public function getOrder(): int
-    {
-        return 4;
     }
 }
