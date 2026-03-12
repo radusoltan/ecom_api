@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Support;
 
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Doctrine\Type\EncryptedJsonType;
+use App\Shared\Infrastructure\Doctrine\Type\EncryptedStringType;
+use App\Shared\Infrastructure\Encryption\EncryptionService;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * TenantTestTrait.
@@ -35,6 +39,9 @@ trait TenantTestTrait
             throw new \RuntimeException('setTenantContext() requires getEntityManager() method. Make sure your test extends KernelTestCase and has access to EntityManager.');
         }
 
+        // Bootstrap encryption types so entities with encrypted fields work before HTTP requests
+        $this->bootEncryptionTypes();
+
         /** @var EntityManagerInterface $em */
         $em = $this->getEntityManager();
         $connection = $em->getConnection();
@@ -44,6 +51,37 @@ trait TenantTestTrait
         $connection->executeStatement(
             sprintf("SET app.tenant_id = '%s'", $tenantId)
         );
+    }
+
+    /**
+     * Bootstrap Doctrine encrypted types with the EncryptionService.
+     *
+     * The EncryptionTypeBootListener only fires on HTTP requests. Tests that persist
+     * entities with encrypted fields before making HTTP requests need this bootstrap.
+     */
+    private function bootEncryptionTypes(): void
+    {
+        $container = null;
+
+        if (method_exists($this, 'getContainer')) {
+            try {
+                $container = static::getContainer();
+            } catch (\Exception) {
+                // Container not available yet
+            }
+        }
+
+        if (null === $container) {
+            return;
+        }
+
+        if ($container->has(EncryptionService::class)) {
+            $encryptionService = $container->get(EncryptionService::class);
+            EncryptedStringType::setEncryptionService($encryptionService);
+            EncryptedStringType::setLogger(new NullLogger());
+            EncryptedJsonType::setEncryptionService($encryptionService);
+            EncryptedJsonType::setLogger(new NullLogger());
+        }
     }
 
     /**

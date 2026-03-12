@@ -137,6 +137,8 @@ final readonly class CachedCollectionProvider implements ProviderInterface
             str_contains($shortName, 'Tenant') => 600,       // 10 minutes
             str_contains($shortName, 'Order') => 0,          // No caching (user-specific)
             str_contains($shortName, 'Payment') => 0,        // No caching (sensitive)
+            str_contains($shortName, 'Notification') => 0,   // No caching (transient)
+            str_contains($shortName, 'Invoice') => 0,        // No caching (sensitive)
             default => self::DEFAULT_TTL,
         };
     }

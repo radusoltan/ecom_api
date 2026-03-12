@@ -42,6 +42,7 @@ final class ApiCacheSubscriberTest extends TestCase
         $this->subscriber->onKernelResponse($event);
 
         self::assertStringContainsString('public', (string) $response->headers->get('Cache-Control'));
+        self::assertStringContainsString('stale-while-revalidate=600', (string) $response->headers->get('Cache-Control'));
         self::assertNotNull($response->headers->get('ETag'));
         self::assertNotNull($response->headers->get('X-Cache-TTL'));
     }
@@ -132,7 +133,7 @@ final class ApiCacheSubscriberTest extends TestCase
     }
 
     #[Test]
-    public function itSetsCategoriesTtlTo600(): void
+    public function itSetsCategoriesTtlTo300(): void
     {
         $request = Request::create('/api/categories', 'GET');
         $response = new Response('{}', 200);
@@ -140,7 +141,7 @@ final class ApiCacheSubscriberTest extends TestCase
 
         $this->subscriber->onKernelResponse($event);
 
-        self::assertSame('600', $response->headers->get('X-Cache-TTL'));
+        self::assertSame('300', $response->headers->get('X-Cache-TTL'));
     }
 
     #[Test]
@@ -152,7 +153,11 @@ final class ApiCacheSubscriberTest extends TestCase
 
         $this->subscriber->onKernelResponse($event);
 
-        self::assertStringContainsString('Accept-Language', (string) $response->headers->get('Vary'));
+        $vary = implode(', ', $response->headers->all('Vary'));
+
+        self::assertStringContainsString('Accept', $vary);
+        self::assertStringContainsString('Accept-Language', $vary);
+        self::assertStringContainsString('X-Tenant-ID', $vary);
     }
 
     #[Test]
@@ -167,6 +172,44 @@ final class ApiCacheSubscriberTest extends TestCase
         $this->subscriber->onKernelResponse($event);
 
         self::assertNotNull($response->getEtag());
+    }
+
+    #[Test]
+    public function itUsesUpdatedAtBasedEtagForConditionalRequests(): void
+    {
+        $resource = new class {
+            public function getId(): string
+            {
+                return 'resource-123';
+            }
+
+            public function getUpdatedAt(): \DateTimeImmutable
+            {
+                return new \DateTimeImmutable('2026-03-10T12:00:00+00:00');
+            }
+        };
+
+        $firstRequest = Request::create('/api/products/resource-123', 'GET');
+        $firstRequest->attributes->set('data', $resource);
+        $firstResponse = new Response('{"data":"products"}', 200);
+        $firstEvent = $this->createMainRequestEvent($firstRequest, $firstResponse);
+
+        $this->subscriber->onKernelResponse($firstEvent);
+
+        $etag = $firstResponse->getEtag();
+
+        self::assertNotNull($etag);
+        self::assertNotNull($firstResponse->headers->get('Last-Modified'));
+
+        $conditionalRequest = Request::create('/api/products/resource-123', 'GET');
+        $conditionalRequest->headers->set('If-None-Match', $etag);
+        $conditionalRequest->attributes->set('data', $resource);
+        $conditionalResponse = new Response('{"data":"products"}', 200);
+        $conditionalEvent = $this->createMainRequestEvent($conditionalRequest, $conditionalResponse);
+
+        $this->subscriber->onKernelResponse($conditionalEvent);
+
+        self::assertSame(304, $conditionalResponse->getStatusCode());
     }
 
     #[Test]

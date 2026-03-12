@@ -81,7 +81,7 @@ final readonly class RedeemPointsCommandHandler
         // 8. Return result
         return new RedeemPointsResult(
             pointsRedeemed: $command->pointsToRedeem,
-            discountAmount: $discountAmount->amount(),
+            discountAmountMinorUnits: $discountAmount->getAmount(),
             discountCurrency: $discountAmount->getCurrency()->getCurrencyCode(),
             remainingBalance: $customer->loyaltyPoints()
         );

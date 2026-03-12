@@ -521,12 +521,15 @@ final class DomainEventAuditSubscriberTest extends TestCase
         $this->assertSame('No longer needed', $command->metadata['reason']);
     }
 
-    public function testStockAdjustedUsesSystemTenant(): void
+    public function testStockAdjustedUsesEventTenant(): void
     {
         $stockItemId = StockItemId::generate();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
 
         $event = new StockAdjusted(
             stockItemId: $stockItemId,
+            tenantId: $tenantId,
+            productId: ProductId::generate(),
             previousQuantity: InventoryQuantity::fromInt(100),
             newQuantity: InventoryQuantity::fromInt(80),
             reason: 'Manual adjustment',
@@ -537,8 +540,7 @@ final class DomainEventAuditSubscriberTest extends TestCase
 
         $this->assertCount(1, $this->dispatchedCommands);
         $command = $this->dispatchedCommands[0];
-        // Events without tenantId fall back to system tenant
-        $this->assertSame('00000000-0000-0000-0000-000000000000', $command->tenantId);
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
         $this->assertSame('adjust', $command->actionType);
         $this->assertSame('stock', $command->resourceType);
         $this->assertSame(100, $command->metadata['previousQuantity']);

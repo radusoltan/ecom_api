@@ -10,12 +10,16 @@ use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity;
 use App\Inventory\Infrastructure\Persistence\Doctrine\Repository\DoctrineORMWarehouseRepository;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Cache\CacheService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -31,7 +35,11 @@ final class DoctrineORMWarehouseRepositoryTest extends TestCase
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
         $this->eventBus = $this->createMock(MessageBusInterface::class);
-        $this->repository = new DoctrineORMWarehouseRepository($this->entityManager, $this->eventBus);
+        $this->repository = new DoctrineORMWarehouseRepository(
+            $this->entityManager,
+            $this->eventBus,
+            new CacheService(new TagAwareAdapter(new ArrayAdapter()), new NullLogger())
+        );
         $this->tenantId = TenantId::fromString('00000000-0000-4000-8000-000000000001');
     }
 
@@ -179,6 +187,30 @@ final class DoctrineORMWarehouseRepositoryTest extends TestCase
         $result = $this->repository->findByCodeAndTenant(WarehouseCode::fromString('WH001'), $this->tenantId);
 
         self::assertInstanceOf(Warehouse::class, $result);
+    }
+
+    #[Test]
+    public function findByCodeAndTenantCachesRepeatedLookups(): void
+    {
+        $entity = $this->createWarehouseEntityMock();
+        $repo = $this->createEntityRepo(findOneByResult: $entity);
+        $repo->expects(self::once())
+            ->method('findOneBy')
+            ->with([
+                'code' => 'WH001',
+                'tenantId' => $this->tenantId->toString(),
+            ])
+            ->willReturn($entity);
+
+        $this->entityManager->expects(self::once())
+            ->method('getRepository')
+            ->willReturn($repo);
+
+        $first = $this->repository->findByCodeAndTenant(WarehouseCode::fromString('WH001'), $this->tenantId);
+        $second = $this->repository->findByCodeAndTenant(WarehouseCode::fromString('WH001'), $this->tenantId);
+
+        self::assertInstanceOf(Warehouse::class, $first);
+        self::assertInstanceOf(Warehouse::class, $second);
     }
 
     // -----------------------------------------------------------------------

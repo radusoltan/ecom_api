@@ -62,7 +62,7 @@ final class ConfigurableProductExtendedTest extends TestCase
         $id2 = ConfigurableProductId::generate();
 
         self::assertNotSame($id1->toString(), $id2->toString());
-        self::assertStringStartsWith('cfgprod_', $id1->toString());
+        self::assertTrue(\Symfony\Component\Uid\Uuid::isValid($id1->toString()));
     }
 
     #[Test]

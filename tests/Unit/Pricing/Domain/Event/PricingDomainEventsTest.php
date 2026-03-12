@@ -107,21 +107,27 @@ final class PricingDomainEventsTest extends TestCase
     #[Test]
     public function priceListActivatedEvent(): void
     {
-        $event = new PriceListActivated('pl-1', $this->now);
+        $event = new PriceListActivated('pl-1', 't-1', $this->now);
 
         self::assertSame('pl-1', $event->priceListId());
+        self::assertSame('t-1', $event->tenantId());
         self::assertSame($this->now, $event->occurredOn());
 
         $array = $event->toArray();
         self::assertSame('pl-1', $array['price_list_id']);
+        self::assertSame('t-1', $array['tenant_id']);
     }
 
     #[Test]
     public function priceListDeactivatedEvent(): void
     {
-        $event = new PriceListDeactivated('pl-1', $this->now);
+        $event = new PriceListDeactivated('pl-1', 't-1', $this->now);
 
         self::assertSame('pl-1', $event->priceListId());
+        self::assertSame('t-1', $event->tenantId());
+
+        $array = $event->toArray();
+        self::assertSame('t-1', $array['tenant_id']);
     }
 
     #[Test]

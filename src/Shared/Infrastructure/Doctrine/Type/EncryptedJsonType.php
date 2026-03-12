@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Doctrine\Type;
 
+use App\Shared\Infrastructure\Encryption\DecryptionFailedException;
 use App\Shared\Infrastructure\Encryption\EncryptionService;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * Custom Doctrine type that transparently encrypts/decrypts JSON values.
@@ -19,10 +22,16 @@ use Doctrine\DBAL\Types\Type;
 final class EncryptedJsonType extends Type
 {
     private static ?EncryptionService $encryptionService = null;
+    private static LoggerInterface $logger;
 
     public static function setEncryptionService(EncryptionService $service): void
     {
         self::$encryptionService = $service;
+    }
+
+    public static function setLogger(LoggerInterface $logger): void
+    {
+        self::$logger = $logger;
     }
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
@@ -48,11 +57,14 @@ final class EncryptedJsonType extends Type
 
         try {
             return self::$encryptionService->decryptJson($value);
-        } catch (\RuntimeException) {
-            // Value might not be encrypted yet (pre-migration data)
-            $decoded = json_decode($value, true);
+        } catch (DecryptionFailedException $e) {
+            // SECURITY: Never return raw data on decryption failure.
+            $logger = self::$logger ?? new NullLogger();
+            $logger->error('Decryption failed for encrypted JSON field', [
+                'error' => $e->getMessage(),
+            ]);
 
-            return \is_array($decoded) ? $decoded : null;
+            return null;
         }
     }
 

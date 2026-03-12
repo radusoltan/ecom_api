@@ -7,6 +7,12 @@ namespace App\Invoice\Infrastructure\Pdf;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
+/**
+ * Factory for creating DomPDF instances with SSRF-safe configuration.
+ *
+ * Remote resource fetching is disabled to prevent SSRF attacks.
+ * All resources (logos, images) must be provided as local file paths.
+ */
 final class DompdfFactory
 {
     /**
@@ -26,8 +32,14 @@ final class DompdfFactory
         $options->set('defaultPaperOrientation', $this->options['defaultPaperOrientation'] ?? 'portrait');
         $options->set('defaultFont', $this->options['defaultFont'] ?? 'DejaVu Sans');
         $options->set('isFontSubsettingEnabled', $this->options['isFontSubsettingEnabled'] ?? true);
-        $options->set('isRemoteEnabled', $this->options['isRemoteEnabled'] ?? true);
         $options->set('isHtml5ParserEnabled', $this->options['isHtml5ParserEnabled'] ?? true);
+
+        // SECURITY: Disable remote resource fetching to prevent SSRF.
+        // All resources (logos, images) must be local file paths.
+        $options->set('isRemoteEnabled', false);
+
+        // Belt-and-suspenders: restrict to file:// protocol only
+        $options->setAllowedProtocols(['file://']);
 
         if (isset($this->options['fontDir'])) {
             $options->set('fontDir', $this->options['fontDir']);

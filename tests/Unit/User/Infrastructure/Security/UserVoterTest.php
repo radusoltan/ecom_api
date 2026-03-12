@@ -52,18 +52,15 @@ final class UserVoterTest extends TestCase
         $this->assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, null, [UserVoter::MANAGE_ROLES]));
     }
 
-    public function testTenantAdminCanViewAndManageTenantUsers(): void
+    public function testTenantAdminCanCrudButNotManageRoles(): void
     {
         $token = $this->createTokenWithRoles(['ROLE_TENANT_ADMIN']);
 
-        // Tenant admin can view all users
+        // Tenant admin has CRUD access (RLS enforces tenant isolation at DB level)
         $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, null, [UserVoter::VIEW]));
-
-        // For CRUD operations, tenant admin needs User subject for tenant scope check
-        // Without subject, voter denies access
-        $this->assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, null, [UserVoter::CREATE]));
-        $this->assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, null, [UserVoter::EDIT]));
-        $this->assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, null, [UserVoter::DELETE]));
+        $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, null, [UserVoter::CREATE]));
+        $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, null, [UserVoter::EDIT]));
+        $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote($token, null, [UserVoter::DELETE]));
 
         // Tenant admin cannot manage roles
         $this->assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote($token, null, [UserVoter::MANAGE_ROLES]));

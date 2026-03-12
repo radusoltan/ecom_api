@@ -9,6 +9,7 @@ use App\Pricing\Domain\Model\PriceListId;
 use App\Pricing\Domain\Repository\PriceListRepositoryInterface;
 use App\Pricing\Infrastructure\Persistence\Doctrine\Entity\PriceListEntity;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Cache\CacheService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -20,6 +21,7 @@ final readonly class DoctrineORMPriceListRepository implements PriceListReposito
     public function __construct(
         private EntityManagerInterface $entityManager,
         private EventDispatcherInterface $eventDispatcher,
+        private CacheService $cacheService,
     ) {
     }
 
@@ -54,95 +56,130 @@ final readonly class DoctrineORMPriceListRepository implements PriceListReposito
 
     public function findByTenant(TenantId $tenantId, bool $activeOnly = false): array
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $tenant = $tenantId->toString();
+        $key = $this->cacheService->tenantQueryKey($tenant, 'pricing', 'price_lists', [
+            'activeOnly' => $activeOnly,
+        ]);
 
-        $qb->select('pl')
-            ->from(PriceListEntity::class, 'pl')
-            ->where('pl.tenantId = :tenantId')
-            ->setParameter('tenantId', $tenantId->toString())
-            ->orderBy('pl.priority', 'DESC')
-            ->addOrderBy('pl.createdAt', 'ASC');
+        return $this->cacheService->get(
+            $key,
+            function () use ($tenantId, $activeOnly): array {
+                $qb = $this->entityManager->createQueryBuilder();
 
-        if ($activeOnly) {
-            $qb->andWhere('pl.isActive = :isActive')
-                ->setParameter('isActive', true);
-        }
+                $qb->select('pl')
+                    ->from(PriceListEntity::class, 'pl')
+                    ->where('pl.tenantId = :tenantId')
+                    ->setParameter('tenantId', $tenantId->toString())
+                    ->orderBy('pl.priority', 'DESC')
+                    ->addOrderBy('pl.createdAt', 'ASC');
 
-        $entities = $qb->getQuery()->getResult();
+                if ($activeOnly) {
+                    $qb->andWhere('pl.isActive = :isActive')
+                        ->setParameter('isActive', true);
+                }
 
-        return array_map(
-            fn (PriceListEntity $entity) => $entity->toDomainModel(),
-            $entities
+                $entities = $qb->getQuery()->getResult();
+
+                return array_map(
+                    fn (PriceListEntity $entity) => $entity->toDomainModel(),
+                    $entities
+                );
+            },
+            300,
+            $this->cacheService->tenantScopedTags($tenant, 'price_lists')
         );
     }
 
     public function findValidForTenant(TenantId $tenantId): array
     {
         $now = new \DateTimeImmutable();
+        $tenant = $tenantId->toString();
+        $key = $this->cacheService->tenantQueryKey($tenant, 'pricing', 'active_price_lists', [
+            'date' => $now->format('Y-m-d H:i'),
+        ]);
 
-        $qb = $this->entityManager->createQueryBuilder();
+        return $this->cacheService->get(
+            $key,
+            function () use ($tenantId, $now): array {
+                $qb = $this->entityManager->createQueryBuilder();
 
-        $qb->select('pl')
-            ->from(PriceListEntity::class, 'pl')
-            ->where('pl.tenantId = :tenantId')
-            ->andWhere('pl.isActive = :isActive')
-            ->andWhere(
-                $qb->expr()->orX(
-                    'pl.validFrom IS NULL',
-                    'pl.validFrom <= :now'
-                )
-            )
-            ->andWhere(
-                $qb->expr()->orX(
-                    'pl.validTo IS NULL',
-                    'pl.validTo >= :now'
-                )
-            )
-            ->setParameter('tenantId', $tenantId->toString())
-            ->setParameter('isActive', true)
-            ->setParameter('now', $now)
-            ->orderBy('pl.priority', 'DESC')
-            ->addOrderBy('pl.createdAt', 'ASC');
+                $qb->select('pl')
+                    ->from(PriceListEntity::class, 'pl')
+                    ->where('pl.tenantId = :tenantId')
+                    ->andWhere('pl.isActive = :isActive')
+                    ->andWhere(
+                        $qb->expr()->orX(
+                            'pl.validFrom IS NULL',
+                            'pl.validFrom <= :now'
+                        )
+                    )
+                    ->andWhere(
+                        $qb->expr()->orX(
+                            'pl.validTo IS NULL',
+                            'pl.validTo >= :now'
+                        )
+                    )
+                    ->setParameter('tenantId', $tenantId->toString())
+                    ->setParameter('isActive', true)
+                    ->setParameter('now', $now)
+                    ->orderBy('pl.priority', 'DESC')
+                    ->addOrderBy('pl.createdAt', 'ASC');
 
-        $entities = $qb->getQuery()->getResult();
+                $entities = $qb->getQuery()->getResult();
 
-        return array_map(
-            fn (PriceListEntity $entity) => $entity->toDomainModel(),
-            $entities
+                return array_map(
+                    fn (PriceListEntity $entity) => $entity->toDomainModel(),
+                    $entities
+                );
+            },
+            300,
+            $this->cacheService->tenantScopedTags($tenant, 'price_lists')
         );
     }
 
     public function findActiveByTenantId(TenantId $tenantId, \DateTimeImmutable $date): array
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $tenant = $tenantId->toString();
+        $key = $this->cacheService->tenantQueryKey($tenant, 'pricing', 'price_lists_by_date', [
+            'date' => $date,
+        ]);
 
-        $qb->select('pl')
-            ->from(PriceListEntity::class, 'pl')
-            ->where('pl.tenantId = :tenantId')
-            ->andWhere('pl.isActive = :isActive')
-            ->andWhere(
-                $qb->expr()->orX(
-                    'pl.validFrom IS NULL',
-                    'pl.validFrom <= :date'
-                )
-            )
-            ->andWhere(
-                $qb->expr()->orX(
-                    'pl.validTo IS NULL',
-                    'pl.validTo >= :date'
-                )
-            )
-            ->setParameter('tenantId', $tenantId->toString())
-            ->setParameter('isActive', true)
-            ->setParameter('date', $date)
-            ->orderBy('pl.priority', 'DESC')
-            ->addOrderBy('pl.createdAt', 'ASC');
+        return $this->cacheService->get(
+            $key,
+            function () use ($tenantId, $date): array {
+                $qb = $this->entityManager->createQueryBuilder();
 
-        $entities = $qb->getQuery()->getResult();
+                $qb->select('pl')
+                    ->from(PriceListEntity::class, 'pl')
+                    ->where('pl.tenantId = :tenantId')
+                    ->andWhere('pl.isActive = :isActive')
+                    ->andWhere(
+                        $qb->expr()->orX(
+                            'pl.validFrom IS NULL',
+                            'pl.validFrom <= :date'
+                        )
+                    )
+                    ->andWhere(
+                        $qb->expr()->orX(
+                            'pl.validTo IS NULL',
+                            'pl.validTo >= :date'
+                        )
+                    )
+                    ->setParameter('tenantId', $tenantId->toString())
+                    ->setParameter('isActive', true)
+                    ->setParameter('date', $date)
+                    ->orderBy('pl.priority', 'DESC')
+                    ->addOrderBy('pl.createdAt', 'ASC');
 
-        return array_map(
-            fn (PriceListEntity $entity) => $entity->toDomainModel(),
-            $entities
+                $entities = $qb->getQuery()->getResult();
+
+                return array_map(
+                    fn (PriceListEntity $entity) => $entity->toDomainModel(),
+                    $entities
+                );
+            },
+            300,
+            $this->cacheService->tenantScopedTags($tenant, 'price_lists')
         );
     }
 

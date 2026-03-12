@@ -1339,7 +1339,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
     public function onStockAdjusted(StockAdjusted $event): void
     {
         $this->logEvent(
-            tenantId: null,
+            tenantId: $event->tenantId->toString(),
             actionType: 'adjust',
             resourceType: 'stock',
             resourceId: $event->stockItemId->toString(),
@@ -1355,7 +1355,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
     public function onStockAllocated(StockAllocated $event): void
     {
         $this->logEvent(
-            tenantId: null,
+            tenantId: $event->tenantId->toString(),
             actionType: 'allocate',
             resourceType: 'stock',
             resourceId: $event->stockItemId->toString(),
@@ -1370,7 +1370,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
     public function onStockReserved(StockReserved $event): void
     {
         $this->logEvent(
-            tenantId: null,
+            tenantId: $event->tenantId->toString(),
             actionType: 'reserve',
             resourceType: 'stock',
             resourceId: $event->stockItemId->toString(),
@@ -1385,7 +1385,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
     public function onStockReleased(StockReleased $event): void
     {
         $this->logEvent(
-            tenantId: null,
+            tenantId: $event->tenantId->toString(),
             actionType: 'release',
             resourceType: 'stock',
             resourceId: $event->stockItemId->toString(),
@@ -1433,7 +1433,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
     public function onWarehouseUpdated(WarehouseUpdated $event): void
     {
         $this->logEvent(
-            tenantId: null,
+            tenantId: $event->tenantId->toString(),
             actionType: 'update',
             resourceType: 'warehouse',
             resourceId: $event->warehouseId->toString(),
@@ -1447,7 +1447,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
     public function onWarehouseActivated(WarehouseActivated $event): void
     {
         $this->logEvent(
-            tenantId: null,
+            tenantId: $event->tenantId->toString(),
             actionType: 'activate',
             resourceType: 'warehouse',
             resourceId: $event->warehouseId->toString(),
@@ -1458,7 +1458,7 @@ final readonly class DomainEventAuditSubscriber implements EventSubscriberInterf
     public function onWarehouseDeactivated(WarehouseDeactivated $event): void
     {
         $this->logEvent(
-            tenantId: null,
+            tenantId: $event->tenantId->toString(),
             actionType: 'deactivate',
             resourceType: 'warehouse',
             resourceId: $event->warehouseId->toString(),

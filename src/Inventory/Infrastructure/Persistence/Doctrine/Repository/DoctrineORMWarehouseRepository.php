@@ -10,6 +10,7 @@ use App\Inventory\Domain\Model\WarehouseId;
 use App\Inventory\Domain\Repository\WarehouseRepositoryInterface;
 use App\Inventory\Infrastructure\Persistence\Doctrine\Entity\WarehouseEntity;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Cache\CacheService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -18,6 +19,7 @@ final readonly class DoctrineORMWarehouseRepository implements WarehouseReposito
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MessageBusInterface $eventBus,
+        private CacheService $cacheService,
     ) {
     }
 
@@ -54,46 +56,82 @@ final readonly class DoctrineORMWarehouseRepository implements WarehouseReposito
 
     public function findByCodeAndTenant(WarehouseCode $code, TenantId $tenantId): ?Warehouse
     {
-        $repository = $this->entityManager->getRepository(WarehouseEntity::class);
-
-        $entity = $repository->findOneBy([
+        $tenant = $tenantId->toString();
+        $key = $this->cacheService->tenantQueryKey($tenant, 'inventory', 'warehouse_code', [
             'code' => $code->value(),
-            'tenantId' => $tenantId->toString(),
         ]);
 
-        return $entity?->toDomainModel();
+        return $this->cacheService->get(
+            $key,
+            function () use ($code, $tenantId): ?Warehouse {
+                $repository = $this->entityManager->getRepository(WarehouseEntity::class);
+
+                $entity = $repository->findOneBy([
+                    'code' => $code->value(),
+                    'tenantId' => $tenantId->toString(),
+                ]);
+
+                return $entity?->toDomainModel();
+            },
+            600,
+            $this->cacheService->tenantScopedTags($tenant, 'warehouses')
+        );
     }
 
     public function findByTenant(TenantId $tenantId): array
     {
-        $repository = $this->entityManager->getRepository(WarehouseEntity::class);
+        $tenant = $tenantId->toString();
+        $key = $this->cacheService->tenantQueryKey($tenant, 'inventory', 'warehouses', [
+            'scope' => 'all',
+        ]);
 
-        $entities = $repository->findBy(
-            ['tenantId' => $tenantId->toString()],
-            ['priority' => 'ASC', 'name' => 'ASC'] // Order by priority, then name
-        );
+        return $this->cacheService->get(
+            $key,
+            function () use ($tenantId): array {
+                $repository = $this->entityManager->getRepository(WarehouseEntity::class);
 
-        return array_map(
-            fn (WarehouseEntity $entity): Warehouse => $entity->toDomainModel(),
-            $entities
+                $entities = $repository->findBy(
+                    ['tenantId' => $tenantId->toString()],
+                    ['priority' => 'ASC', 'name' => 'ASC']
+                );
+
+                return array_map(
+                    fn (WarehouseEntity $entity): Warehouse => $entity->toDomainModel(),
+                    $entities
+                );
+            },
+            600,
+            $this->cacheService->tenantScopedTags($tenant, 'warehouses')
         );
     }
 
     public function findActiveByTenant(TenantId $tenantId): array
     {
-        $repository = $this->entityManager->getRepository(WarehouseEntity::class);
+        $tenant = $tenantId->toString();
+        $key = $this->cacheService->tenantQueryKey($tenant, 'inventory', 'active_warehouses', [
+            'scope' => 'active',
+        ]);
 
-        $entities = $repository->findBy(
-            [
-                'tenantId' => $tenantId->toString(),
-                'isActive' => true,
-            ],
-            ['priority' => 'ASC', 'name' => 'ASC'] // Order by priority for routing
-        );
+        return $this->cacheService->get(
+            $key,
+            function () use ($tenantId): array {
+                $repository = $this->entityManager->getRepository(WarehouseEntity::class);
 
-        return array_map(
-            fn (WarehouseEntity $entity): Warehouse => $entity->toDomainModel(),
-            $entities
+                $entities = $repository->findBy(
+                    [
+                        'tenantId' => $tenantId->toString(),
+                        'isActive' => true,
+                    ],
+                    ['priority' => 'ASC', 'name' => 'ASC']
+                );
+
+                return array_map(
+                    fn (WarehouseEntity $entity): Warehouse => $entity->toDomainModel(),
+                    $entities
+                );
+            },
+            600,
+            $this->cacheService->tenantScopedTags($tenant, 'warehouses')
         );
     }
 

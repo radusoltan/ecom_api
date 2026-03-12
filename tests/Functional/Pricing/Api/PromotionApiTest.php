@@ -363,7 +363,7 @@ final class PromotionApiTest extends ApiTestCase
             tenantId: $this->tenantId,
             name: 'Promotion 2',
             type: PromotionType::catalogRule(),
-            discount: Discount::fixedAmount(5.0)
+            discount: Discount::fixedAmount(500)
         );
 
         $promotion3 = Promotion::create(

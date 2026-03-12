@@ -117,7 +117,7 @@ final class SegmentPricingRuleTest extends TestCase
     {
         $rule = SegmentPricingRule::create(
             CustomerSegment::wholesale(),
-            Discount::fixedAmount(50.0),
+            Discount::fixedAmount(5000),
             150
         );
 

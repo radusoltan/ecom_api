@@ -51,6 +51,7 @@ class OrderResource
     public ?string $status = null;
     /** @var array<string, mixed> */
     public array $lines = [];
+    public ?int $lineCount = null;
     public ?array $shippingAddress = null;
     public ?array $billingAddress = null;
     public ?int $totalAmount = null;

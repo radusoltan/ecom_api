@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Payment\Presentation\Api\Controller;
 use App\Payment\Application\Service\WebhookDeduplicationService;
 use App\Payment\Infrastructure\Webhook\StripeWebhookHandler;
 use App\Payment\Presentation\Api\Controller\StripeWebhookController;
+use App\Shared\Application\Service\TenantContextInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,6 +39,7 @@ final class StripeWebhookControllerTest extends TestCase
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
             deduplicationService: $this->createMock(WebhookDeduplicationService::class),
+            tenantContext: $this->createMock(TenantContextInterface::class),
             logger: new NullLogger()
         );
 
@@ -162,6 +164,7 @@ final class StripeWebhookControllerTest extends TestCase
             commandBus: $this->commandBus,
             queryBus: $this->queryBus,
             deduplicationService: $this->createMock(WebhookDeduplicationService::class),
+            tenantContext: $this->createMock(TenantContextInterface::class),
             logger: new NullLogger()
         );
 

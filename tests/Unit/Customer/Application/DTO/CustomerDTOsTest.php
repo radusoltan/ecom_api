@@ -209,13 +209,13 @@ final class CustomerDTOsTest extends TestCase
     {
         $result = new RedeemPointsResult(
             pointsRedeemed: 500,
-            discountAmount: 5.00,
+            discountAmountMinorUnits: 500,
             discountCurrency: 'USD',
             remainingBalance: 1000,
         );
 
         self::assertSame(500, $result->pointsRedeemed);
-        self::assertSame(5.00, $result->discountAmount);
+        self::assertSame(500, $result->discountAmountMinorUnits);
         self::assertSame('USD', $result->discountCurrency);
         self::assertSame(1000, $result->remainingBalance);
     }
@@ -225,7 +225,7 @@ final class CustomerDTOsTest extends TestCase
     {
         $result = new RedeemPointsResult(
             pointsRedeemed: 200,
-            discountAmount: 2.00,
+            discountAmountMinorUnits: 200,
             discountCurrency: 'EUR',
             remainingBalance: 300,
         );
@@ -233,7 +233,7 @@ final class CustomerDTOsTest extends TestCase
         $array = $result->toArray();
 
         self::assertSame(200, $array['points_redeemed']);
-        self::assertSame(2.00, $array['discount_amount']);
+        self::assertSame(200, $array['discount_amount']);
         self::assertSame('EUR', $array['discount_currency']);
         self::assertSame(300, $array['remaining_balance']);
     }

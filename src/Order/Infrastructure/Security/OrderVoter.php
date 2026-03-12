@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Order\Infrastructure\Security;
 
 use App\Order\Domain\Model\Order;
+use App\Shared\Infrastructure\Security\OwnershipCheckTrait;
 use App\Shared\Infrastructure\Security\Voter\AbstractResourceVoter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
@@ -23,6 +24,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Vote;
  */
 final class OrderVoter extends AbstractResourceVoter
 {
+    use OwnershipCheckTrait;
     public const VIEW = 'order.view';
     public const CREATE = 'order.create';
     public const EDIT = 'order.edit';
@@ -67,33 +69,23 @@ final class OrderVoter extends AbstractResourceVoter
             return in_array($attribute, [self::VIEW, self::CREATE, self::EDIT, self::CANCEL, self::REFUND], true);
         }
 
-        // CUSTOMER: can create orders and view own orders
+        // CUSTOMER: can create orders and view/cancel own orders only
         if ($this->hasRole($token, 'ROLE_CUSTOMER')) {
-            // Can always create orders
             if (self::CREATE === $attribute) {
                 return true;
             }
 
-            // Can view and cancel own orders
+            // View and cancel own orders only (BOLA protection)
             if ($subject instanceof Order && in_array($attribute, [self::VIEW, self::CANCEL], true)) {
-                $user = $this->getUser($token);
-
-                // TODO: Implement customer ownership check when customer_id is added
-                // For now, allow view and cancel for all customers
-                return true;
+                return $this->isResourceOwnerByEmail($token, $subject->customerEmail());
             }
 
             return false;
         }
 
-        // VENDOR: can view orders related to their products
+        // VENDOR: can view orders (filtered by application layer)
         if ($this->hasRole($token, 'ROLE_VENDOR')) {
-            if (self::VIEW === $attribute) {
-                // TODO: Implement vendor-related order check
-                return true;
-            }
-
-            return false;
+            return self::VIEW === $attribute;
         }
 
         return false;

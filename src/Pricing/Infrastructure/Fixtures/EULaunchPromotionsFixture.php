@@ -52,8 +52,11 @@ final class EULaunchPromotionsFixture extends Fixture implements FixtureGroupInt
         }
         $tenantId = TenantId::fromString($tenantIdString);
 
-        // Set RLS context
-        $this->connection->executeStatement("SET app.tenant_id = '{$tenantIdString}'");
+        // Set RLS context using parameterized set_config to prevent SQL injection
+        $this->connection->executeStatement(
+            "SELECT set_config('app.tenant_id', :tenantId, false)",
+            ['tenantId' => $tenantIdString]
+        );
 
         echo "🎁  Creating EU Launch Promotions...\n\n";
 
@@ -74,7 +77,7 @@ final class EULaunchPromotionsFixture extends Fixture implements FixtureGroupInt
             tenantId: $tenantId,
             name: 'First Order Free Shipping',
             type: PromotionType::coupon(),
-            discount: Discount::fixedAmount(9.99),  // €9.99 shipping credit
+            discount: Discount::fixedAmount(999),  // €9.99 shipping credit
             couponCode: 'FREESHIP',
             priority: 140,
             conditions: ['new_customer_only' => true, 'min_cart_value' => 25.00]
@@ -148,7 +151,7 @@ final class EULaunchPromotionsFixture extends Fixture implements FixtureGroupInt
             tenantId: $tenantId,
             name: 'Spend €150 Save €20',
             type: PromotionType::cartRule(),
-            discount: Discount::fixedAmount(20.00),  // €20.00
+            discount: Discount::fixedAmount(2000),  // €20.00
             priority: 95,
             conditions: ['min_cart_value' => 150.00]
         );
@@ -170,7 +173,7 @@ final class EULaunchPromotionsFixture extends Fixture implements FixtureGroupInt
             tenantId: $tenantId,
             name: 'Loyalty Rewards',
             type: PromotionType::coupon(),
-            discount: Discount::fixedAmount(10.00),  // €10.00
+            discount: Discount::fixedAmount(1000),  // €10.00
             couponCode: 'LOYALTY10',
             priority: 125,
             conditions: ['customer_segments' => ['loyal', 'returning']]
@@ -183,7 +186,7 @@ final class EULaunchPromotionsFixture extends Fixture implements FixtureGroupInt
             tenantId: $tenantId,
             name: 'Free Shipping Over €50',
             type: PromotionType::cartRule(),
-            discount: Discount::fixedAmount(9.99),  // €9.99 typical shipping cost
+            discount: Discount::fixedAmount(999),  // €9.99 typical shipping cost
             priority: 80,
             conditions: ['min_cart_value' => 50.00]
         );
@@ -193,7 +196,7 @@ final class EULaunchPromotionsFixture extends Fixture implements FixtureGroupInt
             tenantId: $tenantId,
             name: 'Free Express Shipping',
             type: PromotionType::coupon(),
-            discount: Discount::fixedAmount(14.99),  // €14.99 express shipping
+            discount: Discount::fixedAmount(1499),  // €14.99 express shipping
             couponCode: 'EXPRESS',
             priority: 100,
             conditions: ['min_cart_value' => 100.00]
@@ -229,7 +232,7 @@ final class EULaunchPromotionsFixture extends Fixture implements FixtureGroupInt
             tenantId: $tenantId,
             name: 'Referral Bonus',
             type: PromotionType::coupon(),
-            discount: Discount::fixedAmount(15.00),  // €15.00
+            discount: Discount::fixedAmount(1500),  // €15.00
             couponCode: 'REFER15',
             priority: 120,
             conditions: ['referral_program' => true]

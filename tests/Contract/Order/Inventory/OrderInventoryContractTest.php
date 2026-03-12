@@ -37,10 +37,6 @@ final class OrderInventoryContractTest extends TestCase
 {
     private const TENANT_ID = '00000000-0000-4000-8000-000000000001';
 
-    // -----------------------------------------------------------------------
-    // OrderCancelled — produced by Order, consumed by Inventory
-    // -----------------------------------------------------------------------
-
     #[Test]
     public function orderCancelledEventHasRequiredFields(): void
     {
@@ -77,19 +73,16 @@ final class OrderInventoryContractTest extends TestCase
             previousStatus: OrderStatus::processing(),
         );
 
-        // Inventory subscriber needs to know previous status to decide stock release
         self::assertSame('processing', $event->previousStatus->value());
     }
-
-    // -----------------------------------------------------------------------
-    // StockReserved — produced by Inventory, implements DomainEvent
-    // -----------------------------------------------------------------------
 
     #[Test]
     public function stockReservedImplementsDomainEvent(): void
     {
         $event = new StockReserved(
             stockItemId: StockItemId::generate(),
+            tenantId: TenantId::fromString(self::TENANT_ID),
+            productId: ProductId::generate(),
             quantity: Quantity::fromInt(5),
             reservationId: 'res-12345',
             occurredOn: new \DateTimeImmutable(),
@@ -102,47 +95,58 @@ final class OrderInventoryContractTest extends TestCase
     #[Test]
     public function stockReservedHasRequiredFields(): void
     {
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+        $productId = ProductId::generate();
+
         $event = new StockReserved(
             stockItemId: StockItemId::generate(),
+            tenantId: $tenantId,
+            productId: $productId,
             quantity: Quantity::fromInt(3),
             reservationId: 'order-550e8400',
             occurredOn: new \DateTimeImmutable(),
         );
 
         self::assertInstanceOf(StockItemId::class, $event->stockItemId);
+        self::assertSame($tenantId, $event->tenantId);
+        self::assertSame($productId, $event->productId);
         self::assertInstanceOf(Quantity::class, $event->quantity);
         self::assertIsString($event->reservationId);
         self::assertNotEmpty($event->reservationId);
     }
 
-    // -----------------------------------------------------------------------
-    // StockAllocated — produced by Inventory
-    // -----------------------------------------------------------------------
-
     #[Test]
     public function stockAllocatedHasOrderReference(): void
     {
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+        $productId = ProductId::generate();
+
         $event = new StockAllocated(
             stockItemId: StockItemId::generate(),
+            tenantId: $tenantId,
+            productId: $productId,
             quantity: Quantity::fromInt(2),
             orderId: '550e8400-e29b-41d4-a716-446655440000',
             occurredOn: new \DateTimeImmutable(),
         );
 
+        self::assertSame($tenantId, $event->tenantId);
+        self::assertSame($productId, $event->productId);
         self::assertIsString($event->orderId);
         self::assertNotEmpty($event->orderId);
         self::assertInstanceOf(Quantity::class, $event->quantity);
     }
 
-    // -----------------------------------------------------------------------
-    // StockReleased — produced by Inventory on OrderCancelled
-    // -----------------------------------------------------------------------
-
     #[Test]
     public function stockReleasedHasRequiredFields(): void
     {
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+        $productId = ProductId::generate();
+
         $event = new StockReleased(
             stockItemId: StockItemId::generate(),
+            tenantId: $tenantId,
+            productId: $productId,
             quantity: Quantity::fromInt(5),
             referenceId: '550e8400-e29b-41d4-a716-446655440000',
             reason: 'Order cancelled by customer',
@@ -150,15 +154,13 @@ final class OrderInventoryContractTest extends TestCase
         );
 
         self::assertInstanceOf(StockItemId::class, $event->stockItemId);
+        self::assertSame($tenantId, $event->tenantId);
+        self::assertSame($productId, $event->productId);
         self::assertInstanceOf(Quantity::class, $event->quantity);
         self::assertIsString($event->referenceId);
         self::assertIsString($event->reason);
         self::assertNotEmpty($event->reason);
     }
-
-    // -----------------------------------------------------------------------
-    // StockDepleted — produced by Inventory, references Catalog ProductId
-    // -----------------------------------------------------------------------
 
     #[Test]
     public function stockDepletedCrossesIntoCatalogBoundary(): void
@@ -173,15 +175,10 @@ final class OrderInventoryContractTest extends TestCase
             occurredOn: new \DateTimeImmutable(),
         );
 
-        // Contract: StockDepleted uses Catalog's ProductId
         self::assertInstanceOf(ProductId::class, $event->productId);
         self::assertInstanceOf(WarehouseId::class, $event->warehouseId);
         self::assertInstanceOf(TenantId::class, $event->tenantId);
     }
-
-    // -----------------------------------------------------------------------
-    // Quantity value object contract
-    // -----------------------------------------------------------------------
 
     #[Test]
     public function quantityValueObjectEnforcesRange(): void

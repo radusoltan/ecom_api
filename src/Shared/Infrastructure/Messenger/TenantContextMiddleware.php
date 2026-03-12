@@ -42,6 +42,11 @@ final class TenantContextMiddleware implements MiddlewareInterface
             $tenantStamp = $envelope->last(TenantStamp::class);
 
             if ($tenantStamp instanceof TenantStamp) {
+                // Save previous tenant context to restore after handling.
+                // This prevents nested message handling (e.g., sync transport
+                // within a request) from destroying the request-level context.
+                $previousTenantId = $this->tenantContext->getCurrentTenantId();
+
                 $tenantId = TenantId::fromString($tenantStamp->getTenantId());
                 $this->tenantContext->setCurrentTenant($tenantId);
 
@@ -54,8 +59,16 @@ final class TenantContextMiddleware implements MiddlewareInterface
                     // Handle message with tenant context
                     return $stack->next()->handle($envelope, $stack);
                 } finally {
-                    // Clear tenant context after handling
-                    $this->tenantContext->clearCurrentTenant();
+                    // Restore previous tenant context instead of clearing.
+                    // This is critical for checkout flow safety: if event handlers
+                    // dispatch messages via sync transport, clearing here would
+                    // destroy the request-level tenant context, causing COALESCE
+                    // RLS tables to return all tenants' data.
+                    if (null !== $previousTenantId) {
+                        $this->tenantContext->setCurrentTenant($previousTenantId);
+                    } else {
+                        $this->tenantContext->clearCurrentTenant();
+                    }
                 }
             } else {
                 $this->logger->warning('Async message received without TenantStamp', [

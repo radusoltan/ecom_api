@@ -125,7 +125,10 @@ final readonly class CheckoutProcessor implements ProcessorInterface
                 'item_count' => $cart->getItemCount(),
             ]);
 
-            // Dispatch command to create order and get result from handler
+            // Dispatch command to create order and get result from handler.
+            // The TenantContextMiddleware now preserves parent context across
+            // nested message handling, so the tenant context remains stable
+            // throughout the checkout transaction.
             $envelope = $this->commandBus->dispatch($placeOrderCommand);
             $handledStamp = $envelope->last(HandledStamp::class);
 
@@ -137,8 +140,16 @@ final readonly class CheckoutProcessor implements ProcessorInterface
             $order = $handledStamp->getResult();
             $orderDTO = OrderDTO::fromDomain($order);
 
-            // Re-set tenant context (may have been cleared by event handlers during order dispatch)
-            $this->tenantContext->setCurrentTenant($tenantId);
+            // Verify tenant context survived the dispatch chain. If lost
+            // (e.g., a misconfigured subscriber), restore it before any
+            // further DB operations to prevent COALESCE RLS exposure.
+            if (!$this->tenantContext->hasCurrentTenant()) {
+                $this->logger->warning('Tenant context lost during order dispatch, restoring', [
+                    'tenant_id' => $tenantId->toString(),
+                    'order_id' => $orderDTO->id,
+                ]);
+                $this->tenantContext->setCurrentTenant($tenantId);
+            }
 
             // Mark cart as converted
             $this->cartRepository->markAsConverted($cart->id());

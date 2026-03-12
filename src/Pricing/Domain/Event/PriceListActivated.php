@@ -10,6 +10,7 @@ final readonly class PriceListActivated implements DomainEvent
 {
     public function __construct(
         private string $priceListId,
+        private string $tenantId,
         private \DateTimeImmutable $occurredOn,
     ) {
     }
@@ -17,6 +18,11 @@ final readonly class PriceListActivated implements DomainEvent
     public function priceListId(): string
     {
         return $this->priceListId;
+    }
+
+    public function tenantId(): string
+    {
+        return $this->tenantId;
     }
 
     public function occurredOn(): \DateTimeImmutable
@@ -28,6 +34,7 @@ final readonly class PriceListActivated implements DomainEvent
     {
         return [
             'price_list_id' => $this->priceListId,
+            'tenant_id' => $this->tenantId,
             'occurred_on' => $this->occurredOn->format(\DateTimeImmutable::ATOM),
         ];
     }

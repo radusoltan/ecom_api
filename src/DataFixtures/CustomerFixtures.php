@@ -4,156 +4,149 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Customer\Application\Command\AddAddress\AddAddressCommand;
 use App\Customer\Application\Command\ChangeSegmentCommand;
 use App\Customer\Application\Command\DeactivateCustomerCommand;
 use App\Customer\Application\Command\RegisterCustomerCommand;
 use App\Customer\Domain\ValueObject\CustomerId;
 use App\Shared\Domain\ValueObject\TenantId;
-use App\User\Infrastructure\Persistence\Doctrine\Entity\UserEntity;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Shared\Infrastructure\Tenant\TenantContext;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Uid\Uuid;
 
 /**
  * Customer fixtures - creates diverse customers for testing.
  */
-class CustomerFixtures extends Fixture implements DependentFixtureInterface
+class CustomerFixtures extends AbstractTenantAwareFixture implements DependentFixtureInterface, FixtureGroupInterface
 {
-    private const DEFAULT_PASSWORD = 'customer123';
-
     public function __construct(
+        EntityManagerInterface $entityManager,
+        TenantContext $tenantContext,
         private readonly MessageBusInterface $commandBus,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly UserPasswordHasherInterface $passwordHasher,
     ) {
+        parent::__construct($entityManager, $tenantContext);
+    }
+
+    public static function getGroups(): array
+    {
+        return ['sprint3', 'sprint3-customers'];
     }
 
     public function load(ObjectManager $manager): void
     {
         echo "👥 Creating customers...\n";
-        echo '   ℹ️  Default password for all test customers: '.self::DEFAULT_PASSWORD."\n";
+        $tenantIds = $this->tenantIdsByOwnerEmail();
 
-        // Get first tenant ID from database
-        $tenantIdString = $this->getFirstTenantId($manager);
-        $tenantId = TenantId::fromString($tenantIdString);
+        foreach (Sprint3SeedData::tenants() as $tenant) {
+            $tenantId = TenantId::fromString($tenantIds[$tenant['ownerEmail']]);
+            $faker = $this->faker('customers-'.$tenant['alias']);
+            $this->activateTenantContext($tenantId);
 
-        // Regular Customers (8)
-        $this->createCustomer($tenantId, 'john.doe@example.com', 'John', 'Doe', '+14155551234', 'regular', true);
-        $this->createCustomer($tenantId, 'jane.smith@example.com', 'Jane', 'Smith', '+14155555678', 'regular', true);
-        $this->createCustomer($tenantId, 'mike.johnson@example.com', 'Mike', 'Johnson', null, 'regular', true);
-        $this->createCustomer($tenantId, 'emily.wilson@example.com', 'Emily', 'Wilson', '+442071234567', 'regular', true);
-        $this->createCustomer($tenantId, 'david.brown@example.com', 'David', 'Brown', '+33123456789', 'regular', true);
-        $this->createCustomer($tenantId, 'sarah.davis@example.com', 'Sarah', 'Davis', '+491234567890', 'regular', false);
-        $this->createCustomer($tenantId, 'robert.miller@example.com', 'Robert', 'Miller', '+14165559999', 'regular', true);
-        $this->createCustomer($tenantId, 'lisa.anderson@example.com', 'Lisa', 'Anderson', null, 'regular', false);
+            $createdForTenant = 0;
 
-        // VIP Customers (5)
-        $this->createCustomer($tenantId, 'william.garcia@example.com', 'William', 'Garcia', '+14155551111', 'vip', true);
-        $this->createCustomer($tenantId, 'maria.rodriguez@example.com', 'Maria', 'Rodriguez', '+34123456789', 'vip', true);
-        $this->createCustomer($tenantId, 'james.martinez@example.com', 'James', 'Martinez', '+14085552222', 'vip', true);
-        $this->createCustomer($tenantId, 'patricia.lee@example.com', 'Patricia', 'Lee', null, 'vip', true);
-        $this->createCustomer($tenantId, 'michael.taylor@example.com', 'Michael', 'Taylor', '+14155553333', 'vip', false);
+            for ($index = 1; $index <= Sprint3SeedData::CUSTOMERS_PER_TENANT; ++$index) {
+                $firstName = $faker->firstName();
+                $lastName = $faker->lastName();
+                $customerId = CustomerId::generate();
+                $phoneNumber = 0 === $index % 4 ? null : sprintf('+1%010d', 1000000000 + $index + (abs(crc32($tenant['alias'])) % 899999999));
+                $segment = match (true) {
+                    0 === $index % 11 => 'premium',
+                    0 === $index % 4 => 'vip',
+                    default => 'regular',
+                };
+                $isActive = 0 !== $index % 13;
+                $email = sprintf(
+                    '%s.%s.%03d@%s',
+                    strtolower(preg_replace('/[^a-z]/i', '', $firstName) ?: 'shopper'),
+                    strtolower(preg_replace('/[^a-z]/i', '', $lastName) ?: 'customer'),
+                    $index,
+                    $tenant['customerDomain']
+                );
 
-        // Premium Customers (2)
-        $this->createCustomer($tenantId, 'christopher.thomas@example.com', 'Christopher', 'Thomas', '+14155554444', 'premium', true);
-        $this->createCustomer($tenantId, 'jennifer.moore@example.com', 'Jennifer', 'Moore', '+442071235555', 'premium', true);
+                $this->commandBus->dispatch(new RegisterCustomerCommand(
+                    customerId: $customerId->toString(),
+                    tenantId: $tenantId->toString(),
+                    email: $email,
+                    firstName: $firstName,
+                    lastName: $lastName,
+                    phoneNumber: $phoneNumber
+                ));
 
-        $manager->flush();
+                $primaryStreet2 = 0 === $index % 5 ? 'Suite '.(200 + $index) : null;
+                $this->commandBus->dispatch(new AddAddressCommand(
+                    customerId: $customerId->toString(),
+                    tenantId: $tenantId->toString(),
+                    street: $faker->streetAddress(),
+                    street2: $primaryStreet2,
+                    city: $faker->city(),
+                    state: $this->usStateCode($faker),
+                    postalCode: $faker->postcode(),
+                    country: 'US',
+                    type: 'both',
+                    isDefaultShipping: true,
+                    isDefaultBilling: true
+                ));
 
-        echo "   ✓ Created 15 customers (8 regular, 5 VIP, 2 premium)\n";
-        echo "✅ Customer fixtures completed\n";
-    }
+                if (0 === $index % 3) {
+                    $this->commandBus->dispatch(new AddAddressCommand(
+                        customerId: $customerId->toString(),
+                        tenantId: $tenantId->toString(),
+                        street: $faker->streetAddress(),
+                        street2: null,
+                        city: $faker->city(),
+                        state: $this->usStateCode($faker),
+                        postalCode: $faker->postcode(),
+                        country: 'US',
+                        type: 'shipping',
+                        isDefaultShipping: false,
+                        isDefaultBilling: false
+                    ));
+                }
 
-    private function createCustomer(
-        TenantId $tenantId,
-        string $email,
-        string $firstName,
-        string $lastName,
-        ?string $phoneNumber,
-        string $segment,
-        bool $isActive,
-    ): void {
-        $customerId = CustomerId::generate();
+                if (0 === $index % 5) {
+                    $this->commandBus->dispatch(new AddAddressCommand(
+                        customerId: $customerId->toString(),
+                        tenantId: $tenantId->toString(),
+                        street: $faker->streetAddress(),
+                        street2: 'Accounts Payable',
+                        city: $faker->city(),
+                        state: $this->usStateCode($faker),
+                        postalCode: $faker->postcode(),
+                        country: 'US',
+                        type: 'billing',
+                        isDefaultShipping: false,
+                        isDefaultBilling: false
+                    ));
+                }
 
-        // Create User for authentication (before customer)
-        $this->createUserForCustomer($email, $firstName, $lastName);
+                if ('regular' !== $segment) {
+                    $this->commandBus->dispatch(new ChangeSegmentCommand(
+                        customerId: $customerId->toString(),
+                        tenantId: $tenantId->toString(),
+                        newSegment: $segment
+                    ));
+                }
 
-        // Register customer
-        $registerCommand = new RegisterCustomerCommand(
-            customerId: $customerId->toString(),
-            tenantId: $tenantId->toString(),
-            email: $email,
-            firstName: $firstName,
-            lastName: $lastName,
-            phoneNumber: $phoneNumber
-        );
+                if (!$isActive) {
+                    $this->commandBus->dispatch(new DeactivateCustomerCommand(
+                        customerId: $customerId->toString(),
+                        tenantId: $tenantId->toString()
+                    ));
+                }
 
-        $this->commandBus->dispatch($registerCommand);
+                ++$createdForTenant;
+            }
 
-        // Change segment if not regular
-        if ('regular' !== $segment) {
-            $changeSegmentCommand = new ChangeSegmentCommand(
-                customerId: $customerId->toString(),
-                tenantId: $tenantId->toString(),
-                newSegment: $segment
-            );
-
-            $this->commandBus->dispatch($changeSegmentCommand);
+            echo sprintf("   ✓ %s customers: %d\n", $tenant['name'], $createdForTenant);
+            $this->entityManager->clear();
         }
 
-        // Deactivate if needed
-        if (!$isActive) {
-            $deactivateCommand = new DeactivateCustomerCommand(
-                customerId: $customerId->toString(),
-                tenantId: $tenantId->toString()
-            );
+        $this->clearTenantContext();
 
-            $this->commandBus->dispatch($deactivateCommand);
-        }
-    }
-
-    private function getFirstTenantId(ObjectManager $manager): string
-    {
-        $connection = $manager->getConnection();
-        $result = $connection->executeQuery('SELECT id FROM tenants ORDER BY created_at ASC LIMIT 1')->fetchOne();
-
-        return $result;
-    }
-
-    /**
-     * Create a User entity for authentication when a customer is created via fixtures.
-     */
-    private function createUserForCustomer(string $email, string $firstName, string $lastName): void
-    {
-        // Check if user already exists
-        $existingUser = $this->entityManager->getRepository(UserEntity::class)->findOneBy(['email' => $email]);
-        if ($existingUser) {
-            // User already exists, skip creation
-            return;
-        }
-
-        $user = new UserEntity();
-        $user->setId((string) Uuid::v7());
-        $user->setEmail($email);
-
-        // Generate username from name
-        $sanitized = strtolower(trim($firstName.' '.$lastName));
-        $sanitized = preg_replace('/[^a-z0-9]+/', '-', $sanitized);
-        $generatedUsername = sprintf('%s-%s', '' !== $sanitized ? trim($sanitized, '-') : 'customer', bin2hex(random_bytes(4)));
-        $user->setUsername($generatedUsername);
-        $user->setRoles(['ROLE_CUSTOMER']); // Assign customer role
-        $user->setCreatedAt(new \DateTimeImmutable());
-
-        // Hash the default password
-        $hashedPassword = $this->passwordHasher->hashPassword($user, self::DEFAULT_PASSWORD);
-        $user->setPassword($hashedPassword);
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        echo "✅ Customer population created\n";
     }
 
     public function getDependencies(): array
@@ -161,10 +154,5 @@ class CustomerFixtures extends Fixture implements DependentFixtureInterface
         return [
             TenantFixtures::class,
         ];
-    }
-
-    public function getOrder(): int
-    {
-        return 5;
     }
 }

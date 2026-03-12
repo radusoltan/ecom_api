@@ -17,12 +17,16 @@ use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity;
 use App\Catalog\Infrastructure\Persistence\Doctrine\Repository\DoctrineProductRepository;
 use App\Shared\Domain\ValueObject\Money;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Cache\CacheService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -43,6 +47,7 @@ final class DoctrineProductRepositoryTest extends TestCase
         $this->repository = new DoctrineProductRepository(
             $this->entityManager,
             $this->eventBus,
+            new CacheService(new TagAwareAdapter(new ArrayAdapter()), new NullLogger()),
         );
     }
 
@@ -217,6 +222,36 @@ final class DoctrineProductRepositoryTest extends TestCase
         $result = $this->repository->findBySKU($tenantId, $sku);
 
         self::assertNull($result);
+    }
+
+    #[Test]
+    public function itCachesSkuLookupsPerTenantQueryKey(): void
+    {
+        $tenantId = TenantId::fromString(self::TENANT_UUID);
+        $sku = SKU::fromString('PRD-123456');
+        $product = $this->buildProduct();
+
+        $entity = $this->createMock(ProductEntity::class);
+        $entity->method('toDomainModel')->willReturn($product);
+
+        $doctrineRepo = $this->createMock(EntityRepository::class);
+        $doctrineRepo->expects(self::once())
+            ->method('findOneBy')
+            ->with(['tenantId' => $tenantId->toString(), 'sku' => $sku->value()])
+            ->willReturn($entity);
+
+        $this->entityManager->expects(self::once())
+            ->method('getRepository')
+            ->with(ProductEntity::class)
+            ->willReturn($doctrineRepo);
+
+        $first = $this->repository->findBySKU($tenantId, $sku);
+        $second = $this->repository->findBySKU($tenantId, $sku);
+
+        self::assertSame($product, $first);
+        self::assertNotNull($second);
+        self::assertTrue($first->id()->equals($second->id()));
+        self::assertSame($first->sku()->value(), $second->sku()->value());
     }
 
     // ---------------------------------------------------------------

@@ -1532,10 +1532,14 @@ final class DomainEventAuditSubscriberExtraTest extends TestCase
         $stockItemId = StockItemId::generate();
         $quantity = InventoryQuantity::fromInt(10);
         $now = new \DateTimeImmutable();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
+        $productId = ProductId::generate();
 
         // StockAllocated
         $event = new StockAllocated(
             stockItemId: $stockItemId,
+            tenantId: $tenantId,
+            productId: $productId,
             quantity: $quantity,
             orderId: 'order-001',
             occurredOn: $now,
@@ -1545,7 +1549,7 @@ final class DomainEventAuditSubscriberExtraTest extends TestCase
 
         $this->assertCount(1, $this->dispatchedCommands);
         $command = $this->dispatchedCommands[0];
-        $this->assertSame(self::SYSTEM_TENANT_ID, $command->tenantId);
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
         $this->assertSame('allocate', $command->actionType);
         $this->assertSame('stock', $command->resourceType);
         $this->assertSame($stockItemId->toString(), $command->resourceId);
@@ -1557,6 +1561,8 @@ final class DomainEventAuditSubscriberExtraTest extends TestCase
         $this->dispatchedCommands = [];
         $reserved = new StockReserved(
             stockItemId: $stockItemId,
+            tenantId: $tenantId,
+            productId: $productId,
             quantity: $quantity,
             reservationId: 'res-abc',
             occurredOn: $now,
@@ -1566,7 +1572,7 @@ final class DomainEventAuditSubscriberExtraTest extends TestCase
 
         $this->assertCount(1, $this->dispatchedCommands);
         $command = $this->dispatchedCommands[0];
-        $this->assertSame(self::SYSTEM_TENANT_ID, $command->tenantId);
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
         $this->assertSame('reserve', $command->actionType);
         $this->assertSame('stock', $command->resourceType);
         $this->assertSame('res-abc', $command->metadata['reservationId']);
@@ -1576,6 +1582,8 @@ final class DomainEventAuditSubscriberExtraTest extends TestCase
         $this->dispatchedCommands = [];
         $released = new StockReleased(
             stockItemId: $stockItemId,
+            tenantId: $tenantId,
+            productId: $productId,
             quantity: $quantity,
             referenceId: 'ref-001',
             reason: 'Order cancelled',
@@ -1586,7 +1594,7 @@ final class DomainEventAuditSubscriberExtraTest extends TestCase
 
         $this->assertCount(1, $this->dispatchedCommands);
         $command = $this->dispatchedCommands[0];
-        $this->assertSame(self::SYSTEM_TENANT_ID, $command->tenantId);
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
         $this->assertSame('release', $command->actionType);
         $this->assertSame('stock', $command->resourceType);
         $this->assertSame('ref-001', $command->metadata['referenceId']);
@@ -1595,8 +1603,6 @@ final class DomainEventAuditSubscriberExtraTest extends TestCase
 
         // StockDepleted
         $this->dispatchedCommands = [];
-        $tenantId = TenantId::fromString(self::TENANT_ID);
-        $productId = ProductId::generate();
         $warehouseId = WarehouseId::generate();
 
         $depleted = new StockDepleted(
@@ -1632,14 +1638,15 @@ final class DomainEventAuditSubscriberExtraTest extends TestCase
     {
         $warehouseId = WarehouseId::generate();
         $now = new \DateTimeImmutable();
+        $tenantId = TenantId::fromString(self::TENANT_ID);
 
         // WarehouseActivated
-        $event = new WarehouseActivated(warehouseId: $warehouseId, occurredOn: $now);
+        $event = new WarehouseActivated(warehouseId: $warehouseId, tenantId: $tenantId, occurredOn: $now);
         $this->subscriber->onWarehouseActivated($event);
 
         $this->assertCount(1, $this->dispatchedCommands);
         $command = $this->dispatchedCommands[0];
-        $this->assertSame(self::SYSTEM_TENANT_ID, $command->tenantId);
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
         $this->assertSame('activate', $command->actionType);
         $this->assertSame('warehouse', $command->resourceType);
         $this->assertSame($warehouseId->toString(), $command->resourceId);
@@ -1647,12 +1654,12 @@ final class DomainEventAuditSubscriberExtraTest extends TestCase
 
         // WarehouseDeactivated
         $this->dispatchedCommands = [];
-        $deactivated = new WarehouseDeactivated(warehouseId: $warehouseId, occurredOn: $now);
+        $deactivated = new WarehouseDeactivated(warehouseId: $warehouseId, tenantId: $tenantId, occurredOn: $now);
         $this->subscriber->onWarehouseDeactivated($deactivated);
 
         $this->assertCount(1, $this->dispatchedCommands);
         $command = $this->dispatchedCommands[0];
-        $this->assertSame(self::SYSTEM_TENANT_ID, $command->tenantId);
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
         $this->assertSame('deactivate', $command->actionType);
         $this->assertSame('WarehouseDeactivated', $command->metadata['event']);
 
@@ -1660,6 +1667,7 @@ final class DomainEventAuditSubscriberExtraTest extends TestCase
         $this->dispatchedCommands = [];
         $updated = new WarehouseUpdated(
             warehouseId: $warehouseId,
+            tenantId: $tenantId,
             name: WarehouseName::fromString('Main Warehouse'),
             occurredOn: $now,
         );
@@ -1668,7 +1676,7 @@ final class DomainEventAuditSubscriberExtraTest extends TestCase
 
         $this->assertCount(1, $this->dispatchedCommands);
         $command = $this->dispatchedCommands[0];
-        $this->assertSame(self::SYSTEM_TENANT_ID, $command->tenantId);
+        $this->assertSame(self::TENANT_ID, $command->tenantId);
         $this->assertSame('update', $command->actionType);
         $this->assertSame('warehouse', $command->resourceType);
         $this->assertSame($warehouseId->toString(), $command->resourceId);

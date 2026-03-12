@@ -32,11 +32,11 @@ final readonly class EncryptionService
         $decoded = base64_decode($encoded, true);
 
         if (false === $decoded) {
-            throw new \RuntimeException('Failed to base64-decode ciphertext.');
+            throw DecryptionFailedException::invalidBase64();
         }
 
         if (\strlen($decoded) < \SODIUM_CRYPTO_SECRETBOX_NONCEBYTES + \SODIUM_CRYPTO_SECRETBOX_MACBYTES) {
-            throw new \RuntimeException('Ciphertext too short — corrupted or not encrypted.');
+            throw DecryptionFailedException::tooShort();
         }
 
         $nonce = substr($decoded, 0, \SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
@@ -45,7 +45,7 @@ final readonly class EncryptionService
         $plaintext = sodium_crypto_secretbox_open($ciphertext, $nonce, $this->key);
 
         if (false === $plaintext) {
-            throw new \RuntimeException('Decryption failed — wrong key or corrupted ciphertext.');
+            throw DecryptionFailedException::wrongKeyOrCorrupted();
         }
 
         return $plaintext;

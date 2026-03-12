@@ -6,6 +6,7 @@ namespace App\Shared\Infrastructure\Encryption;
 
 use App\Shared\Infrastructure\Doctrine\Type\EncryptedJsonType;
 use App\Shared\Infrastructure\Doctrine\Type\EncryptedStringType;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -22,6 +23,7 @@ final readonly class EncryptionTypeBootListener
 {
     public function __construct(
         private EncryptionService $encryptionService,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -32,6 +34,8 @@ final readonly class EncryptionTypeBootListener
         }
 
         EncryptedStringType::setEncryptionService($this->encryptionService);
+        EncryptedStringType::setLogger($this->logger);
         EncryptedJsonType::setEncryptionService($this->encryptionService);
+        EncryptedJsonType::setLogger($this->logger);
     }
 }

@@ -36,7 +36,7 @@ final class I18nCacheService
         $key = $this->buildProductKey($tenantId, $productId, $locale);
 
         try {
-            return $this->cache->get($key, function (ItemInterface $item) {
+            return $this->cache->get($key, function (ItemInterface $item) use ($tenantId, $productId) {
                 // If not in cache, return null (will be populated by caller)
                 $item->expiresAfter(self::CACHE_TTL);
                 $item->tag($this->getProductTags($tenantId, $productId));
@@ -78,7 +78,7 @@ final class I18nCacheService
         $key = $this->buildCategoryKey($tenantId, $categoryId, $locale);
 
         try {
-            return $this->cache->get($key, function (ItemInterface $item) {
+            return $this->cache->get($key, function (ItemInterface $item) use ($tenantId, $categoryId) {
                 // If not in cache, return null
                 $item->expiresAfter(self::CACHE_TTL);
                 $item->tag($this->getCategoryTags($tenantId, $categoryId));
@@ -152,7 +152,7 @@ final class I18nCacheService
      */
     public function invalidateTenant(TenantId $tenantId): void
     {
-        $tag = sprintf('%s:tenant:%s', self::KEY_PREFIX, $tenantId->toString());
+        $tag = $this->buildTag(self::KEY_PREFIX, 'tenant', $tenantId->toString());
         $this->cache->invalidateTags([$tag]);
     }
 
@@ -213,17 +213,27 @@ final class I18nCacheService
     private function getProductTags(TenantId $tenantId, ProductId $productId): array
     {
         return [
-            sprintf('%s:tenant:%s', self::KEY_PREFIX, $tenantId->toString()),
-            sprintf('%s:product:%s', self::KEY_PREFIX, $productId->toString()),
+            $this->buildTag(self::KEY_PREFIX, 'tenant', $tenantId->toString()),
+            $this->buildTag(self::KEY_PREFIX, 'product', $productId->toString()),
         ];
     }
 
     private function getCategoryTags(TenantId $tenantId, CategoryId $categoryId): array
     {
         return [
-            sprintf('%s:tenant:%s', self::KEY_PREFIX, $tenantId->toString()),
-            sprintf('%s:category:%s', self::KEY_PREFIX, $categoryId->toString()),
+            $this->buildTag(self::KEY_PREFIX, 'tenant', $tenantId->toString()),
+            $this->buildTag(self::KEY_PREFIX, 'category', $categoryId->toString()),
         ];
+    }
+
+    private function buildTag(string ...$segments): string
+    {
+        $normalized = array_map(
+            static fn (string $segment): string => trim((string) preg_replace('/[{}()\/\\\\@:]+/', '.', $segment), '.'),
+            $segments
+        );
+
+        return implode('.', array_filter($normalized, static fn (string $segment): bool => '' !== $segment));
     }
 
     /**

@@ -69,7 +69,7 @@ final readonly class Discount
         return new self(self::TYPE_FIXED, null, $amount);
     }
 
-    public static function fromTypeAndValue(string $type, float $value): self
+    public static function fromTypeAndValue(string $type, float $value, string $currencyCode = 'USD'): self
     {
         if (self::TYPE_PERCENTAGE === $type) {
             return self::percentage($value);
@@ -77,7 +77,7 @@ final readonly class Discount
 
         if (self::TYPE_FIXED === $type) {
             // For fixed discounts, value is stored in minor units (cents)
-            return self::fixed(Money::fromScalars((int) $value, 'USD')); // TODO: Make currency configurable
+            return self::fixed(Money::fromScalars((int) $value, $currencyCode));
         }
 
         throw new \InvalidArgumentException(sprintf('Invalid discount type "%s"', $type));

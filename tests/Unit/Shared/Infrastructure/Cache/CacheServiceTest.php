@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 /**
  * Unit tests for CacheService.
@@ -268,6 +269,40 @@ final class CacheServiceTest extends TestCase
         $this->cacheService->invalidateMultiple($keys);
     }
 
+    public function testInvalidateTagsUsesTagAwareBackend(): void
+    {
+        $tagAwareCache = $this->createMock(TagAwareCacheInterface::class);
+        $tagAwareCache
+            ->expects(self::once())
+            ->method('invalidateTags')
+            ->with(['tenant.tenant-123.products'])
+            ->willReturn(true);
+
+        $this->logger
+            ->expects(self::once())
+            ->method('info')
+            ->with('Cache tags invalidated', [
+                'tags' => ['tenant.tenant-123.products'],
+                'success' => true,
+            ]);
+
+        $cacheService = new CacheService($tagAwareCache, $this->logger);
+
+        self::assertTrue($cacheService->invalidateTags(['tenant.tenant-123.products']));
+    }
+
+    public function testInvalidateTagsReturnsFalseWhenBackendIsNotTagAware(): void
+    {
+        $this->logger
+            ->expects(self::once())
+            ->method('warning')
+            ->with('Cache backend does not support tag invalidation', [
+                'tags' => ['products'],
+            ]);
+
+        self::assertFalse($this->cacheService->invalidateTags(['products']));
+    }
+
     public function testTenantKeyFormatsCorrectly(): void
     {
         // When: Generating tenant key
@@ -293,6 +328,39 @@ final class CacheServiceTest extends TestCase
 
         // Then: Should format correctly
         self::assertSame('tenant:tenant-123:locale:en:products', $key);
+    }
+
+    public function testTenantQueryKeyIsStableAcrossQueryParameterOrder(): void
+    {
+        $firstKey = $this->cacheService->tenantQueryKey('tenant-123', 'catalog', 'products', [
+            'page' => 1,
+            'filters' => [
+                'priceMax' => 5000,
+                'priceMin' => 1000,
+            ],
+            'sort' => 'name',
+        ]);
+
+        $secondKey = $this->cacheService->tenantQueryKey('tenant-123', 'catalog', 'products', [
+            'sort' => 'name',
+            'filters' => [
+                'priceMin' => 1000,
+                'priceMax' => 5000,
+            ],
+            'page' => 1,
+        ]);
+
+        self::assertSame($firstKey, $secondKey);
+    }
+
+    public function testTenantQueryKeyKeepsTenantIsolation(): void
+    {
+        $tenantOneKey = $this->cacheService->tenantQueryKey('tenant-1', 'catalog', 'products', ['page' => 1]);
+        $tenantTwoKey = $this->cacheService->tenantQueryKey('tenant-2', 'catalog', 'products', ['page' => 1]);
+
+        self::assertNotSame($tenantOneKey, $tenantTwoKey);
+        self::assertStringStartsWith('tenant:tenant-1:catalog:products:', $tenantOneKey);
+        self::assertStringStartsWith('tenant:tenant-2:catalog:products:', $tenantTwoKey);
     }
 
     public function testWarmMultipleStoresAllValues(): void

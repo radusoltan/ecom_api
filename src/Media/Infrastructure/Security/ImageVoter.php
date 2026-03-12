@@ -77,6 +77,13 @@ final class ImageVoter extends Voter
             return true;
         }
 
+        // VENDOR: can manage own images only (ownerId must match user ID)
+        if (in_array('ROLE_VENDOR', $roles, true)) {
+            $user = $this->security->getUser();
+
+            return null !== $user && method_exists($user, 'getId') && $user->getId() === $ownerId;
+        }
+
         return false;
     }
 }

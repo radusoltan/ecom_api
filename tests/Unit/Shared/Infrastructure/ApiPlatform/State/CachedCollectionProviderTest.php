@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Shared\Infrastructure\ApiPlatform\State;
 
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Shared\Infrastructure\ApiPlatform\State\CachedCollectionProvider;
 use App\Shared\Infrastructure\Cache\CacheService;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -37,29 +38,10 @@ final class CachedCollectionProviderTest extends TestCase
         );
     }
 
-    private function createRequest(string $method = 'GET', array $headers = [], ?string $queryString = null): Request
-    {
-        $request = $this->createMock(Request::class);
-        $request->method('getMethod')->willReturn($method);
-        $request->headers = new HeaderBag($headers);
-        $request->method('getPreferredLanguage')->willReturn('en');
-        $request->method('getQueryString')->willReturn($queryString);
-
-        return $request;
-    }
-
-    private function createOperation(string $shortName = 'ProductList'): Operation
-    {
-        $operation = $this->createMock(Operation::class);
-        $operation->method('getShortName')->willReturn($shortName);
-
-        return $operation;
-    }
-
     public function testDelegatesToDecoratedWhenNoRequest(): void
     {
         $this->requestStack->method('getCurrentRequest')->willReturn(null);
-        $operation = $this->createOperation();
+        $operation = $this->createCollectionOperation();
         $expected = ['data'];
 
         $this->decorated->expects(self::once())->method('provide')->willReturn($expected);
@@ -74,7 +56,7 @@ final class CachedCollectionProviderTest extends TestCase
         $request = $this->createRequest('POST');
         $this->requestStack->method('getCurrentRequest')->willReturn($request);
 
-        $operation = $this->createOperation();
+        $operation = $this->createCollectionOperation();
         $expected = ['data'];
 
         $this->decorated->expects(self::once())->method('provide')->willReturn($expected);
@@ -84,15 +66,32 @@ final class CachedCollectionProviderTest extends TestCase
         self::assertSame($expected, $result);
     }
 
-    public function testBypassesCacheWhenNoCacheHeaderSet(): void
+    public function testDelegatesToDecoratedForItemOperations(): void
     {
-        $request = $this->createRequest('GET', ['X-No-Cache' => 'true']);
+        $request = $this->createRequest();
         $this->requestStack->method('getCurrentRequest')->willReturn($request);
 
-        $operation = $this->createOperation();
+        $operation = new Get(uriTemplate: '/products/{id}', shortName: 'Product', name: 'get_product');
+        $expected = ['item'];
+
+        $this->decorated->expects(self::once())->method('provide')->willReturn($expected);
+        $this->cacheService->expects(self::never())->method('get');
+
+        $result = $this->provider->provide($operation);
+
+        self::assertSame($expected, $result);
+    }
+
+    public function testBypassesCacheWhenNoCacheHeaderSet(): void
+    {
+        $request = $this->createRequest(headers: ['X-No-Cache' => 'true']);
+        $this->requestStack->method('getCurrentRequest')->willReturn($request);
+
+        $operation = $this->createCollectionOperation();
         $expected = ['fresh_data'];
 
         $this->decorated->expects(self::once())->method('provide')->willReturn($expected);
+        $this->cacheService->expects(self::never())->method('get');
         $this->logger->expects(self::once())->method('debug');
 
         $result = $this->provider->provide($operation);
@@ -100,18 +99,50 @@ final class CachedCollectionProviderTest extends TestCase
         self::assertSame($expected, $result);
     }
 
-    public function testUsesCacheForGetRequests(): void
+    public function testUsesCacheForGetCollections(): void
     {
-        $request = $this->createRequest('GET', [
-            'X-Tenant-ID' => '00000000-0000-4000-8000-000000000001',
-        ]);
+        $tenantId = '00000000-0000-4000-8000-000000000001';
+        $request = $this->createRequest(
+            headers: [
+                'X-Tenant-ID' => $tenantId,
+                'Accept-Language' => 'en-US,en;q=0.9',
+            ],
+            query: ['page' => '1'],
+            path: '/api/v1/products',
+        );
         $this->requestStack->method('getCurrentRequest')->willReturn($request);
 
-        $operation = $this->createOperation('ProductList');
+        $operation = $this->createCollectionOperation(shortName: 'Product', name: 'get_products', uriTemplate: '/products');
         $cachedData = ['cached_products'];
 
-        $this->cacheService->method('tenantKey')->willReturn('tenant:t1:api:ProductList:en:hash');
-        $this->cacheService->method('get')->willReturn($cachedData);
+        $this->cacheService->expects(self::once())
+            ->method('tenantQueryKey')
+            ->with(
+                $tenantId,
+                'api',
+                'products',
+                self::callback(static function (array $query): bool {
+                    return 'get_products' === $query['operation']
+                        && 'en' === $query['locale']
+                        && '/api/v1/products' === $query['path']
+                        && $query['query'] === ['page' => '1'];
+                })
+            )
+            ->willReturn('tenant-cache-key');
+        $this->cacheService->expects(self::once())->method('tag')->with('api')->willReturn('api');
+        $this->cacheService->expects(self::once())
+            ->method('tenantScopedTags')
+            ->with($tenantId, 'products')
+            ->willReturn(['tenant-tag', 'products-tag', 'tenant-products-tag']);
+        $this->cacheService->expects(self::once())
+            ->method('get')
+            ->with(
+                'tenant-cache-key',
+                self::isCallable(),
+                300,
+                ['api', 'tenant-tag', 'products-tag', 'tenant-products-tag']
+            )
+            ->willReturn($cachedData);
 
         $result = $this->provider->provide($operation);
 
@@ -120,15 +151,16 @@ final class CachedCollectionProviderTest extends TestCase
 
     public function testFallsBackToDecoratedOnCacheException(): void
     {
-        $request = $this->createRequest('GET', [
-            'X-Tenant-ID' => '00000000-0000-4000-8000-000000000001',
-        ]);
+        $tenantId = '00000000-0000-4000-8000-000000000001';
+        $request = $this->createRequest(headers: ['X-Tenant-ID' => $tenantId]);
         $this->requestStack->method('getCurrentRequest')->willReturn($request);
 
-        $operation = $this->createOperation();
+        $operation = $this->createCollectionOperation(shortName: 'Product', name: 'get_products');
         $expected = ['fallback_data'];
 
-        $this->cacheService->method('tenantKey')->willReturn('key');
+        $this->cacheService->method('tenantQueryKey')->willReturn('cache-key');
+        $this->cacheService->method('tag')->willReturn('api');
+        $this->cacheService->method('tenantScopedTags')->willReturn(['tenant-products-tag']);
         $this->cacheService->method('get')->willThrowException(new \RuntimeException('Cache down'));
 
         $this->decorated->expects(self::once())->method('provide')->willReturn($expected);
@@ -139,102 +171,118 @@ final class CachedCollectionProviderTest extends TestCase
         self::assertSame($expected, $result);
     }
 
-    public function testTtlForProductOperation(): void
+    public function testSkipsCachingForOrderCollections(): void
     {
-        $request = $this->createRequest('GET', [
-            'X-Tenant-ID' => '00000000-0000-4000-8000-000000000001',
-        ]);
+        $request = $this->createRequest(path: '/api/v1/orders');
         $this->requestStack->method('getCurrentRequest')->willReturn($request);
 
-        $operation = $this->createOperation('ProductList');
+        $operation = $this->createCollectionOperation(shortName: 'Order', name: 'get_orders', uriTemplate: '/orders');
+        $expected = ['orders'];
 
-        $this->cacheService->method('tenantKey')->willReturn('key');
-        $this->cacheService->expects(self::once())->method('get')->with(
-            self::anything(),
-            self::anything(),
-            300, // 5 minutes for Product
-            self::anything(),
-        )->willReturn([]);
+        $this->decorated->expects(self::once())->method('provide')->willReturn($expected);
+        $this->cacheService->expects(self::never())->method('tenantQueryKey');
+        $this->cacheService->expects(self::never())->method('get');
 
-        $this->provider->provide($operation);
+        $result = $this->provider->provide($operation);
+
+        self::assertSame($expected, $result);
     }
 
-    public function testTtlForCategoryOperation(): void
+    public function testIncludesOperationIdentityInCacheKeyPayload(): void
     {
-        $request = $this->createRequest('GET', [
-            'X-Tenant-ID' => '00000000-0000-4000-8000-000000000001',
-        ]);
+        $request = $this->createRequest(path: '/api/v1/storefront/featured-products');
         $this->requestStack->method('getCurrentRequest')->willReturn($request);
 
-        $operation = $this->createOperation('CategoryList');
+        $queries = [];
+        $this->cacheService->method('tenantQueryKey')->willReturnCallback(
+            static function (string $tenantId, string $context, string $resource, array $query) use (&$queries): string {
+                $queries[] = $query;
 
-        $this->cacheService->method('tenantKey')->willReturn('key');
-        $this->cacheService->expects(self::once())->method('get')->with(
-            self::anything(),
-            self::anything(),
-            600, // 10 minutes for Category
-            self::anything(),
-        )->willReturn([]);
-
-        $this->provider->provide($operation);
-    }
-
-    public function testTtlZeroForOrderOperation(): void
-    {
-        $request = $this->createRequest('GET', [
-            'X-Tenant-ID' => '00000000-0000-4000-8000-000000000001',
-        ]);
-        $this->requestStack->method('getCurrentRequest')->willReturn($request);
-
-        $operation = $this->createOperation('OrderList');
-
-        $this->cacheService->method('tenantKey')->willReturn('key');
-        $this->cacheService->expects(self::once())->method('get')->with(
-            self::anything(),
-            self::anything(),
-            0, // No caching for Order
-            self::anything(),
-        )->willReturn([]);
-
-        $this->provider->provide($operation);
-    }
-
-    public function testGeneratesProductTags(): void
-    {
-        $tenantId = '00000000-0000-4000-8000-000000000001';
-        $request = $this->createRequest('GET', ['X-Tenant-ID' => $tenantId]);
-        $this->requestStack->method('getCurrentRequest')->willReturn($request);
-
-        $operation = $this->createOperation('ProductList');
-
-        $this->cacheService->method('tenantKey')->willReturn('key');
-        $this->cacheService->expects(self::once())->method('get')->with(
-            self::anything(),
-            self::anything(),
-            self::anything(),
-            self::callback(function (array $tags) use ($tenantId) {
-                return in_array('api', $tags, true)
-                    && in_array('tenant:'.$tenantId, $tags, true)
-                    && in_array('products', $tags, true)
-                    && in_array('tenant:'.$tenantId.':products', $tags, true);
-            }),
-        )->willReturn([]);
-
-        $this->provider->provide($operation);
-    }
-
-    public function testDefaultTenantIdWhenHeaderMissing(): void
-    {
-        $request = $this->createRequest('GET');
-        $this->requestStack->method('getCurrentRequest')->willReturn($request);
-
-        $operation = $this->createOperation('SomeResource');
-
-        $this->cacheService->expects(self::once())->method('tenantKey')
-            ->with('default', self::anything())
-            ->willReturn('key');
+                return 'cache-key-'.count($queries);
+            }
+        );
+        $this->cacheService->method('tag')->willReturn('api');
+        $this->cacheService->method('tenantScopedTags')->willReturn(['tenant-products-tag']);
         $this->cacheService->method('get')->willReturn([]);
 
+        $this->provider->provide(
+            new GetCollection(
+                uriTemplate: '/storefront/featured-products',
+                shortName: 'StorefrontProduct',
+                name: 'get_featured_products'
+            )
+        );
+
+        $this->provider->provide(
+            new GetCollection(
+                uriTemplate: '/storefront/products',
+                shortName: 'StorefrontProduct',
+                name: 'get_storefront_products'
+            )
+        );
+
+        self::assertCount(2, $queries);
+        self::assertSame('get_featured_products', $queries[0]['operation']);
+        self::assertSame('get_storefront_products', $queries[1]['operation']);
+        self::assertNotSame($queries[0]['operation'], $queries[1]['operation']);
+    }
+
+    public function testDefaultsTenantIdWhenHeaderMissing(): void
+    {
+        $request = $this->createRequest(path: '/api/v1/categories');
+        $this->requestStack->method('getCurrentRequest')->willReturn($request);
+
+        $operation = $this->createCollectionOperation(shortName: 'Category', name: 'get_categories', uriTemplate: '/categories');
+
+        $this->cacheService->expects(self::once())->method('tenantQueryKey')
+            ->with('default', 'api', 'categories', self::anything())
+            ->willReturn('cache-key');
+        $this->cacheService->expects(self::once())->method('tag')->with('api')->willReturn('api');
+        $this->cacheService->expects(self::once())->method('tenantScopedTags')
+            ->with('default', 'categories')
+            ->willReturn(['tenant-categories-tag']);
+        $this->cacheService->expects(self::once())->method('get')
+            ->with('cache-key', self::isCallable(), 300, ['api', 'tenant-categories-tag'])
+            ->willReturn([]);
+
         $this->provider->provide($operation);
+    }
+
+    private function createRequest(
+        string $method = 'GET',
+        array $headers = [],
+        array $query = [],
+        string $path = '/api/v1/products',
+    ): Request {
+        $request = new Request(
+            $query,
+            [],
+            [],
+            [],
+            [],
+            [
+                'REQUEST_METHOD' => $method,
+                'REQUEST_URI' => $path,
+                'PATH_INFO' => $path,
+            ]
+        );
+
+        foreach ($headers as $name => $value) {
+            $request->headers->set($name, $value);
+        }
+
+        return $request;
+    }
+
+    private function createCollectionOperation(
+        string $shortName = 'Product',
+        string $name = 'get_products',
+        string $uriTemplate = '/products',
+    ): Operation {
+        return new GetCollection(
+            uriTemplate: $uriTemplate,
+            shortName: $shortName,
+            name: $name,
+        );
     }
 }

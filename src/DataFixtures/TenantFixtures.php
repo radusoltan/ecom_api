@@ -4,54 +4,55 @@ declare(strict_types=1);
 
 namespace App\DataFixtures;
 
+use App\Shared\Infrastructure\Tenant\TenantContext;
 use App\Tenant\Application\Command\CreateTenantCommand;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Tenant\Application\Command\EnableLocaleCommand;
+use App\Tenant\Application\Command\SetDefaultLocaleCommand;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-/**
- * Tenant fixtures - creates multiple tenants for testing.
- */
-class TenantFixtures extends Fixture
+final class TenantFixtures extends AbstractTenantAwareFixture implements FixtureGroupInterface
 {
     public function __construct(
+        EntityManagerInterface $entityManager,
+        TenantContext $tenantContext,
         private readonly MessageBusInterface $commandBus,
     ) {
+        parent::__construct($entityManager, $tenantContext);
+    }
+
+    public static function getGroups(): array
+    {
+        return ['sprint3', 'sprint3-tenants'];
     }
 
     public function load(ObjectManager $manager): void
     {
-        echo "🏢 Creating tenants...\n";
+        echo "🏢 Creating Sprint 3 tenants...\n";
 
-        // Tenant 1: TechMart
-        $command1 = new CreateTenantCommand(
-            name: 'TechMart',
-            ownerEmail: 'owner@techmart.com'
-        );
-        $this->commandBus->dispatch($command1);
-        echo "   ✓ TechMart created\n";
+        foreach (Sprint3SeedData::tenants() as $tenant) {
+            $this->commandBus->dispatch(new CreateTenantCommand(
+                name: $tenant['name'],
+                ownerEmail: $tenant['ownerEmail'],
+            ));
 
-        // Tenant 2: Fashion Hub
-        $command2 = new CreateTenantCommand(
-            name: 'Fashion Hub',
-            ownerEmail: 'owner@fashionhub.com'
-        );
-        $this->commandBus->dispatch($command2);
-        echo "   ✓ Fashion Hub created\n";
+            $tenantId = (string) $this->connection()->fetchOne(
+                'SELECT id FROM tenants WHERE owner_email = :ownerEmail LIMIT 1',
+                ['ownerEmail' => $tenant['ownerEmail']]
+            );
 
-        // Tenant 3: HomeGoods Plus
-        $command3 = new CreateTenantCommand(
-            name: 'HomeGoods Plus',
-            ownerEmail: 'owner@homegoods.com'
-        );
-        $this->commandBus->dispatch($command3);
-        echo "   ✓ HomeGoods Plus created\n";
+            $this->activateTenantContext($tenantId);
+            $this->commandBus->dispatch(new SetDefaultLocaleCommand($tenantId, 'en'));
+            $this->commandBus->dispatch(new EnableLocaleCommand($tenantId, 'fr'));
+            $this->commandBus->dispatch(new EnableLocaleCommand($tenantId, 'de'));
 
-        echo "✅ All tenants created successfully (3 total)\n";
-    }
+            echo sprintf("   ✓ %s (%s)\n", $tenant['name'], $tenantId);
+        }
 
-    public function getOrder(): int
-    {
-        return 1;
+        $this->clearTenantContext();
+
+        echo "✅ Tenants ready with EN/FR/DE locales\n";
     }
 }

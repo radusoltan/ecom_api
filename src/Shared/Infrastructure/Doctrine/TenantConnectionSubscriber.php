@@ -10,6 +10,7 @@ use Doctrine\DBAL\Driver\Connection as ConnectionInterface;
 use Doctrine\DBAL\Driver\Middleware\AbstractConnectionMiddleware;
 use Doctrine\DBAL\Driver\Middleware\AbstractDriverMiddleware;
 use Doctrine\DBAL\Driver\Middleware as MiddlewareInterface;
+use Doctrine\DBAL\ParameterType;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -53,9 +54,11 @@ final class TenantConnectionSubscriber implements MiddlewareInterface
                 }
 
                 try {
-                    $connection->exec(
-                        "SELECT set_config('app.tenant_id', '".$tenantId->toString()."', false)"
+                    $stmt = $connection->prepare(
+                        "SELECT set_config('app.tenant_id', ?, false)"
                     );
+                    $stmt->bindValue(1, $tenantId->toString(), ParameterType::STRING);
+                    $stmt->execute();
 
                     $this->logger->info('Tenant context set in database', [
                         'tenant_id' => $tenantId->toString(),

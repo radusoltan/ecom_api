@@ -66,13 +66,9 @@ final readonly class LocaleResponseListener implements EventSubscriberInterface
         $response->headers->set('Content-Language', $currentLocale);
 
         // Add Vary header to ensure proper caching
-        $vary = $response->headers->get('Vary', '');
-        $varyHeaders = array_filter(array_map('trim', explode(',', $vary)));
-
-        if (!in_array('Accept-Language', $varyHeaders, true)) {
-            $varyHeaders[] = 'Accept-Language';
-        }
-
-        $response->headers->set('Vary', implode(', ', $varyHeaders));
+        $response->headers->set('Vary', implode(', ', array_values(array_unique([
+            ...$response->getVary(),
+            'Accept-Language',
+        ]))));
     }
 }

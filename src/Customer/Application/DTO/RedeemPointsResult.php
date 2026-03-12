@@ -9,9 +9,12 @@ namespace App\Customer\Application\DTO;
  */
 final readonly class RedeemPointsResult
 {
+    /**
+     * @param int $discountAmountMinorUnits Discount amount in minor units (cents)
+     */
     public function __construct(
         public int $pointsRedeemed,
-        public float $discountAmount,
+        public int $discountAmountMinorUnits,
         public string $discountCurrency,
         public int $remainingBalance,
     ) {
@@ -24,7 +27,7 @@ final readonly class RedeemPointsResult
     {
         return [
             'points_redeemed' => $this->pointsRedeemed,
-            'discount_amount' => $this->discountAmount,
+            'discount_amount' => $this->discountAmountMinorUnits,
             'discount_currency' => $this->discountCurrency,
             'remaining_balance' => $this->remainingBalance,
         ];

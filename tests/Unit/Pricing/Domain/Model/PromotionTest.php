@@ -294,7 +294,7 @@ final class PromotionTest extends TestCase
             tenantId: $this->tenantId,
             name: 'Reconstituted Promotion',
             type: PromotionType::coupon(),
-            discount: Discount::fixedAmount(50.0),
+            discount: Discount::fixedAmount(5000),
             priority: 150,
             isActive: true,
             couponCode: $couponCode,

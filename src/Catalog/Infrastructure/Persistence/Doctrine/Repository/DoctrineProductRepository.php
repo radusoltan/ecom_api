@@ -11,6 +11,7 @@ use App\Catalog\Domain\Model\Slug;
 use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\ProductEntity;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Cache\CacheService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -19,6 +20,7 @@ final class DoctrineProductRepository implements ProductRepositoryInterface
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $eventBus,
+        private readonly CacheService $cacheService,
     ) {
     }
 
@@ -71,50 +73,79 @@ final class DoctrineProductRepository implements ProductRepositoryInterface
 
     public function findBySKU(TenantId $tenantId, SKU $sku): ?Product
     {
-        $repository = $this->entityManager->getRepository(ProductEntity::class);
-
-        $entity = $repository->findOneBy([
-            'tenantId' => $tenantId->toString(),
+        $tenant = $tenantId->toString();
+        $key = $this->cacheService->tenantQueryKey($tenant, 'catalog', 'product_sku', [
             'sku' => $sku->value(),
         ]);
 
-        if (null === $entity) {
-            return null;
-        }
+        return $this->cacheService->get(
+            $key,
+            function () use ($tenantId, $sku): ?Product {
+                $repository = $this->entityManager->getRepository(ProductEntity::class);
 
-        return $entity->toDomainModel();
+                $entity = $repository->findOneBy([
+                    'tenantId' => $tenantId->toString(),
+                    'sku' => $sku->value(),
+                ]);
+
+                return $entity?->toDomainModel();
+            },
+            300,
+            $this->cacheService->tenantScopedTags($tenant, 'products')
+        );
     }
 
     public function findBySlug(TenantId $tenantId, Slug $slug): ?Product
     {
-        $repository = $this->entityManager->getRepository(ProductEntity::class);
-
-        $entity = $repository->findOneBy([
-            'tenantId' => $tenantId->toString(),
+        $tenant = $tenantId->toString();
+        $key = $this->cacheService->tenantQueryKey($tenant, 'catalog', 'product_slug', [
             'slug' => $slug->value(),
         ]);
 
-        if (null === $entity) {
-            return null;
-        }
+        return $this->cacheService->get(
+            $key,
+            function () use ($tenantId, $slug): ?Product {
+                $repository = $this->entityManager->getRepository(ProductEntity::class);
 
-        return $entity->toDomainModel();
+                $entity = $repository->findOneBy([
+                    'tenantId' => $tenantId->toString(),
+                    'slug' => $slug->value(),
+                ]);
+
+                return $entity?->toDomainModel();
+            },
+            300,
+            $this->cacheService->tenantScopedTags($tenant, 'products')
+        );
     }
 
     public function findByTenant(TenantId $tenantId, int $limit = 100, int $offset = 0): array
     {
-        $repository = $this->entityManager->getRepository(ProductEntity::class);
+        $tenant = $tenantId->toString();
+        $key = $this->cacheService->tenantQueryKey($tenant, 'catalog', 'products', [
+            'limit' => $limit,
+            'offset' => $offset,
+        ]);
 
-        $entities = $repository->findBy(
-            ['tenantId' => $tenantId->toString()],
-            ['createdAt' => 'DESC'],
-            $limit,
-            $offset
-        );
+        return $this->cacheService->get(
+            $key,
+            function () use ($tenantId, $limit, $offset): array {
+                $repository = $this->entityManager->getRepository(ProductEntity::class);
 
-        return array_map(
-            static fn (ProductEntity $entity): Product => $entity->toDomainModel(),
-            $entities
+                $entities = $repository->findBy(
+                    ['tenantId' => $tenantId->toString()],
+                    ['createdAt' => 'DESC'],
+                    $limit,
+                    $offset
+                );
+
+                return array_map(
+                    static fn (ProductEntity $entity): Product => $entity->toDomainModel(),
+                    $entities
+                );
+            },
+            300,
+            $this->cacheService->tenantScopedTags($tenant, 'products')
         );
     }
 

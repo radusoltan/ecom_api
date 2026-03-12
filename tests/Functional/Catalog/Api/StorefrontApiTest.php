@@ -27,11 +27,17 @@ class StorefrontApiTest extends ApiTestCase
         // Check cache headers
         $this->assertResponseHasHeader('Cache-Control');
         $this->assertResponseHasHeader('Vary');
+        $this->assertResponseHasHeader('ETag');
         $this->assertResponseHasHeader('X-Content-Language');
 
         $cacheControl = $response->getHeaders()['cache-control'][0] ?? '';
+        $vary = implode(', ', $response->getHeaders()['vary'] ?? []);
         $this->assertStringContainsString('public', $cacheControl);
         $this->assertStringContainsString('max-age=300', $cacheControl);
+        $this->assertStringContainsString('stale-while-revalidate=600', $cacheControl);
+        $this->assertStringContainsString('Accept', $vary);
+        $this->assertStringContainsString('Accept-Language', $vary);
+        $this->assertStringContainsString('X-Tenant-ID', $vary);
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertIsArray($data);
@@ -64,9 +70,15 @@ class StorefrontApiTest extends ApiTestCase
         // Check cache headers
         $this->assertResponseHasHeader('Cache-Control');
         $this->assertResponseHasHeader('Vary');
+        $this->assertResponseHasHeader('ETag');
 
         $cacheControl = $response->getHeaders()['cache-control'][0] ?? '';
+        $vary = implode(', ', $response->getHeaders()['vary'] ?? []);
         $this->assertStringContainsString('public', $cacheControl);
+        $this->assertStringContainsString('max-age=300', $cacheControl);
+        $this->assertStringContainsString('stale-while-revalidate=600', $cacheControl);
+        $this->assertStringContainsString('Accept-Language', $vary);
+        $this->assertStringContainsString('X-Tenant-ID', $vary);
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertIsArray($data);
@@ -101,16 +113,15 @@ class StorefrontApiTest extends ApiTestCase
 
         // Check cache headers
         $this->assertResponseHasHeader('Cache-Control');
+        $this->assertResponseHasHeader('Vary');
+        $this->assertResponseHasHeader('ETag');
         $cacheControl = $response->getHeaders()['cache-control'][0] ?? '';
+        $vary = implode(', ', $response->getHeaders()['vary'] ?? []);
         $this->assertStringContainsString('public', $cacheControl);
-        // Accept max-age=120 or max-age=300
-        $this->assertThat(
-            $cacheControl,
-            $this->logicalOr(
-                $this->stringContains('max-age=120'),
-                $this->stringContains('max-age=300')
-            )
-        );
+        $this->assertStringContainsString('max-age=300', $cacheControl);
+        $this->assertStringContainsString('stale-while-revalidate=600', $cacheControl);
+        $this->assertStringContainsString('Accept-Language', $vary);
+        $this->assertStringContainsString('X-Tenant-ID', $vary);
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertIsArray($data);

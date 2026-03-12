@@ -9,6 +9,7 @@ use App\Payment\Application\Command\MarkPaymentAsFailed;
 use App\Payment\Application\Query\GetPaymentById;
 use App\Payment\Application\Service\WebhookDeduplicationService;
 use App\Payment\Domain\ValueObject\PaymentId;
+use App\Shared\Application\Service\TenantContextInterface;
 use App\Shared\Domain\ValueObject\TenantId;
 use Psr\Log\LoggerInterface;
 use Stripe\Event;
@@ -36,6 +37,7 @@ final readonly class StripeWebhookHandler
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
         private WebhookDeduplicationService $deduplicationService,
+        private TenantContextInterface $tenantContext,
         private LoggerInterface $logger,
     ) {
     }
@@ -69,12 +71,22 @@ final readonly class StripeWebhookHandler
                 'event_type' => $event->type,
             ]);
 
-            // Deduplication: check if this event was already processed
+            // SECURITY: Extract and validate tenant context BEFORE any DB operations
             $tenantId = $this->extractTenantIdFromEvent($event);
-            if (null !== $tenantId) {
-                if ($this->deduplicationService->isDuplicate('stripe', $event->id, $event->type, $tenantId, $payload)) {
-                    return new Response('Already processed', Response::HTTP_OK);
-                }
+            if (null === $tenantId) {
+                $this->logger->error('Stripe webhook: Missing tenant_id in event metadata', [
+                    'event_id' => $event->id,
+                    'event_type' => $event->type,
+                ]);
+
+                return new Response('Missing tenant_id in metadata', Response::HTTP_BAD_REQUEST);
+            }
+
+            $this->tenantContext->setCurrentTenant($tenantId);
+
+            // Deduplication: tenant-scoped check
+            if ($this->deduplicationService->isDuplicate('stripe', $event->id, $event->type, $tenantId, $payload)) {
+                return new Response('Already processed', Response::HTTP_OK);
             }
 
             // Procesează evenimentul bazat pe tip

@@ -494,7 +494,7 @@ final class PromotionExtendedTest extends TestCase
             tenantId: $this->tenantId,
             name: 'Full Getters',
             type: PromotionType::coupon(),
-            discount: Discount::fixedAmount(10.0),
+            discount: Discount::fixedAmount(1000),
             priority: 250,
             couponCode: $coupon,
             conditions: ['min_cart' => 50],

@@ -248,6 +248,7 @@ final class PriceList extends AggregateRoot
 
         $this->recordEvent(new PriceListActivated(
             $this->id->toString(),
+            $this->tenantId->toString(),
             $this->updatedAt
         ));
     }
@@ -266,6 +267,7 @@ final class PriceList extends AggregateRoot
 
         $this->recordEvent(new PriceListDeactivated(
             $this->id->toString(),
+            $this->tenantId->toString(),
             $this->updatedAt
         ));
     }

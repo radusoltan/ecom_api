@@ -10,6 +10,7 @@ use App\Catalog\Domain\Model\Slug;
 use App\Catalog\Domain\Repository\CategoryRepositoryInterface;
 use App\Catalog\Infrastructure\Persistence\Doctrine\Entity\CategoryEntity;
 use App\Shared\Domain\ValueObject\TenantId;
+use App\Shared\Infrastructure\Cache\CacheService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -18,6 +19,7 @@ final class DoctrineCategoryRepository implements CategoryRepositoryInterface
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageBusInterface $eventBus,
+        private readonly CacheService $cacheService,
     ) {
     }
 
@@ -64,50 +66,82 @@ final class DoctrineCategoryRepository implements CategoryRepositoryInterface
 
     public function findBySlug(TenantId $tenantId, Slug $slug): ?Category
     {
-        $repository = $this->entityManager->getRepository(CategoryEntity::class);
-
-        $entity = $repository->findOneBy([
-            'tenantId' => $tenantId->toString(),
+        $tenant = $tenantId->toString();
+        $key = $this->cacheService->tenantQueryKey($tenant, 'catalog', 'category_slug', [
             'slug' => $slug->value(),
         ]);
 
-        if (null === $entity) {
-            return null;
-        }
+        return $this->cacheService->get(
+            $key,
+            function () use ($tenantId, $slug): ?Category {
+                $repository = $this->entityManager->getRepository(CategoryEntity::class);
 
-        return $entity->toDomainModel();
+                $entity = $repository->findOneBy([
+                    'tenantId' => $tenantId->toString(),
+                    'slug' => $slug->value(),
+                ]);
+
+                return $entity?->toDomainModel();
+            },
+            300,
+            $this->cacheService->tenantScopedTags($tenant, 'categories')
+        );
     }
 
     public function findByTenant(TenantId $tenantId): array
     {
-        $repository = $this->entityManager->getRepository(CategoryEntity::class);
+        $tenant = $tenantId->toString();
+        $key = $this->cacheService->tenantQueryKey($tenant, 'catalog', 'categories', [
+            'scope' => 'all',
+        ]);
 
-        $entities = $repository->findBy(
-            ['tenantId' => $tenantId->toString()],
-            ['position' => 'ASC']
-        );
+        return $this->cacheService->get(
+            $key,
+            function () use ($tenantId): array {
+                $repository = $this->entityManager->getRepository(CategoryEntity::class);
 
-        return array_map(
-            static fn (CategoryEntity $entity): Category => $entity->toDomainModel(),
-            $entities
+                $entities = $repository->findBy(
+                    ['tenantId' => $tenantId->toString()],
+                    ['position' => 'ASC']
+                );
+
+                return array_map(
+                    static fn (CategoryEntity $entity): Category => $entity->toDomainModel(),
+                    $entities
+                );
+            },
+            300,
+            $this->cacheService->tenantScopedTags($tenant, 'categories')
         );
     }
 
     public function findByParent(TenantId $tenantId, ?CategoryId $parentId): array
     {
-        $repository = $this->entityManager->getRepository(CategoryEntity::class);
+        $tenant = $tenantId->toString();
+        $key = $this->cacheService->tenantQueryKey($tenant, 'catalog', 'category_parent', [
+            'parentId' => $parentId?->toString() ?? 'root',
+        ]);
 
-        $entities = $repository->findBy(
-            [
-                'tenantId' => $tenantId->toString(),
-                'parentId' => $parentId?->toString(),
-            ],
-            ['position' => 'ASC']
-        );
+        return $this->cacheService->get(
+            $key,
+            function () use ($tenantId, $parentId): array {
+                $repository = $this->entityManager->getRepository(CategoryEntity::class);
 
-        return array_map(
-            static fn (CategoryEntity $entity): Category => $entity->toDomainModel(),
-            $entities
+                $entities = $repository->findBy(
+                    [
+                        'tenantId' => $tenantId->toString(),
+                        'parentId' => $parentId?->toString(),
+                    ],
+                    ['position' => 'ASC']
+                );
+
+                return array_map(
+                    static fn (CategoryEntity $entity): Category => $entity->toDomainModel(),
+                    $entities
+                );
+            },
+            300,
+            $this->cacheService->tenantScopedTags($tenant, 'categories')
         );
     }
 

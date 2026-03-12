@@ -49,8 +49,11 @@ final class ReviewFixtures extends Fixture implements DependentFixtureInterface
             return;
         }
 
-        // Set RLS context
-        $this->connection->executeStatement("SET app.tenant_id = '{$tenantIdString}'");
+        // Set RLS context using parameterized set_config to prevent SQL injection
+        $this->connection->executeStatement(
+            "SELECT set_config('app.tenant_id', :tenantId, false)",
+            ['tenantId' => $tenantIdString]
+        );
 
         $productIds = $this->connection->fetchFirstColumn(
             'SELECT id FROM catalog_products WHERE tenant_id = :tenant_id ORDER BY created_at DESC LIMIT 100',
