@@ -9,6 +9,7 @@ use App\Catalog\Domain\Repository\ProductRepositoryInterface;
 use App\Catalog\Infrastructure\Elasticsearch\CategoryIndexer;
 use App\Catalog\Infrastructure\Elasticsearch\ProductIndexer;
 use App\Internationalization\Domain\Model\Locale;
+use App\Shared\Application\Service\TenantContextInterface;
 use App\Shared\Domain\ValueObject\TenantId;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -29,6 +30,7 @@ final class ReindexElasticsearchCommand extends Command
         private readonly CategoryRepositoryInterface $categoryRepository,
         private readonly ProductIndexer $productIndexer,
         private readonly CategoryIndexer $categoryIndexer,
+        private readonly TenantContextInterface $tenantContext,
     ) {
         parent::__construct();
     }
@@ -70,6 +72,9 @@ HELP
 
             return Command::FAILURE;
         }
+
+        // Set RLS tenant context so Doctrine queries return tenant-scoped data
+        $this->tenantContext->setCurrentTenant($tenantId);
 
         $locales = null !== $localeString
             ? [Locale::fromString($localeString)]
