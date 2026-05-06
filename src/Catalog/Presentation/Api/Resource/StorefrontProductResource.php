@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Catalog\Presentation\Api\Resource;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Catalog\Presentation\Api\State\FeaturedProductsProvider;
 use App\Catalog\Presentation\Api\State\ProductListingProvider;
+use App\Catalog\Presentation\Api\State\StorefrontProductProvider;
 
 #[ApiResource(
     shortName: 'StorefrontProduct',
@@ -23,6 +25,13 @@ use App\Catalog\Presentation\Api\State\ProductListingProvider;
             provider: ProductListingProvider::class,
             normalizationContext: ['groups' => ['storefront:read']],
             description: 'Get product listing with filters, facets, and pagination'
+        ),
+        new Get(
+            uriTemplate: '/storefront/products/{slug}',
+            uriVariables: ['slug'],
+            provider: StorefrontProductProvider::class,
+            normalizationContext: ['groups' => ['storefront:read']],
+            description: 'Get a single storefront product by slug (active products only, current tenant)'
         ),
     ],
     normalizationContext: ['groups' => ['storefront:read']]
@@ -40,4 +49,5 @@ class StorefrontProductResource
     public ?string $availability = null;
     public ?array $breadcrumbs = null;
     public ?string $description = null;
+    public ?string $categoryId = null;
 }

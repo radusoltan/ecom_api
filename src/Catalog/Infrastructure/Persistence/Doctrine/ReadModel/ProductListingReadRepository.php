@@ -88,6 +88,7 @@ final readonly class ProductListingReadRepository
             SELECT
                 p.id,
                 p.slug,
+                p.category_id,
                 CASE
                     WHEN :locale <> 'en'
                         AND p.name_translations IS NOT NULL
@@ -132,6 +133,76 @@ final readonly class ProductListingReadRepository
     }
 
     /**
+     * Storefront single-product lookup by slug.
+     *
+     * Tenant scoping is enforced by PostgreSQL RLS via the `app.tenant_id` GUC,
+     * which is set upstream by TenantRequestSubscriber from the X-Tenant-ID header.
+     * Inactive products and rows from other tenants are filtered transparently.
+     *
+     * @return StorefrontProductDto|null null when slug does not match any active product
+     *                                   visible under the current tenant context
+     */
+    public function findOneBySlugForStorefront(string $slug, string $locale = 'en'): ?StorefrontProductDto
+    {
+        if ('' === $slug) {
+            return null;
+        }
+
+        $locale = $this->normalizeLocale($locale);
+
+        $sql = <<<SQL
+            SELECT
+                p.id,
+                p.slug,
+                p.category_id,
+                CASE
+                    WHEN :locale <> 'en'
+                        AND p.name_translations IS NOT NULL
+                        AND p.name_translations->>:locale IS NOT NULL
+                    THEN p.name_translations->>:locale
+                    ELSE p.name
+                END AS name,
+                p.price_amount,
+                p.price_currency,
+                p.images,
+                p.is_featured,
+                p.stock_quantity,
+                p.track_inventory,
+                p.allow_backorder,
+                CASE
+                    WHEN :locale <> 'en'
+                        AND p.description_translations IS NOT NULL
+                        AND p.description_translations->>:locale IS NOT NULL
+                    THEN p.description_translations->>:locale
+                    ELSE p.description
+                END AS description
+            FROM catalog_products p
+            WHERE p.slug = :slug AND p.active = :active
+            LIMIT 1
+        SQL;
+
+        $row = $this->connection->fetchAssociative(
+            $sql,
+            [
+                'slug' => $slug,
+                'active' => true,
+                'locale' => $locale,
+            ],
+            [
+                'slug' => ParameterType::STRING,
+                'active' => ParameterType::BOOLEAN,
+                'locale' => ParameterType::STRING,
+            ]
+        );
+
+        if (false === $row) {
+            return null;
+        }
+
+        return $this->rowToDto($row);
+    }
+
+    /**
      * @param array<string, mixed> $row
      */
     private function rowToDto(array $row): StorefrontProductDto
@@ -141,6 +212,7 @@ final readonly class ProductListingReadRepository
         $trackInventory = (bool) ($row['track_inventory'] ?? true);
         $allowBackorder = (bool) ($row['allow_backorder'] ?? false);
         $stockQuantity = (int) ($row['stock_quantity'] ?? 0);
+        $categoryId = $row['category_id'] ?? null;
 
         return new StorefrontProductDto(
             id: (string) ($row['id'] ?? ''),
@@ -156,6 +228,7 @@ final readonly class ProductListingReadRepository
             availability: !$trackInventory || $stockQuantity > 0 || $allowBackorder ? 'in_stock' : 'out_of_stock',
             breadcrumbs: null,
             description: isset($row['description']) ? (string) $row['description'] : null,
+            categoryId: is_string($categoryId) && '' !== $categoryId ? $categoryId : null,
         );
     }
 
