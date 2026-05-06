@@ -4,24 +4,44 @@ declare(strict_types=1);
 
 namespace App\Payment\Presentation\Api\Controller;
 
-use App\Payment\Infrastructure\Gateway\PaymentGatewayFactory;
+use App\Payment\Application\Command\CapturePayment;
+use App\Payment\Application\Command\InitiatePayment;
+use App\Payment\Domain\ValueObject\PaymentGateway;
+use App\Payment\Domain\ValueObject\PaymentId;
+use App\Payment\Domain\ValueObject\PaymentMethod;
+use App\Shared\Domain\ValueObject\Money;
+use App\Shared\Domain\ValueObject\TenantId;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * PayPal Payment Controller.
  *
  * Handles PayPal payment operations via REST API.
+ * Follows the same command bus pattern as StripePaymentController.
+ *
+ * Security:
+ * - Rate limited: 10 requests/minute per IP (api_payment limiter)
+ * - Input validation: amount ceiling, email format, UUID format
+ * - Error sanitization: generic error messages in responses, details logged server-side
  */
 #[Route('/api/v1/payments/paypal', name: 'api_payment_paypal_')]
 final class PayPalPaymentController extends AbstractController
 {
+    private const MAX_AMOUNT_CENTS = 99_999_99; // $999,999.99
+
     public function __construct(
-        private readonly PaymentGatewayFactory $gatewayFactory,
+        private readonly MessageBusInterface $commandBus,
+        #[Autowire(service: 'limiter.api_payment')]
+        private readonly RateLimiterFactory $apiPaymentLimiter,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -29,62 +49,94 @@ final class PayPalPaymentController extends AbstractController
     /**
      * Create PayPal Order.
      *
-     * Creates a PayPal order and returns the order ID and approval URL.
+     * Creates a PayPal order via InitiatePayment command and returns
+     * the payment ID, PayPal order ID, and approval URL.
      */
     #[Route('/create-order', name: 'create_order', methods: ['POST'])]
     public function createOrder(Request $request): JsonResponse
     {
+        // Rate limiting
+        $limiter = $this->apiPaymentLimiter->create($request->getClientIp() ?? 'unknown');
+        if (!$limiter->consume()->isAccepted()) {
+            return new JsonResponse([
+                'error' => 'Too many payment requests. Please try again later.',
+            ], Response::HTTP_TOO_MANY_REQUESTS);
+        }
+
         try {
             $data = json_decode($request->getContent(), true);
 
-            if (!isset($data['amount'], $data['currency'])) {
-                return new JsonResponse([
-                    'error' => 'Missing required fields: amount, currency',
-                ], Response::HTTP_BAD_REQUEST);
+            if (!is_array($data)) {
+                return new JsonResponse(['error' => 'Invalid JSON body'], Response::HTTP_BAD_REQUEST);
             }
 
-            $amount = (int) $data['amount']; // Amount in cents
-            $currency = strtoupper($data['currency']);
+            $amount = $data['amount'] ?? null;
+            $currency = $data['currency'] ?? 'USD';
             $customerEmail = $data['customerEmail'] ?? null;
+            $orderId = $data['orderId'] ?? null;
+            $tenantId = $request->headers->get('X-Tenant-ID');
 
-            $this->logger->info('PayPal: Creating order', [
-                'amount' => $amount,
-                'currency' => $currency,
-                'customer_email' => $customerEmail,
-            ]);
+            // Validation — amount
+            if (null === $amount || !is_numeric($amount) || (int) $amount <= 0) {
+                return new JsonResponse(['error' => 'Invalid amount'], Response::HTTP_BAD_REQUEST);
+            }
 
-            // Get PayPal gateway
-            $gateway = $this->gatewayFactory->getGateway(\App\Payment\Domain\ValueObject\PaymentGateway::paypal());
+            if ((int) $amount > self::MAX_AMOUNT_CENTS) {
+                return new JsonResponse(['error' => 'Amount exceeds maximum allowed'], Response::HTTP_BAD_REQUEST);
+            }
 
-            // Create PayPal order (authorize)
-            $result = $gateway->authorize(
-                $amount,
-                $currency,
-                \App\Payment\Domain\ValueObject\PaymentMethod::paypal(),
-                [
-                    'customer_email' => $customerEmail,
-                    'order_id' => $data['orderId'] ?? null,
-                ]
+            // Validation — orderId
+            if (!is_string($orderId) || '' === $orderId) {
+                return new JsonResponse(['error' => 'orderId is required'], Response::HTTP_BAD_REQUEST);
+            }
+
+            // Validation — tenantId (UUID format)
+            if (!is_string($tenantId) || !preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $tenantId)) {
+                return new JsonResponse(['error' => 'Valid X-Tenant-ID header is required'], Response::HTTP_BAD_REQUEST);
+            }
+
+            // Validation — email format
+            if (!is_string($customerEmail) || false === filter_var($customerEmail, FILTER_VALIDATE_EMAIL)) {
+                return new JsonResponse(['error' => 'Valid customerEmail is required'], Response::HTTP_BAD_REQUEST);
+            }
+
+            // Create payment ID
+            $paymentId = PaymentId::generate();
+
+            // Dispatch InitiatePayment command
+            $command = new InitiatePayment(
+                paymentId: $paymentId,
+                tenantId: TenantId::fromString($tenantId),
+                orderId: $orderId,
+                amount: Money::fromScalars((int) $amount, strtoupper($currency)),
+                customerEmail: $customerEmail,
+                method: PaymentMethod::paypal(),
+                gateway: PaymentGateway::paypal()
             );
 
-            $this->logger->info('PayPal: Order created successfully', [
-                'paypal_order_id' => $result['transaction_id'],
-                'approval_url' => $result['metadata']['approval_url'] ?? null,
-            ]);
+            $result = $this->commandBus->dispatch($command);
+
+            // Extract result from envelope
+            $handlerResult = $result->last(HandledStamp::class)?->getResult();
+
+            if (!$handlerResult) {
+                throw new \RuntimeException('Payment initiation failed');
+            }
 
             return new JsonResponse([
-                'orderId' => $result['transaction_id'],
-                'approvalUrl' => $result['metadata']['approval_url'] ?? null,
-                'status' => $result['status'],
+                'paymentId' => $handlerResult['paymentId'],
+                'orderId' => $handlerResult['paymentIntentId'],
+                'approvalUrl' => $handlerResult['clientSecret'],
+                'status' => $handlerResult['status'],
             ]);
-        } catch (\Throwable $e) {
-            $this->logger->error('PayPal: Order creation failed', [
+        } catch (\Exception $e) {
+            $this->logger->error('PayPal order creation failed', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'ip' => $request->getClientIp(),
             ]);
 
             return new JsonResponse([
-                'error' => 'Failed to create PayPal order: '.$e->getMessage(),
+                'error' => 'Payment processing failed. Please try again.',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -92,88 +144,61 @@ final class PayPalPaymentController extends AbstractController
     /**
      * Capture PayPal Order.
      *
-     * Captures a previously authorized PayPal order.
+     * Captures a previously authorized PayPal order via CapturePayment command.
+     * Called after customer approves the payment on PayPal and returns.
      */
     #[Route('/capture-order', name: 'capture_order', methods: ['POST'])]
     public function captureOrder(Request $request): JsonResponse
     {
+        // Rate limiting
+        $limiter = $this->apiPaymentLimiter->create($request->getClientIp() ?? 'unknown');
+        if (!$limiter->consume()->isAccepted()) {
+            return new JsonResponse([
+                'error' => 'Too many requests. Please try again later.',
+            ], Response::HTTP_TOO_MANY_REQUESTS);
+        }
+
         try {
             $data = json_decode($request->getContent(), true);
 
-            if (!isset($data['orderId'])) {
-                return new JsonResponse([
-                    'error' => 'Missing required field: orderId',
-                ], Response::HTTP_BAD_REQUEST);
+            if (!is_array($data)) {
+                return new JsonResponse(['error' => 'Invalid JSON body'], Response::HTTP_BAD_REQUEST);
             }
 
-            $orderId = $data['orderId'];
+            $paymentId = $data['paymentId'] ?? null;
+
+            if (!is_string($paymentId) || '' === $paymentId) {
+                return new JsonResponse(['error' => 'paymentId is required'], Response::HTTP_BAD_REQUEST);
+            }
+
+            // Validate UUID format
+            if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $paymentId)) {
+                return new JsonResponse(['error' => 'Invalid paymentId format'], Response::HTTP_BAD_REQUEST);
+            }
 
             $this->logger->info('PayPal: Capturing order', [
-                'paypal_order_id' => $orderId,
+                'payment_id' => $paymentId,
             ]);
 
-            // Get PayPal gateway
-            $gateway = $this->gatewayFactory->getGateway(\App\Payment\Domain\ValueObject\PaymentGateway::paypal());
+            // Dispatch CapturePayment command
+            $command = new CapturePayment(
+                id: PaymentId::fromString($paymentId),
+            );
 
-            // Capture PayPal order
-            $result = $gateway->capture($orderId);
-
-            $this->logger->info('PayPal: Order captured successfully', [
-                'paypal_order_id' => $orderId,
-                'capture_id' => $result['transaction_id'],
-                'status' => $result['status'],
-            ]);
+            $this->commandBus->dispatch($command);
 
             return new JsonResponse([
-                'captureId' => $result['transaction_id'],
-                'status' => $result['status'],
-                'capturedAmount' => $result['captured_amount'],
+                'paymentId' => $paymentId,
+                'status' => 'captured',
             ]);
-        } catch (\Throwable $e) {
-            $this->logger->error('PayPal: Order capture failed', [
+        } catch (\Exception $e) {
+            $this->logger->error('PayPal order capture failed', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'ip' => $request->getClientIp(),
             ]);
 
             return new JsonResponse([
-                'error' => 'Failed to capture PayPal order: '.$e->getMessage(),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Get PayPal Order Status.
-     *
-     * Retrieves the status of a PayPal order.
-     */
-    #[Route('/order-status/{orderId}', name: 'order_status', methods: ['GET'])]
-    public function getOrderStatus(string $orderId): JsonResponse
-    {
-        try {
-            $this->logger->info('PayPal: Fetching order status', [
-                'paypal_order_id' => $orderId,
-            ]);
-
-            // Get PayPal gateway
-            $gateway = $this->gatewayFactory->getGateway(\App\Payment\Domain\ValueObject\PaymentGateway::paypal());
-
-            // Get order status
-            $result = $gateway->getStatus($orderId);
-
-            return new JsonResponse([
-                'orderId' => $orderId,
-                'status' => $result['status'],
-                'amount' => $result['amount'],
-                'currency' => $result['currency'],
-                'metadata' => $result['metadata'],
-            ]);
-        } catch (\Throwable $e) {
-            $this->logger->error('PayPal: Failed to fetch order status', [
-                'error' => $e->getMessage(),
-            ]);
-
-            return new JsonResponse([
-                'error' => 'Failed to fetch PayPal order status: '.$e->getMessage(),
+                'error' => 'Payment capture failed. Please try again.',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

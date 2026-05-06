@@ -72,8 +72,9 @@ security:
         - { path: ^/api/v1/orders, roles: PUBLIC_ACCESS, methods: [POST] }
         - { path: ^/api/v1/validate-coupon, roles: PUBLIC_ACCESS, methods: [POST] }
 
-        # === Payment (1 entry — Stripe guest checkout flow) ===
+        # === Payment (2 entries — Stripe + PayPal guest checkout flows) ===
         - { path: ^/api/v1/payments/stripe, roles: PUBLIC_ACCESS, methods: [POST, GET] }
+        - { path: ^/api/v1/payments/paypal, roles: PUBLIC_ACCESS, methods: [POST, GET] }
 
         # === Webhooks (1 entry — signature-verified server-to-server) ===
         - { path: ^/api/v1/webhooks, roles: PUBLIC_ACCESS, methods: [POST] }
