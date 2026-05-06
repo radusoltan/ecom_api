@@ -36,6 +36,7 @@ final class CategoryCollectionProvider implements ProviderInterface
         // Check if we should filter by parent (root/subcategories)
         $parentFilter = $request?->query->get('parent');
         $parentId = $request?->query->get('parentId');
+        $slug = $request->query->get('slug');
 
         // Build query
         $queryBuilder = $this->entityManager->createQueryBuilder()
@@ -56,6 +57,11 @@ final class CategoryCollectionProvider implements ProviderInterface
             // Filter by specific parent ID
             $queryBuilder->andWhere('c.parentId = :parentId')
                 ->setParameter('parentId', $parentId);
+        }
+
+        if (is_string($slug) && '' !== trim($slug)) {
+            $queryBuilder->andWhere('c.slug = :slug')
+                ->setParameter('slug', trim($slug));
         }
         // If no filter, return all categories
 
