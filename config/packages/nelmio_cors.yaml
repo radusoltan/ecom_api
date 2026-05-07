@@ -5,14 +5,14 @@ nelmio_cors:
         origin_regex: true
         allow_origin: []
         allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
-        allow_headers: ['Content-Type', 'Authorization', 'Accept', 'Accept-Language', 'X-Tenant-ID']
+        allow_headers: ['Content-Type', 'Authorization', 'Accept', 'Accept-Language', 'X-Tenant-ID', 'X-Cart-ID']
         expose_headers: ['Link', 'Content-Language']
         allow_credentials: true  # Required for cookies
         max_age: 3600
     paths:
         '^/api':
             allow_origin: []
-            allow_headers: ['Content-Type', 'Authorization', 'Accept', 'Accept-Language', 'X-Tenant-ID']
+            allow_headers: ['Content-Type', 'Authorization', 'Accept', 'Accept-Language', 'X-Tenant-ID', 'X-Cart-ID']
             allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
             allow_credentials: true  # Required for cookies
             max_age: 3600
