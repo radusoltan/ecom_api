@@ -121,6 +121,112 @@ final class StorefrontProductDetailApiTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(404);
     }
 
+    /**
+     * TSK-738 regression guard: price MUST be a flat object {amount,currency}
+     * under Accept: application/ld+json, not a Hydra Collection wrap.
+     * Storefront client defaults to ld+json — this is the production shape.
+     */
+    public function testPriceShapeIsFlatUnderJsonLd(): void
+    {
+        $client = static::createClient();
+        $response = $client->request('GET', '/api/v1/storefront/products/'.self::SLUG_ACTIVE_A, [
+            'headers' => [
+                'Accept' => 'application/ld+json',
+                'Accept-Language' => 'en',
+                'X-Tenant-ID' => self::TENANT_A,
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $data = $response->toArray();
+
+        $this->assertArrayHasKey('price', $data, 'price field must exist on the response root');
+        $this->assertIsArray($data['price'], 'price must serialize to an associative array, not a scalar');
+
+        // The bug: API Platform JSON-LD wraps array<string,mixed> DTO fields as
+        // Hydra Collection at top level of a single Get response, hiding the
+        // amount/currency values inside `member[]`. Guard against it.
+        $this->assertArrayNotHasKey('member', $data['price'], 'price must NOT be wrapped in a Hydra Collection (member key present)');
+        $this->assertNotSame('Collection', $data['price']['@type'] ?? null, 'price @type must NOT be Hydra Collection');
+
+        $this->assertArrayHasKey('amount', $data['price'], 'price.amount must be a top-level key, not nested under member[]');
+        $this->assertArrayHasKey('currency', $data['price'], 'price.currency must be a top-level key, not nested under member[]');
+        $this->assertSame(12345, $data['price']['amount']);
+        $this->assertSame('USD', $data['price']['currency']);
+    }
+
+    /**
+     * TSK-738 regression guard: ensure listing endpoint shape preserved.
+     * Listing already serialized price flat under JSON-LD because each DTO
+     * is nested in member[] — guard against an inverse regression where the
+     * fix breaks the listing path.
+     */
+    public function testListingPriceShapeStaysFlatUnderJsonLd(): void
+    {
+        $client = static::createClient();
+        $response = $client->request('GET', '/api/v1/storefront/products', [
+            'headers' => [
+                'Accept' => 'application/ld+json',
+                'X-Tenant-ID' => self::TENANT_A,
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $data = $response->toArray();
+        $this->assertArrayHasKey('member', $data);
+
+        $found = null;
+        foreach ($data['member'] as $product) {
+            if (($product['slug'] ?? null) === self::SLUG_ACTIVE_A) {
+                $found = $product;
+                break;
+            }
+        }
+        $this->assertNotNull($found, 'seeded product must appear in listing');
+        $this->assertIsArray($found['price'] ?? null);
+        $this->assertSame(12345, $found['price']['amount'] ?? null);
+        $this->assertSame('USD', $found['price']['currency'] ?? null);
+        $this->assertArrayNotHasKey('member', $found['price'], 'listing price must not be Hydra Collection-wrapped');
+        $this->assertNotSame('Collection', $found['price']['@type'] ?? null);
+    }
+
+    /**
+     * TSK-738 audit: primaryImage is also array<string,mixed> on the DTO.
+     * Same Hydra-Collection-wrap risk under JSON-LD. Seed a product with
+     * non-null primaryImage and assert flat shape.
+     */
+    public function testPrimaryImageShapeIsFlatUnderJsonLd(): void
+    {
+        $this->setTenantContextOnConnection(self::TENANT_A);
+        $imageSlug = 'tsk-738-with-image-tenant-a';
+        $this->seedProductWithImage(self::TENANT_A, $imageSlug, 'TSK738-IMG', 'TSK-738 Product With Image');
+
+        try {
+            $client = static::createClient();
+            $response = $client->request('GET', '/api/v1/storefront/products/'.$imageSlug, [
+                'headers' => [
+                    'Accept' => 'application/ld+json',
+                    'X-Tenant-ID' => self::TENANT_A,
+                ],
+            ]);
+
+            $this->assertResponseIsSuccessful();
+            $data = $response->toArray();
+
+            $this->assertArrayHasKey('primaryImage', $data);
+            $this->assertIsArray($data['primaryImage']);
+            $this->assertArrayNotHasKey('member', $data['primaryImage'], 'primaryImage must NOT be Hydra Collection-wrapped');
+            $this->assertNotSame('Collection', $data['primaryImage']['@type'] ?? null);
+            $this->assertArrayHasKey('urlSm', $data['primaryImage']);
+            $this->assertArrayHasKey('urlMd', $data['primaryImage']);
+            $this->assertArrayHasKey('urlLg', $data['primaryImage']);
+            $this->assertSame('https://cdn.example/tsk738.jpg', $data['primaryImage']['urlSm']);
+        } finally {
+            $this->setTenantContextOnConnection(self::TENANT_A);
+            $this->connection->executeStatement("DELETE FROM catalog_products WHERE sku = 'TSK738-IMG'");
+        }
+    }
+
     private function seedProduct(string $tenantId, string $slug, string $sku, string $name, bool $active, ?string $categoryId): void
     {
         $this->connection->executeStatement(
@@ -156,6 +262,43 @@ final class StorefrontProductDetailApiTest extends ApiTestCase
         );
     }
 
+    private function seedProductWithImage(string $tenantId, string $slug, string $sku, string $name): void
+    {
+        $images = json_encode([
+            ['url' => 'https://cdn.example/tsk738.jpg', 'isPrimary' => true],
+        ], JSON_THROW_ON_ERROR);
+
+        $this->connection->executeStatement(
+            'INSERT INTO catalog_products (
+                id, tenant_id, sku, name, description, short_description, slug,
+                price_amount, price_currency, category_id,
+                stock_quantity, track_inventory, allow_backorder, images,
+                active, is_featured, created_at, updated_at,
+                name_translations, description_translations, short_description_translations
+            ) VALUES (
+                gen_random_uuid(), :tenantId, :sku, :name, :description, :shortDescription, :slug,
+                :priceAmount, :priceCurrency, NULL,
+                100, true, false, :images,
+                true, false, NOW(), NOW(),
+                :nameTranslations::jsonb, :descTranslations::jsonb, :shortDescTranslations::jsonb
+            )',
+            [
+                'tenantId' => $tenantId,
+                'sku' => $sku,
+                'name' => $name,
+                'description' => 'Seeded by StorefrontProductDetailApiTest for TSK-738.',
+                'shortDescription' => 'TSK-738 short description.',
+                'slug' => $slug,
+                'priceAmount' => 9999,
+                'priceCurrency' => 'USD',
+                'images' => $images,
+                'nameTranslations' => '{}',
+                'descTranslations' => '{}',
+                'shortDescTranslations' => '{}',
+            ]
+        );
+    }
+
     private function setTenantContextOnConnection(string $tenantId): void
     {
         $this->connection->executeStatement(
@@ -171,7 +314,7 @@ final class StorefrontProductDetailApiTest extends ApiTestCase
         foreach ([self::TENANT_A, self::TENANT_B] as $tenantId) {
             $this->setTenantContextOnConnection($tenantId);
             $this->connection->executeStatement(
-                "DELETE FROM catalog_products WHERE sku LIKE 'TSK716-%'"
+                "DELETE FROM catalog_products WHERE sku LIKE 'TSK716-%' OR sku LIKE 'TSK738-%'"
             );
         }
     }

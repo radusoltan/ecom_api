@@ -16,10 +16,10 @@ final class StorefrontProductDto
         #[Groups(['storefront:read'])]
         public readonly string $name,
         #[Groups(['storefront:read'])]
-        public readonly array $price, // ['amount' => int, 'currency' => string]
+        public readonly MoneyDto $price,
 
         #[Groups(['storefront:read'])]
-        public readonly ?array $primaryImage = null, // ['urlSm' => string, 'urlMd' => string, 'urlLg' => string]
+        public readonly ?ProductImageDto $primaryImage = null,
 
         #[Groups(['storefront:read'])]
         public readonly bool $isFeatured = false,
@@ -41,12 +41,31 @@ final class StorefrontProductDto
     /** @param array<string, mixed> $data */
     public static function fromArray(array $data): self
     {
+        $priceData = $data['price'] ?? [];
+        $price = $priceData instanceof MoneyDto
+            ? $priceData
+            : new MoneyDto(
+                amount: is_array($priceData) ? (int) ($priceData['amount'] ?? 0) : 0,
+                currency: is_array($priceData) ? (string) ($priceData['currency'] ?? 'USD') : 'USD',
+            );
+
+        $imageData = $data['primaryImage'] ?? null;
+        $primaryImage = match (true) {
+            $imageData instanceof ProductImageDto => $imageData,
+            is_array($imageData) => new ProductImageDto(
+                urlSm: (string) ($imageData['urlSm'] ?? ''),
+                urlMd: (string) ($imageData['urlMd'] ?? ''),
+                urlLg: (string) ($imageData['urlLg'] ?? ''),
+            ),
+            default => null,
+        };
+
         return new self(
             id: $data['id'] ?? '',
             slug: $data['slug'] ?? '',
             name: $data['name'] ?? '',
-            price: $data['price'] ?? ['amount' => 0, 'currency' => 'USD'],
-            primaryImage: $data['primaryImage'] ?? null,
+            price: $price,
+            primaryImage: $primaryImage,
             isFeatured: $data['isFeatured'] ?? false,
             rating: $data['rating'] ?? null,
             availability: $data['availability'] ?? null,

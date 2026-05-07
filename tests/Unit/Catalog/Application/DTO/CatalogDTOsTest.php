@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Catalog\Application\DTO;
 
 use App\Catalog\Application\DTO\AdminProductListDto;
+use App\Catalog\Application\DTO\MoneyDto;
 use App\Catalog\Application\DTO\OptionDTO;
 use App\Catalog\Application\DTO\OptionValueDTO;
+use App\Catalog\Application\DTO\ProductImageDto;
 use App\Catalog\Application\DTO\ProductImportResult;
 use App\Catalog\Application\DTO\StorefrontCategoryDto;
 use App\Catalog\Application\DTO\StorefrontProductDto;
@@ -15,8 +17,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(MoneyDto::class)]
 #[CoversClass(OptionDTO::class)]
 #[CoversClass(OptionValueDTO::class)]
+#[CoversClass(ProductImageDto::class)]
 #[CoversClass(ProductImportResult::class)]
 #[CoversClass(StorefrontCategoryDto::class)]
 #[CoversClass(StorefrontProductDto::class)]
@@ -33,8 +37,8 @@ final class CatalogDTOsTest extends TestCase
             id: 'prod-1',
             slug: 'cool-product',
             name: 'Cool Product',
-            price: ['amount' => 2999, 'currency' => 'USD'],
-            primaryImage: ['urlSm' => '/sm.jpg', 'urlMd' => '/md.jpg', 'urlLg' => '/lg.jpg'],
+            price: new MoneyDto(amount: 2999, currency: 'USD'),
+            primaryImage: new ProductImageDto(urlSm: '/sm.jpg', urlMd: '/md.jpg', urlLg: '/lg.jpg'),
             isFeatured: true,
             rating: 4.5,
             availability: 'in_stock',
@@ -45,8 +49,12 @@ final class CatalogDTOsTest extends TestCase
         self::assertSame('prod-1', $dto->id);
         self::assertSame('cool-product', $dto->slug);
         self::assertSame('Cool Product', $dto->name);
-        self::assertSame(2999, $dto->price['amount']);
-        self::assertSame('USD', $dto->price['currency']);
+        self::assertSame(2999, $dto->price->amount);
+        self::assertSame('USD', $dto->price->currency);
+        self::assertNotNull($dto->primaryImage);
+        self::assertSame('/sm.jpg', $dto->primaryImage->urlSm);
+        self::assertSame('/md.jpg', $dto->primaryImage->urlMd);
+        self::assertSame('/lg.jpg', $dto->primaryImage->urlLg);
         self::assertTrue($dto->isFeatured);
         self::assertSame(4.5, $dto->rating);
         self::assertSame('in_stock', $dto->availability);
@@ -62,6 +70,7 @@ final class CatalogDTOsTest extends TestCase
             'slug' => 'another-product',
             'name' => 'Another Product',
             'price' => ['amount' => 1500, 'currency' => 'EUR'],
+            'primaryImage' => ['urlSm' => '/a.jpg', 'urlMd' => '/b.jpg', 'urlLg' => '/c.jpg'],
             'isFeatured' => true,
             'rating' => 3.8,
         ]);
@@ -69,13 +78,32 @@ final class CatalogDTOsTest extends TestCase
         self::assertSame('prod-2', $dto->id);
         self::assertSame('another-product', $dto->slug);
         self::assertSame('Another Product', $dto->name);
-        self::assertSame(1500, $dto->price['amount']);
+        self::assertSame(1500, $dto->price->amount);
+        self::assertSame('EUR', $dto->price->currency);
         self::assertTrue($dto->isFeatured);
         self::assertSame(3.8, $dto->rating);
-        self::assertNull($dto->primaryImage);
+        self::assertNotNull($dto->primaryImage);
+        self::assertSame('/a.jpg', $dto->primaryImage->urlSm);
         self::assertNull($dto->availability);
         self::assertNull($dto->breadcrumbs);
         self::assertNull($dto->description);
+    }
+
+    #[Test]
+    public function storefrontProductDtoFromArrayAcceptsAlreadyTypedVOs(): void
+    {
+        $dto = StorefrontProductDto::fromArray([
+            'id' => 'prod-3',
+            'slug' => 'typed',
+            'name' => 'Typed',
+            'price' => new MoneyDto(amount: 4242, currency: 'GBP'),
+            'primaryImage' => new ProductImageDto(urlSm: '/x.jpg', urlMd: '/y.jpg', urlLg: '/z.jpg'),
+        ]);
+
+        self::assertSame(4242, $dto->price->amount);
+        self::assertSame('GBP', $dto->price->currency);
+        self::assertNotNull($dto->primaryImage);
+        self::assertSame('/x.jpg', $dto->primaryImage->urlSm);
     }
 
     #[Test]
@@ -86,8 +114,9 @@ final class CatalogDTOsTest extends TestCase
         self::assertSame('', $dto->id);
         self::assertSame('', $dto->slug);
         self::assertSame('', $dto->name);
-        self::assertSame(0, $dto->price['amount']);
-        self::assertSame('USD', $dto->price['currency']);
+        self::assertSame(0, $dto->price->amount);
+        self::assertSame('USD', $dto->price->currency);
+        self::assertNull($dto->primaryImage);
         self::assertFalse($dto->isFeatured);
         self::assertNull($dto->rating);
     }
@@ -99,7 +128,7 @@ final class CatalogDTOsTest extends TestCase
             id: 'p-1',
             slug: 'slug',
             name: 'Name',
-            price: ['amount' => 100, 'currency' => 'USD'],
+            price: new MoneyDto(amount: 100, currency: 'USD'),
         );
 
         self::assertNull($dto->primaryImage);
