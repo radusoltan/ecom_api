@@ -7,6 +7,8 @@ namespace App\Catalog\Presentation\Api\Resource;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use App\Catalog\Application\DTO\MoneyDto;
+use App\Catalog\Application\DTO\ProductImageDto;
 use App\Catalog\Presentation\Api\State\FeaturedProductsProvider;
 use App\Catalog\Presentation\Api\State\ProductListingProvider;
 use App\Catalog\Presentation\Api\State\StorefrontProductProvider;
@@ -41,12 +43,12 @@ class StorefrontProductResource
     public string $id;
     public string $slug;
     public string $name;
-    /** @var array<string, mixed> */
-    public array $price;
-    public ?array $primaryImage = null;
+    public MoneyDto $price;
+    public ?ProductImageDto $primaryImage = null;
     public bool $isFeatured = false;
     public ?float $rating = null;
     public ?string $availability = null;
+    /** @var list<array{name: string, slug: string}>|null */
     public ?array $breadcrumbs = null;
     public ?string $description = null;
     public ?string $categoryId = null;

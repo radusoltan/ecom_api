@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Persistence\Doctrine\ReadModel;
 
+use App\Catalog\Application\DTO\MoneyDto;
+use App\Catalog\Application\DTO\ProductImageDto;
 use App\Catalog\Application\DTO\StorefrontProductDto;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
@@ -218,10 +220,10 @@ final readonly class ProductListingReadRepository
             id: (string) ($row['id'] ?? ''),
             slug: (string) ($row['slug'] ?? $row['id'] ?? ''),
             name: (string) ($row['name'] ?? ''),
-            price: [
-                'amount' => (int) ($row['price_amount'] ?? 0),
-                'currency' => (string) ($row['price_currency'] ?? 'USD'),
-            ],
+            price: new MoneyDto(
+                amount: (int) ($row['price_amount'] ?? 0),
+                currency: (string) ($row['price_currency'] ?? 'USD'),
+            ),
             primaryImage: $primaryImage,
             isFeatured: (bool) ($row['is_featured'] ?? false),
             rating: null,
@@ -258,10 +260,8 @@ final readonly class ProductListingReadRepository
 
     /**
      * @param list<array<string, mixed>> $images
-     *
-     * @return array{urlSm: string, urlMd: string, urlLg: string}|null
      */
-    private function extractPrimaryImage(array $images): ?array
+    private function extractPrimaryImage(array $images): ?ProductImageDto
     {
         if ([] === $images) {
             return null;
@@ -283,11 +283,11 @@ final readonly class ProductListingReadRepository
             return null;
         }
 
-        return [
-            'urlSm' => $url,
-            'urlMd' => $url,
-            'urlLg' => $url,
-        ];
+        return new ProductImageDto(
+            urlSm: $url,
+            urlMd: $url,
+            urlLg: $url,
+        );
     }
 
     private function normalizeLocale(string $locale): string
