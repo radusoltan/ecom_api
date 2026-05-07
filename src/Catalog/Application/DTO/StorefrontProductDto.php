@@ -32,6 +32,9 @@ final class StorefrontProductDto
 
         #[Groups(['storefront:read'])]
         public readonly ?string $description = null,
+
+        #[Groups(['storefront:read'])]
+        public readonly ?string $categoryId = null,
     ) {
     }
 
@@ -48,7 +51,8 @@ final class StorefrontProductDto
             rating: $data['rating'] ?? null,
             availability: $data['availability'] ?? null,
             breadcrumbs: $data['breadcrumbs'] ?? null,
-            description: $data['description'] ?? null
+            description: $data['description'] ?? null,
+            categoryId: $data['categoryId'] ?? null,
         );
     }
 }
