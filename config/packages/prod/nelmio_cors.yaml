@@ -1,8 +1,18 @@
 # Production CORS Configuration
+#
+# IMPORTANT: prod/staging CORS is handled exclusively by the nginx layer
+# (add_header ... always directives in /etc/nginx/sites-available/ecom-*).
+# Symfony nelmio_cors is intentionally silent in prod to prevent duplicate
+# Access-Control-Allow-Origin headers (which browsers reject per spec).
+#
+# If nginx CORS handling is removed/refactored, restore allow_origin here
+# in the SAME PR. Without this, real-method requests will fail CORS.
+#
+# See: docs/adrs/ADR-XXX-cors-layering.md (TBD) and TSK-744 incident.
 nelmio_cors:
     defaults:
         origin_regex: true
-        allow_origin: ['https://ecom.local']
+        allow_origin: []
         allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
         allow_headers: ['Content-Type', 'Authorization', 'Accept', 'Accept-Language', 'X-Tenant-ID', 'X-Cart-ID']
         expose_headers: ['Link', 'Content-Language']
@@ -10,7 +20,7 @@ nelmio_cors:
         max_age: 3600
     paths:
         '^/api':
-            allow_origin: ['https://ecom.local']
+            allow_origin: []
             allow_headers: ['Content-Type', 'Authorization', 'Accept', 'Accept-Language', 'X-Tenant-ID', 'X-Cart-ID']
             allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
             allow_credentials: true
